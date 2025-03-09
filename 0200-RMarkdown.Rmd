@@ -293,6 +293,7 @@ You may use `knitr::opts_chunk$set()` to change the default values of chunk opti
   ````md
   ```{r, results='asis'}`r ''`
   cat("I'm raw **Markdown** content.\n")
+  ```
   ````
   
 
@@ -309,4 +310,85 @@ You may use `knitr::opts_chunk$set()` to change the default values of chunk opti
 - `hold`: Hold all pieces of text output in a chunk and flush them to the end of the chunk.
 
 - `hide` (or `FALSE`): Hide text output.
+
+
+
+___
+
+## Print Verbatim R code chunks
+
+**Including verbatim R code chunks inside R Markdown**
+
+One solution for including verbatim R code chunks (see below for more) is to insert hidden inline R code (`` `r
+  ''` ``) immediately <u>before or after</u> your R code chunk. 
+
+- The hidden inline R code will be evaluated as an inline expression to an empty string by knitr.
+
+Then wrap the whole block within a markdown code block. The rendered output will display the verbatim R code chunk — including backticks.
+
+R code generating the four backticks block:
+
+```r 
+output_code <-
+"````markdown
+`r ''````{r}
+plot(cars)
+``` \n````"
+cat(output_code)
+```
+
+
+Write this code in your R Markdown document:
+
+```{r eval=TRUE, comment = ''}
+output_code <-
+"````markdown
+`r ''````{r}
+plot(cars)
+``` \n````"
+cat(output_code)
+```
+
+
+or
+
+```{r eval=TRUE, comment = ''}
+output_code <-
+"````markdown
+```{r}`r ''`
+plot(cars)
+``` \n````"
+cat(output_code)
+```
+
+
+Knit the document and the code will render like this in your output:
+
+````md
+```{r}`r ''`
+plot(cars)
+```
+````
+
+**References**:
+
+https://yihui.org/en/2017/11/knitr-verbatim-code-chunk/
+
+https://support.posit.co/hc/en-us/articles/360018181633-Including-verbatim-R-code-chunks-inside-R-Markdown
+
+https://themockup.blog/posts/2021-08-27-displaying-verbatim-code-chunks-in-xaringan-presentations/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

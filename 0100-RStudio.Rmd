@@ -1,13 +1,13 @@
 # Rstudio
 
-## Rstudio shortcuts
+**Rstudio shortcuts**
 
 | keyboard combination                                    | function                                                     |
 | ------------------------------------------------------- | ------------------------------------------------------------ |
 | opt + _                                                 | insert assignment operator `<-`                              |
 | ESC or ctrl + C                                         | exit `+` prompt                                              |
 | ctrl + shift + m                                        | add pipe operator "%>%"                                      |
-| <span style='color:#32CD32'>ctrl + `[`/`]` </span>      | indent or unindent                                           |
+| <span style='color:#008B45FF'>ctrl + `[`/`]` </span>      | indent or unindent                                           |
 | cmd + D                                                 | delete one row                                               |
 | cmd + 1                                                 | move cursor to console window                                |
 | cmd + 2                                                 | move cursor to editor window                                 |
@@ -18,17 +18,17 @@
 | shift +  $\uparrow$ / $\downarrow$                      | select one line up/down                                      |
 | fn + F2                                                 | `view()` an object, don't select the object                  |
 | cmd + shift + 1                                         | activate X11() window                                        |
-| <span style='color:#32CD32'>ctrl (+ shift) + tab</span> | next (last) tab in scriptor (this applies to all apps); <br />hit ctrl first, then shift if necessary, last tab |
+| <span style='color:#008B45FF'>ctrl (+ shift) + tab</span> | next (last) tab in scriptor (this applies to all apps); <br />hit ctrl first, then shift if necessary, last tab |
 
 
-<span style='color:#32CD32'>**Source**</span>
+<span style='color:#008B45FF'>**Source**</span>
 
 | keyboard combination | function                                            |
 | -------------------- | --------------------------------------------------- |
 | cmd + return         | Run current line/selection                          |
 | opt + return         | Run current line/selection (retain cursor position) |
 
-<span style='color:#32CD32'>**`Rmd` related**</span>
+<span style='color:#008B45FF'>**`Rmd` related**</span>
 
 | keyboard combination | function                                                     |
 | -------------------- | ------------------------------------------------------------ |
@@ -44,7 +44,7 @@ A: Choose the gear in the editor toolbar and choose "Chunk Output in Console".
 
 
 
-<span style='color:#32CD32'>**Set working directory**</span>
+<span style='color:#008B45FF'>**Set working directory**</span>
 
 ```R
 dir_folder <- dirname(rstudioapi::getSourceEditorContext()$path) # get the dir name of the current script
@@ -96,7 +96,7 @@ rstudioapi::terminalExecute("open -n /Applications/RStudio.app", show = FALSE)
 - `env`                  Vector of name=value strings to set environment variables
 - `show`                If FALSE, terminal won't be brought to front
 
-The <span style='color:#32CD32'>`rstudioapi`</span> package provides an interface for interacting with the RStudio IDE with R code. Using`rstudioapi`, you can:
+The <span style='color:#008B45FF'>`rstudioapi`</span> package provides an interface for interacting with the RStudio IDE with R code. Using`rstudioapi`, you can:
 
 - Examine, manipulate, and save the contents of documents currently open in RStudio,
 - Create, open, or re-open RStudio projects,
@@ -171,165 +171,4 @@ install.packages(
 Now go to Tools > Modify Keyboard Shortcuts and search for "dashes". Here you can define the keyboard combination by clicking inside the empty Shortcut field and pressing the desired key-combination on your keyboard. Click Apply, and that’s it!
 
 ___
-
-## Dark Theme
-
-https://community.rstudio.com/t/fvaleature-req-word-background-highlight-color-in-find-and-spellcheck/18578/3
-
-https://rstudio.github.io/rstudio-extensions/rstudio-theme-creation.html
-
-https://docs.posit.co/ide/user/ide/guide/ui/appearance.html#creating-custom-themes-for-rstudio
-
-`.ace_marker-layer .ace_selection` Changes the color and style of the highlighting for the currently selected line or block of lines.
-
-`.ace_marker-layer .ace_bracket`   Changes the color and style of the highlighting on matching brackets.
-
-**Recommended highlight color**: `rgba(255, 0, 0, 0.47)`
-
-
-
-`RStudio` editor theme directory on Mac:
-
-right click `RStudio.app`, "Show Package Contents" to navigate to the application folder. 
-
-`/Applications/RStudio.app/Contents/Resources/resources/themes/ambiance.rstheme`
-
-Custom theme (user-defined) folder: 
-
-- `~/.config/rstudio/themes/idle_fingers_2.rstheme` on mac
-- [viridis-theme](https://github.com/z3tt/viridis-theme/blob/main/viridis.rstheme)
-
-```scss
-/* yaml tag */
-.ace_meta.ace_tag {
-  color: #2499DA;
-}
-/* quoted by $...$ and code chunk options */
-.ace_support.ace_function {
-  color: #55C667;
-}
-```
-
-
-
-___
-
-
-
-## Packages Management
-
-**Install R pakages from source**
-
-```R
-# From local tarball
-install.packages(
-  # indicate path of the package source file
-  "~/Documents/R/UserPackages/shoRtcut2_0.1.0.tar.gz", 
-  # indicate it is a local file
-  repos = NULL)
-
-# From github
-install.packages("Rcpp", repos="https://rcppcore.github.io/drat")
-```
-
-
-
-Check insatlled packages
-
-```R
-# print all installed packages
-rownames(installed.packages())
-# check if `ggplot2` is installed
-"ggplot2" %in% rownames(installed.packages())
-```
-
-Update packages
-
-```R
-packageVersion("ggplot2") # check package version
-install.packages("ggplot2") # update one specific package
-
-## update all installed packages in a stated library location, default to `.libPaths()`
-update.packages(lib.loc = .libPaths()) 
-```
-
-Which will ask you for every package if you want to update, to just say yes to everything use `ask = FAlSE`.
-
-```R
-update.packages(ask = FALSE)
-```
-
-Unfortunately this <span style='color:#32CD32'>won’t</span> update packages installed by `devtools::install_github()`
-
-**Updating all Packages after <span style='color:cyan'>R update</span>**
-
-R packages are missing after updating. So have to save the installed packages and re-install them after updating.
-
-```R
-## get packages installed
-packs <- as.data.frame(installed.packages(.libPaths()[1]), stringsAsFactors = F)
-# Save to local
-f_name <- "~/Documents/R/packages.csv"
-rownames(packs)
-write.csv(packs, f_name, row.names = FALSE)
-packs <- read_csv(f_name)
-packs
-## Re-install packages using install.packages() after updating R
-install.packages(packs$Package)
-```
-
-R library path `/Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library`
-
--   use `find.package("ggplot2")` to find the location of the source file.
--   alternatively, `.libPaths()` 
-    -   returns the directory within which packages are looked for.
-
-
-
-`library(package)` returns an error if the package doesn't exist.
-
-`require(package)` returns `FALSE` if the package doesn't exist. `require` is designed for use inside other functions.
-
-
-
-___
-
-### Put your R package on GitHub
-
-https://jennybc.github.io/2014-05-12-ubc/ubc-r/session2.4_github.html
-
-- Change to the package directory
-
-- Initialize the repository with `git init`
-
-- Add and commit everything with
-
-  1.   `git add .`              stage changes;
-  2.   `git status`            optional check staged changes, but yet to submit;
-  3.   and `git commit`    submit staged changes.
-
-- Create a [new repository on GitHub](https://github.com/new)
-
-- Connect your local repository to the GitHub one
-
-  ```git
-  git remote add origin https://github.com/username/reponame
-  ```
-
-- Push everything to github
-
-  ```git
-  git branch -M main
-  git push -u origin main
-  ```
-
-
-
-
-
-
-
-
-
-
 
