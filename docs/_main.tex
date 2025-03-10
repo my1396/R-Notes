@@ -119,7 +119,7 @@
 
 \title{A Minimal Book Example}
 \author{John Doe}
-\date{2025-03-07}
+\date{2025-03-10}
 
 \begin{document}
 \maketitle
@@ -821,7 +821,7 @@ Full list of chunk options: \url{https://yihui.org/knitr/options/}
 
 Chunk options can customize nearly all components of code chunks, such as the source code, text output, plots, and the language of the chunk.
 
-\textbf{Other languages are supproted in \texttt{Rmd}}
+\textbf{Other languages are supported in \texttt{Rmd}}
 
 You can list the names of all available engines via:
 
@@ -969,7 +969,7 @@ Definitions
   Sometime, you encounter the following error messages when you have R codes within \texttt{enumerate} environment.
 
   \begin{quote}
-  You can't use `macro parameter character \#' in horizontal mode.
+  You can't use \texttt{macro\ parameter\ character\ \#} in horizontal mode.
   \end{quote}
 
   By default, knitr prefixes R output with \texttt{\#\#}, which can't be present in your TeX file.
@@ -1053,6 +1053,253 @@ Knit the document and the code will render like this in your output:
 \url{https://support.posit.co/hc/en-us/articles/360018181633-Including-verbatim-R-code-chunks-inside-R-Markdown}
 
 \url{https://themockup.blog/posts/2021-08-27-displaying-verbatim-code-chunks-in-xaringan-presentations/}
+
+\chapter{Machine Learning}\label{machine-learning}
+
+Parametric models such as generalized linear regression and logistic regression has advantages and disadvantages.
+
+\textbf{Strength}:
+
+\begin{itemize}
+\tightlist
+\item
+  The effects of individual predictors on the outcome are easily understood
+\item
+  Statistical inference, such as hypothesis testing or interval estimation, is straightforward
+\item
+  Methods and procedures for selecting, comparing, and summarizing these models are well-established and extensively studied
+\end{itemize}
+
+\textbf{Disadvantages} in the following scenarios:
+
+\begin{itemize}
+\tightlist
+\item
+  Complex, non-linear relationships between predictors and the outcome
+\item
+  High degrees of interaction between predictors
+\item
+  Nominal outcome variables with several categories
+\end{itemize}
+
+In these situations, non-parametric or algorithmic modeling approaches have the potential to better capture the underlying trends in the data.
+
+Here we introduce three models: classification and regression trees (CART), random forests, k-nearest neighbors.
+
+\begin{itemize}
+\item
+  Classification and regression trees (CART) are ``trained'' by recursively partitioning the 𝑝-dimensional space (defined by the explanatory variables) until an acceptable level of homogeneity or ``purity'' is achieved within each partition.
+\item
+  A major issue with tree-based models is that they tend to be high variance (leading to a high propensity towards over-fitting). Random forests are a non-parametric, tree-based modeling algorithm that is built upon the idea that averaging a set of independent elements yields an outcome with lower variability than any of the individual elements in the set.
+
+  This general concept should seem familiar. Thinking back to your introductory statistics course, you should remember that the sample mean, \(\overline{x}\), of a dataset has substantially less variability (\(\frac{\sigma}{\sqrt{n}}\)) than the individual data-points themselves (\(\sigma\)).
+\end{itemize}
+
+Q: What is Bias-Variance Trade-Off in Machine Learning?\\
+A:
+
+\begin{itemize}
+\tightlist
+\item
+  Bias refers to error caused by a model for solving complex problems that is over simplified, makes significant assumptions, and misses important relationships in your data.
+\item
+  Variance error is variability of a target function's form with respect to different training sets. Models with small variance error will not change much if you replace couple of samples in training set. Models with high variance might be affected even with small changes in training set. High variance models fit the data too well, and learns the noise in addition to the inherent patterns in the data.
+\end{itemize}
+
+\section{Random Forest}\label{random-forest}
+
+\textbf{Averaging of independent trees}
+
+The goal of bagging is to produce \(\boldsymbol{B}\) separate training datasets that are independent of each other (typically 𝐵 is in the hundreds). The model of interest (in this case classification and regression trees) is trained separately on each of these datasets, resulting in \(\boldsymbol{B}\) different estimated ``models''. These are then averaged to produce a single, low-variance estimate.
+
+Bagging is a general approach, but its most well-known application is in the random forest algorithm:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Construct \(\boldsymbol{B}\) bootstrap samples by sampling cases from the original dataset with replacement (this results in \(\boldsymbol{B}\) unique datasets that are similar to the original)
+\item
+  Fit a classification and regression tree to each sample, but randomly choose a subset of \(m\) variables that can be used in the construction of that tree (this results in \(\boldsymbol{B}\) unique trees that are fit to similar datasets using different sets of predictors)
+\item
+  For a given data-point, each of the \(\boldsymbol{B}\) trees in the forest contributes a prediction or ``vote'', with the majority (or average) of these votes forming the random forest's final prediction, \(\hat{y}_i\)
+\end{enumerate}
+
+A downside of both the CART and random forest algorithms (as well as many other algorithmic modeling approaches) is an inability to clearly quantify the roles played by individual variables in making predictions. However, the importance of individual variables in a random forest can still be expressed using a measure known as variable importance.
+
+The random forest algorithm requires the following tuning parameters be specified in order to run:
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{ntree} - the number of bagged samples, \(\boldsymbol{B}\), onto which trees will be grown
+\item
+  \texttt{mtry} - the number of variables that are randomly chosen to be candidates at each split
+\item
+  Some sort of stopping criteria for individual trees, this can be:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \texttt{nodesize}, which sets the minimum size of terminal nodes
+
+    \begin{itemize}
+    \tightlist
+    \item
+      larger \texttt{nodesize} leads to shallower trees
+    \item
+      smaller node size allows for deeper, more complex trees
+    \end{itemize}
+  \item
+    \texttt{maxnodes}, which sets the maximum number of terminal nodes an individual tree can have.
+  \end{itemize}
+\end{itemize}
+
+\textbf{Applications of Random Forest}
+
+Some of the applications of Random Forest Algorithm are listed below:
+
+\begin{itemize}
+\tightlist
+\item
+  Banking: It predicts a loan applicant's solvency. This helps lending institutions make a good decision on whether to give the customer loan or not. They are also being used to detect fraudsters.
+\item
+  Health Care: Health professionals use random forest systems to diagnose patients. Patients are diagnosed by assessing their previous medical history. Past medical records are reviewed to establish the proper dosage for the patients.
+\item
+  Stock Market: Financial analysts use it to identify potential markets for stocks. It also enables them to remember the behaviour of stocks.
+\item
+  E-Commerce: Through this system, e-commerce vendors can predict the preference of customers based on past consumption behaviour.
+\end{itemize}
+
+\textbf{When to Avoid Using Random Forests?}
+
+Random Forests Algorithms are not ideal in the following situations:
+
+\begin{itemize}
+\tightlist
+\item
+  Extrapolation: Random Forest regression is not ideal in the extrapolation of data. Unlike linear regression, which uses existing observations to estimate values beyond the observation range.
+\item
+  Sparse Data: Random Forest does not produce good results when the data is sparse. In this case, the subject of features and bootstrapped sample will have an invariant space. This will lead to unproductive spills, which will affect the outcome.
+\end{itemize}
+
+\textbf{FAQ}
+
+Q: Is RF a linear or non-linear model?\\
+A: RF can capture complex, non-linear relationships.
+
+Q: Is RF sensitive to Imbalanced Data?\\
+A: It may perform poorly if the dataset is highly imbalanced like one class is significantly more frequent than another.
+
+Q: What is the loss function?\\
+A: Entropy/gini or any other loss function you want.
+
+Q: Difference btw RF and a linear model?\\
+A: A major difference is that a decision tree does not have ``parameters'', whereas the linear models need to create a functional form and find the optimal parameters.
+
+\subsection*{Implementation in R}\label{implementation-in-r}
+\addcontentsline{toc}{subsection}{Implementation in R}
+
+\texttt{ranger} package offers a computation efficient function for RF.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{RF\_ranger }\OtherTok{\textless{}{-}} \FunctionTok{ranger}\NormalTok{(}\AttributeTok{formula =}\NormalTok{ formula, }
+                    \AttributeTok{data =}\NormalTok{ data\_before[idx,], }
+                    \AttributeTok{probability =}\NormalTok{ T,}
+                    \AttributeTok{importance =} \StringTok{"permutation"}\NormalTok{, }
+                    \AttributeTok{scale.permutation.importance =} \ConstantTok{TRUE}\NormalTok{,}
+\NormalTok{                    )}
+    \CommentTok{\# print(RF\_ranger)}
+    
+\NormalTok{rf.pred.test }\OtherTok{\textless{}{-}} \FunctionTok{predict}\NormalTok{(RF\_ranger, }\AttributeTok{data=}\NormalTok{data\_before[}\SpecialCharTok{{-}}\NormalTok{idx,])}\SpecialCharTok{$}\NormalTok{predictions}
+\end{Highlighting}
+\end{Shaded}
+
+The hyperparameters \texttt{mtry}, \texttt{min.node.size} and \texttt{sample.fraction} determine the degree of randomness, and should be tuned.
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{mtry}: Number of variables to possibly split at in each node in one tree. In plain language, it indicates how many predictor variables should be used in each tree.
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Default is the (rounded down) square root of the number variables. Alternatively, a single argument function returning an integer, given the number of independent variables.
+  \item
+    Range btw 1 to the number of predictors.
+  \item
+    If all predictors are used, then this corresponds in fact to bagging.
+  \end{itemize}
+\item
+  \texttt{min.node.size}: The number of observations a terminal node should at least have.
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Default 1 for classification, 5 for regression, 3 for survival, and 10 for probability. For classification, this can be a vector of class-specific values.
+  \item
+    Range between 1 and 10
+  \end{itemize}
+\item
+  \texttt{sample.fraction}: Fraction of observations to be used in each tree. Default is 1 for sampling with replacement and 0.632 for sampling without replacement. For classification, this can be a vector of class-specific values.
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Smaller fractions lead to greater diversity, and thus less correlated trees which often is desirable.
+  \item
+    Range between 0.2 and 0.9
+  \end{itemize}
+\end{itemize}
+
+Q: How to tune hyperparameters?\\
+A: Check out \href{https://mlr3.mlr-org.com}{\texttt{mlr3} package}. \href{https://r.geocompx.org/eco.html}{Here} is an example.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection*{Imbalance Classification}\label{imbalance-classification}
+\addcontentsline{toc}{subsection}{Imbalance Classification}
+
+You can balance your random forests using case weights. Here's a simple example:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(ranger) }\CommentTok{\#Best random forest implementation in R}
+
+\CommentTok{\#Make a dataste}
+\FunctionTok{set.seed}\NormalTok{(}\DecValTok{43}\NormalTok{)}
+\NormalTok{nrow }\OtherTok{\textless{}{-}} \DecValTok{1000}
+\NormalTok{ncol }\OtherTok{\textless{}{-}} \DecValTok{10}
+\NormalTok{X }\OtherTok{\textless{}{-}} \FunctionTok{matrix}\NormalTok{(}\FunctionTok{rnorm}\NormalTok{(nrow }\SpecialCharTok{*}\NormalTok{ ncol), }\AttributeTok{ncol=}\NormalTok{ncol)}
+\NormalTok{CF }\OtherTok{\textless{}{-}} \FunctionTok{rnorm}\NormalTok{(ncol)}
+\NormalTok{Y }\OtherTok{\textless{}{-}}\NormalTok{ (X }\SpecialCharTok{\%*\%}\NormalTok{ CF }\SpecialCharTok{+} \FunctionTok{rnorm}\NormalTok{(nrow))[,}\DecValTok{1}\NormalTok{]}
+\NormalTok{Y }\OtherTok{\textless{}{-}} \FunctionTok{as.integer}\NormalTok{(Y }\SpecialCharTok{\textgreater{}} \FunctionTok{quantile}\NormalTok{(Y, }\FloatTok{0.90}\NormalTok{))}
+\FunctionTok{table}\NormalTok{(Y)}
+
+\CommentTok{\#Compute weights to balance the RF}
+\NormalTok{w }\OtherTok{\textless{}{-}} \DecValTok{1}\SpecialCharTok{/}\FunctionTok{table}\NormalTok{(Y)}
+\NormalTok{w }\OtherTok{\textless{}{-}}\NormalTok{ w}\SpecialCharTok{/}\FunctionTok{sum}\NormalTok{(w)}
+\NormalTok{weights }\OtherTok{\textless{}{-}} \FunctionTok{rep}\NormalTok{(}\DecValTok{0}\NormalTok{, nrow)}
+\NormalTok{weights[Y }\SpecialCharTok{==} \DecValTok{0}\NormalTok{] }\OtherTok{\textless{}{-}}\NormalTok{ w[}\StringTok{\textquotesingle{}0\textquotesingle{}}\NormalTok{]}
+\NormalTok{weights[Y }\SpecialCharTok{==} \DecValTok{1}\NormalTok{] }\OtherTok{\textless{}{-}}\NormalTok{ w[}\StringTok{\textquotesingle{}1\textquotesingle{}}\NormalTok{]}
+\FunctionTok{table}\NormalTok{(weights, Y)}
+
+\CommentTok{\#Fit the RF}
+\NormalTok{data }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(}\AttributeTok{Y=}\FunctionTok{factor}\NormalTok{(}\FunctionTok{ifelse}\NormalTok{(Y}\SpecialCharTok{==}\DecValTok{0}\NormalTok{, }\StringTok{\textquotesingle{}no\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}yes\textquotesingle{}}\NormalTok{)), X)}
+\NormalTok{model }\OtherTok{\textless{}{-}} \FunctionTok{ranger}\NormalTok{(Y}\SpecialCharTok{\textasciitilde{}}\NormalTok{., data, }\AttributeTok{case.weights=}\NormalTok{weights)}
+\FunctionTok{print}\NormalTok{(model)}
+\end{Highlighting}
+\end{Shaded}
+
+Source: \url{https://stats.stackexchange.com/a/287849}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\textbf{References}:
+
+\url{https://remiller1450.github.io/m257s21/Lab10_Other_Models.html}
 
   \bibliography{book.bib,packages.bib}
 
