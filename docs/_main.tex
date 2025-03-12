@@ -119,7 +119,7 @@
 
 \title{A Minimal Book Example}
 \author{John Doe}
-\date{2025-03-10}
+\date{2025-03-12}
 
 \begin{document}
 \maketitle
@@ -1125,6 +1125,8 @@ Bagging is a general approach, but its most well-known application is in the ran
   For a given data-point, each of the \(\boldsymbol{B}\) trees in the forest contributes a prediction or ``vote'', with the majority (or average) of these votes forming the random forest's final prediction, \(\hat{y}_i\)
 \end{enumerate}
 
+\includegraphics[width=0.8\linewidth]{images/rf}
+
 A downside of both the CART and random forest algorithms (as well as many other algorithmic modeling approaches) is an inability to clearly quantify the roles played by individual variables in making predictions. However, the importance of individual variables in a random forest can still be expressed using a measure known as variable importance.
 
 The random forest algorithm requires the following tuning parameters be specified in order to run:
@@ -1197,6 +1199,8 @@ A: Entropy/gini or any other loss function you want.
 Q: Difference btw RF and a linear model?\\
 A: A major difference is that a decision tree does not have ``parameters'', whereas the linear models need to create a functional form and find the optimal parameters.
 
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
 \subsection*{Implementation in R}\label{implementation-in-r}
 \addcontentsline{toc}{subsection}{Implementation in R}
 
@@ -1206,7 +1210,7 @@ A: A major difference is that a decision tree does not have ``parameters'', wher
 \begin{Highlighting}[]
 \NormalTok{RF\_ranger }\OtherTok{\textless{}{-}} \FunctionTok{ranger}\NormalTok{(}\AttributeTok{formula =}\NormalTok{ formula, }
                     \AttributeTok{data =}\NormalTok{ data\_before[idx,], }
-                    \AttributeTok{probability =}\NormalTok{ T,}
+                    \AttributeTok{probability =} \ConstantTok{TRUE}\NormalTok{,}
                     \AttributeTok{importance =} \StringTok{"permutation"}\NormalTok{, }
                     \AttributeTok{scale.permutation.importance =} \ConstantTok{TRUE}\NormalTok{,}
 \NormalTok{                    )}
@@ -1216,12 +1220,20 @@ A: A major difference is that a decision tree does not have ``parameters'', wher
 \end{Highlighting}
 \end{Shaded}
 
+Parameters controlling the general process of RF:
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{probability=FALSE}: Whether to forecast a probability forest.
+\end{itemize}
+
 The hyperparameters \texttt{mtry}, \texttt{min.node.size} and \texttt{sample.fraction} determine the degree of randomness, and should be tuned.
 
 \begin{itemize}
 \tightlist
 \item
-  \texttt{mtry}: Number of variables to possibly split at in each node in one tree. In plain language, it indicates how many predictor variables should be used in each tree.
+  \texttt{mtry=500}: Number of variables to possibly split at in each node in one tree. In plain language, it indicates how many predictor variables should be used in each tree.
 
   \begin{itemize}
   \tightlist
@@ -1254,6 +1266,27 @@ The hyperparameters \texttt{mtry}, \texttt{min.node.size} and \texttt{sample.fra
   \end{itemize}
 \end{itemize}
 
+Parameters controlling what and how intermediate results are saved:
+
+\begin{itemize}
+\item
+  \texttt{keep.inbag\ =\ FALSE}: Whether to save how often observations are in-bag in each tree.
+
+  Set to \texttt{TRUE} if you want to check sample composition in each tree.
+\item
+  \texttt{importance\ =\ \textquotesingle{}none\textquotesingle{}\textbar{}\textquotesingle{}impurity\textquotesingle{}\textbar{}\textquotesingle{}impurity\_corrected\textquotesingle{}\textbar{}\textquotesingle{}permutation\textquotesingle{}}: Variable importance mode.
+\item
+  \texttt{scale.permutation.importance\ =\ FALSE}: Whether to scale permutation importance by standard error as in (Breiman 2001). Only applicable if \texttt{\textquotesingle{}permutation\textquotesingle{}} variable importance mode selected.
+\item
+  \texttt{write.forest\ =\ TRUE}: Whether to save \texttt{ranger.forest} object, required for prediction. Set to \texttt{FALSE} to reduce memory usage if no prediction intended.
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Set to \texttt{FALSE} when you do parameter tuning.
+  \end{itemize}
+\end{itemize}
+
 Q: How to tune hyperparameters?\\
 A: Check out \href{https://mlr3.mlr-org.com}{\texttt{mlr3} package}. \href{https://r.geocompx.org/eco.html}{Here} is an example.
 
@@ -1266,9 +1299,9 @@ You can balance your random forests using case weights. Here's a simple example:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{library}\NormalTok{(ranger) }\CommentTok{\#Best random forest implementation in R}
+\FunctionTok{library}\NormalTok{(ranger)}
 
-\CommentTok{\#Make a dataste}
+\CommentTok{\# Make a dataste}
 \FunctionTok{set.seed}\NormalTok{(}\DecValTok{43}\NormalTok{)}
 \NormalTok{nrow }\OtherTok{\textless{}{-}} \DecValTok{1000}
 \NormalTok{ncol }\OtherTok{\textless{}{-}} \DecValTok{10}
@@ -1278,7 +1311,7 @@ You can balance your random forests using case weights. Here's a simple example:
 \NormalTok{Y }\OtherTok{\textless{}{-}} \FunctionTok{as.integer}\NormalTok{(Y }\SpecialCharTok{\textgreater{}} \FunctionTok{quantile}\NormalTok{(Y, }\FloatTok{0.90}\NormalTok{))}
 \FunctionTok{table}\NormalTok{(Y)}
 
-\CommentTok{\#Compute weights to balance the RF}
+\CommentTok{\# Compute weights to balance the RF}
 \NormalTok{w }\OtherTok{\textless{}{-}} \DecValTok{1}\SpecialCharTok{/}\FunctionTok{table}\NormalTok{(Y)}
 \NormalTok{w }\OtherTok{\textless{}{-}}\NormalTok{ w}\SpecialCharTok{/}\FunctionTok{sum}\NormalTok{(w)}
 \NormalTok{weights }\OtherTok{\textless{}{-}} \FunctionTok{rep}\NormalTok{(}\DecValTok{0}\NormalTok{, nrow)}
@@ -1286,14 +1319,14 @@ You can balance your random forests using case weights. Here's a simple example:
 \NormalTok{weights[Y }\SpecialCharTok{==} \DecValTok{1}\NormalTok{] }\OtherTok{\textless{}{-}}\NormalTok{ w[}\StringTok{\textquotesingle{}1\textquotesingle{}}\NormalTok{]}
 \FunctionTok{table}\NormalTok{(weights, Y)}
 
-\CommentTok{\#Fit the RF}
+\CommentTok{\# Fit the RF}
 \NormalTok{data }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(}\AttributeTok{Y=}\FunctionTok{factor}\NormalTok{(}\FunctionTok{ifelse}\NormalTok{(Y}\SpecialCharTok{==}\DecValTok{0}\NormalTok{, }\StringTok{\textquotesingle{}no\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}yes\textquotesingle{}}\NormalTok{)), X)}
 \NormalTok{model }\OtherTok{\textless{}{-}} \FunctionTok{ranger}\NormalTok{(Y}\SpecialCharTok{\textasciitilde{}}\NormalTok{., data, }\AttributeTok{case.weights=}\NormalTok{weights)}
 \FunctionTok{print}\NormalTok{(model)}
 \end{Highlighting}
 \end{Shaded}
 
-Source: \url{https://stats.stackexchange.com/a/287849}
+Code Source: \url{https://stats.stackexchange.com/a/287849}
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 

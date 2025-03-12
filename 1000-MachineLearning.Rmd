@@ -49,7 +49,7 @@ Bagging is a general approach, but its most well-known application is in the ran
 2. Fit a classification and regression tree to each sample, but randomly choose a subset of $m$ variables that can be used in the construction of that tree (this results in $\boldsymbol{B}$ unique trees that are fit to similar datasets using different sets of predictors)
 3. For a given data-point, each of the $\boldsymbol{B}$ trees in the forest contributes a prediction or “vote”, with the majority (or average) of these votes forming the random forest’s final prediction, $\hat{y}_i$
 
-```{r out.width = "80%"}
+```{r out.width = "80%", eval=TRUE}
 knitr::include_graphics("images/rf.png")
 ```
 
@@ -101,6 +101,8 @@ A: Entropy/gini or any other loss function you want.
 Q: Difference btw RF and a linear model? \
 A: A major difference is that a decision tree does not have "parameters", whereas the linear models need to create a functional form and find the optimal parameters. 
 
+--------------------------------------------------------------------------------
+
 ### Implementation in R {-}
 
 `ranger` package offers a computation efficient function for RF.
@@ -108,7 +110,7 @@ A: A major difference is that a decision tree does not have "parameters", wherea
 ```r
 RF_ranger <- ranger(formula = formula, 
                     data = data_before[idx,], 
-                    probability = T,
+                    probability = TRUE,
                     importance = "permutation", 
                     scale.permutation.importance = TRUE,
                     )
@@ -117,9 +119,13 @@ RF_ranger <- ranger(formula = formula,
 rf.pred.test <- predict(RF_ranger, data=data_before[-idx,])$predictions
 ```
 
+Parameters controlling the general process of RF:
+
+- `probability=FALSE`: Whether to forecast a probability forest.
+
 The hyperparameters `mtry`, `min.node.size` and `sample.fraction` determine the degree of randomness, and should be tuned.
 
-- `mtry`: Number of variables to possibly split at in each node in one tree. In plain language, it indicates how many predictor variables should be used in each tree. 
+- `mtry=500`: Number of variables to possibly split at in each node in one tree. In plain language, it indicates how many predictor variables should be used in each tree. 
     - Default is the (rounded down) square root of the number variables. Alternatively, a single argument function returning an integer, given the number of independent variables.
     - Range btw 1 to the number of predictors.
     - If all predictors are used, then this corresponds in fact to bagging.
@@ -130,6 +136,17 @@ The hyperparameters `mtry`, `min.node.size` and `sample.fraction` determine the 
     - Smaller fractions lead to greater diversity, and thus less correlated trees which often is desirable. 
     - Range between 0.2 and 0.9
 
+Parameters controlling what and how intermediate results are saved:
+
+- `keep.inbag = FALSE`: Whether to save how often observations are in-bag in each tree. 
+
+    Set to `TRUE` if you want to check sample composition in each tree.
+    
+- `importance = 'none'|'impurity'|'impurity_corrected'|'permutation'`: Variable importance mode.
+- `scale.permutation.importance = FALSE`: Whether to scale permutation importance by standard error as in (Breiman 2001). Only applicable if `'permutation'` variable importance mode selected.
+
+- `write.forest = TRUE`: Whether to save `ranger.forest` object, required for prediction. Set to `FALSE` to reduce memory usage if no prediction intended. 
+    - Set to `FALSE` when you do parameter tuning.
 
 Q: How to tune hyperparameters? \
 A: Check out [`mlr3` package](https://mlr3.mlr-org.com). [Here](https://r.geocompx.org/eco.html) is an example.
@@ -142,9 +159,9 @@ ___
 You can balance your random forests using case weights. Here's a simple example:
 
 ```r
-library(ranger) #Best random forest implementation in R
+library(ranger)
 
-#Make a dataste
+# Make a dataste
 set.seed(43)
 nrow <- 1000
 ncol <- 10
@@ -154,7 +171,7 @@ Y <- (X %*% CF + rnorm(nrow))[,1]
 Y <- as.integer(Y > quantile(Y, 0.90))
 table(Y)
 
-#Compute weights to balance the RF
+# Compute weights to balance the RF
 w <- 1/table(Y)
 w <- w/sum(w)
 weights <- rep(0, nrow)
@@ -162,7 +179,7 @@ weights[Y == 0] <- w['0']
 weights[Y == 1] <- w['1']
 table(weights, Y)
 
-#Fit the RF
+# Fit the RF
 data <- data.frame(Y=factor(ifelse(Y==0, 'no', 'yes')), X)
 model <- ranger(Y~., data, case.weights=weights)
 print(model)
