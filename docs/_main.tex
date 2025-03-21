@@ -119,7 +119,7 @@
 
 \title{A Minimal Book Example}
 \author{John Doe}
-\date{2025-03-17}
+\date{2025-03-21}
 
 \begin{document}
 \maketitle
@@ -450,9 +450,55 @@ Custom theme (user-defined) folder:
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
+\section{Update R}\label{update-r}
+
+The key thing to be aware of is that when you update R, {if you just download the latest version from the website, you will lose all your packages!} ❌
+
+The easiest way to update R and not cause yourself a huge headache is to use the \texttt{installr} package. When you use the \texttt{updateR()} function, a series of dialogue boxes will appear. These should be fairly self-explanatory but there is a \href{https://www.r-statistics.com/2015/06/a-step-by-step-screenshots-tutorial-for-upgrading-r-on-windows/\#google_vignette}{full step-by-step guide} available for how to use \texttt{installr}, the important bit is to {select ``Yes'' when it asked if you would like to copy your packages from the older version of R}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Install the installr package}
+\FunctionTok{install.packages}\NormalTok{(}\StringTok{"installr"}\NormalTok{)}
+
+\CommentTok{\# Load installr}
+\FunctionTok{library}\NormalTok{(installr)}
+
+\CommentTok{\# Run the update function}
+\FunctionTok{updateR}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
 \section{Packages Management}\label{packages-management}
 
-\textbf{Install R pakages from source}
+\textbf{Load packages}
+
+Q: What is the difference btw \texttt{library(package)} and \texttt{require(package)}?\\
+A:
+
+\begin{itemize}
+\item
+  \texttt{library(package)} returns an error if the package doesn't exist.
+\item
+  \texttt{require(package)} returns \texttt{FALSE} if the package is not found and \texttt{TRUE} if the packages is loaded. \texttt{require} is designed for use inside other functions, such as using the value it returns in some error checking loop, as it outputs a warning and continues if the package is not found.
+\end{itemize}
+
+Q: How to reload a package after updating?\\
+A: Call \texttt{detach(package:pkg,\ unload\ =\ TRUE)} or \texttt{unloadNamespace} first, then use \texttt{library(pkg)} to reload. If you use \texttt{library} on a package whose namespace is loaded, it attaches the exports of the already loaded namespace. So detaching and re-attaching a package may not refresh some or all components of the package, and is inadvisable. The most reliable way to completely detach a package is to {restart R}.
+
+For example, if we want to detach \texttt{ggplot2} package, we can use
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{detach}\NormalTok{(package}\SpecialCharTok{:}\NormalTok{ggplot2, }\AttributeTok{unload=}\ConstantTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\textbf{Install R packages from source}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -468,7 +514,7 @@ Custom theme (user-defined) folder:
 \end{Highlighting}
 \end{Shaded}
 
-Check insatlled packages
+Check installed packages
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -479,19 +525,53 @@ Check insatlled packages
 \end{Highlighting}
 \end{Shaded}
 
-Update packages
+Check package version
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \FunctionTok{packageVersion}\NormalTok{(}\StringTok{"ggplot2"}\NormalTok{) }\CommentTok{\# check package version}
-\FunctionTok{install.packages}\NormalTok{(}\StringTok{"ggplot2"}\NormalTok{) }\CommentTok{\# update one specific package}
-
-\DocumentationTok{\#\# update all installed packages in a stated library location, default to \textasciigrave{}.libPaths()\textasciigrave{}}
-\FunctionTok{update.packages}\NormalTok{(}\AttributeTok{lib.loc =} \FunctionTok{.libPaths}\NormalTok{()) }
 \end{Highlighting}
 \end{Shaded}
 
-Which will ask you for every package if you want to update, to just say yes to everything use \texttt{ask\ =\ FAlSE}.
+\textbf{Update packages}
+
+\begin{itemize}
+\item
+  Update an individual package
+
+  \begin{itemize}
+  \item
+    Using \texttt{install.packages}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{install.packages}\NormalTok{(}\StringTok{"ggplot2"}\NormalTok{) }\CommentTok{\# update one specific package}
+\end{Highlighting}
+\end{Shaded}
+  \item
+    Using \texttt{update.packages}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{update.packages}\NormalTok{(}\AttributeTok{oldPkgs =} \StringTok{"ggplot2"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+    Note that you need to {specify \texttt{oldPkgs} explicily} as it is a named argument.
+  \end{itemize}
+\item
+  Update ALL outdated packages
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DocumentationTok{\#\# update all installed packages in a stated library location, default to \textasciigrave{}.libPaths()\textasciigrave{}}
+\FunctionTok{update.packages}\NormalTok{(}\AttributeTok{lib.loc =} \FunctionTok{.libPaths}\NormalTok{(), }\AttributeTok{ask =} \ConstantTok{TRUE}\NormalTok{) }
+\end{Highlighting}
+\end{Shaded}
+
+  \texttt{update.packages} updates ALL outdated packages in a stated library location. That library location is given by the first argument (if not supplied it works on all known library locations for the current R session).\\
+  It will ask you for every package if you want to update.\\
+  To just say \texttt{yes} to everything, use \texttt{ask\ =\ FAlSE}.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -499,11 +579,51 @@ Which will ask you for every package if you want to update, to just say yes to e
 \end{Highlighting}
 \end{Shaded}
 
-Unfortunately this {won't} update packages installed by \texttt{devtools::install\_github()}
+  Unfortunately this {won't} update packages installed by \texttt{devtools::install\_github()}
+\end{itemize}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+{Troubleshooting}
+
+Q: I ran \texttt{update.packages("ggplot2")}, but nothing happened. No output on console, no error, nothing.\\
+A: The first argument specifies the library location you want to search through (and update packages therein). \texttt{update.packages("ggplot2")} means you want to update the packages in library location \texttt{ggplot2}, which is most {unlikely} to exist on your R installation.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+Q: I tried to update \texttt{ggplot2} with \texttt{install.packages("ggplot2")}, but nothing happened.\\
+A: {If \texttt{ggplot2} is already loaded}, then you can't install \texttt{ggplot2} in the current session now. If you need to, save any objects you can't easily recreate, and quit out of R. Then start a new R session, immediately run \texttt{install.packages("ggplot2")}, then once finished, load the package and reload in any previously saved objects.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+More about \texttt{update.packages}:
+
+\begin{itemize}
+\item
+  \texttt{update.packages(lib.loc\ =\ NULL,\ repos\ =\ getOption("repos"),\ ask\ =\ TRUE)}: First a list of all packages found in \texttt{lib.loc} is created and compared with those available at the repositories. If \texttt{ask\ =\ TRUE} (the default) packages with a newer version are reported and for each one the user can specify if it should be updated. If so the packages are downloaded from the repositories and installed in the respective library path (or \texttt{instlib} if specified).
+\item
+  You can specify one specific package to update using \texttt{update.packages(oldPkgs\ =\ "ggplot2")}. It will check updates only for that package and ask you if you want to update.
+
+  The easiest way to update an individual package is just to use \texttt{install.packages}. It is a one step command, compared to \texttt{update.packages}, which first checks and then asks.
+\item
+  \texttt{update.packages} returns NULL invisibly.
+\item
+  Be aware that some package updates may cause your previous code to stop working. For this reason, we recommend updating all your packages once at the beginning of each academic year (or semester) -- don't do it before an assessment or deadline just in case!
+\end{itemize}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
 \textbf{Updating all Packages after {R update}}
 
-R packages are missing after updating. So have to save the installed packages and re-install them after updating.
+R packages are missing after updating. So you have to save the installed packages and re-install them after updating.
+
+\begin{itemize}
+\tightlist
+\item
+  Alternatively, \texttt{installr::updateR()} automatically \hyperref[update-r]{updates R} and installs your packages. ✅
+\end{itemize}
+
+Here is how to do it manually.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -525,27 +645,25 @@ R library path \texttt{/Library/Frameworks/R.framework/Versions/4.2-arm64/Resour
 \begin{itemize}
 \tightlist
 \item
-  use \texttt{find.package("ggplot2")} to find the location of the source file.
+  use \texttt{find.package("ggplot2")} to find the location to where the given package is found.
 \item
-  alternatively, \texttt{.libPaths()}
+  alternatively, you can run \texttt{.libPaths()}
 
   \begin{itemize}
   \tightlist
   \item
-    returns the directory within which packages are looked for.
+    \texttt{.libPaths()} without an argument will return a list of all the places R will currently look for loading a package when requested.
+  \item
+    \texttt{.libPaths("a/b/c")} with an argument will add that new directory (\texttt{"a/b/c"}) to the ones R was already using. If you use that directory often enough, you may wish to add that call to \texttt{.libPaths("a/b/c")} in your \texttt{.Rprofile} startup file in your home directory.
   \end{itemize}
 \end{itemize}
-
-\texttt{library(package)} returns an error if the package doesn't exist.
-
-\texttt{require(package)} returns \texttt{FALSE} if the package doesn't exist. \texttt{require} is designed for use inside other functions.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
 \subsection*{Put your R package on GitHub}\label{put-your-r-package-on-github}
 \addcontentsline{toc}{subsection}{Put your R package on GitHub}
 
-\url{https://jennybc.github.io/2014-05-12-ubc/ubc-r/session2.4_github.html}
+Reference: \url{https://jennybc.github.io/2014-05-12-ubc/ubc-r/session2.4_github.html}
 
 \begin{itemize}
 \item
@@ -1191,7 +1309,7 @@ Q: Is RF a linear or non-linear model?\\
 A: RF can capture complex, non-linear relationships.
 
 Q: Is RF sensitive to Imbalanced Data?\\
-A: It may perform poorly if the dataset is highly imbalanced like one class is significantly more frequent than another.
+A: Yes. It may perform poorly if the dataset is highly imbalanced like one class is significantly more frequent than another.
 
 Q: What is the loss function?\\
 A: Entropy/gini or any other loss function you want.

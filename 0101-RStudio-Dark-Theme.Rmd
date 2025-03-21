@@ -36,15 +36,58 @@ Custom theme (user-defined) folder:
 }
 ```
 
+--------------------------------------------------------------------------------
+
+## Update R
 
 
-___
+The key thing to be aware of is that when you update R, <span style='color:#FF9900'>if you just download the latest version from the website, you will lose all your packages!</span> ❌
+
+The easiest way to update R and not cause yourself a huge headache is to use the `installr` package. When you use the `updateR()` function, a series of dialogue boxes will appear. These should be fairly self-explanatory but there is a [full step-by-step guide][guide] available for how to use `installr`, the important bit is to <span style='color:#00CC66'>select "Yes" when it asked if you would like to copy your packages from the older version of R</span>.
+
+```r
+# Install the installr package
+install.packages("installr")
+
+# Load installr
+library(installr)
+
+# Run the update function
+updateR()
+```
+
+[guide]: <https://www.r-statistics.com/2015/06/a-step-by-step-screenshots-tutorial-for-upgrading-r-on-windows/#google_vignette> "Guide to update R with `installr`"
+
+
+--------------------------------------------------------------------------------
 
 
 
 ## Packages Management
 
-**Install R pakages from source**
+
+**Load packages**
+
+Q: What is the difference btw `library(package)` and `require(package)`?  \
+A: 
+
+- `library(package)` returns an error if the package doesn't exist.
+
+- `require(package)` returns `FALSE` if the package  is not found and `TRUE` if the packages is loaded. `require` is designed for use inside other functions, such as using the value it returns in some error checking loop, as it outputs a warning and continues if the package is not found.
+
+
+Q: How to reload a package after updating? \
+A: Call `detach(package:pkg, unload = TRUE)` or `unloadNamespace` first, then use `library(pkg)` to reload.  If you use `library` on a package whose namespace is loaded, it attaches the exports of the already loaded namespace. So detaching and re-attaching a package may not refresh some or all components of the package, and is inadvisable. The most reliable way to completely detach a package is to <span style='color:#00CC66'>restart R</span>.
+
+For example, if we want to detach `ggplot2` package, we can use
+
+```r
+detach(package:ggplot2, unload=TRUE)
+```
+
+--------------------------------------------------------------------------------
+
+**Install R packages from source**
 
 ```R
 # From local tarball
@@ -58,9 +101,7 @@ install.packages(
 install.packages("Rcpp", repos="https://rcppcore.github.io/drat")
 ```
 
-
-
-Check insatlled packages
+Check installed packages
 
 ```R
 # print all installed packages
@@ -69,27 +110,86 @@ rownames(installed.packages())
 "ggplot2" %in% rownames(installed.packages())
 ```
 
-Update packages
+Check package version
 
-```R
+```r
 packageVersion("ggplot2") # check package version
-install.packages("ggplot2") # update one specific package
-
-## update all installed packages in a stated library location, default to `.libPaths()`
-update.packages(lib.loc = .libPaths()) 
 ```
 
-Which will ask you for every package if you want to update, to just say yes to everything use `ask = FAlSE`.
 
-```R
-update.packages(ask = FALSE)
-```
+**Update packages**
 
-Unfortunately this <span style='color:#32CD32'>won’t</span> update packages installed by `devtools::install_github()`
+- Update an individual package
+    - Using `install.packages`
+    
+        ```R
+        install.packages("ggplot2") # update one specific package
+        ```
+        
+    - Using `update.packages`
+    
+        ```R
+        update.packages(oldPkgs = "ggplot2")
+        ```
+        
+        Note that you need to <span style='color:#00CC66'>specify `oldPkgs` explicily</span> as it is a named argument.
+        
+- Update ALL outdated packages
 
-**Updating all Packages after <span style='color:cyan'>R update</span>**
+    ```R
+    ## update all installed packages in a stated library location, default to `.libPaths()`
+    update.packages(lib.loc = .libPaths(), ask = TRUE) 
+    ```
 
-R packages are missing after updating. So have to save the installed packages and re-install them after updating.
+    `update.packages` updates ALL outdated packages in a stated library location. That library location is given by the first argument (if not supplied it works on all known library locations for the current R session).  \
+    It will ask you for every package if you want to update. \
+    To just say `yes` to everything, use `ask = FAlSE`.
+    
+    ```R
+    update.packages(ask = FALSE)
+    ```
+    
+    Unfortunately this <span style='color:#00CC66'>won’t</span> update packages installed by `devtools::install_github()`
+
+
+--------------------------------------------------------------------------------
+
+<span style="font-size: 1.13em; font-weight: bold;">Troubleshooting</span>
+
+
+Q: I ran `update.packages("ggplot2")`, but nothing happened. No output on console, no error, nothing. \
+A: The first argument specifies the library location you want to search through (and update packages therein). `update.packages("ggplot2")` means you want to update the packages in library location `ggplot2`, which is most <span style='color:#FF9900'>unlikely</span> to exist on your R installation.
+
+
+--------------------------------------------------------------------------------
+
+Q: I tried to update `ggplot2` with `install.packages("ggplot2")`, but nothing happened. \
+A: <span style='color:#00CC66'>If `ggplot2` is already loaded</span>, then you can't install `ggplot2` in the current session now. If you need to, save any objects you can't easily recreate, and quit out of R. Then start a new R session, immediately run `install.packages("ggplot2")`, then once finished, load the package and reload in any previously saved objects.
+
+--------------------------------------------------------------------------------
+
+More about `update.packages`:
+
+- `update.packages(lib.loc = NULL, repos = getOption("repos"), ask = TRUE)`: First a list of all packages found in `lib.loc` is created and compared with those available at the repositories. If `ask = TRUE` (the default) packages with a newer version are reported and for each one the user can specify if it should be updated. If so the packages are downloaded from the repositories and installed in the respective library path (or `instlib` if specified).
+
+- You can specify one specific package to update using `update.packages(oldPkgs = "ggplot2")`. It will check updates only for that package and ask you if you want to update. 
+
+    The easiest way to update an individual package is just to use `install.packages`. It is a one step command, compared to `update.packages`, which first checks and then asks.
+
+- `update.packages` returns NULL invisibly.
+
+- Be aware that <u>some package updates may cause your previous code to stop working</u>. For this reason, we recommend updating all your packages once at the beginning of each academic year (or semester) – don't do it before an assessment or deadline just in case!
+
+
+--------------------------------------------------------------------------------
+
+**Updating all Packages after <span style='color:#0099FF'>R update</span>**
+
+R packages are missing after updating. So you have to save the installed packages and re-install them after updating. 
+
+- Alternatively, `installr::updateR()` automatically [updates R](#update-r) and installs your packages. ✅
+
+Here is how to do it manually.
 
 ```R
 ## get packages installed
@@ -106,23 +206,20 @@ install.packages(packs$Package)
 
 R library path `/Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library`
 
--   use `find.package("ggplot2")` to find the location of the source file.
--   alternatively, `.libPaths()` 
-    -   returns the directory within which packages are looked for.
+-   use `find.package("ggplot2")` to find the location to where the given package is found.
+-   alternatively, you can run `.libPaths()` 
+    - `.libPaths()` without an argument will return a list of all the places R will currently look for loading a package when requested.
+    - `.libPaths("a/b/c")` with an argument will add that new directory (`"a/b/c"`) to the ones R was already using. If you use that directory often enough, you may wish to add that call to `.libPaths("a/b/c")` in your `.Rprofile` startup file in your home directory.
 
 
 
-`library(package)` returns an error if the package doesn't exist.
-
-`require(package)` returns `FALSE` if the package doesn't exist. `require` is designed for use inside other functions.
 
 
-
-___
+--------------------------------------------------------------------------------
 
 ### Put your R package on GitHub {-}
 
-https://jennybc.github.io/2014-05-12-ubc/ubc-r/session2.4_github.html
+Reference: <https://jennybc.github.io/2014-05-12-ubc/ubc-r/session2.4_github.html>
 
 - Change to the package directory
 
