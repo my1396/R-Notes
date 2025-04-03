@@ -87,6 +87,93 @@ For example, if we want to detach `ggplot2` package, we can use
 detach(package:ggplot2, unload=TRUE)
 ```
 
+
+`requireNamespace`  can be used to *test* if a package is installed and loadable because it comes back with either `TRUE` (if found the pkg) or `FALSE` (if failed to find the pkg). 
+
+```r
+> !requireNamespace("ggplot2")
+[1] FALSE
+> !requireNamespace("ggplot3")
+Loading required namespace: ggplot3
+Failed with error:  ‘there is no package called ‘ggplot3’’
+[1] TRUE
+```
+
+To see whether need to install some packages:
+
+```{r eval=F}
+if (!requireNamespace("devtools")) install.packages("devtools")
+```
+
+Alternatively, 
+
+```r
+# short command
+"ggplot2" %in% installed.packages()
+# full command
+"ggplot2" %in% rownames(installed.packages())
+```
+
+
+`installed.packages()` Finds details of all packages installed in the specified library path `lib.loc`. Returns a matrix of package names, library paths and version numbers.
+
+```r
+> installed.packages() %>% class()
+[1] "matrix" "array" 
+
+> installed.packages() %>% str()
+ chr [1:355, 1:16] "abind" "alphavantager" "anytime" "askpass" "assertthat" "backports" "base" ...
+ - attr(*, "dimnames")=List of 2
+  ..$ : chr [1:355] "abind" "alphavantager" "anytime" "askpass" ...
+  ..$ : chr [1:16] "Package" "LibPath" "Version" "Priority" ...
+```
+
+
+
+The following code can be used to load packages for your project and set up the working environment.
+
+```r
+# load the pkg, if not found, install then load
+require(dplyr) || {install.packages("dplyr"); require(dplyr)}
+require(odbc) || {install.packages("odbc"); require(odbc)}
+require(DBI) || {install.packages("DBI"); require(DBI)}
+```
+
+If using `library()`, will return error if some package is not installed and interrupt the program.
+
+
+
+
+If it is a list of packages you want to check, use `lapply` to loop through all packages.
+
+```r
+## First specify the packages of interest
+packages = c("MASS", "nlme")
+
+## Now load or install&load all
+package.check <- lapply(
+  packages,
+  FUN = function(x) {
+    if (!require(x, character.only = TRUE)) {
+      install.packages(x, dependencies = TRUE)
+      library(x, character.only = TRUE)
+    }
+  }
+)
+```
+
+You can then use `search()` to determine whether all the packages have loaded.
+
+```r
+search()
+ [1] ".GlobalEnv"        "package:nlme"      "package:MASS"     
+ [4] "package:stats"     "package:graphics"  "package:grDevices"
+ [7] "package:datasets"  "renv:shims"        "package:utils"    
+[10] "package:methods"   "Autoloads"         "package:base"     
+```
+
+
+
 --------------------------------------------------------------------------------
 
 **Install R packages from source**
@@ -103,6 +190,26 @@ install.packages(
 install.packages("Rcpp", repos="https://rcppcore.github.io/drat")
 ```
 
+
+
+**Install from GitHub**
+
+```r
+devtools::install_github(repo, ref="HEAD", subdir = NULL)
+```
+
+- `repo`	repository address in the format `username/repo[/subdir][@ref|#pull]`. Alternatively, you can specify `subdir` and/or `ref` using the respective parameters. If both are specified, the values in `repo` take precedence.
+- `ref`            Desired git reference. Could be a commit, tag, or branch name, or a call to `github_pull()` or `github_release()`. Defaults to `"HEAD"`, which means the default branch on GitHub and for git remotes.
+
+Ex
+
+```r
+# install version 3.5.1
+install_github("tidyverse/ggplot2", ref="ggplot2 3.5.1")
+```
+
+--------------------------------------------------------------------------------
+
 Check installed packages
 
 ```R
@@ -118,6 +225,10 @@ Check package version
 packageVersion("ggplot2") # check package version
 ```
 
+Q: How do I know if I have the latest version? \
+A: You can go to GitHub repo to check release notes. You will find the latest version of packages there.
+
+--------------------------------------------------------------------------------
 
 **Update packages**
 
@@ -279,6 +390,54 @@ A: Follow the instructions [here][license].
 
 
 [license]: https://docs.github.com/en/communities/setting-up-your-project-for-healthy-contributions/adding-a-license-to-a-repository "GitHub: add license to your rep"
+
+
+--------------------------------------------------------------------------------
+
+## Save R Workspace
+
+If you want to saves <span style='color:#00CC66'>all objects</span> in your work space, use `save.image()`.  It will creates an image of your current variables and functions, and saves them to a file called `.RData`. When R next loads, objects stored in this image are by default restored.
+
+This sounds convenient, however, you do NOT want to do this because this corrupt reproducibility of your project. ❌
+
+You want to start clean very time. ✅
+
+It is suggested change RStudio Global Options to
+
+- *not* "restore `.RData` into workspace at startup", and 
+- *never* "save workspace to `.RData` on exit".
+
+In case you do feel the need to save the workspace, use the following cmd.
+
+`save.image(file = ".RData", version = NULL, ascii = FALSE,
+           compress = !ascii, safe = TRUE)`
+
+```R
+## save current workspace ##
+f_name <- "RImage/TCR_2023-05-09.RData"
+f_name
+save.image(f_name)
+# load(f_name)
+```
+
+Q: Can I save the loaded packages in the current session/workspace?   
+A: The workspace is for *objects* like data and functions. Starting R with particular packages loaded is what your `.Rprofile` file is for, and you can have a different one in each directory. But I'd recommend not saving anything between r sessions and instead recreate it all using code. This is much more likely to lead to reproducible results.
+
+
+--------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

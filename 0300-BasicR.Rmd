@@ -1,0 +1,114 @@
+# Basic R
+
+
+### Save & Load R objects  {-}
+
+
+`save(..., f_name)` and `saveRDS()`
+
+`save()` 		When loaded the named object is restored to the current environment (in general use this is the global environment — the workspace) **with the same name it had when saved**. 
+
+`save` writes an external representation of **R** objects to the specified file. The objects can be read back from the file at a later date by using the function `load` or `attach` (or `data` in some cases).
+
+`save(..., list = character(),
+     file = stop("'file' must be specified"),
+     ascii = FALSE, version = NULL, envir = parent.frame(),
+     compress = isTRUE(!ascii), compression_level,
+     eval.promises = TRUE, precheck = TRUE)`
+
+- `...` 	 The names of the objects to be saved (as symbols or character strings).
+- `list`    A character vector containing the names of objects to be saved.
+  - The names of the objects specified **either** as symbols (or character strings) in `...` or as a character **vector** in `list` are used to look up the objects from environment `envir`. 
+- `file`    the name of the file where the data will be saved.
+
+
+
+`saveRDS()`	doesn’t save the both the object and its name it just saves a representation of the object. As a result, <span style='color:#00CC66'>the saved object can be loaded into a named object</span> within R that is different from the name it had when originally serialized.
+
+> Serialization is the process of converting a data structure or object state into a format that can be stored (for example, in a file or memory buffer, or transmitted across a network connection link) and “resurrected” later in the same or another computer environment.
+
+`saveRDS` 	works only for <span style='color:#00CC66'>saving a single R object</span>, `save()` can save multiple R objects in one file. A workaround for `saveRDS` is to save all target objects in a single R object (e.g., in a **list**), and then use `saveRDS()` to save it at once.
+
+```R
+datalist = list(mtcars = mtcars, pressure=pressure)
+saveRDS(datalist, "twodatasets.RDS")
+rm(list=ls())
+
+datalist = readRDS("twodatasets.RDS")
+datalist
+```
+
+
+--------------------------------------------------------------------------------
+
+
+#### Load R objects {-}
+
+`load(f_name)` to load .`rda` file.
+
+`readRDS(f_name)` to load `.rds` file.
+
+Naming conventions:
+
+- `rda` and `rds` for <span style='color:#00CC66'>selected</span> objects
+- `.RData` for <span style='color:#00CC66'>all</span> objectes in your workspace
+- The file extensions are up to you; you can use whatever file extensions you want.
+
+An example
+
+```R
+> require(mgcv)
+Loading required package: mgcv
+This is mgcv 1.7-13. For overview type 'help("mgcv-package")'.
+> mod <- gam(Ozone ~ s(Wind), data = airquality, method = "REML")
+> mod
+
+Family: gaussian
+Link function: identity
+
+Formula:
+Ozone ~ s(Wind)
+
+Estimated degrees of freedom:
+3.529  total = 4.529002
+
+REML score: 529.4881
+> save(mod, file = "mymodel.rda")
+> ls()
+[1] "mod"
+> load(file = "mymodel.rda")
+> ls()
+[1] "mod"
+
+
+> ls()
+[1] "mod"
+> saveRDS(mod, "mymodel.rds")
+> mod2 <- readRDS("mymodel.rds")
+> ls()
+[1] "mod"  "mod2"
+> identical(mod, mod2, ignore.environment = TRUE)
+[1] TRUE
+```
+
+
+
+-----------------------------------------------------------------------------
+
+
+#### Save figures in a list  {-}
+
+```R
+p_list <- list(p_ano=p_ano, p_tr=p_tr)
+# p_list[[name]] <- p_obj
+p_list[[1]]
+
+f_name <- paste0(fig_dir, sprintf("trend_analysis/image_list_%s.rds", con_name))
+# saveRDS(p_list, f_name)
+
+# plot in a panel grid
+p_allCON <- plot_grid(plotlist=p_list, align="vh", labels=sprintf("(%s)", letters[1:length(p_list)]), hjust=-1, nrow=3, label_size=12)
+p_allCON
+```
+
+

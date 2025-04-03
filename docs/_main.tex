@@ -119,7 +119,7 @@
 
 \title{A Minimal Book Example}
 \author{John Doe}
-\date{2025-04-02}
+\date{2025-04-03}
 
 \begin{document}
 \maketitle
@@ -275,7 +275,7 @@ A: There are several options:
 
   Note that the emoji won't disply correctly in your Rmd file, but when you render the Rmd and deploy to html pages, the emoji will show properly.
 \item
-  Using Hexadecimal code. (You need to look up the code, which is a hassle. ❌)
+  Using Hexadecimal code. (You need to look up the code somewhere, which is a hassle. ❌)
 
   We can add emojis to an HTML document by using their hexadecimal code. These code starts with \texttt{\&\#x} and ends with \texttt{;} to specify browser that these are hexadecimal codes. For example,
 
@@ -295,7 +295,7 @@ A: There are several options:
 
   Replace \texttt{U+} with \texttt{\&\#x} so it will now look like \texttt{\&\#x1F600}
 
-  Throw that into a html tag.
+  Finally, enclose that into an html tag, e.g., \texttt{\textless{}span\textgreater{}}.
 \item
   With RStudio Visual mode. (You need to change mode back and forth. ❌)
 
@@ -557,6 +557,98 @@ For example, if we want to detach \texttt{ggplot2} package, we can use
 \end{Highlighting}
 \end{Shaded}
 
+\texttt{requireNamespace} can be used to \emph{test} if a package is installed and loadable because it comes back with either \texttt{TRUE} (if found the pkg) or \texttt{FALSE} (if failed to find the pkg).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\SpecialCharTok{\textgreater{}} \SpecialCharTok{!}\FunctionTok{requireNamespace}\NormalTok{(}\StringTok{"ggplot2"}\NormalTok{)}
+\NormalTok{[}\DecValTok{1}\NormalTok{] }\ConstantTok{FALSE}
+\SpecialCharTok{\textgreater{}} \SpecialCharTok{!}\FunctionTok{requireNamespace}\NormalTok{(}\StringTok{"ggplot3"}\NormalTok{)}
+\NormalTok{Loading required namespace}\SpecialCharTok{:}\NormalTok{ ggplot3}
+\NormalTok{Failed with error}\SpecialCharTok{:}\NormalTok{  ‘there is no package called ‘ggplot3’’}
+\NormalTok{[}\DecValTok{1}\NormalTok{] }\ConstantTok{TRUE}
+\end{Highlighting}
+\end{Shaded}
+
+To see whether need to install some packages:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\ControlFlowTok{if}\NormalTok{ (}\SpecialCharTok{!}\FunctionTok{requireNamespace}\NormalTok{(}\StringTok{"devtools"}\NormalTok{)) }\FunctionTok{install.packages}\NormalTok{(}\StringTok{"devtools"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+Alternatively,
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# short command}
+\StringTok{"ggplot2"} \SpecialCharTok{\%in\%} \FunctionTok{installed.packages}\NormalTok{()}
+\CommentTok{\# full command}
+\StringTok{"ggplot2"} \SpecialCharTok{\%in\%} \FunctionTok{rownames}\NormalTok{(}\FunctionTok{installed.packages}\NormalTok{())}
+\end{Highlighting}
+\end{Shaded}
+
+\texttt{installed.packages()} Finds details of all packages installed in the specified library path \texttt{lib.loc}. Returns a matrix of package names, library paths and version numbers.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\SpecialCharTok{\textgreater{}} \FunctionTok{installed.packages}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{class}\NormalTok{()}
+\NormalTok{[}\DecValTok{1}\NormalTok{] }\StringTok{"matrix"} \StringTok{"array"} 
+
+\SpecialCharTok{\textgreater{}} \FunctionTok{installed.packages}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{str}\NormalTok{()}
+\NormalTok{ chr [}\DecValTok{1}\SpecialCharTok{:}\DecValTok{355}\NormalTok{, }\DecValTok{1}\SpecialCharTok{:}\DecValTok{16}\NormalTok{] }\StringTok{"abind"} \StringTok{"alphavantager"} \StringTok{"anytime"} \StringTok{"askpass"} \StringTok{"assertthat"} \StringTok{"backports"} \StringTok{"base"}\NormalTok{ ...}
+ \SpecialCharTok{{-}} \FunctionTok{attr}\NormalTok{(}\SpecialCharTok{*}\NormalTok{, }\StringTok{"dimnames"}\NormalTok{)}\OtherTok{=}\NormalTok{List of }\DecValTok{2}
+\NormalTok{  ..}\SpecialCharTok{$} \ErrorTok{:}\NormalTok{ chr [}\DecValTok{1}\SpecialCharTok{:}\DecValTok{355}\NormalTok{] }\StringTok{"abind"} \StringTok{"alphavantager"} \StringTok{"anytime"} \StringTok{"askpass"}\NormalTok{ ...}
+\NormalTok{  ..}\SpecialCharTok{$} \ErrorTok{:}\NormalTok{ chr [}\DecValTok{1}\SpecialCharTok{:}\DecValTok{16}\NormalTok{] }\StringTok{"Package"} \StringTok{"LibPath"} \StringTok{"Version"} \StringTok{"Priority"}\NormalTok{ ...}
+\end{Highlighting}
+\end{Shaded}
+
+The following code can be used to load packages for your project and set up the working environment.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# load the pkg, if not found, install then load}
+\FunctionTok{require}\NormalTok{(dplyr) }\SpecialCharTok{||}\NormalTok{ \{}\FunctionTok{install.packages}\NormalTok{(}\StringTok{"dplyr"}\NormalTok{); }\FunctionTok{require}\NormalTok{(dplyr)\}}
+\FunctionTok{require}\NormalTok{(odbc) }\SpecialCharTok{||}\NormalTok{ \{}\FunctionTok{install.packages}\NormalTok{(}\StringTok{"odbc"}\NormalTok{); }\FunctionTok{require}\NormalTok{(odbc)\}}
+\FunctionTok{require}\NormalTok{(DBI) }\SpecialCharTok{||}\NormalTok{ \{}\FunctionTok{install.packages}\NormalTok{(}\StringTok{"DBI"}\NormalTok{); }\FunctionTok{require}\NormalTok{(DBI)\}}
+\end{Highlighting}
+\end{Shaded}
+
+If using \texttt{library()}, will return error if some package is not installed and interrupt the program.
+
+If it is a list of packages you want to check, use \texttt{lapply} to loop through all packages.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DocumentationTok{\#\# First specify the packages of interest}
+\NormalTok{packages }\OtherTok{=} \FunctionTok{c}\NormalTok{(}\StringTok{"MASS"}\NormalTok{, }\StringTok{"nlme"}\NormalTok{)}
+
+\DocumentationTok{\#\# Now load or install\&load all}
+\NormalTok{package.check }\OtherTok{\textless{}{-}} \FunctionTok{lapply}\NormalTok{(}
+\NormalTok{  packages,}
+  \AttributeTok{FUN =} \ControlFlowTok{function}\NormalTok{(x) \{}
+    \ControlFlowTok{if}\NormalTok{ (}\SpecialCharTok{!}\FunctionTok{require}\NormalTok{(x, }\AttributeTok{character.only =} \ConstantTok{TRUE}\NormalTok{)) \{}
+      \FunctionTok{install.packages}\NormalTok{(x, }\AttributeTok{dependencies =} \ConstantTok{TRUE}\NormalTok{)}
+      \FunctionTok{library}\NormalTok{(x, }\AttributeTok{character.only =} \ConstantTok{TRUE}\NormalTok{)}
+\NormalTok{    \}}
+\NormalTok{  \}}
+\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+You can then use \texttt{search()} to determine whether all the packages have loaded.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{search}\NormalTok{()}
+\NormalTok{ [}\DecValTok{1}\NormalTok{] }\StringTok{".GlobalEnv"}        \StringTok{"package:nlme"}      \StringTok{"package:MASS"}     
+\NormalTok{ [}\DecValTok{4}\NormalTok{] }\StringTok{"package:stats"}     \StringTok{"package:graphics"}  \StringTok{"package:grDevices"}
+\NormalTok{ [}\DecValTok{7}\NormalTok{] }\StringTok{"package:datasets"}  \StringTok{"renv:shims"}        \StringTok{"package:utils"}    
+\NormalTok{[}\DecValTok{10}\NormalTok{] }\StringTok{"package:methods"}   \StringTok{"Autoloads"}         \StringTok{"package:base"}     
+\end{Highlighting}
+\end{Shaded}
+
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
 \textbf{Install R packages from source}
@@ -574,6 +666,33 @@ For example, if we want to detach \texttt{ggplot2} package, we can use
 \FunctionTok{install.packages}\NormalTok{(}\StringTok{"Rcpp"}\NormalTok{, }\AttributeTok{repos=}\StringTok{"https://rcppcore.github.io/drat"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
+
+\textbf{Install from GitHub}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{devtools}\SpecialCharTok{::}\FunctionTok{install\_github}\NormalTok{(repo, }\AttributeTok{ref=}\StringTok{"HEAD"}\NormalTok{, }\AttributeTok{subdir =} \ConstantTok{NULL}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{repo} repository address in the format \texttt{username/repo{[}/subdir{]}{[}@ref\textbar{}\#pull{]}}. Alternatively, you can specify \texttt{subdir} and/or \texttt{ref} using the respective parameters. If both are specified, the values in \texttt{repo} take precedence.
+\item
+  \texttt{ref} Desired git reference. Could be a commit, tag, or branch name, or a call to \texttt{github\_pull()} or \texttt{github\_release()}. Defaults to \texttt{"HEAD"}, which means the default branch on GitHub and for git remotes.
+\end{itemize}
+
+Ex
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# install version 3.5.1}
+\FunctionTok{install\_github}\NormalTok{(}\StringTok{"tidyverse/ggplot2"}\NormalTok{, }\AttributeTok{ref=}\StringTok{"ggplot2 3.5.1"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
 Check installed packages
 
@@ -593,6 +712,11 @@ Check package version
 \FunctionTok{packageVersion}\NormalTok{(}\StringTok{"ggplot2"}\NormalTok{) }\CommentTok{\# check package version}
 \end{Highlighting}
 \end{Shaded}
+
+Q: How do I know if I have the latest version?\\
+A: You can go to GitHub repo to check release notes. You will find the latest version of packages there.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
 \textbf{Update packages}
 
@@ -791,6 +915,45 @@ A: See \url{https://opensource.guide/legal/\#which-open-source-license-is-approp
 
 Q: How to add a license to my repo?\\
 A: Follow the instructions \href{https://docs.github.com/en/communities/setting-up-your-project-for-healthy-contributions/adding-a-license-to-a-repository}{here}.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\section{Save R Workspace}\label{save-r-workspace}
+
+If you want to saves {all objects} in your work space, use \texttt{save.image()}. It will creates an image of your current variables and functions, and saves them to a file called \texttt{.RData}. When R next loads, objects stored in this image are by default restored.
+
+This sounds convenient, however, you do NOT want to do this because this corrupt reproducibility of your project. ❌
+
+You want to start clean very time. ✅
+
+It is suggested change RStudio Global Options to
+
+\begin{itemize}
+\tightlist
+\item
+  \emph{not} ``restore \texttt{.RData} into workspace at startup'', and
+\item
+  \emph{never} ``save workspace to \texttt{.RData} on exit''.
+\end{itemize}
+
+In case you do feel the need to save the workspace, use the following cmd.
+
+\texttt{save.image(file\ =\ ".RData",\ version\ =\ NULL,\ ascii\ =\ FALSE,\ \ \ \ \ \ \ \ \ \ \ \ compress\ =\ !ascii,\ safe\ =\ TRUE)}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DocumentationTok{\#\# save current workspace \#\#}
+\NormalTok{f\_name }\OtherTok{\textless{}{-}} \StringTok{"RImage/TCR\_2023{-}05{-}09.RData"}
+\NormalTok{f\_name}
+\FunctionTok{save.image}\NormalTok{(f\_name)}
+\CommentTok{\# load(f\_name)}
+\end{Highlighting}
+\end{Shaded}
+
+Q: Can I save the loaded packages in the current session/workspace?\\
+A: The workspace is for \emph{objects} like data and functions. Starting R with particular packages loaded is what your \texttt{.Rprofile} file is for, and you can have a different one in each directory. But I'd recommend not saving anything between r sessions and instead recreate it all using code. This is much more likely to lead to reproducible results.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
 \chapter{Knit Rmd}\label{knit-rmd}
 
@@ -1259,6 +1422,134 @@ Knit the document and the code will render like this in your output:
 \url{https://support.posit.co/hc/en-us/articles/360018181633-Including-verbatim-R-code-chunks-inside-R-Markdown}
 
 \url{https://themockup.blog/posts/2021-08-27-displaying-verbatim-code-chunks-in-xaringan-presentations/}
+
+\chapter{Basic R}\label{basic-r}
+
+\subsection*{Save \& Load R objects}\label{save-load-r-objects}
+\addcontentsline{toc}{subsection}{Save \& Load R objects}
+
+\texttt{save(...,\ f\_name)} and \texttt{saveRDS()}
+
+\texttt{save()} When loaded the named object is restored to the current environment (in general use this is the global environment --- the workspace) \textbf{with the same name it had when saved}.
+
+\texttt{save} writes an external representation of \textbf{R} objects to the specified file. The objects can be read back from the file at a later date by using the function \texttt{load} or \texttt{attach} (or \texttt{data} in some cases).
+
+\texttt{save(...,\ list\ =\ character(),\ \ \ \ \ \ file\ =\ stop("\textquotesingle{}file\textquotesingle{}\ must\ be\ specified"),\ \ \ \ \ \ ascii\ =\ FALSE,\ version\ =\ NULL,\ envir\ =\ parent.frame(),\ \ \ \ \ \ compress\ =\ isTRUE(!ascii),\ compression\_level,\ \ \ \ \ \ eval.promises\ =\ TRUE,\ precheck\ =\ TRUE)}
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{...} The names of the objects to be saved (as symbols or character strings).
+\item
+  \texttt{list} A character vector containing the names of objects to be saved.
+
+  \begin{itemize}
+  \tightlist
+  \item
+    The names of the objects specified \textbf{either} as symbols (or character strings) in \texttt{...} or as a character \textbf{vector} in \texttt{list} are used to look up the objects from environment \texttt{envir}.
+  \end{itemize}
+\item
+  \texttt{file} the name of the file where the data will be saved.
+\end{itemize}
+
+\texttt{saveRDS()} doesn't save the both the object and its name it just saves a representation of the object. As a result, {the saved object can be loaded into a named object} within R that is different from the name it had when originally serialized.
+
+\begin{quote}
+Serialization is the process of converting a data structure or object state into a format that can be stored (for example, in a file or memory buffer, or transmitted across a network connection link) and ``resurrected'' later in the same or another computer environment.
+\end{quote}
+
+\texttt{saveRDS} works only for {saving a single R object}, \texttt{save()} can save multiple R objects in one file. A workaround for \texttt{saveRDS} is to save all target objects in a single R object (e.g., in a \textbf{list}), and then use \texttt{saveRDS()} to save it at once.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{datalist }\OtherTok{=} \FunctionTok{list}\NormalTok{(}\AttributeTok{mtcars =}\NormalTok{ mtcars, }\AttributeTok{pressure=}\NormalTok{pressure)}
+\FunctionTok{saveRDS}\NormalTok{(datalist, }\StringTok{"twodatasets.RDS"}\NormalTok{)}
+\FunctionTok{rm}\NormalTok{(}\AttributeTok{list=}\FunctionTok{ls}\NormalTok{())}
+
+\NormalTok{datalist }\OtherTok{=} \FunctionTok{readRDS}\NormalTok{(}\StringTok{"twodatasets.RDS"}\NormalTok{)}
+\NormalTok{datalist}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsubsection*{Load R objects}\label{load-r-objects}
+\addcontentsline{toc}{subsubsection}{Load R objects}
+
+\texttt{load(f\_name)} to load .\texttt{rda} file.
+
+\texttt{readRDS(f\_name)} to load \texttt{.rds} file.
+
+Naming conventions:
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{rda} and \texttt{rds} for {selected} objects
+\item
+  \texttt{.RData} for {all} objectes in your workspace
+\item
+  The file extensions are up to you; you can use whatever file extensions you want.
+\end{itemize}
+
+An example
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\SpecialCharTok{\textgreater{}} \FunctionTok{require}\NormalTok{(mgcv)}
+\NormalTok{Loading required package}\SpecialCharTok{:}\NormalTok{ mgcv}
+\NormalTok{This is mgcv }\FloatTok{1.7{-}13.}\NormalTok{ For overview type }\StringTok{\textquotesingle{}help("mgcv{-}package")\textquotesingle{}}\NormalTok{.}
+\SpecialCharTok{\textgreater{}}\NormalTok{ mod }\OtherTok{\textless{}{-}} \FunctionTok{gam}\NormalTok{(Ozone }\SpecialCharTok{\textasciitilde{}} \FunctionTok{s}\NormalTok{(Wind), }\AttributeTok{data =}\NormalTok{ airquality, }\AttributeTok{method =} \StringTok{"REML"}\NormalTok{)}
+\SpecialCharTok{\textgreater{}}\NormalTok{ mod}
+
+\NormalTok{Family}\SpecialCharTok{:}\NormalTok{ gaussian}
+\NormalTok{Link }\ControlFlowTok{function}\SpecialCharTok{:}\NormalTok{ identity}
+
+\NormalTok{Formula}\SpecialCharTok{:}
+\NormalTok{Ozone }\SpecialCharTok{\textasciitilde{}} \FunctionTok{s}\NormalTok{(Wind)}
+
+\NormalTok{Estimated degrees of freedom}\SpecialCharTok{:}
+\FloatTok{3.529}\NormalTok{  total }\OtherTok{=} \FloatTok{4.529002}
+
+\NormalTok{REML score}\SpecialCharTok{:} \FloatTok{529.4881}
+\SpecialCharTok{\textgreater{}} \FunctionTok{save}\NormalTok{(mod, }\AttributeTok{file =} \StringTok{"mymodel.rda"}\NormalTok{)}
+\SpecialCharTok{\textgreater{}} \FunctionTok{ls}\NormalTok{()}
+\NormalTok{[}\DecValTok{1}\NormalTok{] }\StringTok{"mod"}
+\SpecialCharTok{\textgreater{}} \FunctionTok{load}\NormalTok{(}\AttributeTok{file =} \StringTok{"mymodel.rda"}\NormalTok{)}
+\SpecialCharTok{\textgreater{}} \FunctionTok{ls}\NormalTok{()}
+\NormalTok{[}\DecValTok{1}\NormalTok{] }\StringTok{"mod"}
+
+
+\SpecialCharTok{\textgreater{}} \FunctionTok{ls}\NormalTok{()}
+\NormalTok{[}\DecValTok{1}\NormalTok{] }\StringTok{"mod"}
+\SpecialCharTok{\textgreater{}} \FunctionTok{saveRDS}\NormalTok{(mod, }\StringTok{"mymodel.rds"}\NormalTok{)}
+\SpecialCharTok{\textgreater{}}\NormalTok{ mod2 }\OtherTok{\textless{}{-}} \FunctionTok{readRDS}\NormalTok{(}\StringTok{"mymodel.rds"}\NormalTok{)}
+\SpecialCharTok{\textgreater{}} \FunctionTok{ls}\NormalTok{()}
+\NormalTok{[}\DecValTok{1}\NormalTok{] }\StringTok{"mod"}  \StringTok{"mod2"}
+\SpecialCharTok{\textgreater{}} \FunctionTok{identical}\NormalTok{(mod, mod2, }\AttributeTok{ignore.environment =} \ConstantTok{TRUE}\NormalTok{)}
+\NormalTok{[}\DecValTok{1}\NormalTok{] }\ConstantTok{TRUE}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsubsection*{Save figures in a list}\label{save-figures-in-a-list}
+\addcontentsline{toc}{subsubsection}{Save figures in a list}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{p\_list }\OtherTok{\textless{}{-}} \FunctionTok{list}\NormalTok{(}\AttributeTok{p\_ano=}\NormalTok{p\_ano, }\AttributeTok{p\_tr=}\NormalTok{p\_tr)}
+\CommentTok{\# p\_list[[name]] \textless{}{-} p\_obj}
+\NormalTok{p\_list[[}\DecValTok{1}\NormalTok{]]}
+
+\NormalTok{f\_name }\OtherTok{\textless{}{-}} \FunctionTok{paste0}\NormalTok{(fig\_dir, }\FunctionTok{sprintf}\NormalTok{(}\StringTok{"trend\_analysis/image\_list\_\%s.rds"}\NormalTok{, con\_name))}
+\CommentTok{\# saveRDS(p\_list, f\_name)}
+
+\CommentTok{\# plot in a panel grid}
+\NormalTok{p\_allCON }\OtherTok{\textless{}{-}} \FunctionTok{plot\_grid}\NormalTok{(}\AttributeTok{plotlist=}\NormalTok{p\_list, }\AttributeTok{align=}\StringTok{"vh"}\NormalTok{, }\AttributeTok{labels=}\FunctionTok{sprintf}\NormalTok{(}\StringTok{"(\%s)"}\NormalTok{, letters[}\DecValTok{1}\SpecialCharTok{:}\FunctionTok{length}\NormalTok{(p\_list)]), }\AttributeTok{hjust=}\SpecialCharTok{{-}}\DecValTok{1}\NormalTok{, }\AttributeTok{nrow=}\DecValTok{3}\NormalTok{, }\AttributeTok{label\_size=}\DecValTok{12}\NormalTok{)}
+\NormalTok{p\_allCON}
+\end{Highlighting}
+\end{Shaded}
 
 \chapter{Machine Learning}\label{machine-learning}
 

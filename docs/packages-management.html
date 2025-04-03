@@ -29,7 +29,7 @@ set in the _output.yml file.</p>" />
 <meta name="author" content="John Doe" />
 
 
-<meta name="date" content="2025-04-02" />
+<meta name="date" content="2025-04-03" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -160,20 +160,25 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="" data-path="packages-management.html"><a href="packages-management.html#put-your-r-package-on-github"><i class="fa fa-check"></i>Put your R package on GitHub</a></li>
 </ul></li>
 <li class="chapter" data-level="2.4" data-path="using-git-with-rstudio.html"><a href="using-git-with-rstudio.html"><i class="fa fa-check"></i><b>2.4</b> Using Git with RStudio</a></li>
+<li class="chapter" data-level="2.5" data-path="save-r-workspace.html"><a href="save-r-workspace.html"><i class="fa fa-check"></i><b>2.5</b> Save R Workspace</a></li>
 </ul></li>
 <li class="chapter" data-level="3" data-path="knit-rmd.html"><a href="knit-rmd.html"><i class="fa fa-check"></i><b>3</b> Knit Rmd</a>
 <ul>
 <li class="chapter" data-level="3.1" data-path="chunk-options.html"><a href="chunk-options.html"><i class="fa fa-check"></i><b>3.1</b> Chunk Options</a></li>
 <li class="chapter" data-level="3.2" data-path="print-verbatim-r-code-chunks.html"><a href="print-verbatim-r-code-chunks.html"><i class="fa fa-check"></i><b>3.2</b> Print Verbatim R code chunks</a></li>
 </ul></li>
-<li class="chapter" data-level="4" data-path="machine-learning.html"><a href="machine-learning.html"><i class="fa fa-check"></i><b>4</b> Machine Learning</a>
+<li class="chapter" data-level="4" data-path="basic-r.html"><a href="basic-r.html"><i class="fa fa-check"></i><b>4</b> Basic R</a>
 <ul>
-<li class="chapter" data-level="4.1" data-path="random-forest.html"><a href="random-forest.html"><i class="fa fa-check"></i><b>4.1</b> Random Forest</a>
+<li class="chapter" data-level="" data-path="basic-r.html"><a href="basic-r.html#save-load-r-objects"><i class="fa fa-check"></i>Save &amp; Load R objects</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="machine-learning.html"><a href="machine-learning.html"><i class="fa fa-check"></i><b>5</b> Machine Learning</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="random-forest.html"><a href="random-forest.html"><i class="fa fa-check"></i><b>5.1</b> Random Forest</a>
 <ul>
 <li class="chapter" data-level="" data-path="random-forest.html"><a href="random-forest.html#implementation-in-r"><i class="fa fa-check"></i>Implementation in R</a></li>
 <li class="chapter" data-level="" data-path="random-forest.html"><a href="random-forest.html#imbalance-classification"><i class="fa fa-check"></i>Imbalance Classification</a></li>
 </ul></li>
-<li class="chapter" data-level="4.2" data-path="neural-network.html"><a href="neural-network.html"><i class="fa fa-check"></i><b>4.2</b> Neural Network</a></li>
+<li class="chapter" data-level="5.2" data-path="neural-network.html"><a href="neural-network.html"><i class="fa fa-check"></i><b>5.2</b> Neural Network</a></li>
 </ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
@@ -208,41 +213,103 @@ A:</p>
 A: Call <code>detach(package:pkg, unload = TRUE)</code> or <code>unloadNamespace</code> first, then use <code>library(pkg)</code> to reload. If you use <code>library</code> on a package whose namespace is loaded, it attaches the exports of the already loaded namespace. So detaching and re-attaching a package may not refresh some or all components of the package, and is inadvisable. The most reliable way to completely detach a package is to <span style="color:#00CC66">restart R</span>.</p>
 <p>For example, if we want to detach <code>ggplot2</code> package, we can use</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="packages-management.html#cb11-1" tabindex="-1"></a><span class="fu">detach</span>(package<span class="sc">:</span>ggplot2, <span class="at">unload=</span><span class="cn">TRUE</span>)</span></code></pre></div>
+<p><code>requireNamespace</code> can be used to <em>test</em> if a package is installed and loadable because it comes back with either <code>TRUE</code> (if found the pkg) or <code>FALSE</code> (if failed to find the pkg).</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="packages-management.html#cb12-1" tabindex="-1"></a><span class="sc">&gt;</span> <span class="sc">!</span><span class="fu">requireNamespace</span>(<span class="st">&quot;ggplot2&quot;</span>)</span>
+<span id="cb12-2"><a href="packages-management.html#cb12-2" tabindex="-1"></a>[<span class="dv">1</span>] <span class="cn">FALSE</span></span>
+<span id="cb12-3"><a href="packages-management.html#cb12-3" tabindex="-1"></a><span class="sc">&gt;</span> <span class="sc">!</span><span class="fu">requireNamespace</span>(<span class="st">&quot;ggplot3&quot;</span>)</span>
+<span id="cb12-4"><a href="packages-management.html#cb12-4" tabindex="-1"></a>Loading required namespace<span class="sc">:</span> ggplot3</span>
+<span id="cb12-5"><a href="packages-management.html#cb12-5" tabindex="-1"></a>Failed with error<span class="sc">:</span>  ‘there is no package called ‘ggplot3’’</span>
+<span id="cb12-6"><a href="packages-management.html#cb12-6" tabindex="-1"></a>[<span class="dv">1</span>] <span class="cn">TRUE</span></span></code></pre></div>
+<p>To see whether need to install some packages:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="packages-management.html#cb13-1" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">requireNamespace</span>(<span class="st">&quot;devtools&quot;</span>)) <span class="fu">install.packages</span>(<span class="st">&quot;devtools&quot;</span>)</span></code></pre></div>
+<p>Alternatively,</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="packages-management.html#cb14-1" tabindex="-1"></a><span class="co"># short command</span></span>
+<span id="cb14-2"><a href="packages-management.html#cb14-2" tabindex="-1"></a><span class="st">&quot;ggplot2&quot;</span> <span class="sc">%in%</span> <span class="fu">installed.packages</span>()</span>
+<span id="cb14-3"><a href="packages-management.html#cb14-3" tabindex="-1"></a><span class="co"># full command</span></span>
+<span id="cb14-4"><a href="packages-management.html#cb14-4" tabindex="-1"></a><span class="st">&quot;ggplot2&quot;</span> <span class="sc">%in%</span> <span class="fu">rownames</span>(<span class="fu">installed.packages</span>())</span></code></pre></div>
+<p><code>installed.packages()</code> Finds details of all packages installed in the specified library path <code>lib.loc</code>. Returns a matrix of package names, library paths and version numbers.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="packages-management.html#cb15-1" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">installed.packages</span>() <span class="sc">%&gt;%</span> <span class="fu">class</span>()</span>
+<span id="cb15-2"><a href="packages-management.html#cb15-2" tabindex="-1"></a>[<span class="dv">1</span>] <span class="st">&quot;matrix&quot;</span> <span class="st">&quot;array&quot;</span> </span>
+<span id="cb15-3"><a href="packages-management.html#cb15-3" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="packages-management.html#cb15-4" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">installed.packages</span>() <span class="sc">%&gt;%</span> <span class="fu">str</span>()</span>
+<span id="cb15-5"><a href="packages-management.html#cb15-5" tabindex="-1"></a> chr [<span class="dv">1</span><span class="sc">:</span><span class="dv">355</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">16</span>] <span class="st">&quot;abind&quot;</span> <span class="st">&quot;alphavantager&quot;</span> <span class="st">&quot;anytime&quot;</span> <span class="st">&quot;askpass&quot;</span> <span class="st">&quot;assertthat&quot;</span> <span class="st">&quot;backports&quot;</span> <span class="st">&quot;base&quot;</span> ...</span>
+<span id="cb15-6"><a href="packages-management.html#cb15-6" tabindex="-1"></a> <span class="sc">-</span> <span class="fu">attr</span>(<span class="sc">*</span>, <span class="st">&quot;dimnames&quot;</span>)<span class="ot">=</span>List of <span class="dv">2</span></span>
+<span id="cb15-7"><a href="packages-management.html#cb15-7" tabindex="-1"></a>  ..<span class="sc">$</span> <span class="er">:</span> chr [<span class="dv">1</span><span class="sc">:</span><span class="dv">355</span>] <span class="st">&quot;abind&quot;</span> <span class="st">&quot;alphavantager&quot;</span> <span class="st">&quot;anytime&quot;</span> <span class="st">&quot;askpass&quot;</span> ...</span>
+<span id="cb15-8"><a href="packages-management.html#cb15-8" tabindex="-1"></a>  ..<span class="sc">$</span> <span class="er">:</span> chr [<span class="dv">1</span><span class="sc">:</span><span class="dv">16</span>] <span class="st">&quot;Package&quot;</span> <span class="st">&quot;LibPath&quot;</span> <span class="st">&quot;Version&quot;</span> <span class="st">&quot;Priority&quot;</span> ...</span></code></pre></div>
+<p>The following code can be used to load packages for your project and set up the working environment.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="packages-management.html#cb16-1" tabindex="-1"></a><span class="co"># load the pkg, if not found, install then load</span></span>
+<span id="cb16-2"><a href="packages-management.html#cb16-2" tabindex="-1"></a><span class="fu">require</span>(dplyr) <span class="sc">||</span> {<span class="fu">install.packages</span>(<span class="st">&quot;dplyr&quot;</span>); <span class="fu">require</span>(dplyr)}</span>
+<span id="cb16-3"><a href="packages-management.html#cb16-3" tabindex="-1"></a><span class="fu">require</span>(odbc) <span class="sc">||</span> {<span class="fu">install.packages</span>(<span class="st">&quot;odbc&quot;</span>); <span class="fu">require</span>(odbc)}</span>
+<span id="cb16-4"><a href="packages-management.html#cb16-4" tabindex="-1"></a><span class="fu">require</span>(DBI) <span class="sc">||</span> {<span class="fu">install.packages</span>(<span class="st">&quot;DBI&quot;</span>); <span class="fu">require</span>(DBI)}</span></code></pre></div>
+<p>If using <code>library()</code>, will return error if some package is not installed and interrupt the program.</p>
+<p>If it is a list of packages you want to check, use <code>lapply</code> to loop through all packages.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="packages-management.html#cb17-1" tabindex="-1"></a><span class="do">## First specify the packages of interest</span></span>
+<span id="cb17-2"><a href="packages-management.html#cb17-2" tabindex="-1"></a>packages <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&quot;MASS&quot;</span>, <span class="st">&quot;nlme&quot;</span>)</span>
+<span id="cb17-3"><a href="packages-management.html#cb17-3" tabindex="-1"></a></span>
+<span id="cb17-4"><a href="packages-management.html#cb17-4" tabindex="-1"></a><span class="do">## Now load or install&amp;load all</span></span>
+<span id="cb17-5"><a href="packages-management.html#cb17-5" tabindex="-1"></a>package.check <span class="ot">&lt;-</span> <span class="fu">lapply</span>(</span>
+<span id="cb17-6"><a href="packages-management.html#cb17-6" tabindex="-1"></a>  packages,</span>
+<span id="cb17-7"><a href="packages-management.html#cb17-7" tabindex="-1"></a>  <span class="at">FUN =</span> <span class="cf">function</span>(x) {</span>
+<span id="cb17-8"><a href="packages-management.html#cb17-8" tabindex="-1"></a>    <span class="cf">if</span> (<span class="sc">!</span><span class="fu">require</span>(x, <span class="at">character.only =</span> <span class="cn">TRUE</span>)) {</span>
+<span id="cb17-9"><a href="packages-management.html#cb17-9" tabindex="-1"></a>      <span class="fu">install.packages</span>(x, <span class="at">dependencies =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb17-10"><a href="packages-management.html#cb17-10" tabindex="-1"></a>      <span class="fu">library</span>(x, <span class="at">character.only =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb17-11"><a href="packages-management.html#cb17-11" tabindex="-1"></a>    }</span>
+<span id="cb17-12"><a href="packages-management.html#cb17-12" tabindex="-1"></a>  }</span>
+<span id="cb17-13"><a href="packages-management.html#cb17-13" tabindex="-1"></a>)</span></code></pre></div>
+<p>You can then use <code>search()</code> to determine whether all the packages have loaded.</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="packages-management.html#cb18-1" tabindex="-1"></a><span class="fu">search</span>()</span>
+<span id="cb18-2"><a href="packages-management.html#cb18-2" tabindex="-1"></a> [<span class="dv">1</span>] <span class="st">&quot;.GlobalEnv&quot;</span>        <span class="st">&quot;package:nlme&quot;</span>      <span class="st">&quot;package:MASS&quot;</span>     </span>
+<span id="cb18-3"><a href="packages-management.html#cb18-3" tabindex="-1"></a> [<span class="dv">4</span>] <span class="st">&quot;package:stats&quot;</span>     <span class="st">&quot;package:graphics&quot;</span>  <span class="st">&quot;package:grDevices&quot;</span></span>
+<span id="cb18-4"><a href="packages-management.html#cb18-4" tabindex="-1"></a> [<span class="dv">7</span>] <span class="st">&quot;package:datasets&quot;</span>  <span class="st">&quot;renv:shims&quot;</span>        <span class="st">&quot;package:utils&quot;</span>    </span>
+<span id="cb18-5"><a href="packages-management.html#cb18-5" tabindex="-1"></a>[<span class="dv">10</span>] <span class="st">&quot;package:methods&quot;</span>   <span class="st">&quot;Autoloads&quot;</span>         <span class="st">&quot;package:base&quot;</span>     </span></code></pre></div>
 <hr />
 <p><strong>Install R packages from source</strong></p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="packages-management.html#cb12-1" tabindex="-1"></a><span class="co"># From local tarball</span></span>
-<span id="cb12-2"><a href="packages-management.html#cb12-2" tabindex="-1"></a><span class="fu">install.packages</span>(</span>
-<span id="cb12-3"><a href="packages-management.html#cb12-3" tabindex="-1"></a>  <span class="co"># indicate path of the package source file</span></span>
-<span id="cb12-4"><a href="packages-management.html#cb12-4" tabindex="-1"></a>  <span class="st">&quot;~/Documents/R/UserPackages/shoRtcut2_0.1.0.tar.gz&quot;</span>, </span>
-<span id="cb12-5"><a href="packages-management.html#cb12-5" tabindex="-1"></a>  <span class="co"># indicate it is a local file</span></span>
-<span id="cb12-6"><a href="packages-management.html#cb12-6" tabindex="-1"></a>  <span class="at">repos =</span> <span class="cn">NULL</span>)</span>
-<span id="cb12-7"><a href="packages-management.html#cb12-7" tabindex="-1"></a></span>
-<span id="cb12-8"><a href="packages-management.html#cb12-8" tabindex="-1"></a><span class="co"># From github</span></span>
-<span id="cb12-9"><a href="packages-management.html#cb12-9" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;Rcpp&quot;</span>, <span class="at">repos=</span><span class="st">&quot;https://rcppcore.github.io/drat&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="packages-management.html#cb19-1" tabindex="-1"></a><span class="co"># From local tarball</span></span>
+<span id="cb19-2"><a href="packages-management.html#cb19-2" tabindex="-1"></a><span class="fu">install.packages</span>(</span>
+<span id="cb19-3"><a href="packages-management.html#cb19-3" tabindex="-1"></a>  <span class="co"># indicate path of the package source file</span></span>
+<span id="cb19-4"><a href="packages-management.html#cb19-4" tabindex="-1"></a>  <span class="st">&quot;~/Documents/R/UserPackages/shoRtcut2_0.1.0.tar.gz&quot;</span>, </span>
+<span id="cb19-5"><a href="packages-management.html#cb19-5" tabindex="-1"></a>  <span class="co"># indicate it is a local file</span></span>
+<span id="cb19-6"><a href="packages-management.html#cb19-6" tabindex="-1"></a>  <span class="at">repos =</span> <span class="cn">NULL</span>)</span>
+<span id="cb19-7"><a href="packages-management.html#cb19-7" tabindex="-1"></a></span>
+<span id="cb19-8"><a href="packages-management.html#cb19-8" tabindex="-1"></a><span class="co"># From github</span></span>
+<span id="cb19-9"><a href="packages-management.html#cb19-9" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;Rcpp&quot;</span>, <span class="at">repos=</span><span class="st">&quot;https://rcppcore.github.io/drat&quot;</span>)</span></code></pre></div>
+<p><strong>Install from GitHub</strong></p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="packages-management.html#cb20-1" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(repo, <span class="at">ref=</span><span class="st">&quot;HEAD&quot;</span>, <span class="at">subdir =</span> <span class="cn">NULL</span>)</span></code></pre></div>
+<ul>
+<li><code>repo</code> repository address in the format <code>username/repo[/subdir][@ref|#pull]</code>. Alternatively, you can specify <code>subdir</code> and/or <code>ref</code> using the respective parameters. If both are specified, the values in <code>repo</code> take precedence.</li>
+<li><code>ref</code> Desired git reference. Could be a commit, tag, or branch name, or a call to <code>github_pull()</code> or <code>github_release()</code>. Defaults to <code>"HEAD"</code>, which means the default branch on GitHub and for git remotes.</li>
+</ul>
+<p>Ex</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="packages-management.html#cb21-1" tabindex="-1"></a><span class="co"># install version 3.5.1</span></span>
+<span id="cb21-2"><a href="packages-management.html#cb21-2" tabindex="-1"></a><span class="fu">install_github</span>(<span class="st">&quot;tidyverse/ggplot2&quot;</span>, <span class="at">ref=</span><span class="st">&quot;ggplot2 3.5.1&quot;</span>)</span></code></pre></div>
+<hr />
 <p>Check installed packages</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="packages-management.html#cb13-1" tabindex="-1"></a><span class="co"># print all installed packages</span></span>
-<span id="cb13-2"><a href="packages-management.html#cb13-2" tabindex="-1"></a><span class="fu">rownames</span>(<span class="fu">installed.packages</span>())</span>
-<span id="cb13-3"><a href="packages-management.html#cb13-3" tabindex="-1"></a><span class="co"># check if `ggplot2` is installed</span></span>
-<span id="cb13-4"><a href="packages-management.html#cb13-4" tabindex="-1"></a><span class="st">&quot;ggplot2&quot;</span> <span class="sc">%in%</span> <span class="fu">rownames</span>(<span class="fu">installed.packages</span>())</span></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="packages-management.html#cb22-1" tabindex="-1"></a><span class="co"># print all installed packages</span></span>
+<span id="cb22-2"><a href="packages-management.html#cb22-2" tabindex="-1"></a><span class="fu">rownames</span>(<span class="fu">installed.packages</span>())</span>
+<span id="cb22-3"><a href="packages-management.html#cb22-3" tabindex="-1"></a><span class="co"># check if `ggplot2` is installed</span></span>
+<span id="cb22-4"><a href="packages-management.html#cb22-4" tabindex="-1"></a><span class="st">&quot;ggplot2&quot;</span> <span class="sc">%in%</span> <span class="fu">rownames</span>(<span class="fu">installed.packages</span>())</span></code></pre></div>
 <p>Check package version</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="packages-management.html#cb14-1" tabindex="-1"></a><span class="fu">packageVersion</span>(<span class="st">&quot;ggplot2&quot;</span>) <span class="co"># check package version</span></span></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="packages-management.html#cb23-1" tabindex="-1"></a><span class="fu">packageVersion</span>(<span class="st">&quot;ggplot2&quot;</span>) <span class="co"># check package version</span></span></code></pre></div>
+<p>Q: How do I know if I have the latest version?<br />
+A: You can go to GitHub repo to check release notes. You will find the latest version of packages there.</p>
+<hr />
 <p><strong>Update packages</strong></p>
 <ul>
 <li><p>Update an individual package</p>
 <ul>
 <li><p>Using <code>install.packages</code></p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="packages-management.html#cb15-1" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;ggplot2&quot;</span>) <span class="co"># update one specific package</span></span></code></pre></div></li>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="packages-management.html#cb24-1" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;ggplot2&quot;</span>) <span class="co"># update one specific package</span></span></code></pre></div></li>
 <li><p>Using <code>update.packages</code></p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="packages-management.html#cb16-1" tabindex="-1"></a><span class="fu">update.packages</span>(<span class="at">oldPkgs =</span> <span class="st">&quot;ggplot2&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="packages-management.html#cb25-1" tabindex="-1"></a><span class="fu">update.packages</span>(<span class="at">oldPkgs =</span> <span class="st">&quot;ggplot2&quot;</span>)</span></code></pre></div>
 <p>Note that you need to <span style="color:#00CC66">specify <code>oldPkgs</code> explicily</span> as it is a named argument.</p></li>
 </ul></li>
 <li><p>Update ALL outdated packages</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="packages-management.html#cb17-1" tabindex="-1"></a><span class="do">## update all installed packages in a stated library location, default to `.libPaths()`</span></span>
-<span id="cb17-2"><a href="packages-management.html#cb17-2" tabindex="-1"></a><span class="fu">update.packages</span>(<span class="at">lib.loc =</span> <span class="fu">.libPaths</span>(), <span class="at">ask =</span> <span class="cn">TRUE</span>) </span></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="packages-management.html#cb26-1" tabindex="-1"></a><span class="do">## update all installed packages in a stated library location, default to `.libPaths()`</span></span>
+<span id="cb26-2"><a href="packages-management.html#cb26-2" tabindex="-1"></a><span class="fu">update.packages</span>(<span class="at">lib.loc =</span> <span class="fu">.libPaths</span>(), <span class="at">ask =</span> <span class="cn">TRUE</span>) </span></code></pre></div>
 <p><code>update.packages</code> updates ALL outdated packages in a stated library location. That library location is given by the first argument (if not supplied it works on all known library locations for the current R session).<br />
 It will ask you for every package if you want to update.<br />
 To just say <code>yes</code> to everything, use <code>ask = FAlSE</code>.</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="packages-management.html#cb18-1" tabindex="-1"></a><span class="fu">update.packages</span>(<span class="at">ask =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="packages-management.html#cb27-1" tabindex="-1"></a><span class="fu">update.packages</span>(<span class="at">ask =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <p>Unfortunately this <span style="color:#00CC66">won’t</span> update packages installed by <code>devtools::install_github()</code></p></li>
 </ul>
 <hr />
@@ -268,16 +335,16 @@ A: <span style="color:#00CC66">If <code>ggplot2</code> is already loaded</span>,
 <li>Alternatively, <code>installr::updateR()</code> automatically <a href="update-r.html#update-r">updates R</a> and installs your packages. ✅</li>
 </ul>
 <p>Here is how to do it manually.</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="packages-management.html#cb19-1" tabindex="-1"></a><span class="do">## get packages installed</span></span>
-<span id="cb19-2"><a href="packages-management.html#cb19-2" tabindex="-1"></a>packs <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">installed.packages</span>(<span class="fu">.libPaths</span>()[<span class="dv">1</span>]), <span class="at">stringsAsFactors =</span> F)</span>
-<span id="cb19-3"><a href="packages-management.html#cb19-3" tabindex="-1"></a><span class="co"># Save to local</span></span>
-<span id="cb19-4"><a href="packages-management.html#cb19-4" tabindex="-1"></a>f_name <span class="ot">&lt;-</span> <span class="st">&quot;~/Documents/R/packages.csv&quot;</span></span>
-<span id="cb19-5"><a href="packages-management.html#cb19-5" tabindex="-1"></a><span class="fu">rownames</span>(packs)</span>
-<span id="cb19-6"><a href="packages-management.html#cb19-6" tabindex="-1"></a><span class="fu">write.csv</span>(packs, f_name, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb19-7"><a href="packages-management.html#cb19-7" tabindex="-1"></a>packs <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(f_name)</span>
-<span id="cb19-8"><a href="packages-management.html#cb19-8" tabindex="-1"></a>packs</span>
-<span id="cb19-9"><a href="packages-management.html#cb19-9" tabindex="-1"></a><span class="do">## Re-install packages using install.packages() after updating R</span></span>
-<span id="cb19-10"><a href="packages-management.html#cb19-10" tabindex="-1"></a><span class="fu">install.packages</span>(packs<span class="sc">$</span>Package)</span></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="packages-management.html#cb28-1" tabindex="-1"></a><span class="do">## get packages installed</span></span>
+<span id="cb28-2"><a href="packages-management.html#cb28-2" tabindex="-1"></a>packs <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">installed.packages</span>(<span class="fu">.libPaths</span>()[<span class="dv">1</span>]), <span class="at">stringsAsFactors =</span> F)</span>
+<span id="cb28-3"><a href="packages-management.html#cb28-3" tabindex="-1"></a><span class="co"># Save to local</span></span>
+<span id="cb28-4"><a href="packages-management.html#cb28-4" tabindex="-1"></a>f_name <span class="ot">&lt;-</span> <span class="st">&quot;~/Documents/R/packages.csv&quot;</span></span>
+<span id="cb28-5"><a href="packages-management.html#cb28-5" tabindex="-1"></a><span class="fu">rownames</span>(packs)</span>
+<span id="cb28-6"><a href="packages-management.html#cb28-6" tabindex="-1"></a><span class="fu">write.csv</span>(packs, f_name, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb28-7"><a href="packages-management.html#cb28-7" tabindex="-1"></a>packs <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(f_name)</span>
+<span id="cb28-8"><a href="packages-management.html#cb28-8" tabindex="-1"></a>packs</span>
+<span id="cb28-9"><a href="packages-management.html#cb28-9" tabindex="-1"></a><span class="do">## Re-install packages using install.packages() after updating R</span></span>
+<span id="cb28-10"><a href="packages-management.html#cb28-10" tabindex="-1"></a><span class="fu">install.packages</span>(packs<span class="sc">$</span>Package)</span></code></pre></div>
 <p>R library path <code>/Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library</code></p>
 <ul>
 <li>use <code>find.package("ggplot2")</code> to find the location to where the given package is found.</li>
@@ -302,13 +369,13 @@ A: <span style="color:#00CC66">If <code>ggplot2</code> is already loaded</span>,
 </ol></li>
 <li><p>Create a <a href="https://github.com/new">new repository on GitHub</a></p></li>
 <li><p>Connect your local repository to the GitHub one</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb20-1"><a href="packages-management.html#cb20-1" tabindex="-1"></a><span class="co"># add repo name &quot;origin&quot; to the remote repo at the URL</span></span>
-<span id="cb20-2"><a href="packages-management.html#cb20-2" tabindex="-1"></a><span class="fu">git</span> remote add origin https://github.com/username/reponame</span></code></pre></div></li>
+<div class="sourceCode" id="cb29"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb29-1"><a href="packages-management.html#cb29-1" tabindex="-1"></a><span class="co"># add repo name &quot;origin&quot; to the remote repo at the URL</span></span>
+<span id="cb29-2"><a href="packages-management.html#cb29-2" tabindex="-1"></a><span class="fu">git</span> remote add origin https://github.com/username/reponame</span></code></pre></div></li>
 <li><p>Push everything to github</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb21-1"><a href="packages-management.html#cb21-1" tabindex="-1"></a><span class="co"># rename the current local branch to &quot;main&quot;</span></span>
-<span id="cb21-2"><a href="packages-management.html#cb21-2" tabindex="-1"></a><span class="fu">git</span> branch <span class="at">-M</span> main</span>
-<span id="cb21-3"><a href="packages-management.html#cb21-3" tabindex="-1"></a><span class="co"># creates a remote branch &quot;origin&quot; and sets it upstream of the &quot;main&quot; branch</span></span>
-<span id="cb21-4"><a href="packages-management.html#cb21-4" tabindex="-1"></a><span class="fu">git</span> push <span class="at">-u</span> origin main</span></code></pre></div></li>
+<div class="sourceCode" id="cb30"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb30-1"><a href="packages-management.html#cb30-1" tabindex="-1"></a><span class="co"># rename the current local branch to &quot;main&quot;</span></span>
+<span id="cb30-2"><a href="packages-management.html#cb30-2" tabindex="-1"></a><span class="fu">git</span> branch <span class="at">-M</span> main</span>
+<span id="cb30-3"><a href="packages-management.html#cb30-3" tabindex="-1"></a><span class="co"># creates a remote branch &quot;origin&quot; and sets it upstream of the &quot;main&quot; branch</span></span>
+<span id="cb30-4"><a href="packages-management.html#cb30-4" tabindex="-1"></a><span class="fu">git</span> push <span class="at">-u</span> origin main</span></code></pre></div></li>
 </ul>
 <hr />
 </div>
