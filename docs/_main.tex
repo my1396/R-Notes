@@ -112,12 +112,12 @@
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
 \urlstyle{same}
 \hypersetup{
-  pdftitle={A Minimal Book Example},
+  pdftitle={R Notes},
   pdfauthor={John Doe},
   hidelinks,
   pdfcreator={LaTeX via pandoc}}
 
-\title{A Minimal Book Example}
+\title{R Notes}
 \author{John Doe}
 \date{2025-04-03}
 
@@ -1425,8 +1425,7 @@ Knit the document and the code will render like this in your output:
 
 \chapter{Basic R}\label{basic-r}
 
-\subsection*{Save \& Load R objects}\label{save-load-r-objects}
-\addcontentsline{toc}{subsection}{Save \& Load R objects}
+Save \& Load R objects
 
 \texttt{save(...,\ f\_name)} and \texttt{saveRDS()}
 
@@ -1550,6 +1549,204 @@ An example
 \NormalTok{p\_allCON}
 \end{Highlighting}
 \end{Shaded}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\section{Data Input \& Output}\label{data-input-output}
+
+\subsection{Read Data}\label{read-data}
+
+\textbf{Read Fortran}
+
+\texttt{read.fortran(file,\ format,\ ...,\ as.is\ =\ TRUE,\ colClasses\ =\ NA)}
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{format} Character vector or list of vectors.
+\end{itemize}
+
+\texttt{haven::read\_dta()} read Stata data file.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data }\OtherTok{\textless{}{-}} \FunctionTok{read\_dta}\NormalTok{(}\StringTok{"climate\_health\_2406yl.dta"}\NormalTok{)}
+\CommentTok{\# retrieve variable labels/definitions}
+\NormalTok{var\_dict }\OtherTok{\textless{}{-}} \FunctionTok{tibble}\NormalTok{(}\StringTok{"name"} \OtherTok{=} \FunctionTok{colnames}\NormalTok{(data),}
+                   \StringTok{"label"} \OtherTok{=} \FunctionTok{sapply}\NormalTok{(data, }\ControlFlowTok{function}\NormalTok{(x) }\FunctionTok{attr}\NormalTok{(x, }\StringTok{"label"}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%} 
+                                \FunctionTok{as.character}\NormalTok{()}
+\NormalTok{                   )}
+\NormalTok{var\_dict}
+                   
+\FunctionTok{var\_label}\NormalTok{(data}\SpecialCharTok{$}\NormalTok{gor) }\CommentTok{\# get variable label}
+\FunctionTok{val\_labels}\NormalTok{(data}\SpecialCharTok{$}\NormalTok{gor) }\CommentTok{\# get value labels }
+                   
+\end{Highlighting}
+\end{Shaded}
+
+\textbf{Read fixed width text files}
+
+\texttt{read.fwf(file,\ widths)}
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{widths} integer vector, giving the widths of the fixed-width fields (of one line), or list of integer vectors giving widths for multiline records.
+\end{itemize}
+
+\texttt{read.table(f\_name,\ header=FALSE,\ row.names,\ col.names,\ sep="",\ na.strings\ =\ "NA")} a {very versatile} function. Can be used to read \texttt{.csv} or \texttt{.txt} files.
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{f\_name} path to data.
+\item
+  \texttt{header=FALSE} defaults to \texttt{FALSE}, assumes there is no header row in the file unless specified otherwise.
+
+  \begin{itemize}
+  \tightlist
+  \item
+    If there is a header in the first row, should specify \texttt{header=TRUE}.
+  \end{itemize}
+\item
+  \texttt{row.names} a vector of row names. This can be
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \emph{a vector} giving the actual row names, or
+  \item
+    \emph{a single number} giving the column of the table which contains the row names, or
+  \item
+    \emph{character string} giving the name of the table column containing the row names.
+  \end{itemize}
+\item
+  \texttt{col.names} a vector of optional names for the variables. The default is to use \texttt{"V"} followed by the column number.
+\item
+  \texttt{sep} use white space as delimiter.
+
+  \begin{itemize}
+  \tightlist
+  \item
+    if it is a \texttt{csv} file, use \texttt{sep=\textquotesingle{},\textquotesingle{}} to specify comma as delimiter
+  \end{itemize}
+\item
+  \texttt{na.strings\ =\ "NA"} a character vector of strings which are to be interpreted as \texttt{NA} values.
+
+  \begin{itemize}
+  \tightlist
+  \item
+    A useful setting: \texttt{na.strings\ =\ c("",\ "NA",\ "NULL")}
+  \end{itemize}
+\end{itemize}
+
+\texttt{read.csv(f\_name,\ header\ =\ TRUE,\ sep\ =\ ",",\ na.strings\ =\ "..",\ dec=".")}
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{header\ =\ TRUE} whether the file contains the names of the variables as its first line.
+\item
+  \texttt{sep} the field separator string. Values within each row of \texttt{x} are separated by this string.
+\item
+  \texttt{na} the string to use for missing values in the data.
+\item
+  \texttt{dec} the string to use for decimal points in numeric or complex columns: must be a single character.
+\item
+  \texttt{fileEncoding} \texttt{UTF-8}
+\end{itemize}
+
+When reading data from github, you need to pass in the {raw version} of the data in \texttt{read.csv()},
+
+R cannot read the display version.
+
+You can get the URL for the raw version by clicking on the Raw button displayed above the data.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# read.table can be used to read txt and csv. Need to specify sep=\textquotesingle{},\textquotesingle{} when reading csv.}
+\NormalTok{data }\OtherTok{\textless{}{-}} \FunctionTok{read.table}\NormalTok{(}\StringTok{"https://raw.githubusercontent.com/my1396/course\_dataset/refs/heads/main/bonedensity.txt"}\NormalTok{, }\AttributeTok{header=}\ConstantTok{TRUE}\NormalTok{)}
+\NormalTok{data}
+
+\NormalTok{data }\OtherTok{\textless{}{-}} \FunctionTok{read.table}\NormalTok{(}\StringTok{"https://raw.githubusercontent.com/my1396/course\_dataset/refs/heads/main/bonedensity.csv"}\NormalTok{, }\AttributeTok{header=}\ConstantTok{TRUE}\NormalTok{, }\AttributeTok{sep=}\StringTok{","}\NormalTok{)}
+
+\CommentTok{\# can use read\_csv or read.csv}
+\NormalTok{data }\OtherTok{\textless{}{-}} \FunctionTok{read\_csv}\NormalTok{(}\StringTok{"https://raw.githubusercontent.com/my1396/course\_dataset/refs/heads/main/bonedensity.csv"}\NormalTok{)}
+\NormalTok{data}
+\end{Highlighting}
+\end{Shaded}
+
+\texttt{read\_delim(f\_name,\ delim=";")} allows you to specify the delimeter as \texttt{;}.
+
+\texttt{readr::read\_csv(f\_name,\ na\ =\ c("..",\ NA,\ ""),}
+\texttt{locale\ =\ locale(encoding\ =\ "UTF-8"),}
+\texttt{col\_types\ =\ cols(Date\ =\ col\_date(format\ =\ "\%m/\%d/\%y"))\ )} read {comma separated values}.
+
+\begin{itemize}
+\item
+  \texttt{col\_types} specify column types. Could be created by \texttt{list()} or \texttt{cols()}.
+
+  \texttt{read\_csv} will automatically guess, if you don't explicitly specify column types. You can override column types by providing the argument \texttt{col\_types}. You don't need to provide all column types, just the ones you want to override.
+\item
+  By default, reading a file without a column specification will print a message showing what \texttt{readr} guessed they were. To remove this message,
+
+  \begin{itemize}
+  \tightlist
+  \item
+    set \texttt{show\_col\_types\ =\ FALSE} for one time setting, or
+  \item
+    set \texttt{options(readr.show\_col\_types\ =\ FALSE)} for the current sessions' global options setting. If want to change permanently everytime when R starts, put \texttt{options(readr.show\_col\_types\ =\ FALSE)} in \texttt{.Rprofile} as global options.
+  \end{itemize}
+\end{itemize}
+
+\texttt{read\_tsv()} read {tab separated values}.
+
+\texttt{read\_csv2(f\_name,\ na\ =\ c("..",\ NA,\ ""))} use {semicolon \texttt{;} to separate values}; and use comma \texttt{,} for the decimal point. This is common in some European countries.
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{locale} The locale controls defaults that vary from place to place. The default locale is US-centric (like R), but you can use \texttt{locale()} to create your own locale that controls things like the default time zone, encoding, decimal mark, big mark, and day/month names.
+\item
+  \texttt{locale(date\_names\ =\ "en",\ date\_format\ =\ "\%AD",\ time\_format\ =\ "\%AT",\ \ \ \ \ \ \ decimal\_mark\ =\ ".",\ grouping\_mark\ =\ ",",\ tz\ =\ "UTC",\ \ \ \ \ \ \ encoding\ =\ "UTF-8",\ asciify\ =\ FALSE)}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \texttt{decimal\_mark} indicate the decimal place, can only be \texttt{,} or \texttt{.}
+  \item
+    \texttt{encoding} This only affects how the file is read - readr always converts the output to UTF-8.
+  \end{itemize}
+\end{itemize}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{Write Data}\label{write-data}
+
+Save data in \texttt{uft8} encoding with special language characters
+
+\texttt{write\_excel\_csv()} include a \href{https://en.wikipedia.org/wiki/Byte_order_mark}{UTF-8 Byte order mark} which indicates to Excel the csv is UTF-8 encoded.
+
+\texttt{write.csv(x,\ f\_name,\ row.names=TRUE,\ fileEncoding\ ="UTF-8")}
+
+\begin{itemize}
+\item
+  \texttt{x} a matrix or data frame. If not one of the types, it is attempted to coerce \texttt{x} to a data frame.
+
+  \begin{itemize}
+  \item
+    \texttt{write\_csv(x)} \texttt{x} can only be data frame or tibble. Doesn't support matrix.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{mat }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{as\_tibble}\NormalTok{(}\AttributeTok{rownames =} \StringTok{"rowname"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{write\_csv}\NormalTok{(}\StringTok{"mat.csv"}\NormalTok{)}
+\NormalTok{mat }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{write.csv}\NormalTok{(}\StringTok{"mat.csv"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+  \end{itemize}
+\item
+  \texttt{row.names} wether to write row names of \texttt{x}. Defaults to \texttt{TRUE}.
+\end{itemize}
 
 \chapter{Machine Learning}\label{machine-learning}
 
