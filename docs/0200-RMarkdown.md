@@ -2,7 +2,7 @@
 
 # Knit Rmd
 
-R Markdown is a powerful tool for combining analysis and reporting into the same document. R Markdown has grown substantially from a package that supports a few output formats, to an extensive and diverse ecosystem that supports the creation of books, blogs, scientific articles, websites, and even resumes.
+**R Markdown** is a powerful tool for combining analysis and reporting into the same document. R Markdown has grown substantially from a package that supports a few output formats, to an extensive and diverse ecosystem that supports the creation of books, blogs, scientific articles, websites, and even resumes.
 
 Nice documentations 
 
@@ -11,12 +11,20 @@ Nice documentations
 
 
 
+Q: What is the difference between Rmd and R script?  
+A: 
+
+- An R script (`.R`) is used for developing and troubleshooting code; a place where you can store reusable code fragments. 
+- An R Markdown file (`.Rmd`) is used to integrate R commands with explanatory text and output, making it useful for creating reports.
+
+--------------------------------------------------------------------------------
+
 **Quick takeaways**:
 
 - Can still use horizontal separator ctrl + shift + S for dashed lines and ctrl + shift + = for equals
 - Headers must have one empty line above and below to separate it from other text
 
-
+--------------------------------------------------------------------------------
 
 **YAML metadata**
 
@@ -368,6 +376,91 @@ plot(cars)
 ```
 ````
 
+This method makes use of **Markdown Syntax** for code. 
+
+Q: What is the Markdown Syntax for code?  
+A: 
+
+- Inline code use a pair of backticks, e.g., `` `code` ``.  To use $n$ literal backticks, use at least $n+1$ backticks outside. Note that use a space to separate your outside backticks from your literal backtick(s). For example, to generate `` `code` ``, you use ``` ``␣`code`␣`` ``` (i.e., two backticks + space + one backtick + `code` + one backtick + space + two backticks). Note that you need to write sequentially.
+
+- Plain code blocks can be written either
+
+  - After <u>three or more</u> backticks (fenced code blocks), or 
+
+    Can also use tildes (`~`)
+
+  - Indent the blocks by four spaces (indented code blocks)
+
+    Special characters do not trigger special formatting, and all spaces and line breaks are preserved. Blank lines in the verbatim text need not begin with four spaces.
+
+- Note that code blocks must be <u>separated from surrounding text by blank lines</u>.
+
+
+
+If the code itself contains a row of tildes or backticks, just use a longer row of tildes or backticks at the start and end:
+
+~~~~~~~~~~~~~~~~~~~~~md
+~~~~~~~~~~~~~~~~
+~~~~~~~~~~
+code including tildes
+~~~~~~~~~~
+~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+
+These begin with a row of three or more tildes (`~`) and end with a row of tildes that must be at least as long as the starting row.
+
+A shortcut form (without braces) can also be used for specifying the language of the code block:
+
+	```haskell
+	qsort [] = []
+	```
+This is equivalent to:
+
+	``` {.haskell}
+	qsort [] = []
+	```
+
+`haskell` is the language class.
+
+You can add more classes, such as `numberLines` for adding line numbers.
+
+This shortcut form may be combined with attributes:
+
+	```haskell {.numberLines}
+	qsort [] = []
+	```
+Which is equivalent to:
+
+	``` {.haskell .numberLines}
+	qsort [] = []
+	```
+
+and 
+
+```html
+<pre id="mycode" class="haskell numberLines" startFrom="100">
+  <code>
+  primes = filterPrime [2..] where
+  filterPrime (p:xs) =
+    p : filterPrime [x | x <- xs, x `mod` p /= 0]
+  </code>
+</pre>  
+```
+
+If highlighting is supported for your output format and language, then the code block above will appear highlighted, with numbered lines starting with 100, 101, and go on. 
+
+<pre id="mycode" class="haskell numberLines" startFrom="100">
+  <code>
+  primes = filterPrime [2..] where
+  filterPrime (p:xs) =
+    p : filterPrime [x | x <- xs, x `mod` p /= 0]
+  </code>
+</pre>  
+
+___
+
+
+
 **References**:
 
 https://yihui.org/en/2017/11/knitr-verbatim-code-chunk/
@@ -375,6 +468,8 @@ https://yihui.org/en/2017/11/knitr-verbatim-code-chunk/
 https://support.posit.co/hc/en-us/articles/360018181633-Including-verbatim-R-code-chunks-inside-R-Markdown
 
 https://themockup.blog/posts/2021-08-27-displaying-verbatim-code-chunks-in-xaringan-presentations/
+
+Pandoc’s Markdown: <https://pandoc.org/MANUAL.html#fenced-code-blocks>
 
 
 

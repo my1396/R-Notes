@@ -214,7 +214,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <li>Fit a classification and regression tree to each sample, but randomly choose a subset of <span class="math inline">\(m\)</span> variables that can be used in the construction of that tree (this results in <span class="math inline">\(\boldsymbol{B}\)</span> unique trees that are fit to similar datasets using different sets of predictors)</li>
 <li>For a given data-point, each of the <span class="math inline">\(\boldsymbol{B}\)</span> trees in the forest contributes a prediction or “vote”, with the majority (or average) of these votes forming the random forest’s final prediction, <span class="math inline">\(\hat{y}_i\)</span></li>
 </ol>
-<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb55-1"><a href="random-forest.html#cb55-1" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="st">&quot;images/rf.png&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb61-1"><a href="random-forest.html#cb61-1" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="st">&quot;images/rf.png&quot;</span>)</span></code></pre></div>
 <p><img src="images/rf.png" width="80%" /></p>
 <p>A downside of both the CART and random forest algorithms (as well as many other algorithmic modeling approaches) is an <u>inability to clearly quantify the roles played by individual variables</u> in making predictions. However, the importance of individual variables in a random forest can still be expressed using a measure known as variable importance.</p>
 <p>The random forest algorithm requires the following tuning parameters be specified in order to run:</p>
@@ -258,15 +258,15 @@ A: A major difference is that a decision tree does not have “parameters”, wh
 <div id="implementation-in-r" class="section level3 unnumbered hasAnchor">
 <h3>Implementation in R<a href="random-forest.html#implementation-in-r" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p><code>ranger</code> package offers a computation efficient function for RF.</p>
-<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="random-forest.html#cb56-1" tabindex="-1"></a>RF_ranger <span class="ot">&lt;-</span> <span class="fu">ranger</span>(<span class="at">formula =</span> formula, </span>
-<span id="cb56-2"><a href="random-forest.html#cb56-2" tabindex="-1"></a>                    <span class="at">data =</span> data_before[idx,], </span>
-<span id="cb56-3"><a href="random-forest.html#cb56-3" tabindex="-1"></a>                    <span class="at">probability =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb56-4"><a href="random-forest.html#cb56-4" tabindex="-1"></a>                    <span class="at">importance =</span> <span class="st">&quot;permutation&quot;</span>, </span>
-<span id="cb56-5"><a href="random-forest.html#cb56-5" tabindex="-1"></a>                    <span class="at">scale.permutation.importance =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb56-6"><a href="random-forest.html#cb56-6" tabindex="-1"></a>                    )</span>
-<span id="cb56-7"><a href="random-forest.html#cb56-7" tabindex="-1"></a>    <span class="co"># print(RF_ranger)</span></span>
-<span id="cb56-8"><a href="random-forest.html#cb56-8" tabindex="-1"></a>    </span>
-<span id="cb56-9"><a href="random-forest.html#cb56-9" tabindex="-1"></a>rf.pred.test <span class="ot">&lt;-</span> <span class="fu">predict</span>(RF_ranger, <span class="at">data=</span>data_before[<span class="sc">-</span>idx,])<span class="sc">$</span>predictions</span></code></pre></div>
+<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="random-forest.html#cb62-1" tabindex="-1"></a>RF_ranger <span class="ot">&lt;-</span> <span class="fu">ranger</span>(<span class="at">formula =</span> formula, </span>
+<span id="cb62-2"><a href="random-forest.html#cb62-2" tabindex="-1"></a>                    <span class="at">data =</span> data_before[idx,], </span>
+<span id="cb62-3"><a href="random-forest.html#cb62-3" tabindex="-1"></a>                    <span class="at">probability =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb62-4"><a href="random-forest.html#cb62-4" tabindex="-1"></a>                    <span class="at">importance =</span> <span class="st">&quot;permutation&quot;</span>, </span>
+<span id="cb62-5"><a href="random-forest.html#cb62-5" tabindex="-1"></a>                    <span class="at">scale.permutation.importance =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb62-6"><a href="random-forest.html#cb62-6" tabindex="-1"></a>                    )</span>
+<span id="cb62-7"><a href="random-forest.html#cb62-7" tabindex="-1"></a>    <span class="co"># print(RF_ranger)</span></span>
+<span id="cb62-8"><a href="random-forest.html#cb62-8" tabindex="-1"></a>    </span>
+<span id="cb62-9"><a href="random-forest.html#cb62-9" tabindex="-1"></a>rf.pred.test <span class="ot">&lt;-</span> <span class="fu">predict</span>(RF_ranger, <span class="at">data=</span>data_before[<span class="sc">-</span>idx,])<span class="sc">$</span>predictions</span></code></pre></div>
 <p>Parameters controlling the general process of RF:</p>
 <ul>
 <li><code>probability=FALSE</code>: Whether to forecast a probability forest.</li>
@@ -308,30 +308,30 @@ A: Check out <a href="https://mlr3.mlr-org.com"><code>mlr3</code> package</a>. <
 <div id="imbalance-classification" class="section level3 unnumbered hasAnchor">
 <h3>Imbalance Classification<a href="random-forest.html#imbalance-classification" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>You can balance your random forests using case weights. Here’s a simple example:</p>
-<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb57-1"><a href="random-forest.html#cb57-1" tabindex="-1"></a><span class="fu">library</span>(ranger)</span>
-<span id="cb57-2"><a href="random-forest.html#cb57-2" tabindex="-1"></a></span>
-<span id="cb57-3"><a href="random-forest.html#cb57-3" tabindex="-1"></a><span class="co"># Make a dataste</span></span>
-<span id="cb57-4"><a href="random-forest.html#cb57-4" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">43</span>)</span>
-<span id="cb57-5"><a href="random-forest.html#cb57-5" tabindex="-1"></a>nrow <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
-<span id="cb57-6"><a href="random-forest.html#cb57-6" tabindex="-1"></a>ncol <span class="ot">&lt;-</span> <span class="dv">10</span></span>
-<span id="cb57-7"><a href="random-forest.html#cb57-7" tabindex="-1"></a>X <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(nrow <span class="sc">*</span> ncol), <span class="at">ncol=</span>ncol)</span>
-<span id="cb57-8"><a href="random-forest.html#cb57-8" tabindex="-1"></a>CF <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(ncol)</span>
-<span id="cb57-9"><a href="random-forest.html#cb57-9" tabindex="-1"></a>Y <span class="ot">&lt;-</span> (X <span class="sc">%*%</span> CF <span class="sc">+</span> <span class="fu">rnorm</span>(nrow))[,<span class="dv">1</span>]</span>
-<span id="cb57-10"><a href="random-forest.html#cb57-10" tabindex="-1"></a>Y <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(Y <span class="sc">&gt;</span> <span class="fu">quantile</span>(Y, <span class="fl">0.90</span>))</span>
-<span id="cb57-11"><a href="random-forest.html#cb57-11" tabindex="-1"></a><span class="fu">table</span>(Y)</span>
-<span id="cb57-12"><a href="random-forest.html#cb57-12" tabindex="-1"></a></span>
-<span id="cb57-13"><a href="random-forest.html#cb57-13" tabindex="-1"></a><span class="co"># Compute weights to balance the RF</span></span>
-<span id="cb57-14"><a href="random-forest.html#cb57-14" tabindex="-1"></a>w <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span><span class="fu">table</span>(Y)</span>
-<span id="cb57-15"><a href="random-forest.html#cb57-15" tabindex="-1"></a>w <span class="ot">&lt;-</span> w<span class="sc">/</span><span class="fu">sum</span>(w)</span>
-<span id="cb57-16"><a href="random-forest.html#cb57-16" tabindex="-1"></a>weights <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">0</span>, nrow)</span>
-<span id="cb57-17"><a href="random-forest.html#cb57-17" tabindex="-1"></a>weights[Y <span class="sc">==</span> <span class="dv">0</span>] <span class="ot">&lt;-</span> w[<span class="st">&#39;0&#39;</span>]</span>
-<span id="cb57-18"><a href="random-forest.html#cb57-18" tabindex="-1"></a>weights[Y <span class="sc">==</span> <span class="dv">1</span>] <span class="ot">&lt;-</span> w[<span class="st">&#39;1&#39;</span>]</span>
-<span id="cb57-19"><a href="random-forest.html#cb57-19" tabindex="-1"></a><span class="fu">table</span>(weights, Y)</span>
-<span id="cb57-20"><a href="random-forest.html#cb57-20" tabindex="-1"></a></span>
-<span id="cb57-21"><a href="random-forest.html#cb57-21" tabindex="-1"></a><span class="co"># Fit the RF</span></span>
-<span id="cb57-22"><a href="random-forest.html#cb57-22" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">Y=</span><span class="fu">factor</span>(<span class="fu">ifelse</span>(Y<span class="sc">==</span><span class="dv">0</span>, <span class="st">&#39;no&#39;</span>, <span class="st">&#39;yes&#39;</span>)), X)</span>
-<span id="cb57-23"><a href="random-forest.html#cb57-23" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">ranger</span>(Y<span class="sc">~</span>., data, <span class="at">case.weights=</span>weights)</span>
-<span id="cb57-24"><a href="random-forest.html#cb57-24" tabindex="-1"></a><span class="fu">print</span>(model)</span></code></pre></div>
+<div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb63-1"><a href="random-forest.html#cb63-1" tabindex="-1"></a><span class="fu">library</span>(ranger)</span>
+<span id="cb63-2"><a href="random-forest.html#cb63-2" tabindex="-1"></a></span>
+<span id="cb63-3"><a href="random-forest.html#cb63-3" tabindex="-1"></a><span class="co"># Make a dataste</span></span>
+<span id="cb63-4"><a href="random-forest.html#cb63-4" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">43</span>)</span>
+<span id="cb63-5"><a href="random-forest.html#cb63-5" tabindex="-1"></a>nrow <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
+<span id="cb63-6"><a href="random-forest.html#cb63-6" tabindex="-1"></a>ncol <span class="ot">&lt;-</span> <span class="dv">10</span></span>
+<span id="cb63-7"><a href="random-forest.html#cb63-7" tabindex="-1"></a>X <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(nrow <span class="sc">*</span> ncol), <span class="at">ncol=</span>ncol)</span>
+<span id="cb63-8"><a href="random-forest.html#cb63-8" tabindex="-1"></a>CF <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(ncol)</span>
+<span id="cb63-9"><a href="random-forest.html#cb63-9" tabindex="-1"></a>Y <span class="ot">&lt;-</span> (X <span class="sc">%*%</span> CF <span class="sc">+</span> <span class="fu">rnorm</span>(nrow))[,<span class="dv">1</span>]</span>
+<span id="cb63-10"><a href="random-forest.html#cb63-10" tabindex="-1"></a>Y <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(Y <span class="sc">&gt;</span> <span class="fu">quantile</span>(Y, <span class="fl">0.90</span>))</span>
+<span id="cb63-11"><a href="random-forest.html#cb63-11" tabindex="-1"></a><span class="fu">table</span>(Y)</span>
+<span id="cb63-12"><a href="random-forest.html#cb63-12" tabindex="-1"></a></span>
+<span id="cb63-13"><a href="random-forest.html#cb63-13" tabindex="-1"></a><span class="co"># Compute weights to balance the RF</span></span>
+<span id="cb63-14"><a href="random-forest.html#cb63-14" tabindex="-1"></a>w <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span><span class="fu">table</span>(Y)</span>
+<span id="cb63-15"><a href="random-forest.html#cb63-15" tabindex="-1"></a>w <span class="ot">&lt;-</span> w<span class="sc">/</span><span class="fu">sum</span>(w)</span>
+<span id="cb63-16"><a href="random-forest.html#cb63-16" tabindex="-1"></a>weights <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">0</span>, nrow)</span>
+<span id="cb63-17"><a href="random-forest.html#cb63-17" tabindex="-1"></a>weights[Y <span class="sc">==</span> <span class="dv">0</span>] <span class="ot">&lt;-</span> w[<span class="st">&#39;0&#39;</span>]</span>
+<span id="cb63-18"><a href="random-forest.html#cb63-18" tabindex="-1"></a>weights[Y <span class="sc">==</span> <span class="dv">1</span>] <span class="ot">&lt;-</span> w[<span class="st">&#39;1&#39;</span>]</span>
+<span id="cb63-19"><a href="random-forest.html#cb63-19" tabindex="-1"></a><span class="fu">table</span>(weights, Y)</span>
+<span id="cb63-20"><a href="random-forest.html#cb63-20" tabindex="-1"></a></span>
+<span id="cb63-21"><a href="random-forest.html#cb63-21" tabindex="-1"></a><span class="co"># Fit the RF</span></span>
+<span id="cb63-22"><a href="random-forest.html#cb63-22" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">Y=</span><span class="fu">factor</span>(<span class="fu">ifelse</span>(Y<span class="sc">==</span><span class="dv">0</span>, <span class="st">&#39;no&#39;</span>, <span class="st">&#39;yes&#39;</span>)), X)</span>
+<span id="cb63-23"><a href="random-forest.html#cb63-23" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">ranger</span>(Y<span class="sc">~</span>., data, <span class="at">case.weights=</span>weights)</span>
+<span id="cb63-24"><a href="random-forest.html#cb63-24" tabindex="-1"></a><span class="fu">print</span>(model)</span></code></pre></div>
 <p>Code Source: <a href="https://stats.stackexchange.com/a/287849" class="uri">https://stats.stackexchange.com/a/287849</a></p>
 <p>Fixed proportion sampling: <a href="https://github.com/imbs-hl/ranger/issues/167" class="uri">https://github.com/imbs-hl/ranger/issues/167</a></p>
 <hr />
