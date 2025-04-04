@@ -1,0 +1,392 @@
+
+
+# Knit Rmd
+
+R Markdown is a powerful tool for combining analysis and reporting into the same document. R Markdown has grown substantially from a package that supports a few output formats, to an extensive and diverse ecosystem that supports the creation of books, blogs, scientific articles, websites, and even resumes.
+
+Nice documentations 
+
+- [R markdown: The definitive guide.](https://bookdown.org/yihui/rmarkdown)  provides detailed references
+- [R markdown cookbook](https://bookdown.org/yihui/rmarkdown-cookbook/) concise and covers essential functions, with examples.
+
+
+
+**Quick takeaways**:
+
+- Can still use horizontal separator ctrl + shift + S for dashed lines and ctrl + shift + = for equals
+- Headers must have one empty line above and below to separate it from other text
+
+
+
+**YAML metadata**
+
+Q: What is YAML?
+
+A: YAML is a human-friendly data serialization language for all programming languages.
+
+Q: What does YAML do?
+
+A: It is placed at the very beginning of the document and is read by each of Pandoc, **rmarkdown**, and **knitr**. 
+
+- Provide metadata of the document. 
+- located at the top of the file.
+- adheres to the YAML format and is delimited by lines containing three three dashes (`---`).
+
+
+
+It can set values of the template variables, such as `title`, `author`, and `date` of the document. 
+
+- The `output` field is used by rmarkdown to apply the output format function `rmarkdown::html_document()` in the rendering process.
+
+  There are two types of output formats in the **rmarkdown** package: documents (e.g., `pdf_document`), and presentations (e.g., `beamer_presentation`).
+
+  Supported output format examples: `html_document`, `pdf_document`.
+
+  R Markdown documents (`html_documents`) and R Notebook documents (`html_notebook`) are very similar; in fact, an R Notebook document is a special type of R Markdown document. The main difference is using R Markdown document (`html_documents`) you have to knit (render) the entire document each time you want to preview the document, even if you have made a minor change. However, using an R Notebook document (`html_notebook`) you can view a preview of the final document without rendering the entire document.
+
+- Many aspects of the LaTeX template used to create PDF documents can be customized using *top-level* [YAML metadata](https://bookdown.org/yihui/rmarkdown/pdf-document.html#tab:latex-vars) (note that these options do not appear underneath the `output` section, but rather appear at the top level along with `title`, `author`, and so on). For example:
+
+  ```r
+  ---
+  title: "Crop Analysis Q3 2013"
+  output: pdf_document
+  fontsize: 11pt
+  geometry: margin=1in
+  ---
+  ```
+
+  A few available metadata variables are displayed in the following (consult the Pandoc manual for [the full list](https://pandoc.org/MANUAL.html#variables-for-latex)):
+
+  | Variable                                       | Description                                                  |
+  | ---------------------------------------------- | ------------------------------------------------------------ |
+  | `lang`                                         | Document language code                                       |
+  | `fontsize`                                     | Font size (e.g., `10pt`, `11pt`, or `12pt`)                  |
+  | `documentclass`                                | LaTeX document class (e.g., `article`)                       |
+  | `classoption`                                  | Options for documentclass (e.g., `oneside`)                  |
+  | `geometry`                                     | Options for geometry class (e.g., `margin=1in`)              |
+  | `mainfont`, `sansfont`, `monofont`, `mathfont` | Document fonts (works only with `xelatex` and `lualatex`)    |
+  | `linkcolor`, `urlcolor`, `citecolor`           | Color for internal links (cross references), external links (link to websites), and citation links (bibliography) |
+  | `linestretch`                                  | Options for line spacing (e.g. 1, 1.5, 3).                   |
+
+  - In PDFs, you can use code, typesetting commands (e.g., `\vspace{12pt}`), and specific packages from LaTeX. 
+
+    1. The `header-includes` option loads LaTeX packages.
+
+    ```r
+    ---
+    output: pdf_document
+    header-includes:
+    - \usepackage{fancyhdr}
+    ---
+    
+    \pagestyle{fancy}
+    \fancyhead[LE,RO]{Holly Zaharchuk}
+    \fancyhead[LO,RE]{PSY 508}
+    
+    # Problem Set 12
+    ```
+
+    <img src="https://drive.google.com/thumbnail?id=1CNHWeOh7iz_HUh4pBgM99jFzl59csyEC&sz=w1000" alt="latex packages in rmd" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
+
+    2. Alternatively, use `extra_dependencies` to  list a character vector of LaTeX packages. This is useful if you need to load multiple packages:
+
+    ```r
+    ---
+    title: "Untitled"
+    output: 
+      pdf_document:
+        extra_dependencies: ["bbm", "threeparttable"]
+    ---
+    ```
+
+    f you need to specify options when loading the package, you can add a second-level to the list and provide the options as a list:
+
+    ```r
+    ---
+    title: "Untitled"
+    output: 
+      pdf_document:
+        extra_dependencies:
+          caption: ["labelfont={bf}"]
+          hyperref: ["unicode=true", "breaklinks=true"]
+          lmodern: null
+    ---
+    ```
+
+    Here are some examples of LaTeX packages you could consider using within your report:
+
+    - [pdfpages](https://ctan.org/pkg/pdfpages): Include full PDF pages from an external PDF document within your document.
+    - [caption](https://ctan.org/pkg/caption): Change the appearance of caption subtitles. For example, you can make the figure title italic or bold.
+    - [fancyhdr](https://ctan.org/pkg/fancyhdr): Change the style of running headers of all pages.
+
+  - Some options are passed to Pandoc, such as `toc`, `toc_depth`, and `number_sections`. You should consult the [Pandoc documentation](https://pandoc.org/MANUAL.html#variables) when in doubt.
+
+    ```r
+    ---
+    output:
+      pdf_document:
+        toc: true
+    		keep_tex: true
+    ---
+    ```
+
+    - `keep_tex: true`  if you want to keep intermediate TeX. Easy to debug. Defaults to `false`.
+
+
+
+
+
+We can include variables and R expressions in this header that can be referenced throughout our R Markdown document. For example, the following header defines `start_date` and `end_date` parameters, which will be reflected in a list called `params` later in the R Markdown document. 
+
+Thus, if we want to use these values in our R code, we can access them via `params$start_date` and `params$end_date`.
+
+Should I use quotes to surround the values?
+
+- Whenever applicable use the unquoted style since it is the most readable.
+- Use quotes when the value can be misinterpreted as a data type or the value contains a `:`.
+
+```r
+# values need quotes
+foo: '{{ bar }}' # need quotes to avoid interpreting as `dict` object
+foo: '123'       # need quote to avoid interpreting as `int` object
+foo: 'yes'			 # avoid interpreting as `boolean` object
+foo: "bar:baz:bam" # has colon, can be misinterpreted as key
+
+# values need not quotes
+foo: bar1baz234
+bar: 123baz
+```
+
+
+
+## Chunk Options
+
+If you want to set chunk options globally, call `knitr::opts_chunk$set()` in a code chunk (usually the first one in the document), e.g.,
+
+````md
+```{r, label="setup", include=FALSE}
+knitr::opts_chunk$set(
+  comment = "#>", echo = FALSE, fig.width = 6
+)
+```
+````
+
+Full list of chunk options: <https://yihui.org/knitr/options/>
+
+Chunk options can customize nearly all components of code chunks, such as the source code, text output, plots, and the language of the chunk.
+
+
+
+**Other languages are supported in `Rmd`** 
+
+You can list the names of all available engines via:
+
+```r
+names(knitr::knit_engines$get())
+##  [1] "awk"          "bash"         "coffee"      
+##  [4] "gawk"         "groovy"       "haskell"     
+##  [7] "lein"         "mysql"        "node"        
+## [10] "octave"       "perl"         "php"         
+## [13] "psql"         "Rscript"      "ruby"        
+## [16] "sas"          "scala"        "sed"         
+## [19] "sh"           "stata"        "zsh"         
+## [22] "asis"         "asy"          "block"       
+## [25] "block2"       "bslib"        "c"           
+## [28] "cat"          "cc"           "comment"     
+## [31] "css"          "ditaa"        "dot"         
+## [34] "embed"        "eviews"       "exec"        
+## [37] "fortran"      "fortran95"    "go"          
+## [40] "highlight"    "js"           "julia"       
+## [43] "python"       "R"            "Rcpp"        
+## [46] "sass"         "scss"         "sql"         
+## [49] "stan"         "targets"      "tikz"        
+## [52] "verbatim"     "theorem"      "lemma"       
+## [55] "corollary"    "proposition"  "conjecture"  
+## [58] "definition"   "example"      "exercise"    
+## [61] "hypothesis"   "proof"        "remark"      
+## [64] "solution"     "marginfigure"
+```
+
+The engines from `theorem` to `solution` are only available when you use the **bookdown** package, and the rest are shipped with the **knitr** package. 
+
+
+
+To use a different language engine, you can change the language name in the chunk header from `r` to the engine name, e.g.,
+
+~~~r
+```python
+x = 'hello, python world!'
+print(x.split(' '))
+```
+~~~
+
+For engines that rely on external interpreters such as `python`, `perl`, and `ruby`, the default interpreters are obtained from `Sys.which()`, i.e., using the interpreter found via the environment variable `PATH` of the system. If you want to use an alternative interpreter, you may specify its path in the chunk option `engine.path`.
+
+For example, you may want to use Python 3 instead of the default Python 2, and we assume Python 3 is at `/usr/bin/python3` 
+
+````md
+```{python, engine.path = '/usr/bin/python3'}
+import sys
+print(sys.version)
+```
+````
+
+
+
+- All outputs support markdown syntax.
+- If the output is html, you can write in html syntax. 
+
+
+
+The **chunk label** for each chunk is assumed to be unique within the document. This is especially important for cache and plot filenames, because these filenames are based on chunk labels. Chunks without labels will be assigned labels like `unnamed-chunk-i`, where `i` is an incremental number.
+
+- Chunk label doesn't need a `tag`, i.e., you only provide the `value`. 
+
+- If you prefer the form `tag=value`, you could also use the chunk option `label` explicitly, e.g., 
+
+  ````md
+  ```{r, label='my-chunk'}
+  # one code chunk example
+  ```
+  ````
+
+
+
+You may use `knitr::opts_chunk$set()` to change the default values of chunk options in a document. 
+
+**Commonly used chunk options**
+
+- Complete list [here](https://yihui.org/knitr/options/). Or `?opts_chunk` to get the help page.
+
+| Options              | Definitions                                                  |
+| -------------------- | ------------------------------------------------------------ |
+| `echo=TRUE`          | Whether to display the **source code** in the output document.<br />Use this when you want to show the output but not the code itself. |
+| `eval=TRUE`          | Whether to evaluate the code chunk.                          |
+| `include=TRUE`       | Whether to include the <span style='color:#32CD32'>chunk **output**</span> in the output document. <br />If `FALSE`, nothing will be written into the output document, but the code is still evaluated and plot files are generated if there are any plots in the chunk, so you can manually insert figures later. |
+| `message=TRUE`       | Whether to preserve messages emitted by `message()`          |
+| `warning=TRUE`       | Whether to show warnings in the output produced by `warning()`. |
+| `results='markup'`   | Controls how to display the text results. <br />When `results='markup'` that is to write text output as-is, i.e., write the raw text results directly into the output document without any markups.<br />Useful when priting `stargazer` tables. |
+| `comment='##'`       | The prefix to be added before each line of the text output. <br />Set `comment = ''` remove the default `##`. |
+| `fig.keep='high'`    | How plots in chunks should be kept. <br />`high`: Only keep high-level plots (merge low-level changes into high-level plots). <br />`none`: Discard all plots. <br />`all`: Keep all plots (low-level plot changes may produce new plots). <br />`first`: Only keep the first plot. <br />`last`: Only keep the last plot. <br />If set to a numeric vector, the values are indices of (low-level) plots to keep.<br />If you want to choose the second to the fourth plots, you could use `fig.keep = 2:4` (or remove the first plot via `fig.keep = -1`). |
+| `fig.align="center"` | Figure alignment.                                            |
+| `fig.pos="H"`        | A character string for the figure position arrangement to be used in `\begin{figure}[]`. |
+| `fig.cap`            | Figure caption.                                              |
+
+
+
+<span style='color:#32CD32'>`results='markup'`</span>  note plural form for result**s**.
+
+- `markup`: Default. Mark up text output with the appropriate environments depending on the output format. For example, for R Markdown, if the text output is a character string `"[1] 1 2 3"`, the actual output that **knitr** produces will be:
+
+  ~~~r
+  ```
+  [1] 1 2 3
+  ```
+  ~~~
+
+  In this case, `results='markup'` means to put the text output in fenced code blocks (```).
+
+- `asis`: Write text output as-is, i.e., write the raw text results directly into the output document without any markups.
+
+  ````md
+  ```{r, results='asis'}
+  cat("I'm raw **Markdown** content.\n")
+  ```
+  ````
+  
+
+  Sometime, you encounter the following error messages when you have R codes within `enumerate` environment.
+
+  > You can't use `macro parameter character #` in horizontal mode.
+
+  By default, knitr prefixes R output with `##`, which can't be present in your TeX file. 
+
+  Solution:
+
+  - specify `results="asis"` in code chunks.
+
+- `hold`: Hold all pieces of text output in a chunk and flush them to the end of the chunk.
+
+- `hide` (or `FALSE`): Hide text output.
+
+
+
+___
+
+## Print Verbatim R code chunks
+
+**Including verbatim R code chunks inside R Markdown**
+
+One solution for including verbatim R code chunks (see below for more) is to insert hidden inline R code (`` `r
+  ''` ``) immediately <u>before or after</u> your R code chunk. 
+
+- The hidden inline R code will be evaluated as an inline expression to an empty string by knitr.
+
+Then wrap the whole block within a markdown code block. The rendered output will display the verbatim R code chunk — including backticks.
+
+R code generating the four backticks block:
+
+```r 
+output_code <-
+"````markdown
+```{r}
+plot(cars)
+``` \n````"
+cat(output_code)
+```
+
+
+Write this code in your R Markdown document:
+
+
+`````
+````markdown
+`r ''````{r}
+plot(cars)
+``` 
+````
+`````
+
+
+or
+
+
+`````
+````markdown
+```{r}`r ''`
+plot(cars)
+``` 
+````
+`````
+
+
+Knit the document and the code will render like this in your output:
+
+````md
+```{r}
+plot(cars)
+```
+````
+
+**References**:
+
+https://yihui.org/en/2017/11/knitr-verbatim-code-chunk/
+
+https://support.posit.co/hc/en-us/articles/360018181633-Including-verbatim-R-code-chunks-inside-R-Markdown
+
+https://themockup.blog/posts/2021-08-27-displaying-verbatim-code-chunks-in-xaringan-presentations/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

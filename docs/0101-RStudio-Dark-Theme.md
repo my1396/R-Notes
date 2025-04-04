@@ -91,7 +91,8 @@ Failed with error:  ‘there is no package called ‘ggplot3’’
 
 To see whether need to install some packages:
 
-```{r eval=F}
+
+```r
 if (!requireNamespace("devtools")) install.packages("devtools")
 ```
 
@@ -344,9 +345,7 @@ Before you start coding, make sure that you are on the correct branch. You may c
 -   from the Git tab on the Environment, History, Connections, ... pane
 -   you can also see from the status bar on the very top of the window. The words are formatted as "Projection Name – Branch – RStudio".
 
-```{r out.width = "100%", eval=TRUE, echo=FALSE}
-knitr::include_graphics("images/R git branch.png")
-```
+<img src="images/R git branch.png" width="100%" />
 
 Choose a License for your repo
 
