@@ -119,7 +119,7 @@
 
 \title{R Notes}
 \author{John Doe}
-\date{2025-04-04}
+\date{2025-04-06}
 
 \begin{document}
 \maketitle
@@ -193,7 +193,7 @@ function
 \endlastfoot
 opt + \_ & insert assignment operator \texttt{\textless{}-} \\
 ESC or ctrl + C & exit \texttt{+} prompt \\
-ctrl + shift + m & add pipe operator ``\%\textgreater\%'' \\
+⇧ + ⌘ + M & Add magrittr's pipe operator ``\%\textgreater\%''After R4.1, you can set this too native pipe \texttt{\textbar{}\textgreater{}} \\
 {ctrl + \texttt{{[}}/\texttt{{]}}} & indent or unindent \\
 cmd + D & delete one row \\
 cmd + 1 & move cursor to console window \\
@@ -467,6 +467,37 @@ Now go to Tools \textgreater{} Modify Keyboard Shortcuts and search for ``dashes
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
+\textbf{Tips and Tricks}
+
+\begin{itemize}
+\item
+  To add comments to a function, you can type ``Roxygen comment'' into the Command Palette (⇧+⌘+P) while the cursor is in a function and it will automatically add a template structure for writing a comment about your function.
+
+  Keyboard shortcut: ⇧⌥⌘R
+\item
+  Snippets are a way to make a shortcut for inserting text based on a ``code''.
+
+  To find the snippets and edit them, use the Palette (\texttt{Cmd-Shift-P}) and type ``edit snippets''. There you will find some predefined snippets. You can also create your own.
+
+  For instance, when in an R script (or code chunk), typing ``fun'' followed by pressing \texttt{Tab}, a template for a function will be inserted that looks like:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{name }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(variables) \{}
+
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+  You can just fill in the name of the function, then press \texttt{Tab} to move to the variables, change the name, then press \texttt{Tab} again to move to the function code area and write your function without moving your fingers from the keyboard.
+\item
+  Show argument definitions as you type functions.
+
+  When you type an existing R function such as \texttt{round(}, not only does \texttt{tab} give you the options, but there's an explanation beneath each variable, telling you its role in the function:
+\end{itemize}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
 \section{Dark Theme}\label{dark-theme}
 
 \url{https://community.rstudio.com/t/fvaleature-req-word-background-highlight-color-in-find-and-spellcheck/18578/3}
@@ -474,6 +505,16 @@ Now go to Tools \textgreater{} Modify Keyboard Shortcuts and search for ``dashes
 \url{https://rstudio.github.io/rstudio-extensions/rstudio-theme-creation.html}
 
 \url{https://docs.posit.co/ide/user/ide/guide/ui/appearance.html\#creating-custom-themes-for-rstudio}
+
+Theme repositories
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{rstudiothemes}: \url{https://github.com/max-alletsee/rstudio-themes}
+\item
+  \texttt{rsthemes}: \url{https://www.garrickadenbuie.com/project/rsthemes/}
+\end{itemize}
 
 \texttt{.ace\_marker-layer\ .ace\_selection} Changes the color and style of the highlighting for the currently selected line or block of lines.
 
@@ -509,6 +550,53 @@ Custom theme (user-defined) folder:
 \NormalTok{\}}
 \end{Highlighting}
 \end{Shaded}
+
+A collection of screenshots of default RStudio themes: \url{https://www.trifields.jp/list-of-rstudio-editor-themes-2520}
+
+\textbf{Install custom themes}
+
+\begin{itemize}
+\item
+  Using \texttt{rstudiothemes} pkg
+
+  Go to the \href{https://github.com/max-alletsee/rstudio-themes?tab=readme-ov-file}{repository} to see which theme you want to use. Then install the theme. Themes can be applied to RStudio via ``Tools'' - ``Global Options'' - ``Appearance'' - ``Add Theme''.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# install the pseudo{-}package from this Github repository}
+\NormalTok{devtools}\SpecialCharTok{::}\FunctionTok{install\_github}\NormalTok{(}\StringTok{"max{-}alletsee/rstudio{-}themes"}\NormalTok{)}
+
+\FunctionTok{library}\NormalTok{(rstudiothemes) }\CommentTok{\# ... then load the library}
+
+\CommentTok{\# example 1: bulk{-}install all light themes}
+\FunctionTok{install\_rstudio\_themes}\NormalTok{(}\AttributeTok{theme =} \StringTok{"all\_light"}\NormalTok{)}
+
+\CommentTok{\# example 2: install two specific light themes}
+\FunctionTok{install\_rstudio\_themes}\NormalTok{(}\AttributeTok{theme =} \FunctionTok{c}\NormalTok{(}\StringTok{"Ayu Light"}\NormalTok{, }\StringTok{"Github \{rsthemes\}"}\NormalTok{))}
+
+\CommentTok{\# examplease 3: install one specific dark theme}
+\FunctionTok{install\_rstudio\_themes}\NormalTok{(}\AttributeTok{theme =} \StringTok{"49th Parallel"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+\item
+  Using \texttt{rstudioapi} package's \href{https://rdrr.io/cran/rstudioapi/man/addTheme.html}{``addTheme'' function}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# create temporary download directory}
+\NormalTok{theme\_49th\_parallel }\OtherTok{\textless{}{-}}\NormalTok{ fs}\SpecialCharTok{::}\FunctionTok{path\_temp}\NormalTok{(}\StringTok{"49th\_parallel{-}RStudio"}\NormalTok{, }
+                                     \AttributeTok{ext =} \StringTok{"rstheme"}\NormalTok{)}
+
+\CommentTok{\# download theme from github}
+\FunctionTok{download.file}\NormalTok{(}\StringTok{"https://raw.githubusercontent.com/wvictor14/rstudio\_themes/master/49th\%20Parallel.rstheme"}\NormalTok{, }
+\NormalTok{              theme\_49th\_parallel)}
+
+\CommentTok{\# apply the theme}
+\NormalTok{rstudioapi}\SpecialCharTok{::}\FunctionTok{addTheme}\NormalTok{(theme\_49th\_parallel, }
+                     \AttributeTok{apply =} \ConstantTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+\end{itemize}
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
@@ -998,6 +1086,10 @@ Ref: \href{https://docs.posit.co/ide/user/ide/guide/ui/ui-panes.html\#:~:text=fo
 
   In ``Tools -\textgreater{} Global Options -\textgreater{} Code -\textgreater{} Display'', check ``Show whitespace characters''. This will let you see spaces and newlines in the editor.
 \end{itemize}
+
+References:
+
+\url{https://coding-club.rostools.org/posts/tips-and-tricks/}
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 

@@ -6,6 +6,11 @@
 
 <https://docs.posit.co/ide/user/ide/guide/ui/appearance.html#creating-custom-themes-for-rstudio>
 
+Theme repositories
+
+- `rstudiothemes`: <https://github.com/max-alletsee/rstudio-themes>
+- `rsthemes`: <https://www.garrickadenbuie.com/project/rsthemes/>
+
 `.ace_marker-layer .ace_selection` Changes the color and style of the highlighting for the currently selected line or block of lines.
 
 `.ace_marker-layer .ace_bracket` Changes the color and style of the highlighting on matching brackets.
@@ -33,6 +38,54 @@ Custom theme (user-defined) folder:
   color: #55C667;
 }
 ```
+
+A collection of screenshots of default RStudio themes: <https://www.trifields.jp/list-of-rstudio-editor-themes-2520>
+
+
+
+
+
+**Install custom themes**
+
+- Using `rstudiothemes` pkg
+
+  Go to the [repository](https://github.com/max-alletsee/rstudio-themes?tab=readme-ov-file) to see which theme you want to use. Then install the theme. Themes can be applied to RStudio via “Tools” - “Global Options” - “Appearance” - “Add Theme”.
+
+  ```r
+  # install the pseudo-package from this Github repository
+  devtools::install_github("max-alletsee/rstudio-themes")
+  
+  library(rstudiothemes) # ... then load the library
+  
+  # example 1: bulk-install all light themes
+  install_rstudio_themes(theme = "all_light")
+  
+  # example 2: install two specific light themes
+  install_rstudio_themes(theme = c("Ayu Light", "Github {rsthemes}"))
+  
+  # examplease 3: install one specific dark theme
+  install_rstudio_themes(theme = "49th Parallel")
+  ```
+
+- Using `rstudioapi` package's  [“addTheme” function](https://rdrr.io/cran/rstudioapi/man/addTheme.html)
+
+  ```r
+  # create temporary download directory
+  theme_49th_parallel <- fs::path_temp("49th_parallel-RStudio", 
+                                       ext = "rstheme")
+  
+  # download theme from github
+  download.file("https://raw.githubusercontent.com/wvictor14/rstudio_themes/master/49th%20Parallel.rstheme", 
+                theme_49th_parallel)
+  
+  # apply the theme
+  rstudioapi::addTheme(theme_49th_parallel, 
+                       apply = TRUE)
+  ```
+
+  
+
+
 
 ------------------------------------------------------------------------
 
@@ -433,6 +486,12 @@ Ref: [RStudio Pane Layout][pane-layout]
 - Show whitespace characters. 
 
   In "Tools -> Global Options -> Code -> Display", check "Show whitespace characters". This will let you see spaces and newlines in the editor.
+
+
+
+References:
+
+<https://coding-club.rostools.org/posts/tips-and-tricks/>
 
 
 

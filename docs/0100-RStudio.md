@@ -13,7 +13,7 @@ Command Palette: ⇧+⌘+P, all shortcuts can be accessed via the Command Palett
 |-----------------------------------|-------------------------------------|
 | opt + \_ | insert assignment operator `<-` |
 | ESC or ctrl + C | exit `+` prompt |
-| ctrl + shift + m | add pipe operator "%\>%" |
+| ⇧ + ⌘ + M | Add magrittr's pipe operator "%\>%"<br />After R4.1, you can set this too native pipe `|>` |
 | [ctrl + `[`/`]`]{style="color:#008B45FF"} | indent or unindent |
 | cmd + D | delete one row |
 | cmd + 1 | move cursor to console window |
@@ -208,3 +208,34 @@ install.packages(
 Now go to Tools \> Modify Keyboard Shortcuts and search for "dashes". Here you can define the keyboard combination by clicking inside the empty Shortcut field and pressing the desired key-combination on your keyboard. Click Apply, and that's it!
 
 ------------------------------------------------------------------------
+
+**Tips and Tricks**
+
+- To add comments to a function, you can type “Roxygen comment” into the Command Palette (⇧+⌘+P) while the cursor is in a function and it will automatically add a template structure for writing a comment about your function.
+
+  Keyboard shortcut: ⇧⌥⌘R
+
+- Snippets are a way to make a shortcut for inserting text based on a “code”.
+
+  To find the snippets and edit them, use the Palette (`Cmd-Shift-P`) and type “edit snippets”. There you will find some predefined snippets. You can also create your own.
+
+  For instance, when in an R script (or code chunk), typing “fun” followed by pressing `Tab`, a template for a function will be inserted that looks like:
+
+  ```r
+  name <- function(variables) {
+      
+  }
+  ```
+
+  You can just fill in the name of the function, then press `Tab` to move to the variables, change the name, then press `Tab` again to move to the function code area and write your function without moving your fingers from the keyboard.
+
+- Show argument definitions as you type functions.
+
+  When you type an existing R function such as `round(`, not only does `tab` give you the options, but there's an explanation beneath each variable, telling you its role in the function:
+
+  <img src="https://i.sstatic.net/tesBV.png" alt="Function Documentation" style="display: block; margin-right: auto; margin-left: auto; zoom:100%;" />
+
+
+
+___
+
