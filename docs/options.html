@@ -4,13 +4,13 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>2.2 Update R | R Notes</title>
+  <title>2.7 Options | R Notes</title>
   <meta name="description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
 set in the _output.yml file.</p>" />
   <meta name="generator" content="bookdown 0.35 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="2.2 Update R | R Notes" />
+  <meta property="og:title" content="2.7 Options | R Notes" />
   <meta property="og:type" content="book" />
   
   <meta property="og:description" content="<p>This is a minimal example of using the bookdown package to write a book.
@@ -19,7 +19,7 @@ set in the _output.yml file.</p>" />
   <meta name="github-repo" content="my1396/R-Notes" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="2.2 Update R | R Notes" />
+  <meta name="twitter:title" content="2.7 Options | R Notes" />
   
   <meta name="twitter:description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
@@ -36,8 +36,8 @@ set in the _output.yml file.</p>" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   <link rel="shortcut icon" href="images/r-project-favicon.ico" type="image/x-icon" />
-<link rel="prev" href="dark-theme.html"/>
-<link rel="next" href="packages-management.html"/>
+<link rel="prev" href="save-r-workspace.html"/>
+<link rel="next" href="knit-rmd.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -212,29 +212,81 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="update-r" class="section level2 hasAnchor" number="2.2">
-<h2><span class="header-section-number">2.2</span> Update R<a href="update-r.html#update-r" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>Q: How to tell which version of R you are running?<br />
-A: In the R terminal, type <code>R.version</code>.</p>
-<p>The key thing to be aware of is that when you update R, <span style="color:#FF9900">if you just download the latest version from the website, you will lose all your packages!</span> ❌</p>
-<p>The easiest way to update R and not cause yourself a huge headache is to use the <code>installr</code> package. When you use the <code>updateR()</code> function, a series of dialogue boxes will appear. These should be fairly self-explanatory but there is a <a href="https://www.r-statistics.com/2015/06/a-step-by-step-screenshots-tutorial-for-upgrading-r-on-windows/#google_vignette" title="Guide to update R with `installr`">full step-by-step guide</a> available for how to use <code>installr</code>, the important bit is to <span style="color:#00CC66">select “Yes” when it asked if you would like to copy your packages from the older version of R</span>.</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="update-r.html#cb14-1" tabindex="-1"></a><span class="co"># Install the installr package</span></span>
-<span id="cb14-2"><a href="update-r.html#cb14-2" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;installr&quot;</span>)</span>
-<span id="cb14-3"><a href="update-r.html#cb14-3" tabindex="-1"></a></span>
-<span id="cb14-4"><a href="update-r.html#cb14-4" tabindex="-1"></a><span class="co"># Load installr</span></span>
-<span id="cb14-5"><a href="update-r.html#cb14-5" tabindex="-1"></a><span class="fu">library</span>(installr)</span>
-<span id="cb14-6"><a href="update-r.html#cb14-6" tabindex="-1"></a></span>
-<span id="cb14-7"><a href="update-r.html#cb14-7" tabindex="-1"></a><span class="co"># Run the update function</span></span>
-<span id="cb14-8"><a href="update-r.html#cb14-8" tabindex="-1"></a><span class="fu">updateR</span>()</span></code></pre></div>
-<hr />
+<div id="options" class="section level2 hasAnchor" number="2.7">
+<h2><span class="header-section-number">2.7</span> Options<a href="options.html#options" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p><strong><code>getOption(x)</code></strong> Allow the user to set and examine a variety of global <em>options</em> which affect the way in which <strong>R computes and displays its results.</strong> Use <code>getOption</code> to check default values of global options.</p>
+<ul>
+<li><code>x</code> a <span style="color:#00CC66">character string </span>holding an option name, must be <span style="color:#00CC66">quoted in quotes</span></li>
+<li>Can only query one option at a time. If multiple options are given, will return the value of the first option.</li>
+</ul>
+<p><strong><code>options(...)</code></strong> query and modify global options.</p>
+<ul>
+<li><p><code>...</code> any options can be defined, using <code>name = value</code>.</p>
+<p>Note that you do <span style="color:#00CC66">NOT need to quote your option name</span> here!</p></li>
+<li><p><code>options()</code> with no arguments returns a list with the current values of the options.</p></li>
+<li><p><code>options("name")</code> can be used to examine options’ current value too; return a <em>list</em>, whereas <code>getOption("name")</code> returns the value only.</p>
+<ul>
+<li><p>Note that you need to quote the option name when you do queries.</p></li>
+<li><p>You can query more than one options at a time.</p>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="options.html#cb39-1" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">options</span>(<span class="st">&quot;width&quot;</span>, <span class="st">&quot;digits&quot;</span>)</span>
+<span id="cb39-2"><a href="options.html#cb39-2" tabindex="-1"></a><span class="sc">$</span>width</span>
+<span id="cb39-3"><a href="options.html#cb39-3" tabindex="-1"></a>[<span class="dv">1</span>] <span class="dv">90</span></span>
+<span id="cb39-4"><a href="options.html#cb39-4" tabindex="-1"></a></span>
+<span id="cb39-5"><a href="options.html#cb39-5" tabindex="-1"></a><span class="sc">$</span>digits</span>
+<span id="cb39-6"><a href="options.html#cb39-6" tabindex="-1"></a>[<span class="dv">1</span>] <span class="dv">7</span></span>
+<span id="cb39-7"><a href="options.html#cb39-7" tabindex="-1"></a></span>
+<span id="cb39-8"><a href="options.html#cb39-8" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">getOption</span>(<span class="st">&quot;width&quot;</span>, <span class="st">&quot;digits&quot;</span>)</span>
+<span id="cb39-9"><a href="options.html#cb39-9" tabindex="-1"></a>[<span class="dv">1</span>] <span class="dv">90</span></span></code></pre></div></li>
+</ul></li>
+</ul>
+<p><strong><code>?options</code></strong> to get the help page of global options. To check which options are available and their definitions.</p>
+<p><strong>Use examples</strong></p>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="options.html#cb40-1" tabindex="-1"></a><span class="do">## Two ways checking default option values</span></span>
+<span id="cb40-2"><a href="options.html#cb40-2" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">options</span>(<span class="st">&quot;width&quot;</span>)</span>
+<span id="cb40-3"><a href="options.html#cb40-3" tabindex="-1"></a><span class="sc">$</span>width</span>
+<span id="cb40-4"><a href="options.html#cb40-4" tabindex="-1"></a>[<span class="dv">1</span>] <span class="dv">81</span></span>
+<span id="cb40-5"><a href="options.html#cb40-5" tabindex="-1"></a></span>
+<span id="cb40-6"><a href="options.html#cb40-6" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">getOption</span>(<span class="st">&quot;width&quot;</span>)</span>
+<span id="cb40-7"><a href="options.html#cb40-7" tabindex="-1"></a>[<span class="dv">1</span>] <span class="dv">81</span></span>
+<span id="cb40-8"><a href="options.html#cb40-8" tabindex="-1"></a></span>
+<span id="cb40-9"><a href="options.html#cb40-9" tabindex="-1"></a><span class="do">## Change option values</span></span>
+<span id="cb40-10"><a href="options.html#cb40-10" tabindex="-1"></a><span class="co"># use name=value</span></span>
+<span id="cb40-11"><a href="options.html#cb40-11" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">options</span>(<span class="at">width=</span><span class="dv">80</span>, <span class="at">digits=</span><span class="dv">15</span>) <span class="co"># set print width, digits to print for numeric values using name=value paris</span></span>
+<span id="cb40-12"><a href="options.html#cb40-12" tabindex="-1"></a><span class="co"># use a named list</span></span>
+<span id="cb40-13"><a href="options.html#cb40-13" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">options</span>(<span class="fu">list</span>(<span class="at">width=</span><span class="dv">80</span>, <span class="at">digits=</span><span class="dv">15</span>)) </span></code></pre></div>
+<p>Commonly used global options:</p>
+<table>
+<colgroup>
+<col width="17%" />
+<col width="82%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>width</td>
+<td>Controls the maximum number of columns <u>on a line</u> used in printing vectors, matrices and arrays, and when filling by <code>cat</code>. Defaults to 80.<br />Don’t change this if you want to print more columns. Use <span style="color:#00CC66"><code>options(tibble.width=400)</code></span> instead.</td>
+</tr>
+<tr class="even">
+<td>pillar.sigfig</td>
+<td>Tibbles print numbers with three significant digits by default, switching to scientific notation if the available space is too small.<br /><code>options(pillar.sigfig = 4)</code> to increase the number of digits printed out</td>
+</tr>
+</tbody>
+</table>
+
 </div>
+<!-- </div> -->
             </section>
 
           </div>
         </div>
       </div>
-<a href="dark-theme.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="packages-management.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="save-r-workspace.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="knit-rmd.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -265,7 +317,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/my1396/R-Notes/edit/main/0101-RStudio-Dark-Theme.Rmd",
+"link": "https://github.com/my1396/R-Notes/edit/main/0102-RStudio-Options.Rmd",
 "text": "Edit"
 },
 "history": {
@@ -276,7 +328,7 @@ gitbook.start({
 "link": null,
 "text": null
 },
-"download": ["_main.pdf", "_main.epub", "https://github.com/my1396/R-Notes/raw/main/0101-RStudio-Dark-Theme.Rmd"],
+"download": ["_main.pdf", "_main.epub", "https://github.com/my1396/R-Notes/raw/main/0102-RStudio-Options.Rmd"],
 "search": {
 "engine": "fuse",
 "options": null
