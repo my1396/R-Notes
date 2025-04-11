@@ -7,7 +7,8 @@
 Nice documentations 
 
 - [R markdown: The definitive guide.](https://bookdown.org/yihui/rmarkdown)  provides detailed references
-- [R markdown cookbook](https://bookdown.org/yihui/rmarkdown-cookbook/) concise and covers essential functions, with examples.
+- [R markdown cookbook](https://bookdown.org/yihui/rmarkdown-cookbook/): concise and covers essential functions, with examples.
+- [Authoring Books with R Markdown](https://bookdown.org/yihui/bookdown/): with a focus on `bookdown`.
 
 
 
@@ -410,6 +411,20 @@ You may use `knitr::opts_chunk$set()` to change the default values of chunk opti
 ___
 
 ## Print Verbatim R code chunks
+
+**verbatim in line code**
+
+- use `knitr::inline_expr`.
+
+``````markdown
+---
+title: "Test inline expr"
+output: html_document
+---
+
+To use `chunk_reveal("walrus", title = "## Walrus operator")` inline, you can wrap it in R inline chunk like this `` `r chunk_reveal("walrus", title = "## Walrus operator")` ``
+``````
+
 
 **Including verbatim R code chunks inside R Markdown**
 

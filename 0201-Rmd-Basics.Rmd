@@ -84,13 +84,43 @@ Rmd built-in themes for `html` output: <https://rstudio4edu.github.io/rstudio4ed
   <!-- regular html comment --> 
   ```
 
-  
+--------------------------------------------------------------------------------
 
 **Link to an external javascript**
 
 ```html
 <SCRIPT language="JavaScript" SRC="my_jxscript.js"></SCRIPT>
 ```
+
+
+--------------------------------------------------------------------------------
+
+**Tips**:
+
+- In general, you'd better <u>leave at least one empty line</u> between adjacent but different elements, e.g., a header and a paragraph. This is to avoid ambiguity to the Markdown renderer. 
+
+  For example, the `-` in the list below cannot be recognized as a bullet point. You need to add a black line before the bullet list.
+
+  ```markdown
+  The result of 5
+  - 3 is 2.
+  ```
+
+  **Different flavors of Markdown** may produce different results if there are no blank lines. 🙈🙈
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

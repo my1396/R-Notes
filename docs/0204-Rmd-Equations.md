@@ -78,6 +78,44 @@ If you want to provide a specific number to the equation, you can use `\tag{XX.X
 --------------------------------------------------------------------------------
 
 
+**Color eqns** using `\color{#00CC66}{...}`. 
+
+But sometime everything follows gets colored. You may want to use `{\color{#00CC66} ... }` instead.
+
+```latex
+$$
+\color{#008B45}{Y_t} = I_tI_{t-1} + (1-I_t)(1-I_{t-1})
+$$
+```
+
+\begin{align*}
+{\color{red}Y_t} = I_tI_{t-1} + (1-I_t)(1-I_{t-1})
+\end{align*}
+
+- This only works for color names, not hex code starting with `#` as html needs the `#` then 6 characters to denote a color, but LaTeX package `xcolor` specifically excludes `#` from specifying the color.
+
+- Here is an \textcolor[HTML]{00CC66}{inline colored example for LaTeX output} (only works for LaTeX).
+
+
+**A workaround**: We can write a custom R function to insert the correct syntax depending on the output format using the `is_latex_output()` and `is_html_output()` functions in knitr as follows:
+
+
+```r
+colorize <- function(x, color) {
+  if (knitr::is_latex_output()) {
+    sprintf("\\textcolor{%s}{%s}", color, x)
+  } else if (knitr::is_html_output()) {
+    sprintf("<span style='color: %s;'>%s</span>", color,
+      x)
+  } else x
+}
+```
+    
+    
+We can then use the code in an inline R expression `` `r colorize("some words in red", "red")` ``, which will create <span style='color: red;'>some words in red</span>, which works for both html and .
+
+
+--------------------------------------------------------------------------------
 
 
 

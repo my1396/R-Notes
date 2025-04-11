@@ -106,20 +106,21 @@
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 \setcounter{secnumdepth}{5}
 \usepackage{booktabs}
+\usepackage{xcolor}
 \usepackage[]{natbib}
 \bibliographystyle{plainnat}
 \usepackage{bookmark}
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
 \urlstyle{same}
 \hypersetup{
-  pdftitle={Cross References},
+  pdftitle={R Notes},
   pdfauthor={John Doe},
   hidelinks,
   pdfcreator={LaTeX via pandoc}}
 
-\title{Cross References}
+\title{R Notes}
 \author{John Doe}
-\date{2025-04-11}
+\date{2025-04-12}
 
 \begin{document}
 \maketitle
@@ -1459,7 +1460,9 @@ Nice documentations
 \item
   \href{https://bookdown.org/yihui/rmarkdown}{R markdown: The definitive guide.} provides detailed references
 \item
-  \href{https://bookdown.org/yihui/rmarkdown-cookbook/}{R markdown cookbook} concise and covers essential functions, with examples.
+  \href{https://bookdown.org/yihui/rmarkdown-cookbook/}{R markdown cookbook}: concise and covers essential functions, with examples.
+\item
+  \href{https://bookdown.org/yihui/bookdown/}{Authoring Books with R Markdown}: with a focus on \texttt{bookdown}.
 \end{itemize}
 
 Q: What is the difference between Rmd and R script?\\
@@ -1965,6 +1968,25 @@ Definitions
 
 \section{Print Verbatim R code chunks}\label{print-verbatim-r-code-chunks}
 
+\textbf{verbatim in line code}
+
+\begin{itemize}
+\tightlist
+\item
+  use \texttt{knitr::inline\_expr}.
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{{-}{-}{-}}
+\AnnotationTok{title:}\CommentTok{ "Test inline expr"}
+\AnnotationTok{output:}\CommentTok{ html\_document}
+\CommentTok{{-}{-}{-}}
+
+\NormalTok{To use }\InformationTok{\textasciigrave{}chunk\_reveal("walrus", title = "\#\# Walrus operator")\textasciigrave{}}\NormalTok{ inline, you can wrap it in R inline chunk like this \textasciigrave{}}\InformationTok{\textasciigrave{} \textasciigrave{}}\NormalTok{r chunk\_reveal("walrus", title = "\#\# Walrus operator")\textasciigrave{} \textasciigrave{}\textasciigrave{}}
+\end{Highlighting}
+\end{Shaded}
+
 \textbf{Including verbatim R code chunks inside R Markdown}
 
 One solution for including verbatim R code chunks (see below for more) is to insert hidden inline R code (\texttt{\textasciigrave{}r\ \ \ \textquotesingle{}\textquotesingle{}\textasciigrave{}}) immediately before or after your R code chunk.
@@ -2224,6 +2246,8 @@ Rmd built-in themes for \texttt{html} output: \url{https://rstudio4edu.github.io
 \end{Shaded}
 \end{itemize}
 
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
 \textbf{Link to an external javascript}
 
 \begin{Shaded}
@@ -2231,6 +2255,26 @@ Rmd built-in themes for \texttt{html} output: \url{https://rstudio4edu.github.io
 \DataTypeTok{\textless{}}\KeywordTok{SCRIPT}\OtherTok{ language}\OperatorTok{=}\StringTok{"JavaScript"}\OtherTok{ SRC}\OperatorTok{=}\StringTok{"my\_jxscript.js"}\DataTypeTok{\textgreater{}\textless{}/}\KeywordTok{SCRIPT}\DataTypeTok{\textgreater{}}
 \end{Highlighting}
 \end{Shaded}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\textbf{Tips}:
+
+\begin{itemize}
+\item
+  In general, you'd better leave at least one empty line between adjacent but different elements, e.g., a header and a paragraph. This is to avoid ambiguity to the Markdown renderer.
+
+  For example, the \texttt{-} in the list below cannot be recognized as a bullet point. You need to add a black line before the bullet list.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{The result of 5}
+\SpecialStringTok{{-} }\NormalTok{3 is 2.}
+\end{Highlighting}
+\end{Shaded}
+
+  \textbf{Different flavors of Markdown} may produce different results if there are no blank lines. 🙈🙈
+\end{itemize}
 
 \section{Citing References}\label{citing-references}
 
@@ -2597,6 +2641,215 @@ If you want to provide a specific number to the equation, you can use \texttt{\t
 \end{itemize}
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\textbf{Color eqns} using \texttt{\textbackslash{}color\{\#00CC66\}\{...\}}.
+
+But sometime everything follows gets colored. You may want to use \texttt{\{\textbackslash{}color\{\#00CC66\}\ ...\ \}} instead.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\SpecialStringTok{$$}
+\SpecialCharTok{\textbackslash{}color}\SpecialStringTok{\{\#008B45\}\{Y\_t\} = I\_tI\_\{t{-}1\} + (1{-}I\_t)(1{-}I\_\{t{-}1\})}
+\SpecialStringTok{$$}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{align*}
+{\color{red}Y_t} = I_tI_{t-1} + (1-I_t)(1-I_{t-1})
+\end{align*}
+
+\begin{itemize}
+\item
+  This only works for color names, not hex code starting with \texttt{\#} as html needs the \texttt{\#} then 6 characters to denote a color, but LaTeX package \texttt{xcolor} specifically excludes \texttt{\#} from specifying the color.
+\item
+  Here is an \textcolor[HTML]{00CC66}{inline colored example for LaTeX output} (only works for LaTeX).
+\end{itemize}
+
+\textbf{A workaround}: We can write a custom R function to insert the correct syntax depending on the output format using the \texttt{is\_latex\_output()} and \texttt{is\_html\_output()} functions in knitr as follows:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{colorize }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(x, color) \{}
+  \ControlFlowTok{if}\NormalTok{ (knitr}\SpecialCharTok{::}\FunctionTok{is\_latex\_output}\NormalTok{()) \{}
+    \FunctionTok{sprintf}\NormalTok{(}\StringTok{"}\SpecialCharTok{\textbackslash{}\textbackslash{}}\StringTok{textcolor\{\%s\}\{\%s\}"}\NormalTok{, color, x)}
+\NormalTok{  \} }\ControlFlowTok{else} \ControlFlowTok{if}\NormalTok{ (knitr}\SpecialCharTok{::}\FunctionTok{is\_html\_output}\NormalTok{()) \{}
+    \FunctionTok{sprintf}\NormalTok{(}\StringTok{"\textless{}span style=\textquotesingle{}color: \%s;\textquotesingle{}\textgreater{}\%s\textless{}/span\textgreater{}"}\NormalTok{, color,}
+\NormalTok{      x)}
+\NormalTok{  \} }\ControlFlowTok{else}\NormalTok{ x}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+We can then use the code in an inline R expression \texttt{\textasciigrave{}r\ colorize("some\ words\ in\ red",\ "red")\textasciigrave{}}, which will create \textcolor{red}{some words in red}, which works for both html and .
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\section{\texorpdfstring{Numbered \texttt{proof} environment}{Numbered proof environment}}\label{numbered-proof-environment}
+
+\url{https://stackoverflow.com/questions/50379923/bookdown-remark-environment}
+
+Language internationalization: \url{https://bookdown.org/yihui/bookdown/internationalization.html}
+
+Theorem environments in the \href{https://bookdown.org/yihui/bookdown/markdown-extensions-by-bookdown.html\#tab:theorem-envs}{\texttt{bookdown} package}.
+
+\begin{longtable}[]{@{}lll@{}}
+\toprule\noalign{}
+Environment & Printed Name & Label Prefix \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\texttt{theorem} & Theorem & thm \\
+\texttt{lemma} & Lemma & lem \\
+\texttt{corollary} & Corollary & cor \\
+\texttt{proposition} & Proposition & prp \\
+\texttt{conjecture} & Conjecture & cnj \\
+\texttt{definition} & Definition & def \\
+\texttt{example} & Example & exm \\
+\texttt{exercise} & Exercise & exr \\
+\texttt{hypothesis} & Hypothesis & hyp \\
+\end{longtable}
+
+\begin{itemize}
+\tightlist
+\item
+  Definition : an explanation of the mathematical meaning of a word.
+\item
+  Theorem : A statement that has been proven to be true.
+\item
+  Proposition : A less important but nonetheless interesting true statement.
+\item
+  Lemma: A true statement used in proving other true statements (that is, a less important theorem that is helpful in the proof of other results).
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Lemmas are considered to be less important than propositions. But the distinction between categories is rather \emph{blurred}.
+  \item
+    There is no formal distinction among a lemma, a proposition, and a theorem.
+  \end{itemize}
+\item
+  Corollary: A true statment that is a simple deduction from a theorem or proposition.
+\item
+  Proof: The explanation of why a statement is true.
+\item
+  Conjecture: A statement believed to be true, but for which we have no proof. (a statement that is being proposed to be a true statement).
+\item
+  Axiom: A basic assumption about a mathematical situation. (a statement we assume to be true).
+\end{itemize}
+
+\textbf{Usage}
+
+\textbf{Theorems and proofs} provide environments that are commonly used within articles and books in mathematics. To write a theorem, you can use the syntax below:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{::: \{.theorem \#label name="Theorem name"\}}
+\NormalTok{Here is my theorem.}
+\NormalTok{:::}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\item
+  Variants of the \texttt{theorem} environments include: \texttt{lemma}, \texttt{corollary}, \texttt{proposition}, \texttt{conjecture}, \texttt{definition}, \texttt{example}, and \texttt{exercise}. The syntax for these environments is similar to the \texttt{theorem} environment, e.g., ```\texttt{\{lemma\}}.
+
+  For example:
+
+  \textbf{Theorem 12.1 (Pythagorean theorem)} For a right triangle, if \(c\) denotes the length of the hypotenuse and \(a\) and \(b\) denote the lengths of the other two sides, we have
+
+  \begin{align*}
+  c^2 = a^2+b^2
+  \end{align*}
+\item
+  The \texttt{proof} environment behaves similarly to theorem environments but is unnumbered. Variants of the \texttt{proof} environments include \texttt{remark} and \texttt{solution}.
+
+  The \texttt{proof}environment behaves similarly to theorem environments but is unnumbered.
+\end{itemize}
+
+\textbf{Customize math environment labels}
+
+You need to create a file \texttt{\_bookdown.yml} in the same directory as your \texttt{.Rmd}.
+
+In the configuration file **\_bookdown.yml**
+
+For example, if you want \texttt{FIGURE\ x.x} instead of \texttt{Figure\ x.x}, you can change \texttt{fig} to \texttt{"FIGURE\ "}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{language}\KeywordTok{:}
+\AttributeTok{  }\FunctionTok{label}\KeywordTok{:}
+\AttributeTok{    }\FunctionTok{fig}\KeywordTok{:}\AttributeTok{ }\StringTok{"FIGURE "}
+\end{Highlighting}
+\end{Shaded}
+
+If you want to number \texttt{proof},
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  choose one of the \href{https://bookdown.org/yihui/bookdown/markdown-extensions-by-bookdown.html\#theorems}{predefined theorem like environments} that you are not using otherwise, e.g.~\texttt{example} or \texttt{exercise}.
+\item
+  Redefine the printed name for that environment in \texttt{\_bookdown.yml} (c.f. \url{https://bookdown.org/yihui/bookdown/internationalization.html}) via:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{language}\SpecialCharTok{:}
+\NormalTok{  label}\SpecialCharTok{:}
+\NormalTok{    exr}\SpecialCharTok{:} \StringTok{\textquotesingle{}Proof \textquotesingle{}}
+\end{Highlighting}
+\end{Shaded}
+
+  Here I changed the \texttt{exercise} environment leading word to ``Proof''.
+\item
+  In your \texttt{Rmd} files use \texttt{\{exercise,\ mylabel\}} environment.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{::: \{.exercise \#mylabel\}}
+\NormalTok{my comment}
+\NormalTok{:::}
+
+\NormalTok{In Remark }\FunctionTok{\textbackslash{}@ref}\NormalTok{(exr:mylabel) we discussed...}
+\end{Highlighting}
+\end{Shaded}
+
+  Note that you have to use \texttt{exercise} and the correspoding label prefix \texttt{exr}.
+\end{enumerate}
+
+Can specify environment style in \texttt{style.css}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{.exercise}\NormalTok{ \{}
+    \KeywordTok{margin}\CharTok{:} \DecValTok{10}\DataTypeTok{px} \DecValTok{5}\DataTypeTok{px} \DecValTok{20}\DataTypeTok{px} \DecValTok{5}\DataTypeTok{px}\OperatorTok{;} 
+\NormalTok{\}}
+\CommentTok{/* define a boxed environment */}
+\FunctionTok{.boxed}\NormalTok{ \{}
+    \KeywordTok{border}\CharTok{:} \DecValTok{1}\DataTypeTok{px} \DecValTok{solid} \ConstantTok{\#535353}\OperatorTok{;}
+    \KeywordTok{padding{-}bottom}\CharTok{:} \DecValTok{20}\DataTypeTok{px}\OperatorTok{;}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{\textless{}div class = "boxed"\textgreater{}}
+\NormalTok{::: \{.exercise \#proof2\}}
+\NormalTok{Show }\SpecialStringTok{$}\SpecialCharTok{\textbackslash{}pi}\SpecialStringTok{=}\SpecialCharTok{\textbackslash{}Phi}\SpecialStringTok{ }\SpecialCharTok{\textbackslash{}left}\SpecialStringTok{(}\SpecialCharTok{\textbackslash{}frac}\SpecialStringTok{\{}\SpecialCharTok{\textbackslash{}mu}\SpecialStringTok{\}\{}\SpecialCharTok{\textbackslash{}sigma}\SpecialStringTok{\}}\SpecialCharTok{\textbackslash{}right}\SpecialStringTok{)$}\NormalTok{.}
+\SpecialStringTok{$$}
+\KeywordTok{\textbackslash{}begin}\NormalTok{\{}\ExtensionTok{aligned}\NormalTok{\}}\SpecialStringTok{[b]}
+\SpecialStringTok{P(r\_t\textgreater{}0) \&= P(}\SpecialCharTok{\textbackslash{}mu}\SpecialStringTok{+e\_t\textgreater{}0) }\SpecialCharTok{\textbackslash{}\textbackslash{}}
+\SpecialStringTok{\&= P(e\_t\textgreater{}{-}}\SpecialCharTok{\textbackslash{}mu}\SpecialStringTok{) }\SpecialCharTok{\textbackslash{}quad\textbackslash{}quad\textbackslash{}quad}\SpecialStringTok{ (}\SpecialCharTok{\textbackslash{}sigma}\SpecialStringTok{\textgreater{}0, }\SpecialCharTok{\textbackslash{}text}\NormalTok{\{dividing by a pos. number, inequality unchanged\}}\SpecialStringTok{) }\SpecialCharTok{\textbackslash{}\textbackslash{}}
+\SpecialStringTok{\&= P}\SpecialCharTok{\textbackslash{}left}\SpecialStringTok{( }\SpecialCharTok{\textbackslash{}frac}\SpecialStringTok{\{e\_t\}\{}\SpecialCharTok{\textbackslash{}sigma}\SpecialStringTok{\} \textgreater{} {-}}\SpecialCharTok{\textbackslash{}frac}\SpecialStringTok{\{}\SpecialCharTok{\textbackslash{}mu}\SpecialStringTok{\}\{}\SpecialCharTok{\textbackslash{}sigma}\SpecialStringTok{\}}\SpecialCharTok{\textbackslash{}right}\SpecialStringTok{) }\SpecialCharTok{\textbackslash{}quad\textbackslash{};\textbackslash{};}\SpecialStringTok{ e\_t}\SpecialCharTok{\textbackslash{}sim}\SpecialStringTok{ N(0, }\SpecialCharTok{\textbackslash{}sigma}\SpecialStringTok{\^{}2), }\SpecialCharTok{\textbackslash{}text}\NormalTok{\{ then \}}\SpecialStringTok{ }\SpecialCharTok{\textbackslash{}frac}\SpecialStringTok{\{e\_t\}\{}\SpecialCharTok{\textbackslash{}sigma}\SpecialStringTok{\}}\SpecialCharTok{\textbackslash{}sim}\SpecialStringTok{ N(0,1) }\SpecialCharTok{\textbackslash{}\textbackslash{}}
+\SpecialStringTok{\&= P }\SpecialCharTok{\textbackslash{}left}\SpecialStringTok{( }\SpecialCharTok{\textbackslash{}frac}\SpecialStringTok{\{e\_t\}\{}\SpecialCharTok{\textbackslash{}sigma}\SpecialStringTok{\} \textless{} }\SpecialCharTok{\textbackslash{}frac}\SpecialStringTok{\{}\SpecialCharTok{\textbackslash{}mu}\SpecialStringTok{\}\{}\SpecialCharTok{\textbackslash{}sigma}\SpecialStringTok{\} }\SpecialCharTok{\textbackslash{}right}\SpecialStringTok{) }\SpecialCharTok{\textbackslash{}\textbackslash{}}
+\SpecialStringTok{\&= }\SpecialCharTok{\textbackslash{}Phi}\SpecialStringTok{ }\SpecialCharTok{\textbackslash{}left}\SpecialStringTok{(}\SpecialCharTok{\textbackslash{}frac}\SpecialStringTok{\{}\SpecialCharTok{\textbackslash{}mu}\SpecialStringTok{\}\{}\SpecialCharTok{\textbackslash{}sigma}\SpecialStringTok{\} }\SpecialCharTok{\textbackslash{}right}\SpecialStringTok{) }
+\KeywordTok{\textbackslash{}end}\NormalTok{\{}\ExtensionTok{aligned}\NormalTok{\}}\SpecialStringTok{  }\SpecialCharTok{\textbackslash{}square}
+\SpecialStringTok{$$}
+\NormalTok{:::}
+\NormalTok{\textless{}/div\textgreater{}}
+\end{Highlighting}
+\end{Shaded}
 
 \chapter{Basic R}\label{basic-r}
 

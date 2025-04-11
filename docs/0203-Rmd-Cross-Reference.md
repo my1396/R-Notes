@@ -1,8 +1,3 @@
----
-title: "Cross References"
-output: pdf_document
----
-
 
 
 ## Cross References
