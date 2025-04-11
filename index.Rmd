@@ -13,7 +13,7 @@ description: |
   set in the _output.yml file.
 link-citations: yes
 github-repo: my1396/R-Notes
-favicon: "images/R_icon.png"
+favicon: "images/r-project-favicon.ico"
 ---
 
 # About
