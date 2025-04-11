@@ -274,7 +274,7 @@ A: `detach("package:ggplot2", unload=TRUE)` or uncheck the checkbox button in `P
 
 <img src="https://i.sstatic.net/A7TOO.png" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:100%;" />
 
-<img src="https://drive.google.com/thumbnail?id=1ZxDhrGmvNKGtokZ88epXUw7zw7hEG3Dl&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
+<img src="https://drive.google.com/thumbnail?id=16NDo2Ozhz4AnvGoKkP5YuwROS4fYstIN&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
 
 
 
