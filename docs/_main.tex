@@ -119,7 +119,7 @@
 
 \title{R Notes}
 \author{John Doe}
-\date{2025-04-06}
+\date{2025-04-11}
 
 \begin{document}
 \maketitle
@@ -516,19 +516,44 @@ Theme repositories
   \texttt{rsthemes}: \url{https://www.garrickadenbuie.com/project/rsthemes/}
 \end{itemize}
 
+RStudio and Editor themes are two differnt things
+
+\begin{itemize}
+\item
+  \href{https://support.posit.co/hc/en-us/articles/115011846747-Using-Themes-in-the-RStudio-IDE}{RStudio theme} applies to the IDE's framework; including Modern (default), Classic, Sky, and Dark.
+
+  The Sky theme is similar to the Modern theme, except for the tab and toolbar headers. 淡淡的蓝色
+
+  The dark theme is a superset to the Modern and Sky themes that is activated whenever the Editor theme uses a dark palette.
+\item
+  Editor theme applies to the source pane.
+
+  A useful tool to customize your editor theme: \url{https://tmtheme-editor.glitch.me/\#!/editor/theme/Monokai}
+
+  Embeded themes can be found here: \url{https://github.com/rstudio/rstudio/tree/87e129853121106a87e92df416363f39da95f82e/src/cpp/session/resources/themes}
+\end{itemize}
+
+\textbf{Useful elements}:
+
 \texttt{.ace\_marker-layer\ .ace\_selection} Changes the color and style of the highlighting for the currently selected line or block of lines.
 
 \texttt{.ace\_marker-layer\ .ace\_bracket} Changes the color and style of the highlighting on matching brackets.
 
 \textbf{Recommended highlight color}: \texttt{rgba(255,\ 0,\ 0,\ 0.47)}
 
-\texttt{RStudio} editor theme directory on Mac:
+If you really like one of the default themes RStudio provides, but you want to tweak some small things, you can go the theme directory and change the element's appearance.
 
-right click \texttt{RStudio.app}, ``Show Package Contents'' to navigate to the application folder.
+\texttt{RStudio}'s \textbf{default editor theme directory} on Mac:
 
-\texttt{/Applications/RStudio.app/Contents/Resources/resources/themes/ambiance.rstheme}
+Right click \texttt{RStudio.app}, ``Show Package Contents'' to navigate to the application folder.
 
-Custom theme (user-defined) folder:
+\texttt{/Applications/RStudio.app/Contents/Resources/resources/themes/ambiance.rstheme} (deprecated)
+
+New editor theme directory: \texttt{/Applications/RStudio.app/Contents/Resources/app/resources/themes/ambiance.rstheme}
+
+You may also find the default themes on GitHub repo: \url{https://github.com/rstudio/rstudio/tree/master/src/cpp/session/resources/themes}
+
+If you want to install or create a completely new theme, use the \textbf{Custom theme (user-defined) folder}:
 
 \begin{itemize}
 \tightlist
@@ -551,7 +576,25 @@ Custom theme (user-defined) folder:
 \end{Highlighting}
 \end{Shaded}
 
+See \href{https://docs.posit.co/ide/user/ide/guide/ui/appearance.html\#creating-an-rstheme}{HERE} for common selectors you can use.
+
 A collection of screenshots of default RStudio themes: \url{https://www.trifields.jp/list-of-rstudio-editor-themes-2520}
+
+Q: The margin line is too bright.\\
+A: Change the \texttt{.ace\_print-margin} element.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{.ace\_print{-}margin}\NormalTok{ \{}
+  \KeywordTok{width}\CharTok{:} \DecValTok{1}\DataTypeTok{px}\OperatorTok{;}
+  \KeywordTok{background}\CharTok{:} \ConstantTok{\#e8e8e8}\OperatorTok{;}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\texttt{\#e8e8e8} is the culprit here, and should be darkened. I changed it to \texttt{\#2F3941}.
+
+Source: \url{https://github.com/rstudio/rstudio/issues/3420\#issuecomment-453154475}
 
 \textbf{Install custom themes}
 
@@ -626,7 +669,7 @@ The easiest way to update R and not cause yourself a huge headache is to use the
 
 \section{Packages Management}\label{packages-management}
 
-\textbf{Load packages}
+\subsection{Load packages}\label{load-packages}
 
 Q: What is the difference btw \texttt{library(package)} and \texttt{require(package)}?\\
 A:
@@ -741,7 +784,43 @@ You can then use \texttt{search()} to determine whether all the packages have lo
 \end{Highlighting}
 \end{Shaded}
 
+Q: \texttt{dplyr} has many conflicts with \texttt{plyr}.\\
+A: Specify pkg using \texttt{::}. Or set library priority by
+
+\begin{itemize}
+\tightlist
+\item
+  changing the order in which you load the packages.
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# load dplyr last so that it has priority}
+\FunctionTok{library}\NormalTok{(plyr)}
+\FunctionTok{library}\NormalTok{(dplyr)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\tightlist
+\item
+  with the \{needs\} package
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(needs)}
+\CommentTok{\# prioritize the functions in dplyr}
+\FunctionTok{prioritize}\NormalTok{(dplyr) }
+\end{Highlighting}
+\end{Shaded}
+
+Q: How to unload a package without restarting R?\\
+A: \texttt{detach("package:ggplot2",\ unload=TRUE)} or uncheck the checkbox button in \texttt{Packages} pane.
+
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{Install packages}\label{install-packages}
 
 \textbf{Install R packages from source}
 
@@ -797,6 +876,31 @@ Check installed packages
 \end{Highlighting}
 \end{Shaded}
 
+\texttt{installed.packages(lib.loc=NULL,\ priority=NULL)}
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{lib.loc} character vector describing the location of \textbf{R} library trees to search through
+\item
+  \texttt{priority} used to select packages; \texttt{"high"} is equivalent to \texttt{c("base",\ "recommended")}
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# list all bases packages from your \textasciigrave{}R.Version\textasciigrave{}}
+\SpecialCharTok{\textgreater{}} \FunctionTok{rownames}\NormalTok{(}\FunctionTok{installed.packages}\NormalTok{(}\AttributeTok{priority=}\StringTok{"base"}\NormalTok{))}
+\NormalTok{ [}\DecValTok{1}\NormalTok{] }\StringTok{"base"}      \StringTok{"compiler"}  \StringTok{"datasets"}  \StringTok{"graphics"}  \StringTok{"grDevices"} \StringTok{"grid"}     
+\NormalTok{ [}\DecValTok{7}\NormalTok{] }\StringTok{"methods"}   \StringTok{"parallel"}  \StringTok{"splines"}   \StringTok{"stats"}     \StringTok{"stats4"}    \StringTok{"tcltk"}    
+\NormalTok{[}\DecValTok{13}\NormalTok{] }\StringTok{"tools"}     \StringTok{"utils"} 
+\CommentTok{\#  what R loads on startup}
+\SpecialCharTok{\textgreater{}} \FunctionTok{c}\NormalTok{(}\FunctionTok{getOption}\NormalTok{(}\StringTok{"defaultPackages"}\NormalTok{), }\StringTok{"base"}\NormalTok{)}
+\NormalTok{[}\DecValTok{1}\NormalTok{] }\StringTok{"datasets"}  \StringTok{"utils"}     \StringTok{"grDevices"} \StringTok{"graphics"}  \StringTok{"stats"}     \StringTok{"methods"}   \StringTok{"base"}     
+\end{Highlighting}
+\end{Shaded}
+
+\texttt{getOption("defaultPackages")} is what R loads on startup although the \texttt{base}package is not counted.
+
 Check package version
 
 \begin{Shaded}
@@ -810,7 +914,7 @@ A: You can go to GitHub repo to check release notes. You will find the latest ve
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
-\textbf{Update packages}
+\subsection{Update packages}\label{update-packages}
 
 \begin{itemize}
 \item
@@ -1007,6 +1111,37 @@ A: See \url{https://opensource.guide/legal/\#which-open-source-license-is-approp
 
 Q: How to add a license to my repo?\\
 A: Follow the instructions \href{https://docs.github.com/en/communities/setting-up-your-project-for-healthy-contributions/adding-a-license-to-a-repository}{here}.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\section{Copilot}\label{copilot}
+
+Copilot offers autocomplete-style suggestions as you code as ``ghost text''.
+
+GitHub Copilot primarily relies on the context in the file you are actively editing. Any comments, code, or other context provided within the active document will be used as a ``prompt'' that Copilot will then use to provide a suggested completion.
+
+\begin{itemize}
+\item
+  To expand the scope of the context used by Copilot beyond just the active document, there is a setting to also index and read from other R, Python, or SQL files in the current project. This setting can be toggled on or off in the Tools \textgreater{} Global Options \textgreater{} Copilot \textgreater{} ``Index project files with GitHub Copilot'' setting.
+\item
+  At times, normal autocomplete and Copilot may seem to conflict with each other. In these cases, it is best to review the Copilot suggestion and determine if it is appropriate for the current context. If it is, you can accept the suggestion by pressing \texttt{Tab}. If it is not, you can ignore the suggestion and continue typing or force the normal autocomplete to show by pressing \texttt{Ctrl+Space}.
+
+  Issue: \texttt{Ctrl+Space} crash with spotlight shortcut. ❗️
+\item
+  Only show Copilot suggestions when evoke mannually using \texttt{Ctrl\ +\ Backslash\ (\textbackslash{})}.
+
+  The Copilot suggestions can be very distracting and clutter your script.
+\end{itemize}
+
+For general advice on how to use Copilot, please see:
+
+\begin{itemize}
+\tightlist
+\item
+  \href{https://docs.posit.co/ide/user/ide/guide/tools/copilot.html}{RStudio Copilot User Guide}
+\item
+  \href{https://github.blog/2023-06-20-how-to-write-better-prompts-for-github-copilot/}{How to use GitHub Copilot: Prompts, tips, and use cases}
+\end{itemize}
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
@@ -1994,8 +2129,18 @@ Save data in \texttt{uft8} encoding with special language characters
 \end{Shaded}
   \end{itemize}
 \item
-  \texttt{row.names} wether to write row names of \texttt{x}. Defaults to \texttt{TRUE}.
+  \texttt{row.names} whether to write row names of \texttt{x}. Defaults to \texttt{TRUE}.
 \end{itemize}
+
+\subsubsection{\texorpdfstring{\texttt{flextable}}{flextable}}\label{flextable}
+
+\texttt{flextable} package create tables for reporting and publications.
+
+The main function is \texttt{flextable} which takes a \texttt{data.frame} as argument and returns a \texttt{flextable}. If you are using RStudio or another R GUI, the table will be displayed in the \texttt{Viewer} panel or in your default browser.
+
+The package provides a set of functions to easily create some tables from others objects.
+
+The \texttt{as\_flextable()} function is used to transform specific objects into \texttt{flextable} objects. For example, you can transform a crosstab produced with the `tables' package into a flextable which can then be formatted, annotated or augmented with footnotes.
 
 \chapter{Machine Learning}\label{machine-learning}
 

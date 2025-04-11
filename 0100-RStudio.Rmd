@@ -1,8 +1,3 @@
----
-output: 
-    bookdown::html_document2
----
-
 # Rstudio
 
 **Rstudio shortcuts**

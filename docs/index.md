@@ -1,7 +1,7 @@
 --- 
 title: "R Notes"
 author: "John Doe"
-date: "2025-04-06"
+date: "2025-04-11"
 site: bookdown::bookdown_site
 documentclass: book
 bibliography: [book.bib, packages.bib]
@@ -13,6 +13,7 @@ description: |
   set in the _output.yml file.
 link-citations: yes
 github-repo: my1396/R-Notes
+favicon: "images/R_icon.ico"
 ---
 
 # About

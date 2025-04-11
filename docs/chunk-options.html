@@ -29,13 +29,13 @@ set in the _output.yml file.</p>" />
 <meta name="author" content="John Doe" />
 
 
-<meta name="date" content="2025-04-06" />
+<meta name="date" content="2025-04-11" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
-  
+  <link rel="shortcut icon" href="images/R_icon.ico" type="image/x-icon" />
 <link rel="prev" href="knit-rmd.html"/>
 <link rel="next" href="print-verbatim-r-code-chunks.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -157,10 +157,14 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="2.2" data-path="update-r.html"><a href="update-r.html"><i class="fa fa-check"></i><b>2.2</b> Update R</a></li>
 <li class="chapter" data-level="2.3" data-path="packages-management.html"><a href="packages-management.html"><i class="fa fa-check"></i><b>2.3</b> Packages Management</a>
 <ul>
+<li class="chapter" data-level="2.3.1" data-path="packages-management.html"><a href="packages-management.html#load-packages"><i class="fa fa-check"></i><b>2.3.1</b> Load packages</a></li>
+<li class="chapter" data-level="2.3.2" data-path="packages-management.html"><a href="packages-management.html#install-packages"><i class="fa fa-check"></i><b>2.3.2</b> Install packages</a></li>
+<li class="chapter" data-level="2.3.3" data-path="packages-management.html"><a href="packages-management.html#update-packages"><i class="fa fa-check"></i><b>2.3.3</b> Update packages</a></li>
 <li class="chapter" data-level="" data-path="packages-management.html"><a href="packages-management.html#put-your-r-package-on-github"><i class="fa fa-check"></i>Put your R package on GitHub</a></li>
 </ul></li>
 <li class="chapter" data-level="2.4" data-path="using-git-with-rstudio.html"><a href="using-git-with-rstudio.html"><i class="fa fa-check"></i><b>2.4</b> Using Git with RStudio</a></li>
-<li class="chapter" data-level="2.5" data-path="save-r-workspace.html"><a href="save-r-workspace.html"><i class="fa fa-check"></i><b>2.5</b> Save R Workspace</a></li>
+<li class="chapter" data-level="2.5" data-path="copilot.html"><a href="copilot.html"><i class="fa fa-check"></i><b>2.5</b> Copilot</a></li>
+<li class="chapter" data-level="2.6" data-path="save-r-workspace.html"><a href="save-r-workspace.html"><i class="fa fa-check"></i><b>2.6</b> Save R Workspace</a></li>
 </ul></li>
 <li class="chapter" data-level="3" data-path="knit-rmd.html"><a href="knit-rmd.html"><i class="fa fa-check"></i><b>3</b> Knit Rmd</a>
 <ul>
@@ -207,50 +211,50 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <div id="chunk-options" class="section level2 hasAnchor" number="3.1">
 <h2><span class="header-section-number">3.1</span> Chunk Options<a href="chunk-options.html#chunk-options" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>If you want to set chunk options globally, call <code>knitr::opts_chunk$set()</code> in a code chunk (usually the first one in the document), e.g.,</p>
-<div class="sourceCode" id="cb41"><pre class="sourceCode md"><code class="sourceCode markdown"><span id="cb41-1"><a href="chunk-options.html#cb41-1" tabindex="-1"></a><span class="in">```{r, label=&quot;setup&quot;, include=FALSE}</span></span>
-<span id="cb41-2"><a href="chunk-options.html#cb41-2" tabindex="-1"></a><span class="in">knitr::opts_chunk$set(</span></span>
-<span id="cb41-3"><a href="chunk-options.html#cb41-3" tabindex="-1"></a><span class="in">  comment = &quot;#&gt;&quot;, echo = FALSE, fig.width = 6</span></span>
-<span id="cb41-4"><a href="chunk-options.html#cb41-4" tabindex="-1"></a><span class="in">)</span></span>
-<span id="cb41-5"><a href="chunk-options.html#cb41-5" tabindex="-1"></a><span class="in">```</span></span></code></pre></div>
+<div class="sourceCode" id="cb45"><pre class="sourceCode md"><code class="sourceCode markdown"><span id="cb45-1"><a href="chunk-options.html#cb45-1" tabindex="-1"></a><span class="in">```{r, label=&quot;setup&quot;, include=FALSE}</span></span>
+<span id="cb45-2"><a href="chunk-options.html#cb45-2" tabindex="-1"></a><span class="in">knitr::opts_chunk$set(</span></span>
+<span id="cb45-3"><a href="chunk-options.html#cb45-3" tabindex="-1"></a><span class="in">  comment = &quot;#&gt;&quot;, echo = FALSE, fig.width = 6</span></span>
+<span id="cb45-4"><a href="chunk-options.html#cb45-4" tabindex="-1"></a><span class="in">)</span></span>
+<span id="cb45-5"><a href="chunk-options.html#cb45-5" tabindex="-1"></a><span class="in">```</span></span></code></pre></div>
 <p>Full list of chunk options: <a href="https://yihui.org/knitr/options/" class="uri">https://yihui.org/knitr/options/</a></p>
 <p>Chunk options can customize nearly all components of code chunks, such as the source code, text output, plots, and the language of the chunk.</p>
 <p><strong>Other languages are supported in <code>Rmd</code></strong></p>
 <p>You can list the names of all available engines via:</p>
-<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="chunk-options.html#cb42-1" tabindex="-1"></a><span class="fu">names</span>(knitr<span class="sc">::</span>knit_engines<span class="sc">$</span><span class="fu">get</span>())</span>
-<span id="cb42-2"><a href="chunk-options.html#cb42-2" tabindex="-1"></a><span class="do">##  [1] &quot;awk&quot;          &quot;bash&quot;         &quot;coffee&quot;      </span></span>
-<span id="cb42-3"><a href="chunk-options.html#cb42-3" tabindex="-1"></a><span class="do">##  [4] &quot;gawk&quot;         &quot;groovy&quot;       &quot;haskell&quot;     </span></span>
-<span id="cb42-4"><a href="chunk-options.html#cb42-4" tabindex="-1"></a><span class="do">##  [7] &quot;lein&quot;         &quot;mysql&quot;        &quot;node&quot;        </span></span>
-<span id="cb42-5"><a href="chunk-options.html#cb42-5" tabindex="-1"></a><span class="do">## [10] &quot;octave&quot;       &quot;perl&quot;         &quot;php&quot;         </span></span>
-<span id="cb42-6"><a href="chunk-options.html#cb42-6" tabindex="-1"></a><span class="do">## [13] &quot;psql&quot;         &quot;Rscript&quot;      &quot;ruby&quot;        </span></span>
-<span id="cb42-7"><a href="chunk-options.html#cb42-7" tabindex="-1"></a><span class="do">## [16] &quot;sas&quot;          &quot;scala&quot;        &quot;sed&quot;         </span></span>
-<span id="cb42-8"><a href="chunk-options.html#cb42-8" tabindex="-1"></a><span class="do">## [19] &quot;sh&quot;           &quot;stata&quot;        &quot;zsh&quot;         </span></span>
-<span id="cb42-9"><a href="chunk-options.html#cb42-9" tabindex="-1"></a><span class="do">## [22] &quot;asis&quot;         &quot;asy&quot;          &quot;block&quot;       </span></span>
-<span id="cb42-10"><a href="chunk-options.html#cb42-10" tabindex="-1"></a><span class="do">## [25] &quot;block2&quot;       &quot;bslib&quot;        &quot;c&quot;           </span></span>
-<span id="cb42-11"><a href="chunk-options.html#cb42-11" tabindex="-1"></a><span class="do">## [28] &quot;cat&quot;          &quot;cc&quot;           &quot;comment&quot;     </span></span>
-<span id="cb42-12"><a href="chunk-options.html#cb42-12" tabindex="-1"></a><span class="do">## [31] &quot;css&quot;          &quot;ditaa&quot;        &quot;dot&quot;         </span></span>
-<span id="cb42-13"><a href="chunk-options.html#cb42-13" tabindex="-1"></a><span class="do">## [34] &quot;embed&quot;        &quot;eviews&quot;       &quot;exec&quot;        </span></span>
-<span id="cb42-14"><a href="chunk-options.html#cb42-14" tabindex="-1"></a><span class="do">## [37] &quot;fortran&quot;      &quot;fortran95&quot;    &quot;go&quot;          </span></span>
-<span id="cb42-15"><a href="chunk-options.html#cb42-15" tabindex="-1"></a><span class="do">## [40] &quot;highlight&quot;    &quot;js&quot;           &quot;julia&quot;       </span></span>
-<span id="cb42-16"><a href="chunk-options.html#cb42-16" tabindex="-1"></a><span class="do">## [43] &quot;python&quot;       &quot;R&quot;            &quot;Rcpp&quot;        </span></span>
-<span id="cb42-17"><a href="chunk-options.html#cb42-17" tabindex="-1"></a><span class="do">## [46] &quot;sass&quot;         &quot;scss&quot;         &quot;sql&quot;         </span></span>
-<span id="cb42-18"><a href="chunk-options.html#cb42-18" tabindex="-1"></a><span class="do">## [49] &quot;stan&quot;         &quot;targets&quot;      &quot;tikz&quot;        </span></span>
-<span id="cb42-19"><a href="chunk-options.html#cb42-19" tabindex="-1"></a><span class="do">## [52] &quot;verbatim&quot;     &quot;theorem&quot;      &quot;lemma&quot;       </span></span>
-<span id="cb42-20"><a href="chunk-options.html#cb42-20" tabindex="-1"></a><span class="do">## [55] &quot;corollary&quot;    &quot;proposition&quot;  &quot;conjecture&quot;  </span></span>
-<span id="cb42-21"><a href="chunk-options.html#cb42-21" tabindex="-1"></a><span class="do">## [58] &quot;definition&quot;   &quot;example&quot;      &quot;exercise&quot;    </span></span>
-<span id="cb42-22"><a href="chunk-options.html#cb42-22" tabindex="-1"></a><span class="do">## [61] &quot;hypothesis&quot;   &quot;proof&quot;        &quot;remark&quot;      </span></span>
-<span id="cb42-23"><a href="chunk-options.html#cb42-23" tabindex="-1"></a><span class="do">## [64] &quot;solution&quot;     &quot;marginfigure&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="chunk-options.html#cb46-1" tabindex="-1"></a><span class="fu">names</span>(knitr<span class="sc">::</span>knit_engines<span class="sc">$</span><span class="fu">get</span>())</span>
+<span id="cb46-2"><a href="chunk-options.html#cb46-2" tabindex="-1"></a><span class="do">##  [1] &quot;awk&quot;          &quot;bash&quot;         &quot;coffee&quot;      </span></span>
+<span id="cb46-3"><a href="chunk-options.html#cb46-3" tabindex="-1"></a><span class="do">##  [4] &quot;gawk&quot;         &quot;groovy&quot;       &quot;haskell&quot;     </span></span>
+<span id="cb46-4"><a href="chunk-options.html#cb46-4" tabindex="-1"></a><span class="do">##  [7] &quot;lein&quot;         &quot;mysql&quot;        &quot;node&quot;        </span></span>
+<span id="cb46-5"><a href="chunk-options.html#cb46-5" tabindex="-1"></a><span class="do">## [10] &quot;octave&quot;       &quot;perl&quot;         &quot;php&quot;         </span></span>
+<span id="cb46-6"><a href="chunk-options.html#cb46-6" tabindex="-1"></a><span class="do">## [13] &quot;psql&quot;         &quot;Rscript&quot;      &quot;ruby&quot;        </span></span>
+<span id="cb46-7"><a href="chunk-options.html#cb46-7" tabindex="-1"></a><span class="do">## [16] &quot;sas&quot;          &quot;scala&quot;        &quot;sed&quot;         </span></span>
+<span id="cb46-8"><a href="chunk-options.html#cb46-8" tabindex="-1"></a><span class="do">## [19] &quot;sh&quot;           &quot;stata&quot;        &quot;zsh&quot;         </span></span>
+<span id="cb46-9"><a href="chunk-options.html#cb46-9" tabindex="-1"></a><span class="do">## [22] &quot;asis&quot;         &quot;asy&quot;          &quot;block&quot;       </span></span>
+<span id="cb46-10"><a href="chunk-options.html#cb46-10" tabindex="-1"></a><span class="do">## [25] &quot;block2&quot;       &quot;bslib&quot;        &quot;c&quot;           </span></span>
+<span id="cb46-11"><a href="chunk-options.html#cb46-11" tabindex="-1"></a><span class="do">## [28] &quot;cat&quot;          &quot;cc&quot;           &quot;comment&quot;     </span></span>
+<span id="cb46-12"><a href="chunk-options.html#cb46-12" tabindex="-1"></a><span class="do">## [31] &quot;css&quot;          &quot;ditaa&quot;        &quot;dot&quot;         </span></span>
+<span id="cb46-13"><a href="chunk-options.html#cb46-13" tabindex="-1"></a><span class="do">## [34] &quot;embed&quot;        &quot;eviews&quot;       &quot;exec&quot;        </span></span>
+<span id="cb46-14"><a href="chunk-options.html#cb46-14" tabindex="-1"></a><span class="do">## [37] &quot;fortran&quot;      &quot;fortran95&quot;    &quot;go&quot;          </span></span>
+<span id="cb46-15"><a href="chunk-options.html#cb46-15" tabindex="-1"></a><span class="do">## [40] &quot;highlight&quot;    &quot;js&quot;           &quot;julia&quot;       </span></span>
+<span id="cb46-16"><a href="chunk-options.html#cb46-16" tabindex="-1"></a><span class="do">## [43] &quot;python&quot;       &quot;R&quot;            &quot;Rcpp&quot;        </span></span>
+<span id="cb46-17"><a href="chunk-options.html#cb46-17" tabindex="-1"></a><span class="do">## [46] &quot;sass&quot;         &quot;scss&quot;         &quot;sql&quot;         </span></span>
+<span id="cb46-18"><a href="chunk-options.html#cb46-18" tabindex="-1"></a><span class="do">## [49] &quot;stan&quot;         &quot;targets&quot;      &quot;tikz&quot;        </span></span>
+<span id="cb46-19"><a href="chunk-options.html#cb46-19" tabindex="-1"></a><span class="do">## [52] &quot;verbatim&quot;     &quot;theorem&quot;      &quot;lemma&quot;       </span></span>
+<span id="cb46-20"><a href="chunk-options.html#cb46-20" tabindex="-1"></a><span class="do">## [55] &quot;corollary&quot;    &quot;proposition&quot;  &quot;conjecture&quot;  </span></span>
+<span id="cb46-21"><a href="chunk-options.html#cb46-21" tabindex="-1"></a><span class="do">## [58] &quot;definition&quot;   &quot;example&quot;      &quot;exercise&quot;    </span></span>
+<span id="cb46-22"><a href="chunk-options.html#cb46-22" tabindex="-1"></a><span class="do">## [61] &quot;hypothesis&quot;   &quot;proof&quot;        &quot;remark&quot;      </span></span>
+<span id="cb46-23"><a href="chunk-options.html#cb46-23" tabindex="-1"></a><span class="do">## [64] &quot;solution&quot;     &quot;marginfigure&quot;</span></span></code></pre></div>
 <p>The engines from <code>theorem</code> to <code>solution</code> are only available when you use the <strong>bookdown</strong> package, and the rest are shipped with the <strong>knitr</strong> package.</p>
 <p>To use a different language engine, you can change the language name in the chunk header from <code>r</code> to the engine name, e.g.,</p>
-<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="chunk-options.html#cb43-1" tabindex="-1"></a><span class="st">```</span><span class="at">python</span></span>
-<span id="cb43-2"><a href="chunk-options.html#cb43-2" tabindex="-1"></a><span class="at">x = &#39;hello, python world!&#39;</span></span>
-<span id="cb43-3"><a href="chunk-options.html#cb43-3" tabindex="-1"></a><span class="at">print(x.split(&#39; &#39;))</span></span>
-<span id="cb43-4"><a href="chunk-options.html#cb43-4" tabindex="-1"></a><span class="st">```</span></span></code></pre></div>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="chunk-options.html#cb47-1" tabindex="-1"></a><span class="st">```</span><span class="at">python</span></span>
+<span id="cb47-2"><a href="chunk-options.html#cb47-2" tabindex="-1"></a><span class="at">x = &#39;hello, python world!&#39;</span></span>
+<span id="cb47-3"><a href="chunk-options.html#cb47-3" tabindex="-1"></a><span class="at">print(x.split(&#39; &#39;))</span></span>
+<span id="cb47-4"><a href="chunk-options.html#cb47-4" tabindex="-1"></a><span class="st">```</span></span></code></pre></div>
 <p>For engines that rely on external interpreters such as <code>python</code>, <code>perl</code>, and <code>ruby</code>, the default interpreters are obtained from <code>Sys.which()</code>, i.e., using the interpreter found via the environment variable <code>PATH</code> of the system. If you want to use an alternative interpreter, you may specify its path in the chunk option <code>engine.path</code>.</p>
 <p>For example, you may want to use Python 3 instead of the default Python 2, and we assume Python 3 is at <code>/usr/bin/python3</code></p>
-<div class="sourceCode" id="cb44"><pre class="sourceCode md"><code class="sourceCode markdown"><span id="cb44-1"><a href="chunk-options.html#cb44-1" tabindex="-1"></a><span class="in">```{python, engine.path = &#39;/usr/bin/python3&#39;}</span></span>
-<span id="cb44-2"><a href="chunk-options.html#cb44-2" tabindex="-1"></a><span class="in">import sys</span></span>
-<span id="cb44-3"><a href="chunk-options.html#cb44-3" tabindex="-1"></a><span class="in">print(sys.version)</span></span>
-<span id="cb44-4"><a href="chunk-options.html#cb44-4" tabindex="-1"></a><span class="in">```</span></span></code></pre></div>
+<div class="sourceCode" id="cb48"><pre class="sourceCode md"><code class="sourceCode markdown"><span id="cb48-1"><a href="chunk-options.html#cb48-1" tabindex="-1"></a><span class="in">```{python, engine.path = &#39;/usr/bin/python3&#39;}</span></span>
+<span id="cb48-2"><a href="chunk-options.html#cb48-2" tabindex="-1"></a><span class="in">import sys</span></span>
+<span id="cb48-3"><a href="chunk-options.html#cb48-3" tabindex="-1"></a><span class="in">print(sys.version)</span></span>
+<span id="cb48-4"><a href="chunk-options.html#cb48-4" tabindex="-1"></a><span class="in">```</span></span></code></pre></div>
 <ul>
 <li>All outputs support markdown syntax.</li>
 <li>If the output is html, you can write in html syntax.</li>
@@ -259,9 +263,9 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <ul>
 <li><p>Chunk label doesn’t need a <code>tag</code>, i.e., you only provide the <code>value</code>.</p></li>
 <li><p>If you prefer the form <code>tag=value</code>, you could also use the chunk option <code>label</code> explicitly, e.g.,</p>
-<div class="sourceCode" id="cb45"><pre class="sourceCode md"><code class="sourceCode markdown"><span id="cb45-1"><a href="chunk-options.html#cb45-1" tabindex="-1"></a><span class="in">```{r, label=&#39;my-chunk&#39;}</span></span>
-<span id="cb45-2"><a href="chunk-options.html#cb45-2" tabindex="-1"></a><span class="in"># one code chunk example</span></span>
-<span id="cb45-3"><a href="chunk-options.html#cb45-3" tabindex="-1"></a><span class="in">```</span></span></code></pre></div></li>
+<div class="sourceCode" id="cb49"><pre class="sourceCode md"><code class="sourceCode markdown"><span id="cb49-1"><a href="chunk-options.html#cb49-1" tabindex="-1"></a><span class="in">```{r, label=&#39;my-chunk&#39;}</span></span>
+<span id="cb49-2"><a href="chunk-options.html#cb49-2" tabindex="-1"></a><span class="in"># one code chunk example</span></span>
+<span id="cb49-3"><a href="chunk-options.html#cb49-3" tabindex="-1"></a><span class="in">```</span></span></code></pre></div></li>
 </ul>
 <p>You may use <code>knitr::opts_chunk$set()</code> to change the default values of chunk options in a document.</p>
 <p><strong>Commonly used chunk options</strong></p>
@@ -329,14 +333,14 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <p><span style="color:#32CD32"><code>results='markup'</code></span> note plural form for result<strong>s</strong>.</p>
 <ul>
 <li><p><code>markup</code>: Default. Mark up text output with the appropriate environments depending on the output format. For example, for R Markdown, if the text output is a character string <code>"[1] 1 2 3"</code>, the actual output that <strong>knitr</strong> produces will be:</p>
-<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="chunk-options.html#cb46-1" tabindex="-1"></a><span class="st">```</span></span>
-<span id="cb46-2"><a href="chunk-options.html#cb46-2" tabindex="-1"></a><span class="at">[1] 1 2 3</span></span>
-<span id="cb46-3"><a href="chunk-options.html#cb46-3" tabindex="-1"></a><span class="st">```</span></span></code></pre></div>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="chunk-options.html#cb50-1" tabindex="-1"></a><span class="st">```</span></span>
+<span id="cb50-2"><a href="chunk-options.html#cb50-2" tabindex="-1"></a><span class="at">[1] 1 2 3</span></span>
+<span id="cb50-3"><a href="chunk-options.html#cb50-3" tabindex="-1"></a><span class="st">```</span></span></code></pre></div>
 <p>In this case, <code>results='markup'</code> means to put the text output in fenced code blocks (```).</p></li>
 <li><p><code>asis</code>: Write text output as-is, i.e., write the raw text results directly into the output document without any markups.</p>
-<div class="sourceCode" id="cb47"><pre class="sourceCode md"><code class="sourceCode markdown"><span id="cb47-1"><a href="chunk-options.html#cb47-1" tabindex="-1"></a><span class="in">```{r, results=&#39;asis&#39;}</span></span>
-<span id="cb47-2"><a href="chunk-options.html#cb47-2" tabindex="-1"></a><span class="in">cat(&quot;I&#39;m raw **Markdown** content.\n&quot;)</span></span>
-<span id="cb47-3"><a href="chunk-options.html#cb47-3" tabindex="-1"></a><span class="in">```</span></span></code></pre></div>
+<div class="sourceCode" id="cb51"><pre class="sourceCode md"><code class="sourceCode markdown"><span id="cb51-1"><a href="chunk-options.html#cb51-1" tabindex="-1"></a><span class="in">```{r, results=&#39;asis&#39;}</span></span>
+<span id="cb51-2"><a href="chunk-options.html#cb51-2" tabindex="-1"></a><span class="in">cat(&quot;I&#39;m raw **Markdown** content.\n&quot;)</span></span>
+<span id="cb51-3"><a href="chunk-options.html#cb51-3" tabindex="-1"></a><span class="in">```</span></span></code></pre></div>
 <p>Sometime, you encounter the following error messages when you have R codes within <code>enumerate</code> environment.</p>
 <blockquote>
 <p>You can’t use <code>macro parameter character #</code> in horizontal mode.</p>

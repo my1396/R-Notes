@@ -251,8 +251,19 @@ Save data in `uft8` encoding with special language characters
     mat %>% write.csv("mat.csv")
     ```
 
-- `row.names` wether to write row names of `x`. Defaults to `TRUE`.
+- `row.names` whether to write row names of `x`. Defaults to `TRUE`.
 
+
+
+#### `flextable`  
+
+`flextable` package create tables for reporting and publications.
+
+The main function is `flextable` which takes a `data.frame` as argument and returns a `flextable`. If you are using RStudio or another R GUI, the table will be displayed in the `Viewer` panel or in your default browser.
+
+The package provides a set of functions to easily create some tables from others objects.
+
+The `as_flextable()` function is used to transform specific objects into `flextable` objects. For example, you can transform a crosstab produced with the ‘tables’ package into a flextable which can then be formatted, annotated or augmented with footnotes.
 
 
 

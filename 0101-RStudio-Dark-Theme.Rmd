@@ -11,19 +11,41 @@ Theme repositories
 - `rstudiothemes`: <https://github.com/max-alletsee/rstudio-themes>
 - `rsthemes`: <https://www.garrickadenbuie.com/project/rsthemes/>
 
+RStudio and Editor themes are two differnt things
+
+- [RStudio theme](https://support.posit.co/hc/en-us/articles/115011846747-Using-Themes-in-the-RStudio-IDE) applies to the IDE's framework; including Modern (default), Classic, Sky, and Dark.
+
+  The Sky theme is similar to the Modern theme, except for the tab and toolbar headers. 淡淡的蓝色
+
+  The dark theme is a superset to the Modern and Sky themes that is activated whenever the Editor theme uses a dark palette.
+
+- Editor theme applies to the source pane.
+
+  A useful tool to customize your editor theme: <https://tmtheme-editor.glitch.me/#!/editor/theme/Monokai>
+
+  Embeded themes can be found here: <https://github.com/rstudio/rstudio/tree/87e129853121106a87e92df416363f39da95f82e/src/cpp/session/resources/themes>
+
+**Useful elements**:
+
 `.ace_marker-layer .ace_selection` Changes the color and style of the highlighting for the currently selected line or block of lines.
 
 `.ace_marker-layer .ace_bracket` Changes the color and style of the highlighting on matching brackets.
 
 **Recommended highlight color**: `rgba(255, 0, 0, 0.47)`
 
-`RStudio` editor theme directory on Mac:
+If you really like one of the default themes RStudio provides, but you want to tweak some small things, you can go the theme directory and change the element's appearance.
 
-right click `RStudio.app`, "Show Package Contents" to navigate to the application folder.
+`RStudio`'s **default editor theme directory** on Mac:
 
-`/Applications/RStudio.app/Contents/Resources/resources/themes/ambiance.rstheme`
+Right click `RStudio.app`, "Show Package Contents" to navigate to the application folder.
 
-Custom theme (user-defined) folder:
+`/Applications/RStudio.app/Contents/Resources/resources/themes/ambiance.rstheme` (deprecated)
+
+New editor theme directory: `/Applications/RStudio.app/Contents/Resources/app/resources/themes/ambiance.rstheme`
+
+You may also find the default themes on GitHub repo: <https://github.com/rstudio/rstudio/tree/master/src/cpp/session/resources/themes>
+
+If you want to install or create a completely new theme, use the **Custom theme (user-defined) folder**:
 
 -   `~/.config/rstudio/themes/idle_fingers_2.rstheme` on mac
 -   [viridis-theme](https://github.com/z3tt/viridis-theme/blob/main/viridis.rstheme)
@@ -39,9 +61,23 @@ Custom theme (user-defined) folder:
 }
 ```
 
+See [HERE](https://docs.posit.co/ide/user/ide/guide/ui/appearance.html#creating-an-rstheme) for common selectors you can use.
+
 A collection of screenshots of default RStudio themes: <https://www.trifields.jp/list-of-rstudio-editor-themes-2520>
 
+Q: The margin line is too bright.  
+A: Change the `.ace_print-margin` element.
 
+```css
+.ace_print-margin {
+  width: 1px;
+  background: #e8e8e8;
+}
+```
+
+`#e8e8e8` is the culprit here, and should be darkened. I changed it to `#2F3941`.
+
+Source: <https://github.com/rstudio/rstudio/issues/3420#issuecomment-453154475>
 
 
 
@@ -113,7 +149,7 @@ updateR()
 
 ## Packages Management
 
-**Load packages**
+### Load packages
 
 Q: What is the difference btw `library(package)` and `require(package)`?\
 A:
@@ -209,7 +245,39 @@ search()
 [10] "package:methods"   "Autoloads"         "package:base"     
 ```
 
+
+
+Q: `dplyr` has many conflicts with `plyr`.   
+A: Specify pkg using `::`. Or set library priority by 
+
+- changing the order in which you load the packages.
+
+```r
+# load dplyr last so that it has priority
+library(plyr)
+library(dplyr)
+```
+
+- with the \{needs\} package
+
+```r
+library(needs)
+# prioritize the functions in dplyr
+prioritize(dplyr) 
+```
+
+
+
+Q: How to unload a package without restarting R?  
+A: `detach("package:ggplot2", unload=TRUE)` or uncheck the checkbox button in `Packages` pane.
+
+<img src="https://i.sstatic.net/A7TOO.png" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:100%;" />
+
+
+
 ------------------------------------------------------------------------
+
+### Install packages
 
 **Install R packages from source**
 
@@ -252,6 +320,24 @@ rownames(installed.packages())
 "ggplot2" %in% rownames(installed.packages())
 ```
 
+`installed.packages(lib.loc=NULL, priority=NULL)`
+
+- `lib.loc` 	character vector describing the location of **R** library trees to search through
+- `priority`       used to select packages; `"high"` is equivalent to `c("base", "recommended")`
+
+```r
+# list all bases packages from your `R.Version`
+> rownames(installed.packages(priority="base"))
+ [1] "base"      "compiler"  "datasets"  "graphics"  "grDevices" "grid"     
+ [7] "methods"   "parallel"  "splines"   "stats"     "stats4"    "tcltk"    
+[13] "tools"     "utils" 
+#  what R loads on startup
+> c(getOption("defaultPackages"), "base")
+[1] "datasets"  "utils"     "grDevices" "graphics"  "stats"     "methods"   "base"     
+```
+
+`getOption("defaultPackages")` is what R loads on startup although the `base`package is not counted.
+
 Check package version
 
 ``` r
@@ -263,7 +349,7 @@ A: You can go to GitHub repo to check release notes. You will find the latest ve
 
 ------------------------------------------------------------------------
 
-**Update packages**
+### Update packages
 
 -   Update an individual package
 
@@ -408,6 +494,30 @@ A: See <https://opensource.guide/legal/#which-open-source-license-is-appropriate
 
 Q: How to add a license to my repo?\
 A: Follow the instructions [here](https://docs.github.com/en/communities/setting-up-your-project-for-healthy-contributions/adding-a-license-to-a-repository "GitHub: add license to your rep").
+
+--------------------------------------------------------------------------------
+
+## Copilot
+
+Copilot offers autocomplete-style suggestions as you code as “ghost text”. 
+
+GitHub Copilot primarily relies on the context in the file you are actively editing. Any comments, code, or other context provided within the active document will be used as a “prompt” that Copilot will then use to provide a suggested completion. 
+
+- To expand the scope of the context used by Copilot beyond just the active document, there is a setting to also index and read from other R, Python, or SQL files in the current project. This setting can be toggled on or off in the Tools > Global Options > Copilot > “Index project files with GitHub Copilot” setting.
+
+- At times, normal autocomplete and Copilot may seem to conflict with each other. In these cases, it is best to review the Copilot suggestion and determine if it is appropriate for the current context. If it is, you can accept the suggestion by pressing `Tab`. If it is not, you can ignore the suggestion and continue typing or force the normal autocomplete to show by pressing `Ctrl+Space`. 
+
+  Issue: `Ctrl+Space` crash with spotlight shortcut. ❗️
+
+- Only show Copilot suggestions when evoke mannually using `Ctrl + Backslash (\)`.
+
+  The Copilot suggestions can be very distracting and clutter your script.
+
+For general advice on how to use Copilot, please see:
+
+- [RStudio Copilot User Guide](https://docs.posit.co/ide/user/ide/guide/tools/copilot.html)
+- [How to use GitHub Copilot: Prompts, tips, and use cases](https://github.blog/2023-06-20-how-to-write-better-prompts-for-github-copilot/)
+
 
 --------------------------------------------------------------------------------
 
