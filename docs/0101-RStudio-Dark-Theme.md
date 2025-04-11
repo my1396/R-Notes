@@ -182,8 +182,13 @@ To see whether need to install some packages:
 
 
 ```r
+# install the package if it is not available
 if (!requireNamespace("devtools")) install.packages("devtools")
+# or equivalently
+if (!require("devtools")) install.packages("devtools")
 ```
+
+You can also use `require(devtools)` to check whether the required package is available, but note that it will load the package as a side effect.
 
 Alternatively,
 

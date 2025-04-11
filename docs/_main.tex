@@ -112,12 +112,12 @@
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
 \urlstyle{same}
 \hypersetup{
-  pdftitle={R Notes},
+  pdftitle={Cross References},
   pdfauthor={John Doe},
   hidelinks,
   pdfcreator={LaTeX via pandoc}}
 
-\title{R Notes}
+\title{Cross References}
 \author{John Doe}
 \date{2025-04-11}
 
@@ -709,9 +709,14 @@ To see whether need to install some packages:
 
 \begin{Shaded}
 \begin{Highlighting}[]
+\CommentTok{\# install the package if it is not available}
 \ControlFlowTok{if}\NormalTok{ (}\SpecialCharTok{!}\FunctionTok{requireNamespace}\NormalTok{(}\StringTok{"devtools"}\NormalTok{)) }\FunctionTok{install.packages}\NormalTok{(}\StringTok{"devtools"}\NormalTok{)}
+\CommentTok{\# or equivalently}
+\ControlFlowTok{if}\NormalTok{ (}\SpecialCharTok{!}\FunctionTok{require}\NormalTok{(}\StringTok{"devtools"}\NormalTok{)) }\FunctionTok{install.packages}\NormalTok{(}\StringTok{"devtools"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
+
+You can also use \texttt{require(devtools)} to check whether the required package is available, but note that it will load the package as a side effect.
 
 Alternatively,
 
@@ -1296,7 +1301,7 @@ References:
 \end{Highlighting}
 \end{Shaded}
 
-Commonly used global options:
+\textbf{Commonly used global options}:
 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.1781}}
@@ -1314,6 +1319,134 @@ Description
 width & Controls the maximum number of columns on a line used in printing vectors, matrices and arrays, and when filling by \texttt{cat}. Defaults to 80.Don't change this if you want to print more columns. Use {\texttt{options(tibble.width=400)}} instead. \\
 pillar.sigfig & Tibbles print numbers with three significant digits by default, switching to scientific notation if the available space is too small.\texttt{options(pillar.sigfig\ =\ 4)} to increase the number of digits printed out \\
 \end{longtable}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\section{R Startup}\label{r-startup}
+
+\textbf{\texttt{Sys.getenv(x)}} get the values of the environment variables. Returns a vector of the same length as \texttt{x}.
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{x} a character vector
+\end{itemize}
+
+Environment Variables examples:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\SpecialCharTok{\textgreater{}} \FunctionTok{Sys.getenv}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"HOME"}\NormalTok{, }\StringTok{"R\_HOME"}\NormalTok{, }\StringTok{"R\_PAPERSIZE"}\NormalTok{, }\StringTok{"R\_PRINTCMD"}\NormalTok{))}
+\NormalTok{           HOME                                      R\_HOME }
+\StringTok{"/Users/menghan"} \StringTok{"/Library/Frameworks/R.framework/Resources"} 
+\NormalTok{    R\_PAPERSIZE                                  R\_PRINTCMD }
+           \StringTok{"a4"}                                       \StringTok{"lpr"} 
+\end{Highlighting}
+\end{Shaded}
+
+\href{https://community.rstudio.com/t/rstudio-doesnnt-load-rprofile-or-renviron/57721}{Rstudio doesnn't load Rprofile or Renviron}
+
+I store my \texttt{Rprofile} and \texttt{Renviron} in non-default places (i.e.~\texttt{\textasciitilde{}/.config/R}). When opening \texttt{R} in a normal shell, my environment is loaded perfectly fine. When opening Rstudio, it doesn't load my options, settings or paths.
+
+\begin{itemize}
+\item
+  Have to {wrap your option settings in \texttt{rstudio.sessionInit}}
+
+  \url{https://damien-datasci-blog.netlify.app/post/2020-12-31-pimp-your-r-startup-message/}
+
+  \begin{itemize}
+  \item
+    Open \texttt{.Rprofile}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{usethis}\SpecialCharTok{::}\FunctionTok{edit\_r\_profile}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+  \item
+    wrap up your options in the following snippet
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{setHook}\NormalTok{(}\StringTok{"rstudio.sessionInit"}\NormalTok{, }\ControlFlowTok{function}\NormalTok{(newSession) \{}
+  \CommentTok{\# any code included here will be run at the start of each RStudio session}
+  \FunctionTok{options}\NormalTok{(}\AttributeTok{buildtools.check =} \ControlFlowTok{function}\NormalTok{(action) }\ConstantTok{TRUE}\NormalTok{ )}
+\NormalTok{\}, }\AttributeTok{action =} \StringTok{"append"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+  \end{itemize}
+\item
+  Understanding R's startup
+
+  \url{https://rviews.rstudio.com/2017/04/19/r-for-enterprise-understanding-r-s-startup/}
+\end{itemize}
+
+\href{https://usethis.r-lib.org/reference/index.html}{\texttt{usethis}} is a workflow package: it automates repetitive tasks that arise during project setup and development, both for R packages and non-package projects.
+
+What is \texttt{.Rprofile}?
+
+\texttt{.Rprofile} is a startup file to set options and environment variables. \texttt{.Rprofile} files can be either at the user or project level.
+
+\begin{itemize}
+\tightlist
+\item
+  User-level \texttt{.Rprofile} files live in the base of the user's {home directory}, and
+\item
+  project-level \texttt{.Rprofile} files live in the base of the project directory.
+\end{itemize}
+
+Quitting R will erase the default theme setting. If you load \texttt{ggplot2} in a future session it will revert to the default gray theme. If you'd like for \texttt{ggplot2} to always use a different theme (either yours or one of the built-in ones), you can set a load hook and put it in your \texttt{.Rprofile} file. For example, the following hook sets the default theme to be \texttt{theme\_minimal()} every time the \texttt{ggplot2} package is loaded.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{setHook}\NormalTok{(}\FunctionTok{packageEvent}\NormalTok{(}\StringTok{"ggplot2"}\NormalTok{, }\StringTok{"onLoad"}\NormalTok{), }
+        \ControlFlowTok{function}\NormalTok{(...) ggplot2}\SpecialCharTok{::}\FunctionTok{theme\_set}\NormalTok{(ggplot2}\SpecialCharTok{::}\FunctionTok{theme\_bw}\NormalTok{()))}
+\end{Highlighting}
+\end{Shaded}
+
+Of course, you can always override this default theme by adding a theme object to any of your plots that you construct in \texttt{ggplot2}.
+
+\href{https://community.rstudio.com/t/rcpp-compilation-breaks-in-r-4-1-0-running-on-big-sur-11-4/109744}{Rcpp compilation breaks in R 4.1.0}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{devtools}\SpecialCharTok{::}\FunctionTok{build}\NormalTok{(}\StringTok{"my\_package"}\NormalTok{)}
+\NormalTok{Error}\SpecialCharTok{:}\NormalTok{ Could not find tools necessary to compile a package}
+\NormalTok{Call }\StringTok{\textasciigrave{}}\AttributeTok{pkgbuild::check\_build\_tools(debug = TRUE)}\StringTok{\textasciigrave{}}\NormalTok{ to diagnose the problem.}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\item
+  In RStudio, I am continually prompted to install additional build tools and I can't install the build tool. \(\rightarrow\) Bypass the option \texttt{options(buildtools.check\ =\ function(action)\ TRUE)}.
+\item
+  Turns out R was pointing to an old clang version in my Makevars.
+
+  I just deleted it using {[}in Terminal{]}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{sudo}\NormalTok{ rm \textasciitilde{}/.R/Makevars}
+\end{Highlighting}
+\end{Shaded}
+\end{itemize}
+
+\textbf{Install SDK command line tool}
+
+Download from developer.apple.com. Software development kit.
+
+\url{https://developer.apple.com/download/all/}
+
+\textbf{R compiler tools for cpp on MacOS}
+
+\begin{itemize}
+\item
+  \url{https://thecoatlessprofessor.com/programming/cpp/r-compiler-tools-for-rcpp-on-macos/}
+\item
+  install OpenMP enabled \texttt{clang} from the terminal
+
+  \url{https://rpubs.com/Kibalnikov/776164}
+\end{itemize}
 
 \chapter{Knit Rmd}\label{knit-rmd}
 
@@ -1347,21 +1480,19 @@ A:
 \begin{itemize}
 \tightlist
 \item
-  Can still use horizontal separator ctrl + shift + S for dashed lines and ctrl + shift + = for equals
+  Can still use horizontal separator \texttt{ctrl\ +\ shift\ +\ S} for dashed lines and \texttt{ctrl\ +\ shift\ +\ =} for equals
 \item
   Headers must have one empty line above and below to separate it from other text
 \end{itemize}
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
-\textbf{YAML metadata}
+YAML metadata
 
-Q: What is YAML?
-
+Q: What is YAML?\\
 A: YAML is a human-friendly data serialization language for all programming languages.
 
-Q: What does YAML do?
-
+Q: What does YAML do?\\
 A: It is placed at the very beginning of the document and is read by each of Pandoc, \textbf{rmarkdown}, and \textbf{knitr}.
 
 \begin{itemize}
@@ -1546,6 +1677,105 @@ Should I use quotes to surround the values?
 \NormalTok{bar}\SpecialCharTok{:} \DecValTok{123}\NormalTok{baz}
 \end{Highlighting}
 \end{Shaded}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection*{Document dependency}\label{document-dependency}
+
+By default, R Markdown produces standalone HTML files with no external dependencies, using \texttt{data:}URIs to incorporate the contents of linked scripts, stylesheets, images, and videos. This means you can share or publish the file just like you share Office documents or PDFs. If you would rather keep dependencies in external files, you can specify \texttt{self\_contained:\ false}.
+
+Note that even for self-contained documents, MathJax is still loaded externally (this is necessary because of its big size). If you want to serve MathJax locally, you should specify \texttt{mathjax:\ local} and \texttt{self\_contained:\ false}.
+
+One common reason to keep dependencies external is for serving R Markdown documents from a website (external dependencies can be cached separately by browsers, leading to faster page load times). In the case of serving multiple R Markdown documents you may also want to consolidate dependent library files (e.g.~Bootstrap, and MathJax, etc.) into a single directory shared by multiple documents. You can use the \texttt{lib\_dir} option to do this. For example:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\SpecialCharTok{{-}{-}{-}}
+\NormalTok{title}\SpecialCharTok{:} \StringTok{"Habits"}
+\NormalTok{output}\SpecialCharTok{:}
+\NormalTok{  html\_document}\SpecialCharTok{:}
+\NormalTok{    self\_contained}\SpecialCharTok{:}\NormalTok{ false}
+\NormalTok{    lib\_dir}\SpecialCharTok{:}\NormalTok{ libs}
+\SpecialCharTok{{-}{-}{-}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection*{Loading LaTeX packages}\label{loading-latex-packages}
+
+We can load additional LaTeX packages using the \texttt{extra\_dependencies} option within the {\texttt{pdf\_document}} YAML settings.
+
+This allows us to provide a list of LaTeX packages to be loaded in the intermediate LaTeX output document, e.g.,
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\SpecialCharTok{{-}{-}{-}}
+\NormalTok{title}\SpecialCharTok{:} \StringTok{"Using more LaTeX packages"}
+\NormalTok{output}\SpecialCharTok{:} 
+\NormalTok{  pdf\_document}\SpecialCharTok{:}
+\NormalTok{    extra\_dependencies}\SpecialCharTok{:}\NormalTok{ [}\StringTok{"bbm"}\NormalTok{, }\StringTok{"threeparttable"}\NormalTok{]}
+\SpecialCharTok{{-}{-}{-}}
+\end{Highlighting}
+\end{Shaded}
+
+If you need to specify options when loading the package, you can add a second level to the list and provide the options as a list, e.g.,
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{output}\SpecialCharTok{:} 
+\NormalTok{  pdf\_document}\SpecialCharTok{:}
+\NormalTok{    extra\_dependencies}\SpecialCharTok{:}
+\NormalTok{      caption}\SpecialCharTok{:}\NormalTok{ [}\StringTok{"labelfont=\{bf\}"}\NormalTok{]}
+\NormalTok{      hyperref}\SpecialCharTok{:}\NormalTok{ [}\StringTok{"unicode=true"}\NormalTok{, }\StringTok{"breaklinks=true"}\NormalTok{]}
+\NormalTok{      lmodern}\SpecialCharTok{:}\NormalTok{ null}
+\end{Highlighting}
+\end{Shaded}
+
+For those familiar with LaTeX, this is equivalent to the following LaTeX code:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\BuiltInTok{\textbackslash{}usepackage}\NormalTok{[labelfont=\{bf\}]\{}\ExtensionTok{caption}\NormalTok{\} }
+\BuiltInTok{\textbackslash{}usepackage}\NormalTok{[unicode=true, breaklinks=true]\{}\ExtensionTok{hyperref}\NormalTok{\}}
+\BuiltInTok{\textbackslash{}usepackage}\NormalTok{\{}\ExtensionTok{lmodern}\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+The advantage of using the \texttt{extra\_dependencies} argument over the \texttt{includes} argument introduced in Section \href{https://bookdown.org/yihui/rmarkdown-cookbook/latex-preamble.html\#latex-preamble}{6.1} is that you do not need to include an external file, so your Rmd document can be self-contained.
+
+\subsection*{Includes}\label{includes}
+
+You can do more advanced customization of output by including additional HTML content or by replacing the core Pandoc template entirely. To include content in the document header or before/after the document body, you use the \texttt{includes} option as follows:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\SpecialCharTok{{-}{-}{-}}
+\NormalTok{title}\SpecialCharTok{:} \StringTok{"Habits"}
+\NormalTok{output}\SpecialCharTok{:}
+\NormalTok{  html\_document}\SpecialCharTok{:}
+\NormalTok{    includes}\SpecialCharTok{:}
+\NormalTok{      in\_header}\SpecialCharTok{:}\NormalTok{ header.html}
+\NormalTok{      before\_body}\SpecialCharTok{:}\NormalTok{ doc\_prefix.html}
+\NormalTok{      after\_body}\SpecialCharTok{:}\NormalTok{ doc\_suffix.html}
+\SpecialCharTok{{-}{-}{-}}
+\end{Highlighting}
+\end{Shaded}
+
+An example \texttt{header.html} to load a MathJax extension \texttt{textmacros}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\SpecialCharTok{\textless{}}\NormalTok{script type}\OtherTok{=}\StringTok{"text/x{-}mathjax{-}config"}\SpecialCharTok{\textgreater{}}
+  \FunctionTok{MathJax.Hub.Config}\NormalTok{(\{ }
+\NormalTok{    loader}\SpecialCharTok{:}\NormalTok{ \{load}\SpecialCharTok{:}\NormalTok{ [}\StringTok{\textquotesingle{}[tex]/textmacros\textquotesingle{}}\NormalTok{]\},}
+\NormalTok{    tex}\SpecialCharTok{:}\NormalTok{ \{packages}\SpecialCharTok{:}\NormalTok{ \{}\StringTok{\textquotesingle{}[+]\textquotesingle{}}\SpecialCharTok{:}\NormalTok{ [}\StringTok{\textquotesingle{}textmacros\textquotesingle{}}\NormalTok{]\}\}}
+\NormalTok{  \});}
+\SpecialCharTok{\textless{}}\ErrorTok{/}\NormalTok{script}\SpecialCharTok{\textgreater{}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
 \section{Chunk Options}\label{chunk-options}
 
@@ -1892,6 +2122,481 @@ If highlighting is supported for your output format and language, then the code 
 \url{https://themockup.blog/posts/2021-08-27-displaying-verbatim-code-chunks-in-xaringan-presentations/}
 
 Pandoc's Markdown: \url{https://pandoc.org/MANUAL.html\#fenced-code-blocks}
+
+\section{Rmd Basics}\label{rmd-basics}
+
+To name a chunk, add the name after \texttt{r}, it's not necessary to add \texttt{label=\textquotesingle{}chunk-name\textquotesingle{}}, but it is possible to do so if you prefer the form \texttt{tag=value}.
+
+\textbf{The chunk label}
+
+\begin{itemize}
+\tightlist
+\item
+  Must be unique within the document. This is especially important for cache and plot filenames, because these filenames are based on chunk labels. Chunks without labels will be assigned labels like \texttt{unnamed-chunk-i}, where \texttt{i} is an incremental number.
+\item
+  Avoid spaces (\texttt{␣}), periods ( \texttt{.}), and underscores (\texttt{\_}) in chunk labels and paths. If you need separators, you are recommended to use hyphens (\texttt{-}) instead.
+\end{itemize}
+
+\texttt{knitr::opts\_chunk\$set()} changes the default values of chunk options in a document.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\textbf{Unnumbered sections}
+
+Add \texttt{\{-\}} at the end of the section title.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{\# Question 1: Variance and Covariance properties \{{-}\}}
+\CommentTok{\textless{}!{-}{-} equivalently, you can use \{.unnumbered\} {-}{-}\textgreater{}} 
+\FunctionTok{\# Question 1: Variance and Covariance properties \{.unnumbered\}}
+\end{Highlighting}
+\end{Shaded}
+
+Note that the section won't be numbered but will show in the TOC.
+
+If you want to further exclude it from the TOC:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{\# Question 1: Variance and Covariance properties \{.unlisted .unnumbered\}}
+\end{Highlighting}
+\end{Shaded}
+
+Headings with \texttt{\#} will appear in the file outline, which is a convenient feature. So use this method whenever possible.
+
+One exception is level 2 headings in Bookdown:
+
+\begin{itemize}
+\item
+  By default \texttt{Bookdown} starts a new page for each level 2 heading. If you want to keep the style wihtout starting a new page, use an html tag. The heading won't be numbered or included in TOC. However, a downside is that the heading won't show up in the file outline either, making them harder to locate.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DataTypeTok{\textless{}}\KeywordTok{h2}\DataTypeTok{\textgreater{}}\NormalTok{YAML metadata}\DataTypeTok{\textless{}/}\KeywordTok{h2}\DataTypeTok{\textgreater{}}
+\end{Highlighting}
+\end{Shaded}
+\end{itemize}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\textbf{Knitting in the global environment}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{rmarkdown}\SpecialCharTok{::}\FunctionTok{render}\NormalTok{(}\StringTok{"/Users/menghan/Library/CloudStorage/OneDrive{-}Norduniversitet/EK369E/Seminars/w1.rmd"}\NormalTok{, }\AttributeTok{envir=}\NormalTok{.GlobalEnv)}
+\end{Highlighting}
+\end{Shaded}
+
+\textbf{Advantages}: fast; load and output results in the global environment; easy to inspect afterwards.
+
+Rmd built-in themes for \texttt{html} output: \url{https://rstudio4edu.github.io/rstudio4edu-book/rmd-themes.html}
+
+\texttt{.Rmd} documents can be edited in either source or visual mode. To switch into visual mode for a given document, use the Source or Visual button at the top-left of the document toolbar (or alternatively the \texttt{Cmd+Shift+F4} keyboard shortcut).
+
+\begin{itemize}
+\item
+  Visual mode allows you to preview the effect after having compiled the markdown file.
+
+  ❗️But it modifies your code siliently, be cautions with visual mode.
+\item
+  More user-friendly in terms of providing dropdown menus for editting.
+\item
+  Visual mode supports both traditional \textbf{keyboard shortcuts} (e.g.~\texttt{Cmd\ +\ B} for bold) as well as markdown shortcuts (using markdown syntax directly). For example, enclose \texttt{**bold**} text in asterisks or type \texttt{\#\#} and press space to create a second level heading.
+\item
+  One bug for Visual mode is that inside \textbf{bullet points}, \texttt{\$} is automatically escaped as \texttt{\textbackslash{}\$}. In this case, use {\texttt{cmd+/}} and choose {inline math} to insert an eqn.
+\item
+  When type inline equations, first type \texttt{\$} then the equation, then \texttt{\$} at last. Do not type \texttt{\$\$} at one time. Otherwise, they will be escaped as regular text.
+\end{itemize}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\textbf{Comments in Rmd}
+
+\begin{itemize}
+\item
+  In both html and pdf outputs, use the following to write true comments you don't want to show in the rendered file.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\SpecialCharTok{\textless{}!{-}{-}}\NormalTok{ regular html comment }\SpecialCharTok{{-}}\OtherTok{{-}\textgreater{}} 
+\end{Highlighting}
+\end{Shaded}
+\end{itemize}
+
+\textbf{Link to an external javascript}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DataTypeTok{\textless{}}\KeywordTok{SCRIPT}\OtherTok{ language}\OperatorTok{=}\StringTok{"JavaScript"}\OtherTok{ SRC}\OperatorTok{=}\StringTok{"my\_jxscript.js"}\DataTypeTok{\textgreater{}\textless{}/}\KeywordTok{SCRIPT}\DataTypeTok{\textgreater{}}
+\end{Highlighting}
+\end{Shaded}
+
+\section{Citing References}\label{citing-references}
+
+Use \texttt{@citationkey} to cite references in text.
+
+Put citations in parentheses, use \texttt{{[}@citationkey{]}}.
+
+To cite multiple entries, separate the keys by semicolons, e.g., \texttt{{[}@key-1;\ @key-2;\ @key-3{]}}. To suppress the mention of the author, add a minus sign before \texttt{@}, e.g., \texttt{{[}-@citationkey{]}}.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Syntax
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Result
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\texttt{@adams1975} concludes that \ldots{} & Adams (1975) concludes that \ldots{} \\
+\texttt{@adams1975{[}p.33{]}} concludes that \ldots{} & Adams (1975, p.~33) concludes that \ldots{} \\
+\ldots{} end of sentence \texttt{{[}@adams1975{]}}. & \ldots{} end of sentence (Adams, 1975). \\
+\texttt{{[}see\ @adams1975,p.33{]}}. & \ldots{} end of sentence (see Adams, 1975, p.~33). \\
+delineate multiple authors with colon: \texttt{{[}@adams1975;\ @aberdeen1958{]}} & delineate multiple authors with colon: (Aberdeen, 1958; Adams, 1975) \\
+Check Lo and MacKinlay \texttt{{[}-@Lo-Mackinlay1988;\ -@Lo1989{]}} for example. & Check Lo and MacKinlay (1988, 1989) for example. \\
+\end{longtable}
+
+\textbf{Add an item to a bibliography without using it}
+
+By default, the bibliography will only display items that are directly referenced in the document.
+
+If you want to include items in the bibliography without actually citing them in the body text, you can define a dummy \texttt{nocite} metadata field and put the citations there.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{{-}{-}{-}}
+\AnnotationTok{nocite:}\CommentTok{ |}
+\CommentTok{  @item1, @item2}
+\CommentTok{{-}{-}{-}}
+\end{Highlighting}
+\end{Shaded}
+
+\section{Cross References}\label{cross-references}
+
+\subsection{\texorpdfstring{Using \texttt{bookdown}}{Using bookdown}}\label{using-bookdown}
+
+You can number and refer to an equation by adding \texttt{\textbackslash{}begin\{equation\}} along with a label, provided with \texttt{(\textbackslash{}\#eq:label)}.
+
+\begin{itemize}
+\item
+  {The position of the label matters}.
+
+  \begin{itemize}
+  \tightlist
+  \item
+    For single-lined equations: First write your equation, then append your label \texttt{(\textbackslash{}\#eq:label)}. Otherwise, your equation won't be rendered.
+  \item
+    For multi-lined equations: append \texttt{(\textbackslash{}\#eq:label)} after \texttt{\textbackslash{}end\{split\}}, \texttt{\textbackslash{}end\{aligned\}} \ldots{}
+  \end{itemize}
+\item
+  Note that \texttt{\textbackslash{}begin\{equation\}} must {NOT be quoted in \texttt{\$\$...\$\$}} for the equation to be rendered.
+
+  Otherwise, will cause ``Bad math delimiter'' error at the time of tex compilation for pdf output. Might be alright for html output though.
+
+  Unexpected consequence: Without the \texttt{\$\$...\$\$}, RStudio won't provide previews for equations.
+
+  \begin{itemize}
+  \tightlist
+  \item
+    For temporary preview in RStudio at the composing stage, you can enclose the whole math environment in \texttt{\$\$...\$\$}. But \textbf{remember to delete them when you are done} editing the equation.
+  \item
+    See \href{https://www.kenjisato.jp/en/post/2017/02/cross-referenceable-equation-with-preview-in-rmarkdown/}{this post} for a more efficient workaround.
+  \end{itemize}
+\item
+  You can then refer to the equation in text using \texttt{\textbackslash{}@ref(eq:CJ)}. Remember to put the label in parentheses \texttt{()}.
+
+  General syntax for other environments: \texttt{\textbackslash{}@ref(type:label)} where \texttt{type} is the environment being referenced, and \texttt{label} is the chunk label.
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{This is an equation redered using bookdown}
+
+\KeywordTok{\textbackslash{}begin}\NormalTok{\{}\ExtensionTok{equation}\NormalTok{\}}\SpecialStringTok{ (}\SpecialCharTok{\textbackslash{}\#}\SpecialStringTok{eq:CJ)}
+\SpecialStringTok{y=}\SpecialCharTok{\textbackslash{}beta}\SpecialStringTok{\_0 + }\SpecialCharTok{\textbackslash{}beta}\SpecialStringTok{\_1x + e\_t}
+\KeywordTok{\textbackslash{}end}\NormalTok{\{}\ExtensionTok{equation}\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+will render as
+
+\begin{equation} 
+y=\beta_0 + \beta_1x + e_t
+\label{eq:CJ}
+\end{equation}
+
+You may refer to it using \texttt{eqn\ \textbackslash{}@ref(eq:CJ)}, e.g., see eqn \eqref{eq:CJ}.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{Multilined equations.}
+  
+\KeywordTok{\textbackslash{}begin}\NormalTok{\{}\ExtensionTok{equation}\NormalTok{\}}\SpecialStringTok{ }
+\KeywordTok{\textbackslash{}begin}\NormalTok{\{}\ExtensionTok{aligned}\NormalTok{\}}
+\SpecialStringTok{y\_i \&= f(x\_\{1i\}, x\_\{2i\}, }\SpecialCharTok{\textbackslash{}ldots}\SpecialStringTok{, x\_\{Ki\}) + }\SpecialCharTok{\textbackslash{}varepsilon}\SpecialStringTok{\_i }\SpecialCharTok{\textbackslash{}\textbackslash{}}
+\SpecialStringTok{\&= x\_\{1i\} }\SpecialCharTok{\textbackslash{}beta}\SpecialStringTok{\_1 + x\_\{2i\} }\SpecialCharTok{\textbackslash{}beta}\SpecialStringTok{\_2 + }\SpecialCharTok{\textbackslash{}cdots}\SpecialStringTok{ + x\_\{Ki\} }\SpecialCharTok{\textbackslash{}beta}\SpecialStringTok{\_K + }\SpecialCharTok{\textbackslash{}varepsilon}\SpecialStringTok{\_i}
+\KeywordTok{\textbackslash{}end}\NormalTok{\{}\ExtensionTok{aligned}\NormalTok{\}}\SpecialStringTok{(}\SpecialCharTok{\textbackslash{}\#}\SpecialStringTok{eq:scalar{-}form)}
+\KeywordTok{\textbackslash{}end}\NormalTok{\{}\ExtensionTok{equation}\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+will render as
+
+\begin{equation} 
+\begin{aligned}
+y_i &= f(x_{1i}, x_{2i}, \ldots, x_{Ki}) + \varepsilon_i \\
+&= x_{1i} \beta_1 + x_{2i} \beta_2 + \cdots + x_{Ki} \beta_K + \varepsilon_i
+\end{aligned}\label{eq:scalar-form}
+\end{equation}
+
+You may refer to it using \texttt{eqn\ \textbackslash{}@ref(eq:scalar-form)}, e.g., see eqn \eqref{eq:scalar-form} .
+
+Note that
+
+\begin{itemize}
+\item
+  For HTML output, \textbf{bookdown} can only number the equations with labels.
+
+  Please make sure equations without labels are not numbered by either using the \texttt{equation*} environment or adding \texttt{\textbackslash{}nonumber} or \texttt{\textbackslash{}notag} to your equations.
+\end{itemize}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\textbf{Troubleshooting}
+
+Issue: \href{https://github.com/jupyter/nbconvert/issues/232}{Bad math environment delimiter on conversion to pdf when using equation or align}.
+
+Cause: The error happens because I enclosed \texttt{\textbackslash{}begin\{equation\}} environment in \texttt{\$\$}. I did this as the dollar sings enable equation rendering and preview in file.
+
+Fix: remove the double signs.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{The following equation causes error. Need to remove the dollar signs.}
+\SpecialStringTok{$$}
+\KeywordTok{\textbackslash{}begin}\NormalTok{\{}\ExtensionTok{equation}\NormalTok{\}}
+\SpecialStringTok{y=x+2}
+\KeywordTok{\textbackslash{}end}\NormalTok{\{}\ExtensionTok{equation}\NormalTok{\}}
+\SpecialStringTok{$$}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\textbf{More examples}:
+
+\begin{itemize}
+\item
+  \textbf{Headers}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{\# Introduction \{\#intro\}}
+
+\NormalTok{This is Chapter }\FunctionTok{\textbackslash{}@ref}\NormalTok{(intro)}
+\end{Highlighting}
+\end{Shaded}
+\item
+  \textbf{Figures}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{See Figure }\FunctionTok{\textbackslash{}@ref}\NormalTok{(fig:cars{-}plot)}
+
+\NormalTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}\{r cars{-}plot, fig.cap="A plot caption"\}}
+\NormalTok{plot(cars)  \# a scatterplot}
+\NormalTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}}
+\end{Highlighting}
+\end{Shaded}
+\item
+  \textbf{Tables}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{See Table }\FunctionTok{\textbackslash{}@ref}\NormalTok{(tab:mtcars)}
+
+\NormalTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}\{r mtcars\}}
+\NormalTok{knitr::kable(mtcars[1:5, 1:5], caption = "A caption")}
+\NormalTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}}
+\end{Highlighting}
+\end{Shaded}
+\item
+  \textbf{Theorems}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{See Theorem }\FunctionTok{\textbackslash{}@ref}\NormalTok{(thm:boring)}
+
+\NormalTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}\{theorem, boring\}}
+\NormalTok{Here is my theorem.}
+\NormalTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}}
+\end{Highlighting}
+\end{Shaded}
+\item
+  \textbf{Equations}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{See equation }\FunctionTok{\textbackslash{}@ref}\NormalTok{(eq:linear)}
+
+\KeywordTok{\textbackslash{}begin}\NormalTok{\{}\ExtensionTok{equation}\NormalTok{\}}
+\SpecialStringTok{a + bx = c  (}\SpecialCharTok{\textbackslash{}\#}\SpecialStringTok{eq:linear)}
+\KeywordTok{\textbackslash{}end}\NormalTok{\{}\ExtensionTok{equation}\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+\end{itemize}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{Using the LaTeX Way}\label{using-the-latex-way}
+
+The \textbf{LaTeX} way allows you to assign your own labels by \texttt{\textbackslash{}tag}. One drawback is that this does not allow preview of equations.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  Add the following script at the beginning of your document body:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DataTypeTok{\textless{}}\KeywordTok{script}\OtherTok{ type=}\StringTok{"text/x{-}mathjax{-}config"}\DataTypeTok{\textgreater{}}
+\NormalTok{MathJax}\OperatorTok{.}\AttributeTok{Hub}\OperatorTok{.}\FunctionTok{Config}\NormalTok{(\{}
+  \DataTypeTok{TeX}\OperatorTok{:}\NormalTok{ \{ }\DataTypeTok{equationNumbers}\OperatorTok{:}\NormalTok{ \{ }\DataTypeTok{autoNumber}\OperatorTok{:} \StringTok{"AMS"}\NormalTok{ \} \}}
+\NormalTok{\})}\OperatorTok{;}
+\DataTypeTok{\textless{}/}\KeywordTok{script}\DataTypeTok{\textgreater{}}
+\end{Highlighting}
+\end{Shaded}
+
+  It configures MathJax to automatically number equations. \href{https://stackoverflow.com/a/55163121/10108921}{Source}.
+\item
+  In the text, use \texttt{label\{eq:label\}}. If you want to provide a specific number to the equation, you can use \texttt{\textbackslash{}tag\{XX.XX\}}.
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Note that \texttt{\textbackslash{}begin\{equation\}} is {NOT} inside \texttt{\$\$\ ...\$\$}!
+  \end{itemize}
+\item
+  Cite using \texttt{\$\textbackslash{}ref\{eq:label\}\$} (no parenthesis) or \texttt{\$\textbackslash{}eqref\{eq:label\}\$} (with parenthesis). The dollar sign \texttt{\$} here around \texttt{\textbackslash{}ref} and \texttt{\textbackslash{}eqref} is not essential. Commands work with or without \texttt{\$}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{Without using the bookdown package.}
+
+\KeywordTok{\textbackslash{}begin}\NormalTok{\{}\ExtensionTok{equation}\NormalTok{\}}\SpecialStringTok{ }\SpecialCharTok{\textbackslash{}label}\SpecialStringTok{\{eq:test\} }\SpecialCharTok{\textbackslash{}tag}\SpecialStringTok{\{my custom label\}}
+\SpecialStringTok{  Y\_i = }\SpecialCharTok{\textbackslash{}beta}\SpecialStringTok{\_0 + }\SpecialCharTok{\textbackslash{}beta}\SpecialStringTok{\_1 x\_i + }\SpecialCharTok{\textbackslash{}epsilon}\SpecialStringTok{\_i}
+\KeywordTok{\textbackslash{}end}\NormalTok{\{}\ExtensionTok{equation}\NormalTok{\}}
+
+\NormalTok{Cite Equation }\SpecialStringTok{$}\SpecialCharTok{\textbackslash{}eqref}\SpecialStringTok{\{eq:test\}$}\NormalTok{ like this.}
+\end{Highlighting}
+\end{Shaded}
+
+  \begin{equation} \label{eq:test} \tag{my label}
+  Y_i = \beta_0 + \beta_1 x_i + \epsilon_i
+  \end{equation}
+
+  Refer to the eq \eqref{eq:test}
+\end{enumerate}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\textbf{Reference}:
+
+\url{https://bookdown.org/yihui/bookdown/markdown-extensions-by-bookdown.html\#equations}
+
+\section{Equations}\label{equations}
+
+Can use \texttt{\$...\$} (\texttt{\$\$...\$\$} for blocks) or \texttt{\textbackslash{}(...\textbackslash{})} (\texttt{\textbackslash{}{[}...\textbackslash{}{]}} for blocks) to enclose equations. Difference:
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{\$...\$} provides rendered equation previews in RStudio.
+\item
+  \texttt{\textbackslash{}(...\textbackslash{})} does not have previews.
+\end{itemize}
+
+Rstudio equation previews do NOT work well with indented equations. \(\rightarrow\) reduce indentation
+
+如果公式缩进，Rstudio 公式预览功能可能不识别。在不影响理解的前提下，减少不必要的缩进以便预览公式。
+
+\textbf{Multi-case} functions using \texttt{\textbackslash{}begin\{cases\}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{\textbackslash{}begin\{align*\}}
+\NormalTok{I\_t = }
+\NormalTok{\textbackslash{}begin\{cases\}}
+\NormalTok{1 \& \textbackslash{}text\{if \} r\_t\textgreater{}0 }\SpecialCharTok{\textbackslash{}\textbackslash{}}
+\NormalTok{0 \& \textbackslash{}text\{if \} r\_t\textbackslash{}leq0}
+\NormalTok{\textbackslash{}end\{cases\}}
+\NormalTok{\textbackslash{}end\{align*\}}
+\end{Highlighting}
+\end{Shaded}
+
+will render as
+
+\begin{align*}
+I_t = 
+\begin{cases}
+1 & \text{if } r_t>0 \\
+0 & \text{if } r_t\leq0
+\end{cases}
+\end{align*}
+
+For equation numbering support in \texttt{bookdown} you need to \href{https://bookdown.org/yihui/bookdown/markdown-extensions-by-bookdown.html\#equations}{assign labels}.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+You may refer to an equation using Eq. \texttt{\textbackslash{}@ref(eq:eq01)}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{\textbackslash{}begin}\NormalTok{\{}\ExtensionTok{align}\NormalTok{\}}\SpecialStringTok{ (}\SpecialCharTok{\textbackslash{}\#}\SpecialStringTok{eq:eq01)}
+\SpecialCharTok{\textbackslash{}frac}\SpecialStringTok{\{p(x)\}\{1{-}p(x)\} = }\SpecialCharTok{\textbackslash{}exp}\SpecialStringTok{ (}\SpecialCharTok{\textbackslash{}beta}\SpecialStringTok{\_0+}\SpecialCharTok{\textbackslash{}beta}\SpecialStringTok{\_1 x) }\SpecialCharTok{\textbackslash{},}\SpecialStringTok{.}
+\KeywordTok{\textbackslash{}end}\NormalTok{\{}\ExtensionTok{align}\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+If you want to provide a specific number to the equation, you can use \texttt{\textbackslash{}tag\{XX.XX\}}.
+
+\begin{itemize}
+\item
+  With LaTeX
+
+  LaTex allows custom labels.
+
+  \begin{align} \label{eq:my-label-latex} \tag{my label latex}
+  \frac{p(x)}{1-p(x)} = \exp (\beta_0+\beta_1 x) \,.
+  \end{align}
+
+  My specific label here, see eq \eqref{eq:my-label-latex} (\texttt{\textbackslash{}eqref\{eq:my-label-latex\}}).
+\end{itemize}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\begin{itemize}
+\item
+  With \texttt{bookdown}
+
+  \texttt{bookdown} does NOT support custom tag though.
+
+  \begin{align}
+  \frac{p(x)}{1-p(x)} = \exp (\beta_0+\beta_1 x) \,.
+  \label{eq:my-label-bookdown}
+  \end{align}
+
+  My specific label here, see eq \eqref{eq:my-label-bookdown}
+\end{itemize}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
 \chapter{Basic R}\label{basic-r}
 

@@ -25,19 +25,17 @@ A:
 
 **Quick takeaways**:
 
-- Can still use horizontal separator ctrl + shift + S for dashed lines and ctrl + shift + = for equals
+- Can still use horizontal separator `ctrl + shift + S` for dashed lines and `ctrl + shift + =` for equals
 - Headers must have one empty line above and below to separate it from other text
 
 --------------------------------------------------------------------------------
 
-**YAML metadata**
+<h2>YAML metadata</h2>
 
-Q: What is YAML?
-
+Q: What is YAML?  \
 A: YAML is a human-friendly data serialization language for all programming languages.
 
-Q: What does YAML do?
-
+Q: What does YAML do? \
 A: It is placed at the very beginning of the document and is read by each of Pandoc, **rmarkdown**, and **knitr**. 
 
 - Provide metadata of the document. 
@@ -169,7 +167,97 @@ foo: bar1baz234
 bar: 123baz
 ```
 
+--------------------------------------------------------------------------------
 
+### Document dependency {.unlisted .unnumbered}
+
+By default, R Markdown produces standalone HTML files with no external dependencies, using `data:`URIs to incorporate the contents of linked scripts, stylesheets, images, and videos. This means you can share or publish the file just like you share Office documents or PDFs. If you would rather keep dependencies in external files, you can specify `self_contained: false`.
+
+Note that even for self-contained documents, MathJax is still loaded externally (this is necessary because of its big size). If you want to serve MathJax locally, you should specify `mathjax: local` and `self_contained: false`.
+
+One common reason to keep dependencies external is for serving R Markdown documents from a website (external dependencies can be cached separately by browsers, leading to faster page load times). In the case of serving multiple R Markdown documents you may also want to consolidate dependent library files (e.g. Bootstrap, and MathJax, etc.) into a single directory shared by multiple documents. You can use the `lib_dir` option to do this. For example:
+
+```r
+---
+title: "Habits"
+output:
+  html_document:
+    self_contained: false
+    lib_dir: libs
+---
+```
+
+--------------------------------------------------------------------------------
+
+### Loading LaTeX packages {.unlisted .unnumbered}
+
+We can load additional LaTeX packages using the `extra_dependencies` option within the <span style='color:#00CC66'>`pdf_document`</span> YAML settings. 
+
+ This allows us to provide a list of LaTeX packages to be loaded in the intermediate LaTeX output document, e.g.,
+
+```r
+---
+title: "Using more LaTeX packages"
+output: 
+  pdf_document:
+    extra_dependencies: ["bbm", "threeparttable"]
+---
+```
+
+If you need to specify options when loading the package, you can add a second level to the list and provide the options as a list, e.g.,
+
+```r
+output: 
+  pdf_document:
+    extra_dependencies:
+      caption: ["labelfont={bf}"]
+      hyperref: ["unicode=true", "breaklinks=true"]
+      lmodern: null
+```
+
+For those familiar with LaTeX, this is equivalent to the following LaTeX code:
+
+```latex
+\usepackage[labelfont={bf}]{caption} 
+\usepackage[unicode=true, breaklinks=true]{hyperref}
+\usepackage{lmodern}
+```
+
+The advantage of using the `extra_dependencies` argument over the `includes` argument introduced in Section [6.1](https://bookdown.org/yihui/rmarkdown-cookbook/latex-preamble.html#latex-preamble) is that you do not need to include an external file, so your Rmd document can be self-contained.
+
+
+
+### Includes {.unlisted .unnumbered}
+
+You can do more advanced customization of output by including additional HTML content or by replacing the core Pandoc template entirely. To include content in the document header or before/after the document body, you use the `includes` option as follows:
+
+```r
+---
+title: "Habits"
+output:
+  html_document:
+    includes:
+      in_header: header.html
+      before_body: doc_prefix.html
+      after_body: doc_suffix.html
+---
+```
+
+
+
+An example `header.html` to load a MathJax extension `textmacros`.
+
+```r
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({ 
+    loader: {load: ['[tex]/textmacros']},
+    tex: {packages: {'[+]': ['textmacros']}}
+  });
+</script>
+```
+
+
+--------------------------------------------------------------------------------
 
 ## Chunk Options
 

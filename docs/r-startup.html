@@ -4,13 +4,13 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>1.1 Usage | Cross References</title>
+  <title>2.8 R Startup | Cross References</title>
   <meta name="description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
 set in the _output.yml file.</p>" />
   <meta name="generator" content="bookdown 0.35 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="1.1 Usage | Cross References" />
+  <meta property="og:title" content="2.8 R Startup | Cross References" />
   <meta property="og:type" content="book" />
   
   <meta property="og:description" content="<p>This is a minimal example of using the bookdown package to write a book.
@@ -19,7 +19,7 @@ set in the _output.yml file.</p>" />
   <meta name="github-repo" content="my1396/R-Notes" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="1.1 Usage | Cross References" />
+  <meta name="twitter:title" content="2.8 R Startup | Cross References" />
   
   <meta name="twitter:description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
@@ -36,8 +36,8 @@ set in the _output.yml file.</p>" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   <link rel="shortcut icon" href="images/r-project-favicon.ico" type="image/x-icon" />
-<link rel="prev" href="index.html"/>
-<link rel="next" href="render-book.html"/>
+<link rel="prev" href="options.html"/>
+<link rel="next" href="knit-rmd.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -225,19 +225,75 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="usage" class="section level2 hasAnchor" number="1.1">
-<h2><span class="header-section-number">1.1</span> Usage<a href="usage.html#usage" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>Each <strong>bookdown</strong> chapter is an .Rmd file, and each .Rmd file can contain one (and only one) chapter. A chapter <em>must</em> start with a first-level heading: <code># A good chapter</code>, and can contain one (and only one) first-level heading.</p>
-<p>Use second-level and higher headings within chapters like: <code>## A short section</code> or <code>### An even shorter section</code>.</p>
-<p>The <code>index.Rmd</code> file is required, and is also your first book chapter. It will be the homepage when you render the book.</p>
+<div id="r-startup" class="section level2 hasAnchor" number="2.8">
+<h2><span class="header-section-number">2.8</span> R Startup<a href="r-startup.html#r-startup" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p><strong><code>Sys.getenv(x)</code></strong> get the values of the environment variables. Returns a vector of the same length as <code>x</code>.</p>
+<ul>
+<li><code>x</code> a character vector</li>
+</ul>
+<p>Environment Variables examples:</p>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="r-startup.html#cb41-1" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">Sys.getenv</span>(<span class="fu">c</span>(<span class="st">&quot;HOME&quot;</span>, <span class="st">&quot;R_HOME&quot;</span>, <span class="st">&quot;R_PAPERSIZE&quot;</span>, <span class="st">&quot;R_PRINTCMD&quot;</span>))</span>
+<span id="cb41-2"><a href="r-startup.html#cb41-2" tabindex="-1"></a>           HOME                                      R_HOME </span>
+<span id="cb41-3"><a href="r-startup.html#cb41-3" tabindex="-1"></a><span class="st">&quot;/Users/menghan&quot;</span> <span class="st">&quot;/Library/Frameworks/R.framework/Resources&quot;</span> </span>
+<span id="cb41-4"><a href="r-startup.html#cb41-4" tabindex="-1"></a>    R_PAPERSIZE                                  R_PRINTCMD </span>
+<span id="cb41-5"><a href="r-startup.html#cb41-5" tabindex="-1"></a>           <span class="st">&quot;a4&quot;</span>                                       <span class="st">&quot;lpr&quot;</span> </span></code></pre></div>
+<p><a href="https://community.rstudio.com/t/rstudio-doesnnt-load-rprofile-or-renviron/57721">Rstudio doesnn’t load Rprofile or Renviron</a></p>
+<p>I store my <code>Rprofile</code> and <code>Renviron</code> in non-default places (i.e. <code>~/.config/R</code>). When opening <code>R</code> in a normal shell, my environment is loaded perfectly fine. When opening Rstudio, it doesn’t load my options, settings or paths.</p>
+<ul>
+<li><p>Have to <span style="color:#00CC66">wrap your option settings in <code>rstudio.sessionInit</code></span></p>
+<p><a href="https://damien-datasci-blog.netlify.app/post/2020-12-31-pimp-your-r-startup-message/" class="uri">https://damien-datasci-blog.netlify.app/post/2020-12-31-pimp-your-r-startup-message/</a></p>
+<ul>
+<li><p>Open <code>.Rprofile</code></p>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="r-startup.html#cb42-1" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">edit_r_profile</span>()</span></code></pre></div></li>
+<li><p>wrap up your options in the following snippet</p>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="r-startup.html#cb43-1" tabindex="-1"></a><span class="fu">setHook</span>(<span class="st">&quot;rstudio.sessionInit&quot;</span>, <span class="cf">function</span>(newSession) {</span>
+<span id="cb43-2"><a href="r-startup.html#cb43-2" tabindex="-1"></a>  <span class="co"># any code included here will be run at the start of each RStudio session</span></span>
+<span id="cb43-3"><a href="r-startup.html#cb43-3" tabindex="-1"></a>  <span class="fu">options</span>(<span class="at">buildtools.check =</span> <span class="cf">function</span>(action) <span class="cn">TRUE</span> )</span>
+<span id="cb43-4"><a href="r-startup.html#cb43-4" tabindex="-1"></a>}, <span class="at">action =</span> <span class="st">&quot;append&quot;</span>)</span></code></pre></div></li>
+</ul></li>
+<li><p>Understanding R’s startup</p>
+<p><a href="https://rviews.rstudio.com/2017/04/19/r-for-enterprise-understanding-r-s-startup/" class="uri">https://rviews.rstudio.com/2017/04/19/r-for-enterprise-understanding-r-s-startup/</a></p></li>
+</ul>
+<p><a href="https://usethis.r-lib.org/reference/index.html"><code>usethis</code></a> is a workflow package: it automates repetitive tasks that arise during project setup and development, both for R packages and non-package projects.</p>
+<p>What is <code>.Rprofile</code>?</p>
+<p><code>.Rprofile</code> is a startup file to set <u>options</u> and <u>environment variables</u>. <code>.Rprofile</code> files can be either at the user or project level.</p>
+<ul>
+<li>User-level <code>.Rprofile</code> files live in the base of the user’s <span style="color:#00CC66">home directory</span>, and</li>
+<li>project-level <code>.Rprofile</code> files live in the base of the project directory.</li>
+</ul>
+<p>Quitting R will erase the default theme setting. If you load <code>ggplot2</code> in a future session it will revert to the default gray theme. If you’d like for <code>ggplot2</code> to always use a different theme (either yours or one of the built-in ones), you can set a load hook and put it in your <code>.Rprofile</code> file. For example, the following hook sets the default theme to be <code>theme_minimal()</code> every time the <code>ggplot2</code> package is loaded.</p>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="r-startup.html#cb44-1" tabindex="-1"></a><span class="fu">setHook</span>(<span class="fu">packageEvent</span>(<span class="st">&quot;ggplot2&quot;</span>, <span class="st">&quot;onLoad&quot;</span>), </span>
+<span id="cb44-2"><a href="r-startup.html#cb44-2" tabindex="-1"></a>        <span class="cf">function</span>(...) ggplot2<span class="sc">::</span><span class="fu">theme_set</span>(ggplot2<span class="sc">::</span><span class="fu">theme_bw</span>()))</span></code></pre></div>
+<p>Of course, you can always override this default theme by adding a theme object to any of your plots that you construct in <code>ggplot2</code>.</p>
+<p><a href="https://community.rstudio.com/t/rcpp-compilation-breaks-in-r-4-1-0-running-on-big-sur-11-4/109744">Rcpp compilation breaks in R 4.1.0</a></p>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="r-startup.html#cb45-1" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">build</span>(<span class="st">&quot;my_package&quot;</span>)</span>
+<span id="cb45-2"><a href="r-startup.html#cb45-2" tabindex="-1"></a>Error<span class="sc">:</span> Could not find tools necessary to compile a package</span>
+<span id="cb45-3"><a href="r-startup.html#cb45-3" tabindex="-1"></a>Call <span class="st">`</span><span class="at">pkgbuild::check_build_tools(debug = TRUE)</span><span class="st">`</span> to diagnose the problem.</span></code></pre></div>
+<ul>
+<li><p>In RStudio, I am continually prompted to install additional build tools and I can’t install the build tool. <span class="math inline">\(\rightarrow\)</span> Bypass the option <code>options(buildtools.check = function(action) TRUE)</code>.</p></li>
+<li><p>Turns out R was pointing to an old clang version in my Makevars.</p>
+<p>I just deleted it using [in Terminal]</p>
+<div class="sourceCode" id="cb46"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb46-1"><a href="r-startup.html#cb46-1" tabindex="-1"></a><span class="fu">sudo</span> rm ~/.R/Makevars</span></code></pre></div></li>
+</ul>
+<p><strong>Install SDK command line tool</strong></p>
+<p>Download from developer.apple.com. Software development kit.</p>
+<p><a href="https://developer.apple.com/download/all/" class="uri">https://developer.apple.com/download/all/</a></p>
+<p><strong>R compiler tools for cpp on MacOS</strong></p>
+<ul>
+<li><p><a href="https://thecoatlessprofessor.com/programming/cpp/r-compiler-tools-for-rcpp-on-macos/" class="uri">https://thecoatlessprofessor.com/programming/cpp/r-compiler-tools-for-rcpp-on-macos/</a></p></li>
+<li><p>install OpenMP enabled <code>clang</code> from the terminal</p>
+<p><a href="https://rpubs.com/Kibalnikov/776164" class="uri">https://rpubs.com/Kibalnikov/776164</a></p></li>
+</ul>
+
 </div>
+<!-- </div> -->
             </section>
 
           </div>
         </div>
       </div>
-<a href="index.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="render-book.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="options.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="knit-rmd.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -268,7 +324,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/my1396/R-Notes/edit/main/index.Rmd",
+"link": "https://github.com/my1396/R-Notes/edit/main/0102-RStudio-Options.Rmd",
 "text": "Edit"
 },
 "history": {
@@ -279,7 +335,7 @@ gitbook.start({
 "link": null,
 "text": null
 },
-"download": ["_main.pdf", "_main.epub", "https://github.com/my1396/R-Notes/raw/main/index.Rmd"],
+"download": ["_main.pdf", "_main.epub", "https://github.com/my1396/R-Notes/raw/main/0102-RStudio-Options.Rmd"],
 "search": {
 "engine": "fuse",
 "options": null

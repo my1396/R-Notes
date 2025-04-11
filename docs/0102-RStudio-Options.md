@@ -50,13 +50,127 @@ $width
 > options(list(width=80, digits=15)) 
 ```
 
+<div style="height:3px;"><br></div>
 
-Commonly used global options:
+**Commonly used global options**:
 
 | Option        | Description                                                  |
 | ------------- | ------------------------------------------------------------ |
 | width         | Controls the maximum number of columns <u>on a line</u> used in printing vectors, matrices and arrays, and when filling by `cat`. Defaults to 80.<br />Don't change this if you want to print more columns. Use <span style='color:#00CC66'>`options(tibble.width=400)`</span> instead. |
 | pillar.sigfig | Tibbles print numbers with three significant digits by default, switching to scientific notation if the available space is too small.<br />`options(pillar.sigfig = 4)` to increase the number of digits printed out |
+
+
+
+--------------------------------------------------------------------------------
+
+## R Startup
+
+**`Sys.getenv(x)`** 	get the values of the environment variables. Returns a vector of the same length as `x`. 
+
+- `x`	a character vector
+
+Environment Variables examples:
+
+```r
+> Sys.getenv(c("HOME", "R_HOME", "R_PAPERSIZE", "R_PRINTCMD"))
+           HOME                                      R_HOME 
+"/Users/menghan" "/Library/Frameworks/R.framework/Resources" 
+    R_PAPERSIZE                                  R_PRINTCMD 
+           "a4"                                       "lpr" 
+```
+
+
+
+[Rstudio doesnn't load Rprofile or Renviron](https://community.rstudio.com/t/rstudio-doesnnt-load-rprofile-or-renviron/57721)
+
+I store my `Rprofile` and `Renviron` in non-default places (i.e. `~/.config/R`). When opening `R` in a normal shell, my environment is loaded perfectly fine. When opening Rstudio, it doesn't load my options, settings or paths.
+
+- Have to <span style='color:#00CC66'>wrap your option settings in `rstudio.sessionInit`</span>
+
+  https://damien-datasci-blog.netlify.app/post/2020-12-31-pimp-your-r-startup-message/
+
+  - Open `.Rprofile` 
+
+    ```R
+    usethis::edit_r_profile()
+    ```
+
+  - wrap up your options in the following snippet
+
+    ```R
+    setHook("rstudio.sessionInit", function(newSession) {
+      # any code included here will be run at the start of each RStudio session
+      options(buildtools.check = function(action) TRUE )
+    }, action = "append")
+    ```
+
+    
+
+- Understanding R's startup
+
+  https://rviews.rstudio.com/2017/04/19/r-for-enterprise-understanding-r-s-startup/
+
+
+
+[`usethis`](https://usethis.r-lib.org/reference/index.html)  is a workflow package: it automates repetitive tasks that arise during project setup and development, both for R packages and non-package projects.
+
+
+
+
+
+What is `.Rprofile`?
+
+`.Rprofile` is a startup file to set <u>options</u> and <u>environment variables</u>. `.Rprofile` files can be either at the user or project level. 
+
+- User-level `.Rprofile` files live in the base of the user's <span style='color:#00CC66'>home directory</span>, and 
+- project-level `.Rprofile` files live in the base of the project directory. 
+
+Quitting R will erase the default theme setting. If you load `ggplot2` in a future session it will revert to the default gray theme. If you’d like for `ggplot2` to always use a different theme (either yours or one of the built-in ones), you can set a load hook and put it in your `.Rprofile` file. For example, the following hook sets the default theme to be `theme_minimal()` every time the `ggplot2` package is loaded.
+
+```R
+setHook(packageEvent("ggplot2", "onLoad"), 
+        function(...) ggplot2::theme_set(ggplot2::theme_bw()))
+```
+
+Of course, you can always override this default theme by adding a theme object to any of your plots that you construct in `ggplot2`.
+
+
+
+[Rcpp compilation breaks in R 4.1.0](https://community.rstudio.com/t/rcpp-compilation-breaks-in-r-4-1-0-running-on-big-sur-11-4/109744)
+
+```R
+devtools::build("my_package")
+Error: Could not find tools necessary to compile a package
+Call `pkgbuild::check_build_tools(debug = TRUE)` to diagnose the problem.
+```
+
+- In RStudio, I am continually prompted to install additional build tools and I can't install the build tool. $\rightarrow$ Bypass the option `options(buildtools.check = function(action) TRUE)`.
+
+- Turns out R was pointing to an old clang version in my Makevars. 
+
+  I just deleted it using [in Terminal]
+
+  ````bash
+  sudo rm ~/.R/Makevars
+  ````
+
+
+
+**Install SDK command line tool**
+
+Download from developer.apple.com. Software development kit.
+
+https://developer.apple.com/download/all/
+
+
+
+**R compiler tools for cpp on MacOS**
+
+- https://thecoatlessprofessor.com/programming/cpp/r-compiler-tools-for-rcpp-on-macos/
+
+- install OpenMP enabled `clang` from the terminal 
+
+  https://rpubs.com/Kibalnikov/776164
 
 
 
