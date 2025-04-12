@@ -17,7 +17,7 @@ You can number and refer to an equation by adding `\begin{equation}` along with 
     Unexpected consequence: Without the `$$...$$`, RStudio won't provide previews for equations.
     
     - For temporary preview in RStudio at the composing stage, you can enclose the whole math environment in `$$...$$`. But **remember to delete them when you are done** editing the equation.
-    - See [this post](https://www.kenjisato.jp/en/post/2017/02/cross-referenceable-equation-with-preview-in-rmarkdown/) for a more efficient workaround.
+    - See [this post by Kenji Sato](https://www.kenjisato.jp/en/post/2017/02/cross-referenceable-equation-with-preview-in-rmarkdown/) for a more efficient workaround.
     
 - You can then refer to the equation in text using `\@ref(eq:CJ)`. Remember to put the label in parentheses `()`.
 

@@ -107,6 +107,7 @@
 \setcounter{secnumdepth}{5}
 \usepackage{booktabs}
 \usepackage{xcolor}
+\usepackage{xeCJK}  % support for Chinese
 \usepackage[]{natbib}
 \bibliographystyle{plainnat}
 \usepackage{bookmark}
@@ -122,6 +123,23 @@
 \author{John Doe}
 \date{2025-04-12}
 
+\usepackage{amsthm}
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{lemma}{Lemma}[chapter]
+\newtheorem{corollary}{Corollary}[chapter]
+\newtheorem{proposition}{Proposition}[chapter]
+\newtheorem{conjecture}{Conjecture}[chapter]
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[chapter]
+\theoremstyle{definition}
+\newtheorem{example}{Example}[chapter]
+\theoremstyle{definition}
+\newtheorem{exercise}{Exercise}[chapter]
+\theoremstyle{definition}
+\newtheorem{hypothesis}{Hypothesis}[chapter]
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+\newtheorem*{solution}{Solution}
 \begin{document}
 \maketitle
 
@@ -494,7 +512,7 @@ Now go to Tools \textgreater{} Modify Keyboard Shortcuts and search for ``dashes
 \item
   Show argument definitions as you type functions.
 
-  When you type an existing R function such as \texttt{round(}, not only does \texttt{tab} give you the options, but there's an explanation beneath each variable, telling you its role in the function:
+  When you type an existing R function such as \texttt{round(}, not only does {\texttt{tab}} give you the options, but there's an explanation beneath each variable, telling you its role in the function:
 \end{itemize}
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
@@ -1096,6 +1114,13 @@ Reference: \url{https://jennybc.github.io/2014-05-12-ubc/ubc-r/session2.4_github
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
+\subsection{FAQ}\label{faq}
+
+Q: What is package vignettes?\\
+A: It's important to write good and clear documentation, but users don't often read it; at best they'll look at the examples, so be sure to include informative examples. In my experience, what users really want are instructive tutorials demonstrating practical uses of the software with discussion of the interpretation of the results. In R packages, such tutorials are called ``\href{https://kbroman.org/pkg_primer/pages/vignettes.html}{vignettes}.''
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
 \section{Using Git with RStudio}\label{using-git-with-rstudio}
 
 Before you start coding, make sure that you are on the correct branch. You may check
@@ -1458,6 +1483,16 @@ Nice documentations
 \begin{itemize}
 \tightlist
 \item
+  Bookdown package CRAN
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \href{https://cran.r-project.org/web/packages/bookdown/index.html}{Package CRAN page}
+  \item
+    \href{https://cran.r-project.org/web/packages/bookdown/bookdown.pdf}{Reference manual}
+  \end{itemize}
+\item
   \href{https://bookdown.org/yihui/rmarkdown}{R markdown: The definitive guide.} provides detailed references
 \item
   \href{https://bookdown.org/yihui/rmarkdown-cookbook/}{R markdown cookbook}: concise and covers essential functions, with examples.
@@ -1508,7 +1543,11 @@ A: It is placed at the very beginning of the document and is read by each of Pan
   adheres to the YAML format and is delimited by lines containing three three dashes (\texttt{-\/-\/-}).
 \end{itemize}
 
-It can set values of the template variables, such as \texttt{title}, \texttt{author}, and \texttt{date} of the document.
+YAML also called header and front matter.
+
+See \href{https://github.com/hao203/rmarkdown-YAML.git}{HERE} for commonly used YAML metadata (header) in different R Markdown output formats.
+
+YAML can set values of the template variables, such as \texttt{title}, \texttt{author}, and \texttt{date} of the document.
 
 \begin{itemize}
 \item
@@ -1519,8 +1558,27 @@ It can set values of the template variables, such as \texttt{title}, \texttt{aut
   Supported output format examples: \texttt{html\_document}, \texttt{pdf\_document}.
 
   R Markdown documents (\texttt{html\_documents}) and R Notebook documents (\texttt{html\_notebook}) are very similar; in fact, an R Notebook document is a special type of R Markdown document. The main difference is using R Markdown document (\texttt{html\_documents}) you have to knit (render) the entire document each time you want to preview the document, even if you have made a minor change. However, using an R Notebook document (\texttt{html\_notebook}) you can view a preview of the final document without rendering the entire document.
+
+  \textbf{Troubleshooting}
+
+  Issue: \texttt{bookdown} always output html, even if specified to pdf.\\
+  Cause: If it produces HTML, the output format must have been provided somewhere.\\
+  Fix: Check if you have a \_output.yml under the root directory of your book project. If you do, you may delete it. Then bookdown will use the output field that you specified in the YAML frontmatter of your Rmd document.
+\end{itemize}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\textbf{\texttt{bookdown} wrappers} of base markdown format
+
+\texttt{bookdown} output formats allow numbering and cross-referencing figures/tables/equations. It takes the format \texttt{html\_document2}, in general, \texttt{markdown\_document2} is a wrapper for the base format \texttt{markdown\_document}. With the \texttt{bookdown} output format, you can cross-reference sections by their ID's using the same syntax when sections are numbered.
+
+Other bookdown output format examples: \texttt{pdf\_document2}, \texttt{beamer\_presentation2}, \texttt{tufte\_html2}, \texttt{word\_document2}. See Page 12 of the \href{https://cran.r-project.org/web/packages/bookdown/bookdown.pdf}{reference manual} for a complete list of supported format by \texttt{bookdown}.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\begin{itemize}
 \item
-  Many aspects of the LaTeX template used to create PDF documents can be customized using \emph{top-level} \href{https://bookdown.org/yihui/rmarkdown/pdf-document.html\#tab:latex-vars}{YAML metadata} (note that these options do not appear underneath the \texttt{output} section, but rather appear at the top level along with \texttt{title}, \texttt{author}, and so on). For example:
+  Many aspects of the LaTeX template used to create PDF documents can be customized using {\textbf{top-level}} \href{https://bookdown.org/yihui/rmarkdown/pdf-document.html\#tab:latex-vars}{YAML metadata} (note that these options do {\textbf{NOT}} appear underneath the \texttt{output} section, but rather appear at the top level along with \texttt{title}, \texttt{author}, and so on). For example:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1557,24 +1615,22 @@ It can set values of the template variables, such as \texttt{title}, \texttt{aut
   \texttt{linkcolor}, \texttt{urlcolor}, \texttt{citecolor} & Color for internal links (cross references), external links (link to websites), and citation links (bibliography) \\
   \texttt{linestretch} & Options for line spacing (e.g.~1, 1.5, 3). \\
   \end{longtable}
+\item
+  In PDFs, you can use code, typesetting commands (e.g., \texttt{\textbackslash{}vspace\{12pt\}}), and specific packages from LaTeX.
 
-  \begin{itemize}
+  \begin{enumerate}
+  \def\labelenumi{\arabic{enumi}.}
+  \tightlist
   \item
-    In PDFs, you can use code, typesetting commands (e.g., \texttt{\textbackslash{}vspace\{12pt\}}), and specific packages from LaTeX.
-
-    \begin{enumerate}
-    \def\labelenumi{\arabic{enumi}.}
-    \tightlist
-    \item
-      The \texttt{header-includes} option loads LaTeX packages.
-    \end{enumerate}
+    The \texttt{header-includes} option loads LaTeX packages.
+  \end{enumerate}
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \SpecialCharTok{{-}{-}{-}}
 \NormalTok{output}\SpecialCharTok{:}\NormalTok{ pdf\_document}
 \NormalTok{header}\SpecialCharTok{{-}}\NormalTok{includes}\SpecialCharTok{:}
-\SpecialCharTok{{-}}\NormalTok{ \textbackslash{}usepackage\{fancyhdr\}}
+  \SpecialCharTok{{-}}\NormalTok{ \textbackslash{}usepackage\{fancyhdr\}}
 \SpecialCharTok{{-}{-}{-}}
 
 \NormalTok{\textbackslash{}pagestyle\{fancy\}}
@@ -1585,13 +1641,31 @@ It can set values of the template variables, such as \texttt{title}, \texttt{aut
 \end{Highlighting}
 \end{Shaded}
 
-    \begin{enumerate}
-    \def\labelenumi{\arabic{enumi}.}
-    \setcounter{enumi}{1}
-    \tightlist
-    \item
-      Alternatively, use \texttt{extra\_dependencies} to list a character vector of LaTeX packages. This is useful if you need to load multiple packages:
-    \end{enumerate}
+  \href{https://github.com/hao203/rmarkdown-YAML?tab=readme-ov-file\#header-includes}{\textbf{Common \texttt{header-includes}:}}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Chinese/Japanese support
+  \end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{{-}{-}{-}}
+\AnnotationTok{output:}\CommentTok{ pdf\_document}
+\AnnotationTok{header{-}includes:}
+\CommentTok{  {-} \textbackslash{}usepackage\{ctex\}}
+\CommentTok{{-}{-}{-}}
+\end{Highlighting}
+\end{Shaded}
+
+  \begin{enumerate}
+  \def\labelenumi{\arabic{enumi}.}
+  \setcounter{enumi}{1}
+  \tightlist
+  \item
+    Alternatively, use \texttt{extra\_dependencies} to list a character vector of LaTeX packages. This is useful if you need to load multiple packages:
+  \end{enumerate}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1604,7 +1678,7 @@ It can set values of the template variables, such as \texttt{title}, \texttt{aut
 \end{Highlighting}
 \end{Shaded}
 
-    f you need to specify options when loading the package, you can add a second-level to the list and provide the options as a list:
+  If you need to specify options when loading the package, you can add a second-level to the list and provide the options as a list:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1620,42 +1694,60 @@ It can set values of the template variables, such as \texttt{title}, \texttt{aut
 \end{Highlighting}
 \end{Shaded}
 
-    Here are some examples of LaTeX packages you could consider using within your report:
+  Here are some examples of LaTeX packages you could consider using within your report:
 
-    \begin{itemize}
-    \tightlist
-    \item
-      \href{https://ctan.org/pkg/pdfpages}{pdfpages}: Include full PDF pages from an external PDF document within your document.
-    \item
-      \href{https://ctan.org/pkg/caption}{caption}: Change the appearance of caption subtitles. For example, you can make the figure title italic or bold.
-    \item
-      \href{https://ctan.org/pkg/fancyhdr}{fancyhdr}: Change the style of running headers of all pages.
-    \end{itemize}
+  \begin{itemize}
+  \tightlist
   \item
-    Some options are passed to Pandoc, such as \texttt{toc}, \texttt{toc\_depth}, and \texttt{number\_sections}. You should consult the \href{https://pandoc.org/MANUAL.html\#variables}{Pandoc documentation} when in doubt.
+    \href{https://ctan.org/pkg/pdfpages}{pdfpages}: Include full PDF pages from an external PDF document within your document.
+  \item
+    \href{https://ctan.org/pkg/caption}{caption}: Change the appearance of caption subtitles. For example, you can make the figure title italic or bold.
+  \item
+    \href{https://ctan.org/pkg/fancyhdr}{fancyhdr}: Change the style of running headers of all pages.
+  \end{itemize}
+\item
+  Some output options are passed to Pandoc, such as \texttt{toc}, \texttt{toc\_depth}, and \texttt{number\_sections}. You should consult the \href{https://pandoc.org/MANUAL.html\#variables}{Pandoc documentation} when in doubt.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\SpecialCharTok{{-}{-}{-}}
-\NormalTok{output}\SpecialCharTok{:}
-\NormalTok{  pdf\_document}\SpecialCharTok{:}
-\NormalTok{    toc}\SpecialCharTok{:}\NormalTok{ true}
-\NormalTok{        keep\_tex}\SpecialCharTok{:}\NormalTok{ true}
-\SpecialCharTok{{-}{-}{-}}
+\CommentTok{{-}{-}{-}}
+\AnnotationTok{output:}
+\CommentTok{  pdf\_document:}
+\CommentTok{    toc: true}
+\CommentTok{    keep\_tex: true}
+\CommentTok{{-}{-}{-}}
 \end{Highlighting}
 \end{Shaded}
 
-    \begin{itemize}
-    \tightlist
-    \item
-      \texttt{keep\_tex:\ true} if you want to keep intermediate TeX. Easy to debug. Defaults to \texttt{false}.
-    \end{itemize}
+  \begin{itemize}
+  \tightlist
+  \item
+    \texttt{keep\_tex:\ true} if you want to keep intermediate TeX. Easy to debug. Defaults to \texttt{false}.
   \end{itemize}
+
+  To learn which arguments a format takes, read the format's help page in R, e.g.~{\textbf{\texttt{?html\_document}}}.
 \end{itemize}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\textbf{Parameters}
 
 We can include variables and R expressions in this header that can be referenced throughout our R Markdown document. For example, the following header defines \texttt{start\_date} and \texttt{end\_date} parameters, which will be reflected in a list called \texttt{params} later in the R Markdown document.
 
-Thus, if we want to use these values in our R code, we can access them via \texttt{params\$start\_date} and \texttt{params\$end\_date}.
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{{-}{-}{-}}
+\AnnotationTok{title:}\CommentTok{ My RMarkdown}
+\AnnotationTok{author:}\CommentTok{ Yihui Xie}
+\AnnotationTok{output:}\CommentTok{ html\_document}
+\AnnotationTok{params:}
+\CommentTok{  start\_date: \textquotesingle{}2020{-}01{-}01\textquotesingle{}}
+\CommentTok{  end\_date: \textquotesingle{}2020{-}06{-}01\textquotesingle{}}
+\CommentTok{{-}{-}{-}}
+\end{Highlighting}
+\end{Shaded}
+
+To access a parameter in our R code, call \texttt{params\$\textless{}parameter\ name\textgreater{}}, e.g., \texttt{params\$start\_date} and \texttt{params\$end\_date}.
 
 Should I use quotes to surround the values?
 
@@ -1680,6 +1772,16 @@ Should I use quotes to surround the values?
 \NormalTok{bar}\SpecialCharTok{:} \DecValTok{123}\NormalTok{baz}
 \end{Highlighting}
 \end{Shaded}
+
+ref:
+
+\begin{itemize}
+\tightlist
+\item
+  \href{https://bookdown.org/yihui/rmarkdown-cookbook/rmarkdown-anatomy.html\#:~:text=In\%20short\%2C\%20we\%20can\%20include\%20variables\%20and\%20R\%20expressions\%20in\%20this\%20header\%20that\%20can\%20be\%20referenced\%20throughout\%20our\%20R\%20Markdown\%20document.}{R Markdown anatomy, R Markdown Cookbook}
+\item
+  \url{https://rmarkdown.rstudio.com/lesson-6.html}
+\end{itemize}
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
@@ -1707,7 +1809,7 @@ One common reason to keep dependencies external is for serving R Markdown docume
 
 \subsection*{Loading LaTeX packages}\label{loading-latex-packages}
 
-We can load additional LaTeX packages using the \texttt{extra\_dependencies} option within the {\texttt{pdf\_document}} YAML settings.
+We can load additional LaTeX packages using the \href{https://bookdown.org/yihui/rmarkdown-cookbook/latex-extra.html}{\texttt{extra\_dependencies}} option {\textbf{within} the \texttt{pdf\_document}} YAML settings.
 
 This allows us to provide a list of LaTeX packages to be loaded in the intermediate LaTeX output document, e.g.,
 
@@ -1722,7 +1824,7 @@ This allows us to provide a list of LaTeX packages to be loaded in the intermedi
 \end{Highlighting}
 \end{Shaded}
 
-If you need to specify options when loading the package, you can add a second level to the list and provide the options as a list, e.g.,
+If you need to \textbf{specify options} when loading the package, you can add a sub-level to the list and provide the options as a list, e.g.,
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1745,9 +1847,13 @@ For those familiar with LaTeX, this is equivalent to the following LaTeX code:
 \end{Highlighting}
 \end{Shaded}
 
-The advantage of using the \texttt{extra\_dependencies} argument over the \texttt{includes} argument introduced in Section \href{https://bookdown.org/yihui/rmarkdown-cookbook/latex-preamble.html\#latex-preamble}{6.1} is that you do not need to include an external file, so your Rmd document can be self-contained.
+The advantage of using the \texttt{extra\_dependencies} argument over the \texttt{includes} argument introduced in Section \href{https://bookdown.org/yihui/rmarkdown-cookbook/latex-preamble.html\#latex-preamble}{6.1} is that you do not need to include an external file, so your Rmd document can be \textbf{self-contained}.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
 \subsection*{Includes}\label{includes}
+
+\textbf{html output}
 
 You can do more advanced customization of output by including additional HTML content or by replacing the core Pandoc template entirely. To include content in the document header or before/after the document body, you use the \texttt{includes} option as follows:
 
@@ -1777,6 +1883,50 @@ An example \texttt{header.html} to load a MathJax extension \texttt{textmacros}.
 \SpecialCharTok{\textless{}}\ErrorTok{/}\NormalTok{script}\SpecialCharTok{\textgreater{}}
 \end{Highlighting}
 \end{Shaded}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\textbf{pdf output}
+
+For example, to support Chinese characters.
+
+You can use \texttt{includes} and \texttt{preamble.tex} (can be any name, contains any pre-loaded latex code you want to run before your main text code, for setting up environment, loading pkgs, define new commands \ldots{} Very flexible.)
+
+In the main Rmd:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{{-}{-}{-}}
+\AnnotationTok{output:}
+\CommentTok{  pdf\_document:}
+\CommentTok{    includes:}
+\CommentTok{      in\_header: preamble.tex}
+\CommentTok{{-}{-}{-}}
+\end{Highlighting}
+\end{Shaded}
+
+In \texttt{preamble.tex}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\BuiltInTok{\textbackslash{}usepackage}\NormalTok{\{}\ExtensionTok{xeCJK}\NormalTok{\}  }
+\FunctionTok{\textbackslash{}setCJKmainfont}\NormalTok{\{Noto Sans CJK SC\}}
+\end{Highlighting}
+\end{Shaded}
+
+Alternatively, you can use \texttt{header-includes} but with less flexibility to change options:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{{-}{-}{-}}
+\AnnotationTok{output:}\CommentTok{ pdf\_document}
+\AnnotationTok{header{-}includes:}
+\CommentTok{  {-} \textbackslash{}usepackage\{ctex\}}
+\CommentTok{{-}{-}{-}}
+\end{Highlighting}
+\end{Shaded}
+
+Ref: \url{https://github.com/hao203/rmarkdown-YAML?tab=readme-ov-file\#chinesejapanese-support}
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
@@ -2135,6 +2285,31 @@ If highlighting is supported for your output format and language, then the code 
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
+\textbf{Code chunks within \texttt{enumerate}}
+
+\begin{itemize}
+\item
+  Mind the indentation. Rstudio does not automatically adjust indentation for codes.
+\item
+  specify \texttt{results="asis"} if encounter
+
+  \begin{quote}
+  You can't use `macro parameter character \#' in horizontal mode.
+  \end{quote}
+\item
+  cross references using bookdown (\texttt{\textbackslash{}@ref\{fig:scatter-plot\}}) might not work.
+
+  Use latex references \texttt{\textbackslash{}ref\{fig:scatter-plot\}} (base latex) or \texttt{\textbackslash{}autoref\{fig:scatter-plot\}} (from \texttt{hyperref} package)
+\item
+  markdown language does not work well inside latex environments. A possible workaround is use \texttt{1} and indent four spaces for contents that follow.
+\end{itemize}
+
+If it is still a pain in the ass, use \href{https://tex.stackexchange.com/a/594904}{this solution}.
+
+Basically, just copy the output from R condole and paste in Rmd.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
 \textbf{References}:
 
 \url{https://yihui.org/en/2017/11/knitr-verbatim-code-chunk/}
@@ -2276,13 +2451,33 @@ Rmd built-in themes for \texttt{html} output: \url{https://rstudio4edu.github.io
   \textbf{Different flavors of Markdown} may produce different results if there are no blank lines. 🙈🙈
 \end{itemize}
 
-\section{Citing References}\label{citing-references}
+\section{Citations}\label{citations}
 
-Use \texttt{@citationkey} to cite references in text.
+For an overview of including bibliographies in your output document, you may see \href{https://bookdown.org/yihui/bookdown/citations.html}{Section 2.8} of Xie (\href{https://bookdown.org/yihui/rmarkdown-cookbook/bibliography.html\#ref-bookdown2016}{2016}). The basic usage requires us to specify a bibliography file using the \texttt{bibliography} metadata field in YAML. For example:
 
-Put citations in parentheses, use \texttt{{[}@citationkey{]}}.
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{{-}{-}{-}}
+\AnnotationTok{output:}\CommentTok{ html\_document}
+\AnnotationTok{bibliography:}\CommentTok{ references.bib  }
+\CommentTok{{-}{-}{-}}
+\end{Highlighting}
+\end{Shaded}
 
-To cite multiple entries, separate the keys by semicolons, e.g., \texttt{{[}@key-1;\ @key-2;\ @key-3{]}}. To suppress the mention of the author, add a minus sign before \texttt{@}, e.g., \texttt{{[}-@citationkey{]}}.
+where the BibTeX database is a plain-text file with the \texttt{*.bib} extension that consists of bibliography entries.
+
+\textbf{How to cite in text}:
+
+\begin{itemize}
+\item
+  Use \texttt{@citationkey} to cite references in text.
+\item
+  To put citations in parentheses, use \texttt{{[}@citationkey{]}}.
+\item
+  To cite multiple entries, separate the keys by semicolons, e.g., \texttt{{[}@key-1;\ @key-2;\ @key-3{]}}.
+\item
+  To suppress the mention of the author, add a minus sign before \texttt{@}, e.g., \texttt{{[}-@citationkey{]}}.
+\end{itemize}
 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}
@@ -2305,7 +2500,9 @@ delineate multiple authors with colon: \texttt{{[}@adams1975;\ @aberdeen1958{]}}
 Check Lo and MacKinlay \texttt{{[}-@Lo-Mackinlay1988;\ -@Lo1989{]}} for example. & Check Lo and MacKinlay (1988, 1989) for example. \\
 \end{longtable}
 
-\textbf{Add an item to a bibliography without using it}
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\textbf{Add an item to bibliography without using it}
 
 By default, the bibliography will only display items that are directly referenced in the document.
 
@@ -2316,6 +2513,53 @@ If you want to include items in the bibliography without actually citing them in
 \CommentTok{{-}{-}{-}}
 \AnnotationTok{nocite:}\CommentTok{ |}
 \CommentTok{  @item1, @item2}
+\CommentTok{{-}{-}{-}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{Bibliographies}\label{bibliographies}
+
+Users may also choose to use either \texttt{natbib} (based on bibtex) or \texttt{biblatex} as a ``citation package''.
+In this case, the bibliographic data files need to be in the bibtex or biblatex format, and the document output format is \textbf{limited to PDF}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\AnnotationTok{output:}
+\NormalTok{  pdf\_document:}
+\NormalTok{    citation\_package: natbib}
+\NormalTok{  bookdown:}\SpecialCharTok{:pdf\_book:}
+\NormalTok{    citation\_package: biblatex}
+\end{Highlighting}
+\end{Shaded}
+
+If you use matching styles (e.g., \texttt{biblio-style:\ apa} for \texttt{biblatex} along with \texttt{csl:\ apa.csl} for \texttt{pandoc-citeproc}), output to PDF and to non-PDF formats will be very similar, though not necessarily identical.
+
+Once you have one or multiple \texttt{.bib} files, you may use the field \texttt{bibliography} in the YAML metadata of your first R Markdown document (which is typically \texttt{index.Rmd}), and you can also specify the bibliography style via \texttt{biblio-style} (this only applies to PDF output), e.g.,
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{{-}{-}{-}}
+\AnnotationTok{bibliography:}\CommentTok{ ["one.bib", "another.bib", "yet{-}another.bib"]}
+\AnnotationTok{biblio{-}style:}\CommentTok{ "apalike"}
+\AnnotationTok{link{-}citations:}\CommentTok{ true}
+\CommentTok{{-}{-}{-}}
+\end{Highlighting}
+\end{Shaded}
+
+The field \texttt{link-citations} can be used to add internal links from the citation text of the author-year style to the bibliography entry in the HTML output.
+
+For any non-PDF output format, \texttt{pandoc-citeproc} is the only available option. If consistency across PDF and non-PDF output formats is important, use \texttt{pandoc-citeproc} throughout.
+
+To \href{https://bookdown.org/yihui/rmarkdown-cookbook/bibliography.html\#changing-citation-style}{change the bibliography style}, you will need to specify a CSL (Citation Style Language) file in the csl metadata field, e.g.,
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{{-}{-}{-}}
+\AnnotationTok{output:}\CommentTok{ html\_document}
+\AnnotationTok{bibliography:}\CommentTok{ references.bib  }
+\AnnotationTok{csl:}\CommentTok{ biomed{-}central.csl}
 \CommentTok{{-}{-}{-}}
 \end{Highlighting}
 \end{Shaded}
@@ -2349,7 +2593,7 @@ You can number and refer to an equation by adding \texttt{\textbackslash{}begin\
   \item
     For temporary preview in RStudio at the composing stage, you can enclose the whole math environment in \texttt{\$\$...\$\$}. But \textbf{remember to delete them when you are done} editing the equation.
   \item
-    See \href{https://www.kenjisato.jp/en/post/2017/02/cross-referenceable-equation-with-preview-in-rmarkdown/}{this post} for a more efficient workaround.
+    See \href{https://www.kenjisato.jp/en/post/2017/02/cross-referenceable-equation-with-preview-in-rmarkdown/}{this post by Kenji Sato} for a more efficient workaround.
   \end{itemize}
 \item
   You can then refer to the equation in text using \texttt{\textbackslash{}@ref(eq:CJ)}. Remember to put the label in parentheses \texttt{()}.
@@ -2684,7 +2928,7 @@ We can then use the code in an inline R expression \texttt{\textasciigrave{}r\ c
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
-\section{\texorpdfstring{Numbered \texttt{proof} environment}{Numbered proof environment}}\label{numbered-proof-environment}
+\section{Theorems}\label{theorems}
 
 \url{https://stackoverflow.com/questions/50379923/bookdown-remark-environment}
 
@@ -2738,40 +2982,70 @@ Environment & Printed Name & Label Prefix \\
   Axiom: A basic assumption about a mathematical situation. (a statement we assume to be true).
 \end{itemize}
 
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
 \textbf{Usage}
 
 \textbf{Theorems and proofs} provide environments that are commonly used within articles and books in mathematics. To write a theorem, you can use the syntax below:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{::: \{.theorem \#label name="Theorem name"\}}
-\NormalTok{Here is my theorem.}
-\NormalTok{:::}
+\InformationTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}\{theorem, label, name="Theorem name"\}}
+\InformationTok{Here is my first theorem.}
+\InformationTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}}
 \end{Highlighting}
 \end{Shaded}
+
+will be rendered as:
+
+\begin{theorem}[Theorem name]
+\protect\hypertarget{thm:label}{}\label{thm:label}Here is my first theorem.
+\end{theorem}
+
+Refer to the theorem using \texttt{\textbackslash{}@ref(thm:label)}, e.g., see theorem \ref{thm:label}.
+
+Another example
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\InformationTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}\{theorem, thm{-}py, name="Pythagorean theorem"\}}
+\InformationTok{For a right triangle, if $c$ denotes the length of the hypotenuse and $a$ and $b$ denote the lengths of the other two sides, we have}
+\InformationTok{  }
+\InformationTok{  \textbackslash{}begin\{align*\}}
+\InformationTok{  c\^{}2 = a\^{}2+b\^{}2}
+\InformationTok{  \textbackslash{}end\{align*\}}
+\InformationTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}}
+\end{Highlighting}
+\end{Shaded}
+
+will be rendered as:
+
+\begin{theorem}[Pythagorean theorem]
+\protect\hypertarget{thm:thm-py}{}\label{thm:thm-py}For a right triangle, if \(c\) denotes the length of the hypotenuse and \(a\) and \(b\) denote the lengths of the other two sides, we have
+
+\begin{align*}
+  c^2 = a^2+b^2
+  \end{align*}
+\end{theorem}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
 \begin{itemize}
 \item
   Variants of the \texttt{theorem} environments include: \texttt{lemma}, \texttt{corollary}, \texttt{proposition}, \texttt{conjecture}, \texttt{definition}, \texttt{example}, and \texttt{exercise}. The syntax for these environments is similar to the \texttt{theorem} environment, e.g., ```\texttt{\{lemma\}}.
-
-  For example:
-
-  \textbf{Theorem 12.1 (Pythagorean theorem)} For a right triangle, if \(c\) denotes the length of the hypotenuse and \(a\) and \(b\) denote the lengths of the other two sides, we have
-
-  \begin{align*}
-  c^2 = a^2+b^2
-  \end{align*}
 \item
   The \texttt{proof} environment behaves similarly to theorem environments but is unnumbered. Variants of the \texttt{proof} environments include \texttt{remark} and \texttt{solution}.
 
   The \texttt{proof}environment behaves similarly to theorem environments but is unnumbered.
 \end{itemize}
 
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
 \textbf{Customize math environment labels}
 
 You need to create a file \texttt{\_bookdown.yml} in the same directory as your \texttt{.Rmd}.
 
-In the configuration file **\_bookdown.yml**
+In the configuration file \textbf{\texttt{\_bookdown.yml}}
 
 For example, if you want \texttt{FIGURE\ x.x} instead of \texttt{Figure\ x.x}, you can change \texttt{fig} to \texttt{"FIGURE\ "}:
 
@@ -2806,16 +3080,18 @@ If you want to number \texttt{proof},
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{::: \{.exercise \#mylabel\}}
+\NormalTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}\{exercise, mylabel\}}
 \NormalTok{my comment}
-\NormalTok{:::}
+\NormalTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}}
 
 \NormalTok{In Remark }\FunctionTok{\textbackslash{}@ref}\NormalTok{(exr:mylabel) we discussed...}
 \end{Highlighting}
 \end{Shaded}
 
-  Note that you have to use \texttt{exercise} and the correspoding label prefix \texttt{exr}.
+  Note that you have to use \texttt{exercise} and the corresponding label prefix \texttt{exr}.
 \end{enumerate}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
 Can specify environment style in \texttt{style.css}
 
@@ -2835,7 +3111,7 @@ Can specify environment style in \texttt{style.css}
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{\textless{}div class = "boxed"\textgreater{}}
-\NormalTok{::: \{.exercise \#proof2\}}
+\NormalTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}\{exercise, proof2\}}
 \NormalTok{Show }\SpecialStringTok{$}\SpecialCharTok{\textbackslash{}pi}\SpecialStringTok{=}\SpecialCharTok{\textbackslash{}Phi}\SpecialStringTok{ }\SpecialCharTok{\textbackslash{}left}\SpecialStringTok{(}\SpecialCharTok{\textbackslash{}frac}\SpecialStringTok{\{}\SpecialCharTok{\textbackslash{}mu}\SpecialStringTok{\}\{}\SpecialCharTok{\textbackslash{}sigma}\SpecialStringTok{\}}\SpecialCharTok{\textbackslash{}right}\SpecialStringTok{)$}\NormalTok{.}
 \SpecialStringTok{$$}
 \KeywordTok{\textbackslash{}begin}\NormalTok{\{}\ExtensionTok{aligned}\NormalTok{\}}\SpecialStringTok{[b]}
@@ -2846,10 +3122,639 @@ Can specify environment style in \texttt{style.css}
 \SpecialStringTok{\&= }\SpecialCharTok{\textbackslash{}Phi}\SpecialStringTok{ }\SpecialCharTok{\textbackslash{}left}\SpecialStringTok{(}\SpecialCharTok{\textbackslash{}frac}\SpecialStringTok{\{}\SpecialCharTok{\textbackslash{}mu}\SpecialStringTok{\}\{}\SpecialCharTok{\textbackslash{}sigma}\SpecialStringTok{\} }\SpecialCharTok{\textbackslash{}right}\SpecialStringTok{) }
 \KeywordTok{\textbackslash{}end}\NormalTok{\{}\ExtensionTok{aligned}\NormalTok{\}}\SpecialStringTok{  }\SpecialCharTok{\textbackslash{}square}
 \SpecialStringTok{$$}
-\NormalTok{:::}
+\NormalTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}}
 \NormalTok{\textless{}/div\textgreater{}}
 \end{Highlighting}
 \end{Shaded}
+
+\section{Figures}\label{figures}
+
+\section{Tables}\label{tables}
+
+\section{Rmd GitHub Pages}\label{rmd-github-pages}
+
+\chapter{bookdown}\label{bookdown}
+
+\textbf{\href{https://bookdown.org/yihui/rmarkdown/bookdown-start.html}{Bookdown}} is an extra package for R Markdown that is particularly useful for long documents.
+
+\begin{itemize}
+\tightlist
+\item
+  In HTML format, produces a full website of interlinked pages, one page per chapter
+\item
+  Other HTML features: contents bar, search, colour schemes, font size adjustment, etc
+\item
+  Adds LaTeX-like theorem/definition/proof environments
+\end{itemize}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.4941}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5059}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+``Plain'' R Markdown
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+R Markdown with Bookdown
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Good for short documents, single HTML page & Good for long documents, multi-page website \\
+PDF or accessible HTML & PDF or accessible HTML \\
+LaTeX equations & LaTeX equations \\
+No theorem environments & Theorem environments \\
+\end{longtable}
+
+We can reference chunks (tables and figures), sections, and equations in \texttt{bookdown} output formats
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{bookdown} extends Pandoc
+\item
+  Examples of \texttt{bookdown} formats are \texttt{bookdown::pdf\_document2} or \texttt{bookdown::html\_document2}.
+\item
+  Refer to
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Figure \texttt{\textbackslash{}@ref(fig:chunk-name)}
+  \item
+    Table \texttt{\textbackslash{}@ref(tab:chunk-name)}
+  \item
+    Section \texttt{\textbackslash{}@ref(my-section)}
+  \end{itemize}
+\end{itemize}
+
+Examples of chunks:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\InformationTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}\{r chunk{-}name\}}
+\InformationTok{plot(cars)}
+\InformationTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}} 
+\NormalTok{See Figure \textbackslash{}@ref\{fig:chunk{-}name\}.}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{\# Section \{\#my{-}section\}}
+
+\NormalTok{Refer to Section \textbackslash{}@ref\{my{-}section\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\textbf{Create a \texttt{bookdown} project}:
+
+\texttt{File} → \texttt{New\ Project} → \texttt{New\ Directory} → \texttt{Book\ project\ using\ bookdown} → \texttt{Create\ Project}
+
+\textbf{Bookdown cookbook}: \url{https://rstudio4edu.github.io/rstudio4edu-book/book-dress.html}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\textbf{Deployment and Hosting \texttt{bookdown} on GitHub Pages}
+
+Ref: Authoring Books with R Markdown, \url{https://bookdown.org/yihui/bookdown/github.html}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  Initialize your local git repository and link to the remote GitHub repo.
+\item
+  Go to your \texttt{\_bookdown.yml} file and add \texttt{output\_dir:\ "docs"} on a line by itself
+\item
+  Serve/preview your book locally
+
+  Now the website output files should be in \texttt{/docs}.
+
+  Create a \texttt{.nojekyll} in \texttt{/docs} that tells GitHub that your website is not to be built via Jekyll.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{touch}\NormalTok{ .nojekyll}
+\end{Highlighting}
+\end{Shaded}
+\item
+  Push your changes to GitHub remote
+\item
+  Configure publishing source for GH pages as main branch \texttt{/docs} folder
+
+  Go to your GH remote repo, click \texttt{Settings} → click \texttt{Pages} in the left column → under \texttt{GitHub\ Pages}, change the ``Source'' to be ``main branch /docs folder''.
+\end{enumerate}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\section{bookdown project structure}\label{bookdown-project-structure}
+
+Below shows the basic \href{https://bookdown.org/yihui/rmarkdown/bookdown-project.html}{structure of a default \texttt{bookdown} project}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{directory/}
+\NormalTok{├──  index.Rmd}
+\NormalTok{├── 01{-}intro.Rmd}
+\NormalTok{├── 02{-}literature.Rmd}
+\NormalTok{├── 03{-}method.Rmd}
+\NormalTok{├── 04{-}application.Rmd}
+\NormalTok{├── 05{-}summary.Rmd}
+\NormalTok{├── 06{-}references.Rmd}
+\NormalTok{├── \_bookdown.yml}
+\NormalTok{├── \_output.yml}
+\NormalTok{├──  book.bib}
+\NormalTok{├──  preamble.tex}
+\NormalTok{├──  README.md}
+\NormalTok{└──  style.css}
+\end{Highlighting}
+\end{Shaded}
+
+As a summary of these files:
+
+\begin{itemize}
+\item
+  \texttt{index.Rmd}: This is the only Rmd document to contain a YAML frontmatter, and is the first book chapter.
+\item
+  Rmd files: A typical bookdown book contains multiple chapters, and each chapter lives in one separate Rmd file.
+\item
+  \texttt{\_bookdown.yml}: A configuration file for bookdown.
+\item
+  \texttt{\_output.yml}: It specifies the formatting of the HTML, LaTeX/PDF, and e-books.
+\item
+  \texttt{preamble.tex} and \texttt{style.css}: They can be used to adjust the appearance and styles of the book output document(s). Knowledge of LaTeX and/or CSS is required.
+\end{itemize}
+
+These files are explained in greater detail in the following subsections.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\textbf{\texttt{\_output.yml}} \textbf{Output formats} can be specified either in the YAML metadata of the first Rmd file of the book, or in a separate YAML file named \texttt{\_output.yml} under the root directory of the book.
+
+\begin{itemize}
+\item
+  Add an edit link, e.g., \texttt{https://github.com/my1396/R-Notes/edit/main/\%s}
+
+  This will configure which remote repo to link to and hence allow the page to be downloadable as an \texttt{.Rmd}. Also need to specify \texttt{download:\ {[}"rmd"{]}}.
+\item
+  Link to your GitHub in the toolbar, Part 1 (also need \texttt{index.Rmd})
+\item
+  Add other sharing links
+\item
+  Header and footer of your TOC
+\item
+  Collapse the TOC by (sub)section
+\item
+  Code highlighting
+\end{itemize}
+
+Here is a brief example of \texttt{\_output.yml}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\AttributeTok{bookdown:}\FunctionTok{:gitbook}\KeywordTok{:}
+\AttributeTok{  }\FunctionTok{css}\KeywordTok{:}\AttributeTok{ style.css}
+\AttributeTok{  }\FunctionTok{highlight}\KeywordTok{:}\AttributeTok{ tango}
+\AttributeTok{  }\FunctionTok{split\_by}\KeywordTok{:}\AttributeTok{ section}
+\AttributeTok{  }\FunctionTok{includes}\KeywordTok{:}
+\AttributeTok{    }\FunctionTok{in\_header}\KeywordTok{:}\AttributeTok{ head.html}
+\AttributeTok{  }\FunctionTok{config}\KeywordTok{:}
+\AttributeTok{    }\FunctionTok{fontsettings}\KeywordTok{:}
+\AttributeTok{      }\FunctionTok{theme}\KeywordTok{:}\AttributeTok{ sky}
+\AttributeTok{    }\FunctionTok{toc}\KeywordTok{:}
+\AttributeTok{      }\FunctionTok{collapse}\KeywordTok{:}\AttributeTok{ section}
+\FunctionTok{      before}\KeywordTok{: }\CharTok{|}
+\NormalTok{        \textless{}li\textgreater{}\textless{}a href="./"\textgreater{}R Notes\textless{}/a\textgreater{}\textless{}/li\textgreater{}}
+\FunctionTok{      after}\KeywordTok{: }\CharTok{|}
+\NormalTok{        \textless{}li\textgreater{}\textless{}a href="https://github.com/rstudio/bookdown" target="blank"\textgreater{}Published with bookdown\textless{}/a\textgreater{}\textless{}/li\textgreater{}}
+\AttributeTok{    }\FunctionTok{edit}\KeywordTok{:}\AttributeTok{ }
+\AttributeTok{        }\FunctionTok{link}\KeywordTok{:}\AttributeTok{ https://github.com/my1396/R{-}Notes/edit/main/\%s}
+\AttributeTok{    }\FunctionTok{sharing}\KeywordTok{:}
+\AttributeTok{        }\FunctionTok{github}\KeywordTok{:}\AttributeTok{ }\CharTok{yes}
+\AttributeTok{    }\FunctionTok{download}\KeywordTok{:}\AttributeTok{ }\KeywordTok{[}\StringTok{"pdf"}\KeywordTok{,}\AttributeTok{ }\StringTok{"epub"}\KeywordTok{,}\AttributeTok{ }\StringTok{"rmd"}\KeywordTok{]}
+\AttributeTok{    }\FunctionTok{enableEmoji}\KeywordTok{:}\AttributeTok{ }\CharTok{true}
+\AttributeTok{bookdown:}\FunctionTok{:pdf\_book}\KeywordTok{:}
+\AttributeTok{  }\FunctionTok{includes}\KeywordTok{:}
+\AttributeTok{    }\FunctionTok{in\_header}\KeywordTok{:}\AttributeTok{ preamble.tex}
+\AttributeTok{  }\FunctionTok{latex\_engine}\KeywordTok{:}\AttributeTok{ xelatex}
+\AttributeTok{  }\FunctionTok{citation\_package}\KeywordTok{:}\AttributeTok{ natbib}
+\AttributeTok{  }\FunctionTok{keep\_tex}\KeywordTok{:}\AttributeTok{ }\CharTok{yes}
+\AttributeTok{bookdown:}\FunctionTok{:epub\_book}\KeywordTok{:}\AttributeTok{ default}
+\end{Highlighting}
+\end{Shaded}
+
+You do NOT need the three dashes \texttt{-\/-\/-} in \texttt{\_output.yml}. In this case, all formats should be at the top level, instead of under an \texttt{output} field in individual Rmds.
+
+\texttt{split\_by} defaults to \texttt{chapter}, which splits the file by the first-level headers.
+
+\begin{itemize}
+\item
+  \texttt{split\_by:\ section} splits the file by the second-level headers.
+\item
+  The \href{https://bookdown.org/yihui/bookdown/yaml-options.html}{\texttt{includes} option} allows you to insert arbitrary custom content before and/or after the body of the output.
+
+  It has three sub-options: \texttt{in\_header}, \texttt{before\_body}, and \texttt{after\_body}. You need to know the basic structure of an HTML or LaTeX document to understand these options.
+
+  \begin{itemize}
+  \tightlist
+  \item
+    The source of an HTML document looks like this:
+  \end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DataTypeTok{\textless{}}\KeywordTok{html}\DataTypeTok{\textgreater{}}
+
+  \DataTypeTok{\textless{}}\KeywordTok{head}\DataTypeTok{\textgreater{}}
+  \CommentTok{\textless{}!{-}{-} head content here, e.g. CSS and JS {-}{-}\textgreater{}}
+  \DataTypeTok{\textless{}/}\KeywordTok{head}\DataTypeTok{\textgreater{}}
+
+  \DataTypeTok{\textless{}}\KeywordTok{body}\DataTypeTok{\textgreater{}}
+  \CommentTok{\textless{}!{-}{-} body content here {-}{-}\textgreater{}}
+  \DataTypeTok{\textless{}/}\KeywordTok{body}\DataTypeTok{\textgreater{}}
+
+\DataTypeTok{\textless{}/}\KeywordTok{html}\DataTypeTok{\textgreater{}}
+\end{Highlighting}
+\end{Shaded}
+
+  The \texttt{in\_header} option takes a file path and inserts it into the \texttt{\textless{}head\textgreater{}} tag. The \texttt{before\_body} file will be inserted right below the opening \texttt{\textless{}body\textgreater{}} tag, and \texttt{after\_body} is inserted before the closing tag \texttt{\textless{}/body\textgreater{}}.
+
+  \begin{itemize}
+  \item
+    A LaTeX source document has a similar structure:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\BuiltInTok{\textbackslash{}documentclass}\NormalTok{\{}\ExtensionTok{book}\NormalTok{\}}
+
+\CommentTok{\% LaTeX preamble}
+\CommentTok{\% insert in\_header here}
+
+\KeywordTok{\textbackslash{}begin}\NormalTok{\{}\ExtensionTok{document}\NormalTok{\}}
+\CommentTok{\% insert before\_body here}
+
+\CommentTok{\% body content here}
+
+\CommentTok{\% insert after\_body here}
+\KeywordTok{\textbackslash{}end}\NormalTok{\{}\ExtensionTok{document}\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+  \end{itemize}
+\end{itemize}
+
+bookdown 中文书籍 \texttt{\_output.yml} 范例: \url{https://github.com/yihui/bookdown-chinese/blob/96d526572f0c6648d06c2d4bebf57c5fb4eafce3/_output.yml}
+
+\begin{itemize}
+\item
+  You can set up a tex template.
+  Yihui set up the Chinese support in the template file (\texttt{latex/template.tex}).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\AttributeTok{bookdown:}\FunctionTok{:pdf\_book}\KeywordTok{:}
+\AttributeTok{  }\FunctionTok{includes}\KeywordTok{:}
+\AttributeTok{    }\FunctionTok{in\_header}\KeywordTok{:}\AttributeTok{ latex/preamble.tex}
+\AttributeTok{    }\FunctionTok{before\_body}\KeywordTok{:}\AttributeTok{ latex/before\_body.tex}
+\AttributeTok{    }\FunctionTok{after\_body}\KeywordTok{:}\AttributeTok{ latex/after\_body.tex}
+\AttributeTok{  }\FunctionTok{keep\_tex}\KeywordTok{:}\AttributeTok{ }\CharTok{yes}
+\AttributeTok{  }\FunctionTok{dev}\KeywordTok{:}\AttributeTok{ }\StringTok{"cairo\_pdf"}
+\AttributeTok{  }\FunctionTok{latex\_engine}\KeywordTok{:}\AttributeTok{ xelatex}
+\AttributeTok{  }\FunctionTok{citation\_package}\KeywordTok{:}\AttributeTok{ natbib}
+\AttributeTok{  }\FunctionTok{template}\KeywordTok{:}\AttributeTok{ latex/template.tex}
+\end{Highlighting}
+\end{Shaded}
+\end{itemize}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\textbf{\texttt{\_bookdown.yml}} allows you to specify optional settings to build the book.
+
+\begin{itemize}
+\tightlist
+\item
+  Change themes
+\item
+  Change the chapter name
+\item
+  Change \href{https://rstudio4edu.github.io/rstudio4edu-book/book-yours.html\#book-order}{chapter order}
+\item
+  Set \href{https://rstudio4edu.github.io/rstudio4edu-book/make-book.html\#book-output}{\texttt{new\_session:\ yes}}
+\item
+  Set \href{https://rstudio4edu.github.io/rstudio4edu-book/make-book.html\#book-output}{\texttt{output\_dir:\ docs}}
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{delete\_merged\_file}\KeywordTok{:}\AttributeTok{ }\CharTok{true}
+\FunctionTok{output\_dir}\KeywordTok{:}\AttributeTok{ }\StringTok{"docs"}
+\FunctionTok{new\_session}\KeywordTok{:}\AttributeTok{ }\CharTok{yes}
+\FunctionTok{language}\KeywordTok{:}
+\AttributeTok{  }\FunctionTok{ui}\KeywordTok{:}
+\AttributeTok{    }\FunctionTok{chapter\_name}\KeywordTok{:}\AttributeTok{ }\StringTok{"Chapter "}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\textbf{\texttt{index.Rmd}} {homepage of your website}. Contains the first chapter and the YAML metadata. Other common uses:
+
+\begin{itemize}
+\item
+  Link to your GitHub in the toolbar (also need \texttt{\_output.yml})
+\item
+  Add a favicon
+
+  Add the following line to \texttt{index.Rmd} YAML:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{favicon}\InformationTok{:}\NormalTok{ "images/r{-}project{-}favicon}\FunctionTok{.ico}\NormalTok{"}
+\end{Highlighting}
+\end{Shaded}
+
+  Issue: Favicon shows ok on Chrome but couldn't display on Safari. Same issue reported in \href{https://stackoverflow.com/questions/66023588/r-bookdown-favicon-works-offline-but-not-online}{Stack Overflow}.\\
+  Fix: There is a delay for Safari to show Favicon. Wait for two hours and the issue resolves itself\ldots{}
+\item
+  Book cover, author, date, and description
+\end{itemize}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\textbf{Within any \texttt{.Rmd}}
+
+\begin{itemize}
+\tightlist
+\item
+  Group chapters into Parts
+\item
+  Add an appendix
+\item
+  Section (un)numbering
+\end{itemize}
+
+\section{Rendering bookdown}\label{rendering-bookdown}
+
+Two approaches:
+
+\begin{itemize}
+\tightlist
+\item
+  ``Merge and Knit'' (M-K): default; runs \emph{all} code chunks in all chapters; the state of the R session from previous chapters is carried over to later chapters (e.g., objects created in previous chapters are available to later chapters, unless you deliberately deleted them)
+\item
+  ``Knit and Merge'' (K-M): separate R sessions for individual chapters; all chapters are isolated from each other.
+\end{itemize}
+
+Other differences:
+
+\begin{itemize}
+\item
+  Because \textbf{knitr} does not allow duplicate chunk labels in a source document, you need to make sure there are no duplicate labels in your book chapters when you use the M-K approach, otherwise \textbf{knitr} will signal an error when knitting the merged Rmd file. Note that this means there must not be duplicate labels throughout the whole book.
+
+  The K-M approach only requires no duplicate labels within any single Rmd file.
+\item
+  K-M does not allow Rmd files to be in subdirectories, but M-K does.
+\end{itemize}
+
+To switch to K-M, you either use the argument \texttt{new\_session\ =\ TRUE} when calling \texttt{render\_book()}, or set \texttt{new\_session:\ yes} in the configuration file \texttt{\_bookdown.yml}.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\textbf{Creating Websites with R Markdown}: \url{https://bookdown.org/yihui/blogdown/global-options.html}
+
+Q: What's the difference between Bookdown and Blogdown?\\
+A: Bookdown is for books, grouped in chapters; Blogdown is for blogs, ordered by dates.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\textbf{Control long outputs by using hooks}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  Put the following functions to the set up code chunk.
+\item
+  Then you could use the option \texttt{max.lines\ =\ 10} whenever you want to set a limit to the maximum output length to print.
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DocumentationTok{\#\# control long outputs by using eg \textasciigrave{}max.lines = 10\textasciigrave{}}
+\NormalTok{hook\_output\_default }\OtherTok{\textless{}{-}}\NormalTok{ knitr}\SpecialCharTok{::}\NormalTok{knit\_hooks}\SpecialCharTok{$}\FunctionTok{get}\NormalTok{(}\StringTok{\textquotesingle{}output\textquotesingle{}}\NormalTok{)}
+\NormalTok{truncate\_to\_lines }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(x, n) \{}
+   \ControlFlowTok{if}\NormalTok{ (}\SpecialCharTok{!}\FunctionTok{is.null}\NormalTok{(n)) \{}
+\NormalTok{      x }\OtherTok{=} \FunctionTok{unlist}\NormalTok{(stringr}\SpecialCharTok{::}\FunctionTok{str\_split}\NormalTok{(x, }\StringTok{\textquotesingle{}}\SpecialCharTok{\textbackslash{}n}\StringTok{\textquotesingle{}}\NormalTok{))}
+      \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{length}\NormalTok{(x) }\SpecialCharTok{\textgreater{}}\NormalTok{ n) \{}
+         \CommentTok{\# truncate the output}
+\NormalTok{         x }\OtherTok{=} \FunctionTok{c}\NormalTok{(}\FunctionTok{head}\NormalTok{(x, n), }\StringTok{\textquotesingle{}...}\SpecialCharTok{\textbackslash{}n}\StringTok{\textquotesingle{}}\NormalTok{)}
+\NormalTok{      \}}
+\NormalTok{      x }\OtherTok{=} \FunctionTok{paste}\NormalTok{(x, }\AttributeTok{collapse =} \StringTok{\textquotesingle{}}\SpecialCharTok{\textbackslash{}n}\StringTok{\textquotesingle{}}\NormalTok{) }\CommentTok{\# paste first n lines together}
+\NormalTok{   \}}
+\NormalTok{   x}
+\NormalTok{\}}
+\NormalTok{knitr}\SpecialCharTok{::}\NormalTok{knit\_hooks}\SpecialCharTok{$}\FunctionTok{set}\NormalTok{(}\AttributeTok{output =} \ControlFlowTok{function}\NormalTok{(x, options) \{}
+\NormalTok{   max.lines }\OtherTok{\textless{}{-}}\NormalTok{ options}\SpecialCharTok{$}\NormalTok{max.lines}
+\NormalTok{   x }\OtherTok{\textless{}{-}} \FunctionTok{truncate\_to\_lines}\NormalTok{(x, max.lines)}
+   \FunctionTok{hook\_output\_default}\NormalTok{(x, options)}
+\NormalTok{\})}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+Issue: In RStudio dark mode, \texttt{kableExtra} tables are invisible in the code block output preview because both the font and background are white, making the content unreadable.
+
+Fix: Force the font color to be black.
+
+First run this edited version of \texttt{kableExtra:::print.kableExtra()}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{print.kableExtra }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{ (x, ...) \{}
+\NormalTok{  view\_html }\OtherTok{\textless{}{-}} \FunctionTok{getOption}\NormalTok{(}\StringTok{"kableExtra\_view\_html"}\NormalTok{, }\ConstantTok{TRUE}\NormalTok{)}
+  \ControlFlowTok{if}\NormalTok{ (view\_html }\SpecialCharTok{\&} \FunctionTok{interactive}\NormalTok{()) \{}
+\NormalTok{    dep }\OtherTok{\textless{}{-}} \FunctionTok{list}\NormalTok{(}
+\NormalTok{      rmarkdown}\SpecialCharTok{::}\FunctionTok{html\_dependency\_jquery}\NormalTok{(), }
+\NormalTok{      rmarkdown}\SpecialCharTok{::}\FunctionTok{html\_dependency\_bootstrap}\NormalTok{(}\AttributeTok{theme =} \StringTok{"cosmo"}\NormalTok{), }
+\NormalTok{      kableExtra}\SpecialCharTok{::}\FunctionTok{html\_dependency\_kePrint}\NormalTok{(), }
+\NormalTok{      kableExtra}\SpecialCharTok{::}\FunctionTok{html\_dependency\_lightable}\NormalTok{()}
+\NormalTok{    )}
+    
+\NormalTok{    x }\OtherTok{\textless{}{-}} \FunctionTok{sub}\NormalTok{(}\StringTok{\textquotesingle{}style="\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}style="color: black; \textquotesingle{}}\NormalTok{, }\FunctionTok{as.character}\NormalTok{(x), }\AttributeTok{fixed =} \ConstantTok{TRUE}\NormalTok{)}
+        
+\NormalTok{    html\_kable }\OtherTok{\textless{}{-}}\NormalTok{ htmltools}\SpecialCharTok{::}\FunctionTok{browsable}\NormalTok{(}
+\NormalTok{      htmltools}\SpecialCharTok{::}\FunctionTok{HTML}\NormalTok{(}
+        \FunctionTok{as.character}\NormalTok{(x), }
+        \StringTok{"\textless{}script type=}\SpecialCharTok{\textbackslash{}"}\StringTok{text/x{-}mathjax{-}config}\SpecialCharTok{\textbackslash{}"}\StringTok{\textgreater{}MathJax.Hub.Config(\{tex2jax: \{inlineMath: [[}\SpecialCharTok{\textbackslash{}"}\StringTok{$}\SpecialCharTok{\textbackslash{}"}\StringTok{,}\SpecialCharTok{\textbackslash{}"}\StringTok{$}\SpecialCharTok{\textbackslash{}"}\StringTok{]]\}\})\textless{}/script\textgreater{}\textless{}script async src=}\SpecialCharTok{\textbackslash{}"}\StringTok{https://mathjax.rstudio.com/latest/MathJax.js?config=TeX{-}AMS{-}MML\_HTMLorMML}\SpecialCharTok{\textbackslash{}"}\StringTok{\textgreater{}\textless{}/script\textgreater{}"}
+\NormalTok{      )}
+\NormalTok{    )}
+\NormalTok{    htmltools}\SpecialCharTok{::}\FunctionTok{htmlDependencies}\NormalTok{(html\_kable) }\OtherTok{\textless{}{-}}\NormalTok{ dep}
+    \FunctionTok{class}\NormalTok{(html\_kable) }\OtherTok{\textless{}{-}} \StringTok{"shiny.tag.list"}
+    \FunctionTok{print}\NormalTok{(html\_kable)}
+\NormalTok{  \}}
+  \ControlFlowTok{else}\NormalTok{ \{}
+    \FunctionTok{cat}\NormalTok{(}\FunctionTok{as.character}\NormalTok{(x))}
+\NormalTok{  \}}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+The changes consisted of adding the \texttt{x\ \textless{}-\ sub(\textquotesingle{}style="\textquotesingle{},\ \textquotesingle{}style="color:\ black;\ \textquotesingle{},\ as.character(x),\ fixed\ =\ TRUE)} line and also adding full references to some of the functions.
+
+Then you can print the table as before, the table font color will be forced to be black, and hence visible.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(tidyverse)}
+\FunctionTok{head}\NormalTok{(iris) }\SpecialCharTok{\%\textgreater{}\%} 
+\NormalTok{  knitr}\SpecialCharTok{::}\FunctionTok{kable}\NormalTok{(}\AttributeTok{caption =} \StringTok{"**Table 1.** Iris data. "}\NormalTok{, }\AttributeTok{digits =} \DecValTok{2}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} 
+\NormalTok{  kableExtra}\SpecialCharTok{::}\FunctionTok{kable\_styling}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\section{Toggle Visibility of Solutions}\label{toggle-visibility-of-solutions}
+
+When the bookdown file loads, you would like all the solutions to be hidden. You would like a button for each solution to toggle its visibility.
+
+Easy solution: this works but cannot show math equations properly. ❌
+
+\begin{itemize}
+\tightlist
+\item
+  Advantage is that it does not need to define any java function.
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DataTypeTok{\textless{}}\KeywordTok{button}\OtherTok{ class}\OperatorTok{=}\StringTok{"button"}\OtherTok{ onclick}\OperatorTok{=}\StringTok{"$(\textquotesingle{}\#target2\textquotesingle{}).toggle();"}\DataTypeTok{\textgreater{}}
+\NormalTok{    Show/Hide}
+\DataTypeTok{\textless{}/}\KeywordTok{button}\DataTypeTok{\textgreater{}}
+\DataTypeTok{\textless{}}\KeywordTok{div}\OtherTok{ id}\OperatorTok{=}\StringTok{"target2"}\OtherTok{ style}\OperatorTok{=}\StringTok{"display: none"}\DataTypeTok{\textgreater{}}
+\NormalTok{    Solution:}
+\NormalTok{    $P(\textbackslash{}textrm\{A wins or B wins\}) = P\textbackslash{}big(\textbackslash{}\{\textbackslash{}textrm\{A wins\}\textbackslash{}\} \textbackslash{}cup \textbackslash{}\{\textbackslash{}textrm\{B wins\}\textbackslash{}\}\textbackslash{}big)$}
+\DataTypeTok{\textless{}/}\KeywordTok{div}\DataTypeTok{\textgreater{}}
+\end{Highlighting}
+\end{Shaded}
+
+Example:
+
+Show/Hide
+
+\phantomsection\label{target2}
+\begin{verbatim}
+Solution:
+$P(\textrm{A wins or B wins}) = P\big(\{\textrm{A wins}\} \cup \{\textrm{B wins}\}\big)$
+\end{verbatim}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+{\textbf{Ultimate solution!} }
+
+Able to show math equations properly ✅
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  Put the following codes in the Rmd {header}. This defines the button action \texttt{myFunction}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DataTypeTok{\textless{}}\KeywordTok{script}\DataTypeTok{\textgreater{}} 
+    \KeywordTok{function} \FunctionTok{myFunction}\NormalTok{(id) \{}
+      \KeywordTok{var}\NormalTok{ x }\OperatorTok{=} \BuiltInTok{document}\OperatorTok{.}\FunctionTok{getElementById}\NormalTok{(id)}\OperatorTok{;} 
+      \ControlFlowTok{if}\NormalTok{ (x}\OperatorTok{.}\AttributeTok{style}\OperatorTok{.}\AttributeTok{display} \OperatorTok{===} \StringTok{"none"}\NormalTok{) \{}
+\NormalTok{        x}\OperatorTok{.}\AttributeTok{style}\OperatorTok{.}\AttributeTok{display} \OperatorTok{=} \StringTok{"block"}\OperatorTok{;}
+\NormalTok{      \} }\ControlFlowTok{else}\NormalTok{ \{}
+\NormalTok{        x}\OperatorTok{.}\AttributeTok{style}\OperatorTok{.}\AttributeTok{display} \OperatorTok{=} \StringTok{"none"}\OperatorTok{;}
+\NormalTok{      \}}
+\NormalTok{    \}}
+\DataTypeTok{\textless{}/}\KeywordTok{script}\DataTypeTok{\textgreater{}}
+\end{Highlighting}
+\end{Shaded}
+
+  In case of \texttt{bookdown}, put the JavaScript in \texttt{script.hhml}, which will be loaded into the header of all your html files via \texttt{\_output.yml}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\AttributeTok{bookdown:}\FunctionTok{:gitbook}\KeywordTok{:}
+\AttributeTok{  }\FunctionTok{css}\KeywordTok{:}\AttributeTok{ assets/styling/style.css}
+\AttributeTok{  }\FunctionTok{includes}\KeywordTok{:}
+\AttributeTok{    }\FunctionTok{in\_header}\KeywordTok{:}\AttributeTok{ assets/styling/head.html}
+\AttributeTok{    }\FunctionTok{after\_body}\KeywordTok{:}\AttributeTok{ assets/styling/scripts.html}
+\CommentTok{  \# ...}
+\end{Highlighting}
+\end{Shaded}
+\item
+  When you want to create a solution division, use the following codes.
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Change the {function argument \texttt{myDIV}}, which is the \texttt{id} of the element. \texttt{id} must be unique in one file.
+  \item
+    Change the text shown on the button (\texttt{Solution1}) if you need.
+  \item
+    Put your solution inside the \texttt{\textless{}div\ id=myDIV\textgreater{}} tag, where \texttt{id} is what you specified in the function argument.
+  \end{itemize}
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}\{example, ex1\}}
+\NormalTok{Let $Y=g(X)=\textbackslash{}mu+\textbackslash{}sigma X$ where $\textbackslash{}sigma\textgreater{}0$. Representing the CDF of $Y$ using $F\_X(x)$.}
+\NormalTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}}
+
+\DataTypeTok{\textless{}}\KeywordTok{button}\OtherTok{ onclick}\OperatorTok{=}\StringTok{"myFunction(\textquotesingle{}myDIV\textquotesingle{})"}\DataTypeTok{\textgreater{}}\NormalTok{Solution1}\DataTypeTok{\textless{}/}\KeywordTok{button}\DataTypeTok{\textgreater{}}
+
+\DataTypeTok{\textless{}}\KeywordTok{div}\OtherTok{ id}\OperatorTok{=}\StringTok{"myDIV"}\OtherTok{ style}\OperatorTok{=}\StringTok{"display: none; color: blue;"}\DataTypeTok{\textgreater{}}
+\NormalTok{  $P(\textbackslash{}textrm\{A wins or B wins\}) = P\textbackslash{}big(\textbackslash{}\{\textbackslash{}textrm\{A wins\}\textbackslash{}\} \textbackslash{}cup \textbackslash{}\{\textbackslash{}textrm\{B wins\}\textbackslash{}\}\textbackslash{}big)$}
+\NormalTok{  solution1}
+\DataTypeTok{\textless{}/}\KeywordTok{div}\DataTypeTok{\textgreater{}}
+
+\NormalTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}\{example, ex2\}}
+\NormalTok{Let $X\textbackslash{}sim N(0,1)$ and $Y=\textbackslash{}mu+\textbackslash{}sigma X$. Calculate $\textbackslash{}mathbb\{E\}(Y)$.}
+\NormalTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}}
+
+\DataTypeTok{\textless{}}\KeywordTok{button}\OtherTok{ onclick}\OperatorTok{=}\StringTok{"myFunction(\textquotesingle{}myDIV2\textquotesingle{})"}\DataTypeTok{\textgreater{}}\NormalTok{Solution2}\DataTypeTok{\textless{}/}\KeywordTok{button}\DataTypeTok{\textgreater{}}
+\DataTypeTok{\textless{}}\KeywordTok{div}\OtherTok{ id}\OperatorTok{=}\StringTok{"myDIV2"}\OtherTok{ style}\OperatorTok{=}\StringTok{"display: none; color: blue;"}\DataTypeTok{\textgreater{}}
+\NormalTok{  $P(\textbackslash{}textrm\{A wins or B wins\}) = P\textbackslash{}big(\textbackslash{}\{\textbackslash{}textrm\{A wins\}\textbackslash{}\} \textbackslash{}cup \textbackslash{}\{\textbackslash{}textrm\{B wins\}\textbackslash{}\}\textbackslash{}big)$}
+\NormalTok{  solution2 }
+\DataTypeTok{\textless{}/}\KeywordTok{div}\DataTypeTok{\textgreater{}}
+
+\NormalTok{blabla ...}
+\NormalTok{blabla ...}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{example}
+\protect\hypertarget{exm:ex1}{}\label{exm:ex1}Let \(Y=g(X)=\mu+\sigma X\) where \(\sigma>0\). Representing the CDF of \(Y\) using \(F_X(x)\).
+\end{example}
+
+Solution
+
+\phantomsection\label{myDIV}
+Note that \(g(x)\) is strictly increasing in \(x\).
+The inverse function is
+\[
+X = g^{-1}(Y) = \frac{Y-\mu}{\sigma}
+\]
+and so
+\[
+F_Y(y) = F_X\left(g^{-1}(y)\right) = F_X\left(\frac{y-\mu}{\sigma}\right)
+\]
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\textbf{References}:
+
+\begin{itemize}
+\tightlist
+\item
+  \url{https://stackoverflow.com/questions/62549757/toggle-show-hide-element-where-default-on-refresh-is-hide}
+\item
+  \url{https://naras.su.domains/post/toggle-visibility-of-solutions-in-bookdown/}
+\end{itemize}
 
 \chapter{Basic R}\label{basic-r}
 

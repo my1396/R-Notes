@@ -226,9 +226,10 @@ Now go to Tools \> Modify Keyboard Shortcuts and search for "dashes". Here you c
 
 - Show argument definitions as you type functions.
 
-  When you type an existing R function such as `round(`, not only does `tab` give you the options, but there's an explanation beneath each variable, telling you its role in the function:
+  When you type an existing R function such as `round(`, not only does <span style='color:#00CC66'>`tab`</span> give you the options, but there's an explanation beneath each variable, telling you its role in the function:
 
-  <img src="https://i.sstatic.net/tesBV.png" alt="Function Documentation" style="display: block; margin-right: auto; margin-left: auto; zoom:100%;" />
+  <img src="https://drive.google.com/thumbnail?id=1NGKxuZQB3UajPCVMl4091fzT_WIhb1vf&sz=w1000" alt="Function Documentation" style="display: block; margin-right: auto; margin-left: auto; zoom:100%;" />
+
 
 
 

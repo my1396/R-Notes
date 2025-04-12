@@ -6,6 +6,9 @@
 
 Nice documentations 
 
+- Bookdown package CRAN
+    - [Package CRAN page](https://cran.r-project.org/web/packages/bookdown/index.html)
+    - [Reference manual](https://cran.r-project.org/web/packages/bookdown/bookdown.pdf)
 - [R markdown: The definitive guide.](https://bookdown.org/yihui/rmarkdown)  provides detailed references
 - [R markdown cookbook](https://bookdown.org/yihui/rmarkdown-cookbook/): concise and covers essential functions, with examples.
 - [Authoring Books with R Markdown](https://bookdown.org/yihui/bookdown/): with a focus on `bookdown`.
@@ -40,8 +43,11 @@ A: It is placed at the very beginning of the document and is read by each of Pan
 - adheres to the YAML format and is delimited by lines containing three three dashes (`---`).
 
 
+YAML also called header and front matter.
 
-It can set values of the template variables, such as `title`, `author`, and `date` of the document. 
+See [HERE](https://github.com/hao203/rmarkdown-YAML.git) for commonly used YAML metadata (header) in different R Markdown output formats.
+
+YAML can set values of the template variables, such as `title`, `author`, and `date` of the document. 
 
 - The `output` field is used by rmarkdown to apply the output format function `rmarkdown::html_document()` in the rendering process.
 
@@ -50,8 +56,24 @@ It can set values of the template variables, such as `title`, `author`, and `dat
   Supported output format examples: `html_document`, `pdf_document`.
 
   R Markdown documents (`html_documents`) and R Notebook documents (`html_notebook`) are very similar; in fact, an R Notebook document is a special type of R Markdown document. The main difference is using R Markdown document (`html_documents`) you have to knit (render) the entire document each time you want to preview the document, even if you have made a minor change. However, using an R Notebook document (`html_notebook`) you can view a preview of the final document without rendering the entire document.
+  
+  **Troubleshooting**
+  
+  Issue: `bookdown` always output html, even if specified to pdf. \
+  Cause: If it produces HTML, the output format must have been provided somewhere. \
+  Fix: Check if you have a _output.yml under the root directory of your book project. If you do, you may delete it. Then bookdown will use the output field that you specified in the YAML frontmatter of your Rmd document.
 
-- Many aspects of the LaTeX template used to create PDF documents can be customized using *top-level* [YAML metadata](https://bookdown.org/yihui/rmarkdown/pdf-document.html#tab:latex-vars) (note that these options do not appear underneath the `output` section, but rather appear at the top level along with `title`, `author`, and so on). For example:
+--------------------------------------------------------------------------------
+
+  **`bookdown` wrappers** of base markdown format
+  
+  `bookdown` output formats allow numbering and cross-referencing figures/tables/equations. It takes the format `html_document2`, in general, `markdown_document2` is a wrapper for the base format `markdown_document`. With the `bookdown` output format, you can cross-reference sections by their ID's using the same syntax when sections are numbered. 
+
+  Other bookdown output format examples: `pdf_document2`, `beamer_presentation2`, `tufte_html2`, `word_document2`. See Page 12 of the [reference manual](https://cran.r-project.org/web/packages/bookdown/bookdown.pdf) for a complete list of supported format by `bookdown`.
+  
+--------------------------------------------------------------------------------
+  
+- Many aspects of the LaTeX template used to create PDF documents can be customized using <span style='color:#00CC66'>**top-level**</span> [YAML metadata](https://bookdown.org/yihui/rmarkdown/pdf-document.html#tab:latex-vars) (note that these options do <span style='color:#FF9900'>**NOT**</span> appear underneath the `output` section, but rather appear at the top level along with `title`, `author`, and so on). For example:
 
   ```r
   ---
@@ -75,7 +97,7 @@ It can set values of the template variables, such as `title`, `author`, and `dat
   | `linkcolor`, `urlcolor`, `citecolor`           | Color for internal links (cross references), external links (link to websites), and citation links (bibliography) |
   | `linestretch`                                  | Options for line spacing (e.g. 1, 1.5, 3).                   |
 
-  - In PDFs, you can use code, typesetting commands (e.g., `\vspace{12pt}`), and specific packages from LaTeX. 
+- In PDFs, you can use code, typesetting commands (e.g., `\vspace{12pt}`), and specific packages from LaTeX. 
 
     1. The `header-includes` option loads LaTeX packages.
 
@@ -83,7 +105,7 @@ It can set values of the template variables, such as `title`, `author`, and `dat
     ---
     output: pdf_document
     header-includes:
-    - \usepackage{fancyhdr}
+      - \usepackage{fancyhdr}
     ---
     
     \pagestyle{fancy}
@@ -94,6 +116,19 @@ It can set values of the template variables, such as `title`, `author`, and `dat
     ```
 
     <img src="https://drive.google.com/thumbnail?id=1CNHWeOh7iz_HUh4pBgM99jFzl59csyEC&sz=w1000" alt="latex packages in rmd" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
+    
+    [**Common `header-includes`:**](https://github.com/hao203/rmarkdown-YAML?tab=readme-ov-file#header-includes)
+    
+    - Chinese/Japanese support
+    
+    ````markdown
+    ---
+    output: pdf_document
+    header-includes:
+      - \usepackage{ctex}
+    ---
+    ````
+    
 
     2. Alternatively, use `extra_dependencies` to  list a character vector of LaTeX packages. This is useful if you need to load multiple packages:
 
@@ -106,7 +141,7 @@ It can set values of the template variables, such as `title`, `author`, and `dat
     ---
     ```
 
-    f you need to specify options when loading the package, you can add a second-level to the list and provide the options as a list:
+    If you need to specify options when loading the package, you can add a second-level to the list and provide the options as a list:
 
     ```r
     ---
@@ -126,26 +161,40 @@ It can set values of the template variables, such as `title`, `author`, and `dat
     - [caption](https://ctan.org/pkg/caption): Change the appearance of caption subtitles. For example, you can make the figure title italic or bold.
     - [fancyhdr](https://ctan.org/pkg/fancyhdr): Change the style of running headers of all pages.
 
-  - Some options are passed to Pandoc, such as `toc`, `toc_depth`, and `number_sections`. You should consult the [Pandoc documentation](https://pandoc.org/MANUAL.html#variables) when in doubt.
+- Some output options are passed to Pandoc, such as `toc`, `toc_depth`, and `number_sections`. You should consult the [Pandoc documentation](https://pandoc.org/MANUAL.html#variables) when in doubt.
 
-    ```r
+    `````markdown
     ---
     output:
       pdf_document:
         toc: true
-    		keep_tex: true
+        keep_tex: true
     ---
-    ```
+    `````
 
     - `keep_tex: true`  if you want to keep intermediate TeX. Easy to debug. Defaults to `false`.
 
+    To learn which arguments a format takes, read the format's help page in R, e.g. <span style='color:#00CC66'>**`?html_document`**</span>.
 
 
+--------------------------------------------------------------------------------
 
+**Parameters**
 
 We can include variables and R expressions in this header that can be referenced throughout our R Markdown document. For example, the following header defines `start_date` and `end_date` parameters, which will be reflected in a list called `params` later in the R Markdown document. 
 
-Thus, if we want to use these values in our R code, we can access them via `params$start_date` and `params$end_date`.
+````markdown
+---
+title: My RMarkdown
+author: Yihui Xie
+output: html_document
+params:
+  start_date: '2020-01-01'
+  end_date: '2020-06-01'
+---
+````
+
+To access a parameter in our R code, call `params$<parameter name>`, e.g., `params$start_date` and `params$end_date`.
 
 Should I use quotes to surround the values?
 
@@ -163,6 +212,11 @@ foo: "bar:baz:bam" # has colon, can be misinterpreted as key
 foo: bar1baz234
 bar: 123baz
 ```
+
+ref: 
+
+- [R Markdown anatomy, R Markdown Cookbook](https://bookdown.org/yihui/rmarkdown-cookbook/rmarkdown-anatomy.html#:~:text=In%20short%2C%20we%20can%20include%20variables%20and%20R%20expressions%20in%20this%20header%20that%20can%20be%20referenced%20throughout%20our%20R%20Markdown%20document.)
+- <https://rmarkdown.rstudio.com/lesson-6.html>
 
 --------------------------------------------------------------------------------
 
@@ -188,9 +242,9 @@ output:
 
 ### Loading LaTeX packages {.unlisted .unnumbered}
 
-We can load additional LaTeX packages using the `extra_dependencies` option within the <span style='color:#00CC66'>`pdf_document`</span> YAML settings. 
+We can load additional LaTeX packages using the [`extra_dependencies`](https://bookdown.org/yihui/rmarkdown-cookbook/latex-extra.html) option <span style='color:#00CC66'>**within** the `pdf_document`</span> YAML settings. 
 
- This allows us to provide a list of LaTeX packages to be loaded in the intermediate LaTeX output document, e.g.,
+This allows us to provide a list of LaTeX packages to be loaded in the intermediate LaTeX output document, e.g.,
 
 ```r
 ---
@@ -201,7 +255,7 @@ output:
 ---
 ```
 
-If you need to specify options when loading the package, you can add a second level to the list and provide the options as a list, e.g.,
+If you need to **specify options** when loading the package, you can add a sub-level to the list and provide the options as a list, e.g.,
 
 ```r
 output: 
@@ -220,11 +274,17 @@ For those familiar with LaTeX, this is equivalent to the following LaTeX code:
 \usepackage{lmodern}
 ```
 
-The advantage of using the `extra_dependencies` argument over the `includes` argument introduced in Section [6.1](https://bookdown.org/yihui/rmarkdown-cookbook/latex-preamble.html#latex-preamble) is that you do not need to include an external file, so your Rmd document can be self-contained.
+The advantage of using the `extra_dependencies` argument over the `includes` argument introduced in Section [6.1](https://bookdown.org/yihui/rmarkdown-cookbook/latex-preamble.html#latex-preamble) is that you do not need to include an external file, so your Rmd document can be **self-contained**.
 
 
+
+
+--------------------------------------------------------------------------------
 
 ### Includes {.unlisted .unnumbered}
+
+
+**html output**
 
 You can do more advanced customization of output by including additional HTML content or by replacing the core Pandoc template entirely. To include content in the document header or before/after the document body, you use the `includes` option as follows:
 
@@ -252,6 +312,45 @@ An example `header.html` to load a MathJax extension `textmacros`.
   });
 </script>
 ```
+
+--------------------------------------------------------------------------------
+
+**pdf output**
+
+
+For example, to support Chinese characters.
+
+You can use `includes` and `preamble.tex` (can be any name, contains any pre-loaded latex code you want to run before your main text code, for setting up environment, loading pkgs, define new commands ... Very flexible.)
+
+In the main Rmd:
+
+````markdown
+---
+output:
+  pdf_document:
+    includes:
+      in_header: preamble.tex
+---
+````
+
+In `preamble.tex`:
+
+```latex
+\usepackage{xeCJK}  
+\setCJKmainfont{Noto Sans CJK SC}
+```
+
+Alternatively, you can use `header-includes` but with less flexibility to change options:
+
+````markdown
+---
+output: pdf_document
+header-includes:
+  - \usepackage{ctex}
+---
+````
+
+Ref: <https://github.com/hao203/rmarkdown-YAML?tab=readme-ov-file#chinesejapanese-support>
 
 
 --------------------------------------------------------------------------------
@@ -560,9 +659,29 @@ If highlighting is supported for your output format and language, then the code 
   </code>
 </pre>  
 
-___
+--------------------------------------------------------------------------------
+
+**Code chunks within `enumerate`**
+
+- Mind the indentation. Rstudio does not automatically adjust indentation for codes.
+
+- specify `results="asis"` if encounter
+
+  > You can't use `macro parameter character #' in horizontal mode.
+
+- cross references using bookdown (`\@ref{fig:scatter-plot}`) might not work. 
+
+  Use latex references `\ref{fig:scatter-plot}` (base latex) or `\autoref{fig:scatter-plot}` (from `hyperref` package)
+
+- markdown language does not work well inside latex environments. A possible workaround is use `1` and indent four spaces for contents that follow.
+
+If it is still a pain in the ass, use [this solution](https://tex.stackexchange.com/a/594904).
+
+Basically, just copy the output from R condole and paste in Rmd.
 
 
+
+--------------------------------------------------------------------------------
 
 **References**:
 
