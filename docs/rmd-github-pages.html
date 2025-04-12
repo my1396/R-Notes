@@ -205,7 +205,13 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="3.6" data-path="equations.html"><a href="equations.html"><i class="fa fa-check"></i><b>3.6</b> Equations</a></li>
 <li class="chapter" data-level="3.7" data-path="theorems.html"><a href="theorems.html"><i class="fa fa-check"></i><b>3.7</b> Theorems</a></li>
 <li class="chapter" data-level="3.8" data-path="figures.html"><a href="figures.html"><i class="fa fa-check"></i><b>3.8</b> Figures</a></li>
-<li class="chapter" data-level="3.9" data-path="tables.html"><a href="tables.html"><i class="fa fa-check"></i><b>3.9</b> Tables</a></li>
+<li class="chapter" data-level="3.9" data-path="tables.html"><a href="tables.html"><i class="fa fa-check"></i><b>3.9</b> Tables</a>
+<ul>
+<li class="chapter" data-level="3.9.1" data-path="tables.html"><a href="tables.html#knitrkable"><i class="fa fa-check"></i><b>3.9.1</b> <code>knitr::kable</code></a></li>
+<li class="chapter" data-level="3.9.2" data-path="tables.html"><a href="tables.html#data-frame-printing"><i class="fa fa-check"></i><b>3.9.2</b> Data frame printing</a></li>
+<li class="chapter" data-level="3.9.3" data-path="tables.html"><a href="tables.html#stargazer"><i class="fa fa-check"></i><b>3.9.3</b> Stargazer</a></li>
+<li class="chapter" data-level="3.9.4" data-path="tables.html"><a href="tables.html#kableextra"><i class="fa fa-check"></i><b>3.9.4</b> <code>kableExtra</code></a></li>
+</ul></li>
 <li class="chapter" data-level="3.10" data-path="rmd-github-pages.html"><a href="rmd-github-pages.html"><i class="fa fa-check"></i><b>3.10</b> Rmd GitHub Pages</a></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="bookdown.html"><a href="bookdown.html"><i class="fa fa-check"></i><b>4</b> bookdown</a>
@@ -265,6 +271,111 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 </head>
 <div id="rmd-github-pages" class="section level2 hasAnchor" number="3.10">
 <h2><span class="header-section-number">3.10</span> Rmd GitHub Pages<a href="rmd-github-pages.html#rmd-github-pages" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p><strong>Stage-commit-push many files</strong></p>
+<ol style="list-style-type: decimal">
+<li><p>Use the Terminal <code>git add .</code> to “stage” all the files that I want to commit as that’s quicker than clicking on all the files often that I want to commit.</p></li>
+<li><p>Go to RStudio <code>Commit Pending changes</code> icon (the white docs icon with a tick in a Git pane) to write the commit as I find <code>git commit -m "Write your message here"</code> a bit too long!</p></li>
+<li><p>Use the Push and Pull buttons in RStudio as that’s easier than typing <code>git push</code> or <code>git pull</code> in the terminal.</p></li>
+</ol>
+<p>Note that the minimum requirement for any R Markdown website is that it have an <code>index.Rmd</code> file as well as a <code>_site.yml</code> file. If you execute the <code>rmarkdown::render_site()</code> function from within the directory containing the website, the following will occur:</p>
+<ol style="list-style-type: decimal">
+<li><p>All of the <code>*.Rmd</code> and <code>*.md</code> files in the root website directory will be rendered into HTML. Note, however, that Markdown files beginning with <code>_</code> are not rendered (this is a convention to designate files that are to be included by top level Rmd documents as child documents).</p>
+<ol style="list-style-type: decimal">
+<li><code>index.Rmd</code> controls the content on your main page.</li>
+</ol></li>
+<li><p>The generated HTML files and any supporting files (e.g., CSS and JavaScript) are copied into an output directory (<code>_site</code> by default, on Github Pages the output folder is <code>docs</code>).</p>
+<ul>
+<li><p><code>_site.yml</code> controls the styling.</p></li>
+<li><p>The HTML files within the output directory are now ready to deploy as a standalone static website.</p></li>
+</ul></li>
+</ol>
+<p><code>_site.yml</code></p>
+<div class="sourceCode" id="cb149"><pre class="sourceCode yml"><code class="sourceCode yaml"><span id="cb149-1"><a href="rmd-github-pages.html#cb149-1" tabindex="-1"></a><span class="fu">name</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;my-website&quot;</span></span>
+<span id="cb149-2"><a href="rmd-github-pages.html#cb149-2" tabindex="-1"></a><span class="fu">output_dir</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;docs&quot;</span></span>
+<span id="cb149-3"><a href="rmd-github-pages.html#cb149-3" tabindex="-1"></a><span class="fu">include</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="st">&quot;import.R&quot;</span><span class="kw">]</span></span>
+<span id="cb149-4"><a href="rmd-github-pages.html#cb149-4" tabindex="-1"></a><span class="fu">exclude</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="st">&quot;docs.txt&quot;</span><span class="kw">,</span><span class="at"> </span><span class="st">&quot;*.csv&quot;</span><span class="kw">]</span></span></code></pre></div>
+<ul>
+<li><p><code>name</code> provides a suggested URL path for your website when it is published</p></li>
+<li><p><code>output_dir</code> field indicates which directory to copy site content into.</p></li>
+<li><p>The <code>include</code> and <code>exclude</code> fields enable you to override the default behavior vis-à-vis what files are copied into the output directory. By default, all files within the website directory are copied into the output directory (e.g. “_site”) except for the following:</p>
+<ol style="list-style-type: decimal">
+<li>Files beginning with <code>"."</code> (hidden files).</li>
+<li>Files beginning with <code>"_"</code></li>
+<li>Files known to contain R source code (e.g. <code>".R"</code>, <code>".s"</code>, <code>".Rmd"</code>), R data (e.g. <code>".RData"</code>, <code>".rds"</code>), or configuration data (e.g. <code>"rsconnect"</code> ,<code>"packrat"</code>, <code>"renv"</code>)).</li>
+</ol>
+<p>The <code>include</code> and <code>exclude</code> fields of **_site.yml** can be used to override this default behavior (wildcards can be used to specify groups of files to be included or excluded). Note that the <code>include</code> and <code>exclude</code> fields target only top-level files and directories (i.e. a directory is either included or not, you can’t exclude a subset of files within a directory).</p>
+<p>Note also that <code>include</code> and <code>exclude</code> are <em>not</em> used to determine which Rmd files are rendered (all of them in the root directory save for those named with the <code>_</code> prefix will be rendered).</p></li>
+</ul>
+<hr />
+<p><span style="color:#00CC66"><strong>Workflow</strong></span>: Edit your site, <strong>build</strong> it, then push and commit to GitHub to publish your changes online.</p>
+<p>To render <span style="color:#00CC66">all of the pages</span> in the website, you use the <code>Build</code> pane, which calls <code>rmarkdown::render_site()</code> to build and then preview the entire site</p>
+<p>As you work on the <span style="color:#00CC66">individual pages</span> of your website, you can render them using the <code>Knit</code> button just as you do with conventional standalone R Markdown documents. Or use the command line <code>rmarkdown::render("0100-RStudio.Rmd")</code>. It will generate the html output <code>RStudio.html</code> in the same directory. You can see it in the Output pane &gt; <code>Files</code> tab. Click the file and choose <code>View in Web Browser</code>.</p>
+<p>Note:</p>
+<ul>
+<li>Each time you run <code>rmarkdown::render_site()</code>, the <code>docs/</code> folder will be overwritten with updated HTML versions of your <code>.Rmd</code>s. This means DON’T EVER EDIT FILES IN THE <code>docs/</code> FOLDER! Nothing catastrophic will happen if you do, but you will overwrite and lose all your changes the next time you knit or <code>render_site()</code>.</li>
+<li>Don’t forget to update
+<ul>
+<li><code>index_Rmd</code> (home page) and</li>
+<li><code>_site.yml</code> (cross references files <code>include: ["w1.rmd", "w2.rmd"]</code>)
+<ul>
+<li>This will copy files into <code>docs</code> so that you can put a downloadable link to them.</li>
+</ul></li>
+</ul></li>
+</ul>
+<hr />
+<p>CSS Style</p>
+<div class="sourceCode" id="cb150"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb150-1"><a href="rmd-github-pages.html#cb150-1" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb150-2"><a href="rmd-github-pages.html#cb150-2" tabindex="-1"></a><span class="an">output:</span><span class="co"> </span></span>
+<span id="cb150-3"><a href="rmd-github-pages.html#cb150-3" tabindex="-1"></a><span class="co">  html_document:</span></span>
+<span id="cb150-4"><a href="rmd-github-pages.html#cb150-4" tabindex="-1"></a><span class="co">    theme: cosmo</span></span>
+<span id="cb150-5"><a href="rmd-github-pages.html#cb150-5" tabindex="-1"></a><span class="co">   # css: style.css # link to external CSS</span></span>
+<span id="cb150-6"><a href="rmd-github-pages.html#cb150-6" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb150-7"><a href="rmd-github-pages.html#cb150-7" tabindex="-1"></a></span>
+<span id="cb150-8"><a href="rmd-github-pages.html#cb150-8" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">style</span><span class="ot"> type </span><span class="op">=</span> <span class="st">&quot;text/css&quot;</span><span class="dt">&gt;</span> </span>
+<span id="cb150-9"><a href="rmd-github-pages.html#cb150-9" tabindex="-1"></a>h2 {</span>
+<span id="cb150-10"><a href="rmd-github-pages.html#cb150-10" tabindex="-1"></a>  <span class="kw">color</span><span class="ch">:</span> <span class="cn">red</span><span class="op">;</span> <span class="co">/* internal CSS */</span></span>
+<span id="cb150-11"><a href="rmd-github-pages.html#cb150-11" tabindex="-1"></a>}</span>
+<span id="cb150-12"><a href="rmd-github-pages.html#cb150-12" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">style</span><span class="dt">&gt;</span></span>
+<span id="cb150-13"><a href="rmd-github-pages.html#cb150-13" tabindex="-1"></a></span>
+<span id="cb150-14"><a href="rmd-github-pages.html#cb150-14" tabindex="-1"></a><span class="fu">## R Markdown</span></span></code></pre></div>
+<hr />
+<p><strong>Refer to your posts using relative links</strong></p>
+<p>If you have a Markdown file in your repository at <code>docs/project1.html</code>, and you want to link from that file to <code>docs/another-page.md</code>, you can do so with the following markup:</p>
+<div class="sourceCode" id="cb151"><pre class="sourceCode scss"><code class="sourceCode scss"><span id="cb151-1"><a href="rmd-github-pages.html#cb151-1" tabindex="-1"></a><span class="ex">[</span><span class="ss">a relative link</span><span class="ex">]</span><span class="in">(</span>project1<span class="fu">.html</span><span class="in">)</span></span></code></pre></div>
+<p>When you view the source file on GitHub.com, the relative link will continue to work, but now, when you publish that file using GitHub Pages, the link will be silently translated to <code>docs/another-page.html</code> to match the target page’s published URL.</p>
+<p>Link to another file</p>
+<div class="sourceCode" id="cb152"><pre class="sourceCode css"><code class="sourceCode css"><span id="cb152-1"><a href="rmd-github-pages.html#cb152-1" tabindex="-1"></a><span class="ex">[</span><span class="ss">download</span><span class="ex">]</span><span class="in">(</span>w1<span class="fu">.rmd</span><span class="in">)</span></span>
+<span id="cb152-2"><a href="rmd-github-pages.html#cb152-2" tabindex="-1"></a>&lt;a href=&quot;w1<span class="fu">.rmd</span>&quot;<span class="op">&gt;</span>Download File&lt;/a<span class="op">&gt;</span></span></code></pre></div>
+<hr />
+<p><strong>TOC</strong> on home page:</p>
+<ul>
+<li>source code: <a href="https://github.com/lmullen/rmd-notebook/blob/master/index.Rmd" class="uri">https://github.com/lmullen/rmd-notebook/blob/master/index.Rmd</a></li>
+<li>webpage: <a href="https://lmullen.github.io/rmd-notebook/" class="uri">https://lmullen.github.io/rmd-notebook/</a></li>
+</ul>
+<div class="sourceCode" id="cb153"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb153-1"><a href="rmd-github-pages.html#cb153-1" tabindex="-1"></a><span class="co"># replacing with the following options</span></span>
+<span id="cb153-2"><a href="rmd-github-pages.html#cb153-2" tabindex="-1"></a><span class="co"># {r TOC, echo=FALSE, results=&#39;asis&#39;}</span></span>
+<span id="cb153-3"><a href="rmd-github-pages.html#cb153-3" tabindex="-1"></a>rmd <span class="ot">&lt;-</span> <span class="fu">Sys.glob</span>(<span class="st">&quot;*.[Rr]md&quot;</span>)</span>
+<span id="cb153-4"><a href="rmd-github-pages.html#cb153-4" tabindex="-1"></a>rmd <span class="ot">&lt;-</span> rmd[<span class="sc">!</span>rmd <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;index.Rmd&quot;</span>, <span class="st">&quot;about.Rmd&quot;</span>)]</span>
+<span id="cb153-5"><a href="rmd-github-pages.html#cb153-5" tabindex="-1"></a>html <span class="ot">&lt;-</span> <span class="fu">sub</span>(<span class="st">&quot;.Rmd&quot;</span>, <span class="st">&quot;.html&quot;</span>, rmd)</span>
+<span id="cb153-6"><a href="rmd-github-pages.html#cb153-6" tabindex="-1"></a>lines <span class="ot">&lt;-</span> <span class="fu">lapply</span>(rmd, readLines)</span>
+<span id="cb153-7"><a href="rmd-github-pages.html#cb153-7" tabindex="-1"></a>yaml <span class="ot">&lt;-</span> <span class="fu">lapply</span>(lines, rmarkdown<span class="sc">:::</span>parse_yaml_front_matter)</span>
+<span id="cb153-8"><a href="rmd-github-pages.html#cb153-8" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;&lt;ul&gt;&quot;</span>)</span>
+<span id="cb153-9"><a href="rmd-github-pages.html#cb153-9" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(rmd)) {</span>
+<span id="cb153-10"><a href="rmd-github-pages.html#cb153-10" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="fu">paste0</span>(<span class="st">&quot;&lt;li&gt;&lt;a href=&#39;&quot;</span>, html[i], <span class="st">&quot;&#39;&gt;&quot;</span>, yaml[[i]]<span class="sc">$</span>title, <span class="st">&quot;&lt;/a&gt;&lt;br/&gt;&quot;</span>,</span>
+<span id="cb153-11"><a href="rmd-github-pages.html#cb153-11" tabindex="-1"></a>             <span class="st">&quot;&lt;code&gt;&quot;</span>, rmd[i], <span class="st">&quot;&lt;/code&gt;&quot;</span>, <span class="st">&quot;&lt;/li&gt;&quot;</span>))</span>
+<span id="cb153-12"><a href="rmd-github-pages.html#cb153-12" tabindex="-1"></a>}</span>
+<span id="cb153-13"><a href="rmd-github-pages.html#cb153-13" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;&lt;/ul&gt;&quot;</span>)</span></code></pre></div>
+<hr />
+<p>Project website:</p>
+<ul>
+<li><p>Structure: <a href="https://www.storybench.org/convert-google-doc-rmarkdown-publish-github-pages/" class="uri">https://www.storybench.org/convert-google-doc-rmarkdown-publish-github-pages/</a></p></li>
+<li><p>Multi-page website: <a href="https://phuston.github.io/patrickandfrantonarethebestninjas/howto" class="uri">https://phuston.github.io/patrickandfrantonarethebestninjas/howto</a></p></li>
+<li><p>Blogdown: <a href="https://github.com/liuyanguu/Blogdown?tab=readme-ov-file" class="uri">https://github.com/liuyanguu/Blogdown?tab=readme-ov-file</a></p></li>
+<li><p>Distill: <a href="https://rstudio.github.io/distill/website.html" class="uri">https://rstudio.github.io/distill/website.html</a></p></li>
+<li><p>Bookdown Notes for One Course:</p>
+<p><a href="https://github.com/bcallaway11/econ_4750_notes" class="uri">https://github.com/bcallaway11/econ_4750_notes</a></p>
+<p><a href="https://bcallaway11.github.io/econ_4750_notes/law-of-iterated-expectations.html#" class="uri">https://bcallaway11.github.io/econ_4750_notes/law-of-iterated-expectations.html#</a></p></li>
+</ul>
 
 </div>
 <!-- </div> -->

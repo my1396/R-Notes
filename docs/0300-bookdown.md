@@ -167,9 +167,9 @@ bookdown::epub_book: default
 
 You do NOT need the three dashes `---` in `_output.yml`. In this case, all formats should be at the top level, instead of under an `output` field in individual Rmds. 
 
-`split_by` defaults to `chapter`, which splits the file by the first-level headers. 
+- `split_by` defaults to `chapter`, which splits the file by the first-level headers. 
 
-- `split_by: section` splits the file by the second-level headers.
+    `split_by: section` splits the file by the second-level headers.
 
 - The [`includes` option](https://bookdown.org/yihui/bookdown/yaml-options.html) allows you to insert arbitrary custom content before and/or after the body of the output.
 
@@ -195,26 +195,27 @@ You do NOT need the three dashes `---` in `_output.yml`. In this case, all forma
 
     - A LaTeX source document has a similar structure:
         
-        ```latex
-        \documentclass{book}
+    ```latex
+    \documentclass{book}
 
-        % LaTeX preamble
-        % insert in_header here
-        
-        \begin{document}
-        % insert before_body here
-        
-        % body content here
-        
-        % insert after_body here
-        \end{document}
-        ```
+    % LaTeX preamble
+    % insert in_header here
+    
+    \begin{document}
+    % insert before_body here
+    
+    % body content here
+    
+    % insert after_body here
+    \end{document}
+    ```
 
 
 bookdown 中文书籍 `_output.yml` 范例: <https://github.com/yihui/bookdown-chinese/blob/96d526572f0c6648d06c2d4bebf57c5fb4eafce3/_output.yml>
 
 - You can set up a tex template. 
-    Yihui set up the Chinese support in the template file (`latex/template.tex`).
+
+    Yihui sets up the Chinese support in the template file (`latex/template.tex`).
 
     ```yml
     bookdown::pdf_book:

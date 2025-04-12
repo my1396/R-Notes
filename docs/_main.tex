@@ -2904,7 +2904,7 @@ But sometime everything follows gets colored. You may want to use \texttt{\{\tex
 
 \begin{itemize}
 \item
-  This only works for color names, not hex code starting with \texttt{\#} as html needs the \texttt{\#} then 6 characters to denote a color, but LaTeX package \texttt{xcolor} specifically excludes \texttt{\#} from specifying the color.
+  This only works for color names, not hex codes starting with \texttt{\#}, because html requires the \texttt{\#} followed by 6 characters to define a color, but LaTeX package \texttt{xcolor} specifically excludes \texttt{\#} in color specifications.
 \item
   Here is an \textcolor[HTML]{00CC66}{inline colored example for LaTeX output} (only works for LaTeX).
 \end{itemize}
@@ -2927,6 +2927,121 @@ But sometime everything follows gets colored. You may want to use \texttt{\{\tex
 We can then use the code in an inline R expression \texttt{\textasciigrave{}r\ colorize("some\ words\ in\ red",\ "red")\textasciigrave{}}, which will create \textcolor{red}{some words in red}, which works for both html and .
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection*{Mathjax}\label{mathjax}
+
+\url{https://bookdown.org/yihui/rmarkdown/html-document.html\#mathjax-equations}
+
+Default configuration used by the rmarkdown package is given by \texttt{rmarkdown:::mathjax\_config()}. As of rmarkdown v2.1, the function returns ``MathJax.js?config=TeX-AMS-MML\_HTMLorMML''. This configures \texttt{Mathjax} to \texttt{HTML-CSS}.
+
+Change \texttt{Mathjax} configuration to \texttt{CommonHTML} using the following codes.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{{-}{-}{-}}
+\AnnotationTok{title:}\CommentTok{ "Trouble with MathJax"}
+\AnnotationTok{output:}\CommentTok{ }
+\CommentTok{  html\_document:}
+\CommentTok{    mathjax: "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX{-}AMS\_CHTML.js"}
+\CommentTok{    self\_contained: false    }
+\CommentTok{{-}{-}{-}}
+\end{Highlighting}
+\end{Shaded}
+
+By default, \href{https://www.mathjax.org/}{MathJax} scripts are included in HTML documents for rendering LaTeX and MathML equations. You can use the \texttt{mathjax} option to control how MathJax is included:
+
+\begin{itemize}
+\tightlist
+\item
+  Specify \texttt{"default"} to use an HTTPS URL from a CDN host (currently provided by RStudio).
+\item
+  Specify \texttt{"local"} to use a local version of MathJax (which is copied into the output directory). Note that when using \texttt{"local"} you also need to set the \texttt{self\_contained} option to \texttt{false}.
+\item
+  Specify an alternate URL to load MathJax from another location. To use a self-hosted copy of MathJax.
+\item
+  Specify \texttt{null} to exclude MathJax entirely.
+\end{itemize}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+Q: Why my eqns are not rendered?
+
+A: MathJax is unlikely to work offline. Check internet connection.
+
+You load \href{https://docs.mathjax.org/en/stable/configuration.html}{MathJax} into a web page by including its main JavaScript file into the page. That is done via a \texttt{\textless{}script\textgreater{}}tag that links to the \texttt{MathJax.js} file. To do that, place the following line in the \texttt{\textless{}head\textgreater{}} section of your document.
+
+For example, if you are using the MathJax distributed network service, the tag might be
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DataTypeTok{\textless{}}\KeywordTok{script}\OtherTok{ type=}\StringTok{"text/javascript"}
+\OtherTok{   src}\OperatorTok{=}\StringTok{"http://cdn.mathjax.org/mathjax/latest/MathJax.js"}\DataTypeTok{\textgreater{}}
+\DataTypeTok{\textless{}/}\KeywordTok{script}\DataTypeTok{\textgreater{}}
+\end{Highlighting}
+\end{Shaded}
+
+MathJax is available as a web service from \texttt{cdn.mathjax.org}, so you can obtain MathJax from there without needing to install it on your own server. The CDN is part of a distributed ``cloud'' network, so it is handled by servers around the world. That means that you should get access to a server geographically near you, for a fast, reliable connection.
+
+The CDN hosts the most current version of MathJax, as well as older versions, so you can either link to a version that stays up-to-date as MathJax is improved, or you can stay with one of the release versions so that your pages always use the same version of MathJax.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+For equation numbering support in \texttt{bookdown::pdf\_document2} you need to \href{https://bookdown.org/yihui/bookdown/markdown-extensions-by-bookdown.html\#equations}{assign labels}. Defualt behavior is not adding numbering.
+
+\begin{itemize}
+\item
+  Use \texttt{\textbackslash{}begin\{equation\}...\textbackslash{}end\{equations\}} or \texttt{\textbackslash{}begin\{align\}...\textbackslash{}end\{align\}} environments.
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Use \texttt{(\textbackslash{}\#eq:eq1)} or \texttt{\textbackslash{}label\{eq:eq1\}} to add labels.
+  \item
+    Automatically add numbering.
+  \item
+    Drawback is that rmd does not have preview of equations.
+  \end{itemize}
+\item
+  Do NOT enclose the environments in double dollar signs \texttt{\$\$}. Otherwise, no label is added, but cross-references still show up.
+
+  \begin{itemize}
+  \item
+    \texttt{\$\$} do not add numbering automatically.
+  \item
+    But in \texttt{bookdown::html\_document2}, it is ok to use
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\SpecialStringTok{$$}
+\KeywordTok{\textbackslash{}begin}\NormalTok{\{}\ExtensionTok{equation}\NormalTok{\}}\SpecialStringTok{ (}\SpecialCharTok{\textbackslash{}\#}\SpecialStringTok{eq:simple{-}lm)}
+\SpecialCharTok{\textbackslash{}hat}\SpecialStringTok{\{}\SpecialCharTok{\textbackslash{}beta}\SpecialStringTok{\}\_\{}\SpecialCharTok{\textbackslash{}text}\NormalTok{\{OLS\}}\SpecialStringTok{\} = }\SpecialCharTok{\textbackslash{}left}\SpecialStringTok{(}\SpecialCharTok{\textbackslash{}sum}\SpecialStringTok{\_\{i=1\}\^{}n x\_i x\_i\textquotesingle{} }\SpecialCharTok{\textbackslash{}right}\SpecialStringTok{)\^{}\{{-}1\} }\SpecialCharTok{\textbackslash{}left}\SpecialStringTok{(}\SpecialCharTok{\textbackslash{}sum}\SpecialStringTok{\_\{i=1\}\^{}n x\_i y\_i }\SpecialCharTok{\textbackslash{}right}\SpecialStringTok{) .}
+\KeywordTok{\textbackslash{}end}\NormalTok{\{}\ExtensionTok{equation}\NormalTok{\}}
+\SpecialStringTok{$$}
+\end{Highlighting}
+\end{Shaded}
+
+    Then reference with \texttt{\textbackslash{}@ref(eq:simple-lm)}.
+  \end{itemize}
+\item
+  Use \texttt{\textbackslash{}@ref(eq:eq1)} (note this use parentheses) or the Latex command \texttt{\textbackslash{}eqref\{eq:eq1\}} (this uses curly braces) to cite the equation.
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{Load the dataset and calculate the monthly return in month }\SpecialStringTok{$r$}\NormalTok{ (}\SpecialStringTok{$r\_t$}\NormalTok{) as}
+
+\KeywordTok{\textbackslash{}begin}\NormalTok{\{}\ExtensionTok{equation}\NormalTok{\}}
+\SpecialStringTok{r\_t = }\SpecialCharTok{\textbackslash{}frac}\SpecialStringTok{\{P\_t{-}P\_\{t{-}1\}\}\{P\_\{t{-}1\}\} = }\SpecialCharTok{\textbackslash{}frac}\SpecialStringTok{\{P\_t\}\{P\_\{t{-}1\}\}{-}1 , }
+\SpecialStringTok{(}\SpecialCharTok{\textbackslash{}\#}\SpecialStringTok{eq:eq1)}
+\KeywordTok{\textbackslash{}end}\NormalTok{\{}\ExtensionTok{equation}\NormalTok{\}}
+
+\NormalTok{where }\SpecialStringTok{$P\_t$}\NormalTok{ is the adjusted price in month }\SpecialStringTok{$t$}\NormalTok{. }
+
+\NormalTok{Test equation1 }\FunctionTok{\textbackslash{}@ref}\NormalTok{(eq:eq1).}
+
+\NormalTok{Test equation2 }\KeywordTok{\textbackslash{}eqref}\NormalTok{\{}\ExtensionTok{eq:eq1}\NormalTok{\}.}
+\end{Highlighting}
+\end{Shaded}
 
 \section{Theorems}\label{theorems}
 
@@ -3129,9 +3244,1073 @@ Can specify environment style in \texttt{style.css}
 
 \section{Figures}\label{figures}
 
+Specify code chunk options \texttt{fig.width} and \texttt{fig.height} for R-generated figures only.
+
+\begin{itemize}
+\tightlist
+\item
+  Default is \texttt{fig.width\ =\ 7} and \texttt{fig.height\ =\ 5} (in inches, though actual width will depend on screen resolution). Remember that these settings will default to \texttt{rmarkdown} values, not \texttt{knitr} values.
+\item
+  If don't know what size is suitable, can right-click the Plots Viewer and choose ``Copy Image Address''. Scale by \texttt{/100} and fill the values to chunk options.
+\end{itemize}
+
+\texttt{out.width} and \texttt{out.height} apply to both existing images and R-generated figures.
+
+\begin{itemize}
+\tightlist
+\item
+  note that the percentage need to be put in quotes.
+\item
+  \texttt{fig.width} do not scale font, it shows the original font size.
+\item
+  \texttt{out.width} scales the whole figure. Better to use this one. If you want to fix aspect ratio, use \texttt{fig.asp=0.6} to set height:width = 6:10.
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\InformationTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}\{r car{-}plot, eval=TRUE, echo=FALSE, out.width="20\%", fig.cap="Caption here." \}}
+\InformationTok{knitr::include\_graphics(img1\_path) }
+\InformationTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}}
+\end{Highlighting}
+\end{Shaded}
+
+\texttt{fig.cap=NULL} specify figure captions. Must provide \texttt{fig.cap} if you need to cross reference the figure.
+
+See {\texttt{Fig.\ \textbackslash{}@ref(fig:car-plot)}} use code chunk label to cross reference. The chunk label (\texttt{car-plot}) provides the identifier for referencing the figure generated by the chunk.
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{Fig.\&nbsp;\textbackslash{}@ref(fig:logit-regression)} use \texttt{\&nbsp;} to insert a {non-breaking space}.
+\end{itemize}
+
+{\texttt{fig.align="center"}} to set figure alignment.
+
+\texttt{fig.pos="H"} fix placement.
+
+\texttt{fig.asp=0.6} aspect ratio height:width=6:10.
+
+{\textbf{Suggested practice}} so that you have correct aspect ratio and automatically scaled text and labels in figures.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  generate the figure and save to local
+
+  The benefit is that you have full control to adjust the figure as needed, such as font size, and could reuse it later.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\InformationTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}\{r echo=FALSE, include=FALSE\}}
+\InformationTok{p \textless{}{-} ggplot(contingency\_table \%\textgreater{}\% }
+\InformationTok{           as\_tibble() \%\textgreater{}\% }
+\InformationTok{           mutate(chd69=factor(chd69, levels=c("non{-}developed", "developed"))), }
+\InformationTok{       aes(x=smoke, y=n, fill=chd69)) +}
+\InformationTok{    geom\_bar(position="stack", stat="identity", color="black", linewidth=0.1) + }
+\InformationTok{    scale\_fill\_grey(start=0.88, end=0.7) +}
+\InformationTok{    labs(y="Frequency") +}
+\InformationTok{    theme(axis.title.x = element\_blank(), legend.position = "bottom")}
+\InformationTok{f\_name \textless{}{-} "images/stacked\_bar.png"}
+\InformationTok{plot\_png(p, f\_name, 5.17, 5)}
+\InformationTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}}
+\end{Highlighting}
+\end{Shaded}
+
+  Specify chunk options {\texttt{include=FALSE}} (Do not include code output) to suppress the graphic window information like the following.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DocumentationTok{\#\# quartz\_off\_screen }
+\DocumentationTok{\#\#                 2}
+\end{Highlighting}
+\end{Shaded}
+\item
+  add the figure using
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\InformationTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}\{r scatter{-}plot, echo=FALSE, fig.cap="Scatter plot of avearge wage against experience.", out.width = "80\%"\}}
+\InformationTok{include\_graphics(f\_name)}
+\InformationTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}}
+\end{Highlighting}
+\end{Shaded}
+\item
+  cross reference
+
+  \begin{itemize}
+  \item
+    \texttt{pdf\_document}: using \texttt{\textbackslash{}autoref\{fig:scatter-plot\}} from \texttt{hyperref} package or \texttt{Fig.\ \textbackslash{}ref\{fig:scatter-plot\}} from base latex.
+
+    \texttt{hyperref} uses \texttt{Figure}, could be changed to \texttt{Fig.} by putting the following cmd at the begin of the Rmd.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{\textbackslash{}renewcommand\textbackslash{}figureautorefname}\NormalTok{\{Fig.\}}
+\end{Highlighting}
+\end{Shaded}
+  \item
+    \texttt{bookdown::html\_document2}: using \texttt{\textbackslash{}@ref(fig:scatter-plot)}.
+  \end{itemize}
+\end{enumerate}
+
+Latex symbols in Fig. caption
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{\textbackslash{}\textbackslash{}Phi} works. You need to escape the \texttt{\textbackslash{}} in \texttt{\textbackslash{}Phi} .
+\item
+  Suggested to use R code blocks to include figures. If using html, the numbering will be messed up. There is only automatic numbering with R code figures.
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\StringTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}}\AttributeTok{\{r fig.cap="The $}\SpecialCharTok{\textbackslash{}\textbackslash{}}\AttributeTok{Phi$ and $}\SpecialCharTok{\textbackslash{}\textbackslash{}}\AttributeTok{phi$ ($f\_Z(.)$) functions (CDF and pdf of standard normal).", out.width="70\%", echo=FALSE\}}
+\AttributeTok{include\_graphics("https://drive.google.com/thumbnail?id=1nxfdIKXgZvOqXVSeA3h\_hf0yxmsM361l\&sz=w1000")}
+\StringTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\item
+  Alternatively, use html, enclode the caption inside \texttt{\textless{}figcaption\textgreater{}}.
+
+  Drawback: You need to manually add figure numberings.
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DataTypeTok{\textless{}}\KeywordTok{figure}\DataTypeTok{\textgreater{}} 
+\DataTypeTok{\textless{}}\KeywordTok{img}\OtherTok{ src}\OperatorTok{=}\StringTok{"https://drive.google.com/thumbnail?id=1nxfdIKXgZvOqXVSeA3h\_hf0yxmsM361l}\ErrorTok{\&}\StringTok{sz=w1000"}\OtherTok{ alt}\OperatorTok{=}\StringTok{"Phi\_b"}\OtherTok{ style}\OperatorTok{=}\StringTok{"display: block; margin{-}right: auto; margin{-}left: auto; zoom:80\%;"}\OtherTok{ }\DataTypeTok{/\textgreater{}}
+\DataTypeTok{\textless{}}\KeywordTok{figcaption}\DataTypeTok{\textgreater{}}\NormalTok{Fig.1 The $\textbackslash{}Phi$ and $\textbackslash{}phi$ ($f\_Z(.)$) functions (CDF and pdf of standard normal).}\DataTypeTok{\textless{}/}\KeywordTok{figcaption}\DataTypeTok{\textgreater{}}
+\DataTypeTok{\textless{}/}\KeywordTok{figure}\DataTypeTok{\textgreater{}}
+\end{Highlighting}
+\end{Shaded}
+
+Refer to another figure in figure caption
+
+Need to use double backslash \texttt{\textbackslash{}\textbackslash{}@ref(fig:xxx)}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\InformationTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}\{r figure{-}1, fig.cap="Figure1"\}}
+\InformationTok{ggplot()}
+\InformationTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}}
+\NormalTok{Now a second plot with a reference to Fig.: \textbackslash{}@ref(fig:figure{-}1).}
+
+\InformationTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}\{r secondplot, fig.cap = "This is the same as Fig.: \textbackslash{}\textbackslash{}@ref(fig:firstplot) }
+\InformationTok{but now with a red line." \}}
+\InformationTok{library(ggplot2)}
+\InformationTok{plot\_A + geom\_line(alpha = .75,col = "red")}
+\InformationTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}}
+\end{Highlighting}
+\end{Shaded}
+
 \section{Tables}\label{tables}
 
+{\textbf{Cross reference tables}}
+
+Using \texttt{bookdown} cmd: \texttt{\textbackslash{}@ref(tab:chunk-label)}.
+
+Note that you must provide \texttt{caption} option in \texttt{kable()}. Otherwise the table won't be numbered.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{And see Table \textbackslash{}}\SpecialCharTok{@}\FunctionTok{ref}\NormalTok{(tab}\SpecialCharTok{:}\NormalTok{mtcars).}
+
+\StringTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}}\AttributeTok{\{r mtcars, echo=FALSE\}}
+\AttributeTok{knitr::kable(mtcars[1:5, 1:5], caption = "The mtcars data.")}
+\StringTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{\texorpdfstring{\texttt{knitr::kable}}{knitr::kable}}\label{knitrkable}
+
+\texttt{knitr::kable(x,\ digits,\ caption=NULL,\ escape=TRUE)} Create tables in LaTeX, HTML, Markdown and reStructuredText.
+
+\begin{itemize}
+\item
+  \texttt{caption} The table caption. In order to number the table, mut specify the \texttt{caption} argument.
+\item
+  \texttt{format} Possible values are \texttt{latex}, \texttt{html}, \texttt{pipe} (Pandoc's pipe tables), \texttt{simple} (Pandoc's simple tables), \texttt{rst}, and \texttt{jira}.
+
+  The value of this argument will be {automatically determined} if the function is called within a \textbf{knitr} document.
+\item
+  \texttt{digits} Maximum number of digits for numeric columns, passed to \texttt{round()}.
+\item
+  \texttt{col.names} Rename columns.
+\item
+  \texttt{escape=TRUE} Whether to escape special characters when producing HTML or LaTeX tables. Default is \texttt{TRUE}, special characters will either be escaped or substituted. For example, \texttt{\$} is escaped as \texttt{\textbackslash{}\$}, \texttt{\_} is escaped as \texttt{\textbackslash{}\_}, and \texttt{\textbackslash{}} is substituted with \texttt{\textbackslash{}textbackslash\{\}}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    When set to \texttt{FALSE}, you have to make sure \textbf{yourself} that special characters will not trigger syntax errors in LaTeX or HTML.
+  \item
+    Common special LaTeX characters include \texttt{\#}, \texttt{\%}, \texttt{\&}, \texttt{\{}, and \texttt{\}}. Common special HTML characters include \texttt{\&}, \texttt{\textless{}}, \texttt{\textgreater{}}, and \texttt{"}. You need to be cautious when generating tables with \texttt{escape\ =\ FALSE}, and make sure you are using the special characters in the right way. It is a very common mistake to use \texttt{escape\ =\ FALSE} and include \texttt{\%} or \texttt{\_} in column names or the caption of a LaTeX table without realizing that they are special.
+  \end{itemize}
+\item
+  \texttt{align} Column alignment: a character \textbf{vector} consisting of \texttt{\textquotesingle{}l\textquotesingle{}} (left), \texttt{\textquotesingle{}c\textquotesingle{}} (center) and/or \texttt{\textquotesingle{}r\textquotesingle{}} (right).
+
+  \begin{itemize}
+  \tightlist
+  \item
+    By default or if \texttt{align\ =\ NULL}, {numeric columns are right-aligned}, and {other columns are left-aligned}.
+  \item
+    If only one character is provided, that will apply to all columns.
+  \item
+    If a vector is provided, will map to each individual column specifically.
+  \end{itemize}
+\item
+  Missing values (\texttt{NA}) in the table are displayed as \texttt{NA} by default. If you want to display them with other characters, you can set the option \texttt{knitr.kable.NA}, e.g.~{\texttt{options(knitr.kable.NA\ =\ \textquotesingle{}\textquotesingle{})}} in the YAML to hide \texttt{NA} values.
+\item
+  {\texttt{booktabs\ =\ TRUE}} use the booktabs package
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \texttt{linesep\ =\ ""} remove the extra space after every five rows in kable output (with \texttt{booktabs} option)
+  \end{itemize}
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# For Markdown tables, use \textasciigrave{}pipe\textasciigrave{} format}
+\SpecialCharTok{\textgreater{}}\NormalTok{ knitr}\SpecialCharTok{::}\FunctionTok{kable}\NormalTok{(}\FunctionTok{head}\NormalTok{(mtcars[, }\DecValTok{1}\SpecialCharTok{:}\DecValTok{4}\NormalTok{]), }\AttributeTok{format=}\StringTok{"pipe"}\NormalTok{)}
+\SpecialCharTok{|}                  \ErrorTok{|}\NormalTok{  mpg}\SpecialCharTok{|}\NormalTok{ cyl}\SpecialCharTok{|}\NormalTok{ disp}\SpecialCharTok{|}\NormalTok{  hp}\SpecialCharTok{|}
+\ErrorTok{|:}\SpecialCharTok{{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}}\ErrorTok{|}\SpecialCharTok{{-}{-}{-}{-}}\ErrorTok{:|}\SpecialCharTok{{-}{-}{-}}\ErrorTok{:|}\SpecialCharTok{{-}{-}{-}{-}}\ErrorTok{:|}\SpecialCharTok{{-}{-}{-}}\ErrorTok{:|}
+\ErrorTok{|}\NormalTok{Mazda RX4         }\SpecialCharTok{|} \FloatTok{21.0}\SpecialCharTok{|}   \DecValTok{6}\SpecialCharTok{|}  \DecValTok{160}\SpecialCharTok{|} \DecValTok{110}\SpecialCharTok{|}
+\ErrorTok{|}\NormalTok{Mazda RX4 Wag     }\SpecialCharTok{|} \FloatTok{21.0}\SpecialCharTok{|}   \DecValTok{6}\SpecialCharTok{|}  \DecValTok{160}\SpecialCharTok{|} \DecValTok{110}\SpecialCharTok{|}
+\ErrorTok{|}\NormalTok{Datsun }\DecValTok{710}        \SpecialCharTok{|} \FloatTok{22.8}\SpecialCharTok{|}   \DecValTok{4}\SpecialCharTok{|}  \DecValTok{108}\SpecialCharTok{|}  \DecValTok{93}\SpecialCharTok{|}
+\ErrorTok{|}\NormalTok{Hornet }\DecValTok{4}\NormalTok{ Drive    }\SpecialCharTok{|} \FloatTok{21.4}\SpecialCharTok{|}   \DecValTok{6}\SpecialCharTok{|}  \DecValTok{258}\SpecialCharTok{|} \DecValTok{110}\SpecialCharTok{|}
+\ErrorTok{|}\NormalTok{Hornet Sportabout }\SpecialCharTok{|} \FloatTok{18.7}\SpecialCharTok{|}   \DecValTok{8}\SpecialCharTok{|}  \DecValTok{360}\SpecialCharTok{|} \DecValTok{175}\SpecialCharTok{|}
+\ErrorTok{|}\NormalTok{Valiant           }\SpecialCharTok{|} \FloatTok{18.1}\SpecialCharTok{|}   \DecValTok{6}\SpecialCharTok{|}  \DecValTok{225}\SpecialCharTok{|} \DecValTok{105}\SpecialCharTok{|}
+
+\CommentTok{\# For Plain tables in txt, \textasciigrave{}simple\textasciigrave{} is useful}
+\ErrorTok{\textgreater{}}\NormalTok{ knitr}\SpecialCharTok{::}\FunctionTok{kable}\NormalTok{(}\FunctionTok{head}\NormalTok{(mtcars[, }\DecValTok{1}\SpecialCharTok{:}\DecValTok{4}\NormalTok{]), }\StringTok{"simple"}\NormalTok{) }
+\NormalTok{                      mpg   cyl   disp    hp}
+\SpecialCharTok{{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}}  \SpecialCharTok{{-}{-}{-}{-}{-}}  \SpecialCharTok{{-}{-}{-}{-}}  \SpecialCharTok{{-}{-}{-}{-}{-}}  \SpecialCharTok{{-}{-}{-}{-}}
+\NormalTok{Mazda RX4            }\FloatTok{21.0}     \DecValTok{6}    \DecValTok{160}   \DecValTok{110}
+\NormalTok{Mazda RX4 Wag        }\FloatTok{21.0}     \DecValTok{6}    \DecValTok{160}   \DecValTok{110}
+\NormalTok{Datsun }\DecValTok{710}           \FloatTok{22.8}     \DecValTok{4}    \DecValTok{108}    \DecValTok{93}
+\NormalTok{Hornet }\DecValTok{4}\NormalTok{ Drive       }\FloatTok{21.4}     \DecValTok{6}    \DecValTok{258}   \DecValTok{110}
+\NormalTok{Hornet Sportabout    }\FloatTok{18.7}     \DecValTok{8}    \DecValTok{360}   \DecValTok{175}
+\NormalTok{Valiant              }\FloatTok{18.1}     \DecValTok{6}    \DecValTok{225}   \DecValTok{105}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{Data frame printing}\label{data-frame-printing}
+
+To show the \texttt{tibble} information (number of row/columns, and group information) along with paged output, we can write a custom function by modifying the \href{https://github.com/rstudio/rmarkdown/blob/main/R/html_paged.R\#L241-L248}{\texttt{print.paged\_df}} function (which is used internally by rmarkdown for the \texttt{df\_print} feature) and use CSS to nicely format the output.
+
+\url{https://stackoverflow.com/a/76014674/10108921}
+
+{\textbf{Paged df}}
+
+\begin{itemize}
+\tightlist
+\item
+  \url{https://bookdown.org/yihui/rmarkdown/html-document.html\#tab:paged}
+\item
+  \url{https://github.com/rstudio/rmarkdown/issues/1403}
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{{-}{-}{-}}
+\AnnotationTok{title:}\CommentTok{ "Use caption with df\_print set to page"}
+\AnnotationTok{date:}\CommentTok{ "2025{-}04{-}12"}
+\AnnotationTok{output:}
+\CommentTok{  bookdown::html\_document2:}
+\CommentTok{    df\_print: paged}
+\CommentTok{{-}{-}{-}}
+\end{Highlighting}
+\end{Shaded}
+
+When the \texttt{df\_print} option is set to \texttt{paged}, tables are printed as HTML tables with support for pagination over rows and columns.
+
+The possible values of the \texttt{df\_print} option for the \texttt{html\_document} format.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.4118}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5882}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Option
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Description
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\texttt{default} & Call the \texttt{print.data.frame} generic method; console output prefixed by \texttt{\#\#}; \\
+\texttt{kable} & Use the \texttt{knitr::kable} function; looks nice but with no navigation for rows and columns, neither column types. \\
+\texttt{tibble} & Use the \texttt{tibble::print.tbl\_df} function, this provides groups and counts of rows and columns info as if printing a \texttt{tibble}. \\
+{\texttt{paged}} & Use \texttt{rmarkdown::paged\_table} to create a pageable table; \texttt{paged} looks best but slows down compilation significantly; \\
+A custom function & Use the function to create the table \\
+\end{longtable}
+
+The possible values of the \texttt{df\_print} option for the \texttt{pdf\_document} format: \texttt{default}, \texttt{kable}, \texttt{tibble}, \texttt{paged}, or a custom function.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{paged print}
+
+\StringTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}}\AttributeTok{\{r echo=TRUE, paged.print=TRUE\}}
+\AttributeTok{ggplot2::diamonds}
+\StringTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}}
+
+\NormalTok{default output}
+
+\StringTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}}\AttributeTok{\{r echo=TRUE, paged.print=FALSE\}}
+\AttributeTok{ggplot2::diamonds}
+\StringTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}}
+
+\NormalTok{kable output}
+
+\StringTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}}\AttributeTok{\{r echo=TRUE\}}
+\AttributeTok{knitr::kable(ggplot2::diamonds[1:10, ])}
+\StringTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}}
+\end{Highlighting}
+\end{Shaded}
+
+\texttt{kable} output doesn't provide tibble informations.
+
+Available options for \texttt{paged} tables:
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.2090}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.7910}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Option
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Description
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+max.print & The number of rows to print. \\
+rows.print & The number of rows to display. \\
+cols.print & The number of columns to display. \\
+cols.min.print & The minimum number of columns to display. \\
+pages.print & The number of pages to display under page navigation. \\
+paged.print & When set to \texttt{FALSE} turns off paged tables. \\
+rownames.print & When set to \texttt{FALSE} turns off row names. \\
+\end{longtable}
+
+These options are specified in each chunk like below:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\StringTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}}\AttributeTok{\{r cols.print=3, rows.print=3\}}
+\AttributeTok{mtcars}
+\StringTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}}
+\end{Highlighting}
+\end{Shaded}
+
+For pdf\_document, it is possible to write LaTex code directly.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\StringTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}}\AttributeTok{\{=latex\}}
+\SpecialCharTok{\textbackslash{}b}\AttributeTok{egin\{tabular\}\{ll\}}
+\AttributeTok{A \& B }\SpecialCharTok{\textbackslash{}\textbackslash{}}
+\AttributeTok{A \& B }\SpecialCharTok{\textbackslash{}\textbackslash{}}
+\SpecialCharTok{\textbackslash{}e}\AttributeTok{nd\{tabular\}}
+\StringTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}}
+\end{Highlighting}
+\end{Shaded}
+
+Do not forget the equal sign before \texttt{latex}, i.e., it is \texttt{=latex} instead of \texttt{latex}.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{Stargazer}\label{stargazer}
+
+\texttt{stargazer} print nice \textbf{tables} in \texttt{Rmd}.
+
+\url{https://libguides.princeton.edu/c.php?g=1326286&p=9763596\#s-lg-box-wrapper-36305037}
+
+\begin{itemize}
+\item
+  Passing a data frame to stargazer package creates a {summary statistic table}.
+\item
+  Passing a regression object creates a nice {regression table}.\\
+\item
+  \texttt{stargaer} does not work with \texttt{anova} table, use \texttt{pander::pander} instead.
+\end{itemize}
+
+Text table
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\StringTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}}\AttributeTok{\{r descrptive{-}analysis{-}text, comment = \textquotesingle{}\textquotesingle{}\}}
+\AttributeTok{apply(data[,{-}1], 2, get\_stat) \%\textgreater{}\% }
+\AttributeTok{    stargazer(type = "text", digits=2)}
+\StringTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}}
+\end{Highlighting}
+\end{Shaded}
+
+HTML table, note that need to specify \texttt{results="asis"}.
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{*}'s do not show properly, need to specify as footnote manually.
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\StringTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}}\AttributeTok{\{r descrptive{-}analysis{-}html, results="asis"\}}
+\AttributeTok{apply(data[,{-}1], 2, get\_stat) \%\textgreater{}\% }
+\AttributeTok{    stargazer(type = "html", digits=2, }
+\AttributeTok{              notes = "\textless{}span\textgreater{}\&\#42;\textless{}/span\textgreater{}: p\textless{}0.1; \textless{}span\textgreater{}\&\#42;\&\#42;\textless{}/span\textgreater{}: \textless{}strong\textgreater{}p\textless{}0.05\textless{}/strong\textgreater{}; \textless{}span\textgreater{}\&\#42;\&\#42;\&\#42;\textless{}/span\textgreater{}: p\textless{}0.01 \textless{}br\textgreater{} Standard errors in the parentheses.",}
+\AttributeTok{              notes.append = F)}
+\StringTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{type} specify output table format. Possible values: \texttt{latex} (default for latex code), \texttt{html}, and \texttt{text}. Need to specify to \texttt{html} in html outputs.
+\item
+  \texttt{digits} an integer that indicates how many decimal places should be used. A value of \texttt{NULL} indicates that no rounding should be done at all, and that all available decimal places should be reported. Defaults to 3 digits.
+\item
+  \texttt{notes} a character vector containing notes to be included below the table.
+\item
+  \texttt{notes.append=FALSE} a logical value that indicates whether \texttt{notes} should be appended to the standard note(s) associated with the table's \texttt{style} (typically an explanation of significance cutoffs).
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Defaults to \texttt{TRUE}.
+  \item
+    If the argument's value is set to \texttt{FALSE}, the character strings provided in \texttt{notes} will replace any existing/default notes.
+  \end{itemize}
+\end{itemize}
+
+Add a blank line under the \texttt{stargazer} table: \texttt{\&nbsp;} with a blank line above and below.
+
+\textbf{Cross reference \texttt{stargazer} tables.}
+
+\begin{itemize}
+\item
+  {In pdf output}, use \texttt{Table\ \textbackslash{}@ref(tab:reg-table)} or \texttt{Table\ \textbackslash{}ref\{tab:reg-table\}}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{Table \textbackslash{}}\SpecialCharTok{@}\FunctionTok{ref}\NormalTok{(tab}\SpecialCharTok{:}\NormalTok{reg}\SpecialCharTok{{-}}\NormalTok{table) summarize the regression results }\ControlFlowTok{in}\NormalTok{ a table.}
+
+\StringTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}}\AttributeTok{\{r, include=TRUE, results=\textquotesingle{}asis\textquotesingle{}\}}
+\AttributeTok{stargazer(capm\_ml, FF\_ml, type=\textquotesingle{}latex\textquotesingle{}, header=FALSE,}
+\AttributeTok{          digits=4, no.space = TRUE,}
+\AttributeTok{          title="Regression Results for META",}
+\AttributeTok{          label = "tab:reg{-}table")}
+\StringTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}}
+\end{Highlighting}
+\end{Shaded}
+
+  \begin{itemize}
+  \item
+    {\texttt{header=FALSE}} is to suppress the \texttt{\%\ Table\ created\ by\ stargazer} header. This applies to only \texttt{latex} tables.
+  \item
+    \texttt{label="tab:reg-table"} is to specify the cross reference label for the table.
+  \item
+    {\texttt{table.placement\ =\ "H"}} set float to \texttt{H} to fix positions. Places the float at \emph{precisely} the location in the code. This requires the {\texttt{float}} LaTeX package. Remember to load it in the YAML.
+
+    \begin{itemize}
+    \item
+      Defaults to \texttt{"!htbp"}.
+
+      The \texttt{htbp} controls where the table or figure is placed. Tables and figures do not need to go where you put them in the text. LATEX moves them around to prevent large areas of white space from appearing in your paper.
+      \texttt{h} (Here): Place the float here, i.e., \emph{approximately} at the same point it occurs in the source text (however, \emph{not exactly} at the spot)
+      \texttt{t} (Top): Place the table at the top of the \emph{current} page
+      \texttt{b} (Bottom): Place the table at the \emph{bottom} of the current page.
+      \texttt{p} (Page): Place the table at the top of the \emph{next} page.
+      \texttt{!}: Override internal parameters LaTeX uses for determining ``good'' float positions.
+    \end{itemize}
+  \item
+    \texttt{notes.align} \texttt{"l"} for left alignment, \texttt{"r"} for right alignment, and \texttt{"c"} for centering. This argument is not case-sensitive.
+  \item
+    \texttt{single.row\ =\ TRUE} to put coefficients and standard errors on same line
+  \item
+    {\texttt{no.space\ =\ TRUE}} to remove the spaces after each line of coefficients
+  \item
+    \texttt{font.size\ =\ "small"} to make font size smaller
+  \item
+    \texttt{column.labels} a character vector of labels for columns in regression tables.
+  \item
+    \texttt{column.separate} a numeric vector that specifies how \texttt{column.labels} should be laid out across regression table columns. A value of \texttt{c(2,\ 1,\ 3)}, for instance, will apply the first label to the two first columns, the second label to the third column, and the third label will apply to the following three columns (i.e., columns number four, five and six).
+  \item
+    \texttt{dep.var.labels} and \texttt{covariate.labels} labels for dependant variables
+  \item
+    {\texttt{covariate.labels}} labels for covariates in the regression tables.
+
+    Can provide latex symbols in the labels, need to escape special symbols though.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{stargazer}\NormalTok{(mod\_sel\_lm\_mtcars, }
+      \AttributeTok{covariate.labels =} 
+        \FunctionTok{c}\NormalTok{(}\StringTok{"(Intercept)"}\NormalTok{, }\StringTok{"drat"}\NormalTok{, }\StringTok{"hp"}\NormalTok{, }\StringTok{"$w\_\{i\}$"}\NormalTok{,}
+          \StringTok{"}\SpecialCharTok{\textbackslash{}\textbackslash{}}\StringTok{textit\{k\}"}\NormalTok{, }\StringTok{"logLik"}\NormalTok{, }\StringTok{"AICc"}\NormalTok{, }\StringTok{"}\SpecialCharTok{\textbackslash{}\textbackslash{}}\StringTok{Delta AICc"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+  \item
+    \texttt{align=FALSE} a logical value indicating whether numeric values in the same column should be aligned at the decimal mark in LaTeX output.
+  \item
+    \texttt{add.lines} add a row(s), such as reporting fixed effects.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{stargazer}\NormalTok{(output, output2, }\AttributeTok{type =} \StringTok{"html"}\NormalTok{,}
+          \AttributeTok{add.lines =} \FunctionTok{list}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"Fixed effects?"}\NormalTok{, }\StringTok{"No"}\NormalTok{, }\StringTok{"No"}\NormalTok{),}
+                           \FunctionTok{c}\NormalTok{(}\StringTok{"Results believable?"}\NormalTok{, }\StringTok{"Maybe"}\NormalTok{, }\StringTok{"Try again later"}\NormalTok{)))}
+\end{Highlighting}
+\end{Shaded}
+  \end{itemize}
+\item
+  {In html output}, cross references to stargazer tables are not so straightforward.
+
+  \texttt{label} option in \texttt{stargazer} does not work. Cannot use chunk labels either.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\StringTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}}\AttributeTok{\{r fit{-}age, echo=FALSE, results=\textquotesingle{}asis\textquotesingle{}, fig.cap="Logistic regression of CHD on age."\}}
+\AttributeTok{\# Use title caption from fig.cap}
+\AttributeTok{tit \textless{}{-} knitr::opts\_current$get("fig.cap")}
+\AttributeTok{\# Adding caption for html output}
+\AttributeTok{tit\_html \textless{}{-} paste0(\textquotesingle{}\textless{}span id="tab:\textquotesingle{},}
+\AttributeTok{                   knitr::opts\_current$get("label"),}
+\AttributeTok{                   \textquotesingle{}"\textgreater{}(\#tab:\textquotesingle{},}
+\AttributeTok{                   knitr::opts\_current$get("label"),}
+\AttributeTok{                   \textquotesingle{})\textless{}/span\textgreater{}\textquotesingle{},}
+\AttributeTok{                   tit)}
+\AttributeTok{stargazer::stargazer(fit.age,}
+\AttributeTok{          label = paste0("tab:", knitr::opts\_current$get("label")),}
+\AttributeTok{          title = ifelse(knitr::is\_latex\_output(), tit, tit\_html),}
+\AttributeTok{          type = ifelse(knitr::is\_latex\_output(),"latex","html"),}
+\AttributeTok{          notes = "\textless{}span\textgreater{}\&\#42;\textless{}/span\textgreater{}: p\textless{}0.1; \textless{}span\textgreater{}\&\#42;\&\#42;\textless{}/span\textgreater{}: \textless{}strong\textgreater{}p\textless{}0.05\textless{}/strong\textgreater{}; \textless{}span\textgreater{}\&\#42;\&\#42;\&\#42;\textless{}/span\textgreater{}: p\textless{}0.01 \textless{}br\textgreater{} Standard errors in the parentheses.",}
+\AttributeTok{          notes.append = F,}
+\AttributeTok{          header = F}
+\AttributeTok{          )}
+\StringTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}}
+
+\NormalTok{Here is another reference to stargazer Table \textbackslash{}}\SpecialCharTok{@}\FunctionTok{ref}\NormalTok{(tab}\SpecialCharTok{:}\NormalTok{fit}\SpecialCharTok{{-}}\NormalTok{age).}
+\end{Highlighting}
+\end{Shaded}
+
+  Don't change things unless it is absolutely necessary. Run the code chunk before compiling the whole website. It gets slowly as the website gets larger.
+
+  \texttt{stargazer::stargazer()} the \texttt{::} is necessary, and \texttt{header=F} is necessary and should be place at the end, otherwise will have errors as follows.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{Error }\ControlFlowTok{in} \StringTok{\textasciigrave{}}\AttributeTok{.stargazer.wrap()}\StringTok{\textasciigrave{}}\SpecialCharTok{:}
+\SpecialCharTok{!}\NormalTok{ argument is missing, with no default}
+\NormalTok{Backtrace}\SpecialCharTok{:}
+ \FloatTok{1.}\NormalTok{ stargazer}\SpecialCharTok{::}\FunctionTok{stargazer}\NormalTok{(...)}
+ \FloatTok{2.}\NormalTok{ stargazer}\SpecialCharTok{:::}\FunctionTok{.stargazer.wrap}\NormalTok{(...)}
+\NormalTok{Execution halted}
+
+\NormalTok{Exited with status }\FloatTok{1.}
+\end{Highlighting}
+\end{Shaded}
+
+  Another example if you don't need to add footnotes.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\StringTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}}\AttributeTok{\{r mytable, results=\textquotesingle{}asis\textquotesingle{}, fig.cap="This is my table."\}}
+
+\AttributeTok{\# Use title caption from fig.cap}
+\AttributeTok{tit \textless{}{-} knitr::opts\_current$get("fig.cap")}
+
+\AttributeTok{\# Adding caption for html output}
+\AttributeTok{tit\_html \textless{}{-} paste0(\textquotesingle{}\textless{}span id="tab:\textquotesingle{},}
+\AttributeTok{                   knitr::opts\_current$get("label"),}
+\AttributeTok{                   \textquotesingle{}"\textgreater{}(\#tab:\textquotesingle{},}
+\AttributeTok{                   knitr::opts\_current$get("label"),}
+\AttributeTok{                   \textquotesingle{})\textless{}/span\textgreater{}\textquotesingle{},}
+\AttributeTok{                   tit)}
+
+\AttributeTok{stargazer::stargazer(fit.age,}
+\AttributeTok{                     label = paste0("tab:", knitr::opts\_current$get("label")),}
+\AttributeTok{                     title = ifelse(knitr::is\_latex\_output(), tit, tit\_html),}
+\AttributeTok{                     type = ifelse(knitr::is\_latex\_output(),"latex","html"),}
+\AttributeTok{                     header = F}
+\AttributeTok{                     )}
+\StringTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}}
+
+\NormalTok{Here is a reference to stargazer Table \textbackslash{}}\SpecialCharTok{@}\FunctionTok{ref}\NormalTok{(tab}\SpecialCharTok{:}\NormalTok{mytable).}
+\end{Highlighting}
+\end{Shaded}
+\end{itemize}
+
+\textbf{Alignment of Stargazer Tables}
+
+\begin{itemize}
+\item
+  In PDF, the tables will be in the center by default.
+\item
+  However, when working with HTML output, you need to add CSS styling to adjust the table.
+\end{itemize}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{\texorpdfstring{\texttt{kableExtra}}{kableExtra}}\label{kableextra}
+
+The \textbf{kableExtra} package is designed to extend the basic functionality of tables produced using \texttt{knitr::kable()}.
+
+\texttt{kableExtra::kable\_styling(bootstrap\_options\ =\ c("striped",\ "hover"),\ full\_width\ =\ FALSE)}
+
+\begin{itemize}
+\item
+  \texttt{bootstrap\_options} A character vector for bootstrap table options. Please see package vignette or visit the w3schools' \href{https://www.w3schools.com/bootstrap/bootstrap_tables.asp}{Bootstrap Page} for more information. Possible options include \texttt{basic}, \texttt{striped}, \texttt{bordered}, \texttt{hover}, \texttt{condensed}, \texttt{responsive} and \texttt{none}.
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \texttt{striped} alternating row colors
+  \item
+    \texttt{hover} Use the \texttt{:hover} selector on \texttt{tr} (table row) to {highlight table rows} on mouse over.
+  \end{itemize}
+\item
+  \texttt{full\_width} A \texttt{TRUE} or \texttt{FALSE} variable controlling whether the HTML table should have 100\% the preferable format for \texttt{full\_width}. If not specified,
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \texttt{TRUE} for a HTML table , will have full width by default but
+  \item
+    this option will be set to \texttt{FALSE} for a LaTeX table.
+  \end{itemize}
+\item
+  \texttt{latex\_options} A character vector for \textbf{LaTeX} table options, i.e., won't have effecs on html tables.
+
+  Possible options:
+
+  \begin{longtable}[]{@{}
+    >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.2000}}
+    >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.8000}}@{}}
+  \toprule\noalign{}
+  \begin{minipage}[b]{\linewidth}\raggedright
+  Arguments
+  \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+  Meanings
+  \end{minipage} \\
+  \midrule\noalign{}
+  \endhead
+  \bottomrule\noalign{}
+  \endlastfoot
+  \texttt{striped} & Add alternative row colors to the table. It will imports \texttt{LaTeX} package \texttt{xcolor} if enabled. \\
+  \texttt{scale\_down} & useful for super \textbf{wide} table. It will automatically adjust the table to {fit the page width}. \\
+  \texttt{repeat\_header} & only meaningful in a \textbf{long} table environment. It will let the header row repeat on every page in that long table. \\
+  \texttt{hold\_position} & ``hold'' the floating table to the exact position. It is useful when the \texttt{LaTeX} table is contained in a \texttt{table} environment after you specified captions in \texttt{kable()}. It will force the table to stay in the position where it was created in the document. \\
+  \texttt{HOLD\_position} & A stronger version of \texttt{hold\_position}. Requires the float package and specifies ⁠{[}H{]}⁠. \\
+  \end{longtable}
+\end{itemize}
+
+Rows and columns can be grouped via the functions \texttt{pack\_rows()} and \texttt{add\_header\_above()}, respectively.
+
+\texttt{scroll\_box(width\ =\ "100\%",\ height\ =\ "500px")} let you create a fixed height table while making it scrollable. This function only works for html long tables.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# commonly used settings }
+\NormalTok{table }\SpecialCharTok{\%\textgreater{}\%} 
+\NormalTok{    knitr}\SpecialCharTok{::}\FunctionTok{kable}\NormalTok{(}\AttributeTok{digits =} \DecValTok{5}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+    \FunctionTok{kable\_styling}\NormalTok{(}\AttributeTok{bootstrap\_options =} \FunctionTok{c}\NormalTok{(}\StringTok{"striped"}\NormalTok{, }\StringTok{"hover"}\NormalTok{), }\AttributeTok{full\_width =} \ConstantTok{FALSE}\NormalTok{, }\AttributeTok{latex\_options=}\StringTok{"scale\_down"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} 
+    \FunctionTok{scroll\_box}\NormalTok{(}\AttributeTok{width =} \StringTok{"100\%"}\NormalTok{, }\AttributeTok{height =} \StringTok{"500px"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# escape=TRUE, this makes your life easier, will output the table exactly as it is}
+\NormalTok{result }\OtherTok{\textless{}{-}} \FunctionTok{read\_csv}\NormalTok{(}\StringTok{"\textasciitilde{}/Documents/GDP/data/reg\_result/IFE\_result.csv"}\NormalTok{)}
+\NormalTok{result }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{  knitr}\SpecialCharTok{::}\FunctionTok{kable}\NormalTok{(}\AttributeTok{digits =} \DecValTok{5}\NormalTok{, }\AttributeTok{escape=}\NormalTok{T) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{kable\_styling}\NormalTok{(}\AttributeTok{bootstrap\_options =} \FunctionTok{c}\NormalTok{(}\StringTok{"striped"}\NormalTok{, }\StringTok{"hover"}\NormalTok{), }\AttributeTok{full\_width =} \ConstantTok{FALSE}\NormalTok{, }\AttributeTok{latex\_options=}\StringTok{"scale\_down"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# escape=FALSE, have to specify escape by replace \textasciigrave{}*\textasciigrave{} to \textasciigrave{}\textbackslash{}\textbackslash{}\textbackslash{}\textbackslash{}*\textasciigrave{}}
+\NormalTok{result }\OtherTok{\textless{}{-}} \FunctionTok{read\_csv}\NormalTok{(}\StringTok{"\textasciitilde{}/Documents/GDP/data/reg\_result/IFE\_result.csv"}\NormalTok{)}
+\NormalTok{result }\OtherTok{\textless{}{-}}\NormalTok{ result }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{pval.symbol =} \FunctionTok{gsub}\NormalTok{(}\StringTok{"[*]"}\NormalTok{, }\StringTok{"}\SpecialCharTok{\textbackslash{}\textbackslash{}\textbackslash{}\textbackslash{}}\StringTok{*"}\NormalTok{, pval.symbol) )}
+\NormalTok{result }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{  knitr}\SpecialCharTok{::}\FunctionTok{kable}\NormalTok{(}\AttributeTok{digits =} \DecValTok{5}\NormalTok{, }\AttributeTok{escape=}\ConstantTok{FALSE}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{kable\_styling}\NormalTok{(}\AttributeTok{bootstrap\_options =} \FunctionTok{c}\NormalTok{(}\StringTok{"striped"}\NormalTok{, }\StringTok{"hover"}\NormalTok{), }\AttributeTok{full\_width =} \ConstantTok{FALSE}\NormalTok{, }\AttributeTok{latex\_options=}\StringTok{"scale\_down"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\textbf{tables in pdf output}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{reg\_data }\SpecialCharTok{\%\textgreater{}\%} 
+    \FunctionTok{select}\NormalTok{(Date, adjusted, eRi, rmrf) }\SpecialCharTok{\%\textgreater{}\%}
+    \FunctionTok{head}\NormalTok{(}\DecValTok{10}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} 
+\NormalTok{    knitr}\SpecialCharTok{::}\FunctionTok{kable}\NormalTok{(}\AttributeTok{digits =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{,}\DecValTok{2}\NormalTok{,}\DecValTok{4}\NormalTok{,}\DecValTok{4}\NormalTok{), }\AttributeTok{escape=}\NormalTok{T, }\AttributeTok{format =} \StringTok{"latex"}\NormalTok{, }\AttributeTok{booktabs =} \ConstantTok{TRUE}\NormalTok{, }\AttributeTok{linesep =} \StringTok{""}\NormalTok{ ) }\SpecialCharTok{\%\textgreater{}\%}
+    \FunctionTok{kable\_styling}\NormalTok{(}\AttributeTok{latex\_options =} \FunctionTok{c}\NormalTok{(}\StringTok{"striped"}\NormalTok{), }\AttributeTok{full\_width =} \ConstantTok{FALSE}\NormalTok{, }\AttributeTok{stripe\_color =} \StringTok{"gray!15"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\texttt{knitr::kable()} arguments
+
+\begin{itemize}
+\item
+  \texttt{format\ =\ "latex"} specifies the output format.
+\item
+  \texttt{align\ =\ "l"} specifies column alignment.
+\item
+  \texttt{booktabs\ =\ TRUE} is generally recommended for formatting LaTeX tables.
+\item
+  \texttt{linesep\ =\ ""} prevents default behavior of extra space every five rows.
+\end{itemize}
+
+\texttt{kableExtra::kable\_styling()} arguments
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{position\ =\ "left"} places table on left hand side of page.
+\item
+  \texttt{latex\_options\ =\ c("striped",\ "repeat\_header")} implements table striping with repeated headers for tables that span multiple pages.
+\item
+  \texttt{stripe\_color\ =\ "gray!15"} species the stripe color using LaTeX color specification from the \href{https://mirror.mwt.me/ctan/macros/latex/contrib/xcolor/xcolor.pdf}{xcolor package} - this specifies a mix of 15\% gray and 85\% white.
+\end{itemize}
+
+\texttt{linebreak(x,\ align\ =\ "l",\ double\_escape\ =\ F,\ linebreaker\ =\ "\textbackslash{}n")} Make linebreak in LaTeX Table cells.
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{align="l"} Choose from ``l'', ``c'' or ``r''. Defaults to ``l''.
+\end{itemize}
+
+\textbf{Customize the looks for columns/rows}
+
+\texttt{kableExtra::column\_spec(kable\_input)} this function allows users to select a column and then specify its look.
+
+\texttt{row\_spec()} works similar with \texttt{column\_spec()} but defines specifications for rows.
+
+\begin{itemize}
+\tightlist
+\item
+  For the position of the target row, you don't need to count in header rows or the group labeling rows.
+\item
+  \texttt{row\_spec(row\ =\ 0,\ align=\textquotesingle{}c\textquotesingle{})} specify format of the header row. Here I want to center align headers.
+\end{itemize}
+
+\textbf{Add header rows to group columns}
+
+\texttt{add\_header\_above()}. The header variable is supposed to be a named character with the names as new column names and values as column span. For your convenience, if column span equals to 1, you can ignore the \texttt{=1} part so the function below can be written as \texttt{add\_header\_above(c("",\ "Group\ 1"\ =\ 2,\ "Group\ 2"\ =\ 2,\ "Group\ 3"\ =\ 2))}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{kbl}\NormalTok{(dt) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{kable\_classic}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{add\_header\_above}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{" "} \OtherTok{=} \DecValTok{1}\NormalTok{, }\StringTok{"Group 1"} \OtherTok{=} \DecValTok{2}\NormalTok{, }\StringTok{"Group 2"} \OtherTok{=} \DecValTok{2}\NormalTok{, }\StringTok{"Group 3"} \OtherTok{=} \DecValTok{2}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+You can add another row of header on top.
+
+\textbf{Group rows}
+
+\texttt{collapse\_rows} will put repeating cells in columns into multi-row cells. The vertical alignment of the cell is controlled by \texttt{valign} with default as ``top''.
+
+Not working for html output.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{collapse\_rows\_dt }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(}\AttributeTok{C1 =} \FunctionTok{c}\NormalTok{(}\FunctionTok{rep}\NormalTok{(}\StringTok{"a"}\NormalTok{, }\DecValTok{10}\NormalTok{), }\FunctionTok{rep}\NormalTok{(}\StringTok{"b"}\NormalTok{, }\DecValTok{5}\NormalTok{)),}
+                 \AttributeTok{C2 =} \FunctionTok{c}\NormalTok{(}\FunctionTok{rep}\NormalTok{(}\StringTok{"c"}\NormalTok{, }\DecValTok{7}\NormalTok{), }\FunctionTok{rep}\NormalTok{(}\StringTok{"d"}\NormalTok{, }\DecValTok{3}\NormalTok{), }\FunctionTok{rep}\NormalTok{(}\StringTok{"c"}\NormalTok{, }\DecValTok{2}\NormalTok{), }\FunctionTok{rep}\NormalTok{(}\StringTok{"d"}\NormalTok{, }\DecValTok{3}\NormalTok{)),}
+                 \AttributeTok{C3 =} \DecValTok{1}\SpecialCharTok{:}\DecValTok{15}\NormalTok{,}
+                 \AttributeTok{C4 =} \FunctionTok{sample}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{,}\DecValTok{1}\NormalTok{), }\DecValTok{15}\NormalTok{, }\AttributeTok{replace =} \ConstantTok{TRUE}\NormalTok{))}
+\FunctionTok{kbl}\NormalTok{(collapse\_rows\_dt, }\AttributeTok{align =} \StringTok{"c"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{kable\_paper}\NormalTok{(}\AttributeTok{full\_width =}\NormalTok{ F) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{column\_spec}\NormalTok{(}\DecValTok{1}\NormalTok{, }\AttributeTok{bold =}\NormalTok{ T) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{collapse\_rows}\NormalTok{(}\AttributeTok{columns =} \DecValTok{1}\SpecialCharTok{:}\DecValTok{2}\NormalTok{, }\AttributeTok{valign =} \StringTok{"top"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+Empty string as column name in \texttt{tibble}: use \texttt{setNames} or \texttt{attr}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{df }\OtherTok{\textless{}{-}} \FunctionTok{tibble}\NormalTok{(}\StringTok{" "}\OtherTok{=}\DecValTok{1}\NormalTok{)}
+\FunctionTok{setNames}\NormalTok{(df, }\StringTok{""}\NormalTok{)}
+\CommentTok{\# \# A tibble: 1 x 1}
+\CommentTok{\#      \textasciigrave{}\textasciigrave{}}
+\CommentTok{\#   \textless{}dbl\textgreater{}}
+\CommentTok{\# 1     1}
+
+\FunctionTok{attr}\NormalTok{(df, }\StringTok{"names"}\NormalTok{) }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{""}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\texttt{footnote()} add footnotes to tables. There are four notation systems in \texttt{footnote}, namely \texttt{general} (no prefix for footnotes), \texttt{number}, \texttt{alphabet} and \texttt{symbol}.
+
+\textbf{Math in rmd tables}
+
+\texttt{knitr::kable(x,\ escape=TRUE)}
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{escape=TRUE} whether to escape special characters when producing HTML or LaTeX tables.
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Defaults to \texttt{TRUE}.
+  \item
+    When \texttt{escape\ =\ FALSE}, you have to make sure that special characters will not trigger syntax errors in LaTeX or HTML.
+  \end{itemize}
+\end{itemize}
+
+You need to escape \texttt{\textbackslash{}} passed into R code.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\StringTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}}\AttributeTok{\{r, echo=FALSE\}}
+\AttributeTok{library(knitr)}
+
+\AttributeTok{mathy.df \textless{}{-} data.frame(site = c("A", "B"), }
+\AttributeTok{                       b0 = c(3, 4), }
+\AttributeTok{                       BA = c(1, 2))}
+
+\AttributeTok{colnames(mathy.df) \textless{}{-} c("Site", "$}\SpecialCharTok{\textbackslash{}\textbackslash{}}\AttributeTok{beta\_0$", "$}\SpecialCharTok{\textbackslash{}\textbackslash{}}\AttributeTok{beta\_A$")}
+
+\AttributeTok{kable(mathy.df, escape=FALSE)}
+\StringTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}}
+\end{Highlighting}
+\end{Shaded}
+
+It is possible to edit Latex table directly in \texttt{Rmd}.
+
+\begin{itemize}
+\tightlist
+\item
+  Don't enclose in \texttt{\$\$}.
+\item
+  Use \texttt{\textbackslash{}begin\{table\}} and start your table data.
+\end{itemize}
+
 \section{Rmd GitHub Pages}\label{rmd-github-pages}
+
+\textbf{Stage-commit-push many files}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  Use the Terminal \texttt{git\ add\ .} to ``stage'' all the files that I want to commit as that's quicker than clicking on all the files often that I want to commit.
+\item
+  Go to RStudio \texttt{Commit\ Pending\ changes} icon (the white docs icon with a tick in a Git pane) to write the commit as I find \texttt{git\ commit\ -m\ "Write\ your\ message\ here"} a bit too long!
+\item
+  Use the Push and Pull buttons in RStudio as that's easier than typing \texttt{git\ push} or \texttt{git\ pull} in the terminal.
+\end{enumerate}
+
+Note that the minimum requirement for any R Markdown website is that it have an \texttt{index.Rmd} file as well as a \texttt{\_site.yml} file. If you execute the \texttt{rmarkdown::render\_site()} function from within the directory containing the website, the following will occur:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  All of the \texttt{*.Rmd} and \texttt{*.md} files in the root website directory will be rendered into HTML. Note, however, that Markdown files beginning with \texttt{\_} are not rendered (this is a convention to designate files that are to be included by top level Rmd documents as child documents).
+
+  \begin{enumerate}
+  \def\labelenumii{\arabic{enumii}.}
+  \tightlist
+  \item
+    \texttt{index.Rmd} controls the content on your main page.
+  \end{enumerate}
+\item
+  The generated HTML files and any supporting files (e.g., CSS and JavaScript) are copied into an output directory (\texttt{\_site} by default, on Github Pages the output folder is \texttt{docs}).
+
+  \begin{itemize}
+  \item
+    \texttt{\_site.yml} controls the styling.
+  \item
+    The HTML files within the output directory are now ready to deploy as a standalone static website.
+  \end{itemize}
+\end{enumerate}
+
+\texttt{\_site.yml}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{name}\KeywordTok{:}\AttributeTok{ }\StringTok{"my{-}website"}
+\FunctionTok{output\_dir}\KeywordTok{:}\AttributeTok{ }\StringTok{"docs"}
+\FunctionTok{include}\KeywordTok{:}\AttributeTok{ }\KeywordTok{[}\StringTok{"import.R"}\KeywordTok{]}
+\FunctionTok{exclude}\KeywordTok{:}\AttributeTok{ }\KeywordTok{[}\StringTok{"docs.txt"}\KeywordTok{,}\AttributeTok{ }\StringTok{"*.csv"}\KeywordTok{]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\item
+  \texttt{name} provides a suggested URL path for your website when it is published
+\item
+  \texttt{output\_dir} field indicates which directory to copy site content into.
+\item
+  The \texttt{include} and \texttt{exclude} fields enable you to override the default behavior vis-à-vis what files are copied into the output directory. By default, all files within the website directory are copied into the output directory (e.g.~``\_site'') except for the following:
+
+  \begin{enumerate}
+  \def\labelenumi{\arabic{enumi}.}
+  \tightlist
+  \item
+    Files beginning with \texttt{"."} (hidden files).
+  \item
+    Files beginning with \texttt{"\_"}
+  \item
+    Files known to contain R source code (e.g.~\texttt{".R"}, \texttt{".s"}, \texttt{".Rmd"}), R data (e.g.~\texttt{".RData"}, \texttt{".rds"}), or configuration data (e.g.~\texttt{"rsconnect"} ,\texttt{"packrat"}, \texttt{"renv"})).
+  \end{enumerate}
+
+  The \texttt{include} and \texttt{exclude} fields of **\_site.yml** can be used to override this default behavior (wildcards can be used to specify groups of files to be included or excluded). Note that the \texttt{include} and \texttt{exclude} fields target only top-level files and directories (i.e.~a directory is either included or not, you can't exclude a subset of files within a directory).
+
+  Note also that \texttt{include} and \texttt{exclude} are \emph{not} used to determine which Rmd files are rendered (all of them in the root directory save for those named with the \texttt{\_} prefix will be rendered).
+\end{itemize}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+{\textbf{Workflow}}: Edit your site, \textbf{build} it, then push and commit to GitHub to publish your changes online.
+
+To render {all of the pages} in the website, you use the \texttt{Build} pane, which calls \texttt{rmarkdown::render\_site()} to build and then preview the entire site
+
+As you work on the {individual pages} of your website, you can render them using the \texttt{Knit} button just as you do with conventional standalone R Markdown documents. Or use the command line \texttt{rmarkdown::render("0100-RStudio.Rmd")}. It will generate the html output \texttt{RStudio.html} in the same directory. You can see it in the Output pane \textgreater{} \texttt{Files} tab. Click the file and choose \texttt{View\ in\ Web\ Browser}.
+
+Note:
+
+\begin{itemize}
+\tightlist
+\item
+  Each time you run \texttt{rmarkdown::render\_site()}, the \texttt{docs/} folder will be overwritten with updated HTML versions of your \texttt{.Rmd}s. This means DON'T EVER EDIT FILES IN THE \texttt{docs/} FOLDER! Nothing catastrophic will happen if you do, but you will overwrite and lose all your changes the next time you knit or \texttt{render\_site()}.
+\item
+  Don't forget to update
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \texttt{index\_Rmd} (home page) and
+  \item
+    \texttt{\_site.yml} (cross references files \texttt{include:\ {[}"w1.rmd",\ "w2.rmd"{]}})
+
+    \begin{itemize}
+    \tightlist
+    \item
+      This will copy files into \texttt{docs} so that you can put a downloadable link to them.
+    \end{itemize}
+  \end{itemize}
+\end{itemize}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+CSS Style
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{{-}{-}{-}}
+\AnnotationTok{output:}\CommentTok{ }
+\CommentTok{  html\_document:}
+\CommentTok{    theme: cosmo}
+\CommentTok{   \# css: style.css \# link to external CSS}
+\CommentTok{{-}{-}{-}}
+
+\DataTypeTok{\textless{}}\KeywordTok{style}\OtherTok{ type }\OperatorTok{=} \StringTok{"text/css"}\DataTypeTok{\textgreater{}} 
+\NormalTok{h2 \{}
+  \KeywordTok{color}\CharTok{:} \ConstantTok{red}\OperatorTok{;} \CommentTok{/* internal CSS */}
+\NormalTok{\}}
+\DataTypeTok{\textless{}/}\KeywordTok{style}\DataTypeTok{\textgreater{}}
+
+\FunctionTok{\#\# R Markdown}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\textbf{Refer to your posts using relative links}
+
+If you have a Markdown file in your repository at \texttt{docs/project1.html}, and you want to link from that file to \texttt{docs/another-page.md}, you can do so with the following markup:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\ExtensionTok{[}\SpecialStringTok{a relative link}\ExtensionTok{]}\InformationTok{(}\NormalTok{project1}\FunctionTok{.html}\InformationTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+When you view the source file on GitHub.com, the relative link will continue to work, but now, when you publish that file using GitHub Pages, the link will be silently translated to \texttt{docs/another-page.html} to match the target page's published URL.
+
+Link to another file
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\ExtensionTok{[}\SpecialStringTok{download}\ExtensionTok{]}\InformationTok{(}\NormalTok{w1}\FunctionTok{.rmd}\InformationTok{)}
+\NormalTok{\textless{}a href="w1}\FunctionTok{.rmd}\NormalTok{"}\OperatorTok{\textgreater{}}\NormalTok{Download File\textless{}/a}\OperatorTok{\textgreater{}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\textbf{TOC} on home page:
+
+\begin{itemize}
+\tightlist
+\item
+  source code: \url{https://github.com/lmullen/rmd-notebook/blob/master/index.Rmd}
+\item
+  webpage: \url{https://lmullen.github.io/rmd-notebook/}
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# replacing with the following options}
+\CommentTok{\# \{r TOC, echo=FALSE, results=\textquotesingle{}asis\textquotesingle{}\}}
+\NormalTok{rmd }\OtherTok{\textless{}{-}} \FunctionTok{Sys.glob}\NormalTok{(}\StringTok{"*.[Rr]md"}\NormalTok{)}
+\NormalTok{rmd }\OtherTok{\textless{}{-}}\NormalTok{ rmd[}\SpecialCharTok{!}\NormalTok{rmd }\SpecialCharTok{\%in\%} \FunctionTok{c}\NormalTok{(}\StringTok{"index.Rmd"}\NormalTok{, }\StringTok{"about.Rmd"}\NormalTok{)]}
+\NormalTok{html }\OtherTok{\textless{}{-}} \FunctionTok{sub}\NormalTok{(}\StringTok{".Rmd"}\NormalTok{, }\StringTok{".html"}\NormalTok{, rmd)}
+\NormalTok{lines }\OtherTok{\textless{}{-}} \FunctionTok{lapply}\NormalTok{(rmd, readLines)}
+\NormalTok{yaml }\OtherTok{\textless{}{-}} \FunctionTok{lapply}\NormalTok{(lines, rmarkdown}\SpecialCharTok{:::}\NormalTok{parse\_yaml\_front\_matter)}
+\FunctionTok{cat}\NormalTok{(}\StringTok{"\textless{}ul\textgreater{}"}\NormalTok{)}
+\ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \FunctionTok{seq\_along}\NormalTok{(rmd)) \{}
+  \FunctionTok{cat}\NormalTok{(}\FunctionTok{paste0}\NormalTok{(}\StringTok{"\textless{}li\textgreater{}\textless{}a href=\textquotesingle{}"}\NormalTok{, html[i], }\StringTok{"\textquotesingle{}\textgreater{}"}\NormalTok{, yaml[[i]]}\SpecialCharTok{$}\NormalTok{title, }\StringTok{"\textless{}/a\textgreater{}\textless{}br/\textgreater{}"}\NormalTok{,}
+             \StringTok{"\textless{}code\textgreater{}"}\NormalTok{, rmd[i], }\StringTok{"\textless{}/code\textgreater{}"}\NormalTok{, }\StringTok{"\textless{}/li\textgreater{}"}\NormalTok{))}
+\NormalTok{\}}
+\FunctionTok{cat}\NormalTok{(}\StringTok{"\textless{}/ul\textgreater{}"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+Project website:
+
+\begin{itemize}
+\item
+  Structure: \url{https://www.storybench.org/convert-google-doc-rmarkdown-publish-github-pages/}
+\item
+  Multi-page website: \url{https://phuston.github.io/patrickandfrantonarethebestninjas/howto}
+\item
+  Blogdown: \url{https://github.com/liuyanguu/Blogdown?tab=readme-ov-file}
+\item
+  Distill: \url{https://rstudio.github.io/distill/website.html}
+\item
+  Bookdown Notes for One Course:
+
+  \url{https://github.com/bcallaway11/econ_4750_notes}
+
+  \url{https://bcallaway11.github.io/econ_4750_notes/law-of-iterated-expectations.html\#}
+\end{itemize}
 
 \chapter{bookdown}\label{bookdown}
 
@@ -3347,10 +4526,10 @@ Here is a brief example of \texttt{\_output.yml}:
 
 You do NOT need the three dashes \texttt{-\/-\/-} in \texttt{\_output.yml}. In this case, all formats should be at the top level, instead of under an \texttt{output} field in individual Rmds.
 
-\texttt{split\_by} defaults to \texttt{chapter}, which splits the file by the first-level headers.
-
 \begin{itemize}
 \item
+  \texttt{split\_by} defaults to \texttt{chapter}, which splits the file by the first-level headers.
+
   \texttt{split\_by:\ section} splits the file by the second-level headers.
 \item
   The \href{https://bookdown.org/yihui/bookdown/yaml-options.html}{\texttt{includes} option} allows you to insert arbitrary custom content before and/or after the body of the output.
@@ -3382,8 +4561,10 @@ You do NOT need the three dashes \texttt{-\/-\/-} in \texttt{\_output.yml}. In t
   The \texttt{in\_header} option takes a file path and inserts it into the \texttt{\textless{}head\textgreater{}} tag. The \texttt{before\_body} file will be inserted right below the opening \texttt{\textless{}body\textgreater{}} tag, and \texttt{after\_body} is inserted before the closing tag \texttt{\textless{}/body\textgreater{}}.
 
   \begin{itemize}
+  \tightlist
   \item
     A LaTeX source document has a similar structure:
+  \end{itemize}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -3401,7 +4582,6 @@ You do NOT need the three dashes \texttt{-\/-\/-} in \texttt{\_output.yml}. In t
 \KeywordTok{\textbackslash{}end}\NormalTok{\{}\ExtensionTok{document}\NormalTok{\}}
 \end{Highlighting}
 \end{Shaded}
-  \end{itemize}
 \end{itemize}
 
 bookdown 中文书籍 \texttt{\_output.yml} 范例: \url{https://github.com/yihui/bookdown-chinese/blob/96d526572f0c6648d06c2d4bebf57c5fb4eafce3/_output.yml}
@@ -3409,7 +4589,8 @@ bookdown 中文书籍 \texttt{\_output.yml} 范例: \url{https://github.com/yihu
 \begin{itemize}
 \item
   You can set up a tex template.
-  Yihui set up the Chinese support in the template file (\texttt{latex/template.tex}).
+
+  Yihui sets up the Chinese support in the template file (\texttt{latex/template.tex}).
 
 \begin{Shaded}
 \begin{Highlighting}[]

@@ -205,7 +205,13 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="3.6" data-path="equations.html"><a href="equations.html"><i class="fa fa-check"></i><b>3.6</b> Equations</a></li>
 <li class="chapter" data-level="3.7" data-path="theorems.html"><a href="theorems.html"><i class="fa fa-check"></i><b>3.7</b> Theorems</a></li>
 <li class="chapter" data-level="3.8" data-path="figures.html"><a href="figures.html"><i class="fa fa-check"></i><b>3.8</b> Figures</a></li>
-<li class="chapter" data-level="3.9" data-path="tables.html"><a href="tables.html"><i class="fa fa-check"></i><b>3.9</b> Tables</a></li>
+<li class="chapter" data-level="3.9" data-path="tables.html"><a href="tables.html"><i class="fa fa-check"></i><b>3.9</b> Tables</a>
+<ul>
+<li class="chapter" data-level="3.9.1" data-path="tables.html"><a href="tables.html#knitrkable"><i class="fa fa-check"></i><b>3.9.1</b> <code>knitr::kable</code></a></li>
+<li class="chapter" data-level="3.9.2" data-path="tables.html"><a href="tables.html#data-frame-printing"><i class="fa fa-check"></i><b>3.9.2</b> Data frame printing</a></li>
+<li class="chapter" data-level="3.9.3" data-path="tables.html"><a href="tables.html#stargazer"><i class="fa fa-check"></i><b>3.9.3</b> Stargazer</a></li>
+<li class="chapter" data-level="3.9.4" data-path="tables.html"><a href="tables.html#kableextra"><i class="fa fa-check"></i><b>3.9.4</b> <code>kableExtra</code></a></li>
+</ul></li>
 <li class="chapter" data-level="3.10" data-path="rmd-github-pages.html"><a href="rmd-github-pages.html"><i class="fa fa-check"></i><b>3.10</b> Rmd GitHub Pages</a></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="bookdown.html"><a href="bookdown.html"><i class="fa fa-check"></i><b>4</b> bookdown</a>
@@ -323,7 +329,7 @@ I_t =
 {\color{red}Y_t} = I_tI_{t-1} + (1-I_t)(1-I_{t-1})
 \end{align*}\]</span></p>
 <ul>
-<li><p>This only works for color names, not hex code starting with <code>#</code> as html needs the <code>#</code> then 6 characters to denote a color, but LaTeX package <code>xcolor</code> specifically excludes <code>#</code> from specifying the color.</p></li>
+<li><p>This only works for color names, not hex codes starting with <code>#</code>, because html requires the <code>#</code> followed by 6 characters to define a color, but LaTeX package <code>xcolor</code> specifically excludes <code>#</code> in color specifications.</p></li>
 <li><p>Here is an (only works for LaTeX).</p></li>
 </ul>
 <p><strong>A workaround</strong>: We can write a custom R function to insert the correct syntax depending on the output format using the <code>is_latex_output()</code> and <code>is_html_output()</code> functions in knitr as follows:</p>
@@ -337,7 +343,72 @@ I_t =
 <span id="cb107-8"><a href="equations.html#cb107-8" tabindex="-1"></a>}</span></code></pre></div>
 <p>We can then use the code in an inline R expression <code>`r colorize("some words in red", "red")`</code>, which will create <span style="color: red;">some words in red</span>, which works for both html and .</p>
 <hr />
+<div id="mathjax" class="section level3 unlisted unnumbered hasAnchor">
+<h3>Mathjax<a href="equations.html#mathjax" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p><a href="https://bookdown.org/yihui/rmarkdown/html-document.html#mathjax-equations" class="uri">https://bookdown.org/yihui/rmarkdown/html-document.html#mathjax-equations</a></p>
+<p>Default configuration used by the rmarkdown package is given by <code>rmarkdown:::mathjax_config()</code>. As of rmarkdown v2.1, the function returns “MathJax.js?config=TeX-AMS-MML_HTMLorMML”. This configures <code>Mathjax</code> to <code>HTML-CSS</code>.</p>
+<p>Change <code>Mathjax</code> configuration to <code>CommonHTML</code> using the following codes.</p>
+<div class="sourceCode" id="cb108"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb108-1"><a href="equations.html#cb108-1" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb108-2"><a href="equations.html#cb108-2" tabindex="-1"></a><span class="an">title:</span><span class="co"> &quot;Trouble with MathJax&quot;</span></span>
+<span id="cb108-3"><a href="equations.html#cb108-3" tabindex="-1"></a><span class="an">output:</span><span class="co"> </span></span>
+<span id="cb108-4"><a href="equations.html#cb108-4" tabindex="-1"></a><span class="co">  html_document:</span></span>
+<span id="cb108-5"><a href="equations.html#cb108-5" tabindex="-1"></a><span class="co">    mathjax: &quot;https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS_CHTML.js&quot;</span></span>
+<span id="cb108-6"><a href="equations.html#cb108-6" tabindex="-1"></a><span class="co">    self_contained: false    </span></span>
+<span id="cb108-7"><a href="equations.html#cb108-7" tabindex="-1"></a><span class="co">---</span></span></code></pre></div>
+<p>By default, <a href="https://www.mathjax.org/">MathJax</a> scripts are included in HTML documents for rendering LaTeX and MathML equations. You can use the <code>mathjax</code> option to control how MathJax is included:</p>
+<ul>
+<li>Specify <code>"default"</code> to use an HTTPS URL from a CDN host (currently provided by RStudio).</li>
+<li>Specify <code>"local"</code> to use a local version of MathJax (which is copied into the output directory). Note that when using <code>"local"</code> you also need to set the <code>self_contained</code> option to <code>false</code>.</li>
+<li>Specify an alternate URL to load MathJax from another location. To use a self-hosted copy of MathJax.</li>
+<li>Specify <code>null</code> to exclude MathJax entirely.</li>
+</ul>
+<hr />
+<p>Q: Why my eqns are not rendered?</p>
+<p>A: MathJax is unlikely to work offline. Check internet connection.</p>
+<p>You load <a href="https://docs.mathjax.org/en/stable/configuration.html">MathJax</a> into a web page by including its main JavaScript file into the page. That is done via a <code>&lt;script&gt;</code>tag that links to the <code>MathJax.js</code> file. To do that, place the following line in the <code>&lt;head&gt;</code> section of your document.</p>
+<p>For example, if you are using the MathJax distributed network service, the tag might be</p>
+<div class="sourceCode" id="cb109"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb109-1"><a href="equations.html#cb109-1" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">script</span><span class="ot"> type=</span><span class="st">&quot;text/javascript&quot;</span></span>
+<span id="cb109-2"><a href="equations.html#cb109-2" tabindex="-1"></a><span class="ot">   src</span><span class="op">=</span><span class="st">&quot;http://cdn.mathjax.org/mathjax/latest/MathJax.js&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb109-3"><a href="equations.html#cb109-3" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">script</span><span class="dt">&gt;</span></span></code></pre></div>
+<p>MathJax is available as a web service from <code>cdn.mathjax.org</code>, so you can obtain MathJax from there without needing to install it on your own server. The CDN is part of a distributed “cloud” network, so it is handled by servers around the world. That means that you should get access to a server geographically near you, for a fast, reliable connection.</p>
+<p>The CDN hosts the most current version of MathJax, as well as older versions, so you can either link to a version that stays up-to-date as MathJax is improved, or you can stay with one of the release versions so that your pages always use the same version of MathJax.</p>
+<hr />
+<p>For equation numbering support in <code>bookdown::pdf_document2</code> you need to <a href="https://bookdown.org/yihui/bookdown/markdown-extensions-by-bookdown.html#equations">assign labels</a>. Defualt behavior is not adding numbering.</p>
+<ul>
+<li><p>Use <code>\begin{equation}...\end{equations}</code> or <code>\begin{align}...\end{align}</code> environments.</p>
+<ul>
+<li>Use <code>(\#eq:eq1)</code> or <code>\label{eq:eq1}</code> to add labels.</li>
+<li>Automatically add numbering.</li>
+<li>Drawback is that rmd does not have preview of equations.</li>
+</ul></li>
+<li><p>Do NOT enclose the environments in double dollar signs <code>$$</code>. Otherwise, no label is added, but cross-references still show up.</p>
+<ul>
+<li><p><code>$$</code> do not add numbering automatically.</p></li>
+<li><p>But in <code>bookdown::html_document2</code>, it is ok to use</p>
+<div class="sourceCode" id="cb110"><pre class="sourceCode latex"><code class="sourceCode latex"><span id="cb110-1"><a href="equations.html#cb110-1" tabindex="-1"></a><span class="ss">$$</span></span>
+<span id="cb110-2"><a href="equations.html#cb110-2" tabindex="-1"></a><span class="kw">\begin</span>{<span class="ex">equation</span>}<span class="ss"> (</span><span class="sc">\#</span><span class="ss">eq:simple-lm)</span></span>
+<span id="cb110-3"><a href="equations.html#cb110-3" tabindex="-1"></a><span class="sc">\hat</span><span class="ss">{</span><span class="sc">\beta</span><span class="ss">}_{</span><span class="sc">\text</span>{OLS}<span class="ss">} = </span><span class="sc">\left</span><span class="ss">(</span><span class="sc">\sum</span><span class="ss">_{i=1}^n x_i x_i&#39; </span><span class="sc">\right</span><span class="ss">)^{-1} </span><span class="sc">\left</span><span class="ss">(</span><span class="sc">\sum</span><span class="ss">_{i=1}^n x_i y_i </span><span class="sc">\right</span><span class="ss">) .</span></span>
+<span id="cb110-4"><a href="equations.html#cb110-4" tabindex="-1"></a><span class="kw">\end</span>{<span class="ex">equation</span>}</span>
+<span id="cb110-5"><a href="equations.html#cb110-5" tabindex="-1"></a><span class="ss">$$</span></span></code></pre></div>
+<p>Then reference with <code>\@ref(eq:simple-lm)</code>.</p></li>
+</ul></li>
+<li><p>Use <code>\@ref(eq:eq1)</code> (note this use parentheses) or the Latex command <code>\eqref{eq:eq1}</code> (this uses curly braces) to cite the equation.</p></li>
+</ul>
+<div class="sourceCode" id="cb111"><pre class="sourceCode latex"><code class="sourceCode latex"><span id="cb111-1"><a href="equations.html#cb111-1" tabindex="-1"></a>Load the dataset and calculate the monthly return in month <span class="ss">$r$</span> (<span class="ss">$r_t$</span>) as</span>
+<span id="cb111-2"><a href="equations.html#cb111-2" tabindex="-1"></a></span>
+<span id="cb111-3"><a href="equations.html#cb111-3" tabindex="-1"></a><span class="kw">\begin</span>{<span class="ex">equation</span>}</span>
+<span id="cb111-4"><a href="equations.html#cb111-4" tabindex="-1"></a><span class="ss">r_t = </span><span class="sc">\frac</span><span class="ss">{P_t-P_{t-1}}{P_{t-1}} = </span><span class="sc">\frac</span><span class="ss">{P_t}{P_{t-1}}-1 , </span></span>
+<span id="cb111-5"><a href="equations.html#cb111-5" tabindex="-1"></a><span class="ss">(</span><span class="sc">\#</span><span class="ss">eq:eq1)</span></span>
+<span id="cb111-6"><a href="equations.html#cb111-6" tabindex="-1"></a><span class="kw">\end</span>{<span class="ex">equation</span>}</span>
+<span id="cb111-7"><a href="equations.html#cb111-7" tabindex="-1"></a></span>
+<span id="cb111-8"><a href="equations.html#cb111-8" tabindex="-1"></a>where <span class="ss">$P_t$</span> is the adjusted price in month <span class="ss">$t$</span>. </span>
+<span id="cb111-9"><a href="equations.html#cb111-9" tabindex="-1"></a></span>
+<span id="cb111-10"><a href="equations.html#cb111-10" tabindex="-1"></a>Test equation1 <span class="fu">\@ref</span>(eq:eq1).</span>
+<span id="cb111-11"><a href="equations.html#cb111-11" tabindex="-1"></a></span>
+<span id="cb111-12"><a href="equations.html#cb111-12" tabindex="-1"></a>Test equation2 <span class="kw">\eqref</span>{<span class="ex">eq:eq1</span>}.</span></code></pre></div>
+<p><img src="https://drive.google.com/thumbnail?id=1mgX3uwLgTDHF0cMwn04mj9K4GjTOF4TX&sz=w1000" alt="eqn numbering in bookdown" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" /></p>
 
+</div>
 </div>
             </section>
 

@@ -92,7 +92,7 @@ $$
 {\color{red}Y_t} = I_tI_{t-1} + (1-I_t)(1-I_{t-1})
 \end{align*}
 
-- This only works for color names, not hex code starting with `#` as html needs the `#` then 6 characters to denote a color, but LaTeX package `xcolor` specifically excludes `#` from specifying the color.
+- This only works for color names, not hex codes starting with `#`, because html requires the `#` followed by 6 characters to define a color, but LaTeX package `xcolor` specifically excludes `#` in color specifications.
 
 - Here is an \textcolor[HTML]{00CC66}{inline colored example for LaTeX output} (only works for LaTeX).
 
@@ -115,6 +115,106 @@ We can then use the code in an inline R expression `` `r knitr::inline_expr('col
 
 
 --------------------------------------------------------------------------------
+
+
+### Mathjax {.unlisted .unnumbered}
+
+<https://bookdown.org/yihui/rmarkdown/html-document.html#mathjax-equations>
+
+Default configuration used by the rmarkdown package is given by `rmarkdown:::mathjax_config()`. As of rmarkdown v2.1, the function returns "MathJax.js?config=TeX-AMS-MML_HTMLorMML". This configures `Mathjax` to `HTML-CSS`.
+
+Change `Mathjax` configuration to `CommonHTML` using the following codes.
+
+```markdown
+---
+title: "Trouble with MathJax"
+output: 
+  html_document:
+    mathjax: "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS_CHTML.js"
+    self_contained: false    
+---
+```
+
+By default, [MathJax](https://www.mathjax.org/) scripts are included in HTML documents for rendering LaTeX and MathML equations. You can use the `mathjax` option to control how MathJax is included:
+
+- Specify `"default"` to use an HTTPS URL from a CDN host (currently provided by RStudio).
+- Specify `"local"` to use a local version of MathJax (which is copied into the output directory). Note that when using `"local"` you also need to set the `self_contained` option to `false`.
+- Specify an alternate URL to load MathJax from another location. To use a self-hosted copy of MathJax.
+- Specify `null` to exclude MathJax entirely.
+
+
+--------------------------------------------------------------------------------
+
+Q: Why my eqns are not rendered?
+
+A: MathJax is unlikely to work offline. Check internet connection.
+
+
+
+You load [MathJax](https://docs.mathjax.org/en/stable/configuration.html) into a web page by including its main JavaScript file into the page. That is done via a `<script>`tag that links to the `MathJax.js` file. To do that, place the following line in the `<head>` section of your document.
+
+ For example, if you are using the MathJax distributed network service, the tag might be
+
+```html
+<script type="text/javascript"
+   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js">
+</script>
+```
+
+
+
+MathJax is available as a web service from `cdn.mathjax.org`, so you can obtain MathJax from there without needing to install it on your own server. The CDN is part of a distributed “cloud” network, so it is handled by servers around the world. That means that you should get access to a server geographically near you, for a fast, reliable connection.
+
+The CDN hosts the most current version of MathJax, as well as older versions, so you can either link to a version that stays up-to-date as MathJax is improved, or you can stay with one of the release versions so that your pages always use the same version of MathJax.
+
+
+
+--------------------------------------------------------------------------------
+
+For equation numbering support in `bookdown::pdf_document2` you need to [assign labels](https://bookdown.org/yihui/bookdown/markdown-extensions-by-bookdown.html#equations). Defualt behavior is not adding numbering.
+
+- Use `\begin{equation}...\end{equations}` or `\begin{align}...\end{align}` environments.
+
+  - Use `(\#eq:eq1)` or `\label{eq:eq1}` to add labels.
+  - Automatically add numbering.
+  - Drawback is that rmd does not have preview of equations.
+
+- Do NOT enclose the environments in double dollar signs `$$`. Otherwise, no label is added, but cross-references still show up.
+
+  - `$$` do not add numbering automatically. 
+
+  - But in `bookdown::html_document2`, it is ok to use 
+
+    ```latex
+    $$
+    \begin{equation} (\#eq:simple-lm)
+    \hat{\beta}_{\text{OLS}} = \left(\sum_{i=1}^n x_i x_i' \right)^{-1} \left(\sum_{i=1}^n x_i y_i \right) .
+    \end{equation}
+    $$
+    ```
+
+    Then reference with `\@ref(eq:simple-lm)`.
+
+- Use `\@ref(eq:eq1)` (note this use parentheses) or the Latex command  `\eqref{eq:eq1}` (this uses curly braces) to cite the equation.
+
+```latex
+Load the dataset and calculate the monthly return in month $r$ ($r_t$) as
+
+\begin{equation}
+r_t = \frac{P_t-P_{t-1}}{P_{t-1}} = \frac{P_t}{P_{t-1}}-1 , 
+(\#eq:eq1)
+\end{equation}
+
+where $P_t$ is the adjusted price in month $t$. 
+
+Test equation1 \@ref(eq:eq1).
+
+Test equation2 \eqref{eq:eq1}.
+```
+
+
+
+<img src="https://drive.google.com/thumbnail?id=1mgX3uwLgTDHF0cMwn04mj9K4GjTOF4TX&sz=w1000" alt="eqn numbering in bookdown" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
 
 
 
