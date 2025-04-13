@@ -6,7 +6,7 @@ Using `bookdown` cmd: `\@ref(tab:chunk-label)`.
 
 Note that you must provide `caption` option in `kable()`. Otherwise the table won't be numbered.
 
-~~~r
+~~~markdown
 And see Table \@ref(tab:mtcars).
 
 ```{r mtcars, echo=FALSE}
@@ -14,12 +14,39 @@ knitr::kable(mtcars[1:5, 1:5], caption = "The mtcars data.")
 ```
 ~~~
 
+Refer to the Table \@ref(tab:mtcars).
+
+
+Table: (\#tab:mtcars)The mtcars data.
+
+|                  |  mpg| cyl| disp|  hp| drat|
+|:-----------------|----:|---:|----:|---:|----:|
+|Mazda RX4         | 21.0|   6|  160| 110| 3.90|
+|Mazda RX4 Wag     | 21.0|   6|  160| 110| 3.90|
+|Datsun 710        | 22.8|   4|  108|  93| 3.85|
+|Hornet 4 Drive    | 21.4|   6|  258| 110| 3.08|
+|Hornet Sportabout | 18.7|   8|  360| 175| 3.15|
+
+
+
+The following is useful when you want to copy-and-paste R output from console to other document, e.g., markdown.
+
+
+```r
+knitr::kable(mtcars[1:5, 1:5], format="pipe")
+|                  |  mpg| cyl| disp|  hp| drat|
+|:-----------------|----:|---:|----:|---:|----:|
+|Mazda RX4         | 21.0|   6|  160| 110| 3.90|
+|Mazda RX4 Wag     | 21.0|   6|  160| 110| 3.90|
+|Datsun 710        | 22.8|   4|  108|  93| 3.85|
+|Hornet 4 Drive    | 21.4|   6|  258| 110| 3.08|
+|Hornet Sportabout | 18.7|   8|  360| 175| 3.15|
+```
+
+
 --------------------------------------------------------------------------------
 
 ### `knitr::kable`
-
-
-
 
 `knitr::kable(x, digits, caption=NULL, escape=TRUE)` Create tables in LaTeX, HTML, Markdown and reStructuredText. 
 
@@ -90,7 +117,7 @@ To show the `tibble` information (number of row/columns, and group information) 
 ```markdown
 ---
 title: "Use caption with df_print set to page"
-date: "2025-04-12"
+date: "2025-04-13"
 output:
   bookdown::html_document2:
     df_print: paged
@@ -111,7 +138,7 @@ The possible values of the `df_print` option for the `html_document` format.
 
 The possible values of the `df_print` option for the `pdf_document` format: `default`, `kable`, `tibble`, `paged`, or a custom function.
 
-~~~~r
+~~~~markdown
 paged print
 
 ```{r echo=TRUE, paged.print=TRUE}
@@ -151,7 +178,7 @@ Available options for `paged` tables:
 
 These options are specified in each chunk like below:
 
-~~~r
+~~~markdown
 ```{r cols.print=3, rows.print=3}
 mtcars
 ```
@@ -159,9 +186,9 @@ mtcars
 
 
 
-For pdf_document, it is possible to write LaTex code directly.
+For **pdf_document**, it is possible to write LaTex code directly.
 
-````r
+````markdown
 ```{=latex}
 \begin{tabular}{ll}
 A & B \\
@@ -169,6 +196,7 @@ A & B \\
 \end{tabular}
 ```
 ````
+
 
 Do not forget the equal sign before `latex`, i.e., it is `=latex` instead of `latex`. 
 
@@ -188,7 +216,7 @@ Do not forget the equal sign before `latex`, i.e., it is `=latex` instead of `la
 
 Text table
 
-````r
+````markdown
 ```{r descrptive-analysis-text, comment = ''}
 apply(data[,-1], 2, get_stat) %>% 
     stargazer(type = "text", digits=2)
@@ -199,7 +227,7 @@ HTML table, note that need to specify `results="asis"`.
 
 - `*`'s do not show properly, need to specify as footnote manually.
 
-````r
+````markdown
 ```{r descrptive-analysis-html, results="asis"}
 apply(data[,-1], 2, get_stat) %>% 
     stargazer(type = "html", digits=2, 
@@ -223,7 +251,7 @@ Add a blank line under the `stargazer` table: `&nbsp;` with a blank line above a
 
 - <span style='color:#00CC66'>In pdf output</span>, use `Table \@ref(tab:reg-table)` or `Table \ref{tab:reg-table}`.
 
-  ````r
+  ````markdown
   Table \@ref(tab:reg-table) summarize the regression results in a table.
   
   ```{r, include=TRUE, results='asis'}
@@ -297,7 +325,7 @@ Add a blank line under the `stargazer` table: `&nbsp;` with a blank line above a
 
   `label` option in `stargazer` does not work. Cannot use chunk labels either.
 
-  ````r
+  ````markdown
   ```{r fit-age, echo=FALSE, results='asis', fig.cap="Logistic regression of CHD on age."}
   # Use title caption from fig.cap
   tit <- knitr::opts_current$get("fig.cap")
@@ -338,7 +366,7 @@ Add a blank line under the `stargazer` table: `&nbsp;` with a blank line above a
 
   Another example if you don't need to add footnotes.
 
-  ````r
+  ````markdown
   ```{r mytable, results='asis', fig.cap="This is my table."}
   
   # Use title caption from fig.cap
@@ -406,7 +434,7 @@ The **kableExtra** package is designed to extend the basic functionality of tabl
 
 Rows and columns can be grouped via the functions `pack_rows()` and `add_header_above()`, respectively. 
 
-`scroll_box(width = "100%", height = "500px")`  let you create a fixed height table while making it scrollable. This function only works for html long tables.
+`scroll_box(width = "100%", height = "500px")`  let you create a fixed height table while **making it scrollable**. This function only works for html long tables.
 
 ```r
 # commonly used settings 
@@ -417,7 +445,6 @@ table %>%
 ```
 
 
-
 ```r
 # escape=TRUE, this makes your life easier, will output the table exactly as it is
 result <- read_csv("~/Documents/GDP/data/reg_result/IFE_result.csv")
@@ -425,7 +452,6 @@ result %>%
   knitr::kable(digits = 5, escape=T) %>%
   kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE, latex_options="scale_down")
 ```
-
 
 
 ```r
@@ -548,7 +574,7 @@ attr(df, "names") <- c("")
 
 You need to escape `\` passed into R code.
 
-````r
+````markdown
 ```{r, echo=FALSE}
 library(knitr)
 

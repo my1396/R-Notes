@@ -150,6 +150,7 @@ bookdown::gitbook:
         <li><a href="./">R Notes</a></li>
       after: |
         <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+    toc_depth: 3
     edit: 
         link: https://github.com/my1396/R-Notes/edit/main/%s
     sharing:
@@ -210,7 +211,27 @@ You do NOT need the three dashes `---` in `_output.yml`. In this case, all forma
     \end{document}
     ```
 
-
+- You can add a **table of contents* using the `toc` option and specify the depth of headers that it applies to using the `toc_depth` option. 
+    
+    - If the TOC depth defaults to 3 in `html_document`.
+    - For `pdf_document`, if the TOC depth is not explicitly specified, it defaults to 2 (meaning that all level 1 and 2 headers will be included in the TOC).
+    
+    ````markdown
+    ---
+    bookdown::gitbook:
+        toc:
+            collapse: subsection
+        toc_depth: 3
+    ---
+    ````
+    
+    `collapse` specifies a level to expand to by default, aka at `#`, `##`, or `###`.  
+    
+    I suggest ollapsing at level 2. This way, you get a good overview of what each major topic (level 1 heading) includes, without showing the most detailed items.
+    
+    - `collapse: subsection`: At startup, the toc will collapse at the level 2 headings. As you go to one specific subsection, the content inside will expand. You can see level 3 headings. ✅
+    - `collapse: section`: At startup, the toc will collapse at the level 1 headings, which keeps the appearance concise. However, a side effect is that level 3 headings will never be displaied when navigating to a specific level 2 heading.
+    
 bookdown 中文书籍 `_output.yml` 范例: <https://github.com/yihui/bookdown-chinese/blob/96d526572f0c6648d06c2d4bebf57c5fb4eafce3/_output.yml>
 
 - You can set up a tex template. 

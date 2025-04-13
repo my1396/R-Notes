@@ -16,8 +16,11 @@ Other differences:
 To switch to K-M, you either use the argument `new_session = TRUE` when calling `render_book()`, or set `new_session: yes` in the configuration file `_bookdown.yml`.
 
 
+Everytime you make changes to individual Rmd files or to CSS style files, you can knit the single page using `rmarkdown::render("0100-RStudio.Rmd")` or the Knit button in the source editor. The change will be reflected to your website.
 
-___
+- This is faster than Build the website.
+
+--------------------------------------------------------------------------------
 
 **Creating Websites with R Markdown**: <https://bookdown.org/yihui/blogdown/global-options.html>
 
@@ -26,7 +29,7 @@ A: Bookdown is for books, grouped in chapters; Blogdown is for blogs, ordered by
 
 
 
-___
+--------------------------------------------------------------------------------
 
 **Control long outputs by using hooks**
 
@@ -57,7 +60,7 @@ knitr::knit_hooks$set(output = function(x, options) {
 
 --------------------------------------------------------------------------------
 
-Issue: In RStudio dark mode, `kableExtra` tables are invisible in the code block output preview because both the font and background are white, making the content unreadable.
+**Issue**: <u>In RStudio dark mode<u>, `kableExtra` tables are invisible in the code block output preview because both the font and background are white, making the content unreadable.
 
 Fix: Force the font color to be black. 
 

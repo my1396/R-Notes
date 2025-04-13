@@ -12,6 +12,12 @@ Specify code chunk options `fig.width` and `fig.height` for R-generated figures 
 - note that the percentage need to be put in quotes.
 - `fig.width` do not scale font, it shows the original font size.
 - `out.width` scales the whole figure. Better to use this one. If you want to fix aspect ratio, use `fig.asp=0.6` to set height:width = 6:10.
+    
+    - `outwidth` keeps the original aspect ratio of the figure and scale the text in the figure too.
+    
+        But what most people want is to scale the figure but not the text. For instance, you want to scale your figure to 70\% width of page, but you want to keep the original size of text so it is readable.
+        
+    - A caveat with `outwidth`is that the <span style='color:#00CC66'>axis labels and ticks will be so small</span> and hard to read.
 
 ~~~~markdown
 ```{r car-plot, eval=TRUE, echo=FALSE, out.width="20%", fig.cap="Caption here." }
@@ -29,13 +35,13 @@ See <span style='color:#00CC66'>`Fig. \@ref(fig:car-plot)`</span>  use code chun
 
 `fig.pos="H"` fix placement.
 
-` fig.asp=0.6` aspect ratio height:width=6:10.
+`fig.asp=0.6` aspect ratio height:width=6:10.
 
 
 
 <span style='color:#00CC66'>**Suggested practice**</span> so that you have correct aspect ratio and automatically scaled text and labels in figures.
 
-1. generate the figure and save to local
+1. Generate the figure and save to local
 
    The benefit is that you have full control to adjust the figure as needed, such as font size, and could reuse it later.
 
@@ -61,7 +67,7 @@ See <span style='color:#00CC66'>`Fig. \@ref(fig:car-plot)`</span>  use code chun
    ##                 2
    ```
 
-2. add the figure using 
+2. Add the figure using 
 
    ````markdown
    ```{r scatter-plot, echo=FALSE, fig.cap="Scatter plot of avearge wage against experience.", out.width = "80%"}
@@ -69,7 +75,7 @@ See <span style='color:#00CC66'>`Fig. \@ref(fig:car-plot)`</span>  use code chun
    ```
    ````
 
-3. cross reference 
+3. Cross reference 
 
    - `pdf_document`: using `\autoref{fig:scatter-plot}` from `hyperref` package or `Fig. \ref{fig:scatter-plot}` from base latex.
 
@@ -81,22 +87,43 @@ See <span style='color:#00CC66'>`Fig. \@ref(fig:car-plot)`</span>  use code chun
 
    - `bookdown::html_document2`: using `\@ref(fig:scatter-plot)`.
 
+--------------------------------------------------------------------------------
 
+### Latex symbols in Fig. caption {.unnumbered}
 
-Latex symbols in Fig. caption
+**The R code block approach.**
 
 - `\\Phi` works. You need to escape the `\` in `\Phi` .
-- Suggested to use R code blocks to include figures. If using html, the numbering will be messed up. There is only automatic numbering with R code figures.
+- If there are quotation marks (`"`) in the figure caption, need to escape them using `\"...\"` to distinguish from the outer quotes of the caption parameter.
+- You can use regular Markdown syntax in Fig captions, such as using `**Bold**` to make text bold.
+- <span style='color:#00CC66'>Better to use R code blocks to include figures.</span> 
 
-````r
-```{r fig.cap="The $\\Phi$ and $\\phi$ ($f_Z(.)$) functions (CDF and pdf of standard normal).", out.width="70%", echo=FALSE}
-include_graphics("https://drive.google.com/thumbnail?id=1nxfdIKXgZvOqXVSeA3h_hf0yxmsM361l&sz=w1000")
-```
-````
+    Note that `include_graphics("https://link-to-Google-drive")` <span style='color:#FF9900'>does NOT work for pdf output</span>. Works for html output though.
 
-- Alternatively, use html, enclode the caption inside `<figcaption>`. 
+    If using html tag `<figure>`, the numbering will be messed up. There is only automatic numbering with R code figures.
 
-  Drawback: You need to manually add figure numberings.
+    Use example:
+    
+    ````markdown
+    ```{r fig.cap="The $\\Phi$ and $\\phi$ ($f_Z(.)$) functions (CDF and pdf of standard normal).", out.width="70%", echo=FALSE}
+    include_graphics("images/Phi_b.png")
+    ```
+    ````
+    
+    Will generate the following Fig \@ref(fig:fig1).
+    
+    <div class="figure">
+    <img src="images/Phi_b.png" alt="The $\Phi$ and $\phi$ ($f_Z(.)$) functions (CDF and pdf of standard normal)." width="70%" />
+    <p class="caption">(\#fig:fig1)The $\Phi$ and $\phi$ ($f_Z(.)$) functions (CDF and pdf of standard normal).</p>
+    </div>
+
+
+Alternatively, use **the HTML approach**, and enclose the caption inside `<figcaption>`. 
+  
+- Benefit: You can type equations as you normally do. Don't need to escape backslashes as using the R code blocks in the example above. 
+- <span style='color:#FF9900'>Drawback: You need to manually add figure numbering.</span> 
+
+❗️That means, when you change the order of sections or figures in your webpage, the numbering will be a mess. You need to change all capitals manually.
 
 ```html
 <figure> 
@@ -105,23 +132,53 @@ include_graphics("https://drive.google.com/thumbnail?id=1nxfdIKXgZvOqXVSeA3h_hf0
 </figure>
 ```
 
+<figure> 
+<img src="https://drive.google.com/thumbnail?id=1nxfdIKXgZvOqXVSeA3h_hf0yxmsM361l&sz=w1000" alt="Phi_b" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
+<figcaption>Fig.1 The $\Phi$ and $\phi$ ($f_Z(.)$) functions (CDF and pdf of standard normal).</figcaption>
+</figure>
 
+--------------------------------------------------------------------------------
 
-Refer to another figure in figure caption
+### Refer to another figure in figure caption {.unnumbered}
 
-Need to use double backslash  `\\@ref(fig:xxx)`.
+Just need to use double backslash  `\\@ref(fig:xxx)` in the figure caption.
+
+Use example:
+
+We first generate the figure to be referenced.
 
 ````markdown
-```{r figure-1, fig.cap="Figure1"}
-ggplot()
-```
-Now a second plot with a reference to Fig.: \@ref(fig:figure-1).
-
-```{r secondplot, fig.cap = "This is the same as Fig.: \\@ref(fig:firstplot) 
-but now with a red line." }
+```{r firstplot, out.width="60%", fig.cap="Source Figure to be referred to."}
 library(ggplot2)
+p <- ggplot(mtcars, aes(wt, mpg))
+plot_A <- p + geom_point()
+plot_A
+```
+````
+<br>
+
+<div class="figure">
+<img src="0206-Rmd-Figure_files/figure-epub3/firstplot-1.png" alt="Source Figure to be referenced. **Note that when specifying `out.width=&quot;60%&quot;`, the text in the figure is scaled too small.**" width="60%" />
+<p class="caption">(\#fig:firstplot)Source Figure to be referenced. **Note that when specifying `out.width="60%"`, the text in the figure is scaled too small.**</p>
+</div>
+
+Now a second plot with a reference to Fig.: \@ref(fig:firstplot).
+
+````markdown
+```{r secondplot, fig.cap = "This is the same as Fig.: \\@ref(fig:firstplot) but now with a red line." }
 plot_A + geom_line(alpha = .75,col = "red")
 ```
 ````
+
+<br>
+
+<div class="figure">
+<img src="0206-Rmd-Figure_files/figure-epub3/secondplot-1.png" alt="This is the same as Fig.: \@ref(fig:firstplot) but now with a red line and `out.width=&quot;100%&quot;`."  />
+<p class="caption">(\#fig:secondplot)This is the same as Fig.: \@ref(fig:firstplot) but now with a red line and `out.width="100%"`.</p>
+</div>
+
+
+
+
 
 

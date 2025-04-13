@@ -579,11 +579,11 @@ When you quit a project, `.Rhistory` is automatically written to the project dir
 
 Click the `Show in New Window` button in any source editor tab.
 
-<img src="https://docs.posit.co/ide/user/ide/guide/ui/images/source-popout.png" alt="RStudio: pop out script" style="display: block; margin-right: auto; margin-left: auto; zoom:100%;" />
+<img src="https://docs.posit.co/ide/user/ide/guide/ui/images/source-popout.png" alt="RStudio: pop out script" style="display: block; margin-right: auto; margin-left: auto; zoom:60%;" />
 
 To return a document to the main window, click the `Return to Main Window` button on the editor toolbar.
 
-<img src="https://docs.posit.co/ide/user/ide/guide/ui/images/source-return.png" alt="RStudio: merge script" style="display: block; margin-right: auto; margin-left: auto; zoom:100%;" />
+<img src="https://docs.posit.co/ide/user/ide/guide/ui/images/source-return.png" alt="RStudio: merge script" style="display: block; margin-right: auto; margin-left: auto; zoom:60%;" />
 
 --------------------------------------------------------------------------------
 

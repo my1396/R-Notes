@@ -6,7 +6,10 @@
 
 Nice documentations 
 
-- Bookdown package CRAN
+- **`rmarkdown`** package CRAN
+    - [Package CRAN page](https://cran.r-project.org/web/packages/rmarkdown/index.html)
+    - [Reference manual](https://cran.r-project.org/web/packages/rmarkdown/rmarkdown.pdf)
+- **`bookdown`** package CRAN
     - [Package CRAN page](https://cran.r-project.org/web/packages/bookdown/index.html)
     - [Reference manual](https://cran.r-project.org/web/packages/bookdown/bookdown.pdf)
 - [R markdown: The definitive guide.](https://bookdown.org/yihui/rmarkdown)  provides detailed references
@@ -66,13 +69,13 @@ YAML can set values of the template variables, such as `title`, `author`, and `d
 --------------------------------------------------------------------------------
 
   **`bookdown` wrappers** of base markdown format
-  
+
   `bookdown` output formats allow numbering and cross-referencing figures/tables/equations. It takes the format `html_document2`, in general, `markdown_document2` is a wrapper for the base format `markdown_document`. With the `bookdown` output format, you can cross-reference sections by their ID's using the same syntax when sections are numbered. 
 
   Other bookdown output format examples: `pdf_document2`, `beamer_presentation2`, `tufte_html2`, `word_document2`. See Page 12 of the [reference manual](https://cran.r-project.org/web/packages/bookdown/bookdown.pdf) for a complete list of supported format by `bookdown`.
-  
+
 --------------------------------------------------------------------------------
-  
+
 - Many aspects of the LaTeX template used to create PDF documents can be customized using <span style='color:#00CC66'>**top-level**</span> [YAML metadata](https://bookdown.org/yihui/rmarkdown/pdf-document.html#tab:latex-vars) (note that these options do <span style='color:#FF9900'>**NOT**</span> appear underneath the `output` section, but rather appear at the top level along with `title`, `author`, and so on). For example:
 
   ```r
@@ -463,6 +466,7 @@ You may use `knitr::opts_chunk$set()` to change the default values of chunk opti
 | `warning=TRUE`       | Whether to show warnings in the output produced by `warning()`. |
 | `results='markup'`   | Controls how to display the text results. <br />When `results='markup'` that is to write text output as-is, i.e., write the raw text results directly into the output document without any markups.<br />Useful when priting `stargazer` tables. |
 | `comment='##'`       | The prefix to be added before each line of the text output. <br />Set `comment = ''` remove the default `##`. |
+| `collapse=FALSE`     | Whether to, if possible, collapse all the source and output blocks from one code chunk into a single block (by default, they are written to separate blocks). <br />This option only applies to Markdown documents. |
 | `fig.keep='high'`    | How plots in chunks should be kept. <br />`high`: Only keep high-level plots (merge low-level changes into high-level plots). <br />`none`: Discard all plots. <br />`all`: Keep all plots (low-level plot changes may produce new plots). <br />`first`: Only keep the first plot. <br />`last`: Only keep the last plot. <br />If set to a numeric vector, the values are indices of (low-level) plots to keep.<br />If you want to choose the second to the fourth plots, you could use `fig.keep = 2:4` (or remove the first plot via `fig.keep = -1`). |
 | `fig.align="center"` | Figure alignment.                                            |
 | `fig.pos="H"`        | A character string for the figure position arrangement to be used in `\begin{figure}[]`. |
@@ -504,6 +508,14 @@ You may use `knitr::opts_chunk$set()` to change the default values of chunk opti
 - `hold`: Hold all pieces of text output in a chunk and flush them to the end of the chunk.
 
 - `hide` (or `FALSE`): Hide text output.
+
+
+
+___
+
+`collapse=FALSE`  Whether to merge text output and source code into a single code block in the output.  The default `FALSE` means R expressions and their text output are separated into different blocks.
+
+`collapse = TRUE` makes the output more compact, since the R source code and its text output are displayed in a single output block. The default `collapse = FALSE` means R expressions and their text output are separated into different blocks.
 
 
 
@@ -572,7 +584,7 @@ plot(cars)
 
 Knit the document and the code will render like this in your output:
 
-````md
+````markdown
 ```{r}
 plot(cars)
 ```
@@ -610,6 +622,26 @@ code including tildes
 ~~~~~~~~~~~~~~~~~~~~~
 
 These begin with a row of three or more tildes (`~`) and end with a row of tildes that must be at least as long as the starting row.
+
+A trick if you don't want to type more than three tildes or backticks is that you just use different inner and outer symbols.
+
+~~~~~~~~~~~~~~~~~~~~~md
+~~~markdown
+```r
+print ("hello world")
+```
+~~~
+~~~~~~~~~~~~~~~~~~~~~
+
+Will be rendered as:
+
+~~~markdown
+```r
+print ("hello world")
+```
+~~~
+
+--------------------------------------------------------------------------------
 
 A shortcut form (without braces) can also be used for specifying the language of the code block:
 
@@ -649,7 +681,7 @@ and
 </pre>  
 ```
 
-If highlighting is supported for your output format and language, then the code block above will appear highlighted, with numbered lines starting with 100, 101, and go on. 
+If highlighting is supported for your output format and language, then the code block above will appear highlighted, with [numbered lines](https://bookdown.org/yihui/rmarkdown-cookbook/number-lines.html) starting with 100, 101, and go on. 
 
 <pre id="mycode" class="haskell numberLines" startFrom="100">
   <code>
