@@ -4,13 +4,13 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>R Notes</title>
+  <title>Chapter 5 Basic R | R Notes</title>
   <meta name="description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
 set in the _output.yml file.</p>" />
   <meta name="generator" content="bookdown 0.35 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="R Notes" />
+  <meta property="og:title" content="Chapter 5 Basic R | R Notes" />
   <meta property="og:type" content="book" />
   
   <meta property="og:description" content="<p>This is a minimal example of using the bookdown package to write a book.
@@ -19,7 +19,7 @@ set in the _output.yml file.</p>" />
   <meta name="github-repo" content="my1396/R-Notes" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="R Notes" />
+  <meta name="twitter:title" content="Chapter 5 Basic R | R Notes" />
   
   <meta name="twitter:description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
@@ -36,8 +36,8 @@ set in the _output.yml file.</p>" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   <link rel="shortcut icon" href="images/r-project-favicon.ico" type="image/x-icon" />
-
-<link rel="next" href="1.1-usage.html"/>
+<link rel="prev" href="4.3-toggle-visibility-of-solutions.html"/>
+<link rel="next" href="5.1-data-input-output.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -285,22 +285,102 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
         }
     </script>
 </head>
-<div id="header">
-<h1 class="title">R Notes</h1>
-<p class="author"><em>John Doe</em></p>
-<p class="date"><em>2025-04-14</em></p>
+<div id="basic-r" class="section level1 hasAnchor" number="5">
+<h1><span class="header-section-number">Chapter 5</span> Basic R<a href="5-basic-r.html#basic-r" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<h2>
+Save &amp; Load R objects
+</h2>
+<p><code>save(..., f_name)</code> and <code>saveRDS()</code></p>
+<p><code>save()</code> When loaded the named object is restored to the current environment (in general use this is the global environment — the workspace) <strong>with the same name it had when saved</strong>.</p>
+<p><code>save</code> writes an external representation of <strong>R</strong> objects to the specified file. The objects can be read back from the file at a later date by using the function <code>load</code> or <code>attach</code> (or <code>data</code> in some cases).</p>
+<p><code>save(..., list = character(),      file = stop("'file' must be specified"),      ascii = FALSE, version = NULL, envir = parent.frame(),      compress = isTRUE(!ascii), compression_level,      eval.promises = TRUE, precheck = TRUE)</code></p>
+<ul>
+<li><code>...</code> The names of the objects to be saved (as symbols or character strings).</li>
+<li><code>list</code> A character vector containing the names of objects to be saved.
+<ul>
+<li>The names of the objects specified <strong>either</strong> as symbols (or character strings) in <code>...</code> or as a character <strong>vector</strong> in <code>list</code> are used to look up the objects from environment <code>envir</code>.</li>
+</ul></li>
+<li><code>file</code> the name of the file where the data will be saved.</li>
+</ul>
+<p><code>saveRDS()</code> doesn’t save the both the object and its name it just saves a representation of the object. As a result, <span style="color:#00CC66">the saved object can be loaded into a named object</span> within R that is different from the name it had when originally serialized.</p>
+<blockquote>
+<p>Serialization is the process of converting a data structure or object state into a format that can be stored (for example, in a file or memory buffer, or transmitted across a network connection link) and “resurrected” later in the same or another computer environment.</p>
+</blockquote>
+<p><code>saveRDS</code> works only for <span style="color:#00CC66">saving a single R object</span>, <code>save()</code> can save multiple R objects in one file. A workaround for <code>saveRDS</code> is to save all target objects in a single R object (e.g., in a <strong>list</strong>), and then use <code>saveRDS()</code> to save it at once.</p>
+<div class="sourceCode" id="cb186"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb186-1"><a href="5-basic-r.html#cb186-1" tabindex="-1"></a>datalist <span class="ot">=</span> <span class="fu">list</span>(<span class="at">mtcars =</span> mtcars, <span class="at">pressure=</span>pressure)</span>
+<span id="cb186-2"><a href="5-basic-r.html#cb186-2" tabindex="-1"></a><span class="fu">saveRDS</span>(datalist, <span class="st">&quot;twodatasets.RDS&quot;</span>)</span>
+<span id="cb186-3"><a href="5-basic-r.html#cb186-3" tabindex="-1"></a><span class="fu">rm</span>(<span class="at">list=</span><span class="fu">ls</span>())</span>
+<span id="cb186-4"><a href="5-basic-r.html#cb186-4" tabindex="-1"></a></span>
+<span id="cb186-5"><a href="5-basic-r.html#cb186-5" tabindex="-1"></a>datalist <span class="ot">=</span> <span class="fu">readRDS</span>(<span class="st">&quot;twodatasets.RDS&quot;</span>)</span>
+<span id="cb186-6"><a href="5-basic-r.html#cb186-6" tabindex="-1"></a>datalist</span></code></pre></div>
+<hr />
+<div id="load-r-objects" class="section level4 unnumbered hasAnchor">
+<h4>Load R objects<a href="5-basic-r.html#load-r-objects" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p><code>load(f_name)</code> to load .<code>rda</code> file.</p>
+<p><code>readRDS(f_name)</code> to load <code>.rds</code> file.</p>
+<p>Naming conventions:</p>
+<ul>
+<li><code>rda</code> and <code>rds</code> for <span style="color:#00CC66">selected</span> objects</li>
+<li><code>.RData</code> for <span style="color:#00CC66">all</span> objectes in your workspace</li>
+<li>The file extensions are up to you; you can use whatever file extensions you want.</li>
+</ul>
+<p>An example</p>
+<div class="sourceCode" id="cb187"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb187-1"><a href="5-basic-r.html#cb187-1" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">require</span>(mgcv)</span>
+<span id="cb187-2"><a href="5-basic-r.html#cb187-2" tabindex="-1"></a>Loading required package<span class="sc">:</span> mgcv</span>
+<span id="cb187-3"><a href="5-basic-r.html#cb187-3" tabindex="-1"></a>This is mgcv <span class="fl">1.7-13.</span> For overview type <span class="st">&#39;help(&quot;mgcv-package&quot;)&#39;</span>.</span>
+<span id="cb187-4"><a href="5-basic-r.html#cb187-4" tabindex="-1"></a><span class="sc">&gt;</span> mod <span class="ot">&lt;-</span> <span class="fu">gam</span>(Ozone <span class="sc">~</span> <span class="fu">s</span>(Wind), <span class="at">data =</span> airquality, <span class="at">method =</span> <span class="st">&quot;REML&quot;</span>)</span>
+<span id="cb187-5"><a href="5-basic-r.html#cb187-5" tabindex="-1"></a><span class="sc">&gt;</span> mod</span>
+<span id="cb187-6"><a href="5-basic-r.html#cb187-6" tabindex="-1"></a></span>
+<span id="cb187-7"><a href="5-basic-r.html#cb187-7" tabindex="-1"></a>Family<span class="sc">:</span> gaussian</span>
+<span id="cb187-8"><a href="5-basic-r.html#cb187-8" tabindex="-1"></a>Link <span class="cf">function</span><span class="sc">:</span> identity</span>
+<span id="cb187-9"><a href="5-basic-r.html#cb187-9" tabindex="-1"></a></span>
+<span id="cb187-10"><a href="5-basic-r.html#cb187-10" tabindex="-1"></a>Formula<span class="sc">:</span></span>
+<span id="cb187-11"><a href="5-basic-r.html#cb187-11" tabindex="-1"></a>Ozone <span class="sc">~</span> <span class="fu">s</span>(Wind)</span>
+<span id="cb187-12"><a href="5-basic-r.html#cb187-12" tabindex="-1"></a></span>
+<span id="cb187-13"><a href="5-basic-r.html#cb187-13" tabindex="-1"></a>Estimated degrees of freedom<span class="sc">:</span></span>
+<span id="cb187-14"><a href="5-basic-r.html#cb187-14" tabindex="-1"></a><span class="fl">3.529</span>  total <span class="ot">=</span> <span class="fl">4.529002</span></span>
+<span id="cb187-15"><a href="5-basic-r.html#cb187-15" tabindex="-1"></a></span>
+<span id="cb187-16"><a href="5-basic-r.html#cb187-16" tabindex="-1"></a>REML score<span class="sc">:</span> <span class="fl">529.4881</span></span>
+<span id="cb187-17"><a href="5-basic-r.html#cb187-17" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">save</span>(mod, <span class="at">file =</span> <span class="st">&quot;mymodel.rda&quot;</span>)</span>
+<span id="cb187-18"><a href="5-basic-r.html#cb187-18" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">ls</span>()</span>
+<span id="cb187-19"><a href="5-basic-r.html#cb187-19" tabindex="-1"></a>[<span class="dv">1</span>] <span class="st">&quot;mod&quot;</span></span>
+<span id="cb187-20"><a href="5-basic-r.html#cb187-20" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">load</span>(<span class="at">file =</span> <span class="st">&quot;mymodel.rda&quot;</span>)</span>
+<span id="cb187-21"><a href="5-basic-r.html#cb187-21" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">ls</span>()</span>
+<span id="cb187-22"><a href="5-basic-r.html#cb187-22" tabindex="-1"></a>[<span class="dv">1</span>] <span class="st">&quot;mod&quot;</span></span>
+<span id="cb187-23"><a href="5-basic-r.html#cb187-23" tabindex="-1"></a></span>
+<span id="cb187-24"><a href="5-basic-r.html#cb187-24" tabindex="-1"></a></span>
+<span id="cb187-25"><a href="5-basic-r.html#cb187-25" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">ls</span>()</span>
+<span id="cb187-26"><a href="5-basic-r.html#cb187-26" tabindex="-1"></a>[<span class="dv">1</span>] <span class="st">&quot;mod&quot;</span></span>
+<span id="cb187-27"><a href="5-basic-r.html#cb187-27" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">saveRDS</span>(mod, <span class="st">&quot;mymodel.rds&quot;</span>)</span>
+<span id="cb187-28"><a href="5-basic-r.html#cb187-28" tabindex="-1"></a><span class="sc">&gt;</span> mod2 <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&quot;mymodel.rds&quot;</span>)</span>
+<span id="cb187-29"><a href="5-basic-r.html#cb187-29" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">ls</span>()</span>
+<span id="cb187-30"><a href="5-basic-r.html#cb187-30" tabindex="-1"></a>[<span class="dv">1</span>] <span class="st">&quot;mod&quot;</span>  <span class="st">&quot;mod2&quot;</span></span>
+<span id="cb187-31"><a href="5-basic-r.html#cb187-31" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">identical</span>(mod, mod2, <span class="at">ignore.environment =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb187-32"><a href="5-basic-r.html#cb187-32" tabindex="-1"></a>[<span class="dv">1</span>] <span class="cn">TRUE</span></span></code></pre></div>
+<hr />
 </div>
-<div id="about" class="section level1 hasAnchor" number="1">
-<h1><span class="header-section-number">Chapter 1</span> About<a href="index.html#about" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<p>This is a <em>sample</em> book written in <strong>Markdown</strong>. You can use anything that Pandoc’s Markdown supports; for example, a math equation <span class="math inline">\(a^2 + b^2 = c^2\)</span>.</p>
+<div id="save-figures-in-a-list" class="section level4 unnumbered hasAnchor">
+<h4>Save figures in a list<a href="5-basic-r.html#save-figures-in-a-list" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div class="sourceCode" id="cb188"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb188-1"><a href="5-basic-r.html#cb188-1" tabindex="-1"></a>p_list <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">p_ano=</span>p_ano, <span class="at">p_tr=</span>p_tr)</span>
+<span id="cb188-2"><a href="5-basic-r.html#cb188-2" tabindex="-1"></a><span class="co"># p_list[[name]] &lt;- p_obj</span></span>
+<span id="cb188-3"><a href="5-basic-r.html#cb188-3" tabindex="-1"></a>p_list[[<span class="dv">1</span>]]</span>
+<span id="cb188-4"><a href="5-basic-r.html#cb188-4" tabindex="-1"></a></span>
+<span id="cb188-5"><a href="5-basic-r.html#cb188-5" tabindex="-1"></a>f_name <span class="ot">&lt;-</span> <span class="fu">paste0</span>(fig_dir, <span class="fu">sprintf</span>(<span class="st">&quot;trend_analysis/image_list_%s.rds&quot;</span>, con_name))</span>
+<span id="cb188-6"><a href="5-basic-r.html#cb188-6" tabindex="-1"></a><span class="co"># saveRDS(p_list, f_name)</span></span>
+<span id="cb188-7"><a href="5-basic-r.html#cb188-7" tabindex="-1"></a></span>
+<span id="cb188-8"><a href="5-basic-r.html#cb188-8" tabindex="-1"></a><span class="co"># plot in a panel grid</span></span>
+<span id="cb188-9"><a href="5-basic-r.html#cb188-9" tabindex="-1"></a>p_allCON <span class="ot">&lt;-</span> <span class="fu">plot_grid</span>(<span class="at">plotlist=</span>p_list, <span class="at">align=</span><span class="st">&quot;vh&quot;</span>, <span class="at">labels=</span><span class="fu">sprintf</span>(<span class="st">&quot;(%s)&quot;</span>, letters[<span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(p_list)]), <span class="at">hjust=</span><span class="sc">-</span><span class="dv">1</span>, <span class="at">nrow=</span><span class="dv">3</span>, <span class="at">label_size=</span><span class="dv">12</span>)</span>
+<span id="cb188-10"><a href="5-basic-r.html#cb188-10" tabindex="-1"></a>p_allCON</span></code></pre></div>
+<hr />
+</div>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-
-<a href="1.1-usage.html" class="navigation navigation-next navigation-unique" aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="4.3-toggle-visibility-of-solutions.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="5.1-data-input-output.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -331,7 +411,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/my1396/R-Notes/edit/main/index.Rmd",
+"link": "https://github.com/my1396/R-Notes/edit/main/0400-BasicR.Rmd",
 "text": "Edit"
 },
 "history": {
@@ -342,7 +422,7 @@ gitbook.start({
 "link": null,
 "text": null
 },
-"download": ["_main.pdf", "_main.epub", "https://github.com/my1396/R-Notes/raw/main/index.Rmd"],
+"download": ["_main.pdf", "_main.epub", "https://github.com/my1396/R-Notes/raw/main/0400-BasicR.Rmd"],
 "search": {
 "engine": "fuse",
 "options": null

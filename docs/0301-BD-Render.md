@@ -60,7 +60,7 @@ knitr::knit_hooks$set(output = function(x, options) {
 
 --------------------------------------------------------------------------------
 
-**Issue**: <u>In RStudio dark mode<u>, `kableExtra` tables are invisible in the code block output preview because both the font and background are white, making the content unreadable.
+**Issue**: <u>In RStudio dark mode</u>, `kableExtra` tables are invisible in the code block output preview because both the font and background are white, making the content unreadable.
 
 Fix: Force the font color to be black. 
 

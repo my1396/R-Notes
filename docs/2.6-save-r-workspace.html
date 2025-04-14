@@ -4,13 +4,13 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>R Notes</title>
+  <title>2.6 Save R Workspace | R Notes</title>
   <meta name="description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
 set in the _output.yml file.</p>" />
   <meta name="generator" content="bookdown 0.35 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="R Notes" />
+  <meta property="og:title" content="2.6 Save R Workspace | R Notes" />
   <meta property="og:type" content="book" />
   
   <meta property="og:description" content="<p>This is a minimal example of using the bookdown package to write a book.
@@ -19,7 +19,7 @@ set in the _output.yml file.</p>" />
   <meta name="github-repo" content="my1396/R-Notes" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="R Notes" />
+  <meta name="twitter:title" content="2.6 Save R Workspace | R Notes" />
   
   <meta name="twitter:description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
@@ -36,8 +36,8 @@ set in the _output.yml file.</p>" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   <link rel="shortcut icon" href="images/r-project-favicon.ico" type="image/x-icon" />
-
-<link rel="next" href="1.1-usage.html"/>
+<link rel="prev" href="2.5-copilot.html"/>
+<link rel="next" href="2.7-options.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -285,22 +285,62 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
         }
     </script>
 </head>
-<div id="header">
-<h1 class="title">R Notes</h1>
-<p class="author"><em>John Doe</em></p>
-<p class="date"><em>2025-04-14</em></p>
-</div>
-<div id="about" class="section level1 hasAnchor" number="1">
-<h1><span class="header-section-number">Chapter 1</span> About<a href="index.html#about" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<p>This is a <em>sample</em> book written in <strong>Markdown</strong>. You can use anything that Pandoc’s Markdown supports; for example, a math equation <span class="math inline">\(a^2 + b^2 = c^2\)</span>.</p>
+<div id="save-r-workspace" class="section level2 hasAnchor" number="2.6">
+<h2><span class="header-section-number">2.6</span> Save R Workspace<a href="2.6-save-r-workspace.html#save-r-workspace" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>If you want to saves <span style="color:#00CC66">all objects</span> in your work space, use <code>save.image()</code>. It will creates an image of your current variables and functions, and saves them to a file called <code>.RData</code>. When R next loads, objects stored in this image are by default restored.</p>
+<p>This sounds convenient, however, you do NOT want to do this because this corrupt <span style="color:#FF9900">reproducibility</span> of your project. ❌</p>
+<p>You want to <span style="color:#00CC66">start from a clean slate</span> very time. ✅</p>
+<p>It is suggested change RStudio Global Options to</p>
+<ul>
+<li><em>not</em> “restore <code>.RData</code> into workspace at startup”, and</li>
+<li><em>never</em> “save workspace to <code>.RData</code> on exit”.</li>
+</ul>
+<p><img src="https://drive.google.com/thumbnail?id=1bPoux7IlZVUA1zlEn3bIk-Sec17mIFIs&amp;sz=w1000" alt="RStudio workspace" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;"/></p>
+<p>In case you do feel the need to save the workspace, use the following cmd.</p>
+<p><code>save.image(file = ".RData", version = NULL, ascii = FALSE, compress = !ascii, safe = TRUE)</code></p>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="2.6-save-r-workspace.html#cb38-1" tabindex="-1"></a><span class="do">## save current workspace ##</span></span>
+<span id="cb38-2"><a href="2.6-save-r-workspace.html#cb38-2" tabindex="-1"></a>f_name <span class="ot">&lt;-</span> <span class="st">&quot;RImage/TCR_2023-05-09.RData&quot;</span></span>
+<span id="cb38-3"><a href="2.6-save-r-workspace.html#cb38-3" tabindex="-1"></a>f_name</span>
+<span id="cb38-4"><a href="2.6-save-r-workspace.html#cb38-4" tabindex="-1"></a><span class="fu">save.image</span>(f_name)</span>
+<span id="cb38-5"><a href="2.6-save-r-workspace.html#cb38-5" tabindex="-1"></a><span class="co"># load(f_name)</span></span></code></pre></div>
+<p>Q: Can I save the loaded packages in the current session/workspace?<br />
+A: The workspace is for <em>objects</em> like data and functions. Starting R with particular packages loaded is what your <code>.Rprofile</code> file is for, and you can have a different one in each directory. But I’d recommend not saving anything between r sessions and instead recreate it all using code. This is much more likely to lead to reproducible results.</p>
+<p><strong>History</strong></p>
+<p>When you quit a project, <code>.Rhistory</code> is automatically written to the project directory unless you opt out to. It contains a history of all of the commands that you have sent to the R console in this session.</p>
+<hr />
+<p><strong>Pop out an editor</strong></p>
+<p>Click the <code>Show in New Window</code> button in any source editor tab.</p>
+<p><img src="https://docs.posit.co/ide/user/ide/guide/ui/images/source-popout.png" alt="RStudio: pop out script" style="display: block; margin-right: auto; margin-left: auto; zoom:60%;" /></p>
+<p>To return a document to the main window, click the <code>Return to Main Window</code> button on the editor toolbar.</p>
+<p><img src="https://docs.posit.co/ide/user/ide/guide/ui/images/source-return.png" alt="RStudio: merge script" style="display: block; margin-right: auto; margin-left: auto; zoom:60%;" /></p>
+<hr />
+<p><strong>Environment Pane</strong></p>
+<p>By default, the Environment pane is located in the top-right and includes the Environment, History, Connections, Build, and Version Control System (VCS) tabs.</p>
+<p>Version Control System (VCS)</p>
+<p>The VCS tab will change based on the version control system you have enabled for that session. For example, using Git will change the tab name to Git and provide some common commands for viewing diffs, committing changes, pull and push …
+Output pane</p>
+<p>The Output pane displays various outputs such as plots, HTML content, or on-disk files. It contains the Files, Plots, R Packages, Help, Viewer, and Presentation tabs.</p>
+<p>Ref: <a href="https://docs.posit.co/ide/user/ide/guide/ui/ui-panes.html#:~:text=four%20primary%20panes.-,To%20add%20additional%20source%20columns%2C%20from%20the%20RStudio%20menu%3A%20Global,only%20within%20the%20Source%20pane." title="RStudio Pane Layout">RStudio Pane Layout</a></p>
+<hr />
+<p><strong>Global Options that make coding easier</strong></p>
+<ul>
+<li><p>Syntax highlight and matched parentheses.</p>
+<p>Under “Tools -&gt; Global Options -&gt; Code -&gt; Display”, under <strong>Syntax section</strong>, check the boxes for <strong>highlight R function calls</strong> and <strong>use rainbow parentheses</strong>. The second is especially useful to mark matching opening and closing brackets.</p></li>
+<li><p>Show whitespace characters.</p>
+<p>In “Tools -&gt; Global Options -&gt; Code -&gt; Display”, check “Show whitespace characters”. This will let you see spaces and newlines in the editor.</p></li>
+</ul>
+<p>References:</p>
+<p><a href="https://coding-club.rostools.org/posts/tips-and-tricks/" class="uri">https://coding-club.rostools.org/posts/tips-and-tricks/</a></p>
+<hr />
+
 </div>
             </section>
 
           </div>
         </div>
       </div>
-
-<a href="1.1-usage.html" class="navigation navigation-next navigation-unique" aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="2.5-copilot.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="2.7-options.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -331,7 +371,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/my1396/R-Notes/edit/main/index.Rmd",
+"link": "https://github.com/my1396/R-Notes/edit/main/0101-RStudio-Dark-Theme.Rmd",
 "text": "Edit"
 },
 "history": {
@@ -342,7 +382,7 @@ gitbook.start({
 "link": null,
 "text": null
 },
-"download": ["_main.pdf", "_main.epub", "https://github.com/my1396/R-Notes/raw/main/index.Rmd"],
+"download": ["_main.pdf", "_main.epub", "https://github.com/my1396/R-Notes/raw/main/0101-RStudio-Dark-Theme.Rmd"],
 "search": {
 "engine": "fuse",
 "options": null

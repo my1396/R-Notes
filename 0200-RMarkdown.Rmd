@@ -40,7 +40,7 @@ A:
 <h2>YAML metadata</h2>
 
 Q: What is YAML?  \
-A: YAML is a human-friendly data serialization language for all programming languages.
+A: YAML is a human-friendly data serialization language for all programming languages. YAML stands for “Yet Another Markup Language.” 
 
 Q: What does YAML do? \
 A: It is placed at the very beginning of the document and is read by each of Pandoc, **rmarkdown**, and **knitr**. 
@@ -56,7 +56,7 @@ See [HERE](https://github.com/hao203/rmarkdown-YAML.git) for commonly used YAML 
 
 YAML can set values of the template variables, such as `title`, `author`, and `date` of the document. 
 
-- The `output` field is used by rmarkdown to apply the output format function `rmarkdown::html_document()` in the rendering process.
+- The `output` field is used by rmarkdown to apply the <span style='color:#00CC66'>**output format function**</span> `rmarkdown::html_document()` in the rendering process.
 
   There are two types of output formats in the **rmarkdown** package: documents (e.g., `pdf_document`), and presentations (e.g., `beamer_presentation`).
 
@@ -68,21 +68,34 @@ YAML can set values of the template variables, such as `title`, `author`, and `d
   
   Issue: `bookdown` always output html, even if specified to pdf. \
   Cause: If it produces HTML, the output format must have been provided somewhere. \
-  Fix: Check if you have a _output.yml under the root directory of your book project. If you do, you may delete it. Then bookdown will use the output field that you specified in the YAML frontmatter of your Rmd document.
+  Fix: Check if you have a `_output.yml` under the root directory of your book project. If you do, you may delete it. Then bookdown will use the output field that you specified in the YAML frontmatter of your Rmd document.
+  
+  If there are two output formats, `rmarkdown::render()` defaults to use the first output type. If you want another, specify the type, e.g.,  `rmarkdown::render("0100-RStudio.Rmd", 'pdf_document')`. 
 
 --------------------------------------------------------------------------------
 
-  **`bookdown` wrappers** of base markdown format
+**`bookdown` wrappers** of base markdown format
 
-  `bookdown` output formats allow numbering and cross-referencing figures/tables/equations. It takes the format `html_document2`, in general, `markdown_document2` is a wrapper for the base format `markdown_document`. With the `bookdown` output format, you can cross-reference sections by their ID's using the same syntax when sections are numbered. 
+<span style='color:#00CC66'>`bookdown` output formats</span> allow numbering and cross-referencing figures/tables/equations. It takes the format `html_document2`, in general, `markdown_document2` is a wrapper for the base format `markdown_document`. With the `bookdown` output format, you can cross-reference sections by their ID's using the same syntax when sections are numbered. 
 
-  Other bookdown output format examples: `pdf_document2`, `beamer_presentation2`, `tufte_html2`, `word_document2`. See Page 12 of the [reference manual](https://cran.r-project.org/web/packages/bookdown/bookdown.pdf) for a complete list of supported format by `bookdown`.
+Other bookdown output format examples for single documents: `pdf_document2`, `beamer_presentation2`, `tufte_html2`, `word_document2`. See Page 12 of the [reference manual](https://cran.r-project.org/web/packages/bookdown/bookdown.pdf) for a complete list of supported format by `bookdown`.
+
+What bookdown is very powerful for is that it compiles books. Book formats: 
+
+- HTML:
+  - `gitbook`
+  - `html_book`
+  - `tufte_html_book`
+- PDF:
+  - `pdf_book`
+- e-book:
+  - `epub_book`
 
 --------------------------------------------------------------------------------
 
 - Many aspects of the LaTeX template used to create PDF documents can be customized using <span style='color:#00CC66'>**top-level**</span> [YAML metadata](https://bookdown.org/yihui/rmarkdown/pdf-document.html#tab:latex-vars) (note that these options do <span style='color:#FF9900'>**NOT**</span> appear underneath the `output` section, but rather appear at the top level along with `title`, `author`, and so on). For example:
 
-  ```r
+  ```markdown
   ---
   title: "Crop Analysis Q3 2013"
   output: pdf_document
@@ -93,22 +106,79 @@ YAML can set values of the template variables, such as `title`, `author`, and `d
 
   A few available metadata variables are displayed in the following (consult the Pandoc manual for [the full list](https://pandoc.org/MANUAL.html#variables-for-latex)):
 
-  | Variable                                       | Description                                                  |
+  | Top-level YAML Variable                        | Description                                                  |
   | ---------------------------------------------- | ------------------------------------------------------------ |
   | `lang`                                         | Document language code                                       |
   | `fontsize`                                     | Font size (e.g., `10pt`, `11pt`, or `12pt`)                  |
-  | `documentclass`                                | LaTeX document class (e.g., `article`)                       |
-  | `classoption`                                  | Options for documentclass (e.g., `oneside`)                  |
-  | `geometry`                                     | Options for geometry class (e.g., `margin=1in`)              |
+  | `papersize`                                    | Defines the paper size (e.g., `a4paper`, `letterpaper`)      |
+  | `documentclass`                                | LaTeX document class (e.g., `article`, `book`, and `report`) |
+  | `classoption`                                  | A list of options to be passed to the document class, e.g., you can create a two-column document with the `twocolumn` option. |
+  | `geometry`                                     | Options for [`geometry`](https://ctan.org/pkg/geometry) package (e.g., `margin=1in` set all margins to be 1 inch) |
   | `mainfont`, `sansfont`, `monofont`, `mathfont` | Document fonts (works only with `xelatex` and `lualatex`)    |
   | `linkcolor`, `urlcolor`, `citecolor`           | Color for internal links (cross references), external links (link to websites), and citation links (bibliography) |
   | `linestretch`                                  | Options for line spacing (e.g. 1, 1.5, 3).                   |
+
+  Pandoc User's Guide: <https://www.uv.es/wiki/pandoc_manual_2.7.3.wiki?21>
+
+  `classoption`
+
+  - **`onecolumn`, `twocolumn`** - Instructs LaTeX to typeset the document in one column or two columns.
+
+  - **`twoside`, `oneside`**:  Specifies whether double or single sided output should be generated. The classes’ article and report are single sided and the book class is double sided by default. 
+
+    Note that this option concerns the style of the document only. The option two side does *NOT* tell the printer you use that it should actually make a two-sided printout.
+
+    The difference between single-sided and double-sided documents in LaTeX lies in the layout of the <u>page margins</u> and the orientation of the text on the page.
+
+    - Single-sided documents are printed on only one side of the page, with the text and images aligned to the right-hand side of the page. This type of layout is often used for brochures, flyers, and other types of promotional materials.
+
+    - Double-sided documents are printed on both sides of the page, with the text and images alternating between right-hand and left-hand margins. This type of layout is often used for **books**, reports, and other types of <u>long-form documents</u>.
+
+      A `twoside` document has different margins and headers/footers for odd and even pages.
+
+    The layout of a `twoside` book
+
+    <img src="https://drive.google.com/thumbnail?id=19v6DluC9hK_CYQVbHv6e_fp_apwa6NrK&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
+
+    Q: Why Inner margin is narrow?  
+    A: The reason for this is that with two pages side by side, you actually have only THREE margins - the left, right and middle. The middle margin is made up from the inside margins of both pages, and so these are smaller because they add together to make the middle margin. If they were bigger, then you would end up with too much whitespace in the middle.
+
+    ```r
+    o - outside margin
+    i - inside margin
+    b - binding offset
+    
+    Before binding:
+    ------------------    -----------------
+    |oooo|~~~~~~|ii|b|    | |  |~~~~~~|   |
+    |    |~~~~~~|  | |    | |  |~~~~~~|   |
+    |    |~~~~~~|  | |    | |  |~~~~~~|   |
+    |    |~~~~~~|  | |    | |  |~~~~~~|   |
+    |    |~~~~~~|  | |    | |  |~~~~~~|   |
+    |    |~~~~~~|  | |    | |  |~~~~~~|   |
+    ------------------    -----------------
+    
+    After binding:
+    -------------------------------
+    |oooo|~~~~~~|ii|ii|~~~~~~|oooo|
+    |oooo|~~~~~~|ii|ii|~~~~~~|oooo|
+    |oooo|~~~~~~|ii|ii|~~~~~~|oooo|
+    |oooo|~~~~~~|ii|ii|~~~~~~|oooo|
+    |oooo|~~~~~~|ii|ii|~~~~~~|oooo|
+    |oooo|~~~~~~|ii|ii|~~~~~~|oooo|
+    -------------------------------
+    ```
+
+    
+
+  - **`landscape`** - Changes the layout of the document to print in landscape mode.
+  - **`openright`, `openany`** - Makes chapters begin either only on right hand pages or on the next page available. This does not work with the article class, as it does not know about chapters. The report class by default starts chapters on the next page available and the book class starts them on right hand pages.
 
 - In PDFs, you can use code, typesetting commands (e.g., `\vspace{12pt}`), and specific packages from LaTeX. 
 
     1. The `header-includes` option loads LaTeX packages.
 
-    ```r
+    ```markdown
     ---
     output: pdf_document
     header-includes:
@@ -139,7 +209,7 @@ YAML can set values of the template variables, such as `title`, `author`, and `d
 
     2. Alternatively, use `extra_dependencies` to  list a character vector of LaTeX packages. This is useful if you need to load multiple packages:
 
-    ```r
+    ```markdown
     ---
     title: "Untitled"
     output: 
@@ -150,7 +220,7 @@ YAML can set values of the template variables, such as `title`, `author`, and `d
 
     If you need to specify options when loading the package, you can add a second-level to the list and provide the options as a list:
 
-    ```r
+    ```markdown
     ---
     title: "Untitled"
     output: 
@@ -225,6 +295,36 @@ ref:
 - [R Markdown anatomy, R Markdown Cookbook](https://bookdown.org/yihui/rmarkdown-cookbook/rmarkdown-anatomy.html#:~:text=In%20short%2C%20we%20can%20include%20variables%20and%20R%20expressions%20in%20this%20header%20that%20can%20be%20referenced%20throughout%20our%20R%20Markdown%20document.)
 - <https://rmarkdown.rstudio.com/lesson-6.html>
 
+
+--------------------------------------------------------------------------------
+
+### Compile an Rmd {.unlisted .unnumbered}
+
+You can have more than output formats for your Rmd. For example, you want both the html and pdf output.
+
+When you render the Rmd with `rmarkdown::render()`, it will use the **first output format you specify in the YAML metadata** (if it is missing, the default is `html_document`).
+
+do not want to use the first one, you can specify the one you want in the second argument, e.g., for an Rmd document `foo.Rmd` with the metadata:
+
+```yml
+output:
+  html_document:
+    toc: true
+  pdf_document:
+    keep_tex: true
+```
+
+You can render it to PDF via:
+
+```r
+rmarkdown::render('foo.Rmd', 'pdf_document')
+```
+
+- RStudio calls the function `rmarkdown::render()` to render the document in **a new R session**.
+  
+    RStudio does this to ensure **reproducibility**.
+
+
 --------------------------------------------------------------------------------
 
 ### Document dependency {.unlisted .unnumbered}
@@ -235,7 +335,7 @@ Note that even for self-contained documents, MathJax is still loaded externally 
 
 One common reason to keep dependencies external is for serving R Markdown documents from a website (external dependencies can be cached separately by browsers, leading to faster page load times). In the case of serving multiple R Markdown documents you may also want to consolidate dependent library files (e.g. Bootstrap, and MathJax, etc.) into a single directory shared by multiple documents. You can use the `lib_dir` option to do this. For example:
 
-```r
+```markdown
 ---
 title: "Habits"
 output:
@@ -253,7 +353,7 @@ We can load additional LaTeX packages using the [`extra_dependencies`](https://b
 
 This allows us to provide a list of LaTeX packages to be loaded in the intermediate LaTeX output document, e.g.,
 
-```r
+```markdown
 ---
 title: "Using more LaTeX packages"
 output: 
@@ -264,7 +364,7 @@ output:
 
 If you need to **specify options** when loading the package, you can add a sub-level to the list and provide the options as a list, e.g.,
 
-```r
+```yml
 output: 
   pdf_document:
     extra_dependencies:
@@ -295,7 +395,7 @@ The advantage of using the `extra_dependencies` argument over the `includes` arg
 
 You can do more advanced customization of output by including additional HTML content or by replacing the core Pandoc template entirely. To include content in the document header or before/after the document body, you use the `includes` option as follows:
 
-```r
+```markdown
 ---
 title: "Habits"
 output:
@@ -311,7 +411,7 @@ output:
 
 An example `header.html` to load a MathJax extension `textmacros`.
 
-```r
+```html
 <script type="text/x-mathjax-config">
   MathJax.Hub.Config({ 
     loader: {load: ['[tex]/textmacros']},

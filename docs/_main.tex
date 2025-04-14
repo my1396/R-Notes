@@ -3,7 +3,9 @@
 \PassOptionsToPackage{hyphens}{url}
 %
 \documentclass[
-]{book}
+  a4paper,
+  twoside,
+  openright]{book}
 \usepackage{amsmath,amssymb}
 \usepackage{iftex}
 \ifPDFTeX
@@ -36,6 +38,7 @@
   \KOMAoptions{parskip=half}}
 \makeatother
 \usepackage{xcolor}
+\usepackage[top=25.4mm,bottom=25.4mm,left=25.4mm,right=38.1mm]{geometry}
 \usepackage{color}
 \usepackage{fancyvrb}
 \newcommand{\VerbBar}{|}
@@ -121,7 +124,7 @@
 
 \title{R Notes}
 \author{John Doe}
-\date{2025-04-13}
+\date{2025-04-14}
 
 \usepackage{amsthm}
 \newtheorem{theorem}{Theorem}[chapter]
@@ -1538,7 +1541,7 @@ A:
 YAML metadata
 
 Q: What is YAML?\\
-A: YAML is a human-friendly data serialization language for all programming languages.
+A: YAML is a human-friendly data serialization language for all programming languages. YAML stands for ``Yet Another Markup Language.''
 
 Q: What does YAML do?\\
 A: It is placed at the very beginning of the document and is read by each of Pandoc, \textbf{rmarkdown}, and \textbf{knitr}.
@@ -1561,7 +1564,7 @@ YAML can set values of the template variables, such as \texttt{title}, \texttt{a
 
 \begin{itemize}
 \item
-  The \texttt{output} field is used by rmarkdown to apply the output format function \texttt{rmarkdown::html\_document()} in the rendering process.
+  The \texttt{output} field is used by rmarkdown to apply the {\textbf{output format function}} \texttt{rmarkdown::html\_document()} in the rendering process.
 
   There are two types of output formats in the \textbf{rmarkdown} package: documents (e.g., \texttt{pdf\_document}), and presentations (e.g., \texttt{beamer\_presentation}).
 
@@ -1573,16 +1576,52 @@ YAML can set values of the template variables, such as \texttt{title}, \texttt{a
 
   Issue: \texttt{bookdown} always output html, even if specified to pdf.\\
   Cause: If it produces HTML, the output format must have been provided somewhere.\\
-  Fix: Check if you have a \_output.yml under the root directory of your book project. If you do, you may delete it. Then bookdown will use the output field that you specified in the YAML frontmatter of your Rmd document.
+  Fix: Check if you have a \texttt{\_output.yml} under the root directory of your book project. If you do, you may delete it. Then bookdown will use the output field that you specified in the YAML frontmatter of your Rmd document.
+
+  If there are two output formats, \texttt{rmarkdown::render()} defaults to use the first output type. If you want another, specify the type, e.g., \texttt{rmarkdown::render("0100-RStudio.Rmd",\ \textquotesingle{}pdf\_document\textquotesingle{})}.
 \end{itemize}
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
 \textbf{\texttt{bookdown} wrappers} of base markdown format
 
-\texttt{bookdown} output formats allow numbering and cross-referencing figures/tables/equations. It takes the format \texttt{html\_document2}, in general, \texttt{markdown\_document2} is a wrapper for the base format \texttt{markdown\_document}. With the \texttt{bookdown} output format, you can cross-reference sections by their ID's using the same syntax when sections are numbered.
+{\texttt{bookdown} output formats} allow numbering and cross-referencing figures/tables/equations. It takes the format \texttt{html\_document2}, in general, \texttt{markdown\_document2} is a wrapper for the base format \texttt{markdown\_document}. With the \texttt{bookdown} output format, you can cross-reference sections by their ID's using the same syntax when sections are numbered.
 
-Other bookdown output format examples: \texttt{pdf\_document2}, \texttt{beamer\_presentation2}, \texttt{tufte\_html2}, \texttt{word\_document2}. See Page 12 of the \href{https://cran.r-project.org/web/packages/bookdown/bookdown.pdf}{reference manual} for a complete list of supported format by \texttt{bookdown}.
+Other bookdown output format examples for single documents: \texttt{pdf\_document2}, \texttt{beamer\_presentation2}, \texttt{tufte\_html2}, \texttt{word\_document2}. See Page 12 of the \href{https://cran.r-project.org/web/packages/bookdown/bookdown.pdf}{reference manual} for a complete list of supported format by \texttt{bookdown}.
+
+What bookdown is very powerful for is that it compiles books. Book formats:
+
+\begin{itemize}
+\tightlist
+\item
+  HTML:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \texttt{gitbook}
+  \item
+    \texttt{html\_book}
+  \item
+    \texttt{tufte\_html\_book}
+  \end{itemize}
+\item
+  PDF:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \texttt{pdf\_book}
+  \end{itemize}
+\item
+  e-book:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \texttt{epub\_book}
+  \end{itemize}
+\end{itemize}
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
@@ -1592,12 +1631,12 @@ Other bookdown output format examples: \texttt{pdf\_document2}, \texttt{beamer\_
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\SpecialCharTok{{-}{-}{-}}
-\NormalTok{title}\SpecialCharTok{:} \StringTok{"Crop Analysis Q3 2013"}
-\NormalTok{output}\SpecialCharTok{:}\NormalTok{ pdf\_document}
-\NormalTok{fontsize}\SpecialCharTok{:} \DecValTok{11}\NormalTok{pt}
-\NormalTok{geometry}\SpecialCharTok{:}\NormalTok{ margin}\OtherTok{=}\DecValTok{1}\DataTypeTok{i}\NormalTok{n}
-\SpecialCharTok{{-}{-}{-}}
+\CommentTok{{-}{-}{-}}
+\AnnotationTok{title:}\CommentTok{ "Crop Analysis Q3 2013"}
+\AnnotationTok{output:}\CommentTok{ pdf\_document}
+\AnnotationTok{fontsize:}\CommentTok{ 11pt}
+\AnnotationTok{geometry:}\CommentTok{ margin=1in}
+\CommentTok{{-}{-}{-}}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1608,7 +1647,7 @@ Other bookdown output format examples: \texttt{pdf\_document2}, \texttt{beamer\_
     >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5660}}@{}}
   \toprule\noalign{}
   \begin{minipage}[b]{\linewidth}\raggedright
-  Variable
+  Top-level YAML Variable
   \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
   Description
   \end{minipage} \\
@@ -1618,13 +1657,75 @@ Other bookdown output format examples: \texttt{pdf\_document2}, \texttt{beamer\_
   \endlastfoot
   \texttt{lang} & Document language code \\
   \texttt{fontsize} & Font size (e.g., \texttt{10pt}, \texttt{11pt}, or \texttt{12pt}) \\
-  \texttt{documentclass} & LaTeX document class (e.g., \texttt{article}) \\
-  \texttt{classoption} & Options for documentclass (e.g., \texttt{oneside}) \\
-  \texttt{geometry} & Options for geometry class (e.g., \texttt{margin=1in}) \\
+  \texttt{papersize} & Defines the paper size (e.g., \texttt{a4paper}, \texttt{letterpaper}) \\
+  \texttt{documentclass} & LaTeX document class (e.g., \texttt{article}, \texttt{book}, and \texttt{report}) \\
+  \texttt{classoption} & A list of options to be passed to the document class, e.g., you can create a two-column document with the \texttt{twocolumn} option. \\
+  \texttt{geometry} & Options for \href{https://ctan.org/pkg/geometry}{\texttt{geometry}} package (e.g., \texttt{margin=1in} set all margins to be 1 inch) \\
   \texttt{mainfont}, \texttt{sansfont}, \texttt{monofont}, \texttt{mathfont} & Document fonts (works only with \texttt{xelatex} and \texttt{lualatex}) \\
   \texttt{linkcolor}, \texttt{urlcolor}, \texttt{citecolor} & Color for internal links (cross references), external links (link to websites), and citation links (bibliography) \\
   \texttt{linestretch} & Options for line spacing (e.g.~1, 1.5, 3). \\
   \end{longtable}
+
+  Pandoc User's Guide: \url{https://www.uv.es/wiki/pandoc_manual_2.7.3.wiki?21}
+
+  \texttt{classoption}
+
+  \begin{itemize}
+  \item
+    \textbf{\texttt{onecolumn}, \texttt{twocolumn}} - Instructs LaTeX to typeset the document in one column or two columns.
+  \item
+    \textbf{\texttt{twoside}, \texttt{oneside}}: Specifies whether double or single sided output should be generated. The classes' article and report are single sided and the book class is double sided by default.
+
+    Note that this option concerns the style of the document only. The option two side does \emph{NOT} tell the printer you use that it should actually make a two-sided printout.
+
+    The difference between single-sided and double-sided documents in LaTeX lies in the layout of the page margins and the orientation of the text on the page.
+
+    \begin{itemize}
+    \item
+      Single-sided documents are printed on only one side of the page, with the text and images aligned to the right-hand side of the page. This type of layout is often used for brochures, flyers, and other types of promotional materials.
+    \item
+      Double-sided documents are printed on both sides of the page, with the text and images alternating between right-hand and left-hand margins. This type of layout is often used for \textbf{books}, reports, and other types of long-form documents.
+
+      A \texttt{twoside} document has different margins and headers/footers for odd and even pages.
+    \end{itemize}
+
+    The layout of a \texttt{twoside} book
+
+    Q: Why Inner margin is narrow?\\
+    A: The reason for this is that with two pages side by side, you actually have only THREE margins - the left, right and middle. The middle margin is made up from the inside margins of both pages, and so these are smaller because they add together to make the middle margin. If they were bigger, then you would end up with too much whitespace in the middle.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{o }\SpecialCharTok{{-}}\NormalTok{ outside margin}
+\NormalTok{i }\SpecialCharTok{{-}}\NormalTok{ inside margin}
+\NormalTok{b }\SpecialCharTok{{-}}\NormalTok{ binding offset}
+
+\NormalTok{Before binding}\SpecialCharTok{:}
+\SpecialCharTok{{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}}    \SpecialCharTok{{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}}
+\ErrorTok{|}\NormalTok{oooo}\SpecialCharTok{|}\ErrorTok{\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}|}\NormalTok{ii}\SpecialCharTok{|}\NormalTok{b}\SpecialCharTok{|}    \ErrorTok{|} \ErrorTok{|}  \ErrorTok{|\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}|}   \ErrorTok{|}
+\ErrorTok{|}    \ErrorTok{|\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}|}  \ErrorTok{|} \ErrorTok{|}    \ErrorTok{|} \ErrorTok{|}  \ErrorTok{|\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}|}   \ErrorTok{|}
+\ErrorTok{|}    \ErrorTok{|\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}|}  \ErrorTok{|} \ErrorTok{|}    \ErrorTok{|} \ErrorTok{|}  \ErrorTok{|\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}|}   \ErrorTok{|}
+\ErrorTok{|}    \ErrorTok{|\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}|}  \ErrorTok{|} \ErrorTok{|}    \ErrorTok{|} \ErrorTok{|}  \ErrorTok{|\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}|}   \ErrorTok{|}
+\ErrorTok{|}    \ErrorTok{|\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}|}  \ErrorTok{|} \ErrorTok{|}    \ErrorTok{|} \ErrorTok{|}  \ErrorTok{|\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}|}   \ErrorTok{|}
+\ErrorTok{|}    \ErrorTok{|\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}|}  \ErrorTok{|} \ErrorTok{|}    \ErrorTok{|} \ErrorTok{|}  \ErrorTok{|\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}|}   \ErrorTok{|}
+\SpecialCharTok{{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}}    \SpecialCharTok{{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}}
+
+\NormalTok{After binding}\SpecialCharTok{:}
+\SpecialCharTok{{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}}
+\ErrorTok{|}\NormalTok{oooo}\SpecialCharTok{|}\ErrorTok{\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}|}\NormalTok{ii}\SpecialCharTok{|}\NormalTok{ii}\SpecialCharTok{|}\ErrorTok{\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}|}\NormalTok{oooo}\SpecialCharTok{|}
+\ErrorTok{|}\NormalTok{oooo}\SpecialCharTok{|}\ErrorTok{\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}|}\NormalTok{ii}\SpecialCharTok{|}\NormalTok{ii}\SpecialCharTok{|}\ErrorTok{\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}|}\NormalTok{oooo}\SpecialCharTok{|}
+\ErrorTok{|}\NormalTok{oooo}\SpecialCharTok{|}\ErrorTok{\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}|}\NormalTok{ii}\SpecialCharTok{|}\NormalTok{ii}\SpecialCharTok{|}\ErrorTok{\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}|}\NormalTok{oooo}\SpecialCharTok{|}
+\ErrorTok{|}\NormalTok{oooo}\SpecialCharTok{|}\ErrorTok{\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}|}\NormalTok{ii}\SpecialCharTok{|}\NormalTok{ii}\SpecialCharTok{|}\ErrorTok{\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}|}\NormalTok{oooo}\SpecialCharTok{|}
+\ErrorTok{|}\NormalTok{oooo}\SpecialCharTok{|}\ErrorTok{\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}|}\NormalTok{ii}\SpecialCharTok{|}\NormalTok{ii}\SpecialCharTok{|}\ErrorTok{\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}|}\NormalTok{oooo}\SpecialCharTok{|}
+\ErrorTok{|}\NormalTok{oooo}\SpecialCharTok{|}\ErrorTok{\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}|}\NormalTok{ii}\SpecialCharTok{|}\NormalTok{ii}\SpecialCharTok{|}\ErrorTok{\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}|}\NormalTok{oooo}\SpecialCharTok{|}
+\SpecialCharTok{{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}}
+\end{Highlighting}
+\end{Shaded}
+  \item
+    \textbf{\texttt{landscape}} - Changes the layout of the document to print in landscape mode.
+  \item
+    \textbf{\texttt{openright}, \texttt{openany}} - Makes chapters begin either only on right hand pages or on the next page available. This does not work with the article class, as it does not know about chapters. The report class by default starts chapters on the next page available and the book class starts them on right hand pages.
+  \end{itemize}
 \item
   In PDFs, you can use code, typesetting commands (e.g., \texttt{\textbackslash{}vspace\{12pt\}}), and specific packages from LaTeX.
 
@@ -1637,17 +1738,17 @@ Other bookdown output format examples: \texttt{pdf\_document2}, \texttt{beamer\_
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\SpecialCharTok{{-}{-}{-}}
-\NormalTok{output}\SpecialCharTok{:}\NormalTok{ pdf\_document}
-\NormalTok{header}\SpecialCharTok{{-}}\NormalTok{includes}\SpecialCharTok{:}
-  \SpecialCharTok{{-}}\NormalTok{ \textbackslash{}usepackage\{fancyhdr\}}
-\SpecialCharTok{{-}{-}{-}}
+\CommentTok{{-}{-}{-}}
+\AnnotationTok{output:}\CommentTok{ pdf\_document}
+\AnnotationTok{header{-}includes:}
+\CommentTok{  {-} \textbackslash{}usepackage\{fancyhdr\}}
+\CommentTok{{-}{-}{-}}
 
 \NormalTok{\textbackslash{}pagestyle\{fancy\}}
-\NormalTok{\textbackslash{}fancyhead[LE,RO]\{Holly Zaharchuk\}}
-\NormalTok{\textbackslash{}fancyhead[LO,RE]\{PSY }\DecValTok{508}\NormalTok{\}}
+\NormalTok{\textbackslash{}fancyhead}\CommentTok{[}\OtherTok{LE,RO}\CommentTok{]}\NormalTok{\{Holly Zaharchuk\}}
+\NormalTok{\textbackslash{}fancyhead}\CommentTok{[}\OtherTok{LO,RE}\CommentTok{]}\NormalTok{\{PSY 508\}}
 
-\CommentTok{\# Problem Set 12}
+\FunctionTok{\# Problem Set 12}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1679,12 +1780,12 @@ Other bookdown output format examples: \texttt{pdf\_document2}, \texttt{beamer\_
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\SpecialCharTok{{-}{-}{-}}
-\NormalTok{title}\SpecialCharTok{:} \StringTok{"Untitled"}
-\NormalTok{output}\SpecialCharTok{:} 
-\NormalTok{  pdf\_document}\SpecialCharTok{:}
-\NormalTok{    extra\_dependencies}\SpecialCharTok{:}\NormalTok{ [}\StringTok{"bbm"}\NormalTok{, }\StringTok{"threeparttable"}\NormalTok{]}
-\SpecialCharTok{{-}{-}{-}}
+\CommentTok{{-}{-}{-}}
+\AnnotationTok{title:}\CommentTok{ "Untitled"}
+\AnnotationTok{output:}\CommentTok{ }
+\CommentTok{  pdf\_document:}
+\CommentTok{    extra\_dependencies: ["bbm", "threeparttable"]}
+\CommentTok{{-}{-}{-}}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1692,15 +1793,15 @@ Other bookdown output format examples: \texttt{pdf\_document2}, \texttt{beamer\_
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\SpecialCharTok{{-}{-}{-}}
-\NormalTok{title}\SpecialCharTok{:} \StringTok{"Untitled"}
-\NormalTok{output}\SpecialCharTok{:} 
-\NormalTok{  pdf\_document}\SpecialCharTok{:}
-\NormalTok{    extra\_dependencies}\SpecialCharTok{:}
-\NormalTok{      caption}\SpecialCharTok{:}\NormalTok{ [}\StringTok{"labelfont=\{bf\}"}\NormalTok{]}
-\NormalTok{      hyperref}\SpecialCharTok{:}\NormalTok{ [}\StringTok{"unicode=true"}\NormalTok{, }\StringTok{"breaklinks=true"}\NormalTok{]}
-\NormalTok{      lmodern}\SpecialCharTok{:}\NormalTok{ null}
-\SpecialCharTok{{-}{-}{-}}
+\CommentTok{{-}{-}{-}}
+\AnnotationTok{title:}\CommentTok{ "Untitled"}
+\AnnotationTok{output:}\CommentTok{ }
+\CommentTok{  pdf\_document:}
+\CommentTok{    extra\_dependencies:}
+\CommentTok{      caption: ["labelfont=\{bf\}"]}
+\CommentTok{      hyperref: ["unicode=true", "breaklinks=true"]}
+\CommentTok{      lmodern: null}
+\CommentTok{{-}{-}{-}}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1795,6 +1896,41 @@ ref:
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
+\subsection*{Compile an Rmd}\label{compile-an-rmd}
+
+You can have more than output formats for your Rmd. For example, you want both the html and pdf output.
+
+When you render the Rmd with \texttt{rmarkdown::render()}, it will use the \textbf{first output format you specify in the YAML metadata} (if it is missing, the default is \texttt{html\_document}).
+
+do not want to use the first one, you can specify the one you want in the second argument, e.g., for an Rmd document \texttt{foo.Rmd} with the metadata:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{output}\KeywordTok{:}
+\AttributeTok{  }\FunctionTok{html\_document}\KeywordTok{:}
+\AttributeTok{    }\FunctionTok{toc}\KeywordTok{:}\AttributeTok{ }\CharTok{true}
+\AttributeTok{  }\FunctionTok{pdf\_document}\KeywordTok{:}
+\AttributeTok{    }\FunctionTok{keep\_tex}\KeywordTok{:}\AttributeTok{ }\CharTok{true}
+\end{Highlighting}
+\end{Shaded}
+
+You can render it to PDF via:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{rmarkdown}\SpecialCharTok{::}\FunctionTok{render}\NormalTok{(}\StringTok{\textquotesingle{}foo.Rmd\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}pdf\_document\textquotesingle{}}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\item
+  RStudio calls the function \texttt{rmarkdown::render()} to render the document in \textbf{a new R session}.
+
+  RStudio does this to ensure \textbf{reproducibility}.
+\end{itemize}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
 \subsection*{Document dependency}\label{document-dependency}
 
 By default, R Markdown produces standalone HTML files with no external dependencies, using \texttt{data:}URIs to incorporate the contents of linked scripts, stylesheets, images, and videos. This means you can share or publish the file just like you share Office documents or PDFs. If you would rather keep dependencies in external files, you can specify \texttt{self\_contained:\ false}.
@@ -1805,13 +1941,13 @@ One common reason to keep dependencies external is for serving R Markdown docume
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\SpecialCharTok{{-}{-}{-}}
-\NormalTok{title}\SpecialCharTok{:} \StringTok{"Habits"}
-\NormalTok{output}\SpecialCharTok{:}
-\NormalTok{  html\_document}\SpecialCharTok{:}
-\NormalTok{    self\_contained}\SpecialCharTok{:}\NormalTok{ false}
-\NormalTok{    lib\_dir}\SpecialCharTok{:}\NormalTok{ libs}
-\SpecialCharTok{{-}{-}{-}}
+\CommentTok{{-}{-}{-}}
+\AnnotationTok{title:}\CommentTok{ "Habits"}
+\AnnotationTok{output:}
+\CommentTok{  html\_document:}
+\CommentTok{    self\_contained: false}
+\CommentTok{    lib\_dir: libs}
+\CommentTok{{-}{-}{-}}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1825,12 +1961,12 @@ This allows us to provide a list of LaTeX packages to be loaded in the intermedi
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\SpecialCharTok{{-}{-}{-}}
-\NormalTok{title}\SpecialCharTok{:} \StringTok{"Using more LaTeX packages"}
-\NormalTok{output}\SpecialCharTok{:} 
-\NormalTok{  pdf\_document}\SpecialCharTok{:}
-\NormalTok{    extra\_dependencies}\SpecialCharTok{:}\NormalTok{ [}\StringTok{"bbm"}\NormalTok{, }\StringTok{"threeparttable"}\NormalTok{]}
-\SpecialCharTok{{-}{-}{-}}
+\CommentTok{{-}{-}{-}}
+\AnnotationTok{title:}\CommentTok{ "Using more LaTeX packages"}
+\AnnotationTok{output:}\CommentTok{ }
+\CommentTok{  pdf\_document:}
+\CommentTok{    extra\_dependencies: ["bbm", "threeparttable"]}
+\CommentTok{{-}{-}{-}}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1838,12 +1974,12 @@ If you need to \textbf{specify options} when loading the package, you can add a 
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{output}\SpecialCharTok{:} 
-\NormalTok{  pdf\_document}\SpecialCharTok{:}
-\NormalTok{    extra\_dependencies}\SpecialCharTok{:}
-\NormalTok{      caption}\SpecialCharTok{:}\NormalTok{ [}\StringTok{"labelfont=\{bf\}"}\NormalTok{]}
-\NormalTok{      hyperref}\SpecialCharTok{:}\NormalTok{ [}\StringTok{"unicode=true"}\NormalTok{, }\StringTok{"breaklinks=true"}\NormalTok{]}
-\NormalTok{      lmodern}\SpecialCharTok{:}\NormalTok{ null}
+\FunctionTok{output}\KeywordTok{:}\AttributeTok{ }
+\AttributeTok{  }\FunctionTok{pdf\_document}\KeywordTok{:}
+\AttributeTok{    }\FunctionTok{extra\_dependencies}\KeywordTok{:}
+\AttributeTok{      }\FunctionTok{caption}\KeywordTok{:}\AttributeTok{ }\KeywordTok{[}\StringTok{"labelfont=\{bf\}"}\KeywordTok{]}
+\AttributeTok{      }\FunctionTok{hyperref}\KeywordTok{:}\AttributeTok{ }\KeywordTok{[}\StringTok{"unicode=true"}\KeywordTok{,}\AttributeTok{ }\StringTok{"breaklinks=true"}\KeywordTok{]}
+\AttributeTok{      }\FunctionTok{lmodern}\KeywordTok{:}\AttributeTok{ }\CharTok{null}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1869,15 +2005,15 @@ You can do more advanced customization of output by including additional HTML co
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\SpecialCharTok{{-}{-}{-}}
-\NormalTok{title}\SpecialCharTok{:} \StringTok{"Habits"}
-\NormalTok{output}\SpecialCharTok{:}
-\NormalTok{  html\_document}\SpecialCharTok{:}
-\NormalTok{    includes}\SpecialCharTok{:}
-\NormalTok{      in\_header}\SpecialCharTok{:}\NormalTok{ header.html}
-\NormalTok{      before\_body}\SpecialCharTok{:}\NormalTok{ doc\_prefix.html}
-\NormalTok{      after\_body}\SpecialCharTok{:}\NormalTok{ doc\_suffix.html}
-\SpecialCharTok{{-}{-}{-}}
+\CommentTok{{-}{-}{-}}
+\AnnotationTok{title:}\CommentTok{ "Habits"}
+\AnnotationTok{output:}
+\CommentTok{  html\_document:}
+\CommentTok{    includes:}
+\CommentTok{      in\_header: header.html}
+\CommentTok{      before\_body: doc\_prefix.html}
+\CommentTok{      after\_body: doc\_suffix.html}
+\CommentTok{{-}{-}{-}}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1885,12 +2021,12 @@ An example \texttt{header.html} to load a MathJax extension \texttt{textmacros}.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\SpecialCharTok{\textless{}}\NormalTok{script type}\OtherTok{=}\StringTok{"text/x{-}mathjax{-}config"}\SpecialCharTok{\textgreater{}}
-  \FunctionTok{MathJax.Hub.Config}\NormalTok{(\{ }
-\NormalTok{    loader}\SpecialCharTok{:}\NormalTok{ \{load}\SpecialCharTok{:}\NormalTok{ [}\StringTok{\textquotesingle{}[tex]/textmacros\textquotesingle{}}\NormalTok{]\},}
-\NormalTok{    tex}\SpecialCharTok{:}\NormalTok{ \{packages}\SpecialCharTok{:}\NormalTok{ \{}\StringTok{\textquotesingle{}[+]\textquotesingle{}}\SpecialCharTok{:}\NormalTok{ [}\StringTok{\textquotesingle{}textmacros\textquotesingle{}}\NormalTok{]\}\}}
-\NormalTok{  \});}
-\SpecialCharTok{\textless{}}\ErrorTok{/}\NormalTok{script}\SpecialCharTok{\textgreater{}}
+\DataTypeTok{\textless{}}\KeywordTok{script}\OtherTok{ type=}\StringTok{"text/x{-}mathjax{-}config"}\DataTypeTok{\textgreater{}}
+\NormalTok{  MathJax}\OperatorTok{.}\AttributeTok{Hub}\OperatorTok{.}\FunctionTok{Config}\NormalTok{(\{ }
+    \DataTypeTok{loader}\OperatorTok{:}\NormalTok{ \{}\DataTypeTok{load}\OperatorTok{:}\NormalTok{ [}\StringTok{\textquotesingle{}[tex]/textmacros\textquotesingle{}}\NormalTok{]\}}\OperatorTok{,}
+    \DataTypeTok{tex}\OperatorTok{:}\NormalTok{ \{}\DataTypeTok{packages}\OperatorTok{:}\NormalTok{ \{}\StringTok{\textquotesingle{}[+]\textquotesingle{}}\OperatorTok{:}\NormalTok{ [}\StringTok{\textquotesingle{}textmacros\textquotesingle{}}\NormalTok{]\}\}}
+\NormalTok{  \})}\OperatorTok{;}
+\DataTypeTok{\textless{}/}\KeywordTok{script}\DataTypeTok{\textgreater{}}
 \end{Highlighting}
 \end{Shaded}
 
@@ -3660,7 +3796,7 @@ To show the \texttt{tibble} information (number of row/columns, and group inform
 \begin{Highlighting}[]
 \CommentTok{{-}{-}{-}}
 \AnnotationTok{title:}\CommentTok{ "Use caption with df\_print set to page"}
-\AnnotationTok{date:}\CommentTok{ "2025{-}04{-}13"}
+\AnnotationTok{date:}\CommentTok{ "2025{-}04{-}14"}
 \AnnotationTok{output:}
 \CommentTok{  bookdown::html\_document2:}
 \CommentTok{    df\_print: paged}
@@ -4261,31 +4397,38 @@ It is possible to edit Latex table directly in \texttt{Rmd}.
   Use the Push and Pull buttons in RStudio as that's easier than typing \texttt{git\ push} or \texttt{git\ pull} in the terminal.
 \end{enumerate}
 
-Note that the minimum requirement for any R Markdown website is that it have an \texttt{index.Rmd} file as well as a \texttt{\_site.yml} file. If you execute the \texttt{rmarkdown::render\_site()} function from within the directory containing the website, the following will occur:
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection*{Project structure}\label{project-structure}
+\addcontentsline{toc}{subsection}{Project structure}
+
+Note that the \textbf{minimum requirement for any R Markdown website} is that it have an \texttt{index.Rmd} file and a \texttt{\_site.yml} file.
+
+If you execute the \texttt{rmarkdown::render\_site()} function from within the directory containing the website, the following will occur:
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
 \item
   All of the \texttt{*.Rmd} and \texttt{*.md} files in the root website directory will be rendered into HTML. Note, however, that Markdown files beginning with \texttt{\_} are not rendered (this is a convention to designate files that are to be included by top level Rmd documents as child documents).
 
-  \begin{enumerate}
-  \def\labelenumii{\arabic{enumii}.}
+  \begin{itemize}
   \tightlist
   \item
     \texttt{index.Rmd} controls the content on your main page.
-  \end{enumerate}
+  \end{itemize}
 \item
   The generated HTML files and any supporting files (e.g., CSS and JavaScript) are copied into an output directory (\texttt{\_site} by default, on Github Pages the output folder is \texttt{docs}).
 
-  \begin{itemize}
-  \item
-    \texttt{\_site.yml} controls the styling.
-  \item
-    The HTML files within the output directory are now ready to deploy as a standalone static website.
-  \end{itemize}
+  The HTML files within the output directory are now ready to deploy as a standalone static website.
 \end{enumerate}
 
-\texttt{\_site.yml}
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection*{\texorpdfstring{\texttt{\_site.yml} config}{\_site.yml config}}\label{site.yml-config}
+\addcontentsline{toc}{subsection}{\texttt{\_site.yml} config}
+
+\texttt{\_site.yml} is a configuration file. It contains various common elements you want to include on all pages (e.g., output options, CSS styles, header and footer elements, etc.).
+A \texttt{\_site.yml} example:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -4293,16 +4436,32 @@ Note that the minimum requirement for any R Markdown website is that it have an 
 \FunctionTok{output\_dir}\KeywordTok{:}\AttributeTok{ }\StringTok{"docs"}
 \FunctionTok{include}\KeywordTok{:}\AttributeTok{ }\KeywordTok{[}\StringTok{"import.R"}\KeywordTok{]}
 \FunctionTok{exclude}\KeywordTok{:}\AttributeTok{ }\KeywordTok{[}\StringTok{"docs.txt"}\KeywordTok{,}\AttributeTok{ }\StringTok{"*.csv"}\KeywordTok{]}
+\FunctionTok{output}\KeywordTok{:}
+\AttributeTok{  }\FunctionTok{html\_document}\KeywordTok{:}
+\AttributeTok{    }\FunctionTok{theme}\KeywordTok{:}\AttributeTok{ cosmo}
+\AttributeTok{    }\FunctionTok{highlight}\KeywordTok{:}\AttributeTok{ textmate}
+\AttributeTok{    }\FunctionTok{include}\KeywordTok{:}
+\AttributeTok{      }\FunctionTok{after\_body}\KeywordTok{:}\AttributeTok{ footer.html}
+\AttributeTok{    }\FunctionTok{css}\KeywordTok{:}\AttributeTok{ styles.css}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{itemize}
 \item
-  \texttt{name} provides a suggested URL path for your website when it is published
+  \texttt{name} provides a suggested URL path for your website when it is published (by default this is just the name of the directory containing the site).
 \item
   \texttt{output\_dir} field indicates which directory to copy site content into.
+
+  \begin{itemize}
+  \item
+    \texttt{"\_site"} is the default if none is specified.
+  \item
+    It can be \texttt{"."} to keep all content within the root website directory alongside the source code.
+  \end{itemize}
 \item
-  The \texttt{include} and \texttt{exclude} fields enable you to override the default behavior vis-à-vis what files are copied into the output directory. By default, all files within the website directory are copied into the output directory (e.g.~``\_site'') except for the following:
+  The \texttt{include} and \texttt{exclude} fields enable you to override the default behavior vis-à-vis what files are copied into the output directory.
+
+  By default, all files within the website directory are copied into the output directory (e.g.~\texttt{\_site}) except for the following:
 
   \begin{enumerate}
   \def\labelenumi{\arabic{enumi}.}
@@ -4315,18 +4474,108 @@ Note that the minimum requirement for any R Markdown website is that it have an 
     Files known to contain R source code (e.g.~\texttt{".R"}, \texttt{".s"}, \texttt{".Rmd"}), R data (e.g.~\texttt{".RData"}, \texttt{".rds"}), or configuration data (e.g.~\texttt{"rsconnect"} ,\texttt{"packrat"}, \texttt{"renv"})).
   \end{enumerate}
 
-  The \texttt{include} and \texttt{exclude} fields of **\_site.yml** can be used to override this default behavior (wildcards can be used to specify groups of files to be included or excluded). Note that the \texttt{include} and \texttt{exclude} fields target only top-level files and directories (i.e.~a directory is either included or not, you can't exclude a subset of files within a directory).
+  The \texttt{include} and \texttt{exclude} fields of \texttt{\_site.yml} can be used to override this default behavior (wildcards can be used to specify groups of files to be included or excluded). Note that the \texttt{include} and \texttt{exclude} fields target only top-level files and directories (i.e.~a directory is either included or not, you can't exclude a subset of files within a directory).
 
   Note also that \texttt{include} and \texttt{exclude} are \emph{not} used to determine which Rmd files are rendered (all of them in the root directory save for those named with the \texttt{\_} prefix will be rendered).
+\item
+  \texttt{output} defines shared output options for all R Markdown documents within a site.
+
+  Note that individual documents can also include their own output options, which will be merged with the common options at render time.
+
+  \begin{itemize}
+  \item
+    include:\\
+    \strut ~~~after-body: footer.html
+
+    An example of \texttt{footer.thml}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DataTypeTok{\textless{}}\KeywordTok{p}\DataTypeTok{\textgreater{}}\NormalTok{Copyright }\DecValTok{\&copy;}\NormalTok{ 2016 Skynet, Inc. All rights reserved.}\DataTypeTok{\textless{}/}\KeywordTok{p}\DataTypeTok{\textgreater{}}
+\end{Highlighting}
+\end{Shaded}
+  \item
+    \texttt{style.css} is a CSS stylesheet.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{blockquote \{}
+  \KeywordTok{font{-}style}\CharTok{:} \DecValTok{italic}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+  \end{itemize}
 \end{itemize}
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection*{R scripts}\label{r-scripts}
+\addcontentsline{toc}{subsection}{R scripts}
+
+If you have R code that you would like to share across multiple R Markdown documents within your site, you can create an R script (e.g., \texttt{utils.R}) and source it within your Rmd files. For example:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\InformationTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}\{r\}}
+\InformationTok{source("utils.R")}
+\InformationTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}}
+\end{Highlighting}
+\end{Shaded}
+
+\textbf{Shared Rmd snippets}
+
+You may have common fragments of R Markdown that you want to share across pages within your site. To share Rmd fragments, you should name them with a leading underscore (\texttt{\_}), and then include them within their parent Rmd document using the \texttt{child} chunk option. For example:
+
+\begin{itemize}
+\item
+  \texttt{about.Rmd}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{{-}{-}{-}}
+\AnnotationTok{title:}\CommentTok{ "About This Website"}
+\CommentTok{{-}{-}{-}}
+
+\NormalTok{More about this website.}
+
+\InformationTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}\{r, child="\_session{-}info.Rmd"\}}
+\InformationTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}}
+\end{Highlighting}
+\end{Shaded}
+\item
+  \texttt{\_session-info.Rmd}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\AnnotationTok{Session information:}
+
+\InformationTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}\{r\}}
+\InformationTok{sessionInfo()}
+\InformationTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}}
+\end{Highlighting}
+\end{Shaded}
+
+  The leading underscore (\texttt{\_}) is an indicator to the site generation engine that the Rmd is a partial document to be included in other documents, so it is not compiled as a standalone document during site rendering.
+\end{itemize}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection*{Workflow}\label{workflow}
+\addcontentsline{toc}{subsection}{Workflow}
 
 {\textbf{Workflow}}: Edit your site, \textbf{build} it, then push and commit to GitHub to publish your changes online.
 
 To render {all of the pages} in the website, you use the \texttt{Build} pane, which calls \texttt{rmarkdown::render\_site()} to build and then preview the entire site
 
-As you work on the {individual pages} of your website, you can render them using the \texttt{Knit} button just as you do with conventional standalone R Markdown documents. Or use the command line \texttt{rmarkdown::render("0100-RStudio.Rmd")}. It will generate the html output \texttt{RStudio.html} in the same directory. You can see it in the Output pane \textgreater{} \texttt{Files} tab. Click the file and choose \texttt{View\ in\ Web\ Browser}.
+As you work on the {individual pages} of your website, you can render them using the \texttt{Knit} button just as you do with conventional standalone R Markdown documents. Or use the command line \texttt{rmarkdown::render("0100-RStudio.Rmd")}. It will generate the \textbf{html output} \texttt{RStudio.html} in the same directory. You can see it in the Output pane \textgreater{} \texttt{Files} tab. Click the file and choose \texttt{View\ in\ Web\ Browser}.
+
+If you want to have the pdf output, you add \texttt{pdf\_document} to your document's YAML after \texttt{html\_document}. This way, your Rmd will supports multiple output format.
+
+\begin{itemize}
+\tightlist
+\item
+  When you click the \texttt{Knit} button of run \texttt{rmarkdown::render("0100-RStudio.Rmd")}, it will use the first output format. You need to specify the output format you want in the second argument, call \texttt{rmarkdown::render("0100-RStudio.Rmd",\ \textquotesingle{}pdf\_document\textquotesingle{})}
+\end{itemize}
 
 Note:
 
@@ -4340,7 +4589,7 @@ Note:
   \begin{itemize}
   \tightlist
   \item
-    \texttt{index\_Rmd} (home page) and
+    \texttt{index.Rmd} (home page) and
   \item
     \texttt{\_site.yml} (cross references files \texttt{include:\ {[}"w1.rmd",\ "w2.rmd"{]}})
 
@@ -4354,7 +4603,8 @@ Note:
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
-CSS Style
+\subsection*{CSS Style}\label{css-style}
+\addcontentsline{toc}{subsection}{CSS Style}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -4374,6 +4624,8 @@ CSS Style
 \FunctionTok{\#\# R Markdown}
 \end{Highlighting}
 \end{Shaded}
+
+When you want to change the style of certain element but don't know where to start, open the html in Chrome, and go to \texttt{View} \textgreater{} \texttt{Developer} \textgreater{} \texttt{Inspect\ Element} to identify the corresponding elements.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
@@ -4430,9 +4682,11 @@ Link to another file
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
-Project website:
+\textbf{Project website}:
 
 \begin{itemize}
+\item
+  rmarkdown's site generator, \emph{R Markdown: The Definitive Guide}, \url{https://bookdown.org/yihui/rmarkdown/rmarkdown-site.html}
 \item
   Structure: \url{https://www.storybench.org/convert-google-doc-rmarkdown-publish-github-pages/}
 \item
@@ -4592,7 +4846,7 @@ As a summary of these files:
 
 \begin{itemize}
 \item
-  \texttt{index.Rmd}: This is the only Rmd document to contain a YAML frontmatter, and is the first book chapter.
+  \texttt{index.Rmd}: \textbf{This is the only Rmd document to contain a YAML frontmatter}, and is the first book chapter.
 \item
   Rmd files: A typical bookdown book contains multiple chapters, and each chapter lives in one separate Rmd file.
 \item
@@ -4607,7 +4861,12 @@ These files are explained in greater detail in the following subsections.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
-\textbf{\texttt{\_output.yml}} \textbf{Output formats} can be specified either in the YAML metadata of the first Rmd file of the book, or in a separate YAML file named \texttt{\_output.yml} under the root directory of the book.
+\subsection*{\texorpdfstring{\texttt{\_output.yml}}{\_output.yml}}\label{output.yml}
+\addcontentsline{toc}{subsection}{\texttt{\_output.yml}}
+
+\textbf{\texttt{\_output.yml}} \textbf{Output formats} can be specified either in the YAML metadata of the first Rmd file of the book, or in a separate YAML file named \texttt{\_output.yml} under the root directory of the book. See \href{https://bookdown.org/yihui/rmarkdown/bookdown-output.html\#bookdown-output}{Section 12.4 in \emph{R Markdown: The Definitive Guide}} for a complete list of bookdown output formats. A quick takeaway is that bookdown supports both book types and single documents.
+
+\textbf{Common uses of \texttt{\_output.yml}}:
 
 \begin{itemize}
 \item
@@ -4615,7 +4874,7 @@ These files are explained in greater detail in the following subsections.
 
   This will configure which remote repo to link to and hence allow the page to be downloadable as an \texttt{.Rmd}. Also need to specify \texttt{download:\ {[}"rmd"{]}}.
 \item
-  Link to your GitHub in the toolbar, Part 1 (also need \texttt{index.Rmd})
+  Link to your GitHub in the toolbar (also need \texttt{index.Rmd})
 \item
   Add other sharing links
 \item
@@ -4666,9 +4925,15 @@ You do NOT need the three dashes \texttt{-\/-\/-} in \texttt{\_output.yml}. In t
 
 \begin{itemize}
 \item
-  \texttt{split\_by} defaults to \texttt{chapter}, which splits the file by the first-level headers.
+  \texttt{split\_by=\ c("chapter",\ "chapter+number",\ "section",\ "section+number",\ "rmd",\ "none")} defaults to \texttt{chapter}, which splits the file by the first-level headers.
 
-  \texttt{split\_by:\ section} splits the file by the second-level headers.
+  \begin{itemize}
+  \tightlist
+  \item
+    \texttt{section} splits the file by the second-level headers.
+  \item
+    \texttt{chapter+number} and \texttt{section+number}: the chapter/section numbers will be prepended to the HTML filenames. For example: if using \texttt{chapter} or \texttt{section}, the HTML file names will be \texttt{introduction.html}, \texttt{literature.html}, etc.; but with the numbering setting, the HTML file names will be \texttt{1-introduction.html}, \texttt{2-literature.html}, etc.
+  \end{itemize}
 \item
   The \href{https://bookdown.org/yihui/bookdown/yaml-options.html}{\texttt{includes} option} allows you to insert arbitrary custom content before and/or after the body of the output.
 
@@ -4781,7 +5046,10 @@ bookdown 中文书籍 \texttt{\_output.yml} 范例: \url{https://github.com/yihu
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
-\textbf{\texttt{\_bookdown.yml}} allows you to specify optional settings to build the book.
+\subsection*{\texorpdfstring{\texttt{\_bookdown.yml}}{\_bookdown.yml}}\label{bookdown.yml}
+\addcontentsline{toc}{subsection}{\texttt{\_bookdown.yml}}
+
+\textbf{\texttt{\_bookdown.yml}} allows you to specify optional settings to build the book. For example:
 
 \begin{itemize}
 \tightlist
@@ -4810,9 +5078,18 @@ bookdown 中文书籍 \texttt{\_output.yml} 范例: \url{https://github.com/yihu
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
-\textbf{\texttt{index.Rmd}} {homepage of your website}. Contains the first chapter and the YAML metadata. Other common uses:
+\subsection*{\texorpdfstring{\texttt{index.Rmd}}{index.Rmd}}\label{index.rmd}
+\addcontentsline{toc}{subsection}{\texttt{index.Rmd}}
+
+\textbf{\texttt{index.Rmd}} {homepage of your website}. Contains the first chapter and the YAML metadata which will be applied to all other Rmd pages. See \href{https://bookdown.org/yihui/rmarkdown/compile.html}{Chapter 2.2 in \emph{R Markdown: The Definitive Guide}} for YAML details.
+
+Common uses of \texttt{index.Rmd}'s YAML frontmatter:
 
 \begin{itemize}
+\item
+  Book cover, title, author, date, and description
+\item
+  Add bibliography
 \item
   Link to your GitHub in the toolbar (also need \texttt{\_output.yml})
 \item
@@ -4828,8 +5105,42 @@ bookdown 中文书籍 \texttt{\_output.yml} 范例: \url{https://github.com/yihu
 
   Issue: Favicon shows ok on Chrome but couldn't display on Safari. Same issue reported in \href{https://stackoverflow.com/questions/66023588/r-bookdown-favicon-works-offline-but-not-online}{Stack Overflow}.\\
   Fix: There is a delay for Safari to show Favicon. Wait for two hours and the issue resolves itself\ldots{}
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{{-}{-}{-}}
+\AnnotationTok{title:}\CommentTok{ "A Minimal bookdown Project"}
+\AnnotationTok{site:}\CommentTok{ bookdown::bookdown\_site}
+\AnnotationTok{documentclass:}\CommentTok{ book}
+\AnnotationTok{bibliography:}\CommentTok{ [book.bib, packages.bib]}
+\AnnotationTok{csl:}\CommentTok{ chicago{-}fullnote{-}bibliography.csl}
+\AnnotationTok{github{-}repo:}\CommentTok{ my1396/R{-}Notes}
+\AnnotationTok{favicon:}\CommentTok{ "images/r{-}project{-}favicon.ico"}
+\CommentTok{\# typesetting for LaTeX output}
+\AnnotationTok{papersize:}\CommentTok{ a4 \# The printed size of the thesis}
+\AnnotationTok{geometry:}
+\CommentTok{  {-} top=25.4mm}
+\CommentTok{  {-} bottom=25.4mm}
+\CommentTok{  {-} left=25.4mm}
+\CommentTok{  {-} right=38.1mm}
+\CommentTok{  \# {-} bindingoffset=6.4mm  \# removes a specified space from the inner{-}side for twoside.}
+\CommentTok{  \# {-} asymmetric  \# disable alternating margins on odd/even pages}
+\AnnotationTok{classoption:}\CommentTok{ }
+\CommentTok{  {-} twoside}
+\CommentTok{  {-} openright}
+\CommentTok{{-}{-}{-}}
+
+\FunctionTok{\# Preface}
+
+\NormalTok{Some content}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\tightlist
 \item
-  Book cover, author, date, and description
+  \texttt{site:\ bookdown::bookdown\_site} tells rmarkdown to use bookdown to build all Rmd files, instead of rendering a single Rmd file.
 \end{itemize}
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
@@ -4839,11 +5150,9 @@ bookdown 中文书籍 \texttt{\_output.yml} 范例: \url{https://github.com/yihu
 \begin{itemize}
 \tightlist
 \item
-  Group chapters into Parts
+  Chapters (also sections) are based on separate Rmd files.
 \item
-  Add an appendix
-\item
-  Section (un)numbering
+  Besides \texttt{index.Rmd}, other R Markdown files will make up the chapters of your book. By default, bookdown merges all Rmd files by the order of filenames, e.g., \texttt{01-intro.Rmd} will appear before \texttt{02-literature.Rmd}.
 \end{itemize}
 
 \section{Rendering bookdown}\label{rendering-bookdown}

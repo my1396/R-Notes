@@ -4,13 +4,13 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>R Notes</title>
+  <title>5.1 Data Input &amp; Output | R Notes</title>
   <meta name="description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
 set in the _output.yml file.</p>" />
   <meta name="generator" content="bookdown 0.35 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="R Notes" />
+  <meta property="og:title" content="5.1 Data Input &amp; Output | R Notes" />
   <meta property="og:type" content="book" />
   
   <meta property="og:description" content="<p>This is a minimal example of using the bookdown package to write a book.
@@ -19,7 +19,7 @@ set in the _output.yml file.</p>" />
   <meta name="github-repo" content="my1396/R-Notes" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="R Notes" />
+  <meta name="twitter:title" content="5.1 Data Input &amp; Output | R Notes" />
   
   <meta name="twitter:description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
@@ -36,8 +36,8 @@ set in the _output.yml file.</p>" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   <link rel="shortcut icon" href="images/r-project-favicon.ico" type="image/x-icon" />
-
-<link rel="next" href="1.1-usage.html"/>
+<link rel="prev" href="5-basic-r.html"/>
+<link rel="next" href="6-machine-learning.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -285,22 +285,133 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
         }
     </script>
 </head>
-<div id="header">
-<h1 class="title">R Notes</h1>
-<p class="author"><em>John Doe</em></p>
-<p class="date"><em>2025-04-14</em></p>
+<div id="data-input-output" class="section level2 hasAnchor" number="5.1">
+<h2><span class="header-section-number">5.1</span> Data Input &amp; Output<a href="5.1-data-input-output.html#data-input-output" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="read-data" class="section level3 hasAnchor" number="5.1.1">
+<h3><span class="header-section-number">5.1.1</span> Read Data<a href="5.1-data-input-output.html#read-data" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p><strong>Read Fortran</strong></p>
+<p><code>read.fortran(file, format, ..., as.is = TRUE, colClasses = NA)</code></p>
+<ul>
+<li><code>format</code> Character vector or list of vectors.</li>
+</ul>
+<p><strong>Read <code>dta</code></strong></p>
+<p><code>haven::read_dta()</code> read Stata data file.</p>
+<div class="sourceCode" id="cb189"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb189-1"><a href="5.1-data-input-output.html#cb189-1" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">read_dta</span>(<span class="st">&quot;climate_health_2406yl.dta&quot;</span>)</span>
+<span id="cb189-2"><a href="5.1-data-input-output.html#cb189-2" tabindex="-1"></a><span class="co"># retrieve variable labels/definitions</span></span>
+<span id="cb189-3"><a href="5.1-data-input-output.html#cb189-3" tabindex="-1"></a>var_dict <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="st">&quot;name&quot;</span> <span class="ot">=</span> <span class="fu">colnames</span>(data),</span>
+<span id="cb189-4"><a href="5.1-data-input-output.html#cb189-4" tabindex="-1"></a>                   <span class="st">&quot;label&quot;</span> <span class="ot">=</span> <span class="fu">sapply</span>(data, <span class="cf">function</span>(x) <span class="fu">attr</span>(x, <span class="st">&quot;label&quot;</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb189-5"><a href="5.1-data-input-output.html#cb189-5" tabindex="-1"></a>                                <span class="fu">as.character</span>()</span>
+<span id="cb189-6"><a href="5.1-data-input-output.html#cb189-6" tabindex="-1"></a>                   )</span>
+<span id="cb189-7"><a href="5.1-data-input-output.html#cb189-7" tabindex="-1"></a>var_dict</span>
+<span id="cb189-8"><a href="5.1-data-input-output.html#cb189-8" tabindex="-1"></a>                   </span>
+<span id="cb189-9"><a href="5.1-data-input-output.html#cb189-9" tabindex="-1"></a><span class="fu">var_label</span>(data<span class="sc">$</span>gor) <span class="co"># get variable label</span></span>
+<span id="cb189-10"><a href="5.1-data-input-output.html#cb189-10" tabindex="-1"></a><span class="fu">val_labels</span>(data<span class="sc">$</span>gor) <span class="co"># get value labels </span></span></code></pre></div>
+<p><strong>Read fixed width text files</strong></p>
+<p><code>read.fwf(file, widths)</code></p>
+<ul>
+<li><code>widths</code> integer vector, giving the widths of the fixed-width fields (of one line), or list of integer vectors giving widths for multiline records.</li>
+</ul>
+<p><code>read.table(f_name, header=FALSE, row.names, col.names, sep="", na.strings = "NA")</code> a <span style="color:#00CC66">very versatile</span> function. Can be used to read <code>.csv</code> or <code>.txt</code> files.</p>
+<ul>
+<li><code>f_name</code> path to data.</li>
+<li><code>header=FALSE</code> defaults to <code>FALSE</code>, assumes there is no header row in the file unless specified otherwise.
+<ul>
+<li>If there is a header in the first row, should specify <code>header=TRUE</code>.</li>
+</ul></li>
+<li><code>row.names</code> a vector of row names. This can be
+<ul>
+<li><em>a vector</em> giving the actual row names, or</li>
+<li><em>a single number</em> giving the column of the table which contains the row names, or</li>
+<li><em>character string</em> giving the name of the table column containing the row names.</li>
+</ul></li>
+<li><code>col.names</code> a vector of optional names for the variables. The default is to use <code>"V"</code> followed by the column number.</li>
+<li><code>sep</code> use white space as delimiter.
+<ul>
+<li>if it is a <code>csv</code> file, use <code>sep=','</code> to specify comma as delimiter</li>
+</ul></li>
+<li><code>na.strings = "NA"</code> a character vector of strings which are to be interpreted as <code>NA</code> values.
+<ul>
+<li>A useful setting: <code>na.strings = c("", "NA", "NULL")</code></li>
+</ul></li>
+</ul>
+<p><code>read.csv(f_name, header = TRUE, sep = ",", na.strings = "..", dec=".")</code></p>
+<ul>
+<li><code>header = TRUE</code> whether the file contains the names of the variables as its first line.</li>
+<li><code>sep</code> the field separator string. Values within each row of <code>x</code> are separated by this string.</li>
+<li><code>na</code> the string to use for missing values in the data.</li>
+<li><code>dec</code> the string to use for decimal points in numeric or complex columns: must be a single character.</li>
+<li><code>fileEncoding</code> <code>UTF-8</code></li>
+</ul>
+<p>When reading data from github, you need to pass in the <span style="color:#00CC66">raw version</span> of the data in <code>read.csv()</code>,</p>
+<p>R cannot read the display version.</p>
+<p>You can get the URL for the raw version by clicking on the Raw button displayed above the data.</p>
+<p><img src="https://drive.google.com/thumbnail?id=192sslQpCtgW2NvJV-SBMZe_eUleYpjY9&sz=w1000" alt="github raw data" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" /></p>
+<div class="sourceCode" id="cb190"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb190-1"><a href="5.1-data-input-output.html#cb190-1" tabindex="-1"></a><span class="co"># read.table can be used to read txt and csv. Need to specify sep=&#39;,&#39; when reading csv.</span></span>
+<span id="cb190-2"><a href="5.1-data-input-output.html#cb190-2" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">read.table</span>(<span class="st">&quot;https://raw.githubusercontent.com/my1396/course_dataset/refs/heads/main/bonedensity.txt&quot;</span>, <span class="at">header=</span><span class="cn">TRUE</span>)</span>
+<span id="cb190-3"><a href="5.1-data-input-output.html#cb190-3" tabindex="-1"></a>data</span>
+<span id="cb190-4"><a href="5.1-data-input-output.html#cb190-4" tabindex="-1"></a></span>
+<span id="cb190-5"><a href="5.1-data-input-output.html#cb190-5" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">read.table</span>(<span class="st">&quot;https://raw.githubusercontent.com/my1396/course_dataset/refs/heads/main/bonedensity.csv&quot;</span>, <span class="at">header=</span><span class="cn">TRUE</span>, <span class="at">sep=</span><span class="st">&quot;,&quot;</span>)</span>
+<span id="cb190-6"><a href="5.1-data-input-output.html#cb190-6" tabindex="-1"></a></span>
+<span id="cb190-7"><a href="5.1-data-input-output.html#cb190-7" tabindex="-1"></a><span class="co"># can use read_csv or read.csv</span></span>
+<span id="cb190-8"><a href="5.1-data-input-output.html#cb190-8" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;https://raw.githubusercontent.com/my1396/course_dataset/refs/heads/main/bonedensity.csv&quot;</span>)</span>
+<span id="cb190-9"><a href="5.1-data-input-output.html#cb190-9" tabindex="-1"></a>data</span></code></pre></div>
+<p><code>read_delim(f_name, delim=";")</code> allows you to specify the delimeter as <code>;</code>.</p>
+<p><code>readr::read_csv(f_name, na = c("..", NA, ""),</code>
+<code>locale = locale(encoding = "UTF-8"),</code>
+<code>col_types = cols(Date = col_date(format = "%m/%d/%y")) )</code> read <span style="color:#00CC66">comma separated values</span>.</p>
+<ul>
+<li><p><code>col_types</code> specify column types. Could be created by <code>list()</code> or <code>cols()</code>.</p>
+<p><code>read_csv</code> will automatically guess, if you don’t explicitly specify column types. You can override column types by providing the argument <code>col_types</code>. You don’t need to provide all column types, just the ones you want to override.</p></li>
+<li><p>By default, reading a file without a column specification will print a message showing what <code>readr</code> guessed they were. To remove this message,</p>
+<ul>
+<li>set <code>show_col_types = FALSE</code> for one time setting, or</li>
+<li>set <code>options(readr.show_col_types = FALSE)</code> for the current sessions’ global options setting. If want to change permanently everytime when R starts, put <code>options(readr.show_col_types = FALSE)</code> in <code>.Rprofile</code> as global options.</li>
+</ul></li>
+</ul>
+<p><code>read_tsv()</code> read <span style="color:#00CC66">tab separated values</span>.</p>
+<p><code>read_csv2(f_name, na = c("..", NA, ""))</code> use <span style="color:#00CC66">semicolon <code>;</code> to separate values</span>; and use comma <code>,</code> for the decimal point. This is common in some <u>European countries</u>.</p>
+<ul>
+<li><code>locale</code> The locale controls defaults that vary from place to place. The default locale is US-centric (like R), but you can use <code>locale()</code> to create your own locale that controls things like the default time zone, encoding, decimal mark, big mark, and day/month names.</li>
+<li><code>locale(date_names = "en", date_format = "%AD", time_format = "%AT",       decimal_mark = ".", grouping_mark = ",", tz = "UTC",       encoding = "UTF-8", asciify = FALSE)</code>
+<ul>
+<li><code>decimal_mark</code> indicate the decimal place, can only be <code>,</code> or <code>.</code></li>
+<li><code>encoding</code> This only affects how the file is read - readr always converts the output to UTF-8.</li>
+</ul></li>
+</ul>
+<hr />
 </div>
-<div id="about" class="section level1 hasAnchor" number="1">
-<h1><span class="header-section-number">Chapter 1</span> About<a href="index.html#about" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<p>This is a <em>sample</em> book written in <strong>Markdown</strong>. You can use anything that Pandoc’s Markdown supports; for example, a math equation <span class="math inline">\(a^2 + b^2 = c^2\)</span>.</p>
+<div id="write-data" class="section level3 hasAnchor" number="5.1.2">
+<h3><span class="header-section-number">5.1.2</span> Write Data<a href="5.1-data-input-output.html#write-data" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Save data in <code>uft8</code> encoding with special language characters</p>
+<p><code>write_excel_csv()</code> include a <a href="https://en.wikipedia.org/wiki/Byte_order_mark">UTF-8 Byte order mark</a> which indicates to Excel the csv is UTF-8 encoded.</p>
+<p><code>write.csv(x, f_name, row.names=TRUE, fileEncoding ="UTF-8")</code></p>
+<ul>
+<li><p><code>x</code> a matrix or data frame. If not one of the types, it is attempted to coerce <code>x</code> to a data frame.</p>
+<ul>
+<li><p><code>write_csv(x)</code> <code>x</code> can only be data frame or tibble. Doesn’t support matrix.</p>
+<div class="sourceCode" id="cb191"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb191-1"><a href="5.1-data-input-output.html#cb191-1" tabindex="-1"></a>mat <span class="sc">%&gt;%</span> <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;rowname&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">write_csv</span>(<span class="st">&quot;mat.csv&quot;</span>)</span>
+<span id="cb191-2"><a href="5.1-data-input-output.html#cb191-2" tabindex="-1"></a>mat <span class="sc">%&gt;%</span> <span class="fu">write.csv</span>(<span class="st">&quot;mat.csv&quot;</span>)</span></code></pre></div></li>
+</ul></li>
+<li><p><code>row.names</code> whether to write row names of <code>x</code>. Defaults to <code>TRUE</code>.</p></li>
+</ul>
+<div id="flextable" class="section level4 hasAnchor" number="5.1.2.1">
+<h4><span class="header-section-number">5.1.2.1</span> <code>flextable</code><a href="5.1-data-input-output.html#flextable" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p><code>flextable</code> package create tables for reporting and publications.</p>
+<p>The main function is <code>flextable</code> which takes a <code>data.frame</code> as argument and returns a <code>flextable</code>. If you are using RStudio or another R GUI, the table will be displayed in the <code>Viewer</code> panel or in your default browser.</p>
+<p>The package provides a set of functions to easily create some tables from others objects.</p>
+<p>The <code>as_flextable()</code> function is used to transform specific objects into <code>flextable</code> objects. For example, you can transform a crosstab produced with the ‘tables’ package into a flextable which can then be formatted, annotated or augmented with footnotes.</p>
+
 </div>
+</div>
+</div>
+<!-- </div> -->
             </section>
 
           </div>
         </div>
       </div>
-
-<a href="1.1-usage.html" class="navigation navigation-next navigation-unique" aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="5-basic-r.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="6-machine-learning.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -331,7 +442,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/my1396/R-Notes/edit/main/index.Rmd",
+"link": "https://github.com/my1396/R-Notes/edit/main/0400-BasicR.Rmd",
 "text": "Edit"
 },
 "history": {
@@ -342,7 +453,7 @@ gitbook.start({
 "link": null,
 "text": null
 },
-"download": ["_main.pdf", "_main.epub", "https://github.com/my1396/R-Notes/raw/main/index.Rmd"],
+"download": ["_main.pdf", "_main.epub", "https://github.com/my1396/R-Notes/raw/main/0400-BasicR.Rmd"],
 "search": {
 "engine": "fuse",
 "options": null
