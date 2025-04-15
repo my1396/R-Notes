@@ -111,6 +111,16 @@
 \usepackage{booktabs}
 \usepackage{xcolor}
 \usepackage{xeCJK}  % support for Chinese
+\usepackage{enumitem}
+\setlist[itemize, 1]{
+    itemsep = 0.5\baselineskip,
+    parsep = 0.2\baselineskip}
+\setlist[itemize, 2]{
+    itemsep = 0.2\baselineskip
+}
+\usepackage{fontspec}
+\setmainfont{Charter}
+\setmonofont{Consolas}
 \usepackage[]{natbib}
 \bibliographystyle{plainnat}
 \usepackage{bookmark}
@@ -118,13 +128,13 @@
 \urlstyle{same}
 \hypersetup{
   pdftitle={R Notes},
-  pdfauthor={John Doe},
+  pdfauthor={Menghan Yuan},
   hidelinks,
   pdfcreator={LaTeX via pandoc}}
 
 \title{R Notes}
-\author{John Doe}
-\date{2025-04-14}
+\author{Menghan Yuan}
+\date{2025-04-15}
 
 \usepackage{amsthm}
 \newtheorem{theorem}{Theorem}[chapter]
@@ -145,6 +155,22 @@
 \newtheorem*{solution}{Solution}
 \begin{document}
 \maketitle
+
+% disable tightlist for pandoc latex
+\let\tightlist\relax
+% add vertical space above code block
+\renewenvironment{Shaded}{\vspace{0.2\baselineskip}\begin{snugshade}}{\end{snugshade}}
+
+% Dedication page start here
+% \thispagestyle{empty}
+% 
+% test before body
+% 
+% \begin{center}
+% 献给……
+% 
+% 呃，爱谁谁吧
+% \end{center}
 
 {
 \setcounter{tocdepth}{1}
@@ -198,7 +224,7 @@ As you work, you may start a local server to live preview this HTML book. This p
 
 \textbf{Rstudio shortcuts}
 
-Command Palette: ⇧+⌘+P, all shortcuts can be accessed via the Command Palette.
+Command Palette: shift+cmd+P, all shortcuts can be accessed via the Command Palette.
 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.4861}}
@@ -215,7 +241,7 @@ function
 \endlastfoot
 opt + \_ & insert assignment operator \texttt{\textless{}-} \\
 ESC or ctrl + C & exit \texttt{+} prompt \\
-⇧ + ⌘ + M & Add magrittr's pipe operator ``\%\textgreater\%''After R4.1, you can set this too native pipe \texttt{\textbar{}\textgreater{}} \\
+shift + cmd + M & Add magrittr's pipe operator ``\%\textgreater\%''After R4.1, you can set this too native pipe \texttt{\textbar{}\textgreater{}} \\
 {ctrl + \texttt{{[}}/\texttt{{]}}} & indent or unindent \\
 cmd + D & delete one row \\
 cmd + 1 & move cursor to console window \\
@@ -279,7 +305,7 @@ A: Choose the gear ⚙️ in the editor toolbar and choose ``Chunk Output in Con
 
 Q: How to insert Emojis in Rmd?
 
-A: There are several options:
+A: There are several options (only work for html output):
 
 \begin{itemize}
 \item
@@ -493,9 +519,9 @@ Now go to Tools \textgreater{} Modify Keyboard Shortcuts and search for ``dashes
 
 \begin{itemize}
 \item
-  To add comments to a function, you can type ``Roxygen comment'' into the Command Palette (⇧+⌘+P) while the cursor is in a function and it will automatically add a template structure for writing a comment about your function.
+  To add comments to a function, you can type ``Roxygen comment'' into the Command Palette (shift+cmd+P) while the cursor is in a function and it will automatically add a template structure for writing a comment about your function.
 
-  Keyboard shortcut: ⇧⌥⌘R
+  Keyboard shortcut: shift+opt+cmd+R
 \item
   Snippets are a way to make a shortcut for inserting text based on a ``code''.
 
@@ -516,6 +542,8 @@ Now go to Tools \textgreater{} Modify Keyboard Shortcuts and search for ``dashes
   Show argument definitions as you type functions.
 
   When you type an existing R function such as \texttt{round(}, not only does {\texttt{tab}} give you the options, but there's an explanation beneath each variable, telling you its role in the function:
+
+  \includegraphics[width=1\linewidth]{images/func help}
 \end{itemize}
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
@@ -1477,7 +1505,7 @@ Download from developer.apple.com. Software development kit.
   \url{https://rpubs.com/Kibalnikov/776164}
 \end{itemize}
 
-\chapter{Knit Rmd}\label{knit-rmd}
+\chapter{Rmd}\label{rmd}
 
 \textbf{R Markdown} is a powerful tool for combining analysis and reporting into the same document. R Markdown has grown substantially from a package that supports a few output formats, to an extensive and diverse ecosystem that supports the creation of books, blogs, scientific articles, websites, and even resumes.
 
@@ -1506,7 +1534,7 @@ Nice documentations
     \href{https://cran.r-project.org/web/packages/bookdown/bookdown.pdf}{Reference manual}
   \end{itemize}
 \item
-  \href{https://bookdown.org/yihui/rmarkdown}{R markdown: The definitive guide.} provides detailed references
+  \href{https://bookdown.org/yihui/rmarkdown}{R markdown: The definitive guide.} provides detailed references; GitHub repo \href{https://github.com/rstudio/rmarkdown-book}{HERE}.
 \item
   \href{https://bookdown.org/yihui/rmarkdown-cookbook/}{R markdown cookbook}: concise and covers essential functions, with examples.
 \item
@@ -1538,7 +1566,7 @@ A:
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
-YAML metadata
+\section{YAML metadata}\label{yaml-metadata}
 
 Q: What is YAML?\\
 A: YAML is a human-friendly data serialization language for all programming languages. YAML stands for ``Yet Another Markup Language.''
@@ -1558,7 +1586,7 @@ A: It is placed at the very beginning of the document and is read by each of Pan
 
 YAML also called header and front matter.
 
-See \href{https://github.com/hao203/rmarkdown-YAML.git}{HERE} for commonly used YAML metadata (header) in different R Markdown output formats.
+See \emph{R Markdown YAML metadata (header) tutorial with examples} by \texttt{hao203} \href{https://github.com/hao203/rmarkdown-YAML.git}{HERE} for commonly used YAML metadata (header) in different R Markdown output formats.
 
 YAML can set values of the template variables, such as \texttt{title}, \texttt{author}, and \texttt{date} of the document.
 
@@ -1731,9 +1759,10 @@ What bookdown is very powerful for is that it compiles books. Book formats:
 
   \begin{enumerate}
   \def\labelenumi{\arabic{enumi}.}
-  \tightlist
   \item
     The \texttt{header-includes} option loads LaTeX packages.
+
+    Note that \texttt{header-includes} is a top-level option that align with \texttt{output}.
   \end{enumerate}
 
 \begin{Shaded}
@@ -1896,13 +1925,82 @@ ref:
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
-\subsection*{Compile an Rmd}\label{compile-an-rmd}
+\subsection{Render Rmd}\label{render-rmd}
 
-You can have more than output formats for your Rmd. For example, you want both the html and pdf output.
+When you click the \texttt{Knit} button (⇧⌘K) in RStudio, generally two processes happen:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  The \texttt{.Rmd} file is fed to \texttt{knitr}, which executes all of the R code chunks and creates a new markdown (\texttt{.md}) document which includes the R code and its output.
+\item
+  The \texttt{.md} file is then processed by \href{http://pandoc.org/}{pandoc} which is responsible for creating the finished format, e.g., HTML, PDF, MS\_Word.
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \texttt{.md} files can be directly converted to html, but
+  \item
+    \texttt{.md} to pdf is time-consuming. It first generates \texttt{.tex}, then call the LaTeX engine to convert to pdf.
+  \end{itemize}
+\end{enumerate}
+
+There is one function that can do the processes mentioned above: \texttt{rmarkdown::render}.
+
+\texttt{rmarkdown::render(input,\ output\_format\ =\ NULL,\ output\_file\ =\ NULL,\ output\_dir\ =\ NULL,\ output\_options\ =\ NULL,\ output\_yaml\ =\ NULL)}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.2105}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.7895}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Arguments
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Definition
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\texttt{output\_format} & - \texttt{"all"} will render all formats define within the file- Name of a format, e.g., \texttt{html\_document}, will render to that single format- An output format object, e.g., \texttt{html\_document(toc\ =\ TRUE,\ toc\_depth\ =\ 2,\ includes\ =\ includes(before\_body\ =\ "header.htm"))}, where you can pass on the argument \\
+\texttt{output\_options} & - \textbf{List} of output options that can override the options specified in metadata (e.g could be used to force \texttt{self\_contained} or \texttt{mathjax\ =\ "local"}). - Note that this is {only valid when the output format is read from \textbf{metadata}} (i.e.~not a custom format object passed to output\_format).- \texttt{output\_options} cannot work together with \texttt{xxx\_document()}. \\
+\texttt{output\_yaml} & Paths to YAML files specifying output formats and their configurations. The first existing one is used. If none are found, then the function searches YAML files specified to the \texttt{output\_yaml} top-level parameter in the YAML front matter, \texttt{\_output.yml} or \texttt{\_output.yaml}, and then uses the first existing one. \\
+\end{longtable}
+
+Use example of \texttt{render}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{render}\NormalTok{(}\StringTok{"0208{-}Rmd{-}GHpage.Rmd"}\NormalTok{, }
+\NormalTok{    bookdown}\SpecialCharTok{::}\FunctionTok{pdf\_document2}\NormalTok{(}
+        \AttributeTok{latex\_engine =} \StringTok{"xelatex"}\NormalTok{,}
+        \AttributeTok{template =} \StringTok{"latex/template.tex"}\NormalTok{,}
+        \AttributeTok{includes =} \FunctionTok{includes}\NormalTok{(}
+            \AttributeTok{in\_header =} \StringTok{"latex/preamble.tex"}\NormalTok{,}
+            \AttributeTok{before\_body =} \StringTok{"latex/before\_body.tex"}\NormalTok{)}
+\NormalTok{        ))}
+
+\CommentTok{\# This does NOT work as \textasciigrave{}output\_options\textasciigrave{} is only valid when the format is not an output format object "xxx\_document()"}
+\FunctionTok{render}\NormalTok{(}\StringTok{"0208{-}Rmd{-}GHpage.Rmd"}\NormalTok{, }
+\NormalTok{    bookdown}\SpecialCharTok{::}\FunctionTok{pdf\_document2}\NormalTok{(}
+        \AttributeTok{latex\_engine =} \StringTok{"xelatex"}\NormalTok{,}
+        \AttributeTok{template =} \StringTok{"latex/template.tex"}\NormalTok{), }
+    \AttributeTok{output\_options =} \FunctionTok{list}\NormalTok{(}
+        \AttributeTok{includes =} \FunctionTok{includes}\NormalTok{(}
+            \AttributeTok{in\_header =} \StringTok{"latex/preamble.tex"}\NormalTok{,}
+            \AttributeTok{before\_body =} \StringTok{"latex/before\_body.tex"}\NormalTok{)}
+\NormalTok{        ))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+You can have more than one output formats for your Rmd. For example, you want both the html and pdf output.
 
 When you render the Rmd with \texttt{rmarkdown::render()}, it will use the \textbf{first output format you specify in the YAML metadata} (if it is missing, the default is \texttt{html\_document}).
 
-do not want to use the first one, you can specify the one you want in the second argument, e.g., for an Rmd document \texttt{foo.Rmd} with the metadata:
+do not want to use the first one, you can specify the one you want in the second argument, e.g., for an Rmd document \texttt{input.Rmd} with the metadata:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1918,7 +2016,14 @@ You can render it to PDF via:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{rmarkdown}\SpecialCharTok{::}\FunctionTok{render}\NormalTok{(}\StringTok{\textquotesingle{}foo.Rmd\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}pdf\_document\textquotesingle{}}\NormalTok{)}
+\CommentTok{\# Render pdf}
+\NormalTok{rmarkdown}\SpecialCharTok{::}\FunctionTok{render}\NormalTok{(}\StringTok{\textquotesingle{}input.Rmd\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}pdf\_document\textquotesingle{}}\NormalTok{)}
+
+\CommentTok{\# Render multiple formats}
+\FunctionTok{render}\NormalTok{(}\StringTok{"input.Rmd"}\NormalTok{, }\FunctionTok{c}\NormalTok{(}\StringTok{"html\_document"}\NormalTok{, }\StringTok{"pdf\_document"}\NormalTok{))}
+
+\CommentTok{\# Render all formats defined}
+\NormalTok{rmarkdown}\SpecialCharTok{::}\FunctionTok{render}\NormalTok{(}\StringTok{\textquotesingle{}input.Rmd\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}all\textquotesingle{}}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1931,7 +2036,7 @@ You can render it to PDF via:
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
-\subsection*{Document dependency}\label{document-dependency}
+\subsection{Document dependency}\label{document-dependency}
 
 By default, R Markdown produces standalone HTML files with no external dependencies, using \texttt{data:}URIs to incorporate the contents of linked scripts, stylesheets, images, and videos. This means you can share or publish the file just like you share Office documents or PDFs. If you would rather keep dependencies in external files, you can specify \texttt{self\_contained:\ false}.
 
@@ -1999,7 +2104,8 @@ The advantage of using the \texttt{extra\_dependencies} argument over the \textt
 
 \subsection*{Includes}\label{includes}
 
-\textbf{html output}
+\subsubsection*{HTML Output}\label{html-output}
+\addcontentsline{toc}{subsubsection}{HTML Output}
 
 You can do more advanced customization of output by including additional HTML content or by replacing the core Pandoc template entirely. To include content in the document header or before/after the document body, you use the \texttt{includes} option as follows:
 
@@ -2010,9 +2116,10 @@ You can do more advanced customization of output by including additional HTML co
 \AnnotationTok{output:}
 \CommentTok{  html\_document:}
 \CommentTok{    includes:}
-\CommentTok{      in\_header: header.html}
-\CommentTok{      before\_body: doc\_prefix.html}
-\CommentTok{      after\_body: doc\_suffix.html}
+\CommentTok{      in\_header: header.html   \# inject CSS and JavaScript code into the \textless{}head\textgreater{} tag}
+\CommentTok{      before\_body: doc\_prefix.html  \# include a header that shows a banner or logo.}
+\CommentTok{      after\_body: doc\_suffix.html  \# include a footer}
+\CommentTok{  template: template.html  \# custom templates}
 \CommentTok{{-}{-}{-}}
 \end{Highlighting}
 \end{Shaded}
@@ -2032,7 +2139,8 @@ An example \texttt{header.html} to load a MathJax extension \texttt{textmacros}.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
-\textbf{pdf output}
+\subsubsection*{PDF Output}\label{pdf-output}
+\addcontentsline{toc}{subsubsection}{PDF Output}
 
 For example, to support Chinese characters.
 
@@ -2046,8 +2154,74 @@ In the main Rmd:
 \AnnotationTok{output:}
 \CommentTok{  pdf\_document:}
 \CommentTok{    includes:}
-\CommentTok{      in\_header: preamble.tex}
+\CommentTok{      in\_header: latex/preamble.tex}
+\CommentTok{      before\_body: latex/before\_body.tex}
+\CommentTok{      after\_body: latex/after\_body.tex}
 \CommentTok{{-}{-}{-}}
+\end{Highlighting}
+\end{Shaded}
+
+If you want to add anything to the preamble, you have to use the \texttt{includes} option of \texttt{pdf\_document}. This option has three sub-options:
+
+\begin{itemize}
+\item
+  \texttt{in\_header}: loading necessary packages
+\item
+  \texttt{before\_body}:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Styling that has the highest priority (as it will be loaded latest; if you put in \texttt{in\_header}, it might be overridden by default settings)
+  \item
+    Dedication page like ``The books is dedicated to \ldots{}'' (此书献给\ldots)
+  \end{itemize}
+
+  An example of \texttt{before\_body.tex}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\% Styling that has the highest priority}
+\FunctionTok{\textbackslash{}let\textbackslash{}tightlist\textbackslash{}relax} \CommentTok{\% disable \textasciigrave{}\textbackslash{}tightlist\textasciigrave{}}
+\FunctionTok{\textbackslash{}setlength}\NormalTok{\{}\FunctionTok{\textbackslash{}abovedisplayskip}\NormalTok{\}\{{-}5pt\}}
+\FunctionTok{\textbackslash{}setlength}\NormalTok{\{}\FunctionTok{\textbackslash{}abovedisplayshortskip}\NormalTok{\}\{{-}5pt\}}
+
+\CommentTok{\% book dedication page}
+\FunctionTok{\textbackslash{}thispagestyle}\NormalTok{\{empty\}}
+
+\KeywordTok{\textbackslash{}begin}\NormalTok{\{}\ExtensionTok{center}\NormalTok{\}}
+\NormalTok{献给……}
+
+\NormalTok{呃，爱谁谁吧}
+\KeywordTok{\textbackslash{}end}\NormalTok{\{}\ExtensionTok{center}\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+  The default bookdown uses {\textbf{\texttt{\textbackslash{}tightlist}}} for all bullet lists, setting \texttt{itemsep=0pt} and \texttt{parskip=0pt}, aim for ``compact lists.'' See the following definition:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{\textbackslash{}providecommand\{\textbackslash{}tightlist\}\{\%}
+\NormalTok{\textbackslash{}setlength\{\textbackslash{}itemsep\}\{}\DecValTok{0}\NormalTok{pt\}\textbackslash{}setlength\{\textbackslash{}parskip\}\{}\DecValTok{0}\NormalTok{pt\}\}}
+\end{Highlighting}
+\end{Shaded}
+
+  I personally don't like the compact list setting, so I disable it with \texttt{\textbackslash{}let\textbackslash{}tightlist\textbackslash{}relax}. To prevent it from being overridden, I put it in \texttt{before\_body.tex} instead of \texttt{preamble.tex}.
+\item
+  \texttt{after\_body}.
+\end{itemize}
+
+Each of them takes one or multiple file paths. The file(s) specified in \texttt{in\_header} will be added to the preamble. The files specified in \texttt{before\_body} and \texttt{after\_body} are added before and after the document body, respectively.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\BuiltInTok{\textbackslash{}documentclass}\NormalTok{\{}\ExtensionTok{article}\NormalTok{\}}
+\CommentTok{\% preamble}
+\KeywordTok{\textbackslash{}begin}\NormalTok{\{}\ExtensionTok{document}\NormalTok{\}}
+\CommentTok{\% before\_body}
+\CommentTok{\% body}
+\CommentTok{\% after\_body}
+\KeywordTok{\textbackslash{}end}\NormalTok{\{}\ExtensionTok{document}\NormalTok{\}}
 \end{Highlighting}
 \end{Shaded}
 
@@ -2060,7 +2234,7 @@ In \texttt{preamble.tex}:
 \end{Highlighting}
 \end{Shaded}
 
-Alternatively, you can use \texttt{header-includes} but with less flexibility to change options:
+\textbf{Alternatively}, you can use \texttt{header-includes} but with less flexibility to change options:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -2072,7 +2246,104 @@ Alternatively, you can use \texttt{header-includes} but with less flexibility to
 \end{Highlighting}
 \end{Shaded}
 
-Ref: \url{https://github.com/hao203/rmarkdown-YAML?tab=readme-ov-file\#chinesejapanese-support}
+Q: \texttt{includes} vs.~\texttt{header-includes}, which one is better to use for loading LaTeX packages?
+
+A: Another way to add code to the preamble is to pass it directly to the \texttt{header-includes} field in the YAML frontmatter. The advantage of using \texttt{header-includes}is that you can keep everything in one R Markdown document.
+
+However, if your report is to be generated in \emph{multiple output formats}, we still recommend that you \textbf{use the \texttt{includes} method}, because the \texttt{header-includes} field is unconditional, and will be included in non-LaTeX output documents, too. By comparison, the \texttt{includes} option is only applied to the \texttt{pdf\_document} format.
+
+Ref:
+
+\url{https://github.com/hao203/rmarkdown-YAML?tab=readme-ov-file\#chinesejapanese-support}
+
+\url{https://bookdown.org/yihui/rmarkdown-cookbook/latex-preamble.html}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsubsection*{\texorpdfstring{\texttt{header-includes}}{header-includes}}\label{header-includes}
+\addcontentsline{toc}{subsubsection}{\texttt{header-includes}}
+
+Tex style and package loading can also put in \texttt{header-includes}.
+
+Ex.1
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{{-}{-}{-}}
+\AnnotationTok{output:}\CommentTok{ pdf\_document}
+\AnnotationTok{header{-}includes:}
+\CommentTok{ {-} \textbackslash{}usepackage\{fancyhdr\}}
+\CommentTok{ {-} \textbackslash{}pagestyle\{fancy\}}
+\CommentTok{ {-} \textbackslash{}usepackage\{ctex\} \#TeX package for  Chinese}
+\CommentTok{ {-} \textbackslash{}fancyhead[L]\{MANUSCRIPT AUTHORS\}}
+\CommentTok{ {-} \textbackslash{}fancyhead[R]\{MANUSCRIPT SHORT TITLE\}}
+\CommentTok{ {-} \textbackslash{}usepackage\{lineno\} \# TeX package for line numbers}
+\CommentTok{ {-} \textbackslash{}linenumbers}
+\CommentTok{{-}{-}{-}}
+\end{Highlighting}
+\end{Shaded}
+
+Ex.2
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{{-}{-}{-}}
+\AnnotationTok{title:}\CommentTok{ Adding a Logo to LaTeX Title}
+\AnnotationTok{author:}\CommentTok{ Michael Harper}
+\AnnotationTok{date:}\CommentTok{ December 7th, 2018}
+\AnnotationTok{output:}\CommentTok{ pdf\_document}
+\AnnotationTok{header{-}includes:}
+\CommentTok{  {-} \textbackslash{}usepackage\{titling\}}
+\CommentTok{  {-} \textbackslash{}pretitle\{\textbackslash{}begin\{center\}}
+\CommentTok{    \textbackslash{}includegraphics[width=2in,height=2in]\{logo.jpg\}\textbackslash{}LARGE\textbackslash{}\textbackslash{}\}}
+\CommentTok{  {-} \textbackslash{}posttitle\{\textbackslash{}end\{center\}\}}
+\CommentTok{{-}{-}{-}}
+\end{Highlighting}
+\end{Shaded}
+
+Ex.3
+
+To override or extend some CSS for just one document, include for example:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{{-}{-}{-}}
+\AnnotationTok{output:}\CommentTok{ html\_document}
+\AnnotationTok{header{-}includes:}\CommentTok{ |}
+\CommentTok{  \textless{}style\textgreater{}}
+\CommentTok{  blockquote \{}
+\CommentTok{    font{-}style: italic;}
+\CommentTok{  \}}
+\CommentTok{  tr.even \{}
+\CommentTok{    background{-}color: \#f0f0f0;}
+\CommentTok{  \}}
+\CommentTok{  td, th \{}
+\CommentTok{    padding: 0.5em 2em 0.5em 0.5em;}
+\CommentTok{  \}}
+\CommentTok{  tbody \{}
+\CommentTok{    border{-}bottom: none;}
+\CommentTok{  \}}
+\CommentTok{  \textless{}/style\textgreater{}}
+\CommentTok{{-}{-}{-}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection*{Change Font}\label{change-font}
+
+The default font is \texttt{\textbackslash{}usepackage\{lmodern\}} in bookdown.
+
+Can specify alternative fonts in \texttt{preamble.tex} as follows:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\BuiltInTok{\textbackslash{}usepackage}\NormalTok{\{}\ExtensionTok{fontspec}\NormalTok{\}}
+\FunctionTok{\textbackslash{}setmainfont}\NormalTok{\{Charter\}}
+\end{Highlighting}
+\end{Shaded}
+
+Fonts known to LuaTeX or XeTEX may be loaded by their standard names as you'd speak them out loud, such as Times New Roman or Adobe Garamond. `Known to' in this case generally means `exists in a standard fonts location' such as \texttt{\textasciitilde{}/Library/Fonts} on macOS, or \texttt{C:\textbackslash{}Windows\textbackslash{}Fonts} on Windows. In LuaTEX, fonts found in the TEXMF tree can also be loaded by name. In XeTEX, fonts found in the TEXMF tree can be loaded in Windows and Linux, but not on macOS.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
@@ -3421,6 +3692,22 @@ Can specify environment style in \texttt{style.css}
 
 \section{Figures}\label{figures}
 
+The idea is to generate the figure, output to local, then reload using the following code.
+
+\begin{itemize}
+\tightlist
+\item
+  You can let the code output to document directly, but you cannot scale with \texttt{out.width="20\%"} easily. The text would be scaled unexpectedly too small.
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\InformationTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}\{r car{-}plot, eval=TRUE, echo=FALSE, out.width="20\%", fig.cap="Caption here." \}}
+\InformationTok{knitr::include\_graphics(img1\_path) }
+\InformationTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}}
+\end{Highlighting}
+\end{Shaded}
+
 Specify code chunk options \texttt{fig.width} and \texttt{fig.height} for R-generated figures only.
 
 \begin{itemize}
@@ -3451,14 +3738,6 @@ Specify code chunk options \texttt{fig.width} and \texttt{fig.height} for R-gene
   \end{itemize}
 \end{itemize}
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\InformationTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}\{r car{-}plot, eval=TRUE, echo=FALSE, out.width="20\%", fig.cap="Caption here." \}}
-\InformationTok{knitr::include\_graphics(img1\_path) }
-\InformationTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}}
-\end{Highlighting}
-\end{Shaded}
-
 \texttt{fig.cap=NULL} specify figure captions. Must provide \texttt{fig.cap} if you need to cross reference the figure.
 
 See {\texttt{Fig.\ \textbackslash{}@ref(fig:car-plot)}} use code chunk label to cross reference. The chunk label (\texttt{car-plot}) provides the identifier for referencing the figure generated by the chunk.
@@ -3475,7 +3754,7 @@ See {\texttt{Fig.\ \textbackslash{}@ref(fig:car-plot)}} use code chunk label to 
 
 \texttt{fig.asp=0.6} aspect ratio height:width=6:10.
 
-{\textbf{Suggested practice}} so that you have correct aspect ratio and automatically scaled text and labels in figures.
+{\textbf{Suggested practice}} so that you have correct aspect ratio and automatically scaled text and labels in figures. ✅
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -3796,7 +4075,7 @@ To show the \texttt{tibble} information (number of row/columns, and group inform
 \begin{Highlighting}[]
 \CommentTok{{-}{-}{-}}
 \AnnotationTok{title:}\CommentTok{ "Use caption with df\_print set to page"}
-\AnnotationTok{date:}\CommentTok{ "2025{-}04{-}14"}
+\AnnotationTok{date:}\CommentTok{ "2025{-}04{-}15"}
 \AnnotationTok{output:}
 \CommentTok{  bookdown::html\_document2:}
 \CommentTok{    df\_print: paged}
@@ -3951,7 +4230,6 @@ HTML table, note that need to specify \texttt{results="asis"}.
 \end{Shaded}
 
 \begin{itemize}
-\tightlist
 \item
   \texttt{type} specify output table format. Possible values: \texttt{latex} (default for latex code), \texttt{html}, and \texttt{text}. Need to specify to \texttt{html} in html outputs.
 \item
@@ -4575,7 +4853,19 @@ If you want to have the pdf output, you add \texttt{pdf\_document} to your docum
 \tightlist
 \item
   When you click the \texttt{Knit} button of run \texttt{rmarkdown::render("0100-RStudio.Rmd")}, it will use the first output format. You need to specify the output format you want in the second argument, call \texttt{rmarkdown::render("0100-RStudio.Rmd",\ \textquotesingle{}pdf\_document\textquotesingle{})}
+\item
+  More options can be passed by:
 \end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{render}\NormalTok{(}\StringTok{"0207{-}Rmd{-}Table.Rmd"}\NormalTok{, }
+\NormalTok{    bookdown}\SpecialCharTok{::}\FunctionTok{pdf\_document2}\NormalTok{(}
+        \AttributeTok{latex\_engine =} \StringTok{"lualatex"}\NormalTok{,}
+        \AttributeTok{keep\_tex =} \ConstantTok{TRUE}\NormalTok{), }
+    \AttributeTok{output\_options =} \FunctionTok{list}\NormalTok{(}\FunctionTok{includes}\NormalTok{(}\AttributeTok{in\_header =} \StringTok{"preamble.tex"}\NormalTok{)))}
+\end{Highlighting}
+\end{Shaded}
 
 Note:
 
@@ -4899,7 +5189,7 @@ Here is a brief example of \texttt{\_output.yml}:
 \AttributeTok{    }\FunctionTok{fontsettings}\KeywordTok{:}
 \AttributeTok{      }\FunctionTok{theme}\KeywordTok{:}\AttributeTok{ sky}
 \AttributeTok{    }\FunctionTok{toc}\KeywordTok{:}
-\AttributeTok{      }\FunctionTok{collapse}\KeywordTok{:}\AttributeTok{ section}
+\AttributeTok{      }\FunctionTok{collapse}\KeywordTok{:}\AttributeTok{ section+number}
 \FunctionTok{      before}\KeywordTok{: }\CharTok{|}
 \NormalTok{        \textless{}li\textgreater{}\textless{}a href="./"\textgreater{}R Notes\textless{}/a\textgreater{}\textless{}/li\textgreater{}}
 \FunctionTok{      after}\KeywordTok{: }\CharTok{|}
@@ -4933,6 +5223,8 @@ You do NOT need the three dashes \texttt{-\/-\/-} in \texttt{\_output.yml}. In t
     \texttt{section} splits the file by the second-level headers.
   \item
     \texttt{chapter+number} and \texttt{section+number}: the chapter/section numbers will be prepended to the HTML filenames. For example: if using \texttt{chapter} or \texttt{section}, the HTML file names will be \texttt{introduction.html}, \texttt{literature.html}, etc.; but with the numbering setting, the HTML file names will be \texttt{1-introduction.html}, \texttt{2-literature.html}, etc.
+  \item
+    I prefer \texttt{section+number} as it orders all html in the book's section order.
   \end{itemize}
 \item
   The \href{https://bookdown.org/yihui/bookdown/yaml-options.html}{\texttt{includes} option} allows you to insert arbitrary custom content before and/or after the body of the output.
@@ -5075,6 +5367,17 @@ bookdown 中文书籍 \texttt{\_output.yml} 范例: \url{https://github.com/yihu
 \AttributeTok{    }\FunctionTok{chapter\_name}\KeywordTok{:}\AttributeTok{ }\StringTok{"Chapter "}
 \end{Highlighting}
 \end{Shaded}
+
+Note that you don't need to manually create the \texttt{docs} folder, bookdown will create one if it doesn't exists.
+
+\begin{itemize}
+\item
+  After you serve your site locally, all supporting files will be output to \texttt{docs}. Be sure to add one \texttt{.nojekyll} file in \texttt{docs} to tell GitHub that your website is not to be built via Jekyll.
+\item
+  Because bookdown only overwrites existing files and does not delete unused ones, you can simply delete the \texttt{docs} folder so that bookdown will recreate everything necessary without any redundancy.
+
+  Remember to recreate \texttt{.nojekyll} too after bookdown has created the new \texttt{docs}.
+\end{itemize}
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 

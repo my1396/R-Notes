@@ -142,6 +142,15 @@ As you work on the <span style='color:#00CC66'>individual pages</span> of your w
 If you want to have the pdf output, you add `pdf_document` to your document's YAML after `html_document`. This way, your Rmd will supports multiple output format.
 
 - When you click the `Knit` button of run `rmarkdown::render("0100-RStudio.Rmd")`, it will use the first output format. You need to specify the output format you want in the second argument, call `rmarkdown::render("0100-RStudio.Rmd", 'pdf_document')`
+- More options can be passed by:
+
+```r
+render("0207-Rmd-Table.Rmd", 
+	bookdown::pdf_document2(
+		latex_engine = "lualatex",
+		keep_tex = TRUE), 
+	output_options = list(includes(in_header = "preamble.tex")))
+```
 
 Note:
 
@@ -150,6 +159,7 @@ Note:
   - `index.Rmd` (home page) and 
   - `_site.yml` (cross references files `include: ["w1.rmd", "w2.rmd"]`)
     - This will copy files into `docs` so that you can put a downloadable link to them.
+
 
 
 --------------------------------------------------------------------------------

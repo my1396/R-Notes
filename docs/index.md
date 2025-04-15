@@ -1,7 +1,7 @@
 --- 
 title: "R Notes"
-author: "John Doe"
-date: "2025-04-14"
+author: "Menghan Yuan"
+date: "2025-04-15"
 site: bookdown::bookdown_site
 bibliography: [book.bib, packages.bib]
 # url: your book url like https://bookdown.org/yihui/bookdown

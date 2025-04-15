@@ -150,7 +150,7 @@ bookdown::gitbook:
     fontsettings:
       theme: sky
     toc:
-      collapse: section
+      collapse: section+number
       before: |
         <li><a href="./">R Notes</a></li>
       after: |
@@ -177,6 +177,7 @@ You do NOT need the three dashes `---` in `_output.yml`. In this case, all forma
 
     - `section` splits the file by the second-level headers.
     - `chapter+number` and `section+number`: the chapter/section numbers will be prepended to the HTML filenames. For example: if using `chapter` or `section`, the HTML file names will be `introduction.html`, `literature.html`, etc.; but with the numbering setting, the HTML file names will be `1-introduction.html`, `2-literature.html`, etc.
+    - I prefer `section+number` as it orders all html in the book's section order.
 
 - The [`includes` option](https://bookdown.org/yihui/bookdown/yaml-options.html) allows you to insert arbitrary custom content before and/or after the body of the output.
 
@@ -280,6 +281,14 @@ language:
   ui:
     chapter_name: "Chapter "
 ```
+
+Note that you don't need to manually create the `docs` folder, bookdown will create one if it doesn't exists.
+
+- After you serve your site locally, all supporting files will be output to `docs`. Be sure to add one `.nojekyll` file in `docs` to tell GitHub that your website is not to be built via Jekyll. 
+
+- Because bookdown only overwrites existing files and does not delete unused ones, you can simply delete the `docs` folder so that bookdown will recreate everything necessary without any redundancy. 
+    
+    Remember to recreate `.nojekyll` too after bookdown has created the new `docs`.
 
 --------------------------------------------------------------------------------
 

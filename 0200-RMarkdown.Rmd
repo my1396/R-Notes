@@ -4,7 +4,7 @@
 knitr::opts_chunk$set(eval=FALSE, echo=FALSE)
 ```
 
-# Knit Rmd
+# Rmd
 
 **R Markdown** is a powerful tool for combining analysis and reporting into the same document. R Markdown has grown substantially from a package that supports a few output formats, to an extensive and diverse ecosystem that supports the creation of books, blogs, scientific articles, websites, and even resumes.
 
@@ -16,7 +16,7 @@ Nice documentations
 - **`bookdown`** package CRAN
     - [Package CRAN page](https://cran.r-project.org/web/packages/bookdown/index.html)
     - [Reference manual](https://cran.r-project.org/web/packages/bookdown/bookdown.pdf)
-- [R markdown: The definitive guide.](https://bookdown.org/yihui/rmarkdown)  provides detailed references
+- [R markdown: The definitive guide.](https://bookdown.org/yihui/rmarkdown)  provides detailed references; GitHub repo [HERE](https://github.com/rstudio/rmarkdown-book).
 - [R markdown cookbook](https://bookdown.org/yihui/rmarkdown-cookbook/): concise and covers essential functions, with examples.
 - [Authoring Books with R Markdown](https://bookdown.org/yihui/bookdown/): with a focus on `bookdown`.
 
@@ -37,7 +37,7 @@ A:
 
 --------------------------------------------------------------------------------
 
-<h2>YAML metadata</h2>
+## YAML metadata
 
 Q: What is YAML?  \
 A: YAML is a human-friendly data serialization language for all programming languages. YAML stands for “Yet Another Markup Language.” 
@@ -52,7 +52,7 @@ A: It is placed at the very beginning of the document and is read by each of Pan
 
 YAML also called header and front matter.
 
-See [HERE](https://github.com/hao203/rmarkdown-YAML.git) for commonly used YAML metadata (header) in different R Markdown output formats.
+See *R Markdown YAML metadata (header) tutorial with examples* by `hao203` [HERE](https://github.com/hao203/rmarkdown-YAML.git) for commonly used YAML metadata (header) in different R Markdown output formats.
 
 YAML can set values of the template variables, such as `title`, `author`, and `date` of the document. 
 
@@ -178,6 +178,10 @@ What bookdown is very powerful for is that it compiles books. Book formats:
 
     1. The `header-includes` option loads LaTeX packages.
 
+       Note that `header-includes` is a top-level option that align with `output`.
+
+       
+
     ```markdown
     ---
     output: pdf_document
@@ -193,11 +197,11 @@ What bookdown is very powerful for is that it compiles books. Book formats:
     ```
 
     <img src="https://drive.google.com/thumbnail?id=1CNHWeOh7iz_HUh4pBgM99jFzl59csyEC&sz=w1000" alt="latex packages in rmd" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
-    
+
     [**Common `header-includes`:**](https://github.com/hao203/rmarkdown-YAML?tab=readme-ov-file#header-includes)
-    
+
     - Chinese/Japanese support
-    
+
     ````markdown
     ---
     output: pdf_document
@@ -205,10 +209,10 @@ What bookdown is very powerful for is that it compiles books. Book formats:
       - \usepackage{ctex}
     ---
     ````
-    
+
 
     2. Alternatively, use `extra_dependencies` to  list a character vector of LaTeX packages. This is useful if you need to load multiple packages:
-
+    
     ```markdown
     ---
     title: "Untitled"
@@ -217,9 +221,9 @@ What bookdown is very powerful for is that it compiles books. Book formats:
         extra_dependencies: ["bbm", "threeparttable"]
     ---
     ```
-
+    
     If you need to specify options when loading the package, you can add a second-level to the list and provide the options as a list:
-
+    
     ```markdown
     ---
     title: "Untitled"
@@ -231,9 +235,9 @@ What bookdown is very powerful for is that it compiles books. Book formats:
           lmodern: null
     ---
     ```
-
+    
     Here are some examples of LaTeX packages you could consider using within your report:
-
+    
     - [pdfpages](https://ctan.org/pkg/pdfpages): Include full PDF pages from an external PDF document within your document.
     - [caption](https://ctan.org/pkg/caption): Change the appearance of caption subtitles. For example, you can make the figure title italic or bold.
     - [fancyhdr](https://ctan.org/pkg/fancyhdr): Change the style of running headers of all pages.
@@ -298,13 +302,60 @@ ref:
 
 --------------------------------------------------------------------------------
 
-### Compile an Rmd {.unlisted .unnumbered}
+### Render Rmd
 
-You can have more than output formats for your Rmd. For example, you want both the html and pdf output.
+When you click the `Knit` button (⇧⌘K) in RStudio, generally two processes happen: 
+
+1. The `.Rmd` file is fed to `knitr`, which executes all of the R code chunks and creates a new markdown (`.md`) document which includes the R code and its output.
+2. The `.md` file is then processed by [pandoc](http://pandoc.org/) which is responsible for creating the finished format, e.g., HTML, PDF, MS_Word.
+   - `.md` files can be directly converted to html, but
+   - `.md` to pdf is time-consuming. It first generates `.tex`, then call the LaTeX engine to convert to pdf.
+
+<img src="https://d33wubrfki0l68.cloudfront.net/61d189fd9cdf955058415d3e1b28dd60e1bd7c9b/9791d/images/rmarkdownflow.png" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:100%;" />
+
+There is one function that can do the processes mentioned above: `rmarkdown::render`.
+
+`rmarkdown::render(input, output_format = NULL, output_file = NULL, output_dir = NULL, output_options = NULL, output_yaml = NULL)`
+
+| Arguments        | Definition                                                   |
+| ---------------- | ------------------------------------------------------------ |
+| `output_format`  | - `"all"` will render all formats define within the file<br />- Name of a format, e.g., `html_document`, will render to that single format<br />- An output format object, e.g., `html_document(toc = TRUE, toc_depth = 2, includes = includes(before_body = "header.htm"))`, where you can pass on the argument |
+| `output_options` | - **List** of output options that can override the options specified in metadata (e.g could be used to force `self_contained` or `mathjax = "local"`). <br />- Note that this is <span style='color:#00CC66'>only valid when the output format is read from **metadata**</span> (i.e. not a custom format object passed to output_format).<br />- `output_options` cannot work together with `xxx_document()`. |
+| `output_yaml`    | Paths to YAML files specifying output formats and their configurations. The first existing one is used. If none are found, then the function searches YAML files specified to the `output_yaml` top-level parameter in the YAML front matter, `_output.yml` or `_output.yaml`, and then uses the first existing one. |
+
+Use example of `render`
+
+```r
+render("0208-Rmd-GHpage.Rmd", 
+	bookdown::pdf_document2(
+		latex_engine = "xelatex",
+		template = "latex/template.tex",
+		includes = includes(
+			in_header = "latex/preamble.tex",
+  		    before_body = "latex/before_body.tex")
+		))
+
+# This does NOT work as `output_options` is only valid when the format is not an output format object "xxx_document()"
+render("0208-Rmd-GHpage.Rmd", 
+	bookdown::pdf_document2(
+		latex_engine = "xelatex",
+		template = "latex/template.tex"), 
+	output_options = list(
+		includes = includes(
+			in_header = "latex/preamble.tex",
+  		    before_body = "latex/before_body.tex")
+		))
+```
+
+
+
+___
+
+You can have more than one output formats for your Rmd. For example, you want both the html and pdf output.
 
 When you render the Rmd with `rmarkdown::render()`, it will use the **first output format you specify in the YAML metadata** (if it is missing, the default is `html_document`).
 
-do not want to use the first one, you can specify the one you want in the second argument, e.g., for an Rmd document `foo.Rmd` with the metadata:
+do not want to use the first one, you can specify the one you want in the second argument, e.g., for an Rmd document `input.Rmd` with the metadata:
 
 ```yml
 output:
@@ -317,7 +368,14 @@ output:
 You can render it to PDF via:
 
 ```r
-rmarkdown::render('foo.Rmd', 'pdf_document')
+# Render pdf
+rmarkdown::render('input.Rmd', 'pdf_document')
+
+# Render multiple formats
+render("input.Rmd", c("html_document", "pdf_document"))
+
+# Render all formats defined
+rmarkdown::render('input.Rmd', 'all')
 ```
 
 - RStudio calls the function `rmarkdown::render()` to render the document in **a new R session**.
@@ -327,7 +385,7 @@ rmarkdown::render('foo.Rmd', 'pdf_document')
 
 --------------------------------------------------------------------------------
 
-### Document dependency {.unlisted .unnumbered}
+### Document dependency
 
 By default, R Markdown produces standalone HTML files with no external dependencies, using `data:`URIs to incorporate the contents of linked scripts, stylesheets, images, and videos. This means you can share or publish the file just like you share Office documents or PDFs. If you would rather keep dependencies in external files, you can specify `self_contained: false`.
 
@@ -390,8 +448,7 @@ The advantage of using the `extra_dependencies` argument over the `includes` arg
 
 ### Includes {.unlisted .unnumbered}
 
-
-**html output**
+#### HTML Output {.unnumbered}
 
 You can do more advanced customization of output by including additional HTML content or by replacing the core Pandoc template entirely. To include content in the document header or before/after the document body, you use the `includes` option as follows:
 
@@ -401,9 +458,10 @@ title: "Habits"
 output:
   html_document:
     includes:
-      in_header: header.html
-      before_body: doc_prefix.html
-      after_body: doc_suffix.html
+      in_header: header.html   # inject CSS and JavaScript code into the <head> tag
+      before_body: doc_prefix.html  # include a header that shows a banner or logo.
+      after_body: doc_suffix.html  # include a footer
+  template: template.html  # custom templates
 ---
 ```
 
@@ -422,7 +480,7 @@ An example `header.html` to load a MathJax extension `textmacros`.
 
 --------------------------------------------------------------------------------
 
-**pdf output**
+#### PDF Output {.unnumbered}
 
 
 For example, to support Chinese characters.
@@ -436,9 +494,63 @@ In the main Rmd:
 output:
   pdf_document:
     includes:
-      in_header: preamble.tex
+      in_header: latex/preamble.tex
+      before_body: latex/before_body.tex
+      after_body: latex/after_body.tex
 ---
 ````
+
+If you want to add anything to the preamble, you have to use the `includes` option of `pdf_document`. This option has three sub-options: 
+
+- `in_header`: loading necessary packages
+
+- `before_body`:
+
+  - Styling that has the highest priority (as it will be loaded latest; if you put in `in_header`, it might be overridden by default settings)
+  - Dedication page like "The books is dedicated to ..." (此书献给…)
+
+  An example of `before_body.tex`:
+
+  ```latex
+  % Styling that has the highest priority
+  \let\tightlist\relax % disable `\tightlist`
+  \setlength{\abovedisplayskip}{-5pt}
+  \setlength{\abovedisplayshortskip}{-5pt}
+  
+  % book dedication page
+  \thispagestyle{empty}
+  
+  \begin{center}
+  献给……
+  
+  呃，爱谁谁吧
+  \end{center}
+  ```
+  
+  The default bookdown uses <span style='color:#FF9900'>**`\tightlist`**</span> for all bullet lists, setting `itemsep=0pt` and `parskip=0pt`, aim for "compact lists." See the following definition:
+  
+  ```r
+  \providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+  ```
+  
+  I personally don't like the compact list setting, so I disable it with `\let\tightlist\relax`. To prevent it from being overridden, I put it in `before_body.tex` instead of `preamble.tex`.
+    
+- `after_body`. 
+
+Each of them takes one or multiple file paths. The file(s) specified in `in_header` will be added to the preamble. The files specified in `before_body` and `after_body` are added before and after the document body, respectively.
+
+```latex
+\documentclass{article}
+% preamble
+\begin{document}
+% before_body
+% body
+% after_body
+\end{document}
+```
+
+<img src="images/preamble.png" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:40%;" />
 
 In `preamble.tex`:
 
@@ -447,7 +559,7 @@ In `preamble.tex`:
 \setCJKmainfont{Noto Sans CJK SC}
 ```
 
-Alternatively, you can use `header-includes` but with less flexibility to change options:
+**Alternatively**, you can use `header-includes` but with less flexibility to change options:
 
 ````markdown
 ---
@@ -457,8 +569,98 @@ header-includes:
 ---
 ````
 
-Ref: <https://github.com/hao203/rmarkdown-YAML?tab=readme-ov-file#chinesejapanese-support>
+Q: `includes` vs. `header-includes`, which one is better to use for loading LaTeX packages?
 
+A: Another way to add code to the preamble is to pass it directly to the `header-includes` field in the YAML frontmatter. The advantage of using `header-includes`is that you can keep everything in one R Markdown document. 
+
+However, if your report is to be generated in *multiple output formats*, we still recommend that you **use the `includes` method**, because the `header-includes` field is unconditional, and will be included in non-LaTeX output documents, too. By comparison, the `includes` option is only applied to the `pdf_document` format.
+
+
+
+Ref: 
+
+<https://github.com/hao203/rmarkdown-YAML?tab=readme-ov-file#chinesejapanese-support>
+
+<https://bookdown.org/yihui/rmarkdown-cookbook/latex-preamble.html>
+
+--------------------------------------------------------------------------------
+
+#### `header-includes` {.unnumbered}
+
+Tex style and package loading can also put in `header-includes`.
+
+Ex.1
+
+```markdown
+---
+output: pdf_document
+header-includes:
+ - \usepackage{fancyhdr}
+ - \pagestyle{fancy}
+ - \usepackage{ctex} #TeX package for  Chinese
+ - \fancyhead[L]{MANUSCRIPT AUTHORS}
+ - \fancyhead[R]{MANUSCRIPT SHORT TITLE}
+ - \usepackage{lineno} # TeX package for line numbers
+ - \linenumbers
+---
+```
+
+Ex.2
+
+```markdown
+---
+title: Adding a Logo to LaTeX Title
+author: Michael Harper
+date: December 7th, 2018
+output: pdf_document
+header-includes:
+  - \usepackage{titling}
+  - \pretitle{\begin{center}
+    \includegraphics[width=2in,height=2in]{logo.jpg}\LARGE\\}
+  - \posttitle{\end{center}}
+---
+```
+
+Ex.3
+
+To override or extend some CSS for just one document, include for example:
+
+```markdown
+---
+output: html_document
+header-includes: |
+  <style>
+  blockquote {
+    font-style: italic;
+  }
+  tr.even {
+    background-color: #f0f0f0;
+  }
+  td, th {
+    padding: 0.5em 2em 0.5em 0.5em;
+  }
+  tbody {
+    border-bottom: none;
+  }
+  </style>
+---
+```
+
+--------------------------------------------------------------------------------
+
+### Change Font {.unlisted .unnumbered}
+
+
+The default font is `\usepackage{lmodern}` in bookdown.
+
+Can specify alternative fonts in `preamble.tex` as follows:
+
+```latex
+\usepackage{fontspec}
+\setmainfont{Charter}
+```
+
+Fonts known to LuaTeX or XeTEX may be loaded by their standard names as you'd speak them out loud, such as Times New Roman or Adobe Garamond. 'Known to' in this case generally means 'exists in a standard fonts location' such as `~/Library/Fonts` on macOS, or `C:\Windows\Fonts` on Windows. In LuaTEX, fonts found in the TEXMF tree can also be loaded by name. In XeTEX, fonts found in the TEXMF tree can be loaded in Windows and Linux, but not on macOS.
 
 --------------------------------------------------------------------------------
 

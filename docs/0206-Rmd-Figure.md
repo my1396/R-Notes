@@ -1,5 +1,17 @@
 ## Figures
 
+
+The idea is to generate the figure, output to local, then reload using the following code. 
+
+- You can let the code output to document directly, but you cannot scale with `out.width="20%"` easily. The text would be scaled unexpectedly too small.
+
+~~~~markdown
+```{r car-plot, eval=TRUE, echo=FALSE, out.width="20%", fig.cap="Caption here." }
+knitr::include_graphics(img1_path) 
+```
+~~~~
+
+
 Specify code chunk options `fig.width` and `fig.height` for R-generated figures only.
 
 - Default is `fig.width = 7` and `fig.height = 5` (in inches, though actual width will depend on screen resolution). Remember that these settings will default to `rmarkdown` values, not `knitr` values.
@@ -19,11 +31,7 @@ Specify code chunk options `fig.width` and `fig.height` for R-generated figures 
         
     - A caveat with `outwidth`is that the <span style='color:#00CC66'>axis labels and ticks will be so small</span> and hard to read.
 
-~~~~markdown
-```{r car-plot, eval=TRUE, echo=FALSE, out.width="20%", fig.cap="Caption here." }
-knitr::include_graphics(img1_path) 
-```
-~~~~
+
 
 `fig.cap=NULL`  specify figure captions. Must provide `fig.cap` if you need to cross reference the figure.
 
@@ -39,7 +47,7 @@ See <span style='color:#00CC66'>`Fig. \@ref(fig:car-plot)`</span>  use code chun
 
 
 
-<span style='color:#00CC66'>**Suggested practice**</span> so that you have correct aspect ratio and automatically scaled text and labels in figures.
+<span style='color:#00CC66'>**Suggested practice**</span> so that you have correct aspect ratio and automatically scaled text and labels in figures. ✅
 
 1. Generate the figure and save to local
 

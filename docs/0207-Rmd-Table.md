@@ -1,3 +1,9 @@
+---
+output:
+  bookdown::pdf_document2:
+    keep_tex: true
+---
+
 ## Tables
 
 <span style='color:#00CC66'>**Cross reference tables**</span>
@@ -117,7 +123,7 @@ To show the `tibble` information (number of row/columns, and group information) 
 ```markdown
 ---
 title: "Use caption with df_print set to page"
-date: "2025-04-14"
+date: "2025-04-15"
 output:
   bookdown::html_document2:
     df_print: paged
@@ -237,8 +243,11 @@ apply(data[,-1], 2, get_stat) %>%
 ````
 
 - `type` 	specify output table format. Possible values: `latex` (default for latex code), `html`, and `text`. Need to specify to `html` in html outputs.
+
 - `digits`     an integer that indicates how many decimal places should be used. A value of `NULL` indicates that no rounding should be done at all, and that all available decimal places should be reported. Defaults to 3 digits.
+
 - `notes`       a character vector containing notes to be included below the table.
+
 - `notes.append=FALSE`  a logical value that indicates whether `notes` should be appended to the standard note(s) associated with the table's `style` (typically an explanation of significance cutoffs). 
   - Defaults to `TRUE`.
   - If the argument's value is set to `FALSE`, the character strings provided in `notes` will replace any existing/default notes.
