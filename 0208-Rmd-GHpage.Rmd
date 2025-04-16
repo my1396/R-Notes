@@ -146,10 +146,14 @@ If you want to have the pdf output, you add `pdf_document` to your document's YA
 
 ```r
 render("0207-Rmd-Table.Rmd", 
-	bookdown::pdf_document2(
-		latex_engine = "lualatex",
-		keep_tex = TRUE), 
-	output_options = list(includes(in_header = "preamble.tex")))
+bookdown::pdf_document2(
+    latex_engine = "xelatex",
+    keep_tex = TRUE,
+    includes = includes(
+       in_header = "latex/preamble.tex",
+       before_body= "latex/before_body.tex"))
+    )
+# `output_options` is not compatible with output format function object
 ```
 
 Note:
