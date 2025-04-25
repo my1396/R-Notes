@@ -57,7 +57,7 @@ $width
 | Option        | Description                                                  |
 | ------------- | ------------------------------------------------------------ |
 | width         | Controls the maximum number of columns <u>on a line</u> used in printing vectors, matrices and arrays, and when filling by `cat`. Defaults to 80.<br />Don't change this if you want to print more columns. Use <span style='color:#00CC66'>`options(tibble.width=400)`</span> instead. |
-| pillar.sigfig | Tibbles print numbers with three significant digits by default, switching to scientific notation if the available space is too small.<br />`options(pillar.sigfig = 4)` to increase the number of digits printed out |
+| pillar.sigfig | Tibbles print numbers with <span style='color:#00CC66'>**three** significant digits</span> by default, switching to scientific notation if the available space is too small.<br />`options(pillar.sigfig = 4)` to increase the number of digits printed out. |
 
 
 
@@ -109,6 +109,8 @@ I store my `Rprofile` and `Renviron` in non-default places (i.e. `~/.config/R`).
 - Understanding R's startup
 
   https://rviews.rstudio.com/2017/04/19/r-for-enterprise-understanding-r-s-startup/
+  
+  <https://docs.posit.co/ide/user/ide/guide/environments/r/managing-r.html>
 
 
 
@@ -116,14 +118,24 @@ I store my `Rprofile` and `Renviron` in non-default places (i.e. `~/.config/R`).
 
 
 
+___
 
+### `.Rprofile`
 
 What is `.Rprofile`?
 
-`.Rprofile` is a startup file to set <u>options</u> and <u>environment variables</u>. `.Rprofile` files can be either at the user or project level. 
+`.Rprofile` is a startup file to set <span style='color:#00CC66'><u>options</u> and <u>environment variables</u></span>. `.Rprofile` files can be either at the user or project level. 
 
 - User-level `.Rprofile` files live in the base of the user's <span style='color:#00CC66'>home directory</span>, and 
 - project-level `.Rprofile` files live in the base of the project directory. 
+
+R will source only one `.Rprofile` file.  If there is a project-level `.Rprofile`, the user-level file will <span style='color:#FF9900'>NOT</span> be sourced, i.e., the project-level config file take priority.
+
+So if you have both a project-specific `.Rprofile` file and a user `.Rprofile` file that you want to use, you explicitly source the user-level `.Rprofile` at the top of your project-level `.Rprofile` with `source("~/.Rprofile")`.
+
+`.Rprofile` files are sourced as regular R code, so setting environment variables must be done inside a `Sys.setenv(key = "value")` call.
+
+--------------------------------------------------------------------------------
 
 Quitting R will erase the default theme setting. If you load `ggplot2` in a future session it will revert to the default gray theme. If you’d like for `ggplot2` to always use a different theme (either yours or one of the built-in ones), you can set a load hook and put it in your `.Rprofile` file. For example, the following hook sets the default theme to be `theme_minimal()` every time the `ggplot2` package is loaded.
 
@@ -135,6 +147,28 @@ setHook(packageEvent("ggplot2", "onLoad"),
 Of course, you can always override this default theme by adding a theme object to any of your plots that you construct in `ggplot2`.
 
 
+
+--------------------------------------------------------------------------------
+
+### `.Renviron`
+
+`.Renviron` is a user-controllable file that can be used to create <span style='color:#00CC66'>environment variables</span>. This is especially useful to avoid including credentials like API keys inside R scripts. This file is written in a key-value format, so environment variables are created in the format:
+
+```
+Key1=value1
+Key2=value2
+...additional key=value pairs
+```
+
+And then `Sys.getenv("Key1")` will return `"value1"` in an R session.
+
+Like with the `.Rprofile` file, `.Renviron` files can be at either the user or project level. If there is a project-level `.Renviron`, the user-level file will not be sourced. The [usethis](https://usethis.r-lib.org/) package includes a helper function for editing `.Renviron` files from an R session with `usethis::edit_r_environ()`.
+
+The `.Renviron` file is most useful for defining sensitive information such as API keys (such as GitHub, Twitter, or Posit Connect) as well as R specific environment variables like the history size (`R_HISTSIZE=100000`) and default library locations `R_LIBS_USER`.
+
+
+
+--------------------------------------------------------------------------------
 
 [Rcpp compilation breaks in R 4.1.0](https://community.rstudio.com/t/rcpp-compilation-breaks-in-r-4-1-0-running-on-big-sur-11-4/109744)
 

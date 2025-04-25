@@ -575,6 +575,8 @@ When you quit a project, `.Rhistory` is automatically written to the project dir
 
 --------------------------------------------------------------------------------
 
+## Pane Layout
+
 **Pop out an editor**
 
 Click the `Show in New Window` button in any source editor tab.
@@ -611,6 +613,14 @@ Ref: [RStudio Pane Layout][pane-layout]
 - Show whitespace characters. 
 
   In "Tools -> Global Options -> Code -> Display", check "Show whitespace characters". This will let you see spaces and newlines in the editor.
+
+
+--------------------------------------------------------------------------------
+
+Q: How to show Toolbar? \
+A: View > Show Toolbar.
+
+<img src="images/toolbar.png" width="100%" />
 
 
 

@@ -241,7 +241,7 @@ You do NOT need the three dashes `---` in `_output.yml`. In this case, all forma
     
 bookdown 中文书籍 `_output.yml` 范例: <https://github.com/yihui/bookdown-chinese/blob/96d526572f0c6648d06c2d4bebf57c5fb4eafce3/_output.yml>
 
-- You can set up a tex template. 
+- You can set up a **tex template**. 
 
     Yihui sets up the Chinese support in the template file (`latex/template.tex`).
 
@@ -257,6 +257,10 @@ bookdown 中文书籍 `_output.yml` 范例: <https://github.com/yihui/bookdown-c
       citation_package: natbib
       template: latex/template.tex
     ```
+    
+    The base format for `bookdown::pdf_book` is `rmarkdown::pdf_document`.
+    
+    `dev`: Graphics device to use for figure output, defaults to `pdf`.
 
 -----------------------------------------------------------------------------
 
@@ -283,6 +287,10 @@ language:
 ```
 
 Note that you don't need to manually create the `docs` folder, bookdown will create one if it doesn't exists.
+
+- `delete_merged_file`: whether to delete the main Rmd file after the book is successfully rendered. An Rmd file that is merged from all chapters; by default, it is named `_main.Rmd`.
+
+- [`before_chapter_script`](https://github.com/rstudio/bookdown/issues/1252#issuecomment-913530117): one or multiple R scripts to be executed before each chapter. 
 
 - After you serve your site locally, all supporting files will be output to `docs`. Be sure to add one `.nojekyll` file in `docs` to tell GitHub that your website is not to be built via Jekyll. 
 

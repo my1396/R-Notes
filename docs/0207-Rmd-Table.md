@@ -1,9 +1,3 @@
----
-output:
-  bookdown::pdf_document2:
-    keep_tex: true
----
-
 ## Tables
 
 <span style='color:#00CC66'>**Cross reference tables**</span>
@@ -123,7 +117,7 @@ To show the `tibble` information (number of row/columns, and group information) 
 ```markdown
 ---
 title: "Use caption with df_print set to page"
-date: "2025-04-16"
+date: "2025-04-25"
 output:
   bookdown::html_document2:
     df_print: paged

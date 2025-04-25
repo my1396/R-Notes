@@ -29,6 +29,9 @@ If you execute the `rmarkdown::render_site()` function from within the directory
 ### `_site.yml` config {.unnumbered}
 
 `_site.yml` is a configuration file. It contains various common elements you want to include on all pages (e.g., output options, CSS styles, header and footer elements, etc.). 
+
+`_site.yml` is equivalent to the combination of `_output.yml` and `_bookdown.yml` in `bookdown`.
+
 A `_site.yml` example:
 
 ```yml

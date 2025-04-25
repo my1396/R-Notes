@@ -135,7 +135,7 @@
 
 \title{R Notes}
 \author{Menghan Yuan}
-\date{2025-04-16}
+\date{2025-04-25}
 
 \usepackage{amsthm}
 \newtheorem{theorem}{Theorem}[chapter]
@@ -1249,6 +1249,8 @@ When you quit a project, \texttt{.Rhistory} is automatically written to the proj
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
+\section{Pane Layout}\label{pane-layout}
+
 \textbf{Pop out an editor}
 
 Click the \texttt{Show\ in\ New\ Window} button in any source editor tab.
@@ -1284,6 +1286,13 @@ Ref: \href{https://docs.posit.co/ide/user/ide/guide/ui/ui-panes.html\#:~:text=fo
 
   In ``Tools -\textgreater{} Global Options -\textgreater{} Code -\textgreater{} Display'', check ``Show whitespace characters''. This will let you see spaces and newlines in the editor.
 \end{itemize}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+Q: How to show Toolbar?\\
+A: View \textgreater{} Show Toolbar.
+
+\includegraphics[width=1\linewidth]{images/toolbar}
 
 References:
 
@@ -1375,7 +1384,7 @@ Description
 \bottomrule\noalign{}
 \endlastfoot
 width & Controls the maximum number of columns on a line used in printing vectors, matrices and arrays, and when filling by \texttt{cat}. Defaults to 80.Don't change this if you want to print more columns. Use {\texttt{options(tibble.width=400)}} instead. \\
-pillar.sigfig & Tibbles print numbers with three significant digits by default, switching to scientific notation if the available space is too small.\texttt{options(pillar.sigfig\ =\ 4)} to increase the number of digits printed out \\
+pillar.sigfig & Tibbles print numbers with {\textbf{three} significant digits} by default, switching to scientific notation if the available space is too small.\texttt{options(pillar.sigfig\ =\ 4)} to increase the number of digits printed out. \\
 \end{longtable}
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
@@ -1437,13 +1446,19 @@ I store my \texttt{Rprofile} and \texttt{Renviron} in non-default places (i.e.~\
   Understanding R's startup
 
   \url{https://rviews.rstudio.com/2017/04/19/r-for-enterprise-understanding-r-s-startup/}
+
+  \url{https://docs.posit.co/ide/user/ide/guide/environments/r/managing-r.html}
 \end{itemize}
 
 \href{https://usethis.r-lib.org/reference/index.html}{\texttt{usethis}} is a workflow package: it automates repetitive tasks that arise during project setup and development, both for R packages and non-package projects.
 
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{\texorpdfstring{\texttt{.Rprofile}}{.Rprofile}}\label{rprofile}
+
 What is \texttt{.Rprofile}?
 
-\texttt{.Rprofile} is a startup file to set options and environment variables. \texttt{.Rprofile} files can be either at the user or project level.
+\texttt{.Rprofile} is a startup file to set {options and environment variables}. \texttt{.Rprofile} files can be either at the user or project level.
 
 \begin{itemize}
 \tightlist
@@ -1452,6 +1467,14 @@ What is \texttt{.Rprofile}?
 \item
   project-level \texttt{.Rprofile} files live in the base of the project directory.
 \end{itemize}
+
+R will source only one \texttt{.Rprofile} file. If there is a project-level \texttt{.Rprofile}, the user-level file will {NOT} be sourced, i.e., the project-level config file take priority.
+
+So if you have both a project-specific \texttt{.Rprofile} file and a user \texttt{.Rprofile} file that you want to use, you explicitly source the user-level \texttt{.Rprofile} at the top of your project-level \texttt{.Rprofile} with \texttt{source("\textasciitilde{}/.Rprofile")}.
+
+\texttt{.Rprofile} files are sourced as regular R code, so setting environment variables must be done inside a \texttt{Sys.setenv(key\ =\ "value")} call.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
 Quitting R will erase the default theme setting. If you load \texttt{ggplot2} in a future session it will revert to the default gray theme. If you'd like for \texttt{ggplot2} to always use a different theme (either yours or one of the built-in ones), you can set a load hook and put it in your \texttt{.Rprofile} file. For example, the following hook sets the default theme to be \texttt{theme\_minimal()} every time the \texttt{ggplot2} package is loaded.
 
@@ -1463,6 +1486,26 @@ Quitting R will erase the default theme setting. If you load \texttt{ggplot2} in
 \end{Shaded}
 
 Of course, you can always override this default theme by adding a theme object to any of your plots that you construct in \texttt{ggplot2}.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{\texorpdfstring{\texttt{.Renviron}}{.Renviron}}\label{renviron}
+
+\texttt{.Renviron} is a user-controllable file that can be used to create {environment variables}. This is especially useful to avoid including credentials like API keys inside R scripts. This file is written in a key-value format, so environment variables are created in the format:
+
+\begin{verbatim}
+Key1=value1
+Key2=value2
+...additional key=value pairs
+\end{verbatim}
+
+And then \texttt{Sys.getenv("Key1")} will return \texttt{"value1"} in an R session.
+
+Like with the \texttt{.Rprofile} file, \texttt{.Renviron} files can be at either the user or project level. If there is a project-level \texttt{.Renviron}, the user-level file will not be sourced. The \href{https://usethis.r-lib.org/}{usethis} package includes a helper function for editing \texttt{.Renviron} files from an R session with \texttt{usethis::edit\_r\_environ()}.
+
+The \texttt{.Renviron} file is most useful for defining sensitive information such as API keys (such as GitHub, Twitter, or Posit Connect) as well as R specific environment variables like the history size (\texttt{R\_HISTSIZE=100000}) and default library locations \texttt{R\_LIBS\_USER}.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
 \href{https://community.rstudio.com/t/rcpp-compilation-breaks-in-r-4-1-0-running-on-big-sur-11-4/109744}{Rcpp compilation breaks in R 4.1.0}
 
@@ -4076,7 +4119,7 @@ To show the \texttt{tibble} information (number of row/columns, and group inform
 \begin{Highlighting}[]
 \CommentTok{{-}{-}{-}}
 \AnnotationTok{title:}\CommentTok{ "Use caption with df\_print set to page"}
-\AnnotationTok{date:}\CommentTok{ "2025{-}04{-}16"}
+\AnnotationTok{date:}\CommentTok{ "2025{-}04{-}25"}
 \AnnotationTok{output:}
 \CommentTok{  bookdown::html\_document2:}
 \CommentTok{    df\_print: paged}
@@ -4707,6 +4750,9 @@ If you execute the \texttt{rmarkdown::render\_site()} function from within the d
 \addcontentsline{toc}{subsection}{\texttt{\_site.yml} config}
 
 \texttt{\_site.yml} is a configuration file. It contains various common elements you want to include on all pages (e.g., output options, CSS styles, header and footer elements, etc.).
+
+\texttt{\_site.yml} is equivalent to the combination of \texttt{\_output.yml} and \texttt{\_bookdown.yml} in \texttt{bookdown}.
+
 A \texttt{\_site.yml} example:
 
 \begin{Shaded}
@@ -5321,7 +5367,7 @@ bookdown 中文书籍 \texttt{\_output.yml} 范例: \url{https://github.com/yihu
 
 \begin{itemize}
 \item
-  You can set up a tex template.
+  You can set up a \textbf{tex template}.
 
   Yihui sets up the Chinese support in the template file (\texttt{latex/template.tex}).
 
@@ -5339,6 +5385,10 @@ bookdown 中文书籍 \texttt{\_output.yml} 范例: \url{https://github.com/yihu
 \AttributeTok{  }\FunctionTok{template}\KeywordTok{:}\AttributeTok{ latex/template.tex}
 \end{Highlighting}
 \end{Shaded}
+
+  The base format for \texttt{bookdown::pdf\_book} is \texttt{rmarkdown::pdf\_document}.
+
+  \texttt{dev}: Graphics device to use for figure output, defaults to \texttt{pdf}.
 \end{itemize}
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
@@ -5376,6 +5426,10 @@ bookdown 中文书籍 \texttt{\_output.yml} 范例: \url{https://github.com/yihu
 Note that you don't need to manually create the \texttt{docs} folder, bookdown will create one if it doesn't exists.
 
 \begin{itemize}
+\item
+  \texttt{delete\_merged\_file}: whether to delete the main Rmd file after the book is successfully rendered. An Rmd file that is merged from all chapters; by default, it is named \texttt{\_main.Rmd}.
+\item
+  \href{https://github.com/rstudio/bookdown/issues/1252\#issuecomment-913530117}{\texttt{before\_chapter\_script}}: one or multiple R scripts to be executed before each chapter.
 \item
   After you serve your site locally, all supporting files will be output to \texttt{docs}. Be sure to add one \texttt{.nojekyll} file in \texttt{docs} to tell GitHub that your website is not to be built via Jekyll.
 \item
