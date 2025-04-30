@@ -88,6 +88,7 @@ Random Forests Algorithms are not ideal in the following situations:
 - Extrapolation: Random Forest regression is not ideal in the extrapolation of data. Unlike linear regression, which uses existing observations to estimate values beyond the observation range. 
 - Sparse Data: Random Forest does not produce good results when the data is sparse. In this case, the subject of features and bootstrapped sample will have an invariant space. This will lead to unproductive spills, which will affect the outcome.
 
+--------------------------------------------------------------------------------
 
 **FAQ**
 
@@ -103,6 +104,9 @@ A: Entropy/gini or any other loss function you want.
 
 Q: Difference btw RF and a linear model? \
 A: A major difference is that a decision tree does not have "parameters", whereas the linear models need to create a functional form and find the optimal parameters. 
+
+Q: Is RF regression a "true" regression? \
+A: Random forests discretize continuous variables since they are based on decision trees, which function through recursive binary partitioning. But with sufficient data and sufficient splits, a step function with many small steps can approximate a smooth function. As for whether it is a "true" regression, this is somewhat semantic. After all, piecewise regression is regression too, but is also not smooth. As is any regression with a categorical predictor. [Source](https://stats.stackexchange.com/a/408284).
 
 --------------------------------------------------------------------------------
 
@@ -192,6 +196,11 @@ Code Source: <https://stats.stackexchange.com/a/287849>
 Fixed proportion sampling: <https://github.com/imbs-hl/ranger/issues/167>
 
 ___
+
+
+
+
+
 
 **References**:
 

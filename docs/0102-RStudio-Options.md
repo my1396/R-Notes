@@ -124,7 +124,7 @@ ___
 
 What is `.Rprofile`?
 
-`.Rprofile` is a startup file to set <span style='color:#00CC66'><u>options</u> and <u>environment variables</u></span>. `.Rprofile` files can be either at the user or project level. 
+`.Rprofile` is a startup file to set <span style='color:#00CC66'>**options**</span> and <span style='color:#00CC66'>**environment variables**</span>. `.Rprofile` files can be either at the user or project level. 
 
 - User-level `.Rprofile` files live in the base of the user's <span style='color:#00CC66'>home directory</span>, and 
 - project-level `.Rprofile` files live in the base of the project directory. 
@@ -152,7 +152,7 @@ Of course, you can always override this default theme by adding a theme object t
 
 ### `.Renviron`
 
-`.Renviron` is a user-controllable file that can be used to create <span style='color:#00CC66'>environment variables</span>. This is especially useful to avoid including credentials like API keys inside R scripts. This file is written in a key-value format, so environment variables are created in the format:
+`.Renviron` is a user-controllable file that can be used to create <span style='color:#00CC66'>**environment variables**</span>. This is especially useful to avoid including credentials like API keys inside R scripts. This file is written in a key-value format, so environment variables are created in the format:
 
 ```
 Key1=value1
