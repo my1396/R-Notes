@@ -4,13 +4,13 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>2.8 Options | R Notes</title>
+  <title>6.3 Neural Network | R Notes</title>
   <meta name="description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
 set in the _output.yml file.</p>" />
   <meta name="generator" content="bookdown 0.35 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="2.8 Options | R Notes" />
+  <meta property="og:title" content="6.3 Neural Network | R Notes" />
   <meta property="og:type" content="book" />
   
   <meta property="og:description" content="<p>This is a minimal example of using the bookdown package to write a book.
@@ -19,7 +19,7 @@ set in the _output.yml file.</p>" />
   <meta name="github-repo" content="my1396/R-Notes" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="2.8 Options | R Notes" />
+  <meta name="twitter:title" content="6.3 Neural Network | R Notes" />
   
   <meta name="twitter:description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
@@ -36,8 +36,8 @@ set in the _output.yml file.</p>" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   <link rel="shortcut icon" href="images/r-project-favicon.ico" type="image/x-icon" />
-<link rel="prev" href="2.7-pane-layout.html"/>
-<link rel="next" href="2.9-r-startup.html"/>
+<link rel="prev" href="6.2-random-forest.html"/>
+
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -288,83 +288,30 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
         }
     </script>
 </head>
-<div id="options" class="section level2 hasAnchor" number="2.8">
-<h2><span class="header-section-number">2.8</span> Options<a href="2.8-options.html#options" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p><strong><code>getOption(x)</code></strong> Allow the user to set and examine a variety of global <em>options</em> which affect the way in which <strong>R computes and displays its results.</strong> Use <code>getOption</code> to check default values of global options.</p>
+<div id="neural-network" class="section level2 hasAnchor" number="6.3">
+<h2><span class="header-section-number">6.3</span> Neural Network<a href="6.3-neural-network.html#neural-network" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Neural networks are made up objects called “layers” and “neurons” and these things connect to each other in a specific way. Each layer has some number of neurons. For example, the first layer might have 10 neurons, the second might have 15, and so on. The number of layers and the number of neurons in each layer is a “hyperparameter”, the user picks how many of each. Let’s take a look at a single neuron.</p>
+<p><span class="math display">\[
+v_3^{(1)} = g(\boldsymbol{w}_3^{(1)}\boldsymbol{x} + b_3^{(1)})
+\]</span></p>
 <ul>
-<li><code>x</code> a <span style="color:#00CC66">character string </span>holding an option name, must be <span style="color:#00CC66">quoted in quotes</span></li>
-<li>Can only query one option at a time. If multiple options are given, will return the value of the first option.</li>
+<li><p>The LHS, <span class="math inline">\(v_3^{(1)}\)</span>, will be the output. The superscript <span class="math inline">\((1)\)</span> refers to the layer number; the subscript <span class="math inline">\(3\)</span> refers to the neuron.</p>
+<p>An output here means just a single number. If we have say 15 neurons (subscript) for this first layer (superscript), then we will have 15 numbers come out of this first layer: <span class="math inline">\(\boldsymbol{v^{(1)}} = \{v^{(1)}_{1}, v^{(1)}_{1}, ..., v^{(1)}_{15}\}\)</span> where the bolded <span class="math inline">\(v\)</span> means a vector.</p></li>
+<li><p><span class="math inline">\(\boldsymbol{x}\)</span> is our input vector.</p></li>
+<li><p><span class="math inline">\(\boldsymbol{w}\)</span> is the weight/coefficient vector.</p></li>
+<li><p><span class="math inline">\(b\)</span> is a bias or the intercept term, shifting the value of <span class="math inline">\(\boldsymbol{w}\cdot\boldsymbol{x}\)</span> up or down.</p></li>
+<li><p><span class="math inline">\(g\)</span> refers to a “non-linear” function, often called as the “activation function”.</p></li>
 </ul>
-<p><strong><code>options(...)</code></strong> query and modify global options.</p>
-<ul>
-<li><p><code>...</code> any options can be defined, using <code>name = value</code>.</p>
-<p>Note that you do <span style="color:#00CC66">NOT need to quote your option name</span> here!</p></li>
-<li><p><code>options()</code> with no arguments returns a list with the current values of the options.</p></li>
-<li><p><code>options("name")</code> can be used to examine options’ current value too; return a <em>list</em>, whereas <code>getOption("name")</code> returns the value only.</p>
-<ul>
-<li><p>Note that you need to quote the option name when you do queries.</p></li>
-<li><p>You can query more than one options at a time.</p>
-<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="2.8-options.html#cb39-1" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">options</span>(<span class="st">&quot;width&quot;</span>, <span class="st">&quot;digits&quot;</span>)</span>
-<span id="cb39-2"><a href="2.8-options.html#cb39-2" tabindex="-1"></a><span class="sc">$</span>width</span>
-<span id="cb39-3"><a href="2.8-options.html#cb39-3" tabindex="-1"></a>[<span class="dv">1</span>] <span class="dv">90</span></span>
-<span id="cb39-4"><a href="2.8-options.html#cb39-4" tabindex="-1"></a></span>
-<span id="cb39-5"><a href="2.8-options.html#cb39-5" tabindex="-1"></a><span class="sc">$</span>digits</span>
-<span id="cb39-6"><a href="2.8-options.html#cb39-6" tabindex="-1"></a>[<span class="dv">1</span>] <span class="dv">7</span></span>
-<span id="cb39-7"><a href="2.8-options.html#cb39-7" tabindex="-1"></a></span>
-<span id="cb39-8"><a href="2.8-options.html#cb39-8" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">getOption</span>(<span class="st">&quot;width&quot;</span>, <span class="st">&quot;digits&quot;</span>)</span>
-<span id="cb39-9"><a href="2.8-options.html#cb39-9" tabindex="-1"></a>[<span class="dv">1</span>] <span class="dv">90</span></span></code></pre></div></li>
-</ul></li>
-</ul>
-<p><strong><code>?options</code></strong> to get the help page of global options. To check which options are available and their definitions.</p>
-<p><strong>Use examples</strong></p>
-<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="2.8-options.html#cb40-1" tabindex="-1"></a><span class="do">## Two ways checking default option values</span></span>
-<span id="cb40-2"><a href="2.8-options.html#cb40-2" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">options</span>(<span class="st">&quot;width&quot;</span>)</span>
-<span id="cb40-3"><a href="2.8-options.html#cb40-3" tabindex="-1"></a><span class="sc">$</span>width</span>
-<span id="cb40-4"><a href="2.8-options.html#cb40-4" tabindex="-1"></a>[<span class="dv">1</span>] <span class="dv">81</span></span>
-<span id="cb40-5"><a href="2.8-options.html#cb40-5" tabindex="-1"></a></span>
-<span id="cb40-6"><a href="2.8-options.html#cb40-6" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">getOption</span>(<span class="st">&quot;width&quot;</span>)</span>
-<span id="cb40-7"><a href="2.8-options.html#cb40-7" tabindex="-1"></a>[<span class="dv">1</span>] <span class="dv">81</span></span>
-<span id="cb40-8"><a href="2.8-options.html#cb40-8" tabindex="-1"></a></span>
-<span id="cb40-9"><a href="2.8-options.html#cb40-9" tabindex="-1"></a><span class="do">## Change option values</span></span>
-<span id="cb40-10"><a href="2.8-options.html#cb40-10" tabindex="-1"></a><span class="co"># use name=value</span></span>
-<span id="cb40-11"><a href="2.8-options.html#cb40-11" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">options</span>(<span class="at">width=</span><span class="dv">80</span>, <span class="at">digits=</span><span class="dv">15</span>) <span class="co"># set print width, digits to print for numeric values using name=value paris</span></span>
-<span id="cb40-12"><a href="2.8-options.html#cb40-12" tabindex="-1"></a><span class="co"># use a named list</span></span>
-<span id="cb40-13"><a href="2.8-options.html#cb40-13" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">options</span>(<span class="fu">list</span>(<span class="at">width=</span><span class="dv">80</span>, <span class="at">digits=</span><span class="dv">15</span>)) </span></code></pre></div>
-<div style="height:3px;">
-<br>
+
 </div>
-<p><strong>Commonly used global options</strong>:</p>
-<table>
-<colgroup>
-<col width="17%" />
-<col width="82%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th>Option</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>width</td>
-<td>Controls the maximum number of columns <u>on a line</u> used in printing vectors, matrices and arrays, and when filling by <code>cat</code>. Defaults to 80.<br />Don’t change this if you want to print more columns. Use <span style="color:#00CC66"><code>options(tibble.width=400)</code></span> instead.</td>
-</tr>
-<tr class="even">
-<td>pillar.sigfig</td>
-<td>Tibbles print numbers with <span style="color:#00CC66"><strong>three</strong> significant digits</span> by default, switching to scientific notation if the available space is too small.<br /><code>options(pillar.sigfig = 4)</code> to increase the number of digits printed out.</td>
-</tr>
-</tbody>
-</table>
-<hr />
-</div>
+<!-- </div> -->
             </section>
 
           </div>
         </div>
       </div>
-<a href="2.7-pane-layout.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="2.9-r-startup.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="6.2-random-forest.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -395,7 +342,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/my1396/R-Notes/edit/main/0102-RStudio-Options.Rmd",
+"link": "https://github.com/my1396/R-Notes/edit/main/1001-Neural-Network.Rmd",
 "text": "Edit"
 },
 "history": {
@@ -406,7 +353,7 @@ gitbook.start({
 "link": null,
 "text": null
 },
-"download": ["_main.pdf", "_main.epub", "https://github.com/my1396/R-Notes/raw/main/0102-RStudio-Options.Rmd"],
+"download": ["_main.pdf", "_main.epub", "https://github.com/my1396/R-Notes/raw/main/1001-Neural-Network.Rmd"],
 "search": {
 "engine": "fuse",
 "options": null

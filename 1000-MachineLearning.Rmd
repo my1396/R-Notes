@@ -36,6 +36,39 @@ A:
 - Variance error is variability of a target function's form with respect to different training sets. Models with small variance error will not change much if you replace couple of samples in training set. Models with high variance might be affected even with small changes in training set. High variance models fit the data too well, and learns the noise in addition to the inherent patterns in the data.
 
 
+--------------------------------------------------------------------------------
+
+
+## Imbalanced datasets
+
+
+The following table provides generally accepted names and ranges for different degrees of imbalance:
+
+| Percentage of data belonging to minority class | Degree of imbalance |
+|:----------------------------------------------:|:-------------------:|
+| 20-40% of the dataset                          | Mild                |
+| 1-20% of the dataset                           | Moderate            |
+| <1% of the dataset                             | Extreme             |
+
+For example, consider a virus detection dataset in which the minority class represents 0.5% of the dataset and the majority class represents 99.5%. Extremely imbalanced datasets like this one are common in medicine since most subjects won't have the virus.
+
+Imbalanced datasets sometimes don't contain enough minority class examples to train a model properly. That is, with so few positive labels, the model trains almost exclusively on negative labels and can't learn enough about positive labels. For example, if the batch size is 50, many batches would contain no positive labels.
+
+Often, especially for mildly imbalanced and some moderately imbalanced datasets, imbalance isn't a problem. So, you should **first try training on the original dataset**. If the model works well, you're done. If not, at least the suboptimal model provides a good baseline for future experiments. Afterwards, you can try the following techniques to overcome problems caused by imbalanced datasets.
+
+
+### Downsampling and Upweighting
+
+Downsampling (in this context) means training on a disproportionately low subset of the majority class examples.
+
+
+Upweighting means adding an example weight to the downsampled class equal to the factor by which you downsampled.
+
+
+Reference: Imbalanced datasets, [Google for Developers](https://developers.google.com/machine-learning/crash-course/overfitting/imbalanced-datasets).
+
+
+
 ## Random Forest
 
 **Averaging of independent trees**

@@ -117,7 +117,7 @@ To show the `tibble` information (number of row/columns, and group information) 
 ```markdown
 ---
 title: "Use caption with df_print set to page"
-date: "2025-04-25"
+date: "2025-05-08"
 output:
   bookdown::html_document2:
     df_print: paged
@@ -205,16 +205,18 @@ Do not forget the equal sign before `latex`, i.e., it is `=latex` instead of `la
 
 ### Stargazer
 
-`stargazer` print nice **tables** in `Rmd`.
+`stargazer` print nice tables in `Rmd` documents and `R` scripts:
 
-<https://libguides.princeton.edu/c.php?g=1326286&p=9763596#s-lg-box-wrapper-36305037>
+- Passing a data frame to stargazer package creates a <span style='color:#00CC66'>**summary statistic table**</span>. 
 
-- Passing a data frame to stargazer package creates a <span style='color:#00CC66'>summary statistic table</span>. 
+- Passing a regression object creates a nice <span style='color:#00CC66'>**regression table**</span>.  
 
-- Passing a regression object creates a nice <span style='color:#00CC66'>regression table</span>.  
-- `stargaer` does not work with `anova` table, use `pander::pander` instead.
+- Support tables output in multiple formats: `text`, `latex`, and `html`.
+    - In `R` scripts, use `type = "text"` for a quick view of results. 
 
-Text table
+- `stargaer` does NOT work with `anova` table, use `pander::pander` instead.
+
+#### Text table {-}
 
 ````markdown
 ```{r descrptive-analysis-text, comment = ''}
@@ -223,7 +225,9 @@ apply(data[,-1], 2, get_stat) %>%
 ```
 ````
 
-HTML table, note that need to specify `results="asis"`.
+#### HTML table {-}
+
+Note that you need to specify `results="asis"`.  This option tells `knitr` to treat verbatim code blocks "as is." Otherwise, instead of your table, you will see the raw html or latex code.
 
 - `*`'s do not show properly, need to specify as footnote manually.
 
@@ -236,23 +240,75 @@ apply(data[,-1], 2, get_stat) %>%
 ```
 ````
 
+**Common arguments**:
+
 - `type` 	specify output table format. Possible values: `latex` (default for latex code), `html`, and `text`. Need to specify to `html` in html outputs.
 
 - `digits`     an integer that indicates how many decimal places should be used. A value of `NULL` indicates that no rounding should be done at all, and that all available decimal places should be reported. Defaults to 3 digits.
 
 - `notes`       a character vector containing notes to be included below the table.
 
-- `notes.append=FALSE`  a logical value that indicates whether `notes` should be appended to the standard note(s) associated with the table's `style` (typically an explanation of significance cutoffs). 
+- `notes.append = FALSE`  a logical value that indicates whether `notes` should be appended to the existing standard note(s) associated with the table's `style` (typically an explanation of significance cutoffs). 
   - Defaults to `TRUE`.
   - If the argument's value is set to `FALSE`, the character strings provided in `notes` will replace any existing/default notes.
+
+
+- `notes.align`  `"l"` for left alignment, `"r"` for right alignment, and `"c"` for centering. This argument is not case-sensitive.
+  
+
+- `single.row = TRUE` to put coefficients and standard errors on same line
+
+
+- <span style='color:#00CC66'>`no.space = TRUE`</span>  to remove the spaces after each line of coefficients
+
+
+- `font.size = "small"`  to make font size smaller
+
+
+- <span style='color:#00CC66'>`column.labels`</span>  a character vector of labels for columns in regression tables.
+    
+    This is useful to denote different regressions, informing the name/nature of the model, instead of using numers to identify them.
+
+
+- `column.separate`   a numeric vector that specifies how `column.labels` should be laid out across regression table columns. A value of `c(2, 1, 3)`, for instance, will apply the first label to the two first columns, the second label to the third column, and the third label will apply to the following three columns (i.e., columns number four, five and six).
+
+
+- `dep.var.labels` labels for dependent variables
+
+
+- <span style='color:#00CC66'>`covariate.labels`</span>  labels for covariates in the regression tables.
+
+    Can provide latex symbols in the labels, need to escape special symbols though.
+
+    ```r
+    stargazer(mod_sel_lm_mtcars, 
+          covariate.labels = 
+            c("(Intercept)", "drat", "hp", "$w_{i}$",
+              "\\textit{k}", "logLik", "AICc", "\\Delta AICc"))
+    ```
+
+
+
+- `add.lines`  add a row(s), such as reporting fixed effects.
+
+    ```r
+    stargazer(output, output2, type = "html",
+              add.lines = list(
+                c("Fixed effects?", "No", "No"),
+                c("Results believable?", "Maybe", "Try again later")
+                )
+              )
+    ```
+
 
 Add a blank line under the `stargazer` table: `&nbsp;` with a blank line above and below.
 
 
+--------------------------------------------------------------------------------
 
 **Cross reference `stargazer` tables.**
 
-- <span style='color:#00CC66'>In pdf output</span>, use `Table \@ref(tab:reg-table)` or `Table \ref{tab:reg-table}`.
+- **In pdf output**, use `Table \@ref(tab:reg-table)` or `Table \ref{tab:reg-table}`.
 
   ````markdown
   Table \@ref(tab:reg-table) summarize the regression results in a table.
@@ -280,51 +336,10 @@ Add a blank line under the `stargazer` table: `&nbsp;` with a blank line above a
       `p` (Page): Place the table at the top of the *next* page.
       `!`: Override internal parameters LaTeX uses for determining "good" float positions. 
 
+  - `align = FALSE` 	a logical value indicating whether numeric values in the same column should be aligned at the decimal mark in LaTeX output.
+  
 
-  - `notes.align`  `"l"` for left alignment, `"r"` for right alignment, and `"c"` for centering. This argument is not case-sensitive.
-
-
-  - `single.row = TRUE` to put coefficients and standard errors on same line
-
-
-  - <span style='color:#00CC66'>`no.space = TRUE`</span>  to remove the spaces after each line of coefficients
-
-
-  - `font.size = "small"`  to make font size smaller
-
-
-  - `column.labels`  a character vector of labels for columns in regression tables.
-
-
-  - `column.separate`   a numeric vector that specifies how `column.labels` should be laid out across regression table columns. A value of `c(2, 1, 3)`, for instance, will apply the first label to the two first columns, the second label to the third column, and the third label will apply to the following three columns (i.e., columns number four, five and six).
-
-
-  - `dep.var.labels` and `covariate.labels`  labels for dependant variables
-
-
-  - <span style='color:#00CC66'>`covariate.labels`</span>  labels for covariates in the regression tables.
-
-    Can provide latex symbols in the labels, need to escape special symbols though.
-
-    ```r
-    stargazer(mod_sel_lm_mtcars, 
-          covariate.labels = 
-            c("(Intercept)", "drat", "hp", "$w_{i}$",
-              "\\textit{k}", "logLik", "AICc", "\\Delta AICc"))
-    ```
-
-
-  - `align=FALSE` 	a logical value indicating whether numeric values in the same column should be aligned at the decimal mark in LaTeX output.
-
-  - `add.lines`  add a row(s), such as reporting fixed effects.
-
-    ```r
-    stargazer(output, output2, type = "html",
-              add.lines = list(c("Fixed effects?", "No", "No"),
-                               c("Results believable?", "Maybe", "Try again later")))
-    ```
-
-- <span style='color:#00CC66'>In html output</span>, cross references to stargazer tables are not so straightforward.
+- **In html output**, cross references to stargazer tables are not so straightforward.
 
   `label` option in `stargazer` does not work. Cannot use chunk labels either.
 
@@ -401,6 +416,11 @@ Add a blank line under the `stargazer` table: `&nbsp;` with a blank line above a
 - In PDF, the tables will be in the center by default. 
 
 - However, when working with HTML output, you need to add CSS styling to adjust the table. 
+
+
+References:
+
+- <https://libguides.princeton.edu/c.php?g=1326286&p=9763596#s-lg-box-wrapper-36305037>
 
 
 --------------------------------------------------------------------------------
@@ -489,18 +509,21 @@ reg_data %>%
 
 - `linesep = ""` prevents default behavior of extra space every five rows.
 
+--------------------------------------------------------------------------------
+
 `kableExtra::kable_styling()` arguments
 
 - `position = "left"` places table on left hand side of page.
 - `latex_options = c("striped", "repeat_header")` implements table striping with repeated headers for tables that span multiple pages.
 - `stripe_color = "gray!15"` species the stripe color using LaTeX color specification from the [xcolor package](https://mirror.mwt.me/ctan/macros/latex/contrib/xcolor/xcolor.pdf) - this specifies a mix of 15% gray and 85% white.
 
-
+--------------------------------------------------------------------------------
 
 `linebreak(x, align = "l", double_escape = F, linebreaker = "\n")`  Make linebreak in LaTeX Table cells.
 
 - `align="l"`  Choose from "l", "c" or "r". Defaults to "l".
 
+--------------------------------------------------------------------------------
 
 
 **Customize the looks for columns/rows**
@@ -512,7 +535,7 @@ reg_data %>%
 - For the position of the target row, you don’t need to count in header rows or the group labeling rows.
 - `row_spec(row = 0, align='c')` specify format of the header row. Here I want to center align headers.
 
-
+--------------------------------------------------------------------------------
 
 **Add header rows to group columns**
 
@@ -528,11 +551,11 @@ kbl(dt) %>%
 
 You can add another row of header on top.
 
-
+--------------------------------------------------------------------------------
 
 **Group rows**
 
-`collapse_rows` will put repeating cells in columns into multi-row cells. The vertical alignment of the cell is controlled by `valign` with default as “top”.
+`collapse_rows` will put <u>repeating cells in columns</u> into multi-row cells. The vertical alignment of the cell is controlled by `valign` with default as “top”.
 
 Not working for html output.
 
@@ -564,7 +587,7 @@ attr(df, "names") <- c("")
 
 `footnote()` add footnotes to tables. There are four notation systems in `footnote`, namely `general` (no prefix for footnotes), `number`, `alphabet` and `symbol`. 
 
-
+--------------------------------------------------------------------------------
 
 **Math in rmd tables**
 

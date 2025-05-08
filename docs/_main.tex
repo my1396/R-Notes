@@ -135,7 +135,7 @@
 
 \title{R Notes}
 \author{Menghan Yuan}
-\date{2025-04-25}
+\date{2025-05-08}
 
 \usepackage{amsthm}
 \newtheorem{theorem}{Theorem}[chapter]
@@ -4119,7 +4119,7 @@ To show the \texttt{tibble} information (number of row/columns, and group inform
 \begin{Highlighting}[]
 \CommentTok{{-}{-}{-}}
 \AnnotationTok{title:}\CommentTok{ "Use caption with df\_print set to page"}
-\AnnotationTok{date:}\CommentTok{ "2025{-}04{-}25"}
+\AnnotationTok{date:}\CommentTok{ "2025{-}05{-}08"}
 \AnnotationTok{output:}
 \CommentTok{  bookdown::html\_document2:}
 \CommentTok{    df\_print: paged}
@@ -4230,20 +4230,27 @@ Do not forget the equal sign before \texttt{latex}, i.e., it is \texttt{=latex} 
 
 \subsection{Stargazer}\label{stargazer}
 
-\texttt{stargazer} print nice \textbf{tables} in \texttt{Rmd}.
-
-\url{https://libguides.princeton.edu/c.php?g=1326286&p=9763596\#s-lg-box-wrapper-36305037}
+\texttt{stargazer} print nice tables in \texttt{Rmd} documents and \texttt{R} scripts:
 
 \begin{itemize}
 \item
-  Passing a data frame to stargazer package creates a {summary statistic table}.
+  Passing a data frame to stargazer package creates a {\textbf{summary statistic table}}.
 \item
-  Passing a regression object creates a nice {regression table}.\\
+  Passing a regression object creates a nice {\textbf{regression table}}.
 \item
-  \texttt{stargaer} does not work with \texttt{anova} table, use \texttt{pander::pander} instead.
+  Support tables output in multiple formats: \texttt{text}, \texttt{latex}, and \texttt{html}.
+
+  \begin{itemize}
+  \tightlist
+  \item
+    In \texttt{R} scripts, use \texttt{type\ =\ "text"} for a quick view of results.
+  \end{itemize}
+\item
+  \texttt{stargaer} does NOT work with \texttt{anova} table, use \texttt{pander::pander} instead.
 \end{itemize}
 
-Text table
+\subsubsection*{Text table}\label{text-table}
+\addcontentsline{toc}{subsubsection}{Text table}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -4254,7 +4261,10 @@ Text table
 \end{Highlighting}
 \end{Shaded}
 
-HTML table, note that need to specify \texttt{results="asis"}.
+\subsubsection*{HTML table}\label{html-table}
+\addcontentsline{toc}{subsubsection}{HTML table}
+
+Note that you need to specify \texttt{results="asis"}. This option tells \texttt{knitr} to treat verbatim code blocks ``as is.'' Otherwise, instead of your table, you will see the raw html or latex code.
 
 \begin{itemize}
 \tightlist
@@ -4273,6 +4283,8 @@ HTML table, note that need to specify \texttt{results="asis"}.
 \end{Highlighting}
 \end{Shaded}
 
+\textbf{Common arguments}:
+
 \begin{itemize}
 \item
   \texttt{type} specify output table format. Possible values: \texttt{latex} (default for latex code), \texttt{html}, and \texttt{text}. Need to specify to \texttt{html} in html outputs.
@@ -4290,15 +4302,59 @@ HTML table, note that need to specify \texttt{results="asis"}.
   \item
     If the argument's value is set to \texttt{FALSE}, the character strings provided in \texttt{notes} will replace any existing/default notes.
   \end{itemize}
+\item
+  \texttt{notes.align} \texttt{"l"} for left alignment, \texttt{"r"} for right alignment, and \texttt{"c"} for centering. This argument is not case-sensitive.
+\item
+  \texttt{single.row\ =\ TRUE} to put coefficients and standard errors on same line
+\item
+  {\texttt{no.space\ =\ TRUE}} to remove the spaces after each line of coefficients
+\item
+  \texttt{font.size\ =\ "small"} to make font size smaller
+\item
+  {\texttt{column.labels}} a character vector of labels for columns in regression tables.
+
+  This is useful to denote different regressions, informing the name/nature of the model, instead of using numers to identify them.
+\item
+  \texttt{column.separate} a numeric vector that specifies how \texttt{column.labels} should be laid out across regression table columns. A value of \texttt{c(2,\ 1,\ 3)}, for instance, will apply the first label to the two first columns, the second label to the third column, and the third label will apply to the following three columns (i.e., columns number four, five and six).
+\item
+  \texttt{dep.var.labels} labels for dependent variables
+\item
+  {\texttt{covariate.labels}} labels for covariates in the regression tables.
+
+  Can provide latex symbols in the labels, need to escape special symbols though.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{stargazer}\NormalTok{(mod\_sel\_lm\_mtcars, }
+      \AttributeTok{covariate.labels =} 
+        \FunctionTok{c}\NormalTok{(}\StringTok{"(Intercept)"}\NormalTok{, }\StringTok{"drat"}\NormalTok{, }\StringTok{"hp"}\NormalTok{, }\StringTok{"$w\_\{i\}$"}\NormalTok{,}
+          \StringTok{"}\SpecialCharTok{\textbackslash{}\textbackslash{}}\StringTok{textit\{k\}"}\NormalTok{, }\StringTok{"logLik"}\NormalTok{, }\StringTok{"AICc"}\NormalTok{, }\StringTok{"}\SpecialCharTok{\textbackslash{}\textbackslash{}}\StringTok{Delta AICc"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+\item
+  \texttt{add.lines} add a row(s), such as reporting fixed effects.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{stargazer}\NormalTok{(output, output2, }\AttributeTok{type =} \StringTok{"html"}\NormalTok{,}
+          \AttributeTok{add.lines =} \FunctionTok{list}\NormalTok{(}
+            \FunctionTok{c}\NormalTok{(}\StringTok{"Fixed effects?"}\NormalTok{, }\StringTok{"No"}\NormalTok{, }\StringTok{"No"}\NormalTok{),}
+            \FunctionTok{c}\NormalTok{(}\StringTok{"Results believable?"}\NormalTok{, }\StringTok{"Maybe"}\NormalTok{, }\StringTok{"Try again later"}\NormalTok{)}
+\NormalTok{            )}
+\NormalTok{          )}
+\end{Highlighting}
+\end{Shaded}
 \end{itemize}
 
 Add a blank line under the \texttt{stargazer} table: \texttt{\&nbsp;} with a blank line above and below.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
 \textbf{Cross reference \texttt{stargazer} tables.}
 
 \begin{itemize}
 \item
-  {In pdf output}, use \texttt{Table\ \textbackslash{}@ref(tab:reg-table)} or \texttt{Table\ \textbackslash{}ref\{tab:reg-table\}}.
+  \textbf{In pdf output}, use \texttt{Table\ \textbackslash{}@ref(tab:reg-table)} or \texttt{Table\ \textbackslash{}ref\{tab:reg-table\}}.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -4333,47 +4389,10 @@ Add a blank line under the \texttt{stargazer} table: \texttt{\&nbsp;} with a bla
       \texttt{!}: Override internal parameters LaTeX uses for determining ``good'' float positions.
     \end{itemize}
   \item
-    \texttt{notes.align} \texttt{"l"} for left alignment, \texttt{"r"} for right alignment, and \texttt{"c"} for centering. This argument is not case-sensitive.
-  \item
-    \texttt{single.row\ =\ TRUE} to put coefficients and standard errors on same line
-  \item
-    {\texttt{no.space\ =\ TRUE}} to remove the spaces after each line of coefficients
-  \item
-    \texttt{font.size\ =\ "small"} to make font size smaller
-  \item
-    \texttt{column.labels} a character vector of labels for columns in regression tables.
-  \item
-    \texttt{column.separate} a numeric vector that specifies how \texttt{column.labels} should be laid out across regression table columns. A value of \texttt{c(2,\ 1,\ 3)}, for instance, will apply the first label to the two first columns, the second label to the third column, and the third label will apply to the following three columns (i.e., columns number four, five and six).
-  \item
-    \texttt{dep.var.labels} and \texttt{covariate.labels} labels for dependant variables
-  \item
-    {\texttt{covariate.labels}} labels for covariates in the regression tables.
-
-    Can provide latex symbols in the labels, need to escape special symbols though.
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\FunctionTok{stargazer}\NormalTok{(mod\_sel\_lm\_mtcars, }
-      \AttributeTok{covariate.labels =} 
-        \FunctionTok{c}\NormalTok{(}\StringTok{"(Intercept)"}\NormalTok{, }\StringTok{"drat"}\NormalTok{, }\StringTok{"hp"}\NormalTok{, }\StringTok{"$w\_\{i\}$"}\NormalTok{,}
-          \StringTok{"}\SpecialCharTok{\textbackslash{}\textbackslash{}}\StringTok{textit\{k\}"}\NormalTok{, }\StringTok{"logLik"}\NormalTok{, }\StringTok{"AICc"}\NormalTok{, }\StringTok{"}\SpecialCharTok{\textbackslash{}\textbackslash{}}\StringTok{Delta AICc"}\NormalTok{))}
-\end{Highlighting}
-\end{Shaded}
-  \item
     \texttt{align=FALSE} a logical value indicating whether numeric values in the same column should be aligned at the decimal mark in LaTeX output.
-  \item
-    \texttt{add.lines} add a row(s), such as reporting fixed effects.
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\FunctionTok{stargazer}\NormalTok{(output, output2, }\AttributeTok{type =} \StringTok{"html"}\NormalTok{,}
-          \AttributeTok{add.lines =} \FunctionTok{list}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"Fixed effects?"}\NormalTok{, }\StringTok{"No"}\NormalTok{, }\StringTok{"No"}\NormalTok{),}
-                           \FunctionTok{c}\NormalTok{(}\StringTok{"Results believable?"}\NormalTok{, }\StringTok{"Maybe"}\NormalTok{, }\StringTok{"Try again later"}\NormalTok{)))}
-\end{Highlighting}
-\end{Shaded}
   \end{itemize}
 \item
-  {In html output}, cross references to stargazer tables are not so straightforward.
+  \textbf{In html output}, cross references to stargazer tables are not so straightforward.
 
   \texttt{label} option in \texttt{stargazer} does not work. Cannot use chunk labels either.
 
@@ -4457,6 +4476,14 @@ Add a blank line under the \texttt{stargazer} table: \texttt{\&nbsp;} with a bla
   In PDF, the tables will be in the center by default.
 \item
   However, when working with HTML output, you need to add CSS styling to adjust the table.
+\end{itemize}
+
+References:
+
+\begin{itemize}
+\tightlist
+\item
+  \url{https://libguides.princeton.edu/c.php?g=1326286&p=9763596\#s-lg-box-wrapper-36305037}
 \end{itemize}
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
@@ -6174,6 +6201,38 @@ A:
 \item
   Variance error is variability of a target function's form with respect to different training sets. Models with small variance error will not change much if you replace couple of samples in training set. Models with high variance might be affected even with small changes in training set. High variance models fit the data too well, and learns the noise in addition to the inherent patterns in the data.
 \end{itemize}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\section{Imbalanced datasets}\label{imbalanced-datasets}
+
+The following table provides generally accepted names and ranges for different degrees of imbalance:
+
+\begin{longtable}[]{@{}cc@{}}
+\toprule\noalign{}
+Percentage of data belonging to minority class & Degree of imbalance \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+20-40\% of the dataset & Mild \\
+1-20\% of the dataset & Moderate \\
+\textless1\% of the dataset & Extreme \\
+\end{longtable}
+
+For example, consider a virus detection dataset in which the minority class represents 0.5\% of the dataset and the majority class represents 99.5\%. Extremely imbalanced datasets like this one are common in medicine since most subjects won't have the virus.
+
+Imbalanced datasets sometimes don't contain enough minority class examples to train a model properly. That is, with so few positive labels, the model trains almost exclusively on negative labels and can't learn enough about positive labels. For example, if the batch size is 50, many batches would contain no positive labels.
+
+Often, especially for mildly imbalanced and some moderately imbalanced datasets, imbalance isn't a problem. So, you should \textbf{first try training on the original dataset}. If the model works well, you're done. If not, at least the suboptimal model provides a good baseline for future experiments. Afterwards, you can try the following techniques to overcome problems caused by imbalanced datasets.
+
+\subsection{Downsampling and Upweighting}\label{downsampling-and-upweighting}
+
+Downsampling (in this context) means training on a disproportionately low subset of the majority class examples.
+
+Upweighting means adding an example weight to the downsampled class equal to the factor by which you downsampled.
+
+Reference: Imbalanced datasets, \href{https://developers.google.com/machine-learning/crash-course/overfitting/imbalanced-datasets}{Google for Developers}.
 
 \section{Random Forest}\label{random-forest}
 
