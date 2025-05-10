@@ -132,7 +132,10 @@ A: In the R terminal, type `R.version`.
 
 The key thing to be aware of is that when you update R, [if you just download the latest version from the website, you will lose all your packages!]{style="color:#FF9900"} ❌
 
-The easiest way to update R and not cause yourself a huge headache is to use the `installr` package. When you use the `updateR()` function, a series of dialogue boxes will appear. These should be fairly self-explanatory but there is a [full step-by-step guide](https://www.r-statistics.com/2015/06/a-step-by-step-screenshots-tutorial-for-upgrading-r-on-windows/#google_vignette "Guide to update R with `installr`") available for how to use `installr`, the important bit is to [select "Yes" when it asked if you would like to copy your packages from the older version of R]{style="color:#00CC66"}.
+
+**On Windows use `installr`**
+
+The easiest way to update R and not cause yourself a huge headache is to use the `installr` package. When you use the `updateR()` function, a series of dialogue boxes will appear. These should be fairly self-explanatory but there is a [full step-by-step guide](https://www.r-statistics.com/2015/06/a-step-by-step-screenshots-tutorial-for-upgrading-r-on-windows/#google_vignette "Guide to update R with `installr`") available for how to use `installr`, simply select "Yes" when it asks if you would like to copy your packages from the older version of R.
 
 ``` r
 # Install the installr package
@@ -144,6 +147,32 @@ library(installr)
 # Run the update function
 updateR()
 ```
+
+
+**On Mac, can use [`updater`](https://rdrr.io/cran/updater/)**
+
+The package re-installs the packages and does not copy them from the previous R installation library. R packages for minor R releases (e.g. R 4.1 to R 4.2) may not be compatible, which is why its important to re-install the packages and not copy them.
+
+Usage:
+
+1. Find the current location of R by running 
+```r
+> .libPaths()
+[1] "/Library/Frameworks/R.framework/Versions/4.3-x86_64/Resources/library"
+```
+
+2. Install R from <https://cran.r-project.org/>. 
+
+3. Install packages.  
+
+    3.1 Open your new version of R and install the `updater` package with `install.packages("updater")`.
+    
+    3.2 Run 
+    
+    ```r
+    updater::install_pkgs(lib.loc = c("<location(s) saved in Step 1>"))
+    ```
+
 
 ------------------------------------------------------------------------
 
@@ -250,7 +279,7 @@ search()
 [10] "package:methods"   "Autoloads"         "package:base"     
 ```
 
-
+--------------------------------------------------------------------------------
 
 Q: `dplyr` has many conflicts with `plyr`.   
 A: Specify pkg using `::`. Or set library priority by 
@@ -271,12 +300,19 @@ library(needs)
 prioritize(dplyr) 
 ```
 
-
+--------------------------------------------------------------------------------
 
 Q: How to unload a package without restarting R?  
 A: `detach("package:ggplot2", unload=TRUE)` or uncheck the checkbox button in `Packages` pane.
 
 <img src="https://drive.google.com/thumbnail?id=16NDo2Ozhz4AnvGoKkP5YuwROS4fYstIN&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
+
+--------------------------------------------------------------------------------
+
+Q: How to remove a package?  
+A: Use `remove.packages("dplyr")` or you can use the package manager pane, click the X mark on the right side of the selected package.
+
+<img src="https://drive.google.com/thumbnail?id=1YlSLfpoDtf1UQ2pDdYXQNfgPEL1Qc9hG&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
 
 
 
@@ -316,7 +352,7 @@ install_github("tidyverse/ggplot2", ref="ggplot2 3.5.1")
 
 ------------------------------------------------------------------------
 
-Check installed packages
+**Check installed packages**
 
 ``` r
 # print all installed packages
@@ -417,13 +453,13 @@ More about `update.packages`:
 
 ------------------------------------------------------------------------
 
-**Updating all Packages after [R update]{style="color:#0099FF"}**
+**Reinstall all Packages after [R update]{style="color:#0099FF"}**
 
 R packages are missing after updating. So you have to save the installed packages and re-install them after updating.
 
--   Alternatively, `installr::updateR()` automatically [updates R](#update-r) and installs your packages. ✅
+-   Alternatively, `updater` automatically [reinsatll R pakages](#update-r). ✅
 
-Here is how to do it manually.
+Here is how to do it <u>manually</u>.
 
 ``` r
 ## get packages installed
@@ -483,7 +519,7 @@ Reference: <https://jennybc.github.io/2014-05-12-ubc/ubc-r/session2.4_github.htm
 
 ### FAQ {.unlisted .unnumbered}
 
-Q: What is package vignettes? \
+Q: What are package vignettes? \
 A: It's important to write good and clear documentation, but users don't often read it; at best they'll look at the examples, so be sure to include informative examples. In my experience, what users really want are instructive tutorials demonstrating practical uses of the software with discussion of the interpretation of the results. In R packages, such tutorials are called "[vignettes](https://kbroman.org/pkg_primer/pages/vignettes.html)."
 
 
