@@ -448,7 +448,7 @@ R library path `/Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/lib
 
 ------------------------------------------------------------------------
 
-### Put your R package on GitHub {.unnumbered}
+### Put your R package on GitHub
 
 Reference: <https://jennybc.github.io/2014-05-12-ubc/ubc-r/session2.4_github.html>
 
@@ -482,7 +482,7 @@ Reference: <https://jennybc.github.io/2014-05-12-ubc/ubc-r/session2.4_github.htm
 
 ------------------------------------------------------------------------
 
-### FAQ
+### FAQ {.unlisted .unnumbered}
 
 Q: What is package vignettes? \
 A: It's important to write good and clear documentation, but users don't often read it; at best they'll look at the examples, so be sure to include informative examples. In my experience, what users really want are instructive tutorials demonstrating practical uses of the software with discussion of the interpretation of the results. In R packages, such tutorials are called "[vignettes](https://kbroman.org/pkg_primer/pages/vignettes.html)."

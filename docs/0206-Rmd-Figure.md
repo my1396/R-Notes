@@ -10,7 +10,9 @@ knitr::include_graphics(img1_path)
 
 
 
-- You can let the code output to document directly, i.e., not generating a file and reload. But in this case, scale the figure will change the plot text too. The text might be scaled unexpectedly too small/large. Just be careful with it.
+- You can let the code output to document directly, i.e., not generating a file and reload. 
+
+    But in this case, scale the figure will change the plot text too. The text might be scaled unexpectedly too small/large. Just be careful with it.
 
 
 **Output directly to document**
@@ -95,6 +97,8 @@ knitr::include_graphics(f_name)
 <p class="caption">(\#fig:unnamed-chunk-6)include_graphics with `out.width="50%"`.</p>
 </div>
 
+--------------------------------------------------------------------------------
+
 ~~~~markdown
 ```{r out.width="100%", fig.cap="include_graphics with `out.width=\"100%\"`." }
 knitr::include_graphics(f_name) 
@@ -150,6 +154,8 @@ Specify code chunk options `fig.width` and `fig.height` for R-generated figures 
     - A caveat with `out.width`is that the <span style='color:#00CC66'>axis labels and ticks will be so small</span> and hard to read.
 
 --------------------------------------------------------------------------------
+
+Other chunk options related to figures:
 
 `fig.cap=NULL`  specify figure captions. Must provide `fig.cap` if you need to cross reference the figure.
 
