@@ -135,7 +135,7 @@
 
 \title{R Notes}
 \author{Menghan Yuan}
-\date{2025-05-08}
+\date{2025-05-10}
 
 \usepackage{amsthm}
 \newtheorem{theorem}{Theorem}[chapter]
@@ -519,6 +519,11 @@ Now go to Tools \textgreater{} Modify Keyboard Shortcuts and search for ``dashes
 \textbf{Tips and Tricks}
 
 \begin{itemize}
+\item
+  In \texttt{Rmd} files, send the R code chunk output to the console.\\
+  By default, RStudio enables inline output (Notebook mode) on all R Markdown documents. You can disable notebook mode by clicking the gear button in the editor toolbar, and choosing \texttt{Chunk\ Output\ in\ Console}.
+
+  To use the console by default for all your R Markdown documentsm: Tools -\textgreater{} Options -\textgreater{} R Markdown -\textgreater{} Show output inline for all R Markdown documents.
 \item
   To add comments to a function, you can type ``Roxygen comment'' into the Command Palette (shift+cmd+P) while the cursor is in a function and it will automatically add a template structure for writing a comment about your function.
 
@@ -3738,29 +3743,158 @@ Can specify environment style in \texttt{style.css}
 
 The idea is to generate the figure, output to local, then reload using the following code.
 
-\begin{itemize}
-\tightlist
-\item
-  You can let the code output to document directly, but you cannot scale with \texttt{out.width="20\%"} easily. The text would be scaled unexpectedly too small.
-\end{itemize}
-
 \begin{Shaded}
 \begin{Highlighting}[]
-\InformationTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}\{r car{-}plot, eval=TRUE, echo=FALSE, out.width="20\%", fig.cap="Caption here." \}}
+\InformationTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}\{r car{-}plot, eval=TRUE, fig.asp = 0.62, echo=FALSE, out.width="80\%", fig.cap="Caption here." \}}
 \InformationTok{knitr::include\_graphics(img1\_path) }
 \InformationTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}}
 \end{Highlighting}
 \end{Shaded}
+
+\begin{itemize}
+\tightlist
+\item
+  You can let the code output to document directly, i.e., not generating a file and reload. But in this case, scale the figure will change the plot text too. The text might be scaled unexpectedly too small/large. Just be careful with it.
+\end{itemize}
+
+\textbf{Output directly to document}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(quantmod)}
+\NormalTok{aapl }\OtherTok{\textless{}{-}} \FunctionTok{getSymbols}\NormalTok{(}\StringTok{"AAPL"}\NormalTok{, }
+           \AttributeTok{src =} \StringTok{\textquotesingle{}yahoo\textquotesingle{}}\NormalTok{, }
+           \AttributeTok{from =} \StringTok{"2014{-}08{-}01"}\NormalTok{, }
+           \AttributeTok{to =} \StringTok{"2024{-}09{-}17"}\NormalTok{,   }
+           \AttributeTok{auto.assign =} \ConstantTok{FALSE}
+\NormalTok{           )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{\textasciigrave{}\textasciigrave{}}\InformationTok{\textasciigrave{}\{r out.width="50\%", fig.asp = 0.62, fig.cap="\textasciigrave{}}\NormalTok{out.width=\textbackslash{}"50\%\textbackslash{}"\textasciigrave{}, fig.asp set to 0.62."\}}
+\FunctionTok{\# plot text is scaled too}
+\NormalTok{plot(aapl$AAPL.Close)}
+\InformationTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}}
+\end{Highlighting}
+\end{Shaded}
+
+\textbackslash begin\{figure\}
+\includegraphics[width=0.5\linewidth]{0206-Rmd-Figure_files/figure-latex/unnamed-chunk-2-1} \textbackslash caption\{\texttt{out.width="50\%"}, fig.asp set to 0.62. Note that text font scales too, hard to read.\}\label{fig:unnamed-chunk-2}
+\textbackslash end\{figure\}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\InformationTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}\{r fig.width=6, fig.asp=0.6\}}
+\InformationTok{\# Text font does NOT scale, but figure title got cropped}
+\InformationTok{plot(aapl$AAPL.Close)}
+\InformationTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio]{0206-Rmd-Figure_files/figure-latex/unnamed-chunk-3-1.pdf}}
+\caption{\label{fig:unnamed-chunk-3}Set \texttt{fig.width}. Note that text font does NOT scale with figure, BUT the figure title got cropped.}
+\end{figure}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{\textasciigrave{}\textasciigrave{}}\InformationTok{\textasciigrave{}\{r out.width="100\%", fig.asp = 0.6, fig.cap="\textasciigrave{}}\NormalTok{out.width=\textbackslash{}"100\%\textbackslash{}"\textasciigrave{}."\}}
+\NormalTok{plot(aapl$AAPL.Close)}
+\InformationTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}}
+\end{Highlighting}
+\end{Shaded}
+
+\textbackslash begin\{figure\}
+\includegraphics[width=1\linewidth]{0206-Rmd-Figure_files/figure-latex/unnamed-chunk-4-1} \textbackslash caption\{\texttt{out.width="100\%"}, fig.asp set to 0.6. Note that the plot text got zoomed too, can be too large.\}\label{fig:unnamed-chunk-4}
+\textbackslash end\{figure\}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\textbf{Save and reload}
+
+This approach preserves your preference better, maintains the relative size of your figure and the text.
+
+No cropping, no fuss.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{f\_name }\OtherTok{\textless{}{-}} \StringTok{"images/aapl.png"}
+\FunctionTok{png}\NormalTok{(f\_name, }\AttributeTok{width=}\DecValTok{2594}\NormalTok{, }\AttributeTok{height=}\DecValTok{1600}\NormalTok{, }\AttributeTok{res=}\DecValTok{300}\NormalTok{)}
+\FunctionTok{plot}\NormalTok{(aapl}\SpecialCharTok{$}\NormalTok{AAPL.Close)}
+\FunctionTok{invisible}\NormalTok{(}\FunctionTok{dev.off}\NormalTok{())}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{\textasciigrave{}\textasciigrave{}}\InformationTok{\textasciigrave{}\{r out.width="50\%", fig.cap="include\_graphics with \textasciigrave{}}\NormalTok{out.width=\textbackslash{}"50\%\textbackslash{}"\textasciigrave{}." \}}
+\NormalTok{knitr::include\_graphics(f\_name) }
+\InformationTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}}
+\end{Highlighting}
+\end{Shaded}
+
+\textbackslash begin\{figure\}
+\includegraphics[width=0.5\linewidth]{images/aapl} \textbackslash caption\{include\_graphics with \texttt{out.width="50\%"}.\}\label{fig:unnamed-chunk-6}
+\textbackslash end\{figure\}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{\textasciigrave{}\textasciigrave{}}\InformationTok{\textasciigrave{}\{r out.width="100\%", fig.cap="include\_graphics with \textasciigrave{}}\NormalTok{out.width=\textbackslash{}"100\%\textbackslash{}"\textasciigrave{}." \}}
+\NormalTok{knitr::include\_graphics(f\_name) }
+\InformationTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{knitr}\SpecialCharTok{::}\FunctionTok{include\_graphics}\NormalTok{(f\_name) }
+\end{Highlighting}
+\end{Shaded}
+
+\textbackslash begin\{figure\}
+\includegraphics[width=1\linewidth]{images/aapl} \textbackslash caption\{include\_graphics with \texttt{out.width="100\%"}.\}\label{fig:unnamed-chunk-7}
+\textbackslash end\{figure\}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+Q: How to suppress the following \texttt{dev.off()} messages generated by code chunks in \texttt{Rmd}?
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DocumentationTok{\#\# quartz\_off\_screen }
+\DocumentationTok{\#\#                 2}
+\end{Highlighting}
+\end{Shaded}
+
+A: Enclose \texttt{dev.off()} within \texttt{invisible()}, or dump the result of \texttt{dev.off()} to a garbage variable.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{invisible}\NormalTok{(}\FunctionTok{dev.off}\NormalTok{())     }\CommentTok{\# opt1}
+\NormalTok{whatever }\OtherTok{\textless{}{-}} \FunctionTok{dev.off}\NormalTok{()    }\CommentTok{\# opt2}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
 Specify code chunk options \texttt{fig.width} and \texttt{fig.height} for R-generated figures only.
 
 \begin{itemize}
 \tightlist
 \item
-  Default is \texttt{fig.width\ =\ 7} and \texttt{fig.height\ =\ 5} (in inches, though actual width will depend on screen resolution). Remember that these settings will default to \texttt{rmarkdown} values, not \texttt{knitr} values.
+  Default is \texttt{fig.width\ =\ 7} and \texttt{fig.height\ =\ 5} (\textbf{in inches}, though actual width will depend on screen resolution). Remember that these settings will default to \texttt{rmarkdown} values, not \texttt{knitr} values.
 \item
-  If don't know what size is suitable, can right-click the Plots Viewer and choose ``Copy Image Address''. Scale by \texttt{/100} and fill the values to chunk options.
+  If don't know what size is suitable, can right-click the Plots Viewer and choose ``Copy Image Address''. Scale by \texttt{/100} (in inches) and fill the values to chunk options.
 \end{itemize}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
 \texttt{out.width} and \texttt{out.height} apply to both existing images and R-generated figures.
 
@@ -3774,13 +3908,15 @@ Specify code chunk options \texttt{fig.width} and \texttt{fig.height} for R-gene
 
   \begin{itemize}
   \item
-    \texttt{outwidth} keeps the original aspect ratio of the figure and scale the text in the figure too.
+    \texttt{out.width} keeps the original aspect ratio of the figure and scale the text in the figure too.
 
     But what most people want is to scale the figure but not the text. For instance, you want to scale your figure to 70\% width of page, but you want to keep the original size of text so it is readable.
   \item
-    A caveat with \texttt{outwidth}is that the {axis labels and ticks will be so small} and hard to read.
+    A caveat with \texttt{out.width}is that the {axis labels and ticks will be so small} and hard to read.
   \end{itemize}
 \end{itemize}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
 \texttt{fig.cap=NULL} specify figure captions. Must provide \texttt{fig.cap} if you need to cross reference the figure.
 
@@ -3796,7 +3932,9 @@ See {\texttt{Fig.\ \textbackslash{}@ref(fig:car-plot)}} use code chunk label to 
 
 \texttt{fig.pos="H"} fix placement.
 
-\texttt{fig.asp=0.6} aspect ratio height:width=6:10.
+{\texttt{fig.asp=0.6}} aspect ratio height:width=6:10.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
 {\textbf{Suggested practice}} so that you have correct aspect ratio and automatically scaled text and labels in figures. ✅
 
@@ -3970,7 +4108,7 @@ Now a second plot with a reference to Fig.: \ref{fig:firstplot}.
 
 Using \texttt{bookdown} cmd: \texttt{\textbackslash{}@ref(tab:chunk-label)}.
 
-Note that you must provide \texttt{caption} option in \texttt{kable()}. Otherwise the table won't be numbered.
+Note that you must provide \texttt{caption} option in \texttt{knitr::kable()}. Otherwise the table won't be numbered.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -4005,11 +4143,11 @@ Hornet Sportabout & 18.7 & 8 & 360 & 175 & 3.15\\
 \end{tabular}
 \end{table}
 
-The following is useful when you want to copy-and-paste R output from console to other document, e.g., markdown.
+\texttt{knitr::kable(x,\ format="pipe")} is useful when you want to copy-and-paste R output from console to other document, e.g., markdown.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{knitr}\SpecialCharTok{::}\FunctionTok{kable}\NormalTok{(mtcars[}\DecValTok{1}\SpecialCharTok{:}\DecValTok{5}\NormalTok{, }\DecValTok{1}\SpecialCharTok{:}\DecValTok{5}\NormalTok{], }\AttributeTok{format=}\StringTok{"pipe"}\NormalTok{)}
+\NormalTok{knitr}\SpecialCharTok{::}\FunctionTok{kable}\NormalTok{(mtcars[}\DecValTok{1}\SpecialCharTok{:}\DecValTok{5}\NormalTok{, }\DecValTok{1}\SpecialCharTok{:}\DecValTok{5}\NormalTok{], }\AttributeTok{format =} \StringTok{"pipe"}\NormalTok{)}
 \SpecialCharTok{|}                  \ErrorTok{|}\NormalTok{  mpg}\SpecialCharTok{|}\NormalTok{ cyl}\SpecialCharTok{|}\NormalTok{ disp}\SpecialCharTok{|}\NormalTok{  hp}\SpecialCharTok{|}\NormalTok{ drat}\SpecialCharTok{|}
 \ErrorTok{|:}\SpecialCharTok{{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}}\ErrorTok{|}\SpecialCharTok{{-}{-}{-}{-}}\ErrorTok{:|}\SpecialCharTok{{-}{-}{-}}\ErrorTok{:|}\SpecialCharTok{{-}{-}{-}{-}}\ErrorTok{:|}\SpecialCharTok{{-}{-}{-}}\ErrorTok{:|}\SpecialCharTok{{-}{-}{-}{-}}\ErrorTok{:|}
 \ErrorTok{|}\NormalTok{Mazda RX4         }\SpecialCharTok{|} \FloatTok{21.0}\SpecialCharTok{|}   \DecValTok{6}\SpecialCharTok{|}  \DecValTok{160}\SpecialCharTok{|} \DecValTok{110}\SpecialCharTok{|} \FloatTok{3.90}\SpecialCharTok{|}
@@ -4074,7 +4212,7 @@ The following is useful when you want to copy-and-paste R output from console to
 \begin{Shaded}
 \begin{Highlighting}[]
 \CommentTok{\# For Markdown tables, use \textasciigrave{}pipe\textasciigrave{} format}
-\SpecialCharTok{\textgreater{}}\NormalTok{ knitr}\SpecialCharTok{::}\FunctionTok{kable}\NormalTok{(}\FunctionTok{head}\NormalTok{(mtcars[, }\DecValTok{1}\SpecialCharTok{:}\DecValTok{4}\NormalTok{]), }\AttributeTok{format=}\StringTok{"pipe"}\NormalTok{)}
+\SpecialCharTok{\textgreater{}}\NormalTok{ knitr}\SpecialCharTok{::}\FunctionTok{kable}\NormalTok{(}\FunctionTok{head}\NormalTok{(mtcars[, }\DecValTok{1}\SpecialCharTok{:}\DecValTok{4}\NormalTok{]), }\AttributeTok{format =} \StringTok{"pipe"}\NormalTok{)}
 \SpecialCharTok{|}                  \ErrorTok{|}\NormalTok{  mpg}\SpecialCharTok{|}\NormalTok{ cyl}\SpecialCharTok{|}\NormalTok{ disp}\SpecialCharTok{|}\NormalTok{  hp}\SpecialCharTok{|}
 \ErrorTok{|:}\SpecialCharTok{{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}}\ErrorTok{|}\SpecialCharTok{{-}{-}{-}{-}}\ErrorTok{:|}\SpecialCharTok{{-}{-}{-}}\ErrorTok{:|}\SpecialCharTok{{-}{-}{-}{-}}\ErrorTok{:|}\SpecialCharTok{{-}{-}{-}}\ErrorTok{:|}
 \ErrorTok{|}\NormalTok{Mazda RX4         }\SpecialCharTok{|} \FloatTok{21.0}\SpecialCharTok{|}   \DecValTok{6}\SpecialCharTok{|}  \DecValTok{160}\SpecialCharTok{|} \DecValTok{110}\SpecialCharTok{|}
@@ -4085,7 +4223,7 @@ The following is useful when you want to copy-and-paste R output from console to
 \ErrorTok{|}\NormalTok{Valiant           }\SpecialCharTok{|} \FloatTok{18.1}\SpecialCharTok{|}   \DecValTok{6}\SpecialCharTok{|}  \DecValTok{225}\SpecialCharTok{|} \DecValTok{105}\SpecialCharTok{|}
 
 \CommentTok{\# For Plain tables in txt, \textasciigrave{}simple\textasciigrave{} is useful}
-\ErrorTok{\textgreater{}}\NormalTok{ knitr}\SpecialCharTok{::}\FunctionTok{kable}\NormalTok{(}\FunctionTok{head}\NormalTok{(mtcars[, }\DecValTok{1}\SpecialCharTok{:}\DecValTok{4}\NormalTok{]), }\StringTok{"simple"}\NormalTok{) }
+\ErrorTok{\textgreater{}}\NormalTok{ knitr}\SpecialCharTok{::}\FunctionTok{kable}\NormalTok{(}\FunctionTok{head}\NormalTok{(mtcars[, }\DecValTok{1}\SpecialCharTok{:}\DecValTok{4}\NormalTok{]), }\AttributeTok{format =} \StringTok{"simple"}\NormalTok{) }
 \NormalTok{                      mpg   cyl   disp    hp}
 \SpecialCharTok{{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}}  \SpecialCharTok{{-}{-}{-}{-}{-}}  \SpecialCharTok{{-}{-}{-}{-}}  \SpecialCharTok{{-}{-}{-}{-}{-}}  \SpecialCharTok{{-}{-}{-}{-}}
 \NormalTok{Mazda RX4            }\FloatTok{21.0}     \DecValTok{6}    \DecValTok{160}   \DecValTok{110}
@@ -4119,7 +4257,7 @@ To show the \texttt{tibble} information (number of row/columns, and group inform
 \begin{Highlighting}[]
 \CommentTok{{-}{-}{-}}
 \AnnotationTok{title:}\CommentTok{ "Use caption with df\_print set to page"}
-\AnnotationTok{date:}\CommentTok{ "2025{-}05{-}08"}
+\AnnotationTok{date:}\CommentTok{ "2025{-}05{-}10"}
 \AnnotationTok{output:}
 \CommentTok{  bookdown::html\_document2:}
 \CommentTok{    df\_print: paged}
@@ -4175,7 +4313,7 @@ The possible values of the \texttt{df\_print} option for the \texttt{pdf\_docume
 \end{Highlighting}
 \end{Shaded}
 
-\texttt{kable} output doesn't provide tibble informations.
+Note that \texttt{kable} output doesn't provide tibble information.
 
 Available options for \texttt{paged} tables:
 
@@ -4293,7 +4431,7 @@ Note that you need to specify \texttt{results="asis"}. This option tells \texttt
 \item
   \texttt{notes} a character vector containing notes to be included below the table.
 \item
-  \texttt{notes.append=FALSE} a logical value that indicates whether \texttt{notes} should be appended to the standard note(s) associated with the table's \texttt{style} (typically an explanation of significance cutoffs).
+  \texttt{notes.append\ =\ FALSE} a logical value that indicates whether \texttt{notes} should be appended to the existing standard note(s) associated with the table's \texttt{style} (typically an explanation of significance cutoffs).
 
   \begin{itemize}
   \tightlist
@@ -4389,7 +4527,7 @@ Add a blank line under the \texttt{stargazer} table: \texttt{\&nbsp;} with a bla
       \texttt{!}: Override internal parameters LaTeX uses for determining ``good'' float positions.
     \end{itemize}
   \item
-    \texttt{align=FALSE} a logical value indicating whether numeric values in the same column should be aligned at the decimal mark in LaTeX output.
+    \texttt{align\ =\ FALSE} a logical value indicating whether numeric values in the same column should be aligned at the decimal mark in LaTeX output.
   \end{itemize}
 \item
   \textbf{In html output}, cross references to stargazer tables are not so straightforward.
@@ -4602,6 +4740,8 @@ Rows and columns can be grouped via the functions \texttt{pack\_rows()} and \tex
   \texttt{linesep\ =\ ""} prevents default behavior of extra space every five rows.
 \end{itemize}
 
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
 \texttt{kableExtra::kable\_styling()} arguments
 
 \begin{itemize}
@@ -4614,6 +4754,8 @@ Rows and columns can be grouped via the functions \texttt{pack\_rows()} and \tex
   \texttt{stripe\_color\ =\ "gray!15"} species the stripe color using LaTeX color specification from the \href{https://mirror.mwt.me/ctan/macros/latex/contrib/xcolor/xcolor.pdf}{xcolor package} - this specifies a mix of 15\% gray and 85\% white.
 \end{itemize}
 
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
 \texttt{linebreak(x,\ align\ =\ "l",\ double\_escape\ =\ F,\ linebreaker\ =\ "\textbackslash{}n")} Make linebreak in LaTeX Table cells.
 
 \begin{itemize}
@@ -4621,6 +4763,8 @@ Rows and columns can be grouped via the functions \texttt{pack\_rows()} and \tex
 \item
   \texttt{align="l"} Choose from ``l'', ``c'' or ``r''. Defaults to ``l''.
 \end{itemize}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
 \textbf{Customize the looks for columns/rows}
 
@@ -4636,6 +4780,8 @@ Rows and columns can be grouped via the functions \texttt{pack\_rows()} and \tex
   \texttt{row\_spec(row\ =\ 0,\ align=\textquotesingle{}c\textquotesingle{})} specify format of the header row. Here I want to center align headers.
 \end{itemize}
 
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
 \textbf{Add header rows to group columns}
 
 \texttt{add\_header\_above()}. The header variable is supposed to be a named character with the names as new column names and values as column span. For your convenience, if column span equals to 1, you can ignore the \texttt{=1} part so the function below can be written as \texttt{add\_header\_above(c("",\ "Group\ 1"\ =\ 2,\ "Group\ 2"\ =\ 2,\ "Group\ 3"\ =\ 2))}.
@@ -4649,6 +4795,8 @@ Rows and columns can be grouped via the functions \texttt{pack\_rows()} and \tex
 \end{Shaded}
 
 You can add another row of header on top.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
 \textbf{Group rows}
 
@@ -4685,6 +4833,8 @@ Empty string as column name in \texttt{tibble}: use \texttt{setNames} or \texttt
 \end{Shaded}
 
 \texttt{footnote()} add footnotes to tables. There are four notation systems in \texttt{footnote}, namely \texttt{general} (no prefix for footnotes), \texttt{number}, \texttt{alphabet} and \texttt{symbol}.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
 \textbf{Math in rmd tables}
 

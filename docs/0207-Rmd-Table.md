@@ -4,7 +4,7 @@
 
 Using `bookdown` cmd: `\@ref(tab:chunk-label)`.
 
-Note that you must provide `caption` option in `kable()`. Otherwise the table won't be numbered.
+Note that you must provide `caption` option in `knitr::kable()`. Otherwise the table won't be numbered.
 
 ~~~markdown
 And see Table \@ref(tab:mtcars).
@@ -29,11 +29,12 @@ Table: (\#tab:mtcars)The mtcars data.
 
 
 
-The following is useful when you want to copy-and-paste R output from console to other document, e.g., markdown.
+
+`knitr::kable(x, format="pipe")` is useful when you want to copy-and-paste R output from console to other document, e.g., markdown.
 
 
 ```r
-knitr::kable(mtcars[1:5, 1:5], format="pipe")
+knitr::kable(mtcars[1:5, 1:5], format = "pipe")
 |                  |  mpg| cyl| disp|  hp| drat|
 |:-----------------|----:|---:|----:|---:|----:|
 |Mazda RX4         | 21.0|   6|  160| 110| 3.90|
@@ -79,7 +80,7 @@ knitr::kable(mtcars[1:5, 1:5], format="pipe")
 
 ```r
 # For Markdown tables, use `pipe` format
-> knitr::kable(head(mtcars[, 1:4]), format="pipe")
+> knitr::kable(head(mtcars[, 1:4]), format = "pipe")
 |                  |  mpg| cyl| disp|  hp|
 |:-----------------|----:|---:|----:|---:|
 |Mazda RX4         | 21.0|   6|  160| 110|
@@ -90,7 +91,7 @@ knitr::kable(mtcars[1:5, 1:5], format="pipe")
 |Valiant           | 18.1|   6|  225| 105|
 
 # For Plain tables in txt, `simple` is useful
-> knitr::kable(head(mtcars[, 1:4]), "simple") 
+> knitr::kable(head(mtcars[, 1:4]), format = "simple") 
                       mpg   cyl   disp    hp
 ------------------  -----  ----  -----  ----
 Mazda RX4            21.0     6    160   110
@@ -117,7 +118,7 @@ To show the `tibble` information (number of row/columns, and group information) 
 ```markdown
 ---
 title: "Use caption with df_print set to page"
-date: "2025-05-08"
+date: "2025-05-10"
 output:
   bookdown::html_document2:
     df_print: paged
@@ -160,7 +161,7 @@ knitr::kable(ggplot2::diamonds[1:10, ])
 
 <img src="https://drive.google.com/thumbnail?id=1sgdIhRZSBnyomMIgr-d5y3wsYefGZm4C&sz=w1000" alt="df printing" style="display: block; margin-right: auto; margin-left: auto; zoom:60%;" />
 
-`kable` output doesn't provide tibble informations.
+Note that `kable` output doesn't provide tibble information.
 
 
 
@@ -183,7 +184,6 @@ These options are specified in each chunk like below:
 mtcars
 ```
 ~~~
-
 
 
 For **pdf_document**, it is possible to write LaTex code directly.
