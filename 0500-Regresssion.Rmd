@@ -1,0 +1,67 @@
+# Regression
+
+```{r message=FALSE}
+library(tidyverse)
+reg_data <- read_csv("https://raw.githubusercontent.com/my1396/course_dataset/refs/heads/main/META_monthly_factor_model_2014-2024.csv")
+reg_data <- reg_data %>% 
+    mutate(return = adjusted/lag(adjusted)-1,
+           eRi = return-RF)
+## CAPM
+capm_ml <- lm(eRi~rmrf, data=reg_data)
+summary(capm_ml)
+```
+
+Get the **coefficient table** with `broom::tidy`.
+
+```{r}
+library(broom)
+tidy(capm_ml)
+```
+
+
+Get the **variance-covariance matrix** with `vcov`.
+
+```{r}
+vcov(capm_ml)
+# verify using coef table
+capm_ml %>% 
+    tidy() %>% 
+    mutate(variance=std.error^2)
+```
+
+
+We can manually calculate as
+```{r}
+df <- (nrow(capm_ml$model)-2)  # degree of freedom
+sigma2 <- sum(capm_ml$residuals^2)/df  # residual variance
+# 1st column of lm$model is the depend. var.
+X <- capm_ml$model[, 2, drop=FALSE] %>% as.matrix()
+X <- cbind(1, X)  # add intercept
+V <- solve(t(X) %*% X) * sigma2
+V
+```
+
+
+Note that `cov.unscaled` returns the **unscaled** covariance matrix, $(X'X)^{-1}$. 
+
+- To get estimated covariance matrix for the coefficients, you need to multiply `cov.unscaled` by the estimate of the error variance.
+
+```{r}
+solve(t(X) %*% X)
+summary(capm_ml)$cov.unscaled
+all.equal(solve(t(X) %*% X), 
+          summary(capm_ml)$cov.unscaled, 
+          check.attributes = FALSE)
+```
+
+
+**References**:
+
+- <https://github.com/SurajGupta/r-source/blob/master/src/library/stats/R/vcov.R>
+- stats package: <https://docs.tibco.com/pub/enterprise-runtime-for-R/6.0.1/doc/html/Language_Reference/stats/summary.lm.html>
+
+
+
+
+
+

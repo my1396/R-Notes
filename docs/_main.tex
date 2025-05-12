@@ -135,7 +135,7 @@
 
 \title{R Notes}
 \author{Menghan Yuan}
-\date{2025-05-10}
+\date{2025-05-12}
 
 \usepackage{amsthm}
 \newtheorem{theorem}{Theorem}[chapter]
@@ -4311,7 +4311,7 @@ To show the \texttt{tibble} information (number of row/columns, and group inform
 \begin{Highlighting}[]
 \CommentTok{{-}{-}{-}}
 \AnnotationTok{title:}\CommentTok{ "Use caption with df\_print set to page"}
-\AnnotationTok{date:}\CommentTok{ "2025{-}05{-}10"}
+\AnnotationTok{date:}\CommentTok{ "2025{-}05{-}12"}
 \AnnotationTok{output:}
 \CommentTok{  bookdown::html\_document2:}
 \CommentTok{    df\_print: paged}
@@ -6020,6 +6020,16 @@ F_Y(y) = F_X\left(g^{-1}(y)\right) = F_X\left(\frac{y-\mu}{\sigma}\right)
 
 \chapter{Basic R}\label{basic-r}
 
+\textbf{Get help}
+
+\begin{itemize}
+\tightlist
+\item
+  CRAN: \url{https://cran.r-project.org}
+\end{itemize}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
 Save \& Load R objects
 
 \texttt{save(...,\ f\_name)} and \texttt{saveRDS()}
@@ -6258,6 +6268,9 @@ R cannot read the display version.
 
 You can get the URL for the raw version by clicking on the Raw button displayed above the data.
 
+\texttt{read.table(filename,\ header=FALSE,\ sep="")} is more versatile than \texttt{read.csv}. Useful when you have a data file saved as txt.
+Default separator is ``white space'' for \texttt{read.table}, i.e., one or more spaces, tabs, newlines or carriage returns.
+
 \begin{Shaded}
 \begin{Highlighting}[]
 \CommentTok{\# read.table can be used to read txt and csv. Need to specify sep=\textquotesingle{},\textquotesingle{} when reading csv.}
@@ -6266,7 +6279,7 @@ You can get the URL for the raw version by clicking on the Raw button displayed 
 
 \NormalTok{data }\OtherTok{\textless{}{-}} \FunctionTok{read.table}\NormalTok{(}\StringTok{"https://raw.githubusercontent.com/my1396/course\_dataset/refs/heads/main/bonedensity.csv"}\NormalTok{, }\AttributeTok{header=}\ConstantTok{TRUE}\NormalTok{, }\AttributeTok{sep=}\StringTok{","}\NormalTok{)}
 
-\CommentTok{\# can use read\_csv or read.csv}
+\CommentTok{\# Alternatively, can use read\_csv or read.csv directly}
 \NormalTok{data }\OtherTok{\textless{}{-}} \FunctionTok{read\_csv}\NormalTok{(}\StringTok{"https://raw.githubusercontent.com/my1396/course\_dataset/refs/heads/main/bonedensity.csv"}\NormalTok{)}
 \NormalTok{data}
 \end{Highlighting}
@@ -6353,6 +6366,165 @@ The main function is \texttt{flextable} which takes a \texttt{data.frame} as arg
 The package provides a set of functions to easily create some tables from others objects.
 
 The \texttt{as\_flextable()} function is used to transform specific objects into \texttt{flextable} objects. For example, you can transform a crosstab produced with the `tables' package into a flextable which can then be formatted, annotated or augmented with footnotes.
+
+\chapter{Regression}\label{regression}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(tidyverse)}
+\NormalTok{reg\_data }\OtherTok{\textless{}{-}} \FunctionTok{read\_csv}\NormalTok{(}\StringTok{"https://raw.githubusercontent.com/my1396/course\_dataset/refs/heads/main/META\_monthly\_factor\_model\_2014{-}2024.csv"}\NormalTok{)}
+\NormalTok{reg\_data }\OtherTok{\textless{}{-}}\NormalTok{ reg\_data }\SpecialCharTok{\%\textgreater{}\%} 
+    \FunctionTok{mutate}\NormalTok{(}\AttributeTok{return =}\NormalTok{ adjusted}\SpecialCharTok{/}\FunctionTok{lag}\NormalTok{(adjusted)}\SpecialCharTok{{-}}\DecValTok{1}\NormalTok{,}
+           \AttributeTok{eRi =}\NormalTok{ return}\SpecialCharTok{{-}}\NormalTok{RF)}
+\DocumentationTok{\#\# CAPM}
+\NormalTok{capm\_ml }\OtherTok{\textless{}{-}} \FunctionTok{lm}\NormalTok{(eRi}\SpecialCharTok{\textasciitilde{}}\NormalTok{rmrf, }\AttributeTok{data=}\NormalTok{reg\_data)}
+\FunctionTok{summary}\NormalTok{(capm\_ml)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = eRi ~ rmrf, data = reg_data)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -0.40895 -0.03482  0.00141  0.03767  0.20600 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(>|t|)    
+## (Intercept) 0.009747   0.007645   1.275    0.205    
+## rmrf        1.066640   0.166384   6.411  2.8e-09 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 0.08343 on 123 degrees of freedom
+##   (1 observation deleted due to missingness)
+## Multiple R-squared:  0.2504, Adjusted R-squared:  0.2444 
+## F-statistic:  41.1 on 1 and 123 DF,  p-value: 2.801e-09
+\end{verbatim}
+
+Get the \textbf{coefficient table} with \texttt{broom::tidy}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(broom)}
+\FunctionTok{tidy}\NormalTok{(capm\_ml)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 2 x 5
+##   term           estimate   std.error statistic     p.value
+##   <chr>             <dbl>       <dbl>     <dbl>       <dbl>
+## 1 (Intercept) 0.009746761 0.007644518  1.275000 2.047124e-1
+## 2 rmrf        1.066640    0.1663838    6.410718 2.801085e-9
+\end{verbatim}
+
+Get the \textbf{variance-covariance matrix} with \texttt{vcov}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{vcov}\NormalTok{(capm\_ml)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##               (Intercept)          rmrf
+## (Intercept)  5.843866e-05 -0.0002760605
+## rmrf        -2.760605e-04  0.0276835643
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# verify using coef table}
+\NormalTok{capm\_ml }\SpecialCharTok{\%\textgreater{}\%} 
+    \FunctionTok{tidy}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%} 
+    \FunctionTok{mutate}\NormalTok{(}\AttributeTok{variance=}\NormalTok{std.error}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 2 x 6
+##   term           estimate   std.error statistic     p.value      variance
+##   <chr>             <dbl>       <dbl>     <dbl>       <dbl>         <dbl>
+## 1 (Intercept) 0.009746761 0.007644518  1.275000 2.047124e-1 0.00005843866
+## 2 rmrf        1.066640    0.1663838    6.410718 2.801085e-9 0.02768356
+\end{verbatim}
+
+We can manually calculate as
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{df }\OtherTok{\textless{}{-}}\NormalTok{ (}\FunctionTok{nrow}\NormalTok{(capm\_ml}\SpecialCharTok{$}\NormalTok{model)}\SpecialCharTok{{-}}\DecValTok{2}\NormalTok{)  }\CommentTok{\# degree of freedom}
+\NormalTok{sigma2 }\OtherTok{\textless{}{-}} \FunctionTok{sum}\NormalTok{(capm\_ml}\SpecialCharTok{$}\NormalTok{residuals}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{)}\SpecialCharTok{/}\NormalTok{df  }\CommentTok{\# residual variance}
+\CommentTok{\# 1st column of lm$model is the depend. var.}
+\NormalTok{X }\OtherTok{\textless{}{-}}\NormalTok{ capm\_ml}\SpecialCharTok{$}\NormalTok{model[, }\DecValTok{2}\NormalTok{, drop}\OtherTok{=}\ConstantTok{FALSE}\NormalTok{] }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{as.matrix}\NormalTok{()}
+\NormalTok{X }\OtherTok{\textless{}{-}} \FunctionTok{cbind}\NormalTok{(}\DecValTok{1}\NormalTok{, X)  }\CommentTok{\# add intercept}
+\NormalTok{V }\OtherTok{\textless{}{-}} \FunctionTok{solve}\NormalTok{(}\FunctionTok{t}\NormalTok{(X) }\SpecialCharTok{\%*\%}\NormalTok{ X) }\SpecialCharTok{*}\NormalTok{ sigma2}
+\NormalTok{V}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##                             rmrf
+##       5.843866e-05 -0.0002760605
+## rmrf -2.760605e-04  0.0276835643
+\end{verbatim}
+
+Note that \texttt{cov.unscaled} returns the \textbf{unscaled} covariance matrix, \((X'X)^{-1}\).
+
+\begin{itemize}
+\tightlist
+\item
+  To get estimated covariance matrix for the coefficients, you need to multiply \texttt{cov.unscaled} by the estimate of the error variance.
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{solve}\NormalTok{(}\FunctionTok{t}\NormalTok{(X) }\SpecialCharTok{\%*\%}\NormalTok{ X)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##                          rmrf
+##       0.008395487 -0.03965975
+## rmrf -0.039659745  3.97711043
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{summary}\NormalTok{(capm\_ml)}\SpecialCharTok{$}\NormalTok{cov.unscaled}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##              (Intercept)        rmrf
+## (Intercept)  0.008395487 -0.03965975
+## rmrf        -0.039659745  3.97711043
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{all.equal}\NormalTok{(}\FunctionTok{solve}\NormalTok{(}\FunctionTok{t}\NormalTok{(X) }\SpecialCharTok{\%*\%}\NormalTok{ X), }
+          \FunctionTok{summary}\NormalTok{(capm\_ml)}\SpecialCharTok{$}\NormalTok{cov.unscaled, }
+          \AttributeTok{check.attributes =} \ConstantTok{FALSE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] TRUE
+\end{verbatim}
+
+\textbf{References}:
+
+\begin{itemize}
+\tightlist
+\item
+  \url{https://github.com/SurajGupta/r-source/blob/master/src/library/stats/R/vcov.R}
+\item
+  stats package: \url{https://docs.tibco.com/pub/enterprise-runtime-for-R/6.0.1/doc/html/Language_Reference/stats/summary.lm.html}
+\end{itemize}
 
 \chapter{Machine Learning}\label{machine-learning}
 

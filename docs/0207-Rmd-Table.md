@@ -118,7 +118,7 @@ To show the `tibble` information (number of row/columns, and group information) 
 ```markdown
 ---
 title: "Use caption with df_print set to page"
-date: "2025-05-10"
+date: "2025-05-12"
 output:
   bookdown::html_document2:
     df_print: paged
@@ -218,6 +218,8 @@ Do not forget the equal sign before `latex`, i.e., it is `=latex` instead of `la
 
 #### Text table {-}
 
+Specify `stargazer(type = "text")`
+
 ````markdown
 ```{r descrptive-analysis-text, comment = ''}
 apply(data[,-1], 2, get_stat) %>% 
@@ -227,18 +229,33 @@ apply(data[,-1], 2, get_stat) %>%
 
 #### HTML table {-}
 
-Note that you need to specify `results="asis"`.  This option tells `knitr` to treat verbatim code blocks "as is." Otherwise, instead of your table, you will see the raw html or latex code.
+Note that you need to specify `results="asis"` in the chunk options.  This option tells `knitr` to treat verbatim code blocks "as is." Otherwise, instead of your table, you will see the raw html or latex code.
 
-- `*`'s do not show properly, need to specify as footnote manually.
+- Note that `*`'s do not show properly in html output (Fig. \@ref(fig:stargazer1), need to specify as footnote manually.
+
+<div class="figure">
+<img src="https://drive.google.com/thumbnail?id=1UWaYK2Q00xobvHsadz-EsEw0pUnhqVTs&sz=w1000" alt="Failed to show significance codes."  />
+<p class="caption">(\#fig:stargazer1)Failed to show significance codes.</p>
+</div>
+
+Use the following code to display the correct significance symbols. See Fig. \@ref(fig:stargazer2) for the expected output.
 
 ````markdown
 ```{r descrptive-analysis-html, results="asis"}
 apply(data[,-1], 2, get_stat) %>% 
     stargazer(type = "html", digits=2, 
-              notes = "<span>&#42;</span>: p<0.1; <span>&#42;&#42;</span>: <strong>p<0.05</strong>; <span>&#42;&#42;&#42;</span>: p<0.01 <br> Standard errors in the parentheses.",
+              notes = "<span>&#42;</span>: p<0.1; <span>&#42;&#42;</span>: <strong>p<0.05</strong>; <span>&#42;&#42;&#42;</span>: p<0.01 <br> Standard errors in parentheses.",
               notes.append = F)
 ```
 ````
+
+
+<div class="figure">
+<img src="https://drive.google.com/thumbnail?id=1a_HaaOgYidFhQavHA2iuZgUbj5iYdbEW&sz=w1000" alt="Correct significance codes."  />
+<p class="caption">(\#fig:stargazer2)Correct significance codes.</p>
+</div>
+
+
 
 **Common arguments**:
 
@@ -282,9 +299,9 @@ apply(data[,-1], 2, get_stat) %>%
 
     ```r
     stargazer(mod_sel_lm_mtcars, 
-          covariate.labels = 
-            c("(Intercept)", "drat", "hp", "$w_{i}$",
-              "\\textit{k}", "logLik", "AICc", "\\Delta AICc"))
+              covariate.labels = 
+              c("(Intercept)", "drat", "hp", "$w_{i}$",
+                "\\textit{k}", "logLik", "AICc", "\\Delta AICc"))
     ```
 
 

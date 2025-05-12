@@ -4,13 +4,13 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>3.7 Equations | R Notes</title>
+  <title>Chapter 6 Regression | R Notes</title>
   <meta name="description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
 set in the _output.yml file.</p>" />
   <meta name="generator" content="bookdown 0.35 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="3.7 Equations | R Notes" />
+  <meta property="og:title" content="Chapter 6 Regression | R Notes" />
   <meta property="og:type" content="book" />
   
   <meta property="og:description" content="<p>This is a minimal example of using the bookdown package to write a book.
@@ -19,7 +19,7 @@ set in the _output.yml file.</p>" />
   <meta name="github-repo" content="my1396/R-Notes" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="3.7 Equations | R Notes" />
+  <meta name="twitter:title" content="Chapter 6 Regression | R Notes" />
   
   <meta name="twitter:description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
@@ -36,8 +36,8 @@ set in the _output.yml file.</p>" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   <link rel="shortcut icon" href="images/r-project-favicon.ico" type="image/x-icon" />
-<link rel="prev" href="3.6-cross-references.html"/>
-<link rel="next" href="3.8-theorems.html"/>
+<link rel="prev" href="5.1-data-input-output.html"/>
+<link rel="next" href="7-machine-learning.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -288,154 +288,98 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
         }
     </script>
 </head>
-<div id="equations" class="section level2 hasAnchor" number="3.7">
-<h2><span class="header-section-number">3.7</span> Equations<a href="3.7-equations.html#equations" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>Can use <code>$...$</code> (<code>$$...$$</code> for blocks) or <code>\(...\)</code> (<code>\[...\]</code> for blocks) to enclose equations. Difference:</p>
+<div id="regression" class="section level1 hasAnchor" number="6">
+<h1><span class="header-section-number">Chapter 6</span> Regression<a href="6-regression.html#regression" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<div class="sourceCode" id="cb214"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb214-1"><a href="6-regression.html#cb214-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb214-2"><a href="6-regression.html#cb214-2" tabindex="-1"></a>reg_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;https://raw.githubusercontent.com/my1396/course_dataset/refs/heads/main/META_monthly_factor_model_2014-2024.csv&quot;</span>)</span>
+<span id="cb214-3"><a href="6-regression.html#cb214-3" tabindex="-1"></a>reg_data <span class="ot">&lt;-</span> reg_data <span class="sc">%&gt;%</span> </span>
+<span id="cb214-4"><a href="6-regression.html#cb214-4" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">return =</span> adjusted<span class="sc">/</span><span class="fu">lag</span>(adjusted)<span class="sc">-</span><span class="dv">1</span>,</span>
+<span id="cb214-5"><a href="6-regression.html#cb214-5" tabindex="-1"></a>           <span class="at">eRi =</span> return<span class="sc">-</span>RF)</span>
+<span id="cb214-6"><a href="6-regression.html#cb214-6" tabindex="-1"></a><span class="do">## CAPM</span></span>
+<span id="cb214-7"><a href="6-regression.html#cb214-7" tabindex="-1"></a>capm_ml <span class="ot">&lt;-</span> <span class="fu">lm</span>(eRi<span class="sc">~</span>rmrf, <span class="at">data=</span>reg_data)</span>
+<span id="cb214-8"><a href="6-regression.html#cb214-8" tabindex="-1"></a><span class="fu">summary</span>(capm_ml)</span></code></pre></div>
+<pre><code>## 
+## Call:
+## lm(formula = eRi ~ rmrf, data = reg_data)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -0.40895 -0.03482  0.00141  0.03767  0.20600 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) 0.009747   0.007645   1.275    0.205    
+## rmrf        1.066640   0.166384   6.411  2.8e-09 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.08343 on 123 degrees of freedom
+##   (1 observation deleted due to missingness)
+## Multiple R-squared:  0.2504, Adjusted R-squared:  0.2444 
+## F-statistic:  41.1 on 1 and 123 DF,  p-value: 2.801e-09</code></pre>
+<p>Get the <strong>coefficient table</strong> with <code>broom::tidy</code>.</p>
+<div class="sourceCode" id="cb216"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb216-1"><a href="6-regression.html#cb216-1" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
+<span id="cb216-2"><a href="6-regression.html#cb216-2" tabindex="-1"></a><span class="fu">tidy</span>(capm_ml)</span></code></pre></div>
+<pre><code>## # A tibble: 2 × 5
+##   term           estimate   std.error statistic     p.value
+##   &lt;chr&gt;             &lt;dbl&gt;       &lt;dbl&gt;     &lt;dbl&gt;       &lt;dbl&gt;
+## 1 (Intercept) 0.009746761 0.007644518  1.275000 2.047124e-1
+## 2 rmrf        1.066640    0.1663838    6.410718 2.801085e-9</code></pre>
+<p>Get the <strong>variance-covariance matrix</strong> with <code>vcov</code>.</p>
+<div class="sourceCode" id="cb218"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb218-1"><a href="6-regression.html#cb218-1" tabindex="-1"></a><span class="fu">vcov</span>(capm_ml)</span></code></pre></div>
+<pre><code>##               (Intercept)          rmrf
+## (Intercept)  5.843866e-05 -0.0002760605
+## rmrf        -2.760605e-04  0.0276835643</code></pre>
+<div class="sourceCode" id="cb220"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb220-1"><a href="6-regression.html#cb220-1" tabindex="-1"></a><span class="co"># verify using coef table</span></span>
+<span id="cb220-2"><a href="6-regression.html#cb220-2" tabindex="-1"></a>capm_ml <span class="sc">%&gt;%</span> </span>
+<span id="cb220-3"><a href="6-regression.html#cb220-3" tabindex="-1"></a>    <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb220-4"><a href="6-regression.html#cb220-4" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">variance=</span>std.error<span class="sc">^</span><span class="dv">2</span>)</span></code></pre></div>
+<pre><code>## # A tibble: 2 × 6
+##   term           estimate   std.error statistic     p.value      variance
+##   &lt;chr&gt;             &lt;dbl&gt;       &lt;dbl&gt;     &lt;dbl&gt;       &lt;dbl&gt;         &lt;dbl&gt;
+## 1 (Intercept) 0.009746761 0.007644518  1.275000 2.047124e-1 0.00005843866
+## 2 rmrf        1.066640    0.1663838    6.410718 2.801085e-9 0.02768356</code></pre>
+<p>We can manually calculate as</p>
+<div class="sourceCode" id="cb222"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb222-1"><a href="6-regression.html#cb222-1" tabindex="-1"></a>df <span class="ot">&lt;-</span> (<span class="fu">nrow</span>(capm_ml<span class="sc">$</span>model)<span class="sc">-</span><span class="dv">2</span>)  <span class="co"># degree of freedom</span></span>
+<span id="cb222-2"><a href="6-regression.html#cb222-2" tabindex="-1"></a>sigma2 <span class="ot">&lt;-</span> <span class="fu">sum</span>(capm_ml<span class="sc">$</span>residuals<span class="sc">^</span><span class="dv">2</span>)<span class="sc">/</span>df  <span class="co"># residual variance</span></span>
+<span id="cb222-3"><a href="6-regression.html#cb222-3" tabindex="-1"></a><span class="co"># 1st column of lm$model is the depend. var.</span></span>
+<span id="cb222-4"><a href="6-regression.html#cb222-4" tabindex="-1"></a>X <span class="ot">&lt;-</span> capm_ml<span class="sc">$</span>model[, <span class="dv">2</span>, drop<span class="ot">=</span><span class="cn">FALSE</span>] <span class="sc">%&gt;%</span> <span class="fu">as.matrix</span>()</span>
+<span id="cb222-5"><a href="6-regression.html#cb222-5" tabindex="-1"></a>X <span class="ot">&lt;-</span> <span class="fu">cbind</span>(<span class="dv">1</span>, X)  <span class="co"># add intercept</span></span>
+<span id="cb222-6"><a href="6-regression.html#cb222-6" tabindex="-1"></a>V <span class="ot">&lt;-</span> <span class="fu">solve</span>(<span class="fu">t</span>(X) <span class="sc">%*%</span> X) <span class="sc">*</span> sigma2</span>
+<span id="cb222-7"><a href="6-regression.html#cb222-7" tabindex="-1"></a>V</span></code></pre></div>
+<pre><code>##                             rmrf
+##       5.843866e-05 -0.0002760605
+## rmrf -2.760605e-04  0.0276835643</code></pre>
+<p>Note that <code>cov.unscaled</code> returns the <strong>unscaled</strong> covariance matrix, <span class="math inline">\((X&#39;X)^{-1}\)</span>.</p>
 <ul>
-<li><code>$...$</code> provides rendered equation previews in RStudio.</li>
-<li><code>\(...\)</code> does not have previews.</li>
+<li>To get estimated covariance matrix for the coefficients, you need to multiply <code>cov.unscaled</code> by the estimate of the error variance.</li>
 </ul>
-<p>Rstudio equation previews do NOT work well with indented equations. <span class="math inline">\(\rightarrow\)</span> reduce indentation</p>
-<p>如果公式缩进，Rstudio 公式预览功能可能不识别。在不影响理解的前提下，减少不必要的缩进以便预览公式。</p>
-<p><strong>Multi-case</strong> functions using <code>\begin{cases}</code></p>
-<div class="sourceCode" id="cb120"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb120-1"><a href="3.7-equations.html#cb120-1" tabindex="-1"></a>\begin{align*}</span>
-<span id="cb120-2"><a href="3.7-equations.html#cb120-2" tabindex="-1"></a>I_t = </span>
-<span id="cb120-3"><a href="3.7-equations.html#cb120-3" tabindex="-1"></a>\begin{cases}</span>
-<span id="cb120-4"><a href="3.7-equations.html#cb120-4" tabindex="-1"></a>1 &amp; \text{if } r_t&gt;0 <span class="sc">\\</span></span>
-<span id="cb120-5"><a href="3.7-equations.html#cb120-5" tabindex="-1"></a>0 &amp; \text{if } r_t\leq0</span>
-<span id="cb120-6"><a href="3.7-equations.html#cb120-6" tabindex="-1"></a>\end{cases}</span>
-<span id="cb120-7"><a href="3.7-equations.html#cb120-7" tabindex="-1"></a>\end{align*}</span></code></pre></div>
-<p>will render as</p>
-<p><span class="math display">\[\begin{align*}
-I_t =
-\begin{cases}
-1 &amp; \text{if } r_t&gt;0 \\
-0 &amp; \text{if } r_t\leq0
-\end{cases}
-\end{align*}\]</span></p>
-<p>For equation numbering support in <code>bookdown</code> you need to <a href="https://bookdown.org/yihui/bookdown/markdown-extensions-by-bookdown.html#equations">assign labels</a>.</p>
-<hr />
-<p>You may refer to an equation using Eq. <code>\@ref(eq:eq01)</code>.</p>
-<div class="sourceCode" id="cb121"><pre class="sourceCode latex"><code class="sourceCode latex"><span id="cb121-1"><a href="3.7-equations.html#cb121-1" tabindex="-1"></a><span class="kw">\begin</span>{<span class="ex">align</span>}<span class="ss"> (</span><span class="sc">\#</span><span class="ss">eq:eq01)</span></span>
-<span id="cb121-2"><a href="3.7-equations.html#cb121-2" tabindex="-1"></a><span class="sc">\frac</span><span class="ss">{p(x)}{1-p(x)} = </span><span class="sc">\exp</span><span class="ss"> (</span><span class="sc">\beta</span><span class="ss">_0+</span><span class="sc">\beta</span><span class="ss">_1 x) </span><span class="sc">\,</span><span class="ss">.</span></span>
-<span id="cb121-3"><a href="3.7-equations.html#cb121-3" tabindex="-1"></a><span class="kw">\end</span>{<span class="ex">align</span>}</span></code></pre></div>
-<p>If you want to provide a specific number to the equation, you can use <code>\tag{XX.XX}</code>.</p>
+<div class="sourceCode" id="cb224"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb224-1"><a href="6-regression.html#cb224-1" tabindex="-1"></a><span class="fu">solve</span>(<span class="fu">t</span>(X) <span class="sc">%*%</span> X)</span></code></pre></div>
+<pre><code>##                          rmrf
+##       0.008395487 -0.03965975
+## rmrf -0.039659745  3.97711043</code></pre>
+<div class="sourceCode" id="cb226"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb226-1"><a href="6-regression.html#cb226-1" tabindex="-1"></a><span class="fu">summary</span>(capm_ml)<span class="sc">$</span>cov.unscaled</span></code></pre></div>
+<pre><code>##              (Intercept)        rmrf
+## (Intercept)  0.008395487 -0.03965975
+## rmrf        -0.039659745  3.97711043</code></pre>
+<div class="sourceCode" id="cb228"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb228-1"><a href="6-regression.html#cb228-1" tabindex="-1"></a><span class="fu">all.equal</span>(<span class="fu">solve</span>(<span class="fu">t</span>(X) <span class="sc">%*%</span> X), </span>
+<span id="cb228-2"><a href="6-regression.html#cb228-2" tabindex="-1"></a>          <span class="fu">summary</span>(capm_ml)<span class="sc">$</span>cov.unscaled, </span>
+<span id="cb228-3"><a href="6-regression.html#cb228-3" tabindex="-1"></a>          <span class="at">check.attributes =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<pre><code>## [1] TRUE</code></pre>
+<p><strong>References</strong>:</p>
 <ul>
-<li><p>With LaTeX</p>
-<p>LaTex allows custom labels.</p>
-<p><span class="math display">\[\begin{align} \label{eq:my-label-latex} \tag{my label latex}
-\frac{p(x)}{1-p(x)} = \exp (\beta_0+\beta_1 x) \,.
-\end{align}\]</span></p>
-<p>My specific label here, see eq <span class="math inline">\(\eqref{eq:my-label-latex}\)</span> (<code>\eqref{eq:my-label-latex}</code>).</p></li>
+<li><a href="https://github.com/SurajGupta/r-source/blob/master/src/library/stats/R/vcov.R" class="uri">https://github.com/SurajGupta/r-source/blob/master/src/library/stats/R/vcov.R</a></li>
+<li>stats package: <a href="https://docs.tibco.com/pub/enterprise-runtime-for-R/6.0.1/doc/html/Language_Reference/stats/summary.lm.html" class="uri">https://docs.tibco.com/pub/enterprise-runtime-for-R/6.0.1/doc/html/Language_Reference/stats/summary.lm.html</a></li>
 </ul>
-<hr />
-<ul>
-<li><p>With <code>bookdown</code></p>
-<p><code>bookdown</code> does NOT support custom tag though.</p>
-<p><span class="math display" id="eq:my-label-bookdown">\[\begin{align}
-\frac{p(x)}{1-p(x)} = \exp (\beta_0+\beta_1 x) \,.
-\tag{3.3}
-\end{align}\]</span></p>
-<p>My specific label here, see eq <a href="3.7-equations.html#eq:my-label-bookdown">(3.3)</a></p></li>
-</ul>
-<hr />
-<p><strong>Color eqns</strong> using <code>\color{#00CC66}{...}</code>.</p>
-<p>But sometime everything follows gets colored. You may want to use <code>{\color{#00CC66} ... }</code> instead.</p>
-<div class="sourceCode" id="cb122"><pre class="sourceCode latex"><code class="sourceCode latex"><span id="cb122-1"><a href="3.7-equations.html#cb122-1" tabindex="-1"></a><span class="ss">$$</span></span>
-<span id="cb122-2"><a href="3.7-equations.html#cb122-2" tabindex="-1"></a><span class="sc">\color</span><span class="ss">{#008B45}{Y_t} = I_tI_{t-1} + (1-I_t)(1-I_{t-1})</span></span>
-<span id="cb122-3"><a href="3.7-equations.html#cb122-3" tabindex="-1"></a><span class="ss">$$</span></span></code></pre></div>
-<p><span class="math display">\[\begin{align*}
-{\color{red}Y_t} = I_tI_{t-1} + (1-I_t)(1-I_{t-1})
-\end{align*}\]</span></p>
-<ul>
-<li><p>This only works for color names, not hex codes starting with <code>#</code>, because html requires the <code>#</code> followed by 6 characters to define a color, but LaTeX package <code>xcolor</code> specifically excludes <code>#</code> in color specifications.</p></li>
-<li><p>Here is an (only works for LaTeX).</p></li>
-</ul>
-<p><strong>A workaround</strong>: We can write a custom R function to insert the correct syntax depending on the output format using the <code>is_latex_output()</code> and <code>is_html_output()</code> functions in knitr as follows:</p>
-<div class="sourceCode" id="cb123"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb123-1"><a href="3.7-equations.html#cb123-1" tabindex="-1"></a>colorize <span class="ot">&lt;-</span> <span class="cf">function</span>(x, color) {</span>
-<span id="cb123-2"><a href="3.7-equations.html#cb123-2" tabindex="-1"></a>  <span class="cf">if</span> (knitr<span class="sc">::</span><span class="fu">is_latex_output</span>()) {</span>
-<span id="cb123-3"><a href="3.7-equations.html#cb123-3" tabindex="-1"></a>    <span class="fu">sprintf</span>(<span class="st">&quot;</span><span class="sc">\\</span><span class="st">textcolor{%s}{%s}&quot;</span>, color, x)</span>
-<span id="cb123-4"><a href="3.7-equations.html#cb123-4" tabindex="-1"></a>  } <span class="cf">else</span> <span class="cf">if</span> (knitr<span class="sc">::</span><span class="fu">is_html_output</span>()) {</span>
-<span id="cb123-5"><a href="3.7-equations.html#cb123-5" tabindex="-1"></a>    <span class="fu">sprintf</span>(<span class="st">&quot;&lt;span style=&#39;color: %s;&#39;&gt;%s&lt;/span&gt;&quot;</span>, color,</span>
-<span id="cb123-6"><a href="3.7-equations.html#cb123-6" tabindex="-1"></a>      x)</span>
-<span id="cb123-7"><a href="3.7-equations.html#cb123-7" tabindex="-1"></a>  } <span class="cf">else</span> x</span>
-<span id="cb123-8"><a href="3.7-equations.html#cb123-8" tabindex="-1"></a>}</span></code></pre></div>
-<p>We can then use the code in an inline R expression <code>`r colorize("some words in red", "red")`</code>, which will create <span style="color: red;">some words in red</span>, which works for both html and .</p>
-<hr />
-<div id="mathjax" class="section level3 unlisted unnumbered hasAnchor">
-<h3>Mathjax<a href="3.7-equations.html#mathjax" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p><a href="https://bookdown.org/yihui/rmarkdown/html-document.html#mathjax-equations" class="uri">https://bookdown.org/yihui/rmarkdown/html-document.html#mathjax-equations</a></p>
-<p>Default configuration used by the rmarkdown package is given by <code>rmarkdown:::mathjax_config()</code>. As of rmarkdown v2.1, the function returns “MathJax.js?config=TeX-AMS-MML_HTMLorMML”. This configures <code>Mathjax</code> to <code>HTML-CSS</code>.</p>
-<p>Change <code>Mathjax</code> configuration to <code>CommonHTML</code> using the following codes.</p>
-<div class="sourceCode" id="cb124"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb124-1"><a href="3.7-equations.html#cb124-1" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb124-2"><a href="3.7-equations.html#cb124-2" tabindex="-1"></a><span class="an">title:</span><span class="co"> &quot;Trouble with MathJax&quot;</span></span>
-<span id="cb124-3"><a href="3.7-equations.html#cb124-3" tabindex="-1"></a><span class="an">output:</span><span class="co"> </span></span>
-<span id="cb124-4"><a href="3.7-equations.html#cb124-4" tabindex="-1"></a><span class="co">  html_document:</span></span>
-<span id="cb124-5"><a href="3.7-equations.html#cb124-5" tabindex="-1"></a><span class="co">    mathjax: &quot;https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS_CHTML.js&quot;</span></span>
-<span id="cb124-6"><a href="3.7-equations.html#cb124-6" tabindex="-1"></a><span class="co">    self_contained: false    </span></span>
-<span id="cb124-7"><a href="3.7-equations.html#cb124-7" tabindex="-1"></a><span class="co">---</span></span></code></pre></div>
-<p>By default, <a href="https://www.mathjax.org/">MathJax</a> scripts are included in HTML documents for rendering LaTeX and MathML equations. You can use the <code>mathjax</code> option to control how MathJax is included:</p>
-<ul>
-<li>Specify <code>"default"</code> to use an HTTPS URL from a CDN host (currently provided by RStudio).</li>
-<li>Specify <code>"local"</code> to use a local version of MathJax (which is copied into the output directory). Note that when using <code>"local"</code> you also need to set the <code>self_contained</code> option to <code>false</code>.</li>
-<li>Specify an alternate URL to load MathJax from another location. To use a self-hosted copy of MathJax.</li>
-<li>Specify <code>null</code> to exclude MathJax entirely.</li>
-</ul>
-<hr />
-<p>Q: Why my eqns are not rendered?</p>
-<p>A: MathJax is unlikely to work offline. Check internet connection.</p>
-<p>You load <a href="https://docs.mathjax.org/en/stable/configuration.html">MathJax</a> into a web page by including its main JavaScript file into the page. That is done via a <code>&lt;script&gt;</code>tag that links to the <code>MathJax.js</code> file. To do that, place the following line in the <code>&lt;head&gt;</code> section of your document.</p>
-<p>For example, if you are using the MathJax distributed network service, the tag might be</p>
-<div class="sourceCode" id="cb125"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb125-1"><a href="3.7-equations.html#cb125-1" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">script</span><span class="ot"> type=</span><span class="st">&quot;text/javascript&quot;</span></span>
-<span id="cb125-2"><a href="3.7-equations.html#cb125-2" tabindex="-1"></a><span class="ot">   src</span><span class="op">=</span><span class="st">&quot;http://cdn.mathjax.org/mathjax/latest/MathJax.js&quot;</span><span class="dt">&gt;</span></span>
-<span id="cb125-3"><a href="3.7-equations.html#cb125-3" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">script</span><span class="dt">&gt;</span></span></code></pre></div>
-<p>MathJax is available as a web service from <code>cdn.mathjax.org</code>, so you can obtain MathJax from there without needing to install it on your own server. The CDN is part of a distributed “cloud” network, so it is handled by servers around the world. That means that you should get access to a server geographically near you, for a fast, reliable connection.</p>
-<p>The CDN hosts the most current version of MathJax, as well as older versions, so you can either link to a version that stays up-to-date as MathJax is improved, or you can stay with one of the release versions so that your pages always use the same version of MathJax.</p>
-<hr />
-<p>For equation numbering support in <code>bookdown::pdf_document2</code> you need to <a href="https://bookdown.org/yihui/bookdown/markdown-extensions-by-bookdown.html#equations">assign labels</a>. Defualt behavior is not adding numbering.</p>
-<ul>
-<li><p>Use <code>\begin{equation}...\end{equations}</code> or <code>\begin{align}...\end{align}</code> environments.</p>
-<ul>
-<li>Use <code>(\#eq:eq1)</code> or <code>\label{eq:eq1}</code> to add labels.</li>
-<li>Automatically add numbering.</li>
-<li>Drawback is that rmd does not have preview of equations.</li>
-</ul></li>
-<li><p>Do NOT enclose the environments in double dollar signs <code>$$</code>. Otherwise, no label is added, but cross-references still show up.</p>
-<ul>
-<li><p><code>$$</code> do not add numbering automatically.</p></li>
-<li><p>But in <code>bookdown::html_document2</code>, it is ok to use</p>
-<div class="sourceCode" id="cb126"><pre class="sourceCode latex"><code class="sourceCode latex"><span id="cb126-1"><a href="3.7-equations.html#cb126-1" tabindex="-1"></a><span class="ss">$$</span></span>
-<span id="cb126-2"><a href="3.7-equations.html#cb126-2" tabindex="-1"></a><span class="kw">\begin</span>{<span class="ex">equation</span>}<span class="ss"> (</span><span class="sc">\#</span><span class="ss">eq:simple-lm)</span></span>
-<span id="cb126-3"><a href="3.7-equations.html#cb126-3" tabindex="-1"></a><span class="sc">\hat</span><span class="ss">{</span><span class="sc">\beta</span><span class="ss">}_{</span><span class="sc">\text</span>{OLS}<span class="ss">} = </span><span class="sc">\left</span><span class="ss">(</span><span class="sc">\sum</span><span class="ss">_{i=1}^n x_i x_i&#39; </span><span class="sc">\right</span><span class="ss">)^{-1} </span><span class="sc">\left</span><span class="ss">(</span><span class="sc">\sum</span><span class="ss">_{i=1}^n x_i y_i </span><span class="sc">\right</span><span class="ss">) .</span></span>
-<span id="cb126-4"><a href="3.7-equations.html#cb126-4" tabindex="-1"></a><span class="kw">\end</span>{<span class="ex">equation</span>}</span>
-<span id="cb126-5"><a href="3.7-equations.html#cb126-5" tabindex="-1"></a><span class="ss">$$</span></span></code></pre></div>
-<p>Then reference with <code>\@ref(eq:simple-lm)</code>.</p></li>
-</ul></li>
-<li><p>Use <code>\@ref(eq:eq1)</code> (note this use parentheses) or the Latex command <code>\eqref{eq:eq1}</code> (this uses curly braces) to cite the equation.</p></li>
-</ul>
-<div class="sourceCode" id="cb127"><pre class="sourceCode latex"><code class="sourceCode latex"><span id="cb127-1"><a href="3.7-equations.html#cb127-1" tabindex="-1"></a>Load the dataset and calculate the monthly return in month <span class="ss">$r$</span> (<span class="ss">$r_t$</span>) as</span>
-<span id="cb127-2"><a href="3.7-equations.html#cb127-2" tabindex="-1"></a></span>
-<span id="cb127-3"><a href="3.7-equations.html#cb127-3" tabindex="-1"></a><span class="kw">\begin</span>{<span class="ex">equation</span>}</span>
-<span id="cb127-4"><a href="3.7-equations.html#cb127-4" tabindex="-1"></a><span class="ss">r_t = </span><span class="sc">\frac</span><span class="ss">{P_t-P_{t-1}}{P_{t-1}} = </span><span class="sc">\frac</span><span class="ss">{P_t}{P_{t-1}}-1 , </span></span>
-<span id="cb127-5"><a href="3.7-equations.html#cb127-5" tabindex="-1"></a><span class="ss">(</span><span class="sc">\#</span><span class="ss">eq:eq1)</span></span>
-<span id="cb127-6"><a href="3.7-equations.html#cb127-6" tabindex="-1"></a><span class="kw">\end</span>{<span class="ex">equation</span>}</span>
-<span id="cb127-7"><a href="3.7-equations.html#cb127-7" tabindex="-1"></a></span>
-<span id="cb127-8"><a href="3.7-equations.html#cb127-8" tabindex="-1"></a>where <span class="ss">$P_t$</span> is the adjusted price in month <span class="ss">$t$</span>. </span>
-<span id="cb127-9"><a href="3.7-equations.html#cb127-9" tabindex="-1"></a></span>
-<span id="cb127-10"><a href="3.7-equations.html#cb127-10" tabindex="-1"></a>Test equation1 <span class="fu">\@ref</span>(eq:eq1).</span>
-<span id="cb127-11"><a href="3.7-equations.html#cb127-11" tabindex="-1"></a></span>
-<span id="cb127-12"><a href="3.7-equations.html#cb127-12" tabindex="-1"></a>Test equation2 <span class="kw">\eqref</span>{<span class="ex">eq:eq1</span>}.</span></code></pre></div>
-<p><img src="https://drive.google.com/thumbnail?id=1mgX3uwLgTDHF0cMwn04mj9K4GjTOF4TX&sz=w1000" alt="eqn numbering in bookdown" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" /></p>
 
-</div>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-<a href="3.6-cross-references.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="3.8-theorems.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="5.1-data-input-output.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="7-machine-learning.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -466,7 +410,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/my1396/R-Notes/edit/main/0204-Rmd-Equation.Rmd",
+"link": "https://github.com/my1396/R-Notes/edit/main/0500-Regresssion.Rmd",
 "text": "Edit"
 },
 "history": {
@@ -477,7 +421,7 @@ gitbook.start({
 "link": null,
 "text": null
 },
-"download": ["_main.pdf", "_main.epub", "https://github.com/my1396/R-Notes/raw/main/0204-Rmd-Equation.Rmd"],
+"download": ["_main.pdf", "_main.epub", "https://github.com/my1396/R-Notes/raw/main/0500-Regresssion.Rmd"],
 "search": {
 "engine": "fuse",
 "options": null

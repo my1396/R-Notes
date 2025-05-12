@@ -1,6 +1,15 @@
 # Basic R
 
 
+**Get help**
+
+- CRAN: <https://cran.r-project.org>
+
+
+
+
+--------------------------------------------------------------------------------
+
 <h2> Save & Load R objects </h2>
 
 
@@ -186,6 +195,10 @@ You can get the URL for the raw version by clicking on the Raw button displayed 
 
 <img src="https://drive.google.com/thumbnail?id=192sslQpCtgW2NvJV-SBMZe_eUleYpjY9&sz=w1000" alt="github raw data" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
 
+
+`read.table(filename, header=FALSE, sep="")` is more versatile than `read.csv`. Useful when you have a data file saved as txt.
+Default separator is "white space" for `read.table`, i.e., one or more spaces, tabs, newlines or carriage returns. 
+
 ```r
 # read.table can be used to read txt and csv. Need to specify sep=',' when reading csv.
 data <- read.table("https://raw.githubusercontent.com/my1396/course_dataset/refs/heads/main/bonedensity.txt", header=TRUE)
@@ -193,7 +206,7 @@ data
 
 data <- read.table("https://raw.githubusercontent.com/my1396/course_dataset/refs/heads/main/bonedensity.csv", header=TRUE, sep=",")
 
-# can use read_csv or read.csv
+# Alternatively, can use read_csv or read.csv directly
 data <- read_csv("https://raw.githubusercontent.com/my1396/course_dataset/refs/heads/main/bonedensity.csv")
 data
 ```
