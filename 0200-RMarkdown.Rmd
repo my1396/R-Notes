@@ -349,7 +349,7 @@ When you click the `Knit` button (⇧⌘K) in RStudio, generally two processes h
 
 <img src="https://d33wubrfki0l68.cloudfront.net/61d189fd9cdf955058415d3e1b28dd60e1bd7c9b/9791d/images/rmarkdownflow.png" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:100%;" />
 
-There is one function that can do the processes mentioned above: `rmarkdown::render`.
+There is one function that can do the processes mentioned above: [`rmarkdown::render`](https://pkgs.rstudio.com/rmarkdown/reference/render.html).
 
 `rmarkdown::render(input, output_format = NULL, output_file = NULL, output_dir = NULL, output_options = NULL, output_yaml = NULL)`
 
@@ -359,10 +359,10 @@ There is one function that can do the processes mentioned above: `rmarkdown::ren
 | `output_options` | - **List** of output options that can override the options specified in metadata (e.g could be used to force `self_contained` or `mathjax = "local"`). <br />- Note that this is <span style='color:#00CC66'>only valid when the output format is read from **metadata**</span> (i.e. not a custom format object passed to output_format).<br />- `output_options` cannot work together with `xxx_document()`. |
 | `output_yaml`    | Paths to YAML files specifying output formats and their configurations. The first existing one is used. If none are found, then the function searches YAML files specified to the `output_yaml` top-level parameter in the YAML front matter, `_output.yml` or `_output.yaml`, and then uses the first existing one. |
 
-Use example of `render`
+Use examples of `render`, using **output format objects**
 
 ```r
-render("0208-Rmd-GHpage.Rmd", 
+rmarkdown::render("0208-Rmd-GHpage.Rmd", 
 	bookdown::pdf_document2(
 		latex_engine = "xelatex",
 		template = "latex/template.tex",
@@ -372,7 +372,7 @@ render("0208-Rmd-GHpage.Rmd",
 		))
 
 # This does NOT work as `output_options` is only valid when the format is not an output format object "xxx_document()"
-render("0208-Rmd-GHpage.Rmd", 
+rmarkdown::render("0208-Rmd-GHpage.Rmd", 
 	bookdown::pdf_document2(
 		latex_engine = "xelatex",
 		template = "latex/template.tex"), 
@@ -381,17 +381,22 @@ render("0208-Rmd-GHpage.Rmd",
 			in_header = "latex/preamble.tex",
   		    before_body = "latex/before_body.tex")
 		))
+
+# render to html
+rmarkdown::render("AR_application.Rmd",  bookdown::html_document2())
 ```
 
+Note that sometimes the bookdown cross references in Rmd are not rendered when using the `Knit` button. The rendered html shows `Fig. \@ref(fig:ar-res) ` (without the backslash). In this case, using `rmarkdown::render()` **with `output_format = bookdown::html_document2()`** might help.
 
 
-___
+
+--------------------------------------------------------------------------------
 
 You can have more than one output formats for your Rmd. For example, you want both the html and pdf output.
 
 When you render the Rmd with `rmarkdown::render()`, it will use the **first output format you specify in the YAML metadata** (if it is missing, the default is `html_document`).
 
-do not want to use the first one, you can specify the one you want in the second argument, e.g., for an Rmd document `input.Rmd` with the metadata:
+If you do not want to use the first one, you can specify the one you want in the second argument, e.g., for an Rmd document `input.Rmd` with the metadata:
 
 ```yml
 output:
@@ -404,7 +409,7 @@ output:
 You can render it to PDF via:
 
 ```r
-# Render pdf
+# Render to pdf
 rmarkdown::render('input.Rmd', 'pdf_document')
 
 # Render multiple formats
@@ -418,6 +423,15 @@ rmarkdown::render('input.Rmd', 'all')
   
     RStudio does this to ensure **reproducibility**.
 
+
+--------------------------------------------------------------------------------
+
+[`rmarkdown::render_site(input = ".", output_format = "all",)`](https://pkgs.rstudio.com/rmarkdown/reference/render_site.html) Render all of the R Markdown documents within a directory as a website. There are two requirements for a directory to be rendered as a website:
+
+- It must contain either an `index.Rmd` or `index.md` file.
+- It must contain a site configuration file (`_site.yml`).
+
+Note that the "Knit" button in RStudio uses `rmarkdown::render_site` to knit the file in presence of an `index.Rmd` file in the working directory.
 
 --------------------------------------------------------------------------------
 

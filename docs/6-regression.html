@@ -293,14 +293,14 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 </head>
 <div id="regression" class="section level1 hasAnchor" number="6">
 <h1><span class="header-section-number">Chapter 6</span> Regression<a href="6-regression.html#regression" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<div class="sourceCode" id="cb223"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb223-1"><a href="6-regression.html#cb223-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb223-2"><a href="6-regression.html#cb223-2" tabindex="-1"></a>reg_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;https://raw.githubusercontent.com/my1396/course_dataset/refs/heads/main/META_monthly_factor_model_2014-2024.csv&quot;</span>)</span>
-<span id="cb223-3"><a href="6-regression.html#cb223-3" tabindex="-1"></a>reg_data <span class="ot">&lt;-</span> reg_data <span class="sc">%&gt;%</span> </span>
-<span id="cb223-4"><a href="6-regression.html#cb223-4" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">return =</span> adjusted<span class="sc">/</span><span class="fu">lag</span>(adjusted)<span class="sc">-</span><span class="dv">1</span>,</span>
-<span id="cb223-5"><a href="6-regression.html#cb223-5" tabindex="-1"></a>           <span class="at">eRi =</span> return<span class="sc">-</span>RF)</span>
-<span id="cb223-6"><a href="6-regression.html#cb223-6" tabindex="-1"></a><span class="do">## CAPM</span></span>
-<span id="cb223-7"><a href="6-regression.html#cb223-7" tabindex="-1"></a>capm_ml <span class="ot">&lt;-</span> <span class="fu">lm</span>(eRi<span class="sc">~</span>rmrf, <span class="at">data=</span>reg_data)</span>
-<span id="cb223-8"><a href="6-regression.html#cb223-8" tabindex="-1"></a><span class="fu">summary</span>(capm_ml)</span></code></pre></div>
+<div class="sourceCode" id="cb226"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb226-1"><a href="6-regression.html#cb226-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb226-2"><a href="6-regression.html#cb226-2" tabindex="-1"></a>reg_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;https://raw.githubusercontent.com/my1396/course_dataset/refs/heads/main/META_monthly_factor_model_2014-2024.csv&quot;</span>)</span>
+<span id="cb226-3"><a href="6-regression.html#cb226-3" tabindex="-1"></a>reg_data <span class="ot">&lt;-</span> reg_data <span class="sc">%&gt;%</span> </span>
+<span id="cb226-4"><a href="6-regression.html#cb226-4" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">return =</span> adjusted<span class="sc">/</span><span class="fu">lag</span>(adjusted)<span class="sc">-</span><span class="dv">1</span>,</span>
+<span id="cb226-5"><a href="6-regression.html#cb226-5" tabindex="-1"></a>           <span class="at">eRi =</span> return<span class="sc">-</span>RF)</span>
+<span id="cb226-6"><a href="6-regression.html#cb226-6" tabindex="-1"></a><span class="do">## CAPM</span></span>
+<span id="cb226-7"><a href="6-regression.html#cb226-7" tabindex="-1"></a>capm_ml <span class="ot">&lt;-</span> <span class="fu">lm</span>(eRi<span class="sc">~</span>rmrf, <span class="at">data=</span>reg_data)</span>
+<span id="cb226-8"><a href="6-regression.html#cb226-8" tabindex="-1"></a><span class="fu">summary</span>(capm_ml)</span></code></pre></div>
 <pre><code>## 
 ## Call:
 ## lm(formula = eRi ~ rmrf, data = reg_data)
@@ -321,35 +321,35 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 ## Multiple R-squared:  0.2504, Adjusted R-squared:  0.2444 
 ## F-statistic:  41.1 on 1 and 123 DF,  p-value: 2.801e-09</code></pre>
 <p>Get the <strong>coefficient table</strong> with <code>broom::tidy</code>.</p>
-<div class="sourceCode" id="cb225"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb225-1"><a href="6-regression.html#cb225-1" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
-<span id="cb225-2"><a href="6-regression.html#cb225-2" tabindex="-1"></a><span class="fu">tidy</span>(capm_ml)</span></code></pre></div>
+<div class="sourceCode" id="cb228"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb228-1"><a href="6-regression.html#cb228-1" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
+<span id="cb228-2"><a href="6-regression.html#cb228-2" tabindex="-1"></a><span class="fu">tidy</span>(capm_ml)</span></code></pre></div>
 <pre><code>## # A tibble: 2 × 5
 ##   term           estimate   std.error statistic     p.value
 ##   &lt;chr&gt;             &lt;dbl&gt;       &lt;dbl&gt;     &lt;dbl&gt;       &lt;dbl&gt;
 ## 1 (Intercept) 0.009746761 0.007644518  1.275000 2.047124e-1
 ## 2 rmrf        1.066640    0.1663838    6.410718 2.801085e-9</code></pre>
 <p>Get the <strong>variance-covariance matrix</strong> with <code>vcov</code>.</p>
-<div class="sourceCode" id="cb227"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb227-1"><a href="6-regression.html#cb227-1" tabindex="-1"></a><span class="fu">vcov</span>(capm_ml)</span></code></pre></div>
+<div class="sourceCode" id="cb230"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb230-1"><a href="6-regression.html#cb230-1" tabindex="-1"></a><span class="fu">vcov</span>(capm_ml)</span></code></pre></div>
 <pre><code>##               (Intercept)          rmrf
 ## (Intercept)  5.843866e-05 -0.0002760605
 ## rmrf        -2.760605e-04  0.0276835643</code></pre>
-<div class="sourceCode" id="cb229"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb229-1"><a href="6-regression.html#cb229-1" tabindex="-1"></a><span class="co"># verify using coef table</span></span>
-<span id="cb229-2"><a href="6-regression.html#cb229-2" tabindex="-1"></a>capm_ml <span class="sc">%&gt;%</span> </span>
-<span id="cb229-3"><a href="6-regression.html#cb229-3" tabindex="-1"></a>    <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb229-4"><a href="6-regression.html#cb229-4" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">variance=</span>std.error<span class="sc">^</span><span class="dv">2</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb232"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb232-1"><a href="6-regression.html#cb232-1" tabindex="-1"></a><span class="co"># verify using coef table</span></span>
+<span id="cb232-2"><a href="6-regression.html#cb232-2" tabindex="-1"></a>capm_ml <span class="sc">%&gt;%</span> </span>
+<span id="cb232-3"><a href="6-regression.html#cb232-3" tabindex="-1"></a>    <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb232-4"><a href="6-regression.html#cb232-4" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">variance=</span>std.error<span class="sc">^</span><span class="dv">2</span>)</span></code></pre></div>
 <pre><code>## # A tibble: 2 × 6
 ##   term           estimate   std.error statistic     p.value      variance
 ##   &lt;chr&gt;             &lt;dbl&gt;       &lt;dbl&gt;     &lt;dbl&gt;       &lt;dbl&gt;         &lt;dbl&gt;
 ## 1 (Intercept) 0.009746761 0.007644518  1.275000 2.047124e-1 0.00005843866
 ## 2 rmrf        1.066640    0.1663838    6.410718 2.801085e-9 0.02768356</code></pre>
 <p>We can manually calculate as</p>
-<div class="sourceCode" id="cb231"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb231-1"><a href="6-regression.html#cb231-1" tabindex="-1"></a>df <span class="ot">&lt;-</span> (<span class="fu">nrow</span>(capm_ml<span class="sc">$</span>model)<span class="sc">-</span><span class="dv">2</span>)  <span class="co"># degree of freedom</span></span>
-<span id="cb231-2"><a href="6-regression.html#cb231-2" tabindex="-1"></a>sigma2 <span class="ot">&lt;-</span> <span class="fu">sum</span>(capm_ml<span class="sc">$</span>residuals<span class="sc">^</span><span class="dv">2</span>)<span class="sc">/</span>df  <span class="co"># residual variance</span></span>
-<span id="cb231-3"><a href="6-regression.html#cb231-3" tabindex="-1"></a><span class="co"># 1st column of lm$model is the depend. var.</span></span>
-<span id="cb231-4"><a href="6-regression.html#cb231-4" tabindex="-1"></a>X <span class="ot">&lt;-</span> capm_ml<span class="sc">$</span>model[, <span class="dv">2</span>, drop<span class="ot">=</span><span class="cn">FALSE</span>] <span class="sc">%&gt;%</span> <span class="fu">as.matrix</span>()</span>
-<span id="cb231-5"><a href="6-regression.html#cb231-5" tabindex="-1"></a>X <span class="ot">&lt;-</span> <span class="fu">cbind</span>(<span class="dv">1</span>, X)  <span class="co"># add intercept</span></span>
-<span id="cb231-6"><a href="6-regression.html#cb231-6" tabindex="-1"></a>V <span class="ot">&lt;-</span> <span class="fu">solve</span>(<span class="fu">t</span>(X) <span class="sc">%*%</span> X) <span class="sc">*</span> sigma2</span>
-<span id="cb231-7"><a href="6-regression.html#cb231-7" tabindex="-1"></a>V</span></code></pre></div>
+<div class="sourceCode" id="cb234"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb234-1"><a href="6-regression.html#cb234-1" tabindex="-1"></a>df <span class="ot">&lt;-</span> (<span class="fu">nrow</span>(capm_ml<span class="sc">$</span>model)<span class="sc">-</span><span class="dv">2</span>)  <span class="co"># degree of freedom</span></span>
+<span id="cb234-2"><a href="6-regression.html#cb234-2" tabindex="-1"></a>sigma2 <span class="ot">&lt;-</span> <span class="fu">sum</span>(capm_ml<span class="sc">$</span>residuals<span class="sc">^</span><span class="dv">2</span>)<span class="sc">/</span>df  <span class="co"># residual variance</span></span>
+<span id="cb234-3"><a href="6-regression.html#cb234-3" tabindex="-1"></a><span class="co"># 1st column of lm$model is the depend. var.</span></span>
+<span id="cb234-4"><a href="6-regression.html#cb234-4" tabindex="-1"></a>X <span class="ot">&lt;-</span> capm_ml<span class="sc">$</span>model[, <span class="dv">2</span>, drop<span class="ot">=</span><span class="cn">FALSE</span>] <span class="sc">%&gt;%</span> <span class="fu">as.matrix</span>()</span>
+<span id="cb234-5"><a href="6-regression.html#cb234-5" tabindex="-1"></a>X <span class="ot">&lt;-</span> <span class="fu">cbind</span>(<span class="dv">1</span>, X)  <span class="co"># add intercept</span></span>
+<span id="cb234-6"><a href="6-regression.html#cb234-6" tabindex="-1"></a>V <span class="ot">&lt;-</span> <span class="fu">solve</span>(<span class="fu">t</span>(X) <span class="sc">%*%</span> X) <span class="sc">*</span> sigma2</span>
+<span id="cb234-7"><a href="6-regression.html#cb234-7" tabindex="-1"></a>V</span></code></pre></div>
 <pre><code>##                             rmrf
 ##       5.843866e-05 -0.0002760605
 ## rmrf -2.760605e-04  0.0276835643</code></pre>
@@ -357,17 +357,17 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <ul>
 <li>To get estimated covariance matrix for the coefficients, you need to multiply <code>cov.unscaled</code> by the estimate of the error variance.</li>
 </ul>
-<div class="sourceCode" id="cb233"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb233-1"><a href="6-regression.html#cb233-1" tabindex="-1"></a><span class="fu">solve</span>(<span class="fu">t</span>(X) <span class="sc">%*%</span> X)</span></code></pre></div>
+<div class="sourceCode" id="cb236"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb236-1"><a href="6-regression.html#cb236-1" tabindex="-1"></a><span class="fu">solve</span>(<span class="fu">t</span>(X) <span class="sc">%*%</span> X)</span></code></pre></div>
 <pre><code>##                          rmrf
 ##       0.008395487 -0.03965975
 ## rmrf -0.039659745  3.97711043</code></pre>
-<div class="sourceCode" id="cb235"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb235-1"><a href="6-regression.html#cb235-1" tabindex="-1"></a><span class="fu">summary</span>(capm_ml)<span class="sc">$</span>cov.unscaled</span></code></pre></div>
+<div class="sourceCode" id="cb238"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb238-1"><a href="6-regression.html#cb238-1" tabindex="-1"></a><span class="fu">summary</span>(capm_ml)<span class="sc">$</span>cov.unscaled</span></code></pre></div>
 <pre><code>##              (Intercept)        rmrf
 ## (Intercept)  0.008395487 -0.03965975
 ## rmrf        -0.039659745  3.97711043</code></pre>
-<div class="sourceCode" id="cb237"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb237-1"><a href="6-regression.html#cb237-1" tabindex="-1"></a><span class="fu">all.equal</span>(<span class="fu">solve</span>(<span class="fu">t</span>(X) <span class="sc">%*%</span> X), </span>
-<span id="cb237-2"><a href="6-regression.html#cb237-2" tabindex="-1"></a>          <span class="fu">summary</span>(capm_ml)<span class="sc">$</span>cov.unscaled, </span>
-<span id="cb237-3"><a href="6-regression.html#cb237-3" tabindex="-1"></a>          <span class="at">check.attributes =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb240"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb240-1"><a href="6-regression.html#cb240-1" tabindex="-1"></a><span class="fu">all.equal</span>(<span class="fu">solve</span>(<span class="fu">t</span>(X) <span class="sc">%*%</span> X), </span>
+<span id="cb240-2"><a href="6-regression.html#cb240-2" tabindex="-1"></a>          <span class="fu">summary</span>(capm_ml)<span class="sc">$</span>cov.unscaled, </span>
+<span id="cb240-3"><a href="6-regression.html#cb240-3" tabindex="-1"></a>          <span class="at">check.attributes =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <pre><code>## [1] TRUE</code></pre>
 <p><strong>References</strong>:</p>
 <ul>

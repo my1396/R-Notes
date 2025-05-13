@@ -2085,7 +2085,7 @@ When you click the \texttt{Knit} button (⇧⌘K) in RStudio, generally two proc
   \end{itemize}
 \end{enumerate}
 
-There is one function that can do the processes mentioned above: \texttt{rmarkdown::render}.
+There is one function that can do the processes mentioned above: \href{https://pkgs.rstudio.com/rmarkdown/reference/render.html}{\texttt{rmarkdown::render}}.
 
 \texttt{rmarkdown::render(input,\ output\_format\ =\ NULL,\ output\_file\ =\ NULL,\ output\_dir\ =\ NULL,\ output\_options\ =\ NULL,\ output\_yaml\ =\ NULL)}
 
@@ -2107,11 +2107,11 @@ Definition
 \texttt{output\_yaml} & Paths to YAML files specifying output formats and their configurations. The first existing one is used. If none are found, then the function searches YAML files specified to the \texttt{output\_yaml} top-level parameter in the YAML front matter, \texttt{\_output.yml} or \texttt{\_output.yaml}, and then uses the first existing one. \\
 \end{longtable}
 
-Use example of \texttt{render}
+Use examples of \texttt{render}, using \textbf{output format objects}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{render}\NormalTok{(}\StringTok{"0208{-}Rmd{-}GHpage.Rmd"}\NormalTok{, }
+\NormalTok{rmarkdown}\SpecialCharTok{::}\FunctionTok{render}\NormalTok{(}\StringTok{"0208{-}Rmd{-}GHpage.Rmd"}\NormalTok{, }
 \NormalTok{    bookdown}\SpecialCharTok{::}\FunctionTok{pdf\_document2}\NormalTok{(}
         \AttributeTok{latex\_engine =} \StringTok{"xelatex"}\NormalTok{,}
         \AttributeTok{template =} \StringTok{"latex/template.tex"}\NormalTok{,}
@@ -2121,7 +2121,7 @@ Use example of \texttt{render}
 \NormalTok{        ))}
 
 \CommentTok{\# This does NOT work as \textasciigrave{}output\_options\textasciigrave{} is only valid when the format is not an output format object "xxx\_document()"}
-\FunctionTok{render}\NormalTok{(}\StringTok{"0208{-}Rmd{-}GHpage.Rmd"}\NormalTok{, }
+\NormalTok{rmarkdown}\SpecialCharTok{::}\FunctionTok{render}\NormalTok{(}\StringTok{"0208{-}Rmd{-}GHpage.Rmd"}\NormalTok{, }
 \NormalTok{    bookdown}\SpecialCharTok{::}\FunctionTok{pdf\_document2}\NormalTok{(}
         \AttributeTok{latex\_engine =} \StringTok{"xelatex"}\NormalTok{,}
         \AttributeTok{template =} \StringTok{"latex/template.tex"}\NormalTok{), }
@@ -2130,8 +2130,13 @@ Use example of \texttt{render}
             \AttributeTok{in\_header =} \StringTok{"latex/preamble.tex"}\NormalTok{,}
             \AttributeTok{before\_body =} \StringTok{"latex/before\_body.tex"}\NormalTok{)}
 \NormalTok{        ))}
+
+\CommentTok{\# render to html}
+\NormalTok{rmarkdown}\SpecialCharTok{::}\FunctionTok{render}\NormalTok{(}\StringTok{"AR\_application.Rmd"}\NormalTok{,  bookdown}\SpecialCharTok{::}\FunctionTok{html\_document2}\NormalTok{())}
 \end{Highlighting}
 \end{Shaded}
+
+Note that sometimes the bookdown cross references in Rmd are not rendered when using the \texttt{Knit} button. The rendered html shows \texttt{Fig.\ \textbackslash{}@ref(fig:ar-res)} (without the backslash). In this case, using \texttt{rmarkdown::render()} \textbf{with \texttt{output\_format\ =\ bookdown::html\_document2()}} might help.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
@@ -2139,7 +2144,7 @@ You can have more than one output formats for your Rmd. For example, you want bo
 
 When you render the Rmd with \texttt{rmarkdown::render()}, it will use the \textbf{first output format you specify in the YAML metadata} (if it is missing, the default is \texttt{html\_document}).
 
-do not want to use the first one, you can specify the one you want in the second argument, e.g., for an Rmd document \texttt{input.Rmd} with the metadata:
+If you do not want to use the first one, you can specify the one you want in the second argument, e.g., for an Rmd document \texttt{input.Rmd} with the metadata:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -2155,7 +2160,7 @@ You can render it to PDF via:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{\# Render pdf}
+\CommentTok{\# Render to pdf}
 \NormalTok{rmarkdown}\SpecialCharTok{::}\FunctionTok{render}\NormalTok{(}\StringTok{\textquotesingle{}input.Rmd\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}pdf\_document\textquotesingle{}}\NormalTok{)}
 
 \CommentTok{\# Render multiple formats}
@@ -2172,6 +2177,20 @@ You can render it to PDF via:
 
   RStudio does this to ensure \textbf{reproducibility}.
 \end{itemize}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\href{https://pkgs.rstudio.com/rmarkdown/reference/render_site.html}{\texttt{rmarkdown::render\_site(input\ =\ ".",\ output\_format\ =\ "all",)}} Render all of the R Markdown documents within a directory as a website. There are two requirements for a directory to be rendered as a website:
+
+\begin{itemize}
+\tightlist
+\item
+  It must contain either an \texttt{index.Rmd} or \texttt{index.md} file.
+\item
+  It must contain a site configuration file (\texttt{\_site.yml}).
+\end{itemize}
+
+Note that the ``Knit'' button in RStudio uses \texttt{rmarkdown::render\_site} to knit the file in presence of an \texttt{index.Rmd} file in the working directory.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
@@ -5115,7 +5134,11 @@ Note that the \textbf{minimum requirement for any \href{https://bookdown.org/yih
   \texttt{index.Rmd} provides the content for the home page of your website.
 \end{itemize}
 
-If you execute the \texttt{rmarkdown::render\_site()} function from within the directory containing the website, the following will occur:
+\begin{figure}
+\includegraphics[width=16.69in]{images/site-page} \caption{Minimal example of a R Markdown website.}\label{fig:unnamed-chunk-1}
+\end{figure}
+
+If you execute the \texttt{rmarkdown::render\_site()} (``Knit'' button behavior) function from within the directory containing the website, the following will occur:
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -5138,7 +5161,7 @@ If you execute the \texttt{rmarkdown::render\_site()} function from within the d
 \subsection*{\texorpdfstring{\texttt{\_site.yml} config}{\_site.yml config}}\label{site.yml-config}
 \addcontentsline{toc}{subsection}{\texttt{\_site.yml} config}
 
-\href{https://bookdown.org/yihui/rmarkdown/rmarkdown-site.html\#site-configuration}{\texttt{\_site.yml}} is a site configuration file. It provides the global YAML header for the site.
+\href{https://bookdown.org/yihui/rmarkdown/rmarkdown-site.html\#site-configuration}{\texttt{\_site.yml}} is a site configuration file. It provides the {global YAML header for the site}.
 
 It contains various common elements you want to apply to all pages (e.g., output options, CSS styles, header and footer elements, etc.).
 
@@ -5281,7 +5304,7 @@ You may have common fragments of R Markdown that you want to share across pages 
 
 \href{https://bookdown.org/yihui/rmarkdown/rmarkdown-site.html\#site-generator-function}{\texttt{index.Rmd}} provides the content for the home page of your website.
 
-A parsimonious example of \texttt{index.Rmd} which only includes the website title. This is useful if you home page only includes simple text.
+A parsimonious example of \texttt{index.Rmd} which only includes the website title. This is useful if your home page only includes simple text.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -5351,9 +5374,107 @@ References:
 
 {\textbf{Workflow}}: Edit your site, \textbf{build} it, then push and commit to GitHub to publish your changes online.
 
-To render {all of the pages} in the website, you use the \texttt{Build} pane, which calls \texttt{rmarkdown::render\_site()} to build and then preview the entire site
+To render {\textbf{all of the pages}} in the website, you use the \texttt{Build} pane, which calls \texttt{rmarkdown::render\_site()} to build and then preview the entire site.
 
-As you work on the {individual pages} of your website, you can render them using the \texttt{Knit} button just as you do with conventional standalone R Markdown documents. Or use the command line \texttt{rmarkdown::render("0100-RStudio.Rmd")}. It will generate the \textbf{html output} \texttt{RStudio.html} in the same directory. You can see it in the Output pane \textgreater{} \texttt{Files} tab. Click the file and choose \texttt{View\ in\ Web\ Browser}.
+\begin{figure}
+\includegraphics[width=16.72in]{images/site-build} \caption{Build an entire website in RStudio.}\label{fig:unnamed-chunk-2}
+\end{figure}
+
+As you work on the {\textbf{individual pages}} of your website, you can render them just as you do with conventional standalone R Markdown documents. This is useful when you want to preview a specific page without rendering the whole site, which can be time-consuming.
+
+Two options to render individual pages:
+
+\begin{itemize}
+\item
+  Using the \texttt{Knit} button just as you do with conventional standalone R Markdown documents.
+
+  \begin{figure}
+    \includegraphics[width=16.69in]{images/site-page} \caption{Knit a single page of a website.}\label{fig:unnamed-chunk-3}
+    \end{figure}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Note that the \texttt{Knit} button will call \texttt{rmarkdown::render\_site(input\ =\ "0100-RStudio.Rmd",\ output\_format\ =\ "all")}.
+  \item
+    It will generate the html output in the \texttt{docs/} directory as specified in \texttt{\_site.yml}.
+  \item
+    Knitting an individual page will only render and preview that page, not the other pages in the website.
+  \end{itemize}
+\item
+  Or using the command line \texttt{rmarkdown::render("0100-RStudio.Rmd")}.
+
+  \begin{itemize}
+  \tightlist
+  \item
+    It will generate the \textbf{html output} \texttt{RStudio.html} in the current working directory. You can see it in the Output pane \textgreater{} \texttt{Files} tab. Click the file and choose \texttt{View\ in\ Web\ Browser}.
+  \end{itemize}
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# render the entire site}
+\NormalTok{rmarkdown}\SpecialCharTok{::}\FunctionTok{render\_site}\NormalTok{()}
+
+\CommentTok{\# render a single file only}
+\NormalTok{rmarkdown}\SpecialCharTok{::}\FunctionTok{render\_site}\NormalTok{(}\StringTok{"about.Rmd"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+To clean up all of the files generated via \texttt{render\_site()}, you can call the \texttt{clean\_site()} function, which will remove all files generated by rendering your site's Markdown documents, including knitr's \texttt{*\_cache} directories. You can specify the \texttt{preview\ =\ TRUE} option to just list the files to be removed rather than actually removing them:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# list which files will be removed}
+\NormalTok{rmarkdown}\SpecialCharTok{::}\FunctionTok{clean\_site}\NormalTok{(}\AttributeTok{preview =} \ConstantTok{TRUE}\NormalTok{)}
+
+\CommentTok{\# actually remove the files}
+\NormalTok{rmarkdown}\SpecialCharTok{::}\FunctionTok{clean\_site}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+References:
+
+\begin{itemize}
+\tightlist
+\item
+  \url{https://bookdown.org/yihui/rmarkdown/rmarkdown-site.html\#rstudio}
+\end{itemize}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\href{https://bookdown.org/yihui/rmarkdown-cookbook/custom-knit.html}{\textbf{Customize the \texttt{Knit} button}}
+
+It is possible to control the behavior of the \texttt{Knit} button by providing the \texttt{knit} field within the YAML frontmatter of your document.
+
+The field takes a function with the main argument \texttt{input} (the path to the input Rmd document) and other arguments that are currently ignored. You can either write the source code of the function directly in the \texttt{knit} field, or put the function elsewhere (e.g., in an R package) and call the function in the \texttt{knit} field.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{{-}{-}{-}}
+\AnnotationTok{knit:}\CommentTok{ |}
+\CommentTok{  (function(input, ...) \{}
+\CommentTok{    rmarkdown::render(}
+\CommentTok{      input,}
+\CommentTok{      output\_file = paste0(}
+\CommentTok{        xfun::sans\_ext(input), \textquotesingle{}{-}\textquotesingle{}, Sys.Date(), \textquotesingle{}.html\textquotesingle{}}
+\CommentTok{      ),}
+\CommentTok{      envir = globalenv()}
+\CommentTok{    )}
+\CommentTok{  \})}
+\CommentTok{{-}{-}{-}}
+\end{Highlighting}
+\end{Shaded}
+
+Further readings:
+
+\begin{itemize}
+\tightlist
+\item
+  \url{https://forum.posit.co/t/changing-default-behavior-of-knit-button/133874}
+\end{itemize}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
 If you want to have the pdf output, you add \texttt{pdf\_document} to your document's YAML after \texttt{html\_document}. This way, your Rmd will supports multiple output format.
 
