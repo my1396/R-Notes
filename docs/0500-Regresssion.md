@@ -43,7 +43,7 @@ tidy(capm_ml)
 ```
 
 ```
-## # A tibble: 2 × 5
+## # A tibble: 2 x 5
 ##   term           estimate   std.error statistic     p.value
 ##   <chr>             <dbl>       <dbl>     <dbl>       <dbl>
 ## 1 (Intercept) 0.009746761 0.007644518  1.275000 2.047124e-1
@@ -72,7 +72,7 @@ capm_ml %>%
 ```
 
 ```
-## # A tibble: 2 × 6
+## # A tibble: 2 x 6
 ##   term           estimate   std.error statistic     p.value      variance
 ##   <chr>             <dbl>       <dbl>     <dbl>       <dbl>         <dbl>
 ## 1 (Intercept) 0.009746761 0.007644518  1.275000 2.047124e-1 0.00005843866

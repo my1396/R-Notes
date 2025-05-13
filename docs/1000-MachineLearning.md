@@ -87,7 +87,8 @@ Bagging is a general approach, but its most well-known application is in the ran
 knitr::include_graphics("images/rf.png")
 ```
 
-<img src="images/rf.png" width="80%" />
+
+\includegraphics[width=0.8\linewidth]{images/rf} 
 
 
 A downside of both the CART and random forest algorithms (as well as many other algorithmic modeling approaches) is an <u>inability to clearly quantify the roles played by individual variables</u> in making predictions. However, the importance of individual variables in a random forest can still be expressed using a measure known as variable importance.

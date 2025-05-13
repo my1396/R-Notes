@@ -16,16 +16,26 @@ knitr::kable(mtcars[1:5, 1:5], caption = "The mtcars data.")
 
 Refer to the Table \@ref(tab:mtcars).
 
+\begin{table}
 
-Table: (\#tab:mtcars)The mtcars data.
-
-|                  |  mpg| cyl| disp|  hp| drat|
-|:-----------------|----:|---:|----:|---:|----:|
-|Mazda RX4         | 21.0|   6|  160| 110| 3.90|
-|Mazda RX4 Wag     | 21.0|   6|  160| 110| 3.90|
-|Datsun 710        | 22.8|   4|  108|  93| 3.85|
-|Hornet 4 Drive    | 21.4|   6|  258| 110| 3.08|
-|Hornet Sportabout | 18.7|   8|  360| 175| 3.15|
+\caption{(\#tab:mtcars)The mtcars data.}
+\centering
+\begin{tabular}[t]{l|r|r|r|r|r}
+\hline
+  & mpg & cyl & disp & hp & drat\\
+\hline
+Mazda RX4 & 21.0 & 6 & 160 & 110 & 3.90\\
+\hline
+Mazda RX4 Wag & 21.0 & 6 & 160 & 110 & 3.90\\
+\hline
+Datsun 710 & 22.8 & 4 & 108 & 93 & 3.85\\
+\hline
+Hornet 4 Drive & 21.4 & 6 & 258 & 110 & 3.08\\
+\hline
+Hornet Sportabout & 18.7 & 8 & 360 & 175 & 3.15\\
+\hline
+\end{tabular}
+\end{table}
 
 
 
@@ -118,7 +128,7 @@ To show the `tibble` information (number of row/columns, and group information) 
 ```markdown
 ---
 title: "Use caption with df_print set to page"
-date: "2025-05-12"
+date: "2025-05-13"
 output:
   bookdown::html_document2:
     df_print: paged
@@ -226,17 +236,61 @@ apply(data[,-1], 2, get_stat) %>%
     stargazer(type = "text", digits=2)
 ```
 ````
+The text output looks like the following.
+```
+===============================================
+                        Dependent variable:    
+                    ---------------------------
+                            delta_infl         
+-----------------------------------------------
+unemp                         -0.091           
+                              (0.126)          
+                                               
+Constant                       0.518           
+                              (0.743)          
+                                               
+-----------------------------------------------
+Observations                    203            
+R2                             0.003           
+Adjusted R2                   -0.002           
+Residual Std. Error      2.833 (df = 201)      
+F Statistic             0.517 (df = 1; 201)    
+===============================================
+Note:               *p<0.1; **p<0.05; ***p<0.01
+```
+
+There is one empty line after each coefficient, to remove the empty lines, specify `no.space = TRUE`. 
+
+The regression table with all empty lines removed:
+
+```
+===============================================
+                        Dependent variable:    
+                    ---------------------------
+                            delta_infl         
+-----------------------------------------------
+unemp                         -0.091           
+                              (0.126)          
+Constant                       0.518           
+                              (0.743)          
+-----------------------------------------------
+Observations                    203            
+R2                             0.003           
+Adjusted R2                   -0.002           
+Residual Std. Error      2.833 (df = 201)      
+F Statistic             0.517 (df = 1; 201)    
+===============================================
+Note:               *p<0.1; **p<0.05; ***p<0.01
+```
+
 
 #### HTML table {-}
 
 Note that you need to specify `results="asis"` in the chunk options.  This option tells `knitr` to treat verbatim code blocks "as is." Otherwise, instead of your table, you will see the raw html or latex code.
 
-- Note that `*`'s do not show properly in html output (Fig. \@ref(fig:stargazer1), need to specify as footnote manually.
+- Note that `*`'s do not show properly in html output (Fig. \@ref(fig:stargazer1), need to specify in the footnote (`notes`) manually.
 
-<div class="figure">
-<img src="https://drive.google.com/thumbnail?id=1UWaYK2Q00xobvHsadz-EsEw0pUnhqVTs&sz=w1000" alt="Failed to show significance codes."  />
-<p class="caption">(\#fig:stargazer1)Failed to show significance codes.</p>
-</div>
+![(\#fig:stargazer1)Failed to show significance codes.](https://drive.google.com/thumbnail?id=1UWaYK2Q00xobvHsadz-EsEw0pUnhqVTs&sz=w1000) 
 
 Use the following code to display the correct significance symbols. See Fig. \@ref(fig:stargazer2) for the expected output.
 
@@ -250,10 +304,7 @@ apply(data[,-1], 2, get_stat) %>%
 ````
 
 
-<div class="figure">
-<img src="https://drive.google.com/thumbnail?id=1a_HaaOgYidFhQavHA2iuZgUbj5iYdbEW&sz=w1000" alt="Correct significance codes."  />
-<p class="caption">(\#fig:stargazer2)Correct significance codes.</p>
-</div>
+![(\#fig:stargazer2)Correct significance codes.](https://drive.google.com/thumbnail?id=1a_HaaOgYidFhQavHA2iuZgUbj5iYdbEW&sz=w1000) 
 
 
 
@@ -375,7 +426,7 @@ Add a blank line under the `stargazer` table: `&nbsp;` with a blank line above a
             label = paste0("tab:", knitr::opts_current$get("label")),
             title = ifelse(knitr::is_latex_output(), tit, tit_html),
             type = ifelse(knitr::is_latex_output(),"latex","html"),
-            notes = "<span>&#42;</span>: p<0.1; <span>&#42;&#42;</span>: <strong>p<0.05</strong>; <span>&#42;&#42;&#42;</span>: p<0.01 <br> Standard errors in the parentheses.",
+            notes = "<span>&#42;</span>: p<0.1; <span>&#42;&#42;</span>: <strong>p<0.05</strong>; <span>&#42;&#42;&#42;</span>: p<0.01 <br> Standard errors in parentheses.",
             notes.append = F,
             header = F
             )

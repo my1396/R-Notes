@@ -46,7 +46,9 @@ Here is my first theorem.
 
 will be rendered as:
 
-\BeginKnitrBlock{theorem}\iffalse{-91-84-104-101-111-114-101-109-32-110-97-109-101-93-}\fi{}<div class="theorem"><span class="theorem" id="thm:label"><strong>(\#thm:label)  \iffalse (Theorem name) \fi{} </strong></span>Here is my first theorem.</div>\EndKnitrBlock{theorem}
+::: {.theorem #label name="Theorem name"}
+Here is my first theorem.
+:::
 
 Refer to the theorem using `\@ref(thm:label)`, e.g., see theorem \@ref(thm:label).
 
@@ -65,11 +67,13 @@ For a right triangle, if $c$ denotes the length of the hypotenuse and $a$ and $b
 
 will be rendered as:
 
-\BeginKnitrBlock{theorem}\iffalse{-91-80-121-116-104-97-103-111-114-101-97-110-32-116-104-101-111-114-101-109-93-}\fi{}<div class="theorem"><span class="theorem" id="thm:thm-py"><strong>(\#thm:thm-py)  \iffalse (Pythagorean theorem) \fi{} </strong></span>For a right triangle, if $c$ denotes the length of the hypotenuse and $a$ and $b$ denote the lengths of the other two sides, we have
+::: {.theorem #thm-py name="Pythagorean theorem"}
+For a right triangle, if $c$ denotes the length of the hypotenuse and $a$ and $b$ denote the lengths of the other two sides, we have
   
   \begin{align*}
   c^2 = a^2+b^2
-  \end{align*}</div>\EndKnitrBlock{theorem}
+  \end{align*}
+:::
 
 
 --------------------------------------------------------------------------------

@@ -535,7 +535,8 @@ Before you start coding, make sure that you are on the correct branch. You may c
 -   from the Git tab on the Environment, History, Connections, ... pane
 -   you can also see from the status bar on the very top of the window. The words are formatted as "Projection Name – Branch – RStudio".
 
-<img src="images/R git branch.png" width="100%" />
+
+\includegraphics[width=1\linewidth]{images/R git branch} 
 
 Choose a License for your repo
 
@@ -656,7 +657,8 @@ Ref: [RStudio Pane Layout][pane-layout]
 Q: How to show Toolbar? \
 A: View > Show Toolbar.
 
-<img src="images/toolbar.png" width="100%" />
+
+\includegraphics[width=1\linewidth]{images/toolbar} 
 
 
 

@@ -234,7 +234,8 @@ By default, RStudio enables inline output (Notebook mode) on all R Markdown docu
 
   When you type an existing R function such as `round(`, not only does <span style='color:#00CC66'>`tab`</span> give you the options, but there's an explanation beneath each variable, telling you its role in the function:
 
-  <img src="images/func help.png" width="100%" />
+  
+  \includegraphics[width=1\linewidth]{images/func help} 
 
 
 
