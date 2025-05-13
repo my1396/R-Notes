@@ -12,6 +12,8 @@ Use code chunk label to cross reference, e.g., <span style='color:#00CC66'>`Fig.
 
 - Note that you must specify `fig.cap` to enable labeling and cross references. Otherwise, the cross reference will show `Fig. ??`.
 
+- `knitr::include_graphics` supports web url for html output, but NOT for latex output.
+
 --------------------------------------------------------------------------------
 
 
@@ -42,9 +44,10 @@ plot(aapl$AAPL.Close)
 ```
 ~~~~
 
-\begin{figure}
-\includegraphics[width=0.5\linewidth]{0206-Rmd-Figure_files/figure-latex/unnamed-chunk-2-1} \caption{`out.width="50%"`, fig.asp set to 0.62. Note that text font scales too, hard to read.}(\#fig:unnamed-chunk-2)
-\end{figure}
+<div class="figure">
+<img src="0206-Rmd-Figure_files/figure-epub3/unnamed-chunk-2-1.png" alt="`out.width=&quot;50%&quot;`, fig.asp set to 0.62. Note that text font scales too, hard to read." width="50%" />
+<p class="caption">(\#fig:unnamed-chunk-2)`out.width="50%"`, fig.asp set to 0.62. Note that text font scales too, hard to read.</p>
+</div>
 
 --------------------------------------------------------------------------------
 
@@ -55,7 +58,10 @@ plot(aapl$AAPL.Close)
 ```
 ~~~~
 
-![(\#fig:unnamed-chunk-3)Set `fig.width`. Note that text font does NOT scale with figure, BUT the figure title got cropped.](0206-Rmd-Figure_files/figure-latex/unnamed-chunk-3-1.pdf) 
+<div class="figure">
+<img src="0206-Rmd-Figure_files/figure-epub3/unnamed-chunk-3-1.png" alt="Set `fig.width`. Note that text font does NOT scale with figure, BUT the figure title got cropped."  />
+<p class="caption">(\#fig:unnamed-chunk-3)Set `fig.width`. Note that text font does NOT scale with figure, BUT the figure title got cropped.</p>
+</div>
 
 --------------------------------------------------------------------------------
 
@@ -66,9 +72,10 @@ plot(aapl$AAPL.Close)
 ```
 ~~~~
 
-\begin{figure}
-\includegraphics[width=1\linewidth]{0206-Rmd-Figure_files/figure-latex/unnamed-chunk-4-1} \caption{`out.width="100%"`, fig.asp set to 0.6. Note that the plot text got zoomed too, can be too large.}(\#fig:unnamed-chunk-4)
-\end{figure}
+<div class="figure">
+<img src="0206-Rmd-Figure_files/figure-epub3/unnamed-chunk-4-1.png" alt="`out.width=&quot;100%&quot;`, fig.asp set to 0.6. Note that the plot text got zoomed too, can be too large." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-4)`out.width="100%"`, fig.asp set to 0.6. Note that the plot text got zoomed too, can be too large.</p>
+</div>
 
 --------------------------------------------------------------------------------
 
@@ -92,9 +99,10 @@ knitr::include_graphics(f_name)
 ```
 ~~~~
 
-\begin{figure}
-\includegraphics[width=0.5\linewidth]{images/aapl} \caption{include_graphics with `out.width="50%"`.}(\#fig:unnamed-chunk-6)
-\end{figure}
+<div class="figure">
+<img src="images/aapl.png" alt="include_graphics with `out.width=&quot;50%&quot;`." width="50%" />
+<p class="caption">(\#fig:unnamed-chunk-6)include_graphics with `out.width="50%"`.</p>
+</div>
 
 --------------------------------------------------------------------------------
 
@@ -104,14 +112,10 @@ knitr::include_graphics(f_name)
 ```
 ~~~~
 
-
-```r
-knitr::include_graphics(f_name) 
-```
-
-\begin{figure}
-\includegraphics[width=1\linewidth]{images/aapl} \caption{include_graphics with `out.width="100%"`.}(\#fig:unnamed-chunk-7)
-\end{figure}
+<div class="figure">
+<img src="images/aapl.png" alt="include_graphics with `out.width=&quot;100%&quot;`." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-7)include_graphics with `out.width="100%"`.</p>
+</div>
 
 
 --------------------------------------------------------------------------------
@@ -244,9 +248,10 @@ See <span style='color:#00CC66'>`Fig. \@ref(fig:car-plot)`</span>  use code chun
     
     Will generate the following Fig \@ref(fig:fig1).
     
-    \begin{figure}
-    \includegraphics[width=0.7\linewidth]{images/Phi_b} \caption{The $\Phi$ and $\phi$ ($f_Z(.)$) functions (CDF and pdf of standard normal).}(\#fig:fig1)
-    \end{figure}
+    <div class="figure">
+    <img src="images/Phi_b.png" alt="The $\Phi$ and $\phi$ ($f_Z(.)$) functions (CDF and pdf of standard normal)." width="70%" />
+    <p class="caption">(\#fig:fig1)The $\Phi$ and $\phi$ ($f_Z(.)$) functions (CDF and pdf of standard normal).</p>
+    </div>
 
 
 Alternatively, use **the HTML approach**, and enclose the caption inside `<figcaption>`. 
@@ -288,9 +293,10 @@ plot_A
 ````
 <br>
 
-\begin{figure}
-\includegraphics[width=0.6\linewidth]{0206-Rmd-Figure_files/figure-latex/firstplot-1} \caption{Source Figure to be referenced. **Note that when specifying `out.width="60%"`, the text in the figure is scaled too small.**}(\#fig:firstplot)
-\end{figure}
+<div class="figure">
+<img src="0206-Rmd-Figure_files/figure-epub3/firstplot-1.png" alt="Source Figure to be referenced. **Note that when specifying `out.width=&quot;60%&quot;`, the text in the figure is scaled too small.**" width="60%" />
+<p class="caption">(\#fig:firstplot)Source Figure to be referenced. **Note that when specifying `out.width="60%"`, the text in the figure is scaled too small.**</p>
+</div>
 
 Now a second plot with a reference to Fig.: \@ref(fig:firstplot).
 
@@ -302,7 +308,10 @@ plot_A + geom_line(alpha = .75,col = "red")
 
 <br>
 
-![(\#fig:secondplot)This is the same as Fig.: \@ref(fig:firstplot) but now with a red line and `out.width="100%"`.](0206-Rmd-Figure_files/figure-latex/secondplot-1.pdf) 
+<div class="figure">
+<img src="0206-Rmd-Figure_files/figure-epub3/secondplot-1.png" alt="This is the same as Fig.: \@ref(fig:firstplot) but now with a red line and `out.width=&quot;100%&quot;`."  />
+<p class="caption">(\#fig:secondplot)This is the same as Fig.: \@ref(fig:firstplot) but now with a red line and `out.width="100%"`.</p>
+</div>
 
 
 

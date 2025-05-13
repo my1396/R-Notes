@@ -209,7 +209,7 @@ Now go to Tools \> Modify Keyboard Shortcuts and search for "dashes". Here you c
 - In `Rmd` files, send the R code chunk output to the console. \
 By default, RStudio enables inline output (Notebook mode) on all R Markdown documents. You can disable notebook mode by clicking the gear button in the editor toolbar, and choosing `Chunk Output in Console`.
 
-    To use the console by default for all your R Markdown documentsm: Tools -> Options -> R Markdown -> Show output inline for all R Markdown documents.
+    To use the console by default for all your R Markdown documentsm: Tools -> Options -> R Markdown -> Uncheck `Show output inline for all R Markdown documents`.
 
 
 - To add comments to a function, you can type “Roxygen comment” into the Command Palette (shift+cmd+P) while the cursor is in a function and it will automatically add a template structure for writing a comment about your function.
@@ -234,8 +234,7 @@ By default, RStudio enables inline output (Notebook mode) on all R Markdown docu
 
   When you type an existing R function such as `round(`, not only does <span style='color:#00CC66'>`tab`</span> give you the options, but there's an explanation beneath each variable, telling you its role in the function:
 
-  
-  \includegraphics[width=1\linewidth]{images/func help} 
+  <img src="images/func help.png" width="100%" />
 
 
 

@@ -135,7 +135,7 @@
 
 \title{R Notes}
 \author{Menghan Yuan}
-\date{2025-05-12}
+\date{2025-05-13}
 
 \usepackage{amsthm}
 \newtheorem{theorem}{Theorem}[chapter]
@@ -523,7 +523,7 @@ Now go to Tools \textgreater{} Modify Keyboard Shortcuts and search for ``dashes
   In \texttt{Rmd} files, send the R code chunk output to the console.\\
   By default, RStudio enables inline output (Notebook mode) on all R Markdown documents. You can disable notebook mode by clicking the gear button in the editor toolbar, and choosing \texttt{Chunk\ Output\ in\ Console}.
 
-  To use the console by default for all your R Markdown documentsm: Tools -\textgreater{} Options -\textgreater{} R Markdown -\textgreater{} Show output inline for all R Markdown documents.
+  To use the console by default for all your R Markdown documentsm: Tools -\textgreater{} Options -\textgreater{} R Markdown -\textgreater{} Uncheck \texttt{Show\ output\ inline\ for\ all\ R\ Markdown\ documents}.
 \item
   To add comments to a function, you can type ``Roxygen comment'' into the Command Palette (shift+cmd+P) while the cursor is in a function and it will automatically add a template structure for writing a comment about your function.
 
@@ -1677,14 +1677,27 @@ A: It is placed at the very beginning of the document and is read by each of Pan
 \item
   Provide metadata of the document.
 \item
-  located at the top of the file.
+  Located at the top of the file.
 \item
-  adheres to the YAML format and is delimited by lines containing three three dashes (\texttt{-\/-\/-}).
+  Adheres to the YAML format and is delimited by lines containing three three dashes (\texttt{-\/-\/-}).
 \end{itemize}
 
-YAML also called header and front matter.
+YAML are also called \emph{header} or \emph{front matter}.
 
 See \emph{R Markdown YAML metadata (header) tutorial with examples} by \texttt{hao203} \href{https://github.com/hao203/rmarkdown-YAML.git}{HERE} for commonly used YAML metadata (header) in different R Markdown output formats.
+
+There is NO official documentation for R Markdown YAML frontmatter because the YAML frontmatter is a collection of metadata and each individual piece of data might or not be used by a piece of software from your tool chain. That is, the behavior of YAML depends on your user platform.
+
+For instance, the following metadata
+
+\begin{verbatim}
+editor_options:
+  chunk_output_type: console
+\end{verbatim}
+
+is used \emph{exclusively} by RStudio to have the code block output ``be shown in the R console instead of inside the source editor''. This option might be ignored by VSCode or Emacs.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
 YAML can set values of the template variables, such as \texttt{title}, \texttt{author}, and \texttt{date} of the document.
 
@@ -1713,7 +1726,7 @@ YAML can set values of the template variables, such as \texttt{title}, \texttt{a
 
 {\texttt{bookdown} output formats} allow numbering and cross-referencing figures/tables/equations. It takes the format \texttt{html\_document2}, in general, \texttt{markdown\_document2} is a wrapper for the base format \texttt{markdown\_document}. With the \texttt{bookdown} output format, you can cross-reference sections by their ID's using the same syntax when sections are numbered.
 
-Other bookdown output format examples for single documents: \texttt{pdf\_document2}, \texttt{beamer\_presentation2}, \texttt{tufte\_html2}, \texttt{word\_document2}. See Page 12 of the \href{https://cran.r-project.org/web/packages/bookdown/bookdown.pdf}{reference manual} for a complete list of supported format by \texttt{bookdown}.
+Other bookdown output format examples for single documents: \texttt{pdf\_document2}, \texttt{beamer\_presentation2}, \texttt{tufte\_html2}, \texttt{word\_document2}. See Page 12 of the \href{https://cran.r-project.org/web/packages/bookdown/bookdown.pdf}{reference manual} for a complete list of supported formats by \texttt{bookdown}.
 
 What bookdown is very powerful for is that it compiles books. Book formats:
 
@@ -2020,6 +2033,34 @@ ref:
 \item
   \url{https://rmarkdown.rstudio.com/lesson-6.html}
 \end{itemize}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\href{https://rstudio.github.io/visual-markdown-editing/options.html\#file-options}{\textbf{File options}}
+
+Some aspects of markdown output can be customized via global, project, or file-level options, including:
+
+\begin{itemize}
+\tightlist
+\item
+  How to wrap / break lines (fixed column, sentence-per-line, etc.).
+\item
+  Where to write footnotes (below the current paragraph or section, or at the end of the document).
+\item
+  Whether to use the visual mode markdown writer when saving markdown from source mode (to ensure consistency between documents saved from either mode).
+\end{itemize}
+
+Global and project options that affect the way markdown is written can also be customized on a per-file basis. These \emph{file specific options} can be set using YAML. For instance, you want to set lines wrapping after 72 characters:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{{-}{-}{-}}
+\AnnotationTok{editor\_options:}
+\CommentTok{  markdown:}
+\CommentTok{    wrap: 72}
+\CommentTok{{-}{-}{-}}
+\end{Highlighting}
+\end{Shaded}
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
@@ -2935,15 +2976,17 @@ One exception is level 2 headings in Bookdown:
 
 Rmd built-in themes for \texttt{html} output: \url{https://rstudio4edu.github.io/rstudio4edu-book/rmd-themes.html}
 
-\texttt{.Rmd} documents can be edited in either source or visual mode. To switch into visual mode for a given document, use the Source or Visual button at the top-left of the document toolbar (or alternatively the \texttt{Cmd+Shift+F4} keyboard shortcut).
+\texttt{.Rmd} documents can be edited in either \texttt{source} or \texttt{visual} mode. To switch into visual mode for a given document, use the Source or Visual button at the top-left of the document toolbar (or alternatively the \texttt{Cmd+Shift+F4} keyboard shortcut).
+
+\textbf{Visual mode}
 
 \begin{itemize}
 \item
   Visual mode allows you to preview the effect after having compiled the markdown file.
 
-  ❗️But it modifies your code siliently, be cautions with visual mode.
+  ❗️But it modifies your code silently, be cautions with visual mode.
 \item
-  More user-friendly in terms of providing dropdown menus for editting.
+  More user-friendly in terms of providing drop down menus for editing.
 \item
   Visual mode supports both traditional \textbf{keyboard shortcuts} (e.g.~\texttt{Cmd\ +\ B} for bold) as well as markdown shortcuts (using markdown syntax directly). For example, enclose \texttt{**bold**} text in asterisks or type \texttt{\#\#} and press space to create a second level heading.
 \item
@@ -2999,7 +3042,9 @@ Rmd built-in themes for \texttt{html} output: \url{https://rstudio4edu.github.io
 
 \section{Citations}\label{citations}
 
-For an overview of including bibliographies in your output document, you may see \href{https://bookdown.org/yihui/bookdown/citations.html}{Section 2.8} of Xie (\href{https://bookdown.org/yihui/rmarkdown-cookbook/bibliography.html\#ref-bookdown2016}{2016}). The basic usage requires us to specify a bibliography file using the \texttt{bibliography} metadata field in YAML. For example:
+For an overview of including bibliographies in your output document, you may see \href{https://bookdown.org/yihui/bookdown/citations.html}{Section 2.8} of Xie (\href{https://bookdown.org/yihui/rmarkdown-cookbook/bibliography.html\#ref-bookdown2016}{2016}).
+
+The basic usage requires us to specify a bibliography file using the \texttt{bibliography} metadata field in YAML. For example:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -3094,7 +3139,7 @@ Once you have one or multiple \texttt{.bib} files, you may use the field \texttt
 \end{Highlighting}
 \end{Shaded}
 
-The field \texttt{link-citations} can be used to add internal links from the citation text of the author-year style to the bibliography entry in the HTML output.
+The field \texttt{link-citations} can be used to add hyperlinks from the citations to the bibliography entries. Defaults to \texttt{false}.
 
 For any non-PDF output format, \texttt{pandoc-citeproc} is the only available option. If consistency across PDF and non-PDF output formats is important, use \texttt{pandoc-citeproc} throughout.
 
@@ -3106,6 +3151,42 @@ To \href{https://bookdown.org/yihui/rmarkdown-cookbook/bibliography.html\#changi
 \AnnotationTok{output:}\CommentTok{ html\_document}
 \AnnotationTok{bibliography:}\CommentTok{ references.bib  }
 \AnnotationTok{csl:}\CommentTok{ biomed{-}central.csl}
+\CommentTok{{-}{-}{-}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{Bibliography placement}\label{bibliography-placement}
+
+By default, the bibliography will be placed at the end of the document. So, you will want a final header titled \texttt{\#\ References} or \texttt{\#\ Bibliography} at the end your document.
+
+If you want to place the bibliography somewhere else, for instance before the appendices, you can insert a \texttt{\textless{}div\ id="refs"\textgreater{}\textless{}/div\textgreater{}} html tag in source mode:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{\# References}
+
+\DataTypeTok{\textless{}}\KeywordTok{div}\OtherTok{ id}\OperatorTok{=}\StringTok{"refs"}\DataTypeTok{\textgreater{}\textless{}/}\KeywordTok{div}\DataTypeTok{\textgreater{}}
+
+\FunctionTok{\# Appendix}
+\end{Highlighting}
+\end{Shaded}
+
+If you use the \texttt{bookdown::gitbook} output format, by default, the bibliography is split and all citation items that are cited on a given html page are put at the end of that page, so that readers do not have to navigate to a different bibliography page to see the details of citations.
+
+This feature can be disabled by setting the \texttt{split\_bib} YAML field to \texttt{false}, in which case all citations cited in the entire report or book are put on a separate bibliography page. To do this, you can add specific keys in the YAML header:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{{-}{-}{-}}
+\AnnotationTok{author:}\CommentTok{ Research Institute for Nature and Forest}
+\AnnotationTok{date:}\CommentTok{ \textquotesingle{}2025{-}05{-}13\textquotesingle{}}
+\AnnotationTok{site:}\CommentTok{ bookdown::bookdown\_site}
+\AnnotationTok{output:}
+\CommentTok{  bookdown::gitbook:}
+\CommentTok{    split\_by: chapter}
+\CommentTok{    split\_bib: false}
 \CommentTok{{-}{-}{-}}
 \end{Highlighting}
 \end{Shaded}
@@ -3800,6 +3881,17 @@ The idea is to generate the figure, output to local, then reload using the follo
 \end{Highlighting}
 \end{Shaded}
 
+Use code chunk label to cross reference, e.g., {\texttt{Fig.\ \textbackslash{}@ref(fig:car-plot)}}.
+
+\begin{itemize}
+\item
+  Note that you must specify \texttt{fig.cap} to enable labeling and cross references. Otherwise, the cross reference will show \texttt{Fig.\ ??}.
+\item
+  \texttt{knitr::include\_graphics} supports web url for html output, but NOT for latex output.
+\end{itemize}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
 \begin{itemize}
 \item
   You can let the code output to document directly, i.e., not generating a file and reload.
@@ -3901,12 +3993,6 @@ No cropping, no fuss.
 \NormalTok{\textasciigrave{}\textasciigrave{}}\InformationTok{\textasciigrave{}\{r out.width="100\%", fig.cap="include\_graphics with \textasciigrave{}}\NormalTok{out.width=\textbackslash{}"100\%\textbackslash{}"\textasciigrave{}." \}}
 \NormalTok{knitr::include\_graphics(f\_name) }
 \InformationTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{knitr}\SpecialCharTok{::}\FunctionTok{include\_graphics}\NormalTok{(f\_name) }
 \end{Highlighting}
 \end{Shaded}
 
@@ -4311,7 +4397,7 @@ To show the \texttt{tibble} information (number of row/columns, and group inform
 \begin{Highlighting}[]
 \CommentTok{{-}{-}{-}}
 \AnnotationTok{title:}\CommentTok{ "Use caption with df\_print set to page"}
-\AnnotationTok{date:}\CommentTok{ "2025{-}05{-}12"}
+\AnnotationTok{date:}\CommentTok{ "2025{-}05{-}13"}
 \AnnotationTok{output:}
 \CommentTok{  bookdown::html\_document2:}
 \CommentTok{    df\_print: paged}
@@ -4444,6 +4530,8 @@ Do not forget the equal sign before \texttt{latex}, i.e., it is \texttt{=latex} 
 \subsubsection*{Text table}\label{text-table}
 \addcontentsline{toc}{subsubsection}{Text table}
 
+Specify \texttt{stargazer(type\ =\ "text")}
+
 \begin{Shaded}
 \begin{Highlighting}[]
 \InformationTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}\{r descrptive{-}analysis{-}text, comment = \textquotesingle{}\textquotesingle{}\}}
@@ -4453,27 +4541,85 @@ Do not forget the equal sign before \texttt{latex}, i.e., it is \texttt{=latex} 
 \end{Highlighting}
 \end{Shaded}
 
+The text output looks like the following.
+
+\begin{verbatim}
+===============================================
+                        Dependent variable:    
+                    ---------------------------
+                            delta_infl         
+-----------------------------------------------
+unemp                         -0.091           
+                              (0.126)          
+                                               
+Constant                       0.518           
+                              (0.743)          
+                                               
+-----------------------------------------------
+Observations                    203            
+R2                             0.003           
+Adjusted R2                   -0.002           
+Residual Std. Error      2.833 (df = 201)      
+F Statistic             0.517 (df = 1; 201)    
+===============================================
+Note:               *p<0.1; **p<0.05; ***p<0.01
+\end{verbatim}
+
+There is one empty line after each coefficient, to remove the empty lines, specify \texttt{no.space\ =\ TRUE}.
+
+The regression table with all empty lines removed:
+
+\begin{verbatim}
+===============================================
+                        Dependent variable:    
+                    ---------------------------
+                            delta_infl         
+-----------------------------------------------
+unemp                         -0.091           
+                              (0.126)          
+Constant                       0.518           
+                              (0.743)          
+-----------------------------------------------
+Observations                    203            
+R2                             0.003           
+Adjusted R2                   -0.002           
+Residual Std. Error      2.833 (df = 201)      
+F Statistic             0.517 (df = 1; 201)    
+===============================================
+Note:               *p<0.1; **p<0.05; ***p<0.01
+\end{verbatim}
+
 \subsubsection*{HTML table}\label{html-table}
 \addcontentsline{toc}{subsubsection}{HTML table}
 
-Note that you need to specify \texttt{results="asis"}. This option tells \texttt{knitr} to treat verbatim code blocks ``as is.'' Otherwise, instead of your table, you will see the raw html or latex code.
+Note that you need to specify \texttt{results="asis"} in the chunk options. This option tells \texttt{knitr} to treat verbatim code blocks ``as is.'' Otherwise, instead of your table, you will see the raw html or latex code.
 
 \begin{itemize}
 \tightlist
 \item
-  \texttt{*}'s do not show properly, need to specify as footnote manually.
+  Note that \texttt{*}'s do not show properly in html output, see Fig. \ref{fig:stargazer1}, need to specify in the footnote (\texttt{notes}) manually.
 \end{itemize}
+
+\begin{figure}
+\includegraphics[width=5.51in]{images/stargazer1} \caption{Failed to show significance codes.}\label{fig:stargazer1}
+\end{figure}
+
+Use the following code to display the correct significance symbols. See Fig. \ref{fig:stargazer2} for the expected output.
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \InformationTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}\{r descrptive{-}analysis{-}html, results="asis"\}}
 \InformationTok{apply(data[,{-}1], 2, get\_stat) \%\textgreater{}\% }
 \InformationTok{    stargazer(type = "html", digits=2, }
-\InformationTok{              notes = "\textless{}span\textgreater{}\&\#42;\textless{}/span\textgreater{}: p\textless{}0.1; \textless{}span\textgreater{}\&\#42;\&\#42;\textless{}/span\textgreater{}: \textless{}strong\textgreater{}p\textless{}0.05\textless{}/strong\textgreater{}; \textless{}span\textgreater{}\&\#42;\&\#42;\&\#42;\textless{}/span\textgreater{}: p\textless{}0.01 \textless{}br\textgreater{} Standard errors in the parentheses.",}
+\InformationTok{              notes = "\textless{}span\textgreater{}\&\#42;\textless{}/span\textgreater{}: p\textless{}0.1; \textless{}span\textgreater{}\&\#42;\&\#42;\textless{}/span\textgreater{}: \textless{}strong\textgreater{}p\textless{}0.05\textless{}/strong\textgreater{}; \textless{}span\textgreater{}\&\#42;\&\#42;\&\#42;\textless{}/span\textgreater{}: p\textless{}0.01 \textless{}br\textgreater{} Standard errors in parentheses.",}
 \InformationTok{              notes.append = F)}
 \InformationTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}}
 \end{Highlighting}
 \end{Shaded}
+
+\begin{figure}
+\includegraphics[width=5.51in]{images/stargazer1} \caption{Correct significance codes.}\label{fig:stargazer2}
+\end{figure}
 
 \textbf{Common arguments}:
 
@@ -4518,9 +4664,9 @@ Note that you need to specify \texttt{results="asis"}. This option tells \texttt
 \begin{Shaded}
 \begin{Highlighting}[]
 \FunctionTok{stargazer}\NormalTok{(mod\_sel\_lm\_mtcars, }
-      \AttributeTok{covariate.labels =} 
-        \FunctionTok{c}\NormalTok{(}\StringTok{"(Intercept)"}\NormalTok{, }\StringTok{"drat"}\NormalTok{, }\StringTok{"hp"}\NormalTok{, }\StringTok{"$w\_\{i\}$"}\NormalTok{,}
-          \StringTok{"}\SpecialCharTok{\textbackslash{}\textbackslash{}}\StringTok{textit\{k\}"}\NormalTok{, }\StringTok{"logLik"}\NormalTok{, }\StringTok{"AICc"}\NormalTok{, }\StringTok{"}\SpecialCharTok{\textbackslash{}\textbackslash{}}\StringTok{Delta AICc"}\NormalTok{))}
+          \AttributeTok{covariate.labels =} 
+          \FunctionTok{c}\NormalTok{(}\StringTok{"(Intercept)"}\NormalTok{, }\StringTok{"drat"}\NormalTok{, }\StringTok{"hp"}\NormalTok{, }\StringTok{"$w\_\{i\}$"}\NormalTok{,}
+            \StringTok{"}\SpecialCharTok{\textbackslash{}\textbackslash{}}\StringTok{textit\{k\}"}\NormalTok{, }\StringTok{"logLik"}\NormalTok{, }\StringTok{"AICc"}\NormalTok{, }\StringTok{"}\SpecialCharTok{\textbackslash{}\textbackslash{}}\StringTok{Delta AICc"}\NormalTok{))}
 \end{Highlighting}
 \end{Shaded}
 \item
@@ -4604,7 +4750,7 @@ Add a blank line under the \texttt{stargazer} table: \texttt{\&nbsp;} with a bla
 \InformationTok{          label = paste0("tab:", knitr::opts\_current$get("label")),}
 \InformationTok{          title = ifelse(knitr::is\_latex\_output(), tit, tit\_html),}
 \InformationTok{          type = ifelse(knitr::is\_latex\_output(),"latex","html"),}
-\InformationTok{          notes = "\textless{}span\textgreater{}\&\#42;\textless{}/span\textgreater{}: p\textless{}0.1; \textless{}span\textgreater{}\&\#42;\&\#42;\textless{}/span\textgreater{}: \textless{}strong\textgreater{}p\textless{}0.05\textless{}/strong\textgreater{}; \textless{}span\textgreater{}\&\#42;\&\#42;\&\#42;\textless{}/span\textgreater{}: p\textless{}0.01 \textless{}br\textgreater{} Standard errors in the parentheses.",}
+\InformationTok{          notes = "\textless{}span\textgreater{}\&\#42;\textless{}/span\textgreater{}: p\textless{}0.1; \textless{}span\textgreater{}\&\#42;\&\#42;\textless{}/span\textgreater{}: \textless{}strong\textgreater{}p\textless{}0.05\textless{}/strong\textgreater{}; \textless{}span\textgreater{}\&\#42;\&\#42;\&\#42;\textless{}/span\textgreater{}: p\textless{}0.01 \textless{}br\textgreater{} Standard errors in parentheses.",}
 \InformationTok{          notes.append = F,}
 \InformationTok{          header = F}
 \InformationTok{          )}
@@ -4938,6 +5084,10 @@ It is possible to edit Latex table directly in \texttt{Rmd}.
 
 \section{Rmd GitHub Pages}\label{rmd-github-pages}
 
+The \textbf{rmarkdown} package had provided a simple site generator that did not rely on a third-party site generator like Hugo. If you feel Hugo is too complex for you, and you only want to build a few Rmd documents into a website, this built-in site generator may be a good choice.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
 \textbf{Stage-commit-push many files}
 
 \begin{enumerate}
@@ -4955,7 +5105,15 @@ It is possible to edit Latex table directly in \texttt{Rmd}.
 \subsection*{Project structure}\label{project-structure}
 \addcontentsline{toc}{subsection}{Project structure}
 
-Note that the \textbf{minimum requirement for any R Markdown website} is that it have an \texttt{index.Rmd} file and a \texttt{\_site.yml} file.
+Note that the \textbf{minimum requirement for any \href{https://bookdown.org/yihui/rmarkdown/rmarkdown-site.html}{R Markdown website}} is that it have an \texttt{index.Rmd} file and a \texttt{\_site.yml} file.
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{\_site.yml} provides the global YAML header for the site
+\item
+  \texttt{index.Rmd} provides the content for the home page of your website.
+\end{itemize}
 
 If you execute the \texttt{rmarkdown::render\_site()} function from within the directory containing the website, the following will occur:
 
@@ -4980,7 +5138,9 @@ If you execute the \texttt{rmarkdown::render\_site()} function from within the d
 \subsection*{\texorpdfstring{\texttt{\_site.yml} config}{\_site.yml config}}\label{site.yml-config}
 \addcontentsline{toc}{subsection}{\texttt{\_site.yml} config}
 
-\texttt{\_site.yml} is a configuration file. It contains various common elements you want to include on all pages (e.g., output options, CSS styles, header and footer elements, etc.).
+\href{https://bookdown.org/yihui/rmarkdown/rmarkdown-site.html\#site-configuration}{\texttt{\_site.yml}} is a site configuration file. It provides the global YAML header for the site.
+
+It contains various common elements you want to apply to all pages (e.g., output options, CSS styles, header and footer elements, etc.).
 
 \texttt{\_site.yml} is equivalent to the combination of \texttt{\_output.yml} and \texttt{\_bookdown.yml} in \texttt{bookdown}.
 
@@ -5112,6 +5272,76 @@ You may have common fragments of R Markdown that you want to share across pages 
 \end{Shaded}
 
   The leading underscore (\texttt{\_}) is an indicator to the site generation engine that the Rmd is a partial document to be included in other documents, so it is not compiled as a standalone document during site rendering.
+\end{itemize}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection*{\texorpdfstring{\texttt{index.Rmd}}{index.Rmd}}\label{index.rmd}
+\addcontentsline{toc}{subsection}{\texttt{index.Rmd}}
+
+\href{https://bookdown.org/yihui/rmarkdown/rmarkdown-site.html\#site-generator-function}{\texttt{index.Rmd}} provides the content for the home page of your website.
+
+A parsimonious example of \texttt{index.Rmd} which only includes the website title. This is useful if you home page only includes simple text.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{{-}{-}{-}}
+\AnnotationTok{title:}\CommentTok{ "Lab Scripts for Course Example Demonstration"}
+\CommentTok{{-}{-}{-}}
+\end{Highlighting}
+\end{Shaded}
+
+A full example of \texttt{index.Rmd}. You may use this when you want to write complex content in your home page.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{{-}{-}{-}}
+\AnnotationTok{title:}\CommentTok{ "R Notes"}
+\AnnotationTok{author:}\CommentTok{ "Menghan Yuan"}
+\AnnotationTok{date:}\CommentTok{ "2025{-}05{-}13"}
+\AnnotationTok{site:}\CommentTok{ rmarkdown::default\_site}
+\AnnotationTok{documentclass:}\CommentTok{ book}
+\AnnotationTok{bibliography:}\CommentTok{ [book.bib, packages.bib]}
+\AnnotationTok{biblio{-}style:}\CommentTok{ apalike}
+\AnnotationTok{link{-}citations:}\CommentTok{ yes}
+\AnnotationTok{description:}\CommentTok{ "This is a minimal example of using}
+\CommentTok{  the rmarkdown to write a book."}
+\CommentTok{{-}{-}{-}}
+\end{Highlighting}
+\end{Shaded}
+
+\texttt{rmarkdown::default\_site()} is the default site generation function. It is also possible to define a custom site generator that has alternate behaviors, e.g., \texttt{bookdown::bookdown\_site}.
+
+Note that \texttt{index.Rmd} in the \texttt{rmarkdown} build-in site generator is different than \href{https://bookdown.org/yihui/rmarkdown/bookdown-project.html\#index-file}{that of \texttt{bookdown}}.
+
+In \texttt{bookdown} sites, you can specify global YAML that will apply to all pages in the website, but in the \texttt{rmarkdown} built-in site generator, each page has its own YAML.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1716}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3806}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.4478}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\texttt{rmakrdown}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\texttt{bookdown}
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Site generator function & \texttt{rmarkdown::default\_site()} & \texttt{bookdown::bookdown\_site} \\
+\texttt{index.Rmd} & home page & First Chapter and YAML that will apply to all pages \\
+Rmd files & More independent; contains YAML of their own; & Start with first-level heading (e.g., \texttt{\#\ Introduction}); do NOT have any YAML; \\
+\end{longtable}
+
+References:
+
+\begin{itemize}
+\tightlist
+\item
+  \url{https://bookdown.org/yihui/rmarkdown/rmarkdown-site.html\#site-generator-function}
 \end{itemize}
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
@@ -5671,10 +5901,12 @@ Note that you don't need to manually create the \texttt{docs} folder, bookdown w
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
-\subsection*{\texorpdfstring{\texttt{index.Rmd}}{index.Rmd}}\label{index.rmd}
+\subsection*{\texorpdfstring{\texttt{index.Rmd}}{index.Rmd}}\label{index.rmd-1}
 \addcontentsline{toc}{subsection}{\texttt{index.Rmd}}
 
 \textbf{\texttt{index.Rmd}} {homepage of your website}. Contains the first chapter and the YAML metadata which will be applied to all other Rmd pages. See \href{https://bookdown.org/yihui/rmarkdown/compile.html}{Chapter 2.2 in \emph{R Markdown: The Definitive Guide}} for YAML details.
+
+Note that \texttt{index.Rmd} is the only Rmd document to contain a \textbf{YAML frontmatter}.
 
 Common uses of \texttt{index.Rmd}'s YAML frontmatter:
 
@@ -5682,7 +5914,7 @@ Common uses of \texttt{index.Rmd}'s YAML frontmatter:
 \item
   Book cover, title, author, date, and description
 \item
-  Add bibliography
+  Add \textbf{bibliography}
 \item
   Link to your GitHub in the toolbar (also need \texttt{\_output.yml})
 \item
@@ -5699,6 +5931,8 @@ Common uses of \texttt{index.Rmd}'s YAML frontmatter:
   Issue: Favicon shows ok on Chrome but couldn't display on Safari. Same issue reported in \href{https://stackoverflow.com/questions/66023588/r-bookdown-favicon-works-offline-but-not-online}{Stack Overflow}.\\
   Fix: There is a delay for Safari to show Favicon. Wait for two hours and the issue resolves itself\ldots{}
 \end{itemize}
+
+An example of \texttt{index.Rmd}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -5733,20 +5967,43 @@ Common uses of \texttt{index.Rmd}'s YAML frontmatter:
 \begin{itemize}
 \tightlist
 \item
-  \texttt{site:\ bookdown::bookdown\_site} tells rmarkdown to use bookdown to build all Rmd files, instead of rendering a single Rmd file.
+  \texttt{site:\ bookdown::bookdown\_site} tells rmarkdown to use \texttt{bookdown} to build all Rmd files, instead of rendering a single Rmd file.
 \end{itemize}
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
-\textbf{Within any \texttt{.Rmd}}
+\subsection*{\texorpdfstring{\texttt{.Rmd} files}{.Rmd files}}\label{rmd-files}
+\addcontentsline{toc}{subsection}{\texttt{.Rmd} files}
 
 \begin{itemize}
-\tightlist
 \item
   Chapters (also sections) are based on separate Rmd files.
 \item
-  Besides \texttt{index.Rmd}, other R Markdown files will make up the chapters of your book. By default, bookdown merges all Rmd files by the order of filenames, e.g., \texttt{01-intro.Rmd} will appear before \texttt{02-literature.Rmd}.
+  Besides \texttt{index.Rmd}, other R Markdown files will make up the chapters of your book. By default, \texttt{bookdown} merges all Rmd files by the order of filenames, e.g., \texttt{01-intro.Rmd} will appear before \texttt{02-literature.Rmd}.
+\item
+  The Rmd files must start immediately with the chapter title using the first-level heading, e.g., \texttt{\#\ Chapter\ Title}. Note that YAML metadata should {NOT} be included in these Rmd files, as it is inherited from the \texttt{index.Rmd} file.
 \end{itemize}
+
+\texttt{01-intro.Rmd}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{\# Introduction}
+
+\NormalTok{This chapter is an overview of the methods that}
+\NormalTok{we propose to solve an **important problem**.}
+\end{Highlighting}
+\end{Shaded}
+
+\texttt{02-literature.Rmd}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{\# Literature}
+
+\NormalTok{Here is a review of existing methods.}
+\end{Highlighting}
+\end{Shaded}
 
 \section{Rendering bookdown}\label{rendering-bookdown}
 

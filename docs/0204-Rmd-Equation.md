@@ -112,7 +112,7 @@ colorize <- function(x, color) {
 ```
     
     
-We can then use the code in an inline R expression `` `r colorize("some words in red", "red")` ``, which will create \textcolor{red}{some words in red}, which works for both html and .
+We can then use the code in an inline R expression `` `r colorize("some words in red", "red")` ``, which will create <span style='color: red;'>some words in red</span>, which works for both html and .
 
 
 --------------------------------------------------------------------------------

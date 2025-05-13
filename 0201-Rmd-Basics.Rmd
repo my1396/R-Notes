@@ -59,13 +59,15 @@ Rmd built-in themes for `html` output: <https://rstudio4edu.github.io/rstudio4ed
 
 
 
-`.Rmd` documents can be edited in either source or visual mode. To switch into visual mode for a given document, use the Source or Visual button at the top-left of the document toolbar (or alternatively the `Cmd+Shift+F4` keyboard shortcut).
+`.Rmd` documents can be edited in either `source` or `visual` mode. To switch into visual mode for a given document, use the Source or Visual button at the top-left of the document toolbar (or alternatively the `Cmd+Shift+F4` keyboard shortcut).
+
+**Visual mode**
 
 - Visual mode allows you to preview the effect after having compiled the markdown file.
 
-  ❗️But it modifies your code siliently, be cautions with visual mode.
+  ❗️But it modifies your code silently, be cautions with visual mode.
 
-- More user-friendly in terms of providing dropdown menus for editting.
+- More user-friendly in terms of providing drop down menus for editing.
 
 - Visual mode supports both traditional **keyboard shortcuts** (e.g. `Cmd + B` for bold) as well as markdown shortcuts (using markdown syntax directly). For example, enclose `**bold**` text in asterisks or type `##` and press space to create a second level heading. 
 

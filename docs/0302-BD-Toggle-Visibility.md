@@ -92,9 +92,7 @@ blabla ...
 blabla ...
 ````
 
-::: {.example #ex1}
-Let $Y=g(X)=\mu+\sigma X$ where $\sigma>0$. Representing the CDF of $Y$ using $F_X(x)$.
-:::
+\BeginKnitrBlock{example}<div class="example"><span class="example" id="exm:ex1"><strong>(\#exm:ex1) </strong></span>Let $Y=g(X)=\mu+\sigma X$ where $\sigma>0$. Representing the CDF of $Y$ using $F_X(x)$.</div>\EndKnitrBlock{example}
 
 <button onclick="myFunction('myDIV')">Solution</button>
 

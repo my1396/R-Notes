@@ -16,26 +16,16 @@ knitr::kable(mtcars[1:5, 1:5], caption = "The mtcars data.")
 
 Refer to the Table \@ref(tab:mtcars).
 
-\begin{table}
 
-\caption{(\#tab:mtcars)The mtcars data.}
-\centering
-\begin{tabular}[t]{l|r|r|r|r|r}
-\hline
-  & mpg & cyl & disp & hp & drat\\
-\hline
-Mazda RX4 & 21.0 & 6 & 160 & 110 & 3.90\\
-\hline
-Mazda RX4 Wag & 21.0 & 6 & 160 & 110 & 3.90\\
-\hline
-Datsun 710 & 22.8 & 4 & 108 & 93 & 3.85\\
-\hline
-Hornet 4 Drive & 21.4 & 6 & 258 & 110 & 3.08\\
-\hline
-Hornet Sportabout & 18.7 & 8 & 360 & 175 & 3.15\\
-\hline
-\end{tabular}
-\end{table}
+Table: (\#tab:mtcars)The mtcars data.
+
+|                  |  mpg| cyl| disp|  hp| drat|
+|:-----------------|----:|---:|----:|---:|----:|
+|Mazda RX4         | 21.0|   6|  160| 110| 3.90|
+|Mazda RX4 Wag     | 21.0|   6|  160| 110| 3.90|
+|Datsun 710        | 22.8|   4|  108|  93| 3.85|
+|Hornet 4 Drive    | 21.4|   6|  258| 110| 3.08|
+|Hornet Sportabout | 18.7|   8|  360| 175| 3.15|
 
 
 
@@ -288,9 +278,12 @@ Note:               *p<0.1; **p<0.05; ***p<0.01
 
 Note that you need to specify `results="asis"` in the chunk options.  This option tells `knitr` to treat verbatim code blocks "as is." Otherwise, instead of your table, you will see the raw html or latex code.
 
-- Note that `*`'s do not show properly in html output (Fig. \@ref(fig:stargazer1), need to specify in the footnote (`notes`) manually.
+- Note that `*`'s do not show properly in html output, see Fig. \@ref(fig:stargazer1), need to specify in the footnote (`notes`) manually.
 
-![(\#fig:stargazer1)Failed to show significance codes.](https://drive.google.com/thumbnail?id=1UWaYK2Q00xobvHsadz-EsEw0pUnhqVTs&sz=w1000) 
+<div class="figure">
+<img src="images/stargazer1.png" alt="Failed to show significance codes." width="397" />
+<p class="caption">(\#fig:stargazer1)Failed to show significance codes.</p>
+</div>
 
 Use the following code to display the correct significance symbols. See Fig. \@ref(fig:stargazer2) for the expected output.
 
@@ -304,7 +297,10 @@ apply(data[,-1], 2, get_stat) %>%
 ````
 
 
-![(\#fig:stargazer2)Correct significance codes.](https://drive.google.com/thumbnail?id=1a_HaaOgYidFhQavHA2iuZgUbj5iYdbEW&sz=w1000) 
+<div class="figure">
+<img src="images/stargazer1.png" alt="Correct significance codes." width="397" />
+<p class="caption">(\#fig:stargazer2)Correct significance codes.</p>
+</div>
 
 
 

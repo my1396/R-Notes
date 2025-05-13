@@ -1,6 +1,8 @@
 ## Citations
 
-For an overview of including bibliographies in your output document, you may see [Section 2.8](https://bookdown.org/yihui/bookdown/citations.html) of Xie ([2016](https://bookdown.org/yihui/rmarkdown-cookbook/bibliography.html#ref-bookdown2016)). The basic usage requires us to specify a bibliography file using the `bibliography` metadata field in YAML. For example:
+For an overview of including bibliographies in your output document, you may see [Section 2.8](https://bookdown.org/yihui/bookdown/citations.html) of Xie ([2016](https://bookdown.org/yihui/rmarkdown-cookbook/bibliography.html#ref-bookdown2016)). 
+
+The basic usage requires us to specify a bibliography file using the `bibliography` metadata field in YAML. For example:
 
 ```markdown
 ---
@@ -73,7 +75,7 @@ link-citations: true
 ---
 ````
 
-The field `link-citations` can be used to add internal links from the citation text of the author-year style to the bibliography entry in the HTML output.
+The field `link-citations` can be used to add hyperlinks from the citations to the bibliography entries. Defaults to `false`.
 
 For any non-PDF output format, `pandoc-citeproc` is the only available option. If consistency across PDF and non-PDF output formats is important, use `pandoc-citeproc` throughout.
 
@@ -87,7 +89,37 @@ csl: biomed-central.csl
 ---
 ````
 
+--------------------------------------------------------------------------------
 
+### Bibliography placement
+
+By default, the bibliography will be placed at the end of the document. So, you will want a final header titled `# References` or `# Bibliography` at the end your document.
+
+If you want to place the bibliography somewhere else, for instance before the appendices, you can insert a `<div id="refs"></div>` html tag in source mode:
+
+````markdown
+# References
+
+<div id="refs"></div>
+
+# Appendix
+````
+
+If you use the `bookdown::gitbook` output format, by default, the bibliography is split and all citation items that are cited on a given html page are put at the end of that page, so that readers do not have to navigate to a different bibliography page to see the details of citations. 
+
+This feature can be disabled by setting the `split_bib` YAML field to `false`, in which case all citations cited in the entire report or book are put on a separate bibliography page. To do this, you can add specific keys in the YAML header:
+
+````markdown
+---
+author: Research Institute for Nature and Forest
+date: '`r format(Sys.Date())`'
+site: bookdown::bookdown_site
+output:
+  bookdown::gitbook:
+    split_by: chapter
+    split_bib: false
+---
+````
 
 
 

@@ -1,5 +1,11 @@
 ## Rmd GitHub Pages
 
+The **rmarkdown** package had provided a simple site generator that did not rely on a third-party site generator like Hugo. If you feel Hugo is too complex for you, and you only want to build a few Rmd documents into a website, this built-in site generator may be a good choice. 
+
+
+
+___
+
 **Stage-commit-push many files**
 
 1.  Use the Terminal `git add .` to "stage" all the files that I want to commit as that's quicker than clicking on all the files often that I want to commit.
@@ -12,7 +18,10 @@
 
 ### Project structure {.unnumbered}
 
-Note that the **minimum requirement for any R Markdown website** is that it have an `index.Rmd` file and a `_site.yml` file. 
+Note that the **minimum requirement for any [R Markdown website](https://bookdown.org/yihui/rmarkdown/rmarkdown-site.html)** is that it have an `index.Rmd` file and a `_site.yml` file. 
+
+- `_site.yml` provides the global YAML header for the site
+- `index.Rmd` provides the content for the home page of your website.
 
 If you execute the `rmarkdown::render_site()` function from within the directory containing the website, the following will occur:
 
@@ -28,7 +37,9 @@ If you execute the `rmarkdown::render_site()` function from within the directory
 
 ### `_site.yml` config {.unnumbered}
 
-`_site.yml` is a configuration file. It contains various common elements you want to include on all pages (e.g., output options, CSS styles, header and footer elements, etc.). 
+[`_site.yml`](https://bookdown.org/yihui/rmarkdown/rmarkdown-site.html#site-configuration) is a site configuration file. It provides the global YAML header for the site. 
+
+It contains various common elements you want to apply to all pages (e.g., output options, CSS styles, header and footer elements, etc.). 
 
 `_site.yml` is equivalent to the combination of `_output.yml` and `_bookdown.yml` in `bookdown`.
 
@@ -130,6 +141,59 @@ You may have common fragments of R Markdown that you want to share across pages 
   ~~~
 
   The leading underscore (`_`) is an indicator to the site generation engine that the Rmd is a partial document to be included in other documents, so it is not compiled as a standalone document during site rendering.
+
+--------------------------------------------------------------------------------
+
+### `index.Rmd` {.unnumbered}
+
+[`index.Rmd`](https://bookdown.org/yihui/rmarkdown/rmarkdown-site.html#site-generator-function) provides the content for the home page of your website.
+
+A parsimonious example of `index.Rmd` which only includes the website title. This is useful if you home page only includes simple text.
+
+```markdown
+---
+title: "Lab Scripts for Course Example Demonstration"
+---
+```
+
+A full example of `index.Rmd`. You may use this when you want to write complex content in your home page.
+
+```markdown
+---
+title: "R Notes"
+author: "Menghan Yuan"
+date: "2025-05-13"
+site: rmarkdown::default_site
+documentclass: book
+bibliography: [book.bib, packages.bib]
+biblio-style: apalike
+link-citations: yes
+description: "This is a minimal example of using
+  the rmarkdown to write a book."
+---
+```
+
+`rmarkdown::default_site()` is the default site generation function. It is also possible to define a custom site generator that has alternate behaviors, e.g., `bookdown::bookdown_site`.
+
+
+
+Note that `index.Rmd` in the `rmarkdown` build-in site generator is different than [that of `bookdown`](https://bookdown.org/yihui/rmarkdown/bookdown-project.html#index-file). 
+
+In `bookdown` sites, you can specify global YAML that will apply to all pages in the website, but in the `rmarkdown` built-in site generator, each page has its own YAML.
+
+|                         | `rmakrdown`                                         | `bookdown`                                                   |
+| ----------------------- | --------------------------------------------------- | ------------------------------------------------------------ |
+| Site generator function | `rmarkdown::default_site()`                         | `bookdown::bookdown_site`                                    |
+| `index.Rmd`             | home page                                           | First Chapter and YAML that will apply to all pages          |
+| Rmd files               | More independent; <br />contains YAML of their own; | Start with first-level heading (e.g., `# Introduction`); <br />do NOT have any YAML; |
+
+
+
+References:
+
+- <https://bookdown.org/yihui/rmarkdown/rmarkdown-site.html#site-generator-function>
+
+
 
 --------------------------------------------------------------------------------
 

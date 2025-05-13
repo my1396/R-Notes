@@ -307,11 +307,14 @@ Note that you don't need to manually create the `docs` folder, bookdown will cre
  
 **`index.Rmd`** <span style='color:#00CC66'>homepage of your website</span>. Contains the first chapter and the YAML metadata which will be applied to all other Rmd pages. See [Chapter 2.2 in *R Markdown: The Definitive Guide*](https://bookdown.org/yihui/rmarkdown/compile.html) for YAML details.
 
+Note that `index.Rmd` is the only Rmd document to contain a **YAML frontmatter**. 
+
+
 Common uses of `index.Rmd`'s YAML frontmatter:
 
 - Book cover, title, author, date, and description
 
-- Add bibliography
+- Add **bibliography**
 
 - Link to your GitHub in the toolbar (also need `_output.yml`)
 
@@ -327,8 +330,9 @@ Common uses of `index.Rmd`'s YAML frontmatter:
   Fix: There is a delay for Safari to show Favicon. Wait for two hours and the issue resolves itself...
 
 
+An example of `index.Rmd`
 
-~~~~markdown
+````markdown
 ---
 title: "A Minimal bookdown Project"
 site: bookdown::bookdown_site
@@ -354,21 +358,39 @@ classoption:
 # Preface
 
 Some content
-~~~~
+````
 
-- `site: bookdown::bookdown_site` tells rmarkdown to use bookdown to build all Rmd files, instead of rendering a single Rmd file. 
+- `site: bookdown::bookdown_site` tells rmarkdown to use `bookdown` to build <u>all Rmd files</u>, instead of rendering a single Rmd file. 
 
 
 --------------------------------------------------------------------------------
 
-**Within any `.Rmd`**
+### `.Rmd` files {.unnumbered}
+
 
 - Chapters (also sections) are based on separate Rmd files.
-- Besides `index.Rmd`, other R Markdown files will make up the chapters of your book. By default, bookdown merges all Rmd files by the order of filenames, e.g., `01-intro.Rmd` will appear before `02-literature.Rmd`. 
+
+- Besides `index.Rmd`, other R Markdown files will make up the chapters of your book. By default, `bookdown` merges all Rmd files by the order of filenames, e.g., `01-intro.Rmd` will appear before `02-literature.Rmd`. 
+
+- The Rmd files must start immediately with the chapter title using the first-level heading, e.g., `# Chapter Title`. Note that YAML metadata should <span style='color:#FF9900'>NOT</span> be included in these Rmd files, as it is inherited from the <a href="#index">`index.Rmd`</a> file.
 
 
+`01-intro.Rmd`
 
+````markdown
+# Introduction
 
+This chapter is an overview of the methods that
+we propose to solve an **important problem**.
+````
+
+`02-literature.Rmd`
+
+````markdown
+# Literature
+
+Here is a review of existing methods.
+````
 
 
 

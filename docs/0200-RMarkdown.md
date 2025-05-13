@@ -42,13 +42,27 @@ Q: What does YAML do? \
 A: It is placed at the very beginning of the document and is read by each of Pandoc, **rmarkdown**, and **knitr**. 
 
 - Provide metadata of the document. 
-- located at the top of the file.
-- adheres to the YAML format and is delimited by lines containing three three dashes (`---`).
+- Located at the top of the file.
+- Adheres to the YAML format and is delimited by lines containing three three dashes (`---`).
 
 
-YAML also called header and front matter.
+YAML are also called *header* or *front matter*.
 
 See *R Markdown YAML metadata (header) tutorial with examples* by `hao203` [HERE](https://github.com/hao203/rmarkdown-YAML.git) for commonly used YAML metadata (header) in different R Markdown output formats.
+
+
+There is NO official documentation for R Markdown YAML frontmatter because the YAML frontmatter is a collection of metadata and each individual piece of data might or not be used by a piece of software from your tool chain. That is, the behavior of YAML depends on your user platform.
+
+For instance, the following metadata
+
+```
+editor_options:
+  chunk_output_type: console
+```
+
+is used *exclusively* by RStudio to have the code block output "be shown in the R console instead of inside the source editor". This option might be ignored by VSCode or Emacs.
+
+--------------------------------------------------------------------------------
 
 YAML can set values of the template variables, such as `title`, `author`, and `date` of the document. 
 
@@ -74,7 +88,7 @@ YAML can set values of the template variables, such as `title`, `author`, and `d
 
 <span style='color:#00CC66'>`bookdown` output formats</span> allow numbering and cross-referencing figures/tables/equations. It takes the format `html_document2`, in general, `markdown_document2` is a wrapper for the base format `markdown_document`. With the `bookdown` output format, you can cross-reference sections by their ID's using the same syntax when sections are numbered. 
 
-Other bookdown output format examples for single documents: `pdf_document2`, `beamer_presentation2`, `tufte_html2`, `word_document2`. See Page 12 of the [reference manual](https://cran.r-project.org/web/packages/bookdown/bookdown.pdf) for a complete list of supported format by `bookdown`.
+Other bookdown output format examples for single documents: `pdf_document2`, `beamer_presentation2`, `tufte_html2`, `word_document2`. See Page 12 of the [reference manual](https://cran.r-project.org/web/packages/bookdown/bookdown.pdf) for a complete list of supported formats by `bookdown`.
 
 What bookdown is very powerful for is that it compiles books. Book formats: 
 
@@ -295,6 +309,28 @@ ref:
 - [R Markdown anatomy, R Markdown Cookbook](https://bookdown.org/yihui/rmarkdown-cookbook/rmarkdown-anatomy.html#:~:text=In%20short%2C%20we%20can%20include%20variables%20and%20R%20expressions%20in%20this%20header%20that%20can%20be%20referenced%20throughout%20our%20R%20Markdown%20document.)
 - <https://rmarkdown.rstudio.com/lesson-6.html>
 
+
+--------------------------------------------------------------------------------
+
+[**File options**](https://rstudio.github.io/visual-markdown-editing/options.html#file-options)
+
+
+Some aspects of markdown output can be customized via global, project, or file-level options, including:
+
+- How to wrap / break lines (fixed column, sentence-per-line, etc.).
+- Where to write footnotes (below the current paragraph or section, or at the end of the document).
+- Whether to use the visual mode markdown writer when saving markdown from source mode (to ensure consistency between documents saved from either mode).
+
+
+Global and project options that affect the way markdown is written can also be customized on a per-file basis. These *file specific options* can be set using YAML. For instance, you want to set lines wrapping after 72 characters:
+
+```markdown
+---
+editor_options:
+  markdown:
+    wrap: 72
+---
+```
 
 --------------------------------------------------------------------------------
 
