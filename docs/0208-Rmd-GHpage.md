@@ -18,10 +18,10 @@ ___
 
 ### Project structure {.unnumbered}
 
-Note that the **minimum requirement for any [R Markdown website](https://bookdown.org/yihui/rmarkdown/rmarkdown-site.html)** is that it have an `index.Rmd` file and a `_site.yml` file. 
+Note that the **minimum requirement for any [R Markdown website](https://bookdown.org/yihui/rmarkdown/rmarkdown-site.html)** is that it has an `index.Rmd` file and a `_site.yml` file. 
 
-- `_site.yml` provides the global YAML header for the site
-- `index.Rmd` provides the content for the home page of your website.
+- <a href="#site">`_site.yml`</a> provides the global YAML header for the site
+- <a href="#index">`index.Rmd`</a> provides the content for the home page of your website.
 
 <div class="figure">
 <img src="images/site-page.png" alt="Minimal example of a R Markdown website." width="1202" />
@@ -40,6 +40,8 @@ If you execute the `rmarkdown::render_site()` ("Knit" button behavior) function 
     The HTML files within the output directory are now ready to deploy as a standalone static website.
 
 --------------------------------------------------------------------------------
+
+<a id="site"></a>
 
 ### `_site.yml` config {.unnumbered}
 
@@ -109,46 +111,7 @@ output:
 
 --------------------------------------------------------------------------------
 
-### R scripts {.unnumbered}
-
-If you have R code that you would like to share across multiple R Markdown documents within your site, you can create an R script (e.g., `utils.R`) and source it within your Rmd files. For example:
-
-~~~markdown
-```{r}
-source("utils.R")
-```
-~~~
-
-**Shared Rmd snippets**
-
-You may have common fragments of R Markdown that you want to share across pages within your site. To share Rmd fragments, you should name them with a leading underscore (`_`), and then include them within their parent Rmd document using the `child` chunk option. For example:
-
-- `about.Rmd`:
-
-  ~~~markdown
-  ---
-  title: "About This Website"
-  ---
-  
-  More about this website.
-  
-  ```{r, child="_session-info.Rmd"}
-  ```
-  ~~~
-
-- `_session-info.Rmd`:
-
-  ~~~markdown
-  Session information:
-  
-  ```{r}
-  sessionInfo()
-  ```
-  ~~~
-
-  The leading underscore (`_`) is an indicator to the site generation engine that the Rmd is a partial document to be included in other documents, so it is not compiled as a standalone document during site rendering.
-
---------------------------------------------------------------------------------
+<a id="index"></a>
 
 ### `index.Rmd` {.unnumbered}
 
@@ -200,8 +163,57 @@ References:
 - <https://bookdown.org/yihui/rmarkdown/rmarkdown-site.html#site-generator-function>
 
 
+--------------------------------------------------------------------------------
+
+### R scripts {.unnumbered}
+
+If you have R code that you would like to share across multiple R Markdown documents within your site, you can create an R script (e.g., `utils.R`) and source it within your Rmd files. For example:
+
+~~~markdown
+```{r}
+source("utils.R")
+```
+~~~
+
+**Shared Rmd snippets**
+
+You may have common fragments of R Markdown that you want to share across pages within your site. To share Rmd fragments, you should name them with a leading underscore (`_`), and then include them within their parent Rmd document using the `child` chunk option. For example:
+
+- `about.Rmd`:
+
+  ~~~markdown
+  ---
+  title: "About This Website"
+  ---
+  
+  More about this website.
+  
+  ```{r, child="_chunk-opt.Rmd", include=FALSE}
+  # Load settings in "_chunk-opt.Rmd"
+  # "include=F" disables printing the code in "_chunk-opt.Rmd"
+  # into the current file
+  ```
+  ~~~
+
+- `_chunk-opt.Rmd`:
+
+  ~~~markdown
+  <!-- Chunk option settings --> 
+  
+  ```{r chunk-opt, include=FALSE}
+  # set default chunk options
+  opts_chunk$set(echo = TRUE, message=FALSE, fig.align="center", fig.pos = "H")
+  opts <- options(knitr.kable.NA = "")
+  ```
+  
+  <!-- Other shared Rmd snippets --> 
+  ...
+  ~~~
+
+  The leading underscore (`_`) is an indicator to the site generation engine that the Rmd is a partial document to be included in other documents, so it is not compiled as a standalone document during site rendering.
 
 --------------------------------------------------------------------------------
+
 
 ### Workflow {.unnumbered}
 
