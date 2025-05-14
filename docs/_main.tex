@@ -135,7 +135,7 @@
 
 \title{R Notes}
 \author{Menghan Yuan}
-\date{2025-05-13}
+\date{2025-05-14}
 
 \usepackage{amsthm}
 \newtheorem{theorem}{Theorem}[chapter]
@@ -2692,9 +2692,190 @@ Definitions
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
-\texttt{collapse=FALSE} Whether to merge text output and source code into a single code block in the output. The default \texttt{FALSE} means R expressions and their text output are separated into different blocks.
+\texttt{collapse\ =\ FALSE} Whether to merge text output and source code into a single code block in the output. The default \texttt{FALSE} means R expressions and their text output are separated into different blocks.
 
 \texttt{collapse\ =\ TRUE} makes the output more compact, since the R source code and its text output are displayed in a single output block. The default \texttt{collapse\ =\ FALSE} means R expressions and their text output are separated into different blocks.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection*{Hooks}\label{hooks}
+\addcontentsline{toc}{subsection}{Hooks}
+
+The object \texttt{knit\_hooks} in the \textbf{knitr} package is used to set hooks; the basic usage is \texttt{knitr::knit\_hooks\$set(name\ =\ FUN)} (see \href{https://yihui.org/knitr/objects/}{objects} for details) where \texttt{name} is the name of a chunk option (can be arbitrary), and \texttt{FUN} is a function.
+
+There are two types of hooks:
+
+\begin{itemize}
+\item
+  chunk hooks and
+
+  A chunk hook is a function that is triggered by a chunk option when the value of this chunk option is not \texttt{NULL}.
+\item
+  output hooks
+
+  Output hooks control over output from your code chunks, such as source code, text output, messages, and plots.
+\end{itemize}
+
+Hook functions may have different forms, depending what they are designed to do.
+
+\textbf{Chunk hooks}
+
+For example, we define a \textbf{custom chunk hook} function for the \texttt{small\_mar} option
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{knitr}\SpecialCharTok{::}\NormalTok{knit\_hooks}\SpecialCharTok{$}\FunctionTok{set}\NormalTok{(}\AttributeTok{small\_mar =} \ControlFlowTok{function}\NormalTok{(before, ...) \{}
+  \ControlFlowTok{if}\NormalTok{ (before)}
+    \FunctionTok{par}\NormalTok{(}\AttributeTok{mar =} \FunctionTok{c}\NormalTok{(}\DecValTok{4}\NormalTok{, }\DecValTok{4}\NormalTok{, .}\DecValTok{1}\NormalTok{, .}\DecValTok{1}\NormalTok{))  }\CommentTok{\# smaller top/right margin}
+\NormalTok{\})}
+\end{Highlighting}
+\end{Shaded}
+
+Then this function will be called for a chunk option like the following (\texttt{small\_mar} doesn't have to be \texttt{TRUE}; it can be any non-\texttt{NULL} value):
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\StringTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}}\AttributeTok{\{r, myplot, small\_mar=TRUE\}}
+\AttributeTok{hist(rnorm(100), main = \textquotesingle{}\textquotesingle{})}
+\StringTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\textbf{Output hooks}
+
+With the \textbf{knitr} package, you have control over every piece of output from your code chunks, such as source code, text output, messages, and plots. The control is achieved through ``output hooks.''
+
+Available output hook names:
+
+Note that these names of output hooks are reserved by \textbf{knitr}, so you must NOT use these names for your custom chunk hooks.
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{source}: processing the source code.
+\item
+  \texttt{output}: processing text output.
+\end{itemize}
+
+You may obtain the actual hooks from the object \texttt{knit\_hooks} via the \texttt{get()} method, e.g.,
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# for meaningful output, the code below should be}
+\CommentTok{\# executed *inside* a code chunk of a knitr document}
+\NormalTok{knitr}\SpecialCharTok{::}\NormalTok{knit\_hooks}\SpecialCharTok{$}\FunctionTok{get}\NormalTok{(}\StringTok{"source"}\NormalTok{)}
+\NormalTok{knitr}\SpecialCharTok{::}\NormalTok{knit\_hooks}\SpecialCharTok{$}\FunctionTok{get}\NormalTok{(}\StringTok{"output"}\NormalTok{)}
+\CommentTok{\# or knitr::knit\_hooks$get(c(\textquotesingle{}source\textquotesingle{}, \textquotesingle{}output\textquotesingle{}))}
+\end{Highlighting}
+\end{Shaded}
+
+A custom output hook is registered through the \texttt{set()} method of \texttt{knit\_hooks}. Because this method will override the existing default hook, we recommend that you save a copy of an existing hook, process the output elements in your own way, and pass the results to the default hook.
+
+When the text output from a code chunk is lengthy, you may want to only show the first few lines. For example, when printing a data frame of a few thousand rows, it may not be helpful to show the full data, and the first few lines may be enough. Below we redefine the \texttt{output} hook so that we can control the maximum number of lines via a custom chunk option \texttt{out.lines}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# save the built{-}in output hook}
+\NormalTok{hook\_output }\OtherTok{\textless{}{-}}\NormalTok{ knitr}\SpecialCharTok{::}\NormalTok{knit\_hooks}\SpecialCharTok{$}\FunctionTok{get}\NormalTok{(}\StringTok{"output"}\NormalTok{)}
+
+\CommentTok{\# set a new output hook to truncate text output}
+\NormalTok{knitr}\SpecialCharTok{::}\NormalTok{knit\_hooks}\SpecialCharTok{$}\FunctionTok{set}\NormalTok{(}\AttributeTok{output =} \ControlFlowTok{function}\NormalTok{(x, options) \{}
+  \ControlFlowTok{if}\NormalTok{ (}\SpecialCharTok{!}\FunctionTok{is.null}\NormalTok{(n }\OtherTok{\textless{}{-}}\NormalTok{ options}\SpecialCharTok{$}\NormalTok{out.lines)) \{}
+\NormalTok{    x }\OtherTok{\textless{}{-}}\NormalTok{ xfun}\SpecialCharTok{::}\FunctionTok{split\_lines}\NormalTok{(x)}
+    \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{length}\NormalTok{(x) }\SpecialCharTok{\textgreater{}}\NormalTok{ n) \{}
+      \CommentTok{\# truncate the output}
+\NormalTok{      x }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\FunctionTok{head}\NormalTok{(x, n), }\StringTok{"....}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\NormalTok{    \}}
+\NormalTok{    x }\OtherTok{\textless{}{-}} \FunctionTok{paste}\NormalTok{(x, }\AttributeTok{collapse =} \StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\NormalTok{  \}}
+  \FunctionTok{hook\_output}\NormalTok{(x, options)}
+\NormalTok{\})}
+\end{Highlighting}
+\end{Shaded}
+
+The basic idea of the above hook function is that if the number of lines of the text output is greater than the threshold set in the chunk option \texttt{out.lines} (stored in the variable \texttt{n} in the function body), we only keep the first \texttt{n} lines and add an ellipsis (\texttt{....}) to indicate the output is truncated.
+
+Now we can test the new \texttt{output} hook by setting the chunk option \texttt{out.lines\ =\ 4} on the chunk below:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\InformationTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}\{r out.lines = 4\}}
+\InformationTok{print(cars)}
+\InformationTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    speed dist
+## 1      4    2
+## 2      4   10
+## 3      7    4
+....
+\end{verbatim}
+
+And you see four lines of output as expected.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{print}\NormalTok{(}\FunctionTok{head}\NormalTok{(cars, }\DecValTok{10}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    speed dist
+## 1      4    2
+## 2      4   10
+## 3      7    4
+## 4      7   22
+## 5      8   16
+## 6      9   10
+## 7     10   18
+## 8     10   26
+## 9     10   34
+## 10    11   17
+\end{verbatim}
+
+Since we have stored the original \texttt{output} hook in \texttt{hook\_output}, we can restore it by calling the \texttt{set()} method again:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{knitr}\SpecialCharTok{::}\NormalTok{knit\_hooks}\SpecialCharTok{$}\FunctionTok{set}\NormalTok{(}\AttributeTok{output =}\NormalTok{ hook\_output)}
+\end{Highlighting}
+\end{Shaded}
+
+Now we print the data frame again. The default behavior is to print the whole data frame.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{print}\NormalTok{(}\FunctionTok{head}\NormalTok{(cars, }\DecValTok{10}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    speed dist
+## 1      4    2
+## 2      4   10
+## 3      7    4
+## 4      7   22
+## 5      8   16
+## 6      9   10
+## 7     10   18
+## 8     10   26
+## 9     10   34
+## 10    11   17
+\end{verbatim}
+
+References:
+
+\begin{itemize}
+\tightlist
+\item
+  Output hooks: \url{https://bookdown.org/yihui/rmarkdown-cookbook/output-hooks.html}
+\item
+  Chunk hooks: \url{https://bookdown.org/yihui/rmarkdown-cookbook/chunk-hooks.html}
+\end{itemize}
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
@@ -3200,7 +3381,7 @@ This feature can be disabled by setting the \texttt{split\_bib} YAML field to \t
 \begin{Highlighting}[]
 \CommentTok{{-}{-}{-}}
 \AnnotationTok{author:}\CommentTok{ Research Institute for Nature and Forest}
-\AnnotationTok{date:}\CommentTok{ \textquotesingle{}2025{-}05{-}13\textquotesingle{}}
+\AnnotationTok{date:}\CommentTok{ \textquotesingle{}2025{-}05{-}14\textquotesingle{}}
 \AnnotationTok{site:}\CommentTok{ bookdown::bookdown\_site}
 \AnnotationTok{output:}
 \CommentTok{  bookdown::gitbook:}
@@ -4416,7 +4597,7 @@ To show the \texttt{tibble} information (number of row/columns, and group inform
 \begin{Highlighting}[]
 \CommentTok{{-}{-}{-}}
 \AnnotationTok{title:}\CommentTok{ "Use caption with df\_print set to page"}
-\AnnotationTok{date:}\CommentTok{ "2025{-}05{-}13"}
+\AnnotationTok{date:}\CommentTok{ "2025{-}05{-}14"}
 \AnnotationTok{output:}
 \CommentTok{  bookdown::html\_document2:}
 \CommentTok{    df\_print: paged}
@@ -5321,7 +5502,7 @@ A full example of \texttt{index.Rmd}. You may use this when you want to write co
 \CommentTok{{-}{-}{-}}
 \AnnotationTok{title:}\CommentTok{ "R Notes"}
 \AnnotationTok{author:}\CommentTok{ "Menghan Yuan"}
-\AnnotationTok{date:}\CommentTok{ "2025{-}05{-}13"}
+\AnnotationTok{date:}\CommentTok{ "2025{-}05{-}14"}
 \AnnotationTok{site:}\CommentTok{ rmarkdown::default\_site}
 \AnnotationTok{documentclass:}\CommentTok{ book}
 \AnnotationTok{bibliography:}\CommentTok{ [book.bib, packages.bib]}

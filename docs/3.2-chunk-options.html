@@ -29,7 +29,7 @@ set in the _output.yml file.</p>" />
 <meta name="author" content="Menghan Yuan" />
 
 
-<meta name="date" content="2025-05-13" />
+<meta name="date" content="2025-05-14" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -188,7 +188,10 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="3.1.1" data-path="3.1-yaml-metadata.html"><a href="3.1-yaml-metadata.html#render-rmd"><i class="fa fa-check"></i><b>3.1.1</b> Render Rmd</a></li>
 <li class="chapter" data-level="3.1.2" data-path="3.1-yaml-metadata.html"><a href="3.1-yaml-metadata.html#document-dependency"><i class="fa fa-check"></i><b>3.1.2</b> Document dependency</a></li>
 </ul></li>
-<li class="chapter" data-level="3.2" data-path="3.2-chunk-options.html"><a href="3.2-chunk-options.html"><i class="fa fa-check"></i><b>3.2</b> Chunk Options</a></li>
+<li class="chapter" data-level="3.2" data-path="3.2-chunk-options.html"><a href="3.2-chunk-options.html"><i class="fa fa-check"></i><b>3.2</b> Chunk Options</a>
+<ul>
+<li class="chapter" data-level="" data-path="3.2-chunk-options.html"><a href="3.2-chunk-options.html#hooks"><i class="fa fa-check"></i>Hooks</a></li>
+</ul></li>
 <li class="chapter" data-level="3.3" data-path="3.3-print-verbatim-r-code-chunks.html"><a href="3.3-print-verbatim-r-code-chunks.html"><i class="fa fa-check"></i><b>3.3</b> Print Verbatim R code chunks</a></li>
 <li class="chapter" data-level="3.4" data-path="3.4-rmd-basics.html"><a href="3.4-rmd-basics.html"><i class="fa fa-check"></i><b>3.4</b> Rmd Basics</a></li>
 <li class="chapter" data-level="3.5" data-path="3.5-citations.html"><a href="3.5-citations.html"><i class="fa fa-check"></i><b>3.5</b> Citations</a>
@@ -441,9 +444,107 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <li><p><code>hide</code> (or <code>FALSE</code>): Hide text output.</p></li>
 </ul>
 <hr />
-<p><code>collapse=FALSE</code> Whether to merge text output and source code into a single code block in the output. The default <code>FALSE</code> means R expressions and their text output are separated into different blocks.</p>
+<p><code>collapse = FALSE</code> Whether to merge text output and source code into a single code block in the output. The default <code>FALSE</code> means R expressions and their text output are separated into different blocks.</p>
 <p><code>collapse = TRUE</code> makes the output more compact, since the R source code and its text output are displayed in a single output block. The default <code>collapse = FALSE</code> means R expressions and their text output are separated into different blocks.</p>
 <hr />
+<div id="hooks" class="section level3 unnumbered hasAnchor">
+<h3>Hooks<a href="3.2-chunk-options.html#hooks" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The object <code>knit_hooks</code> in the <strong>knitr</strong> package is used to set hooks; the basic usage is <code>knitr::knit_hooks$set(name = FUN)</code> (see <a href="https://yihui.org/knitr/objects/">objects</a> for details) where <code>name</code> is the name of a chunk option (can be arbitrary), and <code>FUN</code> is a function.</p>
+<p>There are two types of hooks:</p>
+<ul>
+<li><p>chunk hooks and</p>
+<p>A chunk hook is a function that is <u>triggered by a chunk option</u> when the value of this chunk option is not <code>NULL</code>.</p></li>
+<li><p>output hooks</p>
+<p>Output hooks control over output from your code chunks, such as source code, text output, messages, and plots.</p></li>
+</ul>
+<p>Hook functions may have different forms, depending what they are designed to do.</p>
+<p><strong>Chunk hooks</strong></p>
+<p>For example, we define a <strong>custom chunk hook</strong> function for the <code>small_mar</code> option</p>
+<div class="sourceCode" id="cb87"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb87-1"><a href="3.2-chunk-options.html#cb87-1" tabindex="-1"></a>knitr<span class="sc">::</span>knit_hooks<span class="sc">$</span><span class="fu">set</span>(<span class="at">small_mar =</span> <span class="cf">function</span>(before, ...) {</span>
+<span id="cb87-2"><a href="3.2-chunk-options.html#cb87-2" tabindex="-1"></a>  <span class="cf">if</span> (before)</span>
+<span id="cb87-3"><a href="3.2-chunk-options.html#cb87-3" tabindex="-1"></a>    <span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">4</span>, .<span class="dv">1</span>, .<span class="dv">1</span>))  <span class="co"># smaller top/right margin</span></span>
+<span id="cb87-4"><a href="3.2-chunk-options.html#cb87-4" tabindex="-1"></a>})</span></code></pre></div>
+<p>Then this function will be called for a chunk option like the following (<code>small_mar</code> doesn’t have to be <code>TRUE</code>; it can be any non-<code>NULL</code> value):</p>
+<div class="sourceCode" id="cb88"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb88-1"><a href="3.2-chunk-options.html#cb88-1" tabindex="-1"></a><span class="st">```</span><span class="at">{r, myplot, small_mar=TRUE}</span></span>
+<span id="cb88-2"><a href="3.2-chunk-options.html#cb88-2" tabindex="-1"></a><span class="at">hist(rnorm(100), main = &#39;&#39;)</span></span>
+<span id="cb88-3"><a href="3.2-chunk-options.html#cb88-3" tabindex="-1"></a><span class="st">```</span></span></code></pre></div>
+<hr />
+<p><strong>Output hooks</strong></p>
+<p>With the <strong>knitr</strong> package, you have control over every piece of output from your code chunks, such as source code, text output, messages, and plots. The control is achieved through “output hooks.”</p>
+<p>Available output hook names:</p>
+<p>Note that these names of output hooks are reserved by <strong>knitr</strong>, so you must NOT use these names for your custom chunk hooks.</p>
+<ul>
+<li><code>source</code>: processing the source code.</li>
+<li><code>output</code>: processing text output.</li>
+</ul>
+<p>You may obtain the actual hooks from the object <code>knit_hooks</code> via the <code>get()</code> method, e.g.,</p>
+<div class="sourceCode" id="cb89"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb89-1"><a href="3.2-chunk-options.html#cb89-1" tabindex="-1"></a><span class="co"># for meaningful output, the code below should be</span></span>
+<span id="cb89-2"><a href="3.2-chunk-options.html#cb89-2" tabindex="-1"></a><span class="co"># executed *inside* a code chunk of a knitr document</span></span>
+<span id="cb89-3"><a href="3.2-chunk-options.html#cb89-3" tabindex="-1"></a>knitr<span class="sc">::</span>knit_hooks<span class="sc">$</span><span class="fu">get</span>(<span class="st">&quot;source&quot;</span>)</span>
+<span id="cb89-4"><a href="3.2-chunk-options.html#cb89-4" tabindex="-1"></a>knitr<span class="sc">::</span>knit_hooks<span class="sc">$</span><span class="fu">get</span>(<span class="st">&quot;output&quot;</span>)</span>
+<span id="cb89-5"><a href="3.2-chunk-options.html#cb89-5" tabindex="-1"></a><span class="co"># or knitr::knit_hooks$get(c(&#39;source&#39;, &#39;output&#39;))</span></span></code></pre></div>
+<p>A custom output hook is registered through the <code>set()</code> method of <code>knit_hooks</code>. Because this method will override the existing default hook, we recommend that you save a copy of an existing hook, process the output elements in your own way, and pass the results to the default hook.</p>
+<p>When the text output from a code chunk is lengthy, you may want to only show the first few lines. For example, when printing a data frame of a few thousand rows, it may not be helpful to show the full data, and the first few lines may be enough. Below we redefine the <code>output</code> hook so that we can control the maximum number of lines via a custom chunk option <code>out.lines</code>:</p>
+<div class="sourceCode" id="cb90"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb90-1"><a href="3.2-chunk-options.html#cb90-1" tabindex="-1"></a><span class="co"># save the built-in output hook</span></span>
+<span id="cb90-2"><a href="3.2-chunk-options.html#cb90-2" tabindex="-1"></a>hook_output <span class="ot">&lt;-</span> knitr<span class="sc">::</span>knit_hooks<span class="sc">$</span><span class="fu">get</span>(<span class="st">&quot;output&quot;</span>)</span>
+<span id="cb90-3"><a href="3.2-chunk-options.html#cb90-3" tabindex="-1"></a></span>
+<span id="cb90-4"><a href="3.2-chunk-options.html#cb90-4" tabindex="-1"></a><span class="co"># set a new output hook to truncate text output</span></span>
+<span id="cb90-5"><a href="3.2-chunk-options.html#cb90-5" tabindex="-1"></a>knitr<span class="sc">::</span>knit_hooks<span class="sc">$</span><span class="fu">set</span>(<span class="at">output =</span> <span class="cf">function</span>(x, options) {</span>
+<span id="cb90-6"><a href="3.2-chunk-options.html#cb90-6" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.null</span>(n <span class="ot">&lt;-</span> options<span class="sc">$</span>out.lines)) {</span>
+<span id="cb90-7"><a href="3.2-chunk-options.html#cb90-7" tabindex="-1"></a>    x <span class="ot">&lt;-</span> xfun<span class="sc">::</span><span class="fu">split_lines</span>(x)</span>
+<span id="cb90-8"><a href="3.2-chunk-options.html#cb90-8" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">length</span>(x) <span class="sc">&gt;</span> n) {</span>
+<span id="cb90-9"><a href="3.2-chunk-options.html#cb90-9" tabindex="-1"></a>      <span class="co"># truncate the output</span></span>
+<span id="cb90-10"><a href="3.2-chunk-options.html#cb90-10" tabindex="-1"></a>      x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">head</span>(x, n), <span class="st">&quot;....</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb90-11"><a href="3.2-chunk-options.html#cb90-11" tabindex="-1"></a>    }</span>
+<span id="cb90-12"><a href="3.2-chunk-options.html#cb90-12" tabindex="-1"></a>    x <span class="ot">&lt;-</span> <span class="fu">paste</span>(x, <span class="at">collapse =</span> <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb90-13"><a href="3.2-chunk-options.html#cb90-13" tabindex="-1"></a>  }</span>
+<span id="cb90-14"><a href="3.2-chunk-options.html#cb90-14" tabindex="-1"></a>  <span class="fu">hook_output</span>(x, options)</span>
+<span id="cb90-15"><a href="3.2-chunk-options.html#cb90-15" tabindex="-1"></a>})</span></code></pre></div>
+<p>The basic idea of the above hook function is that if the number of lines of the text output is greater than the threshold set in the chunk option <code>out.lines</code> (stored in the variable <code>n</code> in the function body), we only keep the first <code>n</code> lines and add an ellipsis (<code>....</code>) to indicate the output is truncated.</p>
+<p>Now we can test the new <code>output</code> hook by setting the chunk option <code>out.lines = 4</code> on the chunk below:</p>
+<div class="sourceCode" id="cb91"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb91-1"><a href="3.2-chunk-options.html#cb91-1" tabindex="-1"></a><span class="in">```{r out.lines = 4}</span></span>
+<span id="cb91-2"><a href="3.2-chunk-options.html#cb91-2" tabindex="-1"></a><span class="in">print(cars)</span></span>
+<span id="cb91-3"><a href="3.2-chunk-options.html#cb91-3" tabindex="-1"></a><span class="in">```</span></span></code></pre></div>
+<pre><code>##    speed dist
+## 1      4    2
+## 2      4   10
+## 3      7    4
+....</code></pre>
+<p>And you see four lines of output as expected.</p>
+<div class="sourceCode" id="cb93"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb93-1"><a href="3.2-chunk-options.html#cb93-1" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">head</span>(cars, <span class="dv">10</span>))</span></code></pre></div>
+<pre><code>##    speed dist
+## 1      4    2
+## 2      4   10
+## 3      7    4
+## 4      7   22
+## 5      8   16
+## 6      9   10
+## 7     10   18
+## 8     10   26
+## 9     10   34
+## 10    11   17</code></pre>
+<p>Since we have stored the original <code>output</code> hook in <code>hook_output</code>, we can restore it by calling the <code>set()</code> method again:</p>
+<div class="sourceCode" id="cb95"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb95-1"><a href="3.2-chunk-options.html#cb95-1" tabindex="-1"></a>knitr<span class="sc">::</span>knit_hooks<span class="sc">$</span><span class="fu">set</span>(<span class="at">output =</span> hook_output)</span></code></pre></div>
+<p>Now we print the data frame again. The default behavior is to print the whole data frame.</p>
+<div class="sourceCode" id="cb96"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb96-1"><a href="3.2-chunk-options.html#cb96-1" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">head</span>(cars, <span class="dv">10</span>))</span></code></pre></div>
+<pre><code>##    speed dist
+## 1      4    2
+## 2      4   10
+## 3      7    4
+## 4      7   22
+## 5      8   16
+## 6      9   10
+## 7     10   18
+## 8     10   26
+## 9     10   34
+## 10    11   17</code></pre>
+<p>References:</p>
+<ul>
+<li>Output hooks: <a href="https://bookdown.org/yihui/rmarkdown-cookbook/output-hooks.html" class="uri">https://bookdown.org/yihui/rmarkdown-cookbook/output-hooks.html</a></li>
+<li>Chunk hooks: <a href="https://bookdown.org/yihui/rmarkdown-cookbook/chunk-hooks.html" class="uri">https://bookdown.org/yihui/rmarkdown-cookbook/chunk-hooks.html</a></li>
+</ul>
+<hr />
+</div>
 </div>
             </section>
 

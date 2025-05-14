@@ -581,7 +581,7 @@ If you want to add anything to the preamble, you have to use the `includes` opti
   ```
   
   I personally don't like the compact list setting, so I disable it with `\let\tightlist\relax`. To prevent it from being overridden, I put it in `before_body.tex` instead of `preamble.tex`.
-    
+  
 - `after_body`. 
 
 Each of them takes one or multiple file paths. The file(s) specified in `in_header` will be added to the preamble. The files specified in `before_body` and `after_body` are added before and after the document body, respectively.
@@ -861,17 +861,178 @@ You may use `knitr::opts_chunk$set()` to change the default values of chunk opti
 
 - `hide` (or `FALSE`): Hide text output.
 
+-----------------------------------------------------------------------------
 
-
-___
-
-`collapse=FALSE`  Whether to merge text output and source code into a single code block in the output.  The default `FALSE` means R expressions and their text output are separated into different blocks.
+`collapse = FALSE`  Whether to merge text output and source code into a single code block in the output.  The default `FALSE` means R expressions and their text output are separated into different blocks.
 
 `collapse = TRUE` makes the output more compact, since the R source code and its text output are displayed in a single output block. The default `collapse = FALSE` means R expressions and their text output are separated into different blocks.
 
 
+--------------------------------------------------------------------------------
 
-___
+### Hooks {.unnumbered}
+
+The object `knit_hooks` in the **knitr** package is used to set hooks; the basic usage is `knitr::knit_hooks$set(name = FUN)` (see [objects](https://yihui.org/knitr/objects/) for details) where `name` is the name of a chunk option (can be arbitrary), and `FUN` is a function. 
+
+There are two types of hooks: 
+
+- chunk hooks and 
+
+  A chunk hook is a function that is <u>triggered by a chunk option</u> when the value of this chunk option is not `NULL`. 
+
+- output hooks 
+
+  Output hooks control over output from your code chunks, such as source code, text output, messages, and plots. 
+
+Hook functions may have different forms, depending what they are designed to do.
+
+**Chunk hooks**
+
+For example, we define a **custom chunk hook** function for the `small_mar` option
+
+```r
+knitr::knit_hooks$set(small_mar = function(before, ...) {
+  if (before)
+    par(mar = c(4, 4, .1, .1))  # smaller top/right margin
+})
+```
+
+Then this function will be called for a chunk option like the following (`small_mar` doesn’t have to be `TRUE`; it can be any non-`NULL` value):
+
+~~~r
+```{r, myplot, small_mar=TRUE}
+hist(rnorm(100), main = '')
+```
+~~~
+
+--------------------------------------------------------------------------------
+
+**Output hooks**
+
+With the **knitr** package, you have control over every piece of output from your code chunks, such as source code, text output, messages, and plots. The control is achieved through “output hooks.” 
+
+Available output hook names:
+
+
+
+Note that these names of output hooks are reserved by **knitr**, so you must NOT use these names for your custom chunk hooks.
+
+- `source`: processing the source code.
+- `output`: processing text output.
+
+You may obtain the actual hooks from the object `knit_hooks` via the `get()` method, e.g.,
+
+```r
+# for meaningful output, the code below should be
+# executed *inside* a code chunk of a knitr document
+knitr::knit_hooks$get("source")
+knitr::knit_hooks$get("output")
+# or knitr::knit_hooks$get(c('source', 'output'))
+```
+
+A custom output hook is registered through the `set()` method of `knit_hooks`. Because this method will override the existing default hook, we recommend that you save a copy of an existing hook, process the output elements in your own way, and pass the results to the default hook. 
+
+When the text output from a code chunk is lengthy, you may want to only show the first few lines. For example, when printing a data frame of a few thousand rows, it may not be helpful to show the full data, and the first few lines may be enough. Below we redefine the `output` hook so that we can control the maximum number of lines via a custom chunk option `out.lines`:
+
+
+```r
+# save the built-in output hook
+hook_output <- knitr::knit_hooks$get("output")
+
+# set a new output hook to truncate text output
+knitr::knit_hooks$set(output = function(x, options) {
+  if (!is.null(n <- options$out.lines)) {
+    x <- xfun::split_lines(x)
+    if (length(x) > n) {
+      # truncate the output
+      x <- c(head(x, n), "....\n")
+    }
+    x <- paste(x, collapse = "\n")
+  }
+  hook_output(x, options)
+})
+```
+
+The basic idea of the above hook function is that if the number of lines of the text output is greater than the threshold set in the chunk option `out.lines` (stored in the variable `n` in the function body), we only keep the first `n` lines and add an ellipsis (`....`) to indicate the output is truncated.
+
+Now we can test the new `output` hook by setting the chunk option `out.lines = 4` on the chunk below:
+
+~~~markdown
+```{r out.lines = 4}
+print(cars)
+```
+~~~
+
+
+```
+##    speed dist
+## 1      4    2
+## 2      4   10
+## 3      7    4
+....
+```
+
+
+And you see four lines of output as expected. 
+
+
+
+```r
+print(head(cars, 10))
+```
+
+```
+##    speed dist
+## 1      4    2
+## 2      4   10
+## 3      7    4
+## 4      7   22
+## 5      8   16
+## 6      9   10
+## 7     10   18
+## 8     10   26
+## 9     10   34
+## 10    11   17
+```
+
+
+Since we have stored the original `output` hook in `hook_output`, we can restore it by calling the `set()` method again:
+
+
+```r
+knitr::knit_hooks$set(output = hook_output)
+```
+
+Now we print the data frame again. The default behavior is to print the whole data frame.
+
+
+```r
+print(head(cars, 10))
+```
+
+```
+##    speed dist
+## 1      4    2
+## 2      4   10
+## 3      7    4
+## 4      7   22
+## 5      8   16
+## 6      9   10
+## 7     10   18
+## 8     10   26
+## 9     10   34
+## 10    11   17
+```
+
+
+References:
+
+- Output hooks: <https://bookdown.org/yihui/rmarkdown-cookbook/output-hooks.html>
+- Chunk hooks: <https://bookdown.org/yihui/rmarkdown-cookbook/chunk-hooks.html>
+
+
+
+--------------------------------------------------------------------------------
 
 ## Print Verbatim R code chunks
 
