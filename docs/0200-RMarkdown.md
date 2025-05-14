@@ -1,5 +1,3 @@
-
-
 # Rmd
 
 **R Markdown** is a powerful tool for combining analysis and reporting into the same document. R Markdown has grown substantially from a package that supports a few output formats, to an extensive and diverse ecosystem that supports the creation of books, blogs, scientific articles, websites, and even resumes.
@@ -712,15 +710,19 @@ Fonts known to LuaTeX or XeTEX may be loaded by their standard names as you'd sp
 
 ## Chunk Options
 
-If you want to set chunk options globally, call `knitr::opts_chunk$set()` in a code chunk (usually the first one in the document), e.g.,
+If you want to **set chunk options globally**, call `knitr::opts_chunk$set()` in a code chunk (usually the first one in the document), e.g.,
 
 ````md
 ```{r, label="setup", include=FALSE}
 knitr::opts_chunk$set(
-  comment = "#>", echo = FALSE, fig.width = 6
+  comment = "#>", 
+  echo = FALSE, 
+  fig.width = 6
 )
 ```
 ````
+
+The settings will apply to every chunk in your file as a default. You can overwrite them in individual chunk headers.
 
 Full list of chunk options: <https://yihui.org/knitr/options/>
 
@@ -811,9 +813,9 @@ You may use `knitr::opts_chunk$set()` to change the default values of chunk opti
 
 | Options              | Definitions                                                  |
 | -------------------- | ------------------------------------------------------------ |
-| `echo=TRUE`          | Whether to display the **source code** in the output document.<br />Use this when you want to show the output but not the code itself. |
+| `echo=TRUE`          | Whether to display the **source code** in the output document.<br />Use this when you want to show the output but NOT the source code itself. |
 | `eval=TRUE`          | Whether to evaluate the code chunk.                          |
-| `include=TRUE`       | Whether to include the <span style='color:#32CD32'>chunk **output**</span> in the output document. <br />If `FALSE`, nothing will be written into the output document, but the code is still evaluated and plot files are generated if there are any plots in the chunk, so you can manually insert figures later. |
+| `include=TRUE`       | Whether to include the <span style='color:#32CD32'>chunk **code and output**</span> in the output document—including source code, text output, messages, warnings, and plots. <br />If `FALSE`, nothing will be written into the output document, but the code is <u>still evaluated</u> and plot files are generated if there are any plots in the chunk, so you can manually insert figures later. |
 | `message=TRUE`       | Whether to preserve messages emitted by `message()`          |
 | `warning=TRUE`       | Whether to show warnings in the output produced by `warning()`. |
 | `results='markup'`   | Controls how to display the text results. <br />When `results='markup'` that is to write text output as-is, i.e., write the raw text results directly into the output document without any markups.<br />Useful when priting `stargazer` tables. |
@@ -828,7 +830,7 @@ You may use `knitr::opts_chunk$set()` to change the default values of chunk opti
 
 <span style='color:#32CD32'>`results='markup'`</span>  note plural form for result**s**.
 
-- `markup`: Default. Mark up text output with the appropriate environments depending on the output format. For example, for R Markdown, if the text output is a character string `"[1] 1 2 3"`, the actual output that **knitr** produces will be:
+- `results='markup'`: Default. Mark up text output with the appropriate environments depending on the output format. For example, for R Markdown, if the text output is a character string `"[1] 1 2 3"`, the actual output that **knitr** produces will be:
 
   ~~~r
   ```
@@ -838,7 +840,7 @@ You may use `knitr::opts_chunk$set()` to change the default values of chunk opti
 
   In this case, `results='markup'` means to put the text output in fenced code blocks (```).
 
-- `asis`: Write text output as-is, i.e., write the raw text results directly into the output document without any markups.
+- `results='asus'`: Write text output as-is, i.e., write the raw text results directly into the output document without any markups.
 
   ````md
   ```{r, results='asis'}
@@ -857,9 +859,9 @@ You may use `knitr::opts_chunk$set()` to change the default values of chunk opti
 
   - specify `results="asis"` in code chunks.
 
-- `hold`: Hold all pieces of text output in a chunk and flush them to the end of the chunk.
+- `results='hold'`: Hold all pieces of text output in a chunk and flush them to the end of the chunk.
 
-- `hide` (or `FALSE`): Hide text output.
+- `results='hide'` (or `results='FALSE'`): Hide text output.
 
 -----------------------------------------------------------------------------
 
@@ -914,6 +916,15 @@ With the **knitr** package, you have control over every piece of output from you
 Available output hook names:
 
 
+```r
+names(knitr:::.default.hooks)
+```
+
+```
+##  [1] "source"          "output"          "warning"         "message"        
+##  [5] "error"           "plot"            "inline"          "chunk"          
+##  [9] "text"            "evaluate.inline" "evaluate"        "document"
+```
 
 Note that these names of output hooks are reserved by **knitr**, so you must NOT use these names for your custom chunk hooks.
 
@@ -1074,6 +1085,15 @@ cat(output_code)
 Write this code in your R Markdown document:
 
 
+````r
+output_code <-
+"````markdown
+`r ''````{r}
+plot(cars)
+``` \n````"
+cat(output_code)
+````
+
 `````
 ````markdown
 `r ''````{r}
@@ -1085,6 +1105,15 @@ plot(cars)
 
 or
 
+
+````r
+output_code <-
+"````markdown
+```{r}`r ''`
+plot(cars)
+``` \n````"
+cat(output_code)
+````
 
 `````
 ````markdown

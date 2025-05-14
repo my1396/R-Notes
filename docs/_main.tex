@@ -2507,17 +2507,21 @@ Fonts known to LuaTeX or XeTEX may be loaded by their standard names as you'd sp
 
 \section{Chunk Options}\label{chunk-options}
 
-If you want to set chunk options globally, call \texttt{knitr::opts\_chunk\$set()} in a code chunk (usually the first one in the document), e.g.,
+If you want to \textbf{set chunk options globally}, call \texttt{knitr::opts\_chunk\$set()} in a code chunk (usually the first one in the document), e.g.,
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \InformationTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}\{r, label="setup", include=FALSE\}}
 \InformationTok{knitr::opts\_chunk$set(}
-\InformationTok{  comment = "\#\textgreater{}", echo = FALSE, fig.width = 6}
+\InformationTok{  comment = "\#\textgreater{}", }
+\InformationTok{  echo = FALSE, }
+\InformationTok{  fig.width = 6}
 \InformationTok{)}
 \InformationTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}}
 \end{Highlighting}
 \end{Shaded}
+
+The settings will apply to every chunk in your file as a default. You can overwrite them in individual chunk headers.
 
 Full list of chunk options: \url{https://yihui.org/knitr/options/}
 
@@ -2629,9 +2633,9 @@ Definitions
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-\texttt{echo=TRUE} & Whether to display the \textbf{source code} in the output document.Use this when you want to show the output but not the code itself. \\
+\texttt{echo=TRUE} & Whether to display the \textbf{source code} in the output document.Use this when you want to show the output but NOT the source code itself. \\
 \texttt{eval=TRUE} & Whether to evaluate the code chunk. \\
-\texttt{include=TRUE} & Whether to include the {chunk \textbf{output}} in the output document. If \texttt{FALSE}, nothing will be written into the output document, but the code is still evaluated and plot files are generated if there are any plots in the chunk, so you can manually insert figures later. \\
+\texttt{include=TRUE} & Whether to include the {chunk \textbf{code and output}} in the output document---including source code, text output, messages, warnings, and plots. If \texttt{FALSE}, nothing will be written into the output document, but the code is still evaluated and plot files are generated if there are any plots in the chunk, so you can manually insert figures later. \\
 \texttt{message=TRUE} & Whether to preserve messages emitted by \texttt{message()} \\
 \texttt{warning=TRUE} & Whether to show warnings in the output produced by \texttt{warning()}. \\
 \texttt{results=\textquotesingle{}markup\textquotesingle{}} & Controls how to display the text results. When \texttt{results=\textquotesingle{}markup\textquotesingle{}} that is to write text output as-is, i.e., write the raw text results directly into the output document without any markups.Useful when priting \texttt{stargazer} tables. \\
@@ -2647,7 +2651,7 @@ Definitions
 
 \begin{itemize}
 \item
-  \texttt{markup}: Default. Mark up text output with the appropriate environments depending on the output format. For example, for R Markdown, if the text output is a character string \texttt{"{[}1{]}\ 1\ 2\ 3"}, the actual output that \textbf{knitr} produces will be:
+  \texttt{results=\textquotesingle{}markup\textquotesingle{}}: Default. Mark up text output with the appropriate environments depending on the output format. For example, for R Markdown, if the text output is a character string \texttt{"{[}1{]}\ 1\ 2\ 3"}, the actual output that \textbf{knitr} produces will be:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -2659,7 +2663,7 @@ Definitions
 
   In this case, \texttt{results=\textquotesingle{}markup\textquotesingle{}} means to put the text output in fenced code blocks (```).
 \item
-  \texttt{asis}: Write text output as-is, i.e., write the raw text results directly into the output document without any markups.
+  \texttt{results=\textquotesingle{}asus\textquotesingle{}}: Write text output as-is, i.e., write the raw text results directly into the output document without any markups.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -2685,9 +2689,9 @@ Definitions
     specify \texttt{results="asis"} in code chunks.
   \end{itemize}
 \item
-  \texttt{hold}: Hold all pieces of text output in a chunk and flush them to the end of the chunk.
+  \texttt{results=\textquotesingle{}hold\textquotesingle{}}: Hold all pieces of text output in a chunk and flush them to the end of the chunk.
 \item
-  \texttt{hide} (or \texttt{FALSE}): Hide text output.
+  \texttt{results=\textquotesingle{}hide\textquotesingle{}} (or \texttt{results=\textquotesingle{}FALSE\textquotesingle{}}): Hide text output.
 \end{itemize}
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
@@ -2748,6 +2752,18 @@ Then this function will be called for a chunk option like the following (\texttt
 With the \textbf{knitr} package, you have control over every piece of output from your code chunks, such as source code, text output, messages, and plots. The control is achieved through ``output hooks.''
 
 Available output hook names:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{names}\NormalTok{(knitr}\SpecialCharTok{:::}\NormalTok{.default.hooks)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##  [1] "source"          "output"          "warning"         "message"        
+##  [5] "error"           "plot"            "inline"          "chunk"          
+##  [9] "text"            "evaluate.inline" "evaluate"        "document"
+\end{verbatim}
 
 Note that these names of output hooks are reserved by \textbf{knitr}, so you must NOT use these names for your custom chunk hooks.
 
@@ -2927,6 +2943,17 @@ R code generating the four backticks block:
 
 Write this code in your R Markdown document:
 
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{output\_code }\OtherTok{\textless{}{-}}
+\StringTok{"\textasciigrave{}\textasciigrave{}\textasciigrave{}\textasciigrave{}markdown}
+\StringTok{\textasciigrave{}r \textquotesingle{}\textquotesingle{}\textasciigrave{}\textasciigrave{}\textasciigrave{}\textasciigrave{}\{r\}}
+\StringTok{plot(cars)}
+\StringTok{\textasciigrave{}\textasciigrave{}\textasciigrave{} }\SpecialCharTok{\textbackslash{}n}\StringTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}\textasciigrave{}"}
+\FunctionTok{cat}\NormalTok{(output\_code)}
+\end{Highlighting}
+\end{Shaded}
+
 \begin{verbatim}
 ````markdown
 `r ''````{r}
@@ -2936,6 +2963,17 @@ plot(cars)
 \end{verbatim}
 
 or
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{output\_code }\OtherTok{\textless{}{-}}
+\StringTok{"\textasciigrave{}\textasciigrave{}\textasciigrave{}\textasciigrave{}markdown}
+\StringTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}\{r\}\textasciigrave{}r \textquotesingle{}\textquotesingle{}\textasciigrave{}}
+\StringTok{plot(cars)}
+\StringTok{\textasciigrave{}\textasciigrave{}\textasciigrave{} }\SpecialCharTok{\textbackslash{}n}\StringTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}\textasciigrave{}"}
+\FunctionTok{cat}\NormalTok{(output\_code)}
+\end{Highlighting}
+\end{Shaded}
 
 \begin{verbatim}
 ````markdown
