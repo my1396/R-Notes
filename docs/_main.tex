@@ -5343,7 +5343,7 @@ The \textbf{rmarkdown} package had provided a simple site generator that did not
 \subsection*{Project structure}\label{project-structure}
 \addcontentsline{toc}{subsection}{Project structure}
 
-Note that the \textbf{minimum requirement for any \href{https://bookdown.org/yihui/rmarkdown/rmarkdown-site.html}{R Markdown website}} is that it have an \texttt{index.Rmd} file and a \texttt{\_site.yml} file.
+Note that the \textbf{minimum requirement for any \href{https://bookdown.org/yihui/rmarkdown/rmarkdown-site.html}{R Markdown website}} is that it has an \texttt{index.Rmd} file and a \texttt{\_site.yml} file.
 
 \begin{itemize}
 \tightlist
@@ -5357,7 +5357,7 @@ Note that the \textbf{minimum requirement for any \href{https://bookdown.org/yih
 \includegraphics[width=16.69in]{images/site-page} \caption{Minimal example of a R Markdown website.}\label{fig:unnamed-chunk-1}
 \end{figure}
 
-If you execute the \texttt{rmarkdown::render\_site()} (``Knit'' button behavior) function from within the directory containing the website, the following will occur:
+If you run \texttt{rmarkdown::render\_site()} (which is the function triggered by the ``Knit'' button) from within the directory containing the website, the following will occur:
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -6621,6 +6621,180 @@ F_Y(y) = F_X\left(g^{-1}(y)\right) = F_X\left(\frac{y-\mu}{\sigma}\right)
   \url{https://stackoverflow.com/questions/62549757/toggle-show-hide-element-where-default-on-refresh-is-hide}
 \item
   \url{https://naras.su.domains/post/toggle-visibility-of-solutions-in-bookdown/}
+\end{itemize}
+
+\section{Quarto}\label{quarto}
+
+Host Quarto on \href{https://quarto.org/docs/publishing/github-pages.html}{GitHub Pages}.
+
+To get started, change your project configuration \texttt{\_quarto.yml} to use \texttt{docs} as the \texttt{output-dir}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{project}\KeywordTok{:}
+\AttributeTok{  }\FunctionTok{type}\KeywordTok{:}\AttributeTok{ website}
+\AttributeTok{  }\FunctionTok{output{-}dir}\KeywordTok{:}\AttributeTok{ docs}
+\end{Highlighting}
+\end{Shaded}
+
+Then, add a \texttt{.nojekyll} file to the \textbf{root of your repository} that tells GitHub Pages not to do additional processing of your published site using Jekyll (the GitHub default site generation tool):
+
+\begin{verbatim}
+touch .nojekyll
+\end{verbatim}
+
+\begin{itemize}
+\tightlist
+\item
+  Note that \texttt{.nojekyll}'s location is different than that of \texttt{bookdown}, which is at \texttt{/docs} folder.
+\end{itemize}
+
+Benefits of Quarto:
+
+\begin{itemize}
+\tightlist
+\item
+  hoverable citations
+\item
+  \href{https://quarto.org/docs/authoring/cross-references.html\#subfigures}{subplots}
+\end{itemize}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+Syntax differences with R markdown:
+
+\begin{itemize}
+\item
+  Code chunks
+
+  R markdown
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\InformationTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}\{r my{-}label, fig.cap = caption\}}
+
+\InformationTok{\# R code}
+\InformationTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}}
+\end{Highlighting}
+\end{Shaded}
+
+  Vs.
+
+  Quarto
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\InformationTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}\{r\}}
+\InformationTok{\#| label: fig{-}my{-}label}
+\InformationTok{\#| fig{-}cap: caption }
+
+\InformationTok{\# R code}
+\InformationTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}}
+\end{Highlighting}
+\end{Shaded}
+\end{itemize}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{Cross References}\label{cross-references-1}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \textbf{Add labels:}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \textbf{Code cell:} add option \texttt{label:\ prefix-LABEL}
+  \item
+    \textbf{Markdown:} add attribute \texttt{\#prefix-LABEL}
+  \end{itemize}
+\item
+  \textbf{Add references:} \texttt{@prefix-LABEL}, e.g.
+
+\begin{verbatim}
+You can see in @fig-scatterplot, that...
+\end{verbatim}
+\end{enumerate}
+
+\begin{longtable}[]{@{}ll@{}}
+\toprule\noalign{}
+\texttt{prefix} & Renders \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\texttt{fig-} & Figure 1 \\
+\texttt{tbl-} & Table 1 \\
+\texttt{eq-} & Equation 1 \\
+\texttt{sec-} & Section 1 \\
+\end{longtable}
+
+\subsubsection*{Equations}\label{equations-1}
+\addcontentsline{toc}{subsubsection}{Equations}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\SpecialStringTok{$$}
+\SpecialStringTok{y\_i = }\SpecialCharTok{\textbackslash{}beta}\SpecialStringTok{\_\{i\}\textquotesingle{}x + u\_i.}
+\SpecialStringTok{$$}\NormalTok{ \{\#eq{-}cross\_sectional\_hetero\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{@eq-cross\_sectional\_hetero} gives \texttt{Equation\ (1)}
+\item
+  \texttt{{[}-@eq-cross\_sectional\_hetero{]}} gives only the tag \texttt{(1)}
+\end{itemize}
+
+You can customize the appearance of inline references by either changing the syntax of the inline reference or by setting options.
+
+Here are the various ways to compose a cross-reference and their resulting output:
+
+\begin{longtable}[]{@{}lll@{}}
+\toprule\noalign{}
+Type & Syntax & Output \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Default & \texttt{@fig-elephant} & Figure 1 \\
+Capitalized & \texttt{@Fig-elephant} & Figure 1 \\
+Custom Prefix & \texttt{{[}Fig\ @fig-elephant{]}} & Fig 1 \\
+No Prefix & \texttt{{[}-@fig-elephant{]}} & 1 \\
+\end{longtable}
+
+Note that the capitalized syntax makes no difference for the default output, but would indeed capitalize the first letter if the default prefix had been changed via an \href{https://quarto.org/docs/authoring/cross-reference-options.html\#references}{option} to use lower case (e.g.~``fig.'').
+
+Change the prefix in inline reference using \texttt{*-prefix} options. You can also specify whether references should be hyper-linked using the \texttt{ref-hyperlink} option.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{{-}{-}{-}}
+\AnnotationTok{title:}\CommentTok{ "My Document"}
+\AnnotationTok{crossref:}
+\CommentTok{  fig{-}prefix: figure   \# (default is "Figure")}
+\CommentTok{  tbl{-}prefix: table    \# (default is "Table")}
+\CommentTok{  ref{-}hyperlink: false \# (default is true)}
+\CommentTok{{-}{-}{-}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+References:
+
+\begin{itemize}
+\tightlist
+\item
+  \url{https://www.njtierney.com/post/2022/04/11/rmd-to-qmd/}
+\item
+  Cheatsheet: \url{https://rstudio.github.io/cheatsheets/html/quarto.html}
+\item
+  Citations: \url{https://quarto.org/docs/authoring/citations.html}
 \end{itemize}
 
 \chapter{Basic R}\label{basic-r}

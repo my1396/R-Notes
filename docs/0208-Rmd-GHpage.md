@@ -29,7 +29,7 @@ Note that the **minimum requirement for any [R Markdown website](https://bookdow
 </div>
 
 
-If you execute the `rmarkdown::render_site()` ("Knit" button behavior) function from within the directory containing the website, the following will occur:
+If you run `rmarkdown::render_site()` (which is the function triggered by the "Knit" button) from within the directory containing the website, the following will occur:
 
 1. All of the `*.Rmd` and `*.md` files in the root website directory will be rendered into HTML. Note, however, that Markdown files beginning with `_` are not rendered (this is a convention to designate files that are to be included by top level Rmd documents as child documents).
 
