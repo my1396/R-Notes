@@ -55,6 +55,10 @@ Refer to Section \@ref{my-section}
 Ref: Authoring Books with R Markdown, <https://bookdown.org/yihui/bookdown/github.html>
 
 1. Initialize your local git repository and link to the remote GitHub repo.
+    
+    See instructions [HERE][init-git].
+    
+    [init-git]: https://my1396.github.io/Econ-Study/2023/10/12/GitHub101.html#push-an-existing-repository "Initialize git and link to remote"
 
 2. Go to your `_bookdown.yml` file and add `output_dir: "docs"` on a line by itself
 
@@ -200,7 +204,58 @@ You do NOT need the three dashes `---` in `_output.yml`. In this case, all forma
     ```
     
     The `in_header` option takes a file path and inserts it into the `<head>` tag. The `before_body` file will be inserted right below the opening `<body>` tag, and `after_body` is inserted before the closing tag `</body>`.
-
+    
+    **Use example** of `includes` option in HTML output.
+    
+    For example, when you have LaTeX math expressions rendered via the MathJax library in the HTML output, and want the equation numbers to be displayed on the left (default is on the right), you can create a text file (named `mathjax-number.html`) that contains the following code:
+    
+    ```js
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      TeX: { TagSide: "left" }
+    });
+    </script>
+    ```
+    
+    Let’s assume the file `mathjax-number.html` is in the root directory of your book (the directory that contains all your Rmd files). You can insert this file into the HTML head via the `in_header` option, e.g.,
+    
+    ```markdown
+    ---
+    output:
+      bookdown::gitbook:
+        includes:
+          in_header: mathjax-number.html
+    ---
+    ```
+    
+    Example of MathJax config files: 
+    
+        - [`0007bookdown/mathjax_header.html`](https://github.com/matthew-towers/0007bookdown/blob/master/mathjax_header.html) by matthew-towers
+            
+            @matthew-towers uses a very clever approach, probably the easiest setup -- define the command directly in LaTeX and enclode in `<span class="math inline">$...$</span>` to indicate this is inline math.
+        
+        - [Using inline config options](https://docs.mathjax.org/en/v2.7-latest/configuration.html#using-in-line-configuration-options)
+        - [Stack Overflow MathJax](https://stackoverflow.com/questions/76312006/how-to-load-mathjax-extensions-in-bookdown)
+    
+    [Bookdown uses MathJax 2.7 by default](https://forum.posit.co/t/cannot-load-mathtools-mathjax-extension-in-bookdown/131073). 
+    
+    [**Define TeX macros**](https://docs.mathjax.org/en/v2.7-latest/tex.html#defining-tex-macros)
+    
+    You can include macro definitions in the Macros section of the TeX blocks of your configuration:
+    
+    ```
+    MathJax.Hub.Config({
+      TeX: {
+        Macros: {
+          RR: "{\\bf R}",
+          bold: ["{\\bf #1}",1]
+        }
+      }
+    });
+    ```
+    
+    Note that `MathJax.Hub.Config` is used in [inline configuration](https://docs.mathjax.org/en/v2.7-latest/configuration.html#configuring-mathjax). It is **case-sensitive**. `Macros` has capital `M`, and `TeX`, rather than `tex`, is used.
+    
     - A LaTeX source document has a similar structure:
         
     ```latex
@@ -218,7 +273,7 @@ You do NOT need the three dashes `---` in `_output.yml`. In this case, all forma
     \end{document}
     ```
 
-- You can add a **table of contents* using the `toc` option and specify the depth of headers that it applies to using the `toc_depth` option. 
+- You can add a **table of contents** using the `toc` option and specify the depth of headers that it applies to using the `toc_depth` option. 
     
     - If the TOC depth defaults to 3 in `html_document`.
     - For `pdf_document`, if the TOC depth is not explicitly specified, it defaults to 2 (meaning that all level 1 and 2 headers will be included in the TOC).

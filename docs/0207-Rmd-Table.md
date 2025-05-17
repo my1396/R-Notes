@@ -118,7 +118,7 @@ To show the `tibble` information (number of row/columns, and group information) 
 ```markdown
 ---
 title: "Use caption with df_print set to page"
-date: "2025-05-14"
+date: "2025-05-17"
 output:
   bookdown::html_document2:
     df_print: paged
@@ -281,7 +281,7 @@ Note that you need to specify `results="asis"` in the chunk options.  This optio
 - Note that `*`'s do not show properly in html output, see Fig. \@ref(fig:stargazer1), need to specify in the footnote (`notes`) manually.
 
 <div class="figure">
-<img src="images/stargazer1.png" alt="Failed to show significance codes." width="397" />
+<img src="images/stargazer1.png" alt="Failed to show significance codes." width="198" />
 <p class="caption">(\#fig:stargazer1)Failed to show significance codes.</p>
 </div>
 
@@ -298,7 +298,7 @@ apply(data[,-1], 2, get_stat) %>%
 
 
 <div class="figure">
-<img src="images/stargazer1.png" alt="Correct significance codes." width="397" />
+<img src="images/stargazer1.png" alt="Correct significance codes." width="198" />
 <p class="caption">(\#fig:stargazer2)Correct significance codes.</p>
 </div>
 

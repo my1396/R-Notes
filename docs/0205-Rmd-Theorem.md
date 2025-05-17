@@ -8,6 +8,8 @@ Language internationalization: <https://bookdown.org/yihui/bookdown/internationa
 
 Theorem environments in the [`bookdown` package](https://bookdown.org/yihui/bookdown/markdown-extensions-by-bookdown.html#tab:theorem-envs).
 
+<a id="thm-env-names">Table: Theorem environments in **bookdown**.</a>
+
 | Environment   | Printed Name | Label Prefix |
 | :------------- | :------------ | :------------ |
 | `theorem`     | Theorem      | thm          |
@@ -46,10 +48,18 @@ Here is my first theorem.
 
 will be rendered as:
 
-\BeginKnitrBlock{theorem}\iffalse{-91-84-104-101-111-114-101-109-32-110-97-109-101-93-}\fi{}<div class="theorem"><span class="theorem" id="thm:label"><strong>(\#thm:label)  \iffalse (Theorem name) \fi{} </strong></span>Here is my first theorem.</div>\EndKnitrBlock{theorem}
+::: {.theorem #label name="Theorem name"}
+Here is my first theorem.
+:::
 
-Refer to the theorem using `\@ref(thm:label)`, e.g., see theorem \@ref(thm:label).
+Refer to the theorem using `\@ref(prefix:label)`. 
+See the column `Label Prefix` in <a href="#thm-env-names">Table</a> for the value of `prefix` for each environment. 
+E.g., see theorem \@ref(thm:label) (`\@ref(thm:label)`).
 
+If you want to refer to a theorem, you should **label** it. The label can be provided as an ID to the block of the form `#label`.
+
+
+--------------------------------------------------------------------------------
 
 Another example
 
@@ -65,12 +75,36 @@ For a right triangle, if $c$ denotes the length of the hypotenuse and $a$ and $b
 
 will be rendered as:
 
-\BeginKnitrBlock{theorem}\iffalse{-91-80-121-116-104-97-103-111-114-101-97-110-32-116-104-101-111-114-101-109-93-}\fi{}<div class="theorem"><span class="theorem" id="thm:thm-py"><strong>(\#thm:thm-py)  \iffalse (Pythagorean theorem) \fi{} </strong></span>For a right triangle, if $c$ denotes the length of the hypotenuse and $a$ and $b$ denote the lengths of the other two sides, we have
+::: {.theorem #thm-py name="Pythagorean theorem"}
+For a right triangle, if $c$ denotes the length of the hypotenuse and $a$ and $b$ denote the lengths of the other two sides, we have
   
   \begin{align*}
   c^2 = a^2+b^2
-  \end{align*}</div>\EndKnitrBlock{theorem}
+  \end{align*}
+:::
 
+--------------------------------------------------------------------------------
+
+Alternatively, you can use the syntax based on Pandoc’s [fenced `Div` blocks](https://pandoc.org/MANUAL.html#divs-and-spans). It can already be used in any R Markdown document to write [custom blocks.](https://bookdown.org/yihui/rmarkdown-cookbook/custom-blocks.html)
+
+```markdown
+::: {.theorem #pyth name="Pythagorean theorem"}
+For a right triangle, if $c$ denotes the length of the hypotenuse
+and $a$ and $b$ denote the lengths of the other two sides, we have
+
+$$a^2 + b^2 = c^2$$
+:::
+```
+
+
+::: {.theorem #pyth name="Pythagorean theorem"}
+For a right triangle, if $c$ denotes the length of the hypotenuse
+and $a$ and $b$ denote the lengths of the other two sides, we have
+
+$$a^2 + b^2 = c^2$$
+:::
+
+Apply Theorem \@ref(thm:pyth), ...
 
 --------------------------------------------------------------------------------
 

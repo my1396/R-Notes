@@ -332,6 +332,53 @@ editor_options:
 
 --------------------------------------------------------------------------------
 
+[**MathJax Options**](https://bookdown.dongzhuoer.com/rstudio/rmarkdown-book/html-document#mathjax-equations)
+
+By default, [MathJax](https://www.mathjax.org/) scripts are included in HTML documents for rendering LaTeX and MathML equations. You can use the `mathjax` option to control how MathJax is included:
+
+- Specify `"default"` to use an HTTPS URL from a CDN host (currently provided by RStudio).
+- Specify `"local"` to use a local version of MathJax (which is copied into the output directory). Note that when using `"local"` you also need to set the `self_contained` option to `false`.
+- Specify an alternate URL to load MathJax from another location.
+- Specify `null` to exclude MathJax entirely.
+
+For example, to use a local copy of MathJax:
+
+```markdown
+---
+title: "Habits"
+output:
+  html_document:
+    mathjax: local
+    self_contained: false
+---
+```
+
+To use a self-hosted copy of MathJax:
+
+```markdown
+---
+title: "Habits"
+output:
+  html_document:
+    mathjax: "http://example.com/MathJax.js"
+---
+```
+
+To exclude MathJax entirely:
+
+```markdown
+---
+title: "Habits"
+output:
+  html_document:
+    mathjax: null
+---
+```
+
+
+
+--------------------------------------------------------------------------------
+
 ### Render Rmd
 
 When you click the `Knit` button (⇧⌘K) in RStudio, generally two processes happen: 
@@ -359,25 +406,30 @@ Use examples of `render`, using **output format objects**
 rmarkdown::render("0208-Rmd-GHpage.Rmd", 
 	bookdown::pdf_document2(
 		latex_engine = "xelatex",
-		template = "latex/template.tex",
-		includes = includes(
+		# template = "latex/template.tex",
+		includes = rmarkdown::includes(
 			in_header = "latex/preamble.tex",
-  		    before_body = "latex/before_body.tex")
+      before_body = "latex/before_body.tex")
 		))
 
 # This does NOT work as `output_options` is only valid when the format is not an output format object "xxx_document()"
 rmarkdown::render("0208-Rmd-GHpage.Rmd", 
 	bookdown::pdf_document2(
 		latex_engine = "xelatex",
-		template = "latex/template.tex"), 
-	output_options = list(
-		includes = includes(
-			in_header = "latex/preamble.tex",
-  		    before_body = "latex/before_body.tex")
+		# template = "latex/template.tex"), 
+		output_options = list(
+			includes = rmarkdown::includes(
+        in_header = "latex/preamble.tex",
+        before_body = "latex/before_body.tex")
 		))
 
 # render to html
-rmarkdown::render("AR_application.Rmd",  bookdown::html_document2())
+rmarkdown::render("0304-Quarto.Rmd",  
+    bookdown::html_document2(
+    	includes = rmarkdown::includes(
+        	in_header = "head.html",
+        	before_body = "scripts.html")
+    	))
 ```
 
 Note that sometimes the bookdown cross references in Rmd are not rendered when using the `Knit` button. The rendered html shows `Fig. \@ref(fig:ar-res) ` (without the backslash). In this case, using `rmarkdown::render()` **with `output_format = bookdown::html_document2()`** might help.
