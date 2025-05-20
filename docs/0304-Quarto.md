@@ -115,6 +115,40 @@ crossref:
 ---
 ```
 
+Math delimiters
+
+Issue: Cannot use `\(` and `\[` for math delimiters. \
+Fix: Add `from: markdown+tex_math_single_backslash` to YAML frontmatter.
+
+```markdown
+---
+title: "Quarto Playground"
+from: markdown+tex_math_single_backslash
+format:
+  html:
+    html-math-method: mathjax
+---
+
+Inline math example: \( E = mc^2 \)
+
+Block math example:
+
+\[
+a^2 + b^2 = c^2
+\]
+```
+
+Refer to Docs of Quarto and Pandoc:
+
+- [https://quarto.org/docs/reference/formats/html.html#rendering](https://quarto.org/docs/reference/formats/html.html#rendering)
+
+- [https://pandoc.org/MANUAL.html#extension-tex_math_single_backslash](https://pandoc.org/MANUAL.html#extension-tex_math_single_backslash)
+
+- [https://pandoc.org/MANUAL.html#extension-tex_math_double_backslash](https://pandoc.org/MANUAL.html#extension-tex_math_double_backslash)
+
+
+
+
 --------------------------------------------------------------------------------
 
 ### Theorems 
