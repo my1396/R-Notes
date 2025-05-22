@@ -115,10 +115,57 @@ crossref:
 ---
 ```
 
-Math delimiters
+
+
+___
+
+### Equations
+
+**Load MathJax Config**
+
+Load `mathjax.html` in YAML
+
+```markdown
+---
+title: "Model specifications"
+author: "GDP and climate"
+date: "2025-05-13"
+from: markdown+tex_math_single_backslash
+format: 
+  html:
+    toc: true
+    self-contained: true
+    html-math-method: mathjax
+    include-in-header: mathjax.html
+---
+```
+
+In `mathjax.html`
+
+```html
+<script>
+MathJax = { 
+    tex: { 
+        tags: 'ams',  // should be 'ams', 'none', or 'all' 
+        macros: {  // define TeX macro
+            RR: "{\\bf R}",
+            bold: ["{\\bf #1}", 1]
+        },
+  	},
+};
+</script>
+```
+
+`tags: 'ams'`  allows equation numbering
+
+
+
+___
+
+**Math delimiters**
 
 Issue: Cannot use `\(` and `\[` for math delimiters. \
-Fix: Add `from: markdown+tex_math_single_backslash` to YAML frontmatter.
+Fix: Add `from: markdown+tex_math_single_backslash` to YAML frontmatter. [Source](https://github.com/quarto-dev/quarto-cli/discussions/11753#discussioncomment-11696142)
 
 ```markdown
 ---
@@ -138,6 +185,14 @@ a^2 + b^2 = c^2
 \]
 ```
 
+`form`: Format to read from. Extensions can be individually enabled or disabled by appending +EXTENSION or -EXTENSION to the format name (e.g. `markdown+emoji`).
+
+Extension: `tex_math_single_backslash`
+
+Causes anything between `\(` and `\)` to be interpreted as inline TeX math, and anything between `\[` and `\]` to be interpreted as display TeX math. Note: a drawback of this extension is that it precludes escaping `(` and `[`.
+
+
+
 Refer to Docs of Quarto and Pandoc:
 
 - [https://quarto.org/docs/reference/formats/html.html#rendering](https://quarto.org/docs/reference/formats/html.html#rendering)
@@ -147,6 +202,17 @@ Refer to Docs of Quarto and Pandoc:
 - [https://pandoc.org/MANUAL.html#extension-tex_math_double_backslash](https://pandoc.org/MANUAL.html#extension-tex_math_double_backslash)
 
 
+
+___
+
+Q: How to get rid of the `qmd` dependence file?  
+A: Use 
+
+```css
+format: 
+  html:
+    self-contained: true
+```
 
 
 --------------------------------------------------------------------------------
