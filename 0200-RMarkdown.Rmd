@@ -14,8 +14,6 @@ Nice documentations
 - [R markdown cookbook](https://bookdown.org/yihui/rmarkdown-cookbook/): concise and covers essential functions, with examples.
 - [Authoring Books with R Markdown](https://bookdown.org/yihui/bookdown/): with a focus on `bookdown`.
 
-
-
 Q: What is the difference between Rmd and R script?  
 A: 
 
@@ -773,6 +771,8 @@ knitr::opts_chunk$set(
 )
 ```
 ````
+
+Chunk options are written in the form `tag=value`. A special chunk option is the chunk label (e.g., `setup` in the above example). Only the chunk label does not need a tag (i.e., you can only provide the value). If you prefer the form `tag=value`, you could also use the chunk option label explicitly, e.g., `label="setup"`.
 
 The settings will apply to every chunk in your file as a default. You can overwrite them in individual chunk headers.
 

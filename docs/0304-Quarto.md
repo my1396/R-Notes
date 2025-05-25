@@ -51,6 +51,17 @@ Syntax differences with R markdown:
     # R code
     ```
     ````
+    
+    Note that <span style='color:#008B45'>Quarto accepts Rmd's way of specifying chunk options</span>. The difference is that Quarto's label for figures must start with `fig-`, while Rmd accepts any labels.
+    
+    ````markdown
+    ```{r label = "fig-my-label", fig.cap = caption}
+    
+    # R code
+    ```
+    ````
+    
+    
 
 --------------------------------------------------------------------------------
 
