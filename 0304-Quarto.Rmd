@@ -126,7 +126,7 @@ format:
     linestretch: 1.7
 ```
 
-Enable dark and light modes
+Enable **dark and light** modes
 
 ```yaml
 format:
