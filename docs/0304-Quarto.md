@@ -6,7 +6,7 @@ To get started, change your project configuration `_quarto.yml` to use `docs` as
 
 ```yml
 project:
-  type: website
+  type: book
   output-dir: docs
 ```
 
@@ -26,7 +26,57 @@ Benefits of Quarto:
 
 --------------------------------------------------------------------------------
 
-Syntax differences with R markdown:
+### Book Structure
+
+```yaml
+book:
+  chapters:
+    - index.qmd
+    - preface.qmd
+    - part: dice.qmd
+      chapters: 
+        - basics.qmd
+        - packages.qmd
+    - part: cards.qmd
+      chapters:
+        - objects.qmd
+        - notation.qmd
+        - modifying.qmd
+        - environments.qmd
+    - references.qmd
+  appendices:
+    - tools.qmd
+    - resources.qmd
+```
+
+- The `index.qmd` file is required (because Quarto books also produce a website in HTML format). This page should include the preface, acknowledgements, etc.
+
+- The remainder of `chapters` includes one or more book chapters.
+
+  You can divide your book into parts using `part` within the book `chapters`. 
+
+  Note that the markdown files `dice.qmd` and `cards.qmd` contain the part title (as a level one heading) as well as some introductory content for the part. 
+
+  If you just need a part title then you can alternatively use this syntax:
+
+  ```yaml
+  book:
+    chapters:
+      - index.qmd
+      - preface.qmd
+      - part: "Dice"
+        chapters: 
+          - basics.qmd
+          - packages.qmd
+  ```
+
+- The `references.qmd` file will include the generated bibliography (see [References](https://quarto.org/docs/books/book-structure.html#references) below for details).
+
+
+
+___
+
+**Syntax differences with R markdown:**
 
 - Code chunks
 
@@ -61,7 +111,55 @@ Syntax differences with R markdown:
     ```
     ````
     
-    
+--------------------------------------------------------------------------------
+
+### HTML Theming
+
+One simple theme
+
+```yaml
+title: "My Document"
+format:
+  html: 
+    theme: cosmo
+    fontsize: 1.1em
+    linestretch: 1.7
+```
+
+Enable dark and light modes
+
+```yaml
+format:
+  html:
+    include-in-header: themes/mathjax.html
+    respect-user-color-scheme: true
+    theme:
+      dark: [cosmo, themes/cosmo-dark.scss]
+      light: cosmo
+```
+
+`respect-user-color-scheme: true`  honors the user’s operating system or browser preference for light or dark mode.
+
+Otherwise, <u>the order of light and dark elements</u> in the theme or brand will determine the <u>default</u> appearance for your html output. For example, since the `dark` option appears first in the first example, a reader will see the light appearance by default, if `respect-user-color-scheme` is not enabled.
+
+As of Quarto 1.7, `respect-user-color-scheme` requires JavaScript support: users with JavaScript disabled will see the author-preferred (first) brand or theme.
+
+
+
+**Theme options**
+
+You can do extensive customization of themes using [Sass](https://sass-lang.com/). Bootstrap defines over 1,400 Sass variables that control fonts, colors, padding, borders, and much more. You can see all of the variables here:
+
+https://github.com/twbs/bootstrap/blob/main/scss/_variables.scss
+
+Note that when you make changes to your local `.scss`, the changes will be implemented in-time. That is, you don't need to re-build your website to see the effects.
+
+
+
+Ref: <https://quarto.org/docs/output-formats/html-themes.html>
+
+
+
 
 --------------------------------------------------------------------------------
 
