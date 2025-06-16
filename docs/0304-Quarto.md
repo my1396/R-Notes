@@ -355,6 +355,8 @@ See Theorem \@ref(thm:thm-line).
 
 --------------------------------------------------------------------------------
 
+To add a name to Theorem, use `name="..."`.
+
 ```markdown
 ::: {#thm-topo name="Topology Space"}
 A topological space $(X, \Tcal)$ is a set $X$ and a collection $\Tcal \subset \Pcal(X)$ of subsets of $X,$ called open sets, such that ...
@@ -371,6 +373,22 @@ A topological space $(X, \Tcal)$ is a set $X$ and a collection $\Tcal \subset \P
 
 
 See Theorem \@ref(thm:thm-topo).
+
+--------------------------------------------------------------------------------
+
+Change the label prefix:
+
+```markdown
+---
+crossref:
+  cnj-title: "Assumption"
+  cnj-prefix: "Assumption"
+---
+```
+
+- `cnj-title`: The title prefix used for conjecture captions.
+- `cnj-prefix`: The prefix used for an <u>inline reference</u> to a conjecture.
+
 
 
 --------------------------------------------------------------------------------

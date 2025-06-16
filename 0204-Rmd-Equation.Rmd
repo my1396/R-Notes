@@ -52,9 +52,9 @@ You may refer to an equation using Eq. `\@ref(eq:eq01)`.
 If you want to provide a specific number to the equation, you can use `\tag{XX.XX}`.
 
 - With LaTeX
-    
+  
   LaTex allows custom labels.
-    
+  
   \begin{align} \label{eq:my-label-latex} \tag{my label latex}
   \frac{p(x)}{1-p(x)} = \exp (\beta_0+\beta_1 x) \,.
   \end{align}
@@ -65,9 +65,9 @@ If you want to provide a specific number to the equation, you can use `\tag{XX.X
 --------------------------------------------------------------------------------
 
 - With `bookdown`
-    
+  
   `bookdown` does NOT support custom tag though.
-    
+  
   \begin{align}
   \frac{p(x)}{1-p(x)} = \exp (\beta_0+\beta_1 x) \,.
   (\#eq:my-label-bookdown)
@@ -109,8 +109,8 @@ colorize <- function(x, color) {
   } else x
 }
 ```
-    
-    
+
+
 We can then use the code in an inline R expression `` `r knitr::inline_expr('colorize("some words in red", "red")')` ``, which will create `r colorize("some words in red", "red")`, which works for both html and .
 
 
@@ -121,7 +121,20 @@ We can then use the code in an inline R expression `` `r knitr::inline_expr('col
 
 <https://bookdown.org/yihui/rmarkdown/html-document.html#mathjax-equations>
 
-Default configuration used by the rmarkdown package is given by `rmarkdown:::mathjax_config()`. As of rmarkdown v2.1, the function returns "MathJax.js?config=TeX-AMS-MML_HTMLorMML". This configures `Mathjax` to `HTML-CSS`.
+RStudio IDE comes with Mathjax 2.7 bundled. This is used by **rmarkdown** when local mode is used for example.
+Path is stored in `Sys.getenv("RMARKDOWN_MATHJAX_PATH")`.
+
+```R
+> Sys.getenv("RMARKDOWN_MATHJAX_PATH")
+[1] "/Applications/RStudio.app/Contents/Resources/app/resources/mathjax-27"
+
+> rmarkdown:::mathjax_config()
+[1] "MathJax.js?config=TeX-AMS-MML_HTMLorMML"
+```
+
+For online mode, **rmarkdown** uses https://mathjax.rstudio.com/latest/ with config `MathJax.js?config=TeX-AMS-MML_HTMLorMML` for now.
+
+Default configuration used by the `rmarkdown` package is given by `rmarkdown:::mathjax_config()`. As of rmarkdown v2.1, the function returns "MathJax.js?config=TeX-AMS-MML_HTMLorMML". This configures `Mathjax` to `HTML-CSS`.
 
 Change `Mathjax` configuration to `CommonHTML` using the following codes.
 
@@ -167,7 +180,25 @@ MathJax is available as a web service from `cdn.mathjax.org`, so you can obtain 
 
 The CDN hosts the most current version of MathJax, as well as older versions, so you can either link to a version that stays up-to-date as MathJax is improved, or you can stay with one of the release versions so that your pages always use the same version of MathJax.
 
+--------------------------------------------------------------------------------
 
+Q: How to define custom macros that can be used in live equation preview in RStudio?
+
+A: Go to `/Applications/RStudio.app/Contents/Resources/app/resources/mathjax-27/config/TeX-MML-AM_CHTML.js`, add your custom macros as follows.
+
+```css
+MathJax.Hub.Config({
+  extensions: ['[a11y]/accessibility-menu.js'],
+  TeX: {
+    Macros: { // define TeX macros
+      RR: "{\\bf R}",
+      bold: ["{\\bf #1}",1],
+      btheta: "\\boldsymbol{\\theta}",
+      bAlpha: "\\boldsymbol{\\Alpha}",
+    }
+  },
+});
+```
 
 --------------------------------------------------------------------------------
 

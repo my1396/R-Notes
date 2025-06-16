@@ -118,7 +118,7 @@ To show the `tibble` information (number of row/columns, and group information) 
 ```markdown
 ---
 title: "Use caption with df_print set to page"
-date: "2025-05-26"
+date: "2025-06-16"
 output:
   bookdown::html_document2:
     df_print: paged
@@ -248,6 +248,10 @@ F Statistic             0.517 (df = 1; 201)
 ===============================================
 Note:               *p<0.1; **p<0.05; ***p<0.01
 ```
+
+By default, `stargazer` uses `***`, `**`, and `*` to denote statistical significance at the one, five, and ten percent levels (`* p<0.1; ** p<0.05; *** p<0.01`). In contrast, `summary.lm` uses `* p<0.05, ** p<0.01, *** p< 0.001`.
+
+You can change the cutoffs for significance using `star.cutoffs = c(0.05, 0.01, 0.001)`.
 
 There is one empty line after each coefficient, to remove the empty lines, specify `no.space = TRUE`. 
 

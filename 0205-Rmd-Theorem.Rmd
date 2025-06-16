@@ -22,16 +22,32 @@ Theorem environments in the [`bookdown` package](https://bookdown.org/yihui/book
 | `exercise`    | Exercise     | exr          |
 | `hypothesis`  | Hypothesis   | hyp          |
 
-- Definition : an explanation of the mathematical meaning of a word.
-- Theorem : A statement that has been proven to be true.
-- Proposition : A less important but nonetheless interesting true statement.
-- Lemma: A true statement used in proving other true statements (that is, a less important theorem that is helpful in the proof of other results). 
+- Definition 定义: an explanation of the mathematical meaning of a word.
+
+- Theorem 定理: A statement that has been proven to be true.
+
+  是文章中重要的数学化的论述，一般有严格的数学证明。
+
+- Proposition 命题: A less important but nonetheless interesting true statement.
+
+  经过证明且 intersting，但没有 Theorem 重要，比较常用。
+
+- Lemma 引理: A true statement used in proving other true statements (that is, a less important theorem that is helpful in the proof of other results). 
+  
+  帮助证明 Theorem 的小结果。有时候可以将 Theorem 拆分成多个小的 Lemma 来逐步证明，以使得证明的思路更加清晰。很少情况下 Lemma 会以其自身的形式存在。
+  
   - Lemmas are considered to be less important than propositions. But the distinction between categories is rather *blurred*. 
   - There is no formal distinction among a lemma, a proposition, and a theorem.
-- Corollary: A true statment that is a simple deduction from a theorem or proposition.
+  
+- Corollary 推论: A true statment that is a simple deduction from a Theorem or Proposition.
+
 - Proof: The explanation of why a statement is true.
-- Conjecture: A statement believed to be true, but for which we have no proof. (a statement that is being proposed to be a true statement).
-- Axiom: A basic assumption about a mathematical situation. (a statement we assume to be true).
+
+- Conjecture 猜想，猜测: A statement believed to be true, but for which we have no proof. (a statement that is being proposed to be a true statement).
+
+- Axiom 公理: A basic assumption about a mathematical situation. (a statement we assume to be true).
+
+  不需要证明的论述，是其他所有 Theorem 的基础。
 
 
 --------------------------------------------------------------------------------
