@@ -135,7 +135,7 @@ format:
     respect-user-color-scheme: true
     theme:
       dark: [cosmo, themes/cosmo-dark.scss]
-      light: cosmo
+      light: [cosmo, themes/cosmo-light.scss]
 ```
 
 `respect-user-color-scheme: true`  honors the user’s operating system or browser preference for light or dark mode.

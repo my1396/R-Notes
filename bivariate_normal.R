@@ -72,4 +72,28 @@ contour(x = x_vals, y = y_vals, z = z_matrix,
 dev.off()
 
 
+## LAD objective function
+u <- seq(-3.5, 3.5, 0.1)
+u
+data <- tibble(u = u,
+       OLS = u^2,
+       LAD = abs(u)) %>% 
+    gather("key", "value", -u)
+p <- ggplot(data, aes(u, value, color=key)) +
+    geom_line() +
+    scale_color_manual(values = c("LAD"="#EE0000", "OLS"="#3B4992")) +
+    theme_bw(base_size = 12) +
+    theme(axis.title.y = element_blank(),
+          legend.position = c(.2,.9),
+          legend.text = element_text(size=rel(1)),
+          legend.title = element_blank()) + 
+    guides(colour = guide_legend(nrow = 1))
+p
+# f_name <- "images/LAD.png"
+# ggsave(f_name)
+
+
+
+
+
 
