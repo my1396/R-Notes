@@ -1,0 +1,3 @@
+# Stata
+
+Stata Tutorial: <https://www.stata.com/links/video-tutorials/>

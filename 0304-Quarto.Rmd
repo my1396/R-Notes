@@ -138,6 +138,20 @@ format:
       light: [cosmo, themes/cosmo-light.scss]
 ```
 
+Rendering the whole website is slow. When you are editing a new section/page, you may want to edit as a standalone webpage and when you are finished, you add the `qmd` file to the `_quarto.yml` file index.
+
+Difference btw a standalone webpage from a component of a `qmd` project
+
+- Standalone webpage: include `yaml` at the header of the file.
+    
+    Fast compile and rendering. ✅
+    
+- A component of `qmd` project: added to the file index, no `yaml` needed, format will automatically apply.
+
+    Slow, need to render the whole `qmd` project in order to see your change.
+
+--------------------------------------------------------------------------------
+
 `respect-user-color-scheme: true`  honors the user’s operating system or browser preference for light or dark mode.
 
 Otherwise, <u>the order of light and dark elements</u> in the theme or brand will determine the <u>default</u> appearance for your html output. For example, since the `dark` option appears first in the first example, a reader will see the light appearance by default, if `respect-user-color-scheme` is not enabled.
