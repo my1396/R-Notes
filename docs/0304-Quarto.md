@@ -19,10 +19,20 @@ touch .nojekyll
 - Note that `.nojekyll`'s location is different than that of `bookdown`, which is at `/docs` folder.
 
 
-Benefits of Quarto:
+Strengths of Quarto:
 
-- hoverable citations 
-- [subplots](https://quarto.org/docs/authoring/cross-references.html#subfigures)
+- hoverable citations and cross-references, easy to read 
+- [easy subplots](https://quarto.org/docs/authoring/cross-references.html#subfigures)
+
+
+Weakness of Quarto:
+
+- slow compared to `Bookdown`
+- issues when you want to compile one single page within a package. Changes are not realized in time unless render the whole website. 
+
+    Workaround: Need to exclude from project index, and need file header `yaml` to import mathjax settings and themes.
+    
+    `Bookdown` is reliable. Don't need `yaml` in single `Rmd`, website theme will apply automatically. 
 
 --------------------------------------------------------------------------------
 

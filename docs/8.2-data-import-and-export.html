@@ -4,13 +4,13 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>1.2 Render book | R Notes</title>
+  <title>8.2 Data Import and Export | R Notes</title>
   <meta name="description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
 set in the _output.yml file.</p>" />
   <meta name="generator" content="bookdown 0.35 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="1.2 Render book | R Notes" />
+  <meta property="og:title" content="8.2 Data Import and Export | R Notes" />
   <meta property="og:type" content="book" />
   
   <meta property="og:description" content="<p>This is a minimal example of using the bookdown package to write a book.
@@ -19,7 +19,7 @@ set in the _output.yml file.</p>" />
   <meta name="github-repo" content="my1396/R-Notes" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="1.2 Render book | R Notes" />
+  <meta name="twitter:title" content="8.2 Data Import and Export | R Notes" />
   
   <meta name="twitter:description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
@@ -36,8 +36,8 @@ set in the _output.yml file.</p>" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   <link rel="shortcut icon" href="images/r-project-favicon.ico" type="image/x-icon" />
-<link rel="prev" href="1.1-usage.html"/>
-<link rel="next" href="1.3-preview-book.html"/>
+<link rel="prev" href="8.1-baisc-syntax.html"/>
+<link rel="next" href="8.3-arellano-bond-estimator.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -483,24 +483,73 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
         }
     </script>
 </head>
-<div id="render-book" class="section level2 hasAnchor" number="1.2">
-<h2><span class="header-section-number">1.2</span> Render book<a href="1.2-render-book.html#render-book" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>You can render the HTML version of this example book without changing anything:</p>
+<div id="data-import-and-export" class="section level2 hasAnchor" number="8.2">
+<h2><span class="header-section-number">8.2</span> Data Import and Export<a href="8.2-data-import-and-export.html#data-import-and-export" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p><strong>Shipped datasets</strong></p>
+<p>Stata contains some demonstration datasets in the system directories.</p>
+<p><code>sysuse dir</code>: list the names of shipped datasets.</p>
+<p><code>sysuse lifeexp</code>: use <code>lifeexp</code><br />
+<code>use lifeexp</code> will return error. Data not found.</p>
+<p><strong>User datasets</strong></p>
+<p><strong><code>.dta</code></strong></p>
+<p><code>use myauto [, clear]</code>: Load <code>myauto.dta</code> (Stata-format) into memory.</p>
+<ul>
+<li><code>clear</code> it is okay to replace the data in memory, even though the current data have not been saved to disk.</li>
+</ul>
+<p><code>save myauto [, replace]</code>: Create a Stata data type file <code>myauto.dta</code></p>
+<ul>
+<li><code>replace</code> allows Stata to overwrite existing dataset that is the output from previous attempts to run the do file.</li>
+</ul>
+<p><strong><code>.csv</code></strong></p>
+<p><code>import delimited myauto.csv</code>: Import <code>myauto.csv</code> to Stata’s memory</p>
+<p><code>export delimited myauto.csv</code>” Export to <code>myauto.csv</code></p>
+<p><code>import delimited filename</code> reads text (ASCII) files in which there is one observation
+per line and the values are separated by commas, tabs, or some other delimiter.</p>
+<p>By default, Stat will check if the file is delimited by tabs or commas based on the first line of data.</p>
+<p><code>export delimited filename</code> writes data into a file in comma-separated (.csv) format by default. You can specify any separation character delimiter that you prefer.</p>
+<p>If <code>filename</code> is specified without an extension, <code>.csv</code> is assumed. If filename contains embedded spaces, enclose it in double quotes.</p>
+<div class="sourceCode" id="cb302"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb302-1"><a href="8.2-data-import-and-export.html#cb302-1" tabindex="-1"></a>import delimited [<span class="kw">using</span>] filename [, import_delimited_options]</span></code></pre></div>
+<p><strong>Options</strong></p>
+<p><code>delimiters("chars"[, collapse | asstring] )</code>:</p>
+<ul>
+<li><p><code>"chars"</code> specifies the delimiter</p>
+<p><code>";"</code>: uses semicolon as a delimiter; <code>"\t"</code> uses tab, <code>"whitespace"</code> uses whitespace</p></li>
+<li><p><code>collapse</code> treat multiple consecutive delimiters as just one delimiter.</p></li>
+<li><p><code>asstring</code> treat <code>chars</code> as one delimiter. By default, each character in <code>chars</code> is treated as an individual delimiter.</p></li>
+</ul>
+<div class="sourceCode" id="cb303"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb303-1"><a href="8.2-data-import-and-export.html#cb303-1" tabindex="-1"></a><span class="co">// use example</span></span>
+<span id="cb303-2"><a href="8.2-data-import-and-export.html#cb303-2" tabindex="-1"></a>import delimited auto, delim(<span class="st">&quot; &quot;</span>, <span class="kw">collapse</span>) colrange(:3) rowrange(8) </span></code></pre></div>
+<div id="labels" class="section level3 hasAnchor" number="8.2.1">
+<h3><span class="header-section-number">8.2.1</span> Labels<a href="8.2-data-import-and-export.html#labels" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Variable labels convey information about a variable, and can be a substitute for long variable names.</p>
+<div class="sourceCode" id="cb304"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb304-1"><a href="8.2-data-import-and-export.html#cb304-1" tabindex="-1"></a><span class="co">// generally</span></span>
+<span id="cb304-2"><a href="8.2-data-import-and-export.html#cb304-2" tabindex="-1"></a><span class="kw">label</span> <span class="kw">variable</span> variable_name <span class="st">&quot;variable label&quot;</span></span>
+<span id="cb304-3"><a href="8.2-data-import-and-export.html#cb304-3" tabindex="-1"></a><span class="co">// use example</span></span>
+<span id="cb304-4"><a href="8.2-data-import-and-export.html#cb304-4" tabindex="-1"></a><span class="kw">label</span> <span class="kw">variable</span> price <span class="st">&quot;Price in 1978 Dollars&quot;</span></span></code></pre></div>
+<p>Value labels are used with categorical variables to tell you what the categories mean.</p>
 <ol style="list-style-type: decimal">
-<li><p>Find the <strong>Build</strong> pane in the RStudio IDE, and</p></li>
-<li><p>Click on <strong>Build Book</strong>, then select your output format, or select “All formats” if you’d like to use multiple formats from the same book source files.</p></li>
+<li>First define a mapping</li>
 </ol>
-<p>Or build the book from the R console:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="1.2-render-book.html#cb1-1" tabindex="-1"></a>bookdown<span class="sc">::</span><span class="fu">render_book</span>()</span></code></pre></div>
-<p>To render this example to PDF as a <code>bookdown::pdf_book</code>, you’ll need to install XeLaTeX. You are recommended to install TinyTeX (which includes XeLaTeX): <a href="https://yihui.org/tinytex/" class="uri">https://yihui.org/tinytex/</a>.</p>
+<div class="sourceCode" id="cb305"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb305-1"><a href="8.2-data-import-and-export.html#cb305-1" tabindex="-1"></a><span class="co">// generally</span></span>
+<span id="cb305-2"><a href="8.2-data-import-and-export.html#cb305-2" tabindex="-1"></a><span class="kw">label</span> <span class="kw">define</span> map_name value1 <span class="st">&quot;label1&quot;</span> value2 <span class="st">&quot;label2&quot;</span>...</span>
+<span id="cb305-3"><a href="8.2-data-import-and-export.html#cb305-3" tabindex="-1"></a><span class="co">// use example</span></span>
+<span id="cb305-4"><a href="8.2-data-import-and-export.html#cb305-4" tabindex="-1"></a><span class="kw">label</span> <span class="kw">define</span> rep_label 1 <span class="st">&quot;Bad&quot;</span> 2 <span class="st">&quot;Average&quot;</span> 3 <span class="st">&quot;Good&quot;</span></span></code></pre></div>
+<ol start="2" style="list-style-type: decimal">
+<li>Add value labels to existing variables</li>
+</ol>
+<div class="sourceCode" id="cb306"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb306-1"><a href="8.2-data-import-and-export.html#cb306-1" tabindex="-1"></a><span class="co">// generally</span></span>
+<span id="cb306-2"><a href="8.2-data-import-and-export.html#cb306-2" tabindex="-1"></a><span class="kw">label</span> <span class="kw">values</span> map_name</span>
+<span id="cb306-3"><a href="8.2-data-import-and-export.html#cb306-3" tabindex="-1"></a><span class="co">// use example</span></span>
+<span id="cb306-4"><a href="8.2-data-import-and-export.html#cb306-4" tabindex="-1"></a><span class="kw">label</span> <span class="kw">values</span> rep3 rep_label</span></code></pre></div>
+</div>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-<a href="1.1-usage.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="1.3-preview-book.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="8.1-baisc-syntax.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="8.3-arellano-bond-estimator.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -531,7 +580,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/my1396/R-Notes/edit/main/index.Rmd",
+"link": "https://github.com/my1396/R-Notes/edit/main/1100-Stata.Rmd",
 "text": "Edit"
 },
 "history": {
@@ -542,7 +591,7 @@ gitbook.start({
 "link": null,
 "text": null
 },
-"download": ["_main.pdf", "_main.epub", "https://github.com/my1396/R-Notes/raw/main/index.Rmd"],
+"download": ["_main.pdf", "_main.epub", "https://github.com/my1396/R-Notes/raw/main/1100-Stata.Rmd"],
 "search": {
 "engine": "fuse",
 "options": null
