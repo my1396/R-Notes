@@ -6,6 +6,8 @@
 - Tutorial: <https://grodri.github.io/stata/>
 - Quick start: <https://lanekenworthy.net/stata-quick-guide/>
 
+
+
 `help <cmd_name>`: Get help for a command.
 
 | Keyboard Shortcut | Description   |
@@ -67,16 +69,31 @@ For example, if you run a command that creates a variable `x`, realize you made 
     ```
 
 - Never modify the raw data files. Save the results of your data cleaning in a new file.
+
 - Every data file is created by a script. Convert your interactive data cleaning session to a `.do` file.
+
 - No data file is modified by multiple scripts.
-- Intermediate steps are saved in different files (or kept in temporary files) than the final dataset.
+
+- Intermediate steps are saved in different files (or kept in temporary files).
+
+    
 
 
 **Keep `do` files short**
 
 Our suggestion is that you keep your do files short enough that when you're working on one of them you can easily wrap your head around it. You also want to keep do files short so they run as quickly as possible: working on a `do` file usually requires running it repeatedly, so moving any code that you consider "done" to a different do file will save time.
 
-You can have a master do file which loads your small section do files sequentially and all in one.
+**Project Structure**
+
+- You can have a master `do` file which loads your small section `do` files sequentially and all in one.
+
+- Enumerate your `do` files.
+
+  Example: `0-master.do`, `1-data-clean.do`, `2-stylized-facts.do`, …
+
+  You can then organize them in sub-do-files: if you have diﬀerent set of stylized facts, you
+
+  could have: `2.1-stylized-facts-geography.do`, `2.2-stylized-facts-count.do` etc. . . .
 
 
 --------------------------------------------------------------------------------
@@ -94,7 +111,7 @@ You can have a master do file which loads your small section do files sequential
 - `/* */` for multiple line comment
 - `//#` or `**#` add a bookmark
 
-Continuation lines: `///` Everything after `///` to the end of the current line is considered a comment. The next line joins with the current line. Therefore, `///` allows you to split long lines across multiple lines in the do-file.
+**Continuation lines**: `///` Everything after `///` to the end of the current line is considered a comment. The next line joins with the current line. Therefore, `///` allows you to split long lines across multiple lines in the do-file.
 
 Summary of ways to break long lines:
 
@@ -152,9 +169,24 @@ If there is no underlining, no abbreviation is allowed.
 `rename` can be abbreviated `ren`, `rena`, `renam`, or it can be spelled out in its entirety.
 
 
+Open `do` files in tabs rather than in separate windows: <https://www.reddit.com/r/stata/comments/1ivjegr/stata_18_mac_does_not_do_tabs_for_dofile_editor/>
+
+
 ## Baisc syntax
 
-`ssc install pkgname`: Install `pkgname` from ssc. The SSC (Statistical Software Components) is the premier Stata download site.
+**Package management**
+
+Users can add new features to Stata, and some users choose to make new features that they have written available to others via the web. The files that comprise a new feature are called a *package*, and a package usually consists of one or more ado-files and help files.
+
+`ssc install newpkgname`: **Install** `newpkgname` from ssc. The SSC (Statistical Software Components) is the premier Stata download site.
+
+`ssc uninstall pkgname` to **uninstall** `pkgname`
+
+`ado update` to **update** packages
+
+`ssc hot [, n(#)]` a list of most popular pkgs at SSC. `n(#)` to specify the number of pkgs listed.
+
+
 
 Stata is case-sensitive: `myvar`, `Myvar` and `MYVAR` are three distinct names.
 
@@ -289,6 +321,66 @@ i.group i.sex i.group#i.sex
 
 `o.age` means that the continuous variable `age` should be omitted, and
 `o2.group` means that the indicator for `group = 2` should be omitted.
+
+
+
+
+
+**Interaction Expansion**
+
+```stata
+xi [ , prefix(string) noomit ] term(s)
+```
+
+`xi`  expands terms containing categorical variables into indicator (also called dummy) variable sets. `xi` provides a convenient way to include dummy or indicator variables when fitting a model that does NOT support factor variables, e.g., `xtabond`.
+
+We recommend that you use factor variables instead of `xi` if a command allows factor variables.
+
+By default, `xi` will create interaction variables starting with `_I`.  This can be changed using the `prefix(string)` option. 
+
+| Operator                | Description                                                  |
+| ----------------------- | ------------------------------------------------------------ |
+| `i.varname`             | creates dummies for categorical variable `varname`           |
+| `i.varname1*i.varname2` | creates dummies for categorical variables `varname1` and `varname2`: main effects and all interactions |
+| `i.varname1*varname3`   | creates dummies for categorical variable `varname1` and continuous variable `varname3`: main effects and all interactions |
+| `i.varname1|varname3`   | creates dummies for categorical variable `varname1` and continuous variable `varname3`: all interactions and main effect of `varname3`, but <span style='color:#FF9900'>**NO**</span> main effect of `varname1` |
+
+- `xi` expands both numeric and string categorical variables.
+
+  `agegrp` takes on values 1, 2,3, and 4.
+
+  ```stata
+  xi: logistic outcome i.agegrp
+  ```
+
+  `xi` tabulates `i.agegrp` creates indicator (dummy) variables for each observed value, omitting the indicator for the smallest value.
+
+  This creates variables name `-Iagegrp2`, `-Iagegrp3`, and `-Iagegrp4`.
+
+  ```stata
+  // The expanded logistic model is
+  logistic outcome _Iagegrp_2 _Iagegrp_3 _Iagegrp_4
+  ```
+
+- Dummy variables are created automatically and are left in your dataset.
+
+	You can drop them by typing `drop I*`. You do not have to do this; each time you use `xi`, any automatically generated dummies with the same prefix as the one specified in the `prefix(string)` option, or `_I` by default, are *dropped and new ones are created*.
+	
+	
+
+**Use `xi` as a command prefix**
+
+```stata
+// simple effects
+xi: logistic outcome weight i.agegrp bp
+// interactions of categorical variables
+xi: logistic outcome weight bp i.agegrp*i.race
+// interactions of dummy variables with continuous variables
+// fits a model with indicator variables for all agegrp categories interacted with weight, plus the maineffect terms weight and i.agegrp.
+xi: logistic outcome bp i.agegrp*weight i.race
+// interaction terms without the agegrp main effect (but with the weight main effect)
+xi: logistic outcome bp i.agegrp|weight i.race
+```
 
 
 
@@ -511,6 +603,10 @@ estimates table m1 m2, stats(N r2_a) star
 
 - `export` allows you to specify the output format
 
+Alternative to `etable`: `eststo`.
+
+
+
 
 ### Stored Results
 
@@ -606,7 +702,7 @@ xtabond depvar [ indepvars ] [ if ] [ in ] [, options ]
 
 **Options**:
 
-- `lags(#)`:  #lags of dependent variable as covariates; default is `lags(1)`
+- `lags(#)`:  #lags of dependent variable as covariates; default is <span style='color:#008B45'>`lags(1)`</span>
 - `maxldep(#)`: maximum lags of dependent variable for use as instruments
 - `maxlags(#)`: maximum lags of predetermined and endogenous variables for use as instruments
 - `twostep`: compute the two-step estimator instead of the one-step estimator
@@ -634,13 +730,13 @@ $$
 
 where $i=1,\ldots,n$ denotes the firm, and $t=3,\ldots,T$ is the time series dimension. 
 
-- $n_{i,t}$ is the natural logarithm of employment
+- $n_{i,t}$ is the natural logarithm of *employment*, first and second lagged were used as independent variables
 
-- $w$ refers to the natural logarithm of wage
+- $w$ refers to the natural logarithm of *wage*, up to lag 1
 
-- $k$ is the natural logarithm of capital
+- $k$ is the natural logarithm of *capital*, up to lag 2
 
-- $ys$ is the natural logarithm of output
+- $ys$ is the natural logarithm of *output*, up to lag 2
 
 - Variables $d_3,\ldots,d_T$ are time dummies with corresponding coefficients $\gamma_3,\ldots,\gamma_T.$
 
@@ -707,7 +803,7 @@ Instruments for level equation
 
 `xtdpdsys` implements the Arellano–Bover/Blundell–Bond system estimator, which includes the lagged differences of `n` (the dependent variable) as instruments for the level equation.
 
-
+--------------------------------------------------------------------------------
 
 **Test for Autocorrelation**
 
@@ -734,6 +830,7 @@ Order         z   Prob > z
 
 ```stata
 . estat sargan
+
 Sargan test of overidentifying restrictions
 H0: Overidentifying restrictions are valid
 		chi2(25) = 65.81806
@@ -742,13 +839,15 @@ H0: Overidentifying restrictions are valid
 
 
 
-
+--------------------------------------------------------------------------------
 
 **Predetermined Covariates**
 
 Sometimes we cannot assume strict exogeneity. Recall that a variable, $x_{it}$, is said to be strictly exogenous if $\E[𝑥_{it}\varepsilon_{is}] = 0$ for all $t$ and $s$. 
 
 If $\E[x_{it}\varepsilon_{is}] \ne 0$ for $s < t$ but $\E[x_{it}\varepsilon_{is}] = 0$ for all $s\ge t,$ the variable is said to be <span style='color:#008B45'>**predetermined**</span>. Intuitively, if the error term at time $t$ has some feedback on the subsequent realizations of $x_{it},$ $x_{it}$ is a predetermined variable. Because unforecastable errors today might affect future changes in the real wage and in the capital stock, we might suspect that the log of the real product wage and the log of the gross capital stock are predetermined instead of strictly exogenous.
+
+We also call predetermined $x_{it}$ as <span style='color:#008B45'>**sequential exogenous**</span>.
 
 Here we treat $w$ and $k$ as predetermined and use lagged levels as instruments.
 
@@ -772,7 +871,7 @@ By this definition, endogenous variables differ from predetermined variables onl
 
   Endogenous variables are treated similarly to the *lagged dependent variable*. Levels of the endogenous variables lagged two or more periods can serve as instruments.
 
-- predetermined variables do NOT allow for contemparaneous correlation.
+- predetermined variables do <span style='color:#FF9900'>**NOT**</span> allow for contemporaneous correlation.
 
 In this example, we treat $w$ and $k$ as endogenous variables.
 
@@ -781,4 +880,71 @@ xtabond n l(0/1).ys yr1980-yr1984 year, lags(2) twostep endogenous(w, lag(1,.)) 
 ```
 
 Although some estimated coefficients changed in magnitude, none changed in sign, and these results are similar to those obtained by treating $w$ and $k$ as predetermined.
+
+
+--------------------------------------------------------------------------------
+
+### xtabond2
+
+`xtabond2` was written by David Roodman. More versatile than `xtabond`. 
+
+| `xtabond`                                                    | `xtabond2`               |
+| ------------------------------------------------------------ | ------------------------ |
+| Not support factor variables<br />Can be fixed with `xi: xtabond` | Support factor variables |
+
+
+
+
+```stata
+xtabond2 depvar varlist [if exp] [in range] [weight] [, level(#)
+        svmat svvar twostep robust cluster(varlist) noconstant small 
+				gmmopt [gmmopt ...] ivopt [ivopt ...]]
+```
+
+**Options**:
+
+- `level(#)` confidence level, default to `level(95)`
+
+- `gmmopt`
+
+  ```stata
+  gmmstyle(varlist [, laglimits(# #) collapse orthogonal equation({diff | level | both}) passthru split])
+  ```
+  
+  `gmmstyle` specifies a set of variables to be used as bases for "GMM-style" instrument sets described in Holtz-Eakin, Newey, and Rosen (1988) and Arellano and Bond (1991).  By default xtabond2 uses, for each time period, all available lags of the specified variables in levels dated $t-1$ or earlier as instruments for the transformed equation; and uses the contemporaneous first differences as instruments in the levels equation. These defaults are appropriate for predetermined variables that are not strictly exogenous (Bond 2000). Missing values are always replaced by zeros.
+  
+  Since the `gmmstyle()` varlist allows time-series operators, there are many routes to the same specification.  E.g., `gmm(w, lag(2 .))`, the standard treatment for an endogenous variable, is equivalent to `gmm(L.w, lag(1 .))`, thus `gmm(L.w)`.
+
+
+- `ivopt`
+
+  ```stata
+  ivstyle(varlist [, equation({diff | level | both}) passthru mz])
+  ```
+
+  `ivstyle` specifies a set of variables to serve as standard instruments, with one column in the instrument matrix per variable.  Normally, strictly exogenous regressors are included in `ivstyle` options, in order to enter the instrument matrix, as well as being listed before the main comma of the command line. 
+  
+  The `equation()` suboption specifies which equation(s) should use the instruments: 
+  
+  - `equation(diff)`: first-difference only
+  - `equation(level)`: levels only
+  - `equation(both)`: both, default
+
+
+
+A matching triplet using different pkgs to achieve the same results (pp42, Stata Journal article by David Roodman)
+
+```stata
+xtabond n, lags(1) pre(w, lagstruct(1,.)) pre(k, endog) robust
+xtdpd n L.n w L.w k, dgmmiv(w k n) vce(robust)
+xtabond2 n L.n w L.w k, gmmstyle(L.(w n k), eq(diff)) robust
+```
+
+
+
+
+
+
+
+
 

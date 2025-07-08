@@ -46,7 +46,7 @@ To number and refer to equations, put them in the equation environments and assi
 ```latex
 \begin{align} 
 \frac{d}{dx}\left( \int_{a}^{x} f(u)\,du\right)=f(x)
-(\#eq:eq01)
+(\#eq:binom)
 \end{align}
 ```
 
@@ -62,12 +62,16 @@ It renders the equation below:
 
 You may refer to it using Eq. <span style='color:#008B45'>**`\@ref(eq:binom)`**</span>, e.g., see Eq \@ref(eq:binom).
 
-Naming conventions for eq labels:
+**Naming conventions** for equation labels in **bookdown**:
 
-- Equation labels must start with the prefix `eq:` in **bookdown**. 
-
-- All labels in **bookdown** must only contain alphanumeric characters, `:`, `-`, and/or `/`. 
+- Equation labels must start with the prefix `eq:`. 
+    
+    In `qmd`, eq labels start with `eq-`.
+    
+- All labels must only contain alphanumeric characters, `:`, `-`, and/or `/`. 
 - Do <span style='color:#FF9900'>**NOT**</span> use underscore `_`. ❌
+    
+    Note that `qmd` supports underscores in eq labels.
 
 
 
