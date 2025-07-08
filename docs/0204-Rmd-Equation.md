@@ -41,13 +41,36 @@ For equation numbering support in `bookdown` you need to [assign labels](https:/
 
 --------------------------------------------------------------------------------
 
-You may refer to an equation using Eq. `\@ref(eq:eq01)`.
+To number and refer to equations, put them in the equation environments and assign labels to them using the syntax `(\#eq:label)`, e.g.,
 
 ```latex
-\begin{align} (\#eq:eq01)
-\frac{p(x)}{1-p(x)} = \exp (\beta_0+\beta_1 x) \,.
+\begin{align} 
+\frac{d}{dx}\left( \int_{a}^{x} f(u)\,du\right)=f(x)
+(\#eq:eq01)
 \end{align}
 ```
+
+It renders the equation below:
+
+
+\begin{align} 
+\frac{d}{dx}\left( \int_{a}^{x} f(u)\,du \right) = f(x)
+(\#eq:binom)
+\end{align}
+
+
+
+You may refer to it using Eq. <span style='color:#008B45'>**`\@ref(eq:binom)`**</span>, e.g., see Eq \@ref(eq:binom).
+
+Naming conventions for eq labels:
+
+- Equation labels must start with the prefix `eq:` in **bookdown**. 
+
+- All labels in **bookdown** must only contain alphanumeric characters, `:`, `-`, and/or `/`. 
+- Do <span style='color:#FF9900'>**NOT**</span> use underscore `_`. ❌
+
+
+
 
 If you want to provide a specific number to the equation, you can use `\tag{XX.XX}`.
 
@@ -73,7 +96,7 @@ If you want to provide a specific number to the equation, you can use `\tag{XX.X
   (\#eq:my-label-bookdown)
   \end{align}
   
-  My specific label here, see eq \@ref(eq:my-label-bookdown)
+  My specific label here, see eq \@ref(eq:my-label-bookdown) (eq. `\@ref(eq:my-label-bookdown)`).
 
 --------------------------------------------------------------------------------
 

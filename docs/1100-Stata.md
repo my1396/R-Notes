@@ -60,7 +60,7 @@ For example, if you run a command that creates a variable `x`, realize you made 
 
 - Your `.do` file begins with loading a dataset and ends with saving one.
 
-    ```
+    ```stata
     use ..., clear // begin
     /* your code */
     save ..., replace // end
@@ -154,7 +154,9 @@ If there is no underlining, no abbreviation is allowed.
 
 ## Baisc syntax
 
-Stata is case-sensitive; `myvar`, `Myvar` and `MYVAR` are three distinct names.
+`ssc install pkgname`: Install `pkgname` from ssc. The SSC (Statistical Software Components) is the premier Stata download site.
+
+Stata is case-sensitive: `myvar`, `Myvar` and `MYVAR` are three distinct names.
 
 ```
 [by varlist:] command [ varlist ] [=exp] [if exp] [in range] [ weight ] [, options]
@@ -209,22 +211,92 @@ summarize marriage_rate divorce_rate if region == "West"
 - Negative numbers mean "from the end of the data"
 
 
-```
+```stata
 // summarize for observations 5 to 25
 summarize marriage_rate divorce_rate in 5/25
 // summarize for the last five observations
 summarize marriage_rate divorce_rate in -5/l
 ```
 
+
+
+**Create new variables**
+
 ```stata
 gen variable = expression      // generate new variables
 replace variable = expression  // replace the value of existing variables
 ```
 
-
 `generate newvar = oldvar + 2` generate a new variable `newvar`, which equals `oldvar+2`
 
-**Time series varlists**
+`egen` creates a new variable based on existing variables.
+
+```stata
+// Generate newv1 for distinct groups of v1 and v2, and create and apply value label mylabel
+egen newv1 = group(v1 v2), label(mylabel)
+```
+
+
+
+`encode var, gen(newvar)`  creates a new variable named `newvar` based on the string variable `varname`.  It alphabetizes unique values in `var` and assigns numeric codes to each entry. 
+
+```stata
+encode sex, gen(gender)
+// nolabel drops value labels and show how the data really appear
+list sex gender in 1/4, nolabel
+// you won't see difference using the following cmd
+list sex gender in 1/4
+```
+
+`sex` is a string variable and takes on values `female` and `male`.
+
+`encode` creates a new variable `gender`, mapping each level in `sex` to a numerical value. `female` becomes 1 and `male` becomes 2.
+
+
+
+___
+
+### Factor Variables
+
+`i.varname` create **indicators** for each level of the variable
+
+```stata
+// group=1 as base level
+list group i.group in 1/5
+// group=3 as base level
+list group i3.group in 1/5
+// individual fixed effects
+regress y i.group 
+```
+
+`c.varname` treat as **continuous**
+
+
+
+`#` cross, create an **interaction** for each combination of the variables
+
+`##` factorial cross, a full factorial of the variables: standalone effects for each variable and an interaction
+
+```stata
+group##sex
+// equivalently
+i.group i.sex i.group#i.sex
+```
+
+
+
+`o.varname` **omit** a variable or indicator
+
+`o.age` means that the continuous variable `age` should be omitted, and
+`o2.group` means that the indicator for `group = 2` should be omitted.
+
+
+
+
+
+___
+
+### Time series varlists
 
 Three time series operators: `L.`, `D.` and `S.`.
 
@@ -244,17 +316,17 @@ xtset country year
 ```
 
 
-| Operator  | Meaning                                                      |
-| --------- | ------------------------------------------------------------ |
-| `L.`      | lag $x_{t-1}$                                                |
-| `L2.`     | 2-period lag $x_{t-2}$                                       |
-| `L(1/2).` | a varlist $x_{t-1}$ and $x_{t-2}$                            |
-| `F.`      | lead $x_{t+1}$                                               |
-| `F2.`     | 2-period lead $x_{t+2}$                                      |
-| `D.`      | difference $x_{t}-x_{t-1}$                                   |
-| `D2.`     | difference of difference $(x_{t}-x_{t-1})-(x_{t-1}-x_{t-2})$ |
-| `S.`      | "seasonal" difference $x_{t}-x_{t-1}$                        |
-| `S2.`     | lag-2 seasonal difference $x_{t}-x_{t-2}$                    |
+| TS Operator | Meaning                                                      |
+| ----------- | ------------------------------------------------------------ |
+| `L.`        | lag $x_{t-1}$                                                |
+| `L2.`       | 2-period lag $x_{t-2}$                                       |
+| `L(1/2).`   | a varlist $x_{t-1}$ and $x_{t-2}$                            |
+| `F.`        | lead $x_{t+1}$                                               |
+| `F2.`       | 2-period lead $x_{t+2}$                                      |
+| `D.`        | difference $x_{t}-x_{t-1}$                                   |
+| `D2.`       | difference of difference $(x_{t}-x_{t-1})-(x_{t-1}-x_{t-2})$ |
+| `S.`        | "seasonal" difference $x_{t}-x_{t-1}$                        |
+| `S2.`       | lag-2 seasonal difference $x_{t}-x_{t-2}$                    |
 
 Note that `D1.` = `S1.`, but `D2.` $\ne$ `S2.`.
 
@@ -277,8 +349,45 @@ L.gnp L2.gnp L3.gnp L.cpi L2.cpi L3.cpi
 `.dta` is Stata dataset file format
 
 
-## Data Import and Export
 
+### Labels
+
+**Variable labels** convey information about a variable, and can be a substitute for long variable names. 
+
+```stata
+// generally
+label variable variable_name "variable label"
+// use example
+label variable price "Price in 1978 Dollars"
+```
+
+**Value labels** are used with categorical variables to tell you what the categories mean.
+
+1. First define a mapping 
+
+```stata
+// generally
+label define map_name value1 "label1" value2 "label2"...
+// use example
+label define rep_label 1 "Bad" 2 "Average" 3 "Good"
+```
+
+2. Add value labels to existing variables
+
+```stata
+// generally
+label values map_name
+// use example
+label values rep3 rep_label
+```
+
+
+
+
+
+## Data Manipulation
+
+### Import and Export
 
 **Shipped datasets**
 
@@ -286,8 +395,9 @@ Stata contains some demonstration datasets in the system directories.
 
 `sysuse dir`: list the names of shipped datasets.
 
-`sysuse lifeexp`: use `lifeexp`\
-`use lifeexp` will return error. Data not found.
+`sysuse lifeexp`: use `lifeexp`
+
+Note that `use lifeexp` will return error. Data not found.
 
 
 **User datasets**
@@ -327,71 +437,348 @@ import delimited [using] filename [, import_delimited_options]
 
 **Options** 
 
-`delimiters("chars"[, collapse | asstring] )`:
+- `delimiters("chars"[, collapse | asstring] )`:
 
-- `"chars"` specifies the delimiter
-
-    `";"`: uses semicolon as a delimiter; `"\t"` uses tab, `"whitespace"` uses whitespace
+    - `"chars"` specifies the delimiter
     
-- `collapse` treat multiple consecutive delimiters as just one delimiter.
-- `asstring`  treat `chars` as one delimiter. By default, each character in `chars` is treated as an individual delimiter.
+        `";"`: uses semicolon as a delimiter; `"\t"` uses tab, `"whitespace"` uses whitespace
+        
+    - `collapse` treat multiple consecutive delimiters as just one delimiter.
+    - `asstring`  treat `chars` as one delimiter. By default, each character in `chars` is treated as an individual delimiter.
+    
+    
+    ```stata
+    // use example
+    import delimited auto, delim(" ", collapse) colrange(:3) rowrange(8) 
+    ```
+
+- `clear` replace data in memory
+
+
+___
+
+### Save Estimation Results
+
+`estimates store model_name` stores the current (active) estimation results under the name `model_name`.
+
+```stata
+// Store estimation results as m1 for use later in the same session
+estimates store m1
+```
+
+`estimates table` organizes estimation results from one or more models in a single formatted table.
+
+If you type estimates table without arguments, a table of the most recent estimation results will be shown.
+
+```stata
+// Display a table of coefficients for stored estimates m1 and m2
+estimates table m1 m2
+// with SE
+estimates table m1 m2, se
+
+// with sample size, adjusted 𝑅2, and stars
+estimates table m1 m2, stats(N r2_a) star
+```
+
+
+
+`estimate save filename` save the current active estimation results to `filename.ster`. 
+
+
+
+#### `etable` {.unnumbered}
+
+**`etable`**  allows you to easily create a table of estimation results and export it to a variety of file types, e.g., docx, html, pdf, xlsx, tex, txt, markdown, md.
+
+```stata
+// use example of etable
+. clear all
+. webuse nhanes2l
+(Second National Health and Nutrition Examination Survey)
+. quietly regress bpsystol age weight i.region
+. estimates store model1
+
+. quietly regress bpsystol i.sex weight i.agegrp
+. estimates store model2
+
+. quietly regress bpsystol age weight i.agegrp
+. estimates store model3
+
+. etable, estimates(model1 model2 model3) showstars showstarsnote title("Table 1. Models for systolic blood pressure") export(mydoc.docx, replace)
+```
+
+**Options**:
+
+- `export` allows you to specify the output format
+
+
+### Stored Results
+
+Stata commands that report results also store the results where they can be subsequently used by other commands or programs. This is documented in the Stored results section of the particular command in the reference manuals.
+
+- e-class commands, such as regress, store their results in `e()`; e-class commands are Stata’s model estimation commands.
+
+- r-class commands, such as summarize, store their results in `r()`; most commands are r-class.
+
 
 
 ```stata
-// use example
-import delimited auto, delim(" ", collapse) colrange(:3) rowrange(8) 
+// for r-class command
+return list
+// for e-class command
+ereturn list
 ```
 
-### Labels
 
-Variable labels convey information about a variable, and can be a substitute for long variable names. 
+
+
+
+
+## Panel
+
+**Declear panel data**
+
+You must `xtset` your data before you can use other `xt` commands.
+
+`xtset panelvar timevar` declares the data to be a panel in which the order of observations is relevant. When you specify `timevar`, you can then use time series operators (e.g., `L`, `D`).
+
+**Menu**
+
+Statistics > Longitudinal/panel data > Setup and utilities > Declare dataset to be panel data
+
+- `panelvar`  panel variable that identifies the unit
+- `timevar` optional time variable that identifies the time within panels
+
+Use `describe` to show an overview of data structure.
+
+Sometimes numbers will get recorded as string variables, making it impossible to do almost any command.
 
 ```stata
-// generally
-label variable variable_name "variable label"
-// use example
-label variable price "Price in 1978 Dollars"
+destring [varlist], {gen(newvarlist) | replace} [options]
 ```
 
-Value labels are used with categorical variables to tell you what the categories mean.
-
-1. First define a mapping 
+- `gen(newvarlist)` generate new variables for each variable in `varlist`.
+- `replace` replace string variables with numeric variables
+- `ignore("chars")` specifies nonnumeric characters be removed.
 
 ```stata
-// generally
-label define map_name value1 "label1" value2 "label2"...
-// use example
-label define rep_label 1 "Bad" 2 "Average" 3 "Good"
+// from logd_gdp to rad, convert to numeric, replace "NA" with missing
+destring logd_gdp-rad, replace ignore(`"NA"')
 ```
 
-2. Add value labels to existing variables
+
+
+--------------------------------------------------------------------------------
+
+`xtreg` is Stata's feature for fitting linear models for panel data.
+
+`xtreg, fe` estimates the parameters of fixed-effects models:
+
 
 ```stata
-// generally
-label values map_name
-// use example
-label values rep3 rep_label
+xtreg depvar [indepvars] [if] [in] [weight] , fe [FE_options]
 ```
 
+Menu: Statistics > Longitudinal/panel data > Linear models > Linear regression (FE, RE, PA, BE, CRE)
+
+Options
+
+- `vce(robust)` use clustered variance that allows for intragroup correlation within
+  groups.
+  
+    By defualt, SE uses OLS estimates.
 
 
 
 ## Arellano-Bond Estimator
 
-The Arellano-Bond estimator may be obtained in Stata using either the `xtabond` or `xtdpd` command.
+The [Arellano–Bond estimator](https://www.stata.com/manuals/xtxtabond.pdf) is for datasets with many panels and few periods. (Technically, the large-sample properties are derived with the number of panels going to infinity and the number of periods held fixed.) The number of instruments increases quadratically in the number of periods. If your dataset is better described by a framework in which both the number of panels and the number of periods is large, then you should consider other estimators such as `xtiveg` or `xtreg, fe`.
 
+The Arellano-Bond estimator may be obtained in Stata using either the `xtabond` or `xtdpd` command.
 
 `xtabond` fits a linear dynamic panel-data model where the unobserved unit-level effects are correlated with the lags of the dependent variable, known as the Arellano–Bond estimator. This estimator is designed for datasets with many panels and few periods, and it requires that there be **no autocorrelation** in the idiosyncratic errors.
 
+`xtabond` uses moment conditions in which lags of the dependent variable and first differences of the exogenous variables are instruments for the first-differenced equation.
+
+```stata
+xtabond depvar [ indepvars ] [ if ] [ in ] [, options ]
+```
+
+**Options**:
+
+- `lags(#)`:  #lags of dependent variable as covariates; default is `lags(1)`
+- `maxldep(#)`: maximum lags of dependent variable for use as instruments
+- `maxlags(#)`: maximum lags of predetermined and endogenous variables for use as instruments
+- `twostep`: compute the two-step estimator instead of the one-step estimator
+- `pre(varlist)`: predetermined variables; can be specified more than once
+- `endogenous(varlist)`: endogenous variables; can be specified more than once
+- `vce(vcetype)`
+    - `vce(gmm)` the default, uses the conventionally derived variance estimator for generalized method of moments estimation.
+    - `vce(robust)`: uses the robust estimator. After one-step estimation, this is the Arellano–Bond robust VCE estimator. After two-step estimation, this is the Windmeijer (2005) WC-robust estimator.
+
+
+
+$$
+\begin{equation} (\#eq:AB-model)
+\begin{split}
+n_{i,t}
+&= \alpha_1 n_{i,t-1} + \alpha_2 n_{i,t-2} + \bbeta'(L) \bx_{it} + \lambda_t + \eta_i + \varepsilon_{i,t} \\
+&= \alpha_1 n_{i,t-1} + \alpha_2 n_{i,t-2}  \\
+&\phantom{=}\quad  + \beta_1 w_{i,t} + \beta_2 w_{i,t-1} \\
+&\phantom{=}\quad  + \beta_3 k_{i,t} + \beta_4 k_{i,t-1} + \beta_5 k_{i,t-2} \\
+&\phantom{=}\quad + \beta_6 ys_{i,t} + \beta_7 ys_{i,t-1} + \beta_8 ys_{i,t-2}  \\
+&\phantom{=}\quad + \gamma_3 d_3 + \dots + \gamma_T d_T + \eta_i + \varepsilon_{i,t},
+\end{split}
+\end{equation}
+$$
+
+where $i=1,\ldots,n$ denotes the firm, and $t=3,\ldots,T$ is the time series dimension. 
+
+- $n_{i,t}$ is the natural logarithm of employment
+
+- $w$ refers to the natural logarithm of wage
+
+- $k$ is the natural logarithm of capital
+
+- $ys$ is the natural logarithm of output
+
+- Variables $d_3,\ldots,d_T$ are time dummies with corresponding coefficients $\gamma_3,\ldots,\gamma_T.$
+
+- $\eta_i$ is the unobserved individual-specific effects.
+
+- $\varepsilon_{i,t}$ is an idiosyncratic remainder component.
+
+Model \@ref(eq:AB-model) can be implemented using the following command.
+
+```stata
+// Use example
+use https://www.stata-press.com/data/r19/abdata
+xtabond n l(0/1).w l(0/2).(k ys) yr1980-yr1984 year, lags(2) vce(robust) noconstant
+```
+
+The output would look like the following.
+
+```stata
+Arellano–Bond dynamic panel-data estimation     Number of obs     =        611
+Group variable: id                              Number of groups  =        140
+Time variable: year
+                                                Obs per group:
+                                                              min =          4
+                                                              avg =   4.364286
+                                                              max =          6
+
+Number of instruments =     40                  Wald chi2(13)     =    1318.68
+                                                Prob > chi2       =     0.0000
+One-step results
+                                     (Std. err. adjusted for clustering on id)
+
+ 	 	                  Robust
+   n 	 	 Coefficient  std. err.      z    P>|z|     [95% conf. interval]
+   
+   n 	 
+ L1. 	 	   .6286618   .1161942     5.41   0.000     .4009254    .8563983
+     	 
+   w 	 
+ --. 	 	  -.5104249   .1904292    -2.68   0.007    -.8836592   -.1371906
+ L1. 	 	   .2891446    .140946     2.05   0.040     .0128954    .5653937
+ L2. 	 	  -.0443653   .0768135    -0.58   0.564     -.194917    .1061865
+     	 
+   k 	 
+ --. 	 	   .3556923   .0603274     5.90   0.000     .2374528    .4739318
+ L1. 	 	  -.0457102   .0699732    -0.65   0.514    -.1828552    .0914348
+ L2. 	 	  -.0619721   .0328589    -1.89   0.059    -.1263743    .0024301
+     	 
+yr1980 	 	  -.0282422   .0166363    -1.70   0.090    -.0608488    .0043643
+yr1981 	 	  -.0694052    .028961    -2.40   0.017    -.1261677   -.0126426
+yr1982 	 	  -.0523678   .0423433    -1.24   0.216    -.1353591    .0306235
+yr1983 	 	  -.0256599   .0533747    -0.48   0.631    -.1302723    .0789525
+yr1984 	 	  -.0093229   .0696241    -0.13   0.893    -.1457837    .1271379
+year 	 	   .0019575   .0119481     0.16   0.870    -.0214604    .0253754
+
+Instruments for differenced equation
+        GMM-type: L(2/.).n
+        Standard: D.w LD.w L2D.w D.k LD.k L2D.k D.yr1980 D.yr1981 D.yr1982
+                  D.yr1983 D.yr1984 D.year
+Instruments for level equation
+        Standard: _cons
+```
+
+
+
+`xtdpdsys` implements the Arellano–Bover/Blundell–Bond system estimator, which includes the lagged differences of `n` (the dependent variable) as instruments for the level equation.
+
+
+
+**Test for Autocorrelation**
+
+The moment conditions of these GMM estimators are valid only if there is no serial correlation in the idiosyncratic errors. Because the first difference of white noise is necessarily autocorrelated, we need only concern ourselves with second and higher autocorrelation. We can use **`estat abond`** to test for autocorrelation:
+
+```stata
+. estat abond, artests(4)
+
+Arellano–Bond test for zero autocorrelation in first-differenced errors
+H0: No autocorrelation 
+
+Order         z   Prob > z
+    1   -4.6414     0.0000
+    2   -1.0572     0.2904
+    3   -.19492     0.8455
+    4   .04472      0.9643
+```
+
+
+
+**Test for Overidentifying Restrictions**
+
+`estat sargan` reports the Sargan test of overidentifying restrictions.
+
+```stata
+. estat sargan
+Sargan test of overidentifying restrictions
+H0: Overidentifying restrictions are valid
+		chi2(25) = 65.81806
+		Prob > chi2 = 0.0000
+```
 
 
 
 
 
+**Predetermined Covariates**
+
+Sometimes we cannot assume strict exogeneity. Recall that a variable, $x_{it}$, is said to be strictly exogenous if $\E[𝑥_{it}\varepsilon_{is}] = 0$ for all $t$ and $s$. 
+
+If $\E[x_{it}\varepsilon_{is}] \ne 0$ for $s < t$ but $\E[x_{it}\varepsilon_{is}] = 0$ for all $s\ge t,$ the variable is said to be <span style='color:#008B45'>**predetermined**</span>. Intuitively, if the error term at time $t$ has some feedback on the subsequent realizations of $x_{it},$ $x_{it}$ is a predetermined variable. Because unforecastable errors today might affect future changes in the real wage and in the capital stock, we might suspect that the log of the real product wage and the log of the gross capital stock are predetermined instead of strictly exogenous.
+
+Here we treat $w$ and $k$ as predetermined and use lagged levels as instruments.
+
+```stata
+xtabond n l(0/1).ys yr1980-yr1984 year, lags(2) twostep pre(w, lag(1,.)) pre(k, lag(2,.)) noconstant vce(robust)
+```
+
+We are now including GMM-type instruments from the first lag of `L.w` on back and from the first lag of `L2.k` on back.
+
+`pre(w, lag(1, .))` to mean that `L.w` is a predetermined variable and `pre(k, lag(2, .))` to mean that `L2.k` is a predetermined variable. 
 
 
 
+**Endogenous Covariates**
 
+We might instead suspect that $w$ and $k$ are endogenous in that  $\E[x_{it}\varepsilon_{is}] \ne 0$ for $s \le t$ but $\E[x_{it}\varepsilon_{is}] = 0$ for all $s > t.$
 
+By this definition, endogenous variables differ from predetermined variables only in that the
 
+- endogenous variables allow for correlation between $x_{it}$ and $\varepsilon_{it}$ at time $t,$ whereas
+
+  Endogenous variables are treated similarly to the *lagged dependent variable*. Levels of the endogenous variables lagged two or more periods can serve as instruments.
+
+- predetermined variables do NOT allow for contemparaneous correlation.
+
+In this example, we treat $w$ and $k$ as endogenous variables.
+
+```stata
+xtabond n l(0/1).ys yr1980-yr1984 year, lags(2) twostep endogenous(w, lag(1,.)) endogenous(k, lag(2,.)) noconstant vce(robust)
+```
+
+Although some estimated coefficients changed in magnitude, none changed in sign, and these results are similar to those obtained by treating $w$ and $k$ as predetermined.
 
