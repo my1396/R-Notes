@@ -538,17 +538,25 @@ div.csl-indent {
 <li><p><strong>Create a forecast model</strong> using <code>forecast create</code>. This initialize a new model; we will call the model <code>mymodel.</code></p>
 <div class="sourceCode" id="cb324"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb324-1"><a href="8.4-forecast.html#cb324-1" tabindex="-1"></a>forecast create mymodel</span></code></pre></div>
 <p>The name you give the model mainly controls how output from <code>forecast</code> commands is labeled. More importantly, <code>forecast create</code> creates the internal data structures Stata uses to keep track of your model.</p></li>
-<li><p><strong>Add all equations</strong> to the model you just created.</p>
+<li><p><strong>Add all equations</strong> to the model you just created using <code>forecast estimates</code>.</p>
 <p>The following command adds the stored estimation results in <code>myarima</code> to the current model <code>mymodel</code>.</p>
 <pre><code>forecast estimates myarima</code></pre></li>
 <li><p><strong>Compute dynamic forecasts</strong> from 2012 to 2024</p>
 <div class="sourceCode" id="cb326"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb326-1"><a href="8.4-forecast.html#cb326-1" tabindex="-1"></a>forecast solve, <span class="kw">begin</span>(2012) <span class="kw">end</span>(2024)</span></code></pre></div></li>
 </ol>
 <hr />
+<p><strong>Creates a new forecast model</strong></p>
+<div class="sourceCode" id="cb327"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb327-1"><a href="8.4-forecast.html#cb327-1" tabindex="-1"></a>forecast create [ <span class="bn">name</span> ] [ , <span class="kw">replace</span> ]</span></code></pre></div>
+<p>The <code>forecast create</code> command creates a new forecast model in Stata.
+You must create a model before you can add equations or solve it. You can have <em>only one model in memory at a time</em>.</p>
+<p>You may optionally specify a <code>name</code> for your model. That <code>name</code> will appear in the output produced by the various forecast subcommands.</p>
+<p><code>replace</code> clear the existing model from memory before creating <code>name</code>. By default, <code>forecast create</code> issues an error message if another model is already in memory.</p>
+<p>Note that you can add multiple equations to a forecast model.</p>
+<hr />
 </div>
 <div id="add-equationsidentifies" class="section level3 unnumbered hasAnchor">
 <h3>Add equations/identifies<a href="8.4-forecast.html#add-equationsidentifies" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<div class="sourceCode" id="cb327"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb327-1"><a href="8.4-forecast.html#cb327-1" tabindex="-1"></a>forecast <span class="kw">estimates</span> <span class="bn">name</span> [, options ]</span></code></pre></div>
+<div class="sourceCode" id="cb328"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb328-1"><a href="8.4-forecast.html#cb328-1" tabindex="-1"></a>forecast <span class="kw">estimates</span> <span class="bn">name</span> [, options ]</span></code></pre></div>
 <p><strong>Options</strong>:</p>
 <ul>
 <li><p><code>predict(p_options)</code>: call <code>predict</code> using <code>p_options</code></p></li>
@@ -556,48 +564,64 @@ div.csl-indent {
 <p><code>forecast estimates</code> creates a new variable in the dataset for each element of <code>namelist</code>.</p>
 <p>If a variable of the same name already exists in your dataset, <code>forecast estimates</code> exits with an error unless you specify the <code>replace</code> option, in which case existing variables are overwritten.</p></li>
 </ul>
+<p><strong>Add an itentity to a forecast model</strong></p>
+<div class="sourceCode" id="cb329"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb329-1"><a href="8.4-forecast.html#cb329-1" tabindex="-1"></a>forecast <span class="kw">identity</span> varname = <span class="fu">exp</span></span></code></pre></div>
+<p>An <code>identity</code> is a nonstochastic equation that expresses an endogenous variable in the model as a function of other variables in the model. Identities often describe the behavior of endogenous variables that are based on accounting identities or adding-up conditions.</p>
+<div class="sourceCode" id="cb330"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb330-1"><a href="8.4-forecast.html#cb330-1" tabindex="-1"></a><span class="co">// Add an identity to the forecast that states that y3 is the sum of y1 and y2</span></span>
+<span id="cb330-2"><a href="8.4-forecast.html#cb330-2" tabindex="-1"></a>forecast <span class="kw">identity</span> y3=y1+y2</span>
+<span id="cb330-3"><a href="8.4-forecast.html#cb330-3" tabindex="-1"></a><span class="co">// create new variable newy before adding it to the forecast</span></span>
+<span id="cb330-4"><a href="8.4-forecast.html#cb330-4" tabindex="-1"></a>forecast <span class="kw">identity</span> newy=y1+y2, <span class="kw">generate</span></span></code></pre></div>
+<p>The difference is that if the LHS variable does not exist, you need to specify the option <code>gen</code>.</p>
+<p>Ex. We have a model using annual data and want to assume that our population variable pop grows at 0.75% per year. Then we can declare endogenous variable pop by using forecast identity:</p>
+<div class="sourceCode" id="cb331"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb331-1"><a href="8.4-forecast.html#cb331-1" tabindex="-1"></a>forecast <span class="kw">identity</span> pop = 1.0075*L.pop</span></code></pre></div>
+<p>Typically, you use <code>forecast identity</code> to define the relationship that determines an endogenous variable that is already in your dataset.</p>
+<p>The generate option of forecast identity is useful when you wish to use a transformation of one or more endogenous variables as a right-hand-side variable in a stochastic equation that describes another endogenous variable.</p>
 <hr />
 <p><code>forecast adjust</code> adjusts a variable by add factoring, replacing, etc.</p>
-<div class="sourceCode" id="cb328"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb328-1"><a href="8.4-forecast.html#cb328-1" tabindex="-1"></a>forecast <span class="kw">adjust</span> varname = <span class="fu">exp</span> [<span class="kw">if</span>] [<span class="kw">in</span>]</span></code></pre></div>
+<div class="sourceCode" id="cb332"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb332-1"><a href="8.4-forecast.html#cb332-1" tabindex="-1"></a>forecast <span class="kw">adjust</span> varname = <span class="fu">exp</span> [<span class="kw">if</span>] [<span class="kw">in</span>]</span></code></pre></div>
 <p><code>varname</code> is the name of the endogenous variable that has been previously added to the model using <code>forecast estimates</code> or <code>forecast coefvector</code>.</p>
 <p><code>forecast adjust</code> specifies an adjustment to be applied to an endogenous variable in the model. Adjustments are typically used to produce alternative forecast scenarios or to incorporate outside information into a model.</p>
-<div class="sourceCode" id="cb329"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb329-1"><a href="8.4-forecast.html#cb329-1" tabindex="-1"></a><span class="co">// Adjust the endogenous variable y in forecast to account for the variable shock in 1990</span></span>
-<span id="cb329-2"><a href="8.4-forecast.html#cb329-2" tabindex="-1"></a>forecast <span class="kw">adjust</span> <span class="fu">y</span> = <span class="fu">y</span> + shock <span class="kw">if</span> <span class="fu">year</span>==1990</span></code></pre></div>
+<div class="sourceCode" id="cb333"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb333-1"><a href="8.4-forecast.html#cb333-1" tabindex="-1"></a><span class="co">// Adjust the endogenous variable y in forecast to account for the variable shock in 1990</span></span>
+<span id="cb333-2"><a href="8.4-forecast.html#cb333-2" tabindex="-1"></a>forecast <span class="kw">adjust</span> <span class="fu">y</span> = <span class="fu">y</span> + shock <span class="kw">if</span> <span class="fu">year</span>==1990</span></code></pre></div>
 <p><strong>Use example: forecast a panel</strong>
 <span class="math display">\[
 \%\Delta \text{dim}_{it} = \beta_0 + \beta_1 \ln(\text{starts}_{it}) + \beta_2 \text{rgspgrowth}_{it} + \beta_3 \text{unrate}_{it} + u_{i} + \varepsilon_{it}
 \]</span></p>
 <p><span class="math inline">\(u_{i}\)</span> refers to individual fixed effects.</p>
 <p>When we make forecasts for any individual panel, we may want to include it in our forecasts. This can be achieved by using <code>forecast adjust</code>.</p>
-<div class="sourceCode" id="cb330"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb330-1"><a href="8.4-forecast.html#cb330-1" tabindex="-1"></a><span class="kw">use</span> https:<span class="co">//www.stata-press.com/data/r19/statehardware, clear</span></span>
-<span id="cb330-2"><a href="8.4-forecast.html#cb330-2" tabindex="-1"></a><span class="kw">generate</span> lndim = <span class="fu">ln</span>(dim)</span>
-<span id="cb330-3"><a href="8.4-forecast.html#cb330-3" tabindex="-1"></a><span class="kw">generate</span> lnstarts = <span class="fu">ln</span>(starts)</span>
-<span id="cb330-4"><a href="8.4-forecast.html#cb330-4" tabindex="-1"></a><span class="kw">quietly</span> <span class="kw">xtreg</span> D.lndim lnstarts rgspgrowth unrate <span class="kw">if</span> qdate &lt;= tq(2009q4), <span class="kw">fe</span></span>
-<span id="cb330-5"><a href="8.4-forecast.html#cb330-5" tabindex="-1"></a><span class="kw">predict</span> dlndim_u, u  <span class="co">/* obtain individual fixed effects */</span></span>
-<span id="cb330-6"><a href="8.4-forecast.html#cb330-6" tabindex="-1"></a><span class="kw">estimates</span> <span class="kw">store</span> dim  <span class="co">/* store estimation results */</span></span></code></pre></div>
-<p>With enough observations, we can have more confidence in the estimated panel-specific errors. If we are willing to assume that we have decent estimates of the panel-specific errors and that those panel-level effects will remain constant over the forecast horizon, then we can incorporate them into our forecasts. Because predict only provided us with estimates of the panel-level effects for the estimation sample, we need to extend them into the forecast horizon. An easy way to do that is to use <code>egen</code> to create a new set of variables:</p>
-<div class="sourceCode" id="cb331"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb331-1"><a href="8.4-forecast.html#cb331-1" tabindex="-1"></a><span class="kw">by</span> state: <span class="kw">egen</span> dlndim_u2 = <span class="kw">mean</span>(dlndim_u)</span></code></pre></div>
+<div class="sourceCode" id="cb334"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb334-1"><a href="8.4-forecast.html#cb334-1" tabindex="-1"></a><span class="kw">use</span> https:<span class="co">//www.stata-press.com/data/r19/statehardware, clear</span></span>
+<span id="cb334-2"><a href="8.4-forecast.html#cb334-2" tabindex="-1"></a><span class="kw">generate</span> lndim = <span class="fu">ln</span>(dim)</span>
+<span id="cb334-3"><a href="8.4-forecast.html#cb334-3" tabindex="-1"></a><span class="kw">generate</span> lnstarts = <span class="fu">ln</span>(starts)</span>
+<span id="cb334-4"><a href="8.4-forecast.html#cb334-4" tabindex="-1"></a><span class="kw">quietly</span> <span class="kw">xtreg</span> D.lndim lnstarts rgspgrowth unrate <span class="kw">if</span> qdate &lt;= tq(2009q4), <span class="kw">fe</span></span>
+<span id="cb334-5"><a href="8.4-forecast.html#cb334-5" tabindex="-1"></a><span class="kw">predict</span> dlndim_u, u  <span class="co">/* obtain individual fixed effects */</span></span>
+<span id="cb334-6"><a href="8.4-forecast.html#cb334-6" tabindex="-1"></a><span class="kw">estimates</span> <span class="kw">store</span> dim  <span class="co">/* store estimation results */</span></span></code></pre></div>
+<p>With enough observations, we can have more confidence in the estimated panel-specific errors.
+If we are willing to assume that we have decent estimates of the panel-specific errors and that those panel-level effects will remain constant over the forecast horizon, then we can <em>incorporate them into our forecasts</em>.</p>
+<p>Because predict only provided us with estimates of the panel-level effects for the estimation sample, we need to <strong>extend them into the forecast horizon</strong>.
+An easy way to do that is to use <code>egen</code> to create a new set of variables:</p>
+<div class="sourceCode" id="cb335"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb335-1"><a href="8.4-forecast.html#cb335-1" tabindex="-1"></a><span class="co">// extend panel fixed effects to the forecast horizon</span></span>
+<span id="cb335-2"><a href="8.4-forecast.html#cb335-2" tabindex="-1"></a><span class="kw">by</span> state: <span class="kw">egen</span> dlndim_u2 = <span class="kw">mean</span>(dlndim_u)</span></code></pre></div>
 <p>We can use <code>forecast adjust</code> to incorporate these terms into our forecasts.</p>
 <p>The following commands define our forecast model, including the estimated panel-specific terms:</p>
-<div class="sourceCode" id="cb332"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb332-1"><a href="8.4-forecast.html#cb332-1" tabindex="-1"></a>forecast create statemodel, <span class="kw">replace</span>   <span class="co">/* create forecast model */</span></span>
-<span id="cb332-2"><a href="8.4-forecast.html#cb332-2" tabindex="-1"></a>forecast <span class="kw">estimates</span> dim, <span class="bn">name</span>(dlndim)  <span class="co">/* add equations, endog variables to bre forecasted */</span></span>
-<span id="cb332-3"><a href="8.4-forecast.html#cb332-3" tabindex="-1"></a>forecast <span class="kw">adjust</span> dlndim = dlndim + dlndim_u2 <span class="co">/* add state fixed effects */</span></span></code></pre></div>
+<div class="sourceCode" id="cb336"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb336-1"><a href="8.4-forecast.html#cb336-1" tabindex="-1"></a>forecast create statemodel, <span class="kw">replace</span>   <span class="co">/* create forecast model */</span></span>
+<span id="cb336-2"><a href="8.4-forecast.html#cb336-2" tabindex="-1"></a>forecast <span class="kw">estimates</span> dim, <span class="bn">name</span>(dlndim)  <span class="co">/* add equations, endog variables to bre forecasted */</span></span>
+<span id="cb336-3"><a href="8.4-forecast.html#cb336-3" tabindex="-1"></a>forecast <span class="kw">adjust</span> dlndim = dlndim + dlndim_u2 <span class="co">/* add state fixed effects */</span></span></code></pre></div>
 <p><code>dlndim</code> stands for the first difference of the logarithm of <code>dim</code>. We are interested in the level of <code>dim</code>, so we need to back out <code>dim</code> from <code>dlndim</code>.</p>
 <p>We use <code>forecast identity</code> to obtain the actual <code>dim</code> variable.</p>
-<div class="sourceCode" id="cb333"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb333-1"><a href="8.4-forecast.html#cb333-1" tabindex="-1"></a><span class="co">// reverse first difference</span></span>
-<span id="cb333-2"><a href="8.4-forecast.html#cb333-2" tabindex="-1"></a>forecast <span class="kw">identity</span> lndim = L.lndim + dlndim</span>
-<span id="cb333-3"><a href="8.4-forecast.html#cb333-3" tabindex="-1"></a><span class="co">// reverse logarithm</span></span>
-<span id="cb333-4"><a href="8.4-forecast.html#cb333-4" tabindex="-1"></a>forecast <span class="kw">identity</span> dim = <span class="fu">exp</span>(lndim)</span></code></pre></div>
+<div class="sourceCode" id="cb337"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb337-1"><a href="8.4-forecast.html#cb337-1" tabindex="-1"></a><span class="co">// reverse first difference</span></span>
+<span id="cb337-2"><a href="8.4-forecast.html#cb337-2" tabindex="-1"></a>forecast <span class="kw">identity</span> lndim = L.lndim + dlndim</span>
+<span id="cb337-3"><a href="8.4-forecast.html#cb337-3" tabindex="-1"></a><span class="co">// reverse logarithm</span></span>
+<span id="cb337-4"><a href="8.4-forecast.html#cb337-4" tabindex="-1"></a>forecast <span class="kw">identity</span> dim = <span class="fu">exp</span>(lndim)</span></code></pre></div>
 <p>We used forecast adjust to perform our adjustment to dlndim immediately after we added those estimation results so that we would not forget to do so.
-However, we could have specified the adjustment at any time.</p>
+However, we <span style="color:#008B45">could specifyt the adjustment at any time</span>.</p>
 <p>Regardless of when you specify an adjustment, <code>forecast solve</code> performs those adjustments immediately after the variable being adjusted is computed.</p>
 <p>Finally we can solve the model. Here we obtain dynamic forecasts beginning in the first quarter of 2010:</p>
-<div class="sourceCode" id="cb334"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb334-1"><a href="8.4-forecast.html#cb334-1" tabindex="-1"></a>forecast solve, <span class="kw">begin</span>(tq(2010q1)) <span class="fu">log</span>(<span class="kw">off</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb338"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb338-1"><a href="8.4-forecast.html#cb338-1" tabindex="-1"></a>forecast solve, <span class="kw">begin</span>(tq(2010q1)) <span class="fu">log</span>(<span class="kw">off</span>)</span></code></pre></div>
 <hr />
 </div>
 <div id="solve-the-foreceast" class="section level3 unnumbered hasAnchor">
 <h3>Solve the foreceast<a href="8.4-forecast.html#solve-the-foreceast" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<div class="sourceCode" id="cb335"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb335-1"><a href="8.4-forecast.html#cb335-1" tabindex="-1"></a>forecast solve [, { <span class="kw">prefix</span>(<span class="fu">string</span>) | suffix(<span class="fu">string</span>) } options ]</span></code></pre></div>
+<div class="sourceCode" id="cb339"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb339-1"><a href="8.4-forecast.html#cb339-1" tabindex="-1"></a>forecast solve [, { <span class="kw">prefix</span>(<span class="fu">string</span>) | suffix(<span class="fu">string</span>) } options ]</span></code></pre></div>
 <p><strong>Options</strong>:</p>
 <ul>
 <li><p><code>prefix(string)</code> and <code>suffix(string)</code> specify prefix/suffix for forecast variables.</p>

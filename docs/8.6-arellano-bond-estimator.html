@@ -539,7 +539,7 @@ fixed- and random-effects estimators in the presence of lagged dependent variabl
 <p>The Arellano-Bond estimator may be obtained in Stata using either the <code>xtabond</code> or <code>xtdpd</code> command.</p>
 <p><code>xtabond</code> fits a linear dynamic panel-data model where the unobserved unit-level effects are correlated with the lags of the dependent variable, known as the Arellano–Bond estimator. This estimator is designed for datasets with many panels and few periods, and it requires that there be <strong>no autocorrelation</strong> in the idiosyncratic errors.</p>
 <p><code>xtabond</code> uses moment conditions in which lags of the dependent variable and first differences of the exogenous variables are instruments for the first-differenced equation.</p>
-<div class="sourceCode" id="cb339"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb339-1"><a href="8.6-arellano-bond-estimator.html#cb339-1" tabindex="-1"></a><span class="kw">xtabond</span> depvar [ indepvars ] [ <span class="kw">if</span> ] [ <span class="kw">in</span> ] [, options ]</span></code></pre></div>
+<div class="sourceCode" id="cb343"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb343-1"><a href="8.6-arellano-bond-estimator.html#cb343-1" tabindex="-1"></a><span class="kw">xtabond</span> depvar [ indepvars ] [ <span class="kw">if</span> ] [ <span class="kw">in</span> ] [, options ]</span></code></pre></div>
 <p><strong>Options</strong>:</p>
 <ul>
 <li><code>lags(#)</code>: #lags of dependent variable as covariates; default is <span style="color:#008B45"><code>lags(1)</code></span></li>
@@ -578,81 +578,81 @@ n_{i,t}
 <li><p><span class="math inline">\(\varepsilon_{i,t}\)</span> is an idiosyncratic remainder component.</p></li>
 </ul>
 <p>Model <a href="8.6-arellano-bond-estimator.html#eq:AB-model">(8.1)</a> can be implemented using the following command.</p>
-<div class="sourceCode" id="cb340"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb340-1"><a href="8.6-arellano-bond-estimator.html#cb340-1" tabindex="-1"></a><span class="co">// Use example</span></span>
-<span id="cb340-2"><a href="8.6-arellano-bond-estimator.html#cb340-2" tabindex="-1"></a><span class="kw">use</span> https:<span class="co">//www.stata-press.com/data/r19/abdata</span></span>
-<span id="cb340-3"><a href="8.6-arellano-bond-estimator.html#cb340-3" tabindex="-1"></a><span class="kw">xtabond</span> n <span class="ot">l</span>(0/1).<span class="fu">w</span> <span class="ot">l</span>(0/2).(<span class="kw">k</span> ys) yr1980-yr1984 <span class="fu">year</span>, lags(2) <span class="kw">vce</span>(<span class="kw">robust</span>) <span class="kw">noconstant</span></span></code></pre></div>
+<div class="sourceCode" id="cb344"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb344-1"><a href="8.6-arellano-bond-estimator.html#cb344-1" tabindex="-1"></a><span class="co">// Use example</span></span>
+<span id="cb344-2"><a href="8.6-arellano-bond-estimator.html#cb344-2" tabindex="-1"></a><span class="kw">use</span> https:<span class="co">//www.stata-press.com/data/r19/abdata</span></span>
+<span id="cb344-3"><a href="8.6-arellano-bond-estimator.html#cb344-3" tabindex="-1"></a><span class="kw">xtabond</span> n <span class="ot">l</span>(0/1).<span class="fu">w</span> <span class="ot">l</span>(0/2).(<span class="kw">k</span> ys) yr1980-yr1984 <span class="fu">year</span>, lags(2) <span class="kw">vce</span>(<span class="kw">robust</span>) <span class="kw">noconstant</span></span></code></pre></div>
 <p>The output would look like the following.</p>
-<div class="sourceCode" id="cb341"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb341-1"><a href="8.6-arellano-bond-estimator.html#cb341-1" tabindex="-1"></a>Arellano–Bond dynamic panel-<span class="kw">data</span> estimation     Number <span class="kw">of</span> <span class="kw">obs</span>     =        611</span>
-<span id="cb341-2"><a href="8.6-arellano-bond-estimator.html#cb341-2" tabindex="-1"></a>Group <span class="kw">variable</span>: id                              Number <span class="kw">of</span> groups  =        140</span>
-<span id="cb341-3"><a href="8.6-arellano-bond-estimator.html#cb341-3" tabindex="-1"></a>Time <span class="kw">variable</span>: <span class="fu">year</span></span>
-<span id="cb341-4"><a href="8.6-arellano-bond-estimator.html#cb341-4" tabindex="-1"></a>                                                Obs per <span class="fu">group</span>:</span>
-<span id="cb341-5"><a href="8.6-arellano-bond-estimator.html#cb341-5" tabindex="-1"></a>                                                              <span class="fu">min</span> =          4</span>
-<span id="cb341-6"><a href="8.6-arellano-bond-estimator.html#cb341-6" tabindex="-1"></a>                                                              avg =   4.364286</span>
-<span id="cb341-7"><a href="8.6-arellano-bond-estimator.html#cb341-7" tabindex="-1"></a>                                                              <span class="fu">max</span> =          6</span>
-<span id="cb341-8"><a href="8.6-arellano-bond-estimator.html#cb341-8" tabindex="-1"></a></span>
-<span id="cb341-9"><a href="8.6-arellano-bond-estimator.html#cb341-9" tabindex="-1"></a>Number <span class="kw">of</span> instruments =     40                  Wald <span class="fu">chi2</span>(13)     =    1318.68</span>
-<span id="cb341-10"><a href="8.6-arellano-bond-estimator.html#cb341-10" tabindex="-1"></a>                                                Prob &gt; <span class="fu">chi2</span>       =     0.0000</span>
-<span id="cb341-11"><a href="8.6-arellano-bond-estimator.html#cb341-11" tabindex="-1"></a>One-step results</span>
-<span id="cb341-12"><a href="8.6-arellano-bond-estimator.html#cb341-12" tabindex="-1"></a>                                     (Std. err. adjusted <span class="kw">for</span> clustering <span class="kw">on</span> id)</span>
-<span id="cb341-13"><a href="8.6-arellano-bond-estimator.html#cb341-13" tabindex="-1"></a></span>
-<span id="cb341-14"><a href="8.6-arellano-bond-estimator.html#cb341-14" tabindex="-1"></a>                          Robust</span>
-<span id="cb341-15"><a href="8.6-arellano-bond-estimator.html#cb341-15" tabindex="-1"></a>   n         Coefficient  <span class="fu">std</span>. err.      z    P&gt;|z|     [95% conf. interval]</span>
-<span id="cb341-16"><a href="8.6-arellano-bond-estimator.html#cb341-16" tabindex="-1"></a>   </span>
-<span id="cb341-17"><a href="8.6-arellano-bond-estimator.html#cb341-17" tabindex="-1"></a>   n     </span>
-<span id="cb341-18"><a href="8.6-arellano-bond-estimator.html#cb341-18" tabindex="-1"></a> L1.           .6286618   .1161942     5.41   0.000     .4009254    .8563983</span>
-<span id="cb341-19"><a href="8.6-arellano-bond-estimator.html#cb341-19" tabindex="-1"></a>         </span>
-<span id="cb341-20"><a href="8.6-arellano-bond-estimator.html#cb341-20" tabindex="-1"></a>   <span class="fu">w</span>     </span>
-<span id="cb341-21"><a href="8.6-arellano-bond-estimator.html#cb341-21" tabindex="-1"></a> --.          -.5104249   .1904292    -2.68   0.007    -.8836592   -.1371906</span>
-<span id="cb341-22"><a href="8.6-arellano-bond-estimator.html#cb341-22" tabindex="-1"></a> L1.           .2891446    .140946     2.05   0.040     .0128954    .5653937</span>
-<span id="cb341-23"><a href="8.6-arellano-bond-estimator.html#cb341-23" tabindex="-1"></a> L2.          -.0443653   .0768135    -0.58   0.564     -.194917    .1061865</span>
-<span id="cb341-24"><a href="8.6-arellano-bond-estimator.html#cb341-24" tabindex="-1"></a>         </span>
-<span id="cb341-25"><a href="8.6-arellano-bond-estimator.html#cb341-25" tabindex="-1"></a>   <span class="kw">k</span>     </span>
-<span id="cb341-26"><a href="8.6-arellano-bond-estimator.html#cb341-26" tabindex="-1"></a> --.           .3556923   .0603274     5.90   0.000     .2374528    .4739318</span>
-<span id="cb341-27"><a href="8.6-arellano-bond-estimator.html#cb341-27" tabindex="-1"></a> L1.          -.0457102   .0699732    -0.65   0.514    -.1828552    .0914348</span>
-<span id="cb341-28"><a href="8.6-arellano-bond-estimator.html#cb341-28" tabindex="-1"></a> L2.          -.0619721   .0328589    -1.89   0.059    -.1263743    .0024301</span>
-<span id="cb341-29"><a href="8.6-arellano-bond-estimator.html#cb341-29" tabindex="-1"></a>         </span>
-<span id="cb341-30"><a href="8.6-arellano-bond-estimator.html#cb341-30" tabindex="-1"></a>yr1980        -.0282422   .0166363    -1.70   0.090    -.0608488    .0043643</span>
-<span id="cb341-31"><a href="8.6-arellano-bond-estimator.html#cb341-31" tabindex="-1"></a>yr1981        -.0694052    .028961    -2.40   0.017    -.1261677   -.0126426</span>
-<span id="cb341-32"><a href="8.6-arellano-bond-estimator.html#cb341-32" tabindex="-1"></a>yr1982        -.0523678   .0423433    -1.24   0.216    -.1353591    .0306235</span>
-<span id="cb341-33"><a href="8.6-arellano-bond-estimator.html#cb341-33" tabindex="-1"></a>yr1983        -.0256599   .0533747    -0.48   0.631    -.1302723    .0789525</span>
-<span id="cb341-34"><a href="8.6-arellano-bond-estimator.html#cb341-34" tabindex="-1"></a>yr1984        -.0093229   .0696241    -0.13   0.893    -.1457837    .1271379</span>
-<span id="cb341-35"><a href="8.6-arellano-bond-estimator.html#cb341-35" tabindex="-1"></a><span class="fu">year</span>           .0019575   .0119481     0.16   0.870    -.0214604    .0253754</span>
-<span id="cb341-36"><a href="8.6-arellano-bond-estimator.html#cb341-36" tabindex="-1"></a></span>
-<span id="cb341-37"><a href="8.6-arellano-bond-estimator.html#cb341-37" tabindex="-1"></a>Instruments <span class="kw">for</span> differenced equation</span>
-<span id="cb341-38"><a href="8.6-arellano-bond-estimator.html#cb341-38" tabindex="-1"></a>        GMM-<span class="dv">type</span>: L(2/.).n</span>
-<span id="cb341-39"><a href="8.6-arellano-bond-estimator.html#cb341-39" tabindex="-1"></a>        Standard: D.<span class="fu">w</span> LD.<span class="fu">w</span> L2D.<span class="fu">w</span> D.<span class="kw">k</span> LD.<span class="kw">k</span> L2D.<span class="kw">k</span> D.yr1980 D.yr1981 D.yr1982</span>
-<span id="cb341-40"><a href="8.6-arellano-bond-estimator.html#cb341-40" tabindex="-1"></a>                  D.yr1983 D.yr1984 D.<span class="fu">year</span></span>
-<span id="cb341-41"><a href="8.6-arellano-bond-estimator.html#cb341-41" tabindex="-1"></a>Instruments <span class="kw">for</span> <span class="dv">level</span> equation</span>
-<span id="cb341-42"><a href="8.6-arellano-bond-estimator.html#cb341-42" tabindex="-1"></a>        Standard: <span class="dt">_cons</span></span></code></pre></div>
+<div class="sourceCode" id="cb345"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb345-1"><a href="8.6-arellano-bond-estimator.html#cb345-1" tabindex="-1"></a>Arellano–Bond dynamic panel-<span class="kw">data</span> estimation     Number <span class="kw">of</span> <span class="kw">obs</span>     =        611</span>
+<span id="cb345-2"><a href="8.6-arellano-bond-estimator.html#cb345-2" tabindex="-1"></a>Group <span class="kw">variable</span>: id                              Number <span class="kw">of</span> groups  =        140</span>
+<span id="cb345-3"><a href="8.6-arellano-bond-estimator.html#cb345-3" tabindex="-1"></a>Time <span class="kw">variable</span>: <span class="fu">year</span></span>
+<span id="cb345-4"><a href="8.6-arellano-bond-estimator.html#cb345-4" tabindex="-1"></a>                                                Obs per <span class="fu">group</span>:</span>
+<span id="cb345-5"><a href="8.6-arellano-bond-estimator.html#cb345-5" tabindex="-1"></a>                                                              <span class="fu">min</span> =          4</span>
+<span id="cb345-6"><a href="8.6-arellano-bond-estimator.html#cb345-6" tabindex="-1"></a>                                                              avg =   4.364286</span>
+<span id="cb345-7"><a href="8.6-arellano-bond-estimator.html#cb345-7" tabindex="-1"></a>                                                              <span class="fu">max</span> =          6</span>
+<span id="cb345-8"><a href="8.6-arellano-bond-estimator.html#cb345-8" tabindex="-1"></a></span>
+<span id="cb345-9"><a href="8.6-arellano-bond-estimator.html#cb345-9" tabindex="-1"></a>Number <span class="kw">of</span> instruments =     40                  Wald <span class="fu">chi2</span>(13)     =    1318.68</span>
+<span id="cb345-10"><a href="8.6-arellano-bond-estimator.html#cb345-10" tabindex="-1"></a>                                                Prob &gt; <span class="fu">chi2</span>       =     0.0000</span>
+<span id="cb345-11"><a href="8.6-arellano-bond-estimator.html#cb345-11" tabindex="-1"></a>One-step results</span>
+<span id="cb345-12"><a href="8.6-arellano-bond-estimator.html#cb345-12" tabindex="-1"></a>                                     (Std. err. adjusted <span class="kw">for</span> clustering <span class="kw">on</span> id)</span>
+<span id="cb345-13"><a href="8.6-arellano-bond-estimator.html#cb345-13" tabindex="-1"></a></span>
+<span id="cb345-14"><a href="8.6-arellano-bond-estimator.html#cb345-14" tabindex="-1"></a>                          Robust</span>
+<span id="cb345-15"><a href="8.6-arellano-bond-estimator.html#cb345-15" tabindex="-1"></a>   n         Coefficient  <span class="fu">std</span>. err.      z    P&gt;|z|     [95% conf. interval]</span>
+<span id="cb345-16"><a href="8.6-arellano-bond-estimator.html#cb345-16" tabindex="-1"></a>   </span>
+<span id="cb345-17"><a href="8.6-arellano-bond-estimator.html#cb345-17" tabindex="-1"></a>   n     </span>
+<span id="cb345-18"><a href="8.6-arellano-bond-estimator.html#cb345-18" tabindex="-1"></a> L1.           .6286618   .1161942     5.41   0.000     .4009254    .8563983</span>
+<span id="cb345-19"><a href="8.6-arellano-bond-estimator.html#cb345-19" tabindex="-1"></a>         </span>
+<span id="cb345-20"><a href="8.6-arellano-bond-estimator.html#cb345-20" tabindex="-1"></a>   <span class="fu">w</span>     </span>
+<span id="cb345-21"><a href="8.6-arellano-bond-estimator.html#cb345-21" tabindex="-1"></a> --.          -.5104249   .1904292    -2.68   0.007    -.8836592   -.1371906</span>
+<span id="cb345-22"><a href="8.6-arellano-bond-estimator.html#cb345-22" tabindex="-1"></a> L1.           .2891446    .140946     2.05   0.040     .0128954    .5653937</span>
+<span id="cb345-23"><a href="8.6-arellano-bond-estimator.html#cb345-23" tabindex="-1"></a> L2.          -.0443653   .0768135    -0.58   0.564     -.194917    .1061865</span>
+<span id="cb345-24"><a href="8.6-arellano-bond-estimator.html#cb345-24" tabindex="-1"></a>         </span>
+<span id="cb345-25"><a href="8.6-arellano-bond-estimator.html#cb345-25" tabindex="-1"></a>   <span class="kw">k</span>     </span>
+<span id="cb345-26"><a href="8.6-arellano-bond-estimator.html#cb345-26" tabindex="-1"></a> --.           .3556923   .0603274     5.90   0.000     .2374528    .4739318</span>
+<span id="cb345-27"><a href="8.6-arellano-bond-estimator.html#cb345-27" tabindex="-1"></a> L1.          -.0457102   .0699732    -0.65   0.514    -.1828552    .0914348</span>
+<span id="cb345-28"><a href="8.6-arellano-bond-estimator.html#cb345-28" tabindex="-1"></a> L2.          -.0619721   .0328589    -1.89   0.059    -.1263743    .0024301</span>
+<span id="cb345-29"><a href="8.6-arellano-bond-estimator.html#cb345-29" tabindex="-1"></a>         </span>
+<span id="cb345-30"><a href="8.6-arellano-bond-estimator.html#cb345-30" tabindex="-1"></a>yr1980        -.0282422   .0166363    -1.70   0.090    -.0608488    .0043643</span>
+<span id="cb345-31"><a href="8.6-arellano-bond-estimator.html#cb345-31" tabindex="-1"></a>yr1981        -.0694052    .028961    -2.40   0.017    -.1261677   -.0126426</span>
+<span id="cb345-32"><a href="8.6-arellano-bond-estimator.html#cb345-32" tabindex="-1"></a>yr1982        -.0523678   .0423433    -1.24   0.216    -.1353591    .0306235</span>
+<span id="cb345-33"><a href="8.6-arellano-bond-estimator.html#cb345-33" tabindex="-1"></a>yr1983        -.0256599   .0533747    -0.48   0.631    -.1302723    .0789525</span>
+<span id="cb345-34"><a href="8.6-arellano-bond-estimator.html#cb345-34" tabindex="-1"></a>yr1984        -.0093229   .0696241    -0.13   0.893    -.1457837    .1271379</span>
+<span id="cb345-35"><a href="8.6-arellano-bond-estimator.html#cb345-35" tabindex="-1"></a><span class="fu">year</span>           .0019575   .0119481     0.16   0.870    -.0214604    .0253754</span>
+<span id="cb345-36"><a href="8.6-arellano-bond-estimator.html#cb345-36" tabindex="-1"></a></span>
+<span id="cb345-37"><a href="8.6-arellano-bond-estimator.html#cb345-37" tabindex="-1"></a>Instruments <span class="kw">for</span> differenced equation</span>
+<span id="cb345-38"><a href="8.6-arellano-bond-estimator.html#cb345-38" tabindex="-1"></a>        GMM-<span class="dv">type</span>: L(2/.).n</span>
+<span id="cb345-39"><a href="8.6-arellano-bond-estimator.html#cb345-39" tabindex="-1"></a>        Standard: D.<span class="fu">w</span> LD.<span class="fu">w</span> L2D.<span class="fu">w</span> D.<span class="kw">k</span> LD.<span class="kw">k</span> L2D.<span class="kw">k</span> D.yr1980 D.yr1981 D.yr1982</span>
+<span id="cb345-40"><a href="8.6-arellano-bond-estimator.html#cb345-40" tabindex="-1"></a>                  D.yr1983 D.yr1984 D.<span class="fu">year</span></span>
+<span id="cb345-41"><a href="8.6-arellano-bond-estimator.html#cb345-41" tabindex="-1"></a>Instruments <span class="kw">for</span> <span class="dv">level</span> equation</span>
+<span id="cb345-42"><a href="8.6-arellano-bond-estimator.html#cb345-42" tabindex="-1"></a>        Standard: <span class="dt">_cons</span></span></code></pre></div>
 <p><code>xtdpdsys</code> implements the Arellano–Bover/Blundell–Bond system estimator, which includes the lagged differences of <code>n</code> (the dependent variable) as instruments for the level equation.</p>
 <hr />
 <p><strong>Test for Autocorrelation</strong></p>
 <p>The moment conditions of these GMM estimators are valid only if there is no serial correlation in the idiosyncratic errors. Because the first difference of white noise is necessarily autocorrelated, we need only concern ourselves with second and higher autocorrelation. We can use <strong><code>estat abond</code></strong> to test for autocorrelation:</p>
-<div class="sourceCode" id="cb342"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb342-1"><a href="8.6-arellano-bond-estimator.html#cb342-1" tabindex="-1"></a>. <span class="kw">estat</span> abond, artests(4)</span>
-<span id="cb342-2"><a href="8.6-arellano-bond-estimator.html#cb342-2" tabindex="-1"></a></span>
-<span id="cb342-3"><a href="8.6-arellano-bond-estimator.html#cb342-3" tabindex="-1"></a>Arellano–Bond <span class="kw">test</span> <span class="kw">for</span> <span class="bn">zero</span> autocorrelation <span class="kw">in</span> first-differenced errors</span>
-<span id="cb342-4"><a href="8.6-arellano-bond-estimator.html#cb342-4" tabindex="-1"></a>H0: No autocorrelation </span>
-<span id="cb342-5"><a href="8.6-arellano-bond-estimator.html#cb342-5" tabindex="-1"></a></span>
-<span id="cb342-6"><a href="8.6-arellano-bond-estimator.html#cb342-6" tabindex="-1"></a>Order         z   Prob &gt; z</span>
-<span id="cb342-7"><a href="8.6-arellano-bond-estimator.html#cb342-7" tabindex="-1"></a>    1   -4.6414     0.0000</span>
-<span id="cb342-8"><a href="8.6-arellano-bond-estimator.html#cb342-8" tabindex="-1"></a>    2   -1.0572     0.2904</span>
-<span id="cb342-9"><a href="8.6-arellano-bond-estimator.html#cb342-9" tabindex="-1"></a>    3   -.19492     0.8455</span>
-<span id="cb342-10"><a href="8.6-arellano-bond-estimator.html#cb342-10" tabindex="-1"></a>    4   .04472      0.9643</span></code></pre></div>
+<div class="sourceCode" id="cb346"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb346-1"><a href="8.6-arellano-bond-estimator.html#cb346-1" tabindex="-1"></a>. <span class="kw">estat</span> abond, artests(4)</span>
+<span id="cb346-2"><a href="8.6-arellano-bond-estimator.html#cb346-2" tabindex="-1"></a></span>
+<span id="cb346-3"><a href="8.6-arellano-bond-estimator.html#cb346-3" tabindex="-1"></a>Arellano–Bond <span class="kw">test</span> <span class="kw">for</span> <span class="bn">zero</span> autocorrelation <span class="kw">in</span> first-differenced errors</span>
+<span id="cb346-4"><a href="8.6-arellano-bond-estimator.html#cb346-4" tabindex="-1"></a>H0: No autocorrelation </span>
+<span id="cb346-5"><a href="8.6-arellano-bond-estimator.html#cb346-5" tabindex="-1"></a></span>
+<span id="cb346-6"><a href="8.6-arellano-bond-estimator.html#cb346-6" tabindex="-1"></a>Order         z   Prob &gt; z</span>
+<span id="cb346-7"><a href="8.6-arellano-bond-estimator.html#cb346-7" tabindex="-1"></a>    1   -4.6414     0.0000</span>
+<span id="cb346-8"><a href="8.6-arellano-bond-estimator.html#cb346-8" tabindex="-1"></a>    2   -1.0572     0.2904</span>
+<span id="cb346-9"><a href="8.6-arellano-bond-estimator.html#cb346-9" tabindex="-1"></a>    3   -.19492     0.8455</span>
+<span id="cb346-10"><a href="8.6-arellano-bond-estimator.html#cb346-10" tabindex="-1"></a>    4   .04472      0.9643</span></code></pre></div>
 <p><strong>Test for Overidentifying Restrictions</strong></p>
 <p><code>estat sargan</code> reports the Sargan test of overidentifying restrictions.</p>
-<div class="sourceCode" id="cb343"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb343-1"><a href="8.6-arellano-bond-estimator.html#cb343-1" tabindex="-1"></a>. <span class="kw">estat</span> sargan</span>
-<span id="cb343-2"><a href="8.6-arellano-bond-estimator.html#cb343-2" tabindex="-1"></a></span>
-<span id="cb343-3"><a href="8.6-arellano-bond-estimator.html#cb343-3" tabindex="-1"></a>Sargan <span class="kw">test</span> <span class="kw">of</span> overidentifying restrictions</span>
-<span id="cb343-4"><a href="8.6-arellano-bond-estimator.html#cb343-4" tabindex="-1"></a>H0: Overidentifying restrictions are valid</span>
-<span id="cb343-5"><a href="8.6-arellano-bond-estimator.html#cb343-5" tabindex="-1"></a>        <span class="fu">chi2</span>(25) = 65.81806</span>
-<span id="cb343-6"><a href="8.6-arellano-bond-estimator.html#cb343-6" tabindex="-1"></a>        Prob &gt; <span class="fu">chi2</span> = 0.0000</span></code></pre></div>
+<div class="sourceCode" id="cb347"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb347-1"><a href="8.6-arellano-bond-estimator.html#cb347-1" tabindex="-1"></a>. <span class="kw">estat</span> sargan</span>
+<span id="cb347-2"><a href="8.6-arellano-bond-estimator.html#cb347-2" tabindex="-1"></a></span>
+<span id="cb347-3"><a href="8.6-arellano-bond-estimator.html#cb347-3" tabindex="-1"></a>Sargan <span class="kw">test</span> <span class="kw">of</span> overidentifying restrictions</span>
+<span id="cb347-4"><a href="8.6-arellano-bond-estimator.html#cb347-4" tabindex="-1"></a>H0: Overidentifying restrictions are valid</span>
+<span id="cb347-5"><a href="8.6-arellano-bond-estimator.html#cb347-5" tabindex="-1"></a>        <span class="fu">chi2</span>(25) = 65.81806</span>
+<span id="cb347-6"><a href="8.6-arellano-bond-estimator.html#cb347-6" tabindex="-1"></a>        Prob &gt; <span class="fu">chi2</span> = 0.0000</span></code></pre></div>
 <hr />
 <p><strong>Predetermined Covariates</strong></p>
 <p>Sometimes we cannot assume strict exogeneity. Recall that a variable, <span class="math inline">\(x_{it}\)</span>, is said to be strictly exogenous if <span class="math inline">\(\E[𝑥_{it}\varepsilon_{is}] = 0\)</span> for all <span class="math inline">\(t\)</span> and <span class="math inline">\(s\)</span>.</p>
 <p>If <span class="math inline">\(\E[x_{it}\varepsilon_{is}] \ne 0\)</span> for <span class="math inline">\(s &lt; t\)</span> but <span class="math inline">\(\E[x_{it}\varepsilon_{is}] = 0\)</span> for all <span class="math inline">\(s\ge t,\)</span> the variable is said to be <span style="color:#008B45"><strong>predetermined</strong></span>. Intuitively, if the error term at time <span class="math inline">\(t\)</span> has some feedback on the subsequent realizations of <span class="math inline">\(x_{it},\)</span> <span class="math inline">\(x_{it}\)</span> is a predetermined variable. Because unforecastable errors today might affect future changes in the real wage and in the capital stock, we might suspect that the log of the real product wage and the log of the gross capital stock are predetermined instead of strictly exogenous.</p>
 <p>We also call predetermined <span class="math inline">\(x_{it}\)</span> as <span style="color:#008B45"><strong>sequential exogenous</strong></span>.</p>
 <p>Here we treat <span class="math inline">\(w\)</span> and <span class="math inline">\(k\)</span> as predetermined and use lagged levels as instruments.</p>
-<div class="sourceCode" id="cb344"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb344-1"><a href="8.6-arellano-bond-estimator.html#cb344-1" tabindex="-1"></a><span class="kw">xtabond</span> n <span class="ot">l</span>(0/1).ys yr1980-yr1984 <span class="fu">year</span>, lags(2) twostep pre(<span class="fu">w</span>, lag(1,.)) pre(<span class="kw">k</span>, lag(2,.)) <span class="kw">noconstant</span> <span class="kw">vce</span>(<span class="kw">robust</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb348"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb348-1"><a href="8.6-arellano-bond-estimator.html#cb348-1" tabindex="-1"></a><span class="kw">xtabond</span> n <span class="ot">l</span>(0/1).ys yr1980-yr1984 <span class="fu">year</span>, lags(2) twostep pre(<span class="fu">w</span>, lag(1,.)) pre(<span class="kw">k</span>, lag(2,.)) <span class="kw">noconstant</span> <span class="kw">vce</span>(<span class="kw">robust</span>)</span></code></pre></div>
 <p>We are now including GMM-type instruments from the first lag of <code>L.w</code> on back and from the first lag of <code>L2.k</code> on back.</p>
 <p><code>pre(w, lag(1, .))</code> to mean that <code>L.w</code> is a predetermined variable and <code>pre(k, lag(2, .))</code> to mean that <code>L2.k</code> is a predetermined variable.</p>
 <p><strong>Endogenous Covariates</strong></p>
@@ -664,18 +664,23 @@ n_{i,t}
 <li><p>predetermined variables do <span style="color:#FF9900"><strong>NOT</strong></span> allow for contemporaneous correlation.</p></li>
 </ul>
 <p>In this example, we treat <span class="math inline">\(w\)</span> and <span class="math inline">\(k\)</span> as endogenous variables.</p>
-<div class="sourceCode" id="cb345"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb345-1"><a href="8.6-arellano-bond-estimator.html#cb345-1" tabindex="-1"></a><span class="kw">xtabond</span> n <span class="ot">l</span>(0/1).ys yr1980-yr1984 <span class="fu">year</span>, lags(2) twostep endogenous(<span class="fu">w</span>, lag(1,.)) endogenous(<span class="kw">k</span>, lag(2,.)) <span class="kw">noconstant</span> <span class="kw">vce</span>(<span class="kw">robust</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb349"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb349-1"><a href="8.6-arellano-bond-estimator.html#cb349-1" tabindex="-1"></a><span class="kw">xtabond</span> n <span class="ot">l</span>(0/1).ys yr1980-yr1984 <span class="fu">year</span>, lags(2) twostep endogenous(<span class="fu">w</span>, lag(1,.)) endogenous(<span class="kw">k</span>, lag(2,.)) <span class="kw">noconstant</span> <span class="kw">vce</span>(<span class="kw">robust</span>)</span></code></pre></div>
 <p>Although some estimated coefficients changed in magnitude, none changed in sign, and these results are similar to those obtained by treating <span class="math inline">\(w\)</span> and <span class="math inline">\(k\)</span> as predetermined.</p>
 <p>Prefix <code>xtabond</code> with <code>xi:</code> if you need to include factor variables</p>
-<div class="sourceCode" id="cb346"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb346-1"><a href="8.6-arellano-bond-estimator.html#cb346-1" tabindex="-1"></a><span class="co">// AB estimator with factor variables</span></span>
-<span id="cb346-2"><a href="8.6-arellano-bond-estimator.html#cb346-2" tabindex="-1"></a><span class="kw">xi</span>: <span class="kw">xtabond</span> logd_gdp tmp tmp2 pre pre2 <span class="co">///</span></span>
-<span id="cb346-3"><a href="8.6-arellano-bond-estimator.html#cb346-3" tabindex="-1"></a>    tmp_pre tmp2_pre tmp_pre2 tmp2_pre2 <span class="co">///</span></span>
-<span id="cb346-4"><a href="8.6-arellano-bond-estimator.html#cb346-4" tabindex="-1"></a>    i.<span class="fu">year</span> i.iso|year_id i.iso|year_id2, <span class="co">///</span></span>
-<span id="cb346-5"><a href="8.6-arellano-bond-estimator.html#cb346-5" tabindex="-1"></a>    lags(1) <span class="kw">vce</span>(<span class="kw">robust</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb350"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb350-1"><a href="8.6-arellano-bond-estimator.html#cb350-1" tabindex="-1"></a><span class="co">// AB estimator with factor variables</span></span>
+<span id="cb350-2"><a href="8.6-arellano-bond-estimator.html#cb350-2" tabindex="-1"></a><span class="kw">xi</span>: <span class="kw">xtabond</span> logd_gdp tmp tmp2 pre pre2 <span class="co">///</span></span>
+<span id="cb350-3"><a href="8.6-arellano-bond-estimator.html#cb350-3" tabindex="-1"></a>    tmp_pre tmp2_pre tmp_pre2 tmp2_pre2 <span class="co">///</span></span>
+<span id="cb350-4"><a href="8.6-arellano-bond-estimator.html#cb350-4" tabindex="-1"></a>    i.<span class="fu">year</span> i.iso|year_id i.iso|year_id2, <span class="co">///</span></span>
+<span id="cb350-5"><a href="8.6-arellano-bond-estimator.html#cb350-5" tabindex="-1"></a>    lags(1) <span class="kw">vce</span>(<span class="kw">robust</span>)</span></code></pre></div>
 <ul>
 <li><p><code>i.year</code>: time fixed effects;</p></li>
 <li><p><code>i.iso|year_id</code>: country-specific linear time trends</p></li>
 <li><p><code>i.iso|year_id2</code>: country-specific quadratic time trends</p></li>
+</ul>
+<hr />
+<p>Forecast under <code>xtabond</code>:</p>
+<ul>
+<li><a href="https://www.stata.com/stata-news/news29-3/forecast/" class="uri">https://www.stata.com/stata-news/news29-3/forecast/</a></li>
 </ul>
 <hr />
 <div id="xtabond2" class="section level3 hasAnchor" number="8.6.1">
@@ -699,18 +704,18 @@ n_{i,t}
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb347"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb347-1"><a href="8.6-arellano-bond-estimator.html#cb347-1" tabindex="-1"></a>xtabond2 depvar <span class="kw">varlist</span> [<span class="kw">if</span> <span class="fu">exp</span>] [<span class="kw">in</span> <span class="kw">range</span>] [<span class="kw">weight</span>] [, <span class="dv">level</span>(#)</span>
-<span id="cb347-2"><a href="8.6-arellano-bond-estimator.html#cb347-2" tabindex="-1"></a>        <span class="kw">svmat</span> svvar twostep <span class="kw">robust</span> <span class="kw">cluster</span>(<span class="kw">varlist</span>) <span class="kw">noconstant</span> small </span>
-<span id="cb347-3"><a href="8.6-arellano-bond-estimator.html#cb347-3" tabindex="-1"></a>                gmmopt [gmmopt ...] ivopt [ivopt ...]]</span></code></pre></div>
+<div class="sourceCode" id="cb351"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb351-1"><a href="8.6-arellano-bond-estimator.html#cb351-1" tabindex="-1"></a>xtabond2 depvar <span class="kw">varlist</span> [<span class="kw">if</span> <span class="fu">exp</span>] [<span class="kw">in</span> <span class="kw">range</span>] [<span class="kw">weight</span>] [, <span class="dv">level</span>(#)</span>
+<span id="cb351-2"><a href="8.6-arellano-bond-estimator.html#cb351-2" tabindex="-1"></a>        <span class="kw">svmat</span> svvar twostep <span class="kw">robust</span> <span class="kw">cluster</span>(<span class="kw">varlist</span>) <span class="kw">noconstant</span> small </span>
+<span id="cb351-3"><a href="8.6-arellano-bond-estimator.html#cb351-3" tabindex="-1"></a>                gmmopt [gmmopt ...] ivopt [ivopt ...]]</span></code></pre></div>
 <p><strong>Options</strong>:</p>
 <ul>
 <li><p><code>level(#)</code> confidence level, default to <code>level(95)</code></p></li>
 <li><p><code>gmmopt</code></p>
-<div class="sourceCode" id="cb348"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb348-1"><a href="8.6-arellano-bond-estimator.html#cb348-1" tabindex="-1"></a>gmmstyle(<span class="kw">varlist</span> [, laglimits(# #) <span class="kw">collapse</span> orthogonal equation({<span class="fu">diff</span> | <span class="dv">level</span> | both}) passthru <span class="kw">split</span>])</span></code></pre></div>
+<div class="sourceCode" id="cb352"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb352-1"><a href="8.6-arellano-bond-estimator.html#cb352-1" tabindex="-1"></a>gmmstyle(<span class="kw">varlist</span> [, laglimits(# #) <span class="kw">collapse</span> orthogonal equation({<span class="fu">diff</span> | <span class="dv">level</span> | both}) passthru <span class="kw">split</span>])</span></code></pre></div>
 <p><code>gmmstyle</code> specifies a set of variables to be used as bases for “GMM-style” instrument sets described in Holtz-Eakin, Newey, and Rosen (1988) and Arellano and Bond (1991). By default xtabond2 uses, for each time period, all available lags of the specified variables in levels dated <span class="math inline">\(t-1\)</span> or earlier as instruments for the transformed equation; and uses the contemporaneous first differences as instruments in the levels equation. These defaults are appropriate for predetermined variables that are not strictly exogenous (Bond 2000). Missing values are always replaced by zeros.</p>
 <p>Since the <code>gmmstyle()</code> varlist allows time-series operators, there are many routes to the same specification. E.g., <code>gmm(w, lag(2 .))</code>, the standard treatment for an endogenous variable, is equivalent to <code>gmm(L.w, lag(1 .))</code>, thus <code>gmm(L.w)</code>.</p></li>
 <li><p><code>ivopt</code></p>
-<div class="sourceCode" id="cb349"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb349-1"><a href="8.6-arellano-bond-estimator.html#cb349-1" tabindex="-1"></a>ivstyle(<span class="kw">varlist</span> [, equation({<span class="fu">diff</span> | <span class="dv">level</span> | both}) passthru mz])</span></code></pre></div>
+<div class="sourceCode" id="cb353"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb353-1"><a href="8.6-arellano-bond-estimator.html#cb353-1" tabindex="-1"></a>ivstyle(<span class="kw">varlist</span> [, equation({<span class="fu">diff</span> | <span class="dv">level</span> | both}) passthru mz])</span></code></pre></div>
 <p><code>ivstyle</code> specifies a set of variables to serve as standard instruments, with one column in the instrument matrix per variable. Normally, strictly exogenous regressors are included in <code>ivstyle</code> options, in order to enter the instrument matrix, as well as being listed before the main comma of the command line.</p>
 <p>The <code>equation()</code> suboption specifies which equation(s) should use the instruments:</p>
 <ul>
@@ -720,9 +725,9 @@ n_{i,t}
 </ul></li>
 </ul>
 <p><strong>A matching triplet</strong> using different pkgs to achieve the same results (pp42, <a href="https://journals.sagepub.com/doi/pdf/10.1177/1536867X0900900106">Stata Journal article by David Roodman</a>)</p>
-<div class="sourceCode" id="cb350"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb350-1"><a href="8.6-arellano-bond-estimator.html#cb350-1" tabindex="-1"></a><span class="kw">xtabond</span> n, lags(1) pre(<span class="fu">w</span>, lagstruct(1,.)) pre(<span class="kw">k</span>, endog) <span class="kw">robust</span></span>
-<span id="cb350-2"><a href="8.6-arellano-bond-estimator.html#cb350-2" tabindex="-1"></a>xtdpd n L.n <span class="fu">w</span> L.<span class="fu">w</span> <span class="kw">k</span>, dgmmiv(<span class="fu">w</span> <span class="kw">k</span> n) <span class="kw">vce</span>(<span class="kw">robust</span>)</span>
-<span id="cb350-3"><a href="8.6-arellano-bond-estimator.html#cb350-3" tabindex="-1"></a>xtabond2 n L.n <span class="fu">w</span> L.<span class="fu">w</span> <span class="kw">k</span>, gmmstyle(L.(<span class="fu">w</span> n <span class="kw">k</span>), <span class="kw">eq</span>(<span class="fu">diff</span>)) <span class="kw">robust</span></span></code></pre></div>
+<div class="sourceCode" id="cb354"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb354-1"><a href="8.6-arellano-bond-estimator.html#cb354-1" tabindex="-1"></a><span class="kw">xtabond</span> n, lags(1) pre(<span class="fu">w</span>, lagstruct(1,.)) pre(<span class="kw">k</span>, endog) <span class="kw">robust</span></span>
+<span id="cb354-2"><a href="8.6-arellano-bond-estimator.html#cb354-2" tabindex="-1"></a>xtdpd n L.n <span class="fu">w</span> L.<span class="fu">w</span> <span class="kw">k</span>, dgmmiv(<span class="fu">w</span> <span class="kw">k</span> n) <span class="kw">vce</span>(<span class="kw">robust</span>)</span>
+<span id="cb354-3"><a href="8.6-arellano-bond-estimator.html#cb354-3" tabindex="-1"></a>xtabond2 n L.n <span class="fu">w</span> L.<span class="fu">w</span> <span class="kw">k</span>, gmmstyle(L.(<span class="fu">w</span> n <span class="kw">k</span>), <span class="kw">eq</span>(<span class="fu">diff</span>)) <span class="kw">robust</span></span></code></pre></div>
 <p><a href="https://www.statalist.org/forums/forum/general-stata-discussion/general/1548924-xtabond-vs-xtabond2-how-to-get-the-same-results" class="uri">https://www.statalist.org/forums/forum/general-stata-discussion/general/1548924-xtabond-vs-xtabond2-how-to-get-the-same-results</a></p>
 
 <div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">

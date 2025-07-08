@@ -750,7 +750,7 @@ Before we are able to forecast, we must populate the exogenous variables over th
 
    The name you give the model mainly controls how output from `forecast` commands is labeled. More importantly, `forecast create` creates the internal data structures Stata uses to keep track of your model.
 
-4. **Add all equations** to the model you just created.
+4. **Add all equations** to the model you just created using `forecast estimates`.
 
 	The following command adds the stored estimation results in `myarima` to the current model `mymodel`.
 
@@ -765,6 +765,24 @@ Before we are able to forecast, we must populate the exogenous variables over th
    ```stata
    forecast solve, begin(2012) end(2024)
    ```
+
+
+--------------------------------------------------------------------------------
+
+**Creates a new forecast model**
+
+```stata
+forecast create [ name ] [ , replace ]
+```
+
+The `forecast create` command creates a new forecast model in Stata.
+You must create a model before you can add equations or solve it. You can have *only one model in memory at a time*.
+
+You may optionally specify a `name` for your model. That `name` will appear in the output produced by the various forecast subcommands.
+
+`replace` clear the existing model from memory before creating `name`.  By default, `forecast create` issues an error message if another model is already in memory.
+
+Note that you can add multiple equations to a forecast model.
 
 
 --------------------------------------------------------------------------------
@@ -784,6 +802,41 @@ forecast estimates name [, options ]
   `forecast estimates` creates a new variable in the dataset for each element of `namelist`.  
 
   If a variable of the same name already exists in your dataset, `forecast estimates` exits with an error unless you specify the `replace` option, in which case existing variables are overwritten.
+
+
+
+**Add an itentity to a forecast model** 
+
+
+```stata
+forecast identity varname = exp
+```
+
+An `identity` is a nonstochastic equation that expresses an endogenous variable in the model as a function of other variables in the model. Identities often describe the behavior of endogenous variables that are based on accounting identities or adding-up conditions.
+
+```stata
+// Add an identity to the forecast that states that y3 is the sum of y1 and y2
+forecast identity y3=y1+y2
+// create new variable newy before adding it to the forecast
+forecast identity newy=y1+y2, generate
+```
+
+The difference is that if the LHS variable does not exist, you need to specify the option `gen`.
+
+Ex. We have a model using annual data and want to assume that our population variable pop grows at 0.75% per year. Then we can declare endogenous variable pop by using forecast identity:
+
+```stata
+forecast identity pop = 1.0075*L.pop
+```
+
+Typically, you use `forecast identity` to define the relationship that determines an endogenous variable that is already in your dataset. 
+
+
+The generate option of forecast identity is useful when you wish to use a transformation of one or more endogenous variables as a right-hand-side variable in a stochastic equation that describes another endogenous variable.
+
+
+
+
 
 
 --------------------------------------------------------------------------------
@@ -825,9 +878,14 @@ predict dlndim_u, u  /* obtain individual fixed effects */
 estimates store dim  /* store estimation results */
 ```
 
-With enough observations, we can have more confidence in the estimated panel-specific errors. If we are willing to assume that we have decent estimates of the panel-specific errors and that those panel-level effects will remain constant over the forecast horizon, then we can incorporate them into our forecasts. Because predict only provided us with estimates of the panel-level effects for the estimation sample, we need to extend them into the forecast horizon. An easy way to do that is to use `egen` to create a new set of variables:
+With enough observations, we can have more confidence in the estimated panel-specific errors. 
+If we are willing to assume that we have decent estimates of the panel-specific errors and that those panel-level effects will remain constant over the forecast horizon, then we can *incorporate them into our forecasts*. 
+
+Because predict only provided us with estimates of the panel-level effects for the estimation sample, we need to **extend them into the forecast horizon**. 
+An easy way to do that is to use `egen` to create a new set of variables:
 
 ```stata
+// extend panel fixed effects to the forecast horizon
 by state: egen dlndim_u2 = mean(dlndim_u)
 ```
 
@@ -853,7 +911,7 @@ forecast identity dim = exp(lndim)
 ```
 
 We used forecast adjust to perform our adjustment to dlndim immediately after we added those estimation results so that we would not forget to do so.
-However, we could have specified the adjustment at any time. 
+However, we <span style='color:#008B45'>could specifyt the adjustment at any time</span>. 
 
 Regardless of when you specify an adjustment, `forecast solve` performs those adjustments immediately after the variable being adjusted is computed.
 
@@ -1183,6 +1241,18 @@ xi: xtabond logd_gdp tmp tmp2 pre pre2 ///
 - `i.iso|year_id`: country-specific linear time trends
 
 - `i.iso|year_id2`: country-specific quadratic time trends
+
+
+
+___
+
+Forecast under `xtabond`: 
+
+- <https://www.stata.com/stata-news/news29-3/forecast/>
+
+
+
+
 
 
 
