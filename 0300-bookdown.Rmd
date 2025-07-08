@@ -360,9 +360,13 @@ Note that you don't need to manually create the `docs` folder, bookdown will cre
 ### `index.Rmd` {.unnumbered}
 
  
-**`index.Rmd`** <span style='color:#00CC66'>homepage of your website</span>. Contains the first chapter and the YAML metadata which will be applied to all other Rmd pages. See [Chapter 2.2 in *R Markdown: The Definitive Guide*](https://bookdown.org/yihui/rmarkdown/compile.html) for YAML details.
+**`index.Rmd`** <span style='color:#008B45'>**homepage of your website**</span>. Contains the first chapter and the <span style='color:#008B45'>**YAML metadata**</span> which will be applied to all other Rmd pages. 
 
-Note that `index.Rmd` is the only Rmd document to contain a **YAML frontmatter**. 
+That is, `index.Rmd` sets the global YAML for the entire website. Moreover, `index.Rmd` is the **only** Rmd document that contains a **YAML frontmatter**. 
+
+See [Chapter 2.2 in *R Markdown: The Definitive Guide*](https://bookdown.org/yihui/rmarkdown/compile.html) for YAML details.
+
+
 
 
 Common uses of `index.Rmd`'s YAML frontmatter:
@@ -370,6 +374,17 @@ Common uses of `index.Rmd`'s YAML frontmatter:
 - Book cover, title, author, date, and description
 
 - Add **bibliography**
+    
+    Once you have one or multiple `.bib` files, you may use the field bibliography in the YAML metadata of your first R Markdown document (which is typically `index.Rmd`), and you can also specify the bibliography style via biblio-style (this only applies to PDF output).
+    
+    ```yml
+    bibliography: [book.bib, packages.bib]
+    biblio-style: "apalike"
+    ```
+    
+    Add your user citation to <span style='color:#008B45'>**`book.bib`**</span> in stead.
+    
+    Don't remove `packages.bib`; it is automatically generated and overwritten every time you rebuild the book.
 
 - Link to your GitHub in the toolbar (also need `_output.yml`)
 
@@ -377,7 +392,7 @@ Common uses of `index.Rmd`'s YAML frontmatter:
 
   Add the following line to `index.Rmd` YAML:
 
-  ```css
+  ```yml
   favicon: "images/r-project-favicon.ico"
   ```
 

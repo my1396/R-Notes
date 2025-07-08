@@ -308,6 +308,29 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
   
   div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 </style>
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
 
 <link rel="stylesheet" href="style.css" type="text/css" />
 </head>
@@ -456,10 +479,16 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="8.2.2" data-path="8.2-data-manipulation.html"><a href="8.2-data-manipulation.html#save-estimation-results"><i class="fa fa-check"></i><b>8.2.2</b> Save Estimation Results</a></li>
 <li class="chapter" data-level="8.2.3" data-path="8.2-data-manipulation.html"><a href="8.2-data-manipulation.html#stored-results"><i class="fa fa-check"></i><b>8.2.3</b> Stored Results</a></li>
 </ul></li>
-<li class="chapter" data-level="8.3" data-path="8.3-panel.html"><a href="8.3-panel.html"><i class="fa fa-check"></i><b>8.3</b> Panel</a></li>
-<li class="chapter" data-level="8.4" data-path="8.4-arellano-bond-estimator.html"><a href="8.4-arellano-bond-estimator.html"><i class="fa fa-check"></i><b>8.4</b> Arellano-Bond Estimator</a>
+<li class="chapter" data-level="8.3" data-path="8.3-predict.html"><a href="8.3-predict.html"><i class="fa fa-check"></i><b>8.3</b> Predict</a></li>
+<li class="chapter" data-level="8.4" data-path="8.4-forecast.html"><a href="8.4-forecast.html"><i class="fa fa-check"></i><b>8.4</b> Forecast</a>
 <ul>
-<li class="chapter" data-level="8.4.1" data-path="8.4-arellano-bond-estimator.html"><a href="8.4-arellano-bond-estimator.html#xtabond2"><i class="fa fa-check"></i><b>8.4.1</b> xtabond2</a></li>
+<li class="chapter" data-level="" data-path="8.4-forecast.html"><a href="8.4-forecast.html#add-equationsidentifies"><i class="fa fa-check"></i>Add equations/identifies</a></li>
+<li class="chapter" data-level="" data-path="8.4-forecast.html"><a href="8.4-forecast.html#solve-the-foreceast"><i class="fa fa-check"></i>Solve the foreceast</a></li>
+</ul></li>
+<li class="chapter" data-level="8.5" data-path="8.5-panel.html"><a href="8.5-panel.html"><i class="fa fa-check"></i><b>8.5</b> Panel</a></li>
+<li class="chapter" data-level="8.6" data-path="8.6-arellano-bond-estimator.html"><a href="8.6-arellano-bond-estimator.html"><i class="fa fa-check"></i><b>8.6</b> Arellano-Bond Estimator</a>
+<ul>
+<li class="chapter" data-level="8.6.1" data-path="8.6-arellano-bond-estimator.html"><a href="8.6-arellano-bond-estimator.html#xtabond2"><i class="fa fa-check"></i><b>8.6.1</b> xtabond2</a></li>
 </ul></li>
 </ul></li>
 <li class="divider"></li>
@@ -547,9 +576,9 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <p><strong>Do-file Rule of Thumb</strong></p>
 <ul>
 <li><p>Your <code>.do</code> file begins with loading a dataset and ends with saving one.</p>
-<div class="sourceCode" id="cb290"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb290-1"><a href="8-stata.html#cb290-1" tabindex="-1"></a><span class="kw">use</span> ..., <span class="kw">clear</span> <span class="co">// begin</span></span>
-<span id="cb290-2"><a href="8-stata.html#cb290-2" tabindex="-1"></a><span class="co">/* your code */</span></span>
-<span id="cb290-3"><a href="8-stata.html#cb290-3" tabindex="-1"></a><span class="kw">save</span> ..., <span class="kw">replace</span> <span class="co">// end</span></span></code></pre></div></li>
+<div class="sourceCode" id="cb291"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb291-1"><a href="8-stata.html#cb291-1" tabindex="-1"></a><span class="kw">use</span> ..., <span class="kw">clear</span> <span class="co">// begin</span></span>
+<span id="cb291-2"><a href="8-stata.html#cb291-2" tabindex="-1"></a><span class="co">/* your code */</span></span>
+<span id="cb291-3"><a href="8-stata.html#cb291-3" tabindex="-1"></a><span class="kw">save</span> ..., <span class="kw">replace</span> <span class="co">// end</span></span></code></pre></div></li>
 <li><p>Never modify the raw data files. Save the results of your data cleaning in a new file.</p></li>
 <li><p>Every data file is created by a script. Convert your interactive data cleaning session to a <code>.do</code> file.</p></li>
 <li><p>No data file is modified by multiple scripts.</p></li>
@@ -581,13 +610,13 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <p>Summary of ways to break long lines:</p>
 <ul>
 <li><p>You can change the end-of-line delimiter to <code>;</code> by using <code>#delimit</code>,</p>
-<div class="sourceCode" id="cb291"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb291-1"><a href="8-stata.html#cb291-1" tabindex="-1"></a>#delimit ; <span class="co">// change the line delimiter to semicolon</span></span>
-<span id="cb291-2"><a href="8-stata.html#cb291-2" tabindex="-1"></a><span class="kw">summarize</span> <span class="kw">weight</span> price displ headroom rep78 <span class="fu">length</span> turn gear_ratio</span>
-<span id="cb291-3"><a href="8-stata.html#cb291-3" tabindex="-1"></a>    <span class="kw">if</span> <span class="fu">substr</span>(company,1,4)==<span class="st">&quot;Ford&quot;</span> |</span>
-<span id="cb291-4"><a href="8-stata.html#cb291-4" tabindex="-1"></a>       <span class="fu">substr</span>(company,1,2)==<span class="st">&quot;GM&quot;</span>, <span class="kw">detail</span> ;</span>
-<span id="cb291-5"><a href="8-stata.html#cb291-5" tabindex="-1"></a><span class="kw">gen</span> <span class="kw">byte</span> ford = <span class="fu">substr</span>(company,1,4)==<span class="st">&quot;Ford&quot;</span> ;</span>
-<span id="cb291-6"><a href="8-stata.html#cb291-6" tabindex="-1"></a>#delimit <span class="kw">cr</span> <span class="co">// change the delimiter back to carriage return</span></span>
-<span id="cb291-7"><a href="8-stata.html#cb291-7" tabindex="-1"></a><span class="kw">gen</span> <span class="kw">byte</span> gm = <span class="fu">substr</span>(company,1,2)==<span class="st">&quot;GM&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb292"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb292-1"><a href="8-stata.html#cb292-1" tabindex="-1"></a>#delimit ; <span class="co">// change the line delimiter to semicolon</span></span>
+<span id="cb292-2"><a href="8-stata.html#cb292-2" tabindex="-1"></a><span class="kw">summarize</span> <span class="kw">weight</span> price displ headroom rep78 <span class="fu">length</span> turn gear_ratio</span>
+<span id="cb292-3"><a href="8-stata.html#cb292-3" tabindex="-1"></a>    <span class="kw">if</span> <span class="fu">substr</span>(company,1,4)==<span class="st">&quot;Ford&quot;</span> |</span>
+<span id="cb292-4"><a href="8-stata.html#cb292-4" tabindex="-1"></a>       <span class="fu">substr</span>(company,1,2)==<span class="st">&quot;GM&quot;</span>, <span class="kw">detail</span> ;</span>
+<span id="cb292-5"><a href="8-stata.html#cb292-5" tabindex="-1"></a><span class="kw">gen</span> <span class="kw">byte</span> ford = <span class="fu">substr</span>(company,1,4)==<span class="st">&quot;Ford&quot;</span> ;</span>
+<span id="cb292-6"><a href="8-stata.html#cb292-6" tabindex="-1"></a>#delimit <span class="kw">cr</span> <span class="co">// change the delimiter back to carriage return</span></span>
+<span id="cb292-7"><a href="8-stata.html#cb292-7" tabindex="-1"></a><span class="kw">gen</span> <span class="kw">byte</span> gm = <span class="fu">substr</span>(company,1,2)==<span class="st">&quot;GM&quot;</span></span></code></pre></div>
 <p>Once you declear <code>#delimit ;</code>, all lines must end in <code>;</code>. Stata treats carriage returns as no different from blanks.</p></li>
 <li><p>you can comment out the line break by using <code>/* */</code> comment delimiters, or</p></li>
 <li><p>you can use the <code>///</code> line-join indicator.</p></li>
@@ -602,10 +631,10 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <p><code>exit, clear</code> to quit Stata. If the dataset in memory has changed since the last time it was saved, Stata will refuse to quit unless you specify <code>clear</code>.</p>
 <hr />
 <p><strong>Abbreviation rules</strong>: Stata allows abbreviations. You can abbreviate commands, variable names, and options.</p>
-<div class="sourceCode" id="cb292"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb292-1"><a href="8-stata.html#cb292-1" tabindex="-1"></a><span class="co">// full command</span></span>
-<span id="cb292-2"><a href="8-stata.html#cb292-2" tabindex="-1"></a>. <span class="kw">summarize</span> myvar, <span class="kw">detail</span></span>
-<span id="cb292-3"><a href="8-stata.html#cb292-3" tabindex="-1"></a><span class="co">// use abbr. to achieve the same function</span></span>
-<span id="cb292-4"><a href="8-stata.html#cb292-4" tabindex="-1"></a>. <span class="kw">sum</span> myv, <span class="kw">d</span></span></code></pre></div>
+<div class="sourceCode" id="cb293"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb293-1"><a href="8-stata.html#cb293-1" tabindex="-1"></a><span class="co">// full command</span></span>
+<span id="cb293-2"><a href="8-stata.html#cb293-2" tabindex="-1"></a>. <span class="kw">summarize</span> myvar, <span class="kw">detail</span></span>
+<span id="cb293-3"><a href="8-stata.html#cb293-3" tabindex="-1"></a><span class="co">// use abbr. to achieve the same function</span></span>
+<span id="cb293-4"><a href="8-stata.html#cb293-4" tabindex="-1"></a>. <span class="kw">sum</span> myv, <span class="kw">d</span></span></code></pre></div>
 <p>As a general rule, command, option, and variable names may be abbreviated to the shortest string of characters that uniquely identifies them.</p>
 <p>When you read the Stata manual, it uses underlines to denote the minimal abbreviation for a command or option.</p>
 <p>E.g. When you see <span style="font-family: monospace"><u>ap</u>pend</span>, it means you can use <code>ap</code> to denote <code>append</code>.

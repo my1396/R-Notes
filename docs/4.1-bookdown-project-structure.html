@@ -308,6 +308,29 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
   
   div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 </style>
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
 
 <link rel="stylesheet" href="style.css" type="text/css" />
 </head>
@@ -456,10 +479,16 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="8.2.2" data-path="8.2-data-manipulation.html"><a href="8.2-data-manipulation.html#save-estimation-results"><i class="fa fa-check"></i><b>8.2.2</b> Save Estimation Results</a></li>
 <li class="chapter" data-level="8.2.3" data-path="8.2-data-manipulation.html"><a href="8.2-data-manipulation.html#stored-results"><i class="fa fa-check"></i><b>8.2.3</b> Stored Results</a></li>
 </ul></li>
-<li class="chapter" data-level="8.3" data-path="8.3-panel.html"><a href="8.3-panel.html"><i class="fa fa-check"></i><b>8.3</b> Panel</a></li>
-<li class="chapter" data-level="8.4" data-path="8.4-arellano-bond-estimator.html"><a href="8.4-arellano-bond-estimator.html"><i class="fa fa-check"></i><b>8.4</b> Arellano-Bond Estimator</a>
+<li class="chapter" data-level="8.3" data-path="8.3-predict.html"><a href="8.3-predict.html"><i class="fa fa-check"></i><b>8.3</b> Predict</a></li>
+<li class="chapter" data-level="8.4" data-path="8.4-forecast.html"><a href="8.4-forecast.html"><i class="fa fa-check"></i><b>8.4</b> Forecast</a>
 <ul>
-<li class="chapter" data-level="8.4.1" data-path="8.4-arellano-bond-estimator.html"><a href="8.4-arellano-bond-estimator.html#xtabond2"><i class="fa fa-check"></i><b>8.4.1</b> xtabond2</a></li>
+<li class="chapter" data-level="" data-path="8.4-forecast.html"><a href="8.4-forecast.html#add-equationsidentifies"><i class="fa fa-check"></i>Add equations/identifies</a></li>
+<li class="chapter" data-level="" data-path="8.4-forecast.html"><a href="8.4-forecast.html#solve-the-foreceast"><i class="fa fa-check"></i>Solve the foreceast</a></li>
+</ul></li>
+<li class="chapter" data-level="8.5" data-path="8.5-panel.html"><a href="8.5-panel.html"><i class="fa fa-check"></i><b>8.5</b> Panel</a></li>
+<li class="chapter" data-level="8.6" data-path="8.6-arellano-bond-estimator.html"><a href="8.6-arellano-bond-estimator.html"><i class="fa fa-check"></i><b>8.6</b> Arellano-Bond Estimator</a>
+<ul>
+<li class="chapter" data-level="8.6.1" data-path="8.6-arellano-bond-estimator.html"><a href="8.6-arellano-bond-estimator.html#xtabond2"><i class="fa fa-check"></i><b>8.6.1</b> xtabond2</a></li>
 </ul></li>
 </ul></li>
 <li class="divider"></li>
@@ -705,45 +734,51 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="index.rmd-1" class="section level3 unnumbered hasAnchor">
 <h3><code>index.Rmd</code><a href="4.1-bookdown-project-structure.html#index.rmd-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p><strong><code>index.Rmd</code></strong> <span style="color:#00CC66">homepage of your website</span>. Contains the first chapter and the YAML metadata which will be applied to all other Rmd pages. See <a href="https://bookdown.org/yihui/rmarkdown/compile.html">Chapter 2.2 in <em>R Markdown: The Definitive Guide</em></a> for YAML details.</p>
-<p>Note that <code>index.Rmd</code> is the only Rmd document to contain a <strong>YAML frontmatter</strong>.</p>
+<p><strong><code>index.Rmd</code></strong> <span style="color:#008B45"><strong>homepage of your website</strong></span>. Contains the first chapter and the <span style="color:#008B45"><strong>YAML metadata</strong></span> which will be applied to all other Rmd pages.</p>
+<p>That is, <code>index.Rmd</code> sets the global YAML for the entire website. Moreover, <code>index.Rmd</code> is the <strong>only</strong> Rmd document that contains a <strong>YAML frontmatter</strong>.</p>
+<p>See <a href="https://bookdown.org/yihui/rmarkdown/compile.html">Chapter 2.2 in <em>R Markdown: The Definitive Guide</em></a> for YAML details.</p>
 <p>Common uses of <code>index.Rmd</code>’s YAML frontmatter:</p>
 <ul>
 <li><p>Book cover, title, author, date, and description</p></li>
-<li><p>Add <strong>bibliography</strong></p></li>
+<li><p>Add <strong>bibliography</strong></p>
+<p>Once you have one or multiple <code>.bib</code> files, you may use the field bibliography in the YAML metadata of your first R Markdown document (which is typically <code>index.Rmd</code>), and you can also specify the bibliography style via biblio-style (this only applies to PDF output).</p>
+<div class="sourceCode" id="cb233"><pre class="sourceCode yml"><code class="sourceCode yaml"><span id="cb233-1"><a href="4.1-bookdown-project-structure.html#cb233-1" tabindex="-1"></a><span class="fu">bibliography</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">book.bib</span><span class="kw">,</span><span class="at"> packages.bib</span><span class="kw">]</span></span>
+<span id="cb233-2"><a href="4.1-bookdown-project-structure.html#cb233-2" tabindex="-1"></a><span class="fu">biblio-style</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;apalike&quot;</span></span></code></pre></div>
+<p>Add your user citation to <span style="color:#008B45"><strong><code>book.bib</code></strong></span> in stead.</p>
+<p>Don’t remove <code>packages.bib</code>; it is automatically generated and overwritten every time you rebuild the book.</p></li>
 <li><p>Link to your GitHub in the toolbar (also need <code>_output.yml</code>)</p></li>
 <li><p>Add a favicon</p>
 <p>Add the following line to <code>index.Rmd</code> YAML:</p>
-<div class="sourceCode" id="cb233"><pre class="sourceCode css"><code class="sourceCode css"><span id="cb233-1"><a href="4.1-bookdown-project-structure.html#cb233-1" tabindex="-1"></a>favicon<span class="in">:</span> &quot;images/r-project-favicon<span class="fu">.ico</span>&quot;</span></code></pre></div>
+<div class="sourceCode" id="cb234"><pre class="sourceCode yml"><code class="sourceCode yaml"><span id="cb234-1"><a href="4.1-bookdown-project-structure.html#cb234-1" tabindex="-1"></a><span class="fu">favicon</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;images/r-project-favicon.ico&quot;</span></span></code></pre></div>
 <p>Issue: Favicon shows ok on Chrome but couldn’t display on Safari. Same issue reported in <a href="https://stackoverflow.com/questions/66023588/r-bookdown-favicon-works-offline-but-not-online">Stack Overflow</a>.<br />
 Fix: There is a delay for Safari to show Favicon. Wait for two hours and the issue resolves itself…</p></li>
 </ul>
 <p>An example of <code>index.Rmd</code></p>
-<div class="sourceCode" id="cb234"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb234-1"><a href="4.1-bookdown-project-structure.html#cb234-1" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb234-2"><a href="4.1-bookdown-project-structure.html#cb234-2" tabindex="-1"></a><span class="an">title:</span><span class="co"> &quot;A Minimal bookdown Project&quot;</span></span>
-<span id="cb234-3"><a href="4.1-bookdown-project-structure.html#cb234-3" tabindex="-1"></a><span class="an">site:</span><span class="co"> bookdown::bookdown_site</span></span>
-<span id="cb234-4"><a href="4.1-bookdown-project-structure.html#cb234-4" tabindex="-1"></a><span class="an">documentclass:</span><span class="co"> book</span></span>
-<span id="cb234-5"><a href="4.1-bookdown-project-structure.html#cb234-5" tabindex="-1"></a><span class="an">bibliography:</span><span class="co"> [book.bib, packages.bib]</span></span>
-<span id="cb234-6"><a href="4.1-bookdown-project-structure.html#cb234-6" tabindex="-1"></a><span class="an">csl:</span><span class="co"> chicago-fullnote-bibliography.csl</span></span>
-<span id="cb234-7"><a href="4.1-bookdown-project-structure.html#cb234-7" tabindex="-1"></a><span class="an">github-repo:</span><span class="co"> my1396/R-Notes</span></span>
-<span id="cb234-8"><a href="4.1-bookdown-project-structure.html#cb234-8" tabindex="-1"></a><span class="an">favicon:</span><span class="co"> &quot;images/r-project-favicon.ico&quot;</span></span>
-<span id="cb234-9"><a href="4.1-bookdown-project-structure.html#cb234-9" tabindex="-1"></a><span class="co"># typesetting for LaTeX output</span></span>
-<span id="cb234-10"><a href="4.1-bookdown-project-structure.html#cb234-10" tabindex="-1"></a><span class="an">papersize:</span><span class="co"> a4 # The printed size of the thesis</span></span>
-<span id="cb234-11"><a href="4.1-bookdown-project-structure.html#cb234-11" tabindex="-1"></a><span class="an">geometry:</span></span>
-<span id="cb234-12"><a href="4.1-bookdown-project-structure.html#cb234-12" tabindex="-1"></a><span class="co">  - top=25.4mm</span></span>
-<span id="cb234-13"><a href="4.1-bookdown-project-structure.html#cb234-13" tabindex="-1"></a><span class="co">  - bottom=25.4mm</span></span>
-<span id="cb234-14"><a href="4.1-bookdown-project-structure.html#cb234-14" tabindex="-1"></a><span class="co">  - left=25.4mm</span></span>
-<span id="cb234-15"><a href="4.1-bookdown-project-structure.html#cb234-15" tabindex="-1"></a><span class="co">  - right=38.1mm</span></span>
-<span id="cb234-16"><a href="4.1-bookdown-project-structure.html#cb234-16" tabindex="-1"></a><span class="co">  # - bindingoffset=6.4mm  # removes a specified space from the inner-side for twoside.</span></span>
-<span id="cb234-17"><a href="4.1-bookdown-project-structure.html#cb234-17" tabindex="-1"></a><span class="co">  # - asymmetric  # disable alternating margins on odd/even pages</span></span>
-<span id="cb234-18"><a href="4.1-bookdown-project-structure.html#cb234-18" tabindex="-1"></a><span class="an">classoption:</span><span class="co"> </span></span>
-<span id="cb234-19"><a href="4.1-bookdown-project-structure.html#cb234-19" tabindex="-1"></a><span class="co">  - twoside</span></span>
-<span id="cb234-20"><a href="4.1-bookdown-project-structure.html#cb234-20" tabindex="-1"></a><span class="co">  - openright</span></span>
-<span id="cb234-21"><a href="4.1-bookdown-project-structure.html#cb234-21" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb234-22"><a href="4.1-bookdown-project-structure.html#cb234-22" tabindex="-1"></a></span>
-<span id="cb234-23"><a href="4.1-bookdown-project-structure.html#cb234-23" tabindex="-1"></a><span class="fu"># Preface</span></span>
-<span id="cb234-24"><a href="4.1-bookdown-project-structure.html#cb234-24" tabindex="-1"></a></span>
-<span id="cb234-25"><a href="4.1-bookdown-project-structure.html#cb234-25" tabindex="-1"></a>Some content</span></code></pre></div>
+<div class="sourceCode" id="cb235"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb235-1"><a href="4.1-bookdown-project-structure.html#cb235-1" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb235-2"><a href="4.1-bookdown-project-structure.html#cb235-2" tabindex="-1"></a><span class="an">title:</span><span class="co"> &quot;A Minimal bookdown Project&quot;</span></span>
+<span id="cb235-3"><a href="4.1-bookdown-project-structure.html#cb235-3" tabindex="-1"></a><span class="an">site:</span><span class="co"> bookdown::bookdown_site</span></span>
+<span id="cb235-4"><a href="4.1-bookdown-project-structure.html#cb235-4" tabindex="-1"></a><span class="an">documentclass:</span><span class="co"> book</span></span>
+<span id="cb235-5"><a href="4.1-bookdown-project-structure.html#cb235-5" tabindex="-1"></a><span class="an">bibliography:</span><span class="co"> [book.bib, packages.bib]</span></span>
+<span id="cb235-6"><a href="4.1-bookdown-project-structure.html#cb235-6" tabindex="-1"></a><span class="an">csl:</span><span class="co"> chicago-fullnote-bibliography.csl</span></span>
+<span id="cb235-7"><a href="4.1-bookdown-project-structure.html#cb235-7" tabindex="-1"></a><span class="an">github-repo:</span><span class="co"> my1396/R-Notes</span></span>
+<span id="cb235-8"><a href="4.1-bookdown-project-structure.html#cb235-8" tabindex="-1"></a><span class="an">favicon:</span><span class="co"> &quot;images/r-project-favicon.ico&quot;</span></span>
+<span id="cb235-9"><a href="4.1-bookdown-project-structure.html#cb235-9" tabindex="-1"></a><span class="co"># typesetting for LaTeX output</span></span>
+<span id="cb235-10"><a href="4.1-bookdown-project-structure.html#cb235-10" tabindex="-1"></a><span class="an">papersize:</span><span class="co"> a4 # The printed size of the thesis</span></span>
+<span id="cb235-11"><a href="4.1-bookdown-project-structure.html#cb235-11" tabindex="-1"></a><span class="an">geometry:</span></span>
+<span id="cb235-12"><a href="4.1-bookdown-project-structure.html#cb235-12" tabindex="-1"></a><span class="co">  - top=25.4mm</span></span>
+<span id="cb235-13"><a href="4.1-bookdown-project-structure.html#cb235-13" tabindex="-1"></a><span class="co">  - bottom=25.4mm</span></span>
+<span id="cb235-14"><a href="4.1-bookdown-project-structure.html#cb235-14" tabindex="-1"></a><span class="co">  - left=25.4mm</span></span>
+<span id="cb235-15"><a href="4.1-bookdown-project-structure.html#cb235-15" tabindex="-1"></a><span class="co">  - right=38.1mm</span></span>
+<span id="cb235-16"><a href="4.1-bookdown-project-structure.html#cb235-16" tabindex="-1"></a><span class="co">  # - bindingoffset=6.4mm  # removes a specified space from the inner-side for twoside.</span></span>
+<span id="cb235-17"><a href="4.1-bookdown-project-structure.html#cb235-17" tabindex="-1"></a><span class="co">  # - asymmetric  # disable alternating margins on odd/even pages</span></span>
+<span id="cb235-18"><a href="4.1-bookdown-project-structure.html#cb235-18" tabindex="-1"></a><span class="an">classoption:</span><span class="co"> </span></span>
+<span id="cb235-19"><a href="4.1-bookdown-project-structure.html#cb235-19" tabindex="-1"></a><span class="co">  - twoside</span></span>
+<span id="cb235-20"><a href="4.1-bookdown-project-structure.html#cb235-20" tabindex="-1"></a><span class="co">  - openright</span></span>
+<span id="cb235-21"><a href="4.1-bookdown-project-structure.html#cb235-21" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb235-22"><a href="4.1-bookdown-project-structure.html#cb235-22" tabindex="-1"></a></span>
+<span id="cb235-23"><a href="4.1-bookdown-project-structure.html#cb235-23" tabindex="-1"></a><span class="fu"># Preface</span></span>
+<span id="cb235-24"><a href="4.1-bookdown-project-structure.html#cb235-24" tabindex="-1"></a></span>
+<span id="cb235-25"><a href="4.1-bookdown-project-structure.html#cb235-25" tabindex="-1"></a>Some content</span></code></pre></div>
 <ul>
 <li><code>site: bookdown::bookdown_site</code> tells rmarkdown to use <code>bookdown</code> to build <u>all Rmd files</u>, instead of rendering a single Rmd file.</li>
 </ul>
@@ -757,14 +792,14 @@ Fix: There is a delay for Safari to show Favicon. Wait for two hours and the iss
 <li><p>The Rmd files must start immediately with the chapter title using the first-level heading, e.g., <code># Chapter Title</code>. Note that YAML metadata should <span style="color:#FF9900">NOT</span> be included in these Rmd files, as it is inherited from the <a href="3.11-rmd-github-pages.html#index"><code>index.Rmd</code></a> file.</p></li>
 </ul>
 <p><code>01-intro.Rmd</code></p>
-<div class="sourceCode" id="cb235"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb235-1"><a href="4.1-bookdown-project-structure.html#cb235-1" tabindex="-1"></a><span class="fu"># Introduction</span></span>
-<span id="cb235-2"><a href="4.1-bookdown-project-structure.html#cb235-2" tabindex="-1"></a></span>
-<span id="cb235-3"><a href="4.1-bookdown-project-structure.html#cb235-3" tabindex="-1"></a>This chapter is an overview of the methods that</span>
-<span id="cb235-4"><a href="4.1-bookdown-project-structure.html#cb235-4" tabindex="-1"></a>we propose to solve an **important problem**.</span></code></pre></div>
-<p><code>02-literature.Rmd</code></p>
-<div class="sourceCode" id="cb236"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb236-1"><a href="4.1-bookdown-project-structure.html#cb236-1" tabindex="-1"></a><span class="fu"># Literature</span></span>
+<div class="sourceCode" id="cb236"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb236-1"><a href="4.1-bookdown-project-structure.html#cb236-1" tabindex="-1"></a><span class="fu"># Introduction</span></span>
 <span id="cb236-2"><a href="4.1-bookdown-project-structure.html#cb236-2" tabindex="-1"></a></span>
-<span id="cb236-3"><a href="4.1-bookdown-project-structure.html#cb236-3" tabindex="-1"></a>Here is a review of existing methods.</span></code></pre></div>
+<span id="cb236-3"><a href="4.1-bookdown-project-structure.html#cb236-3" tabindex="-1"></a>This chapter is an overview of the methods that</span>
+<span id="cb236-4"><a href="4.1-bookdown-project-structure.html#cb236-4" tabindex="-1"></a>we propose to solve an **important problem**.</span></code></pre></div>
+<p><code>02-literature.Rmd</code></p>
+<div class="sourceCode" id="cb237"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb237-1"><a href="4.1-bookdown-project-structure.html#cb237-1" tabindex="-1"></a><span class="fu"># Literature</span></span>
+<span id="cb237-2"><a href="4.1-bookdown-project-structure.html#cb237-2" tabindex="-1"></a></span>
+<span id="cb237-3"><a href="4.1-bookdown-project-structure.html#cb237-3" tabindex="-1"></a>Here is a review of existing methods.</span></code></pre></div>
 
 </div>
 </div>

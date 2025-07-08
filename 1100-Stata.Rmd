@@ -259,14 +259,44 @@ gen variable = expression      // generate new variables
 replace variable = expression  // replace the value of existing variables
 ```
 
-`generate newvar = oldvar + 2` generate a new variable `newvar`, which equals `oldvar+2`
+`generate` create variables based on expressions you specified.
 
-`egen` creates a new variable based on existing variables.
+`generate newvar = oldvar + 2` generate a new variable `newvar`, which equals `oldvar + 2`
+
+`generate lngdp = ln(gdp)` generate the natural log of `gdp`
+
+`generate exp2 = exp^2` generate the square of `exp`
+
+`egen`: Extensions to `generate`; creates a new variable based on <span style='color:#008B45'>`egen` functions</span> of existing variables.
+
+Q: What are `egen` functions? \
+A: The functions are specifically written for `egen`.
 
 ```stata
 // Generate newv1 for distinct groups of v1 and v2, and create and apply value label mylabel
 egen newv1 = group(v1 v2), label(mylabel)
+
+// for each country, calculate the average of wpop
+by country_id, sort: egen pop_country = mean(wpop)
 ```
+
+`gen` vs. `egen`
+
+- `gen` used for simple algebraic transformations
+- `egen` for more complexed transformations, e.g., operations based on groups of observations.
+- They behave differently if you want to calcualte the `sum` per group.
+  - `gen` returns running sum
+  - `egen` returns group sum
+
+```stata
+// Create variable containing the running sum of x
+generate runsum = sum(x)
+
+// Create variable containing a constant equal to the overall sum of x
+egen totalsum = total(x)
+```
+
+
 
 
 
@@ -626,11 +656,249 @@ ereturn list
 ```
 
 
+
+## Predict
+
+`predict` calculates predictions, residuals, influence statistics, and the like after estimation. Exactly what `predict` can do is determined by the previous estimation command; command-specific options are documented with each estimation command. Regardless of command-specific options, the actions of `predict` share certain similarities across estimation commands:
+
+- `predict newvar1` create `newvar1` containing "predicted values", i.e., $\hat{y}_i = \E(y_i\mid \bx_i)$
+
+  - For linear regression models, $\hat{y}_i = \bx_i'\hat{\bbeta.}$
+  - For probit/logit models, $\hat{y}_i = F(\bx_i'\hat{\bbeta}),$ where $F(.)$ is the logistic or normal cumulative distribution function.
+
+- `predict newvar2, xb` create `newvar2` containing the linear prediction
+
+  Option `xb` means caculating the linear prediction, $\bx_i'\hat{\bbeta},$ from the fitted model.
+
+- `predict newvar2 if e(sample), xb` Same as above, but only for observations used to fit the model in the previous estimation, i.e., **in-sample predictions**.
+
+  `e(sample)`:  return $1$ if the observation is in the estimation sample and $0$ otherwise.
+
+- `predict` can be used in **out-of-sample predictions**, which extende beyond the estimation sample. 
+
+  You can load a new dataset and type `predict` to obtain results for that sample.
+
+  ```stata
+  use dataset1		/* estimation dataset */
+  (fit a model)
+  use dataset2		/* forecast dataset */
+  predict yhat    /* fill in the predictions */
+  ```
+
+- ` predict e, residuals` will generate a variable `e` containing the residuals of the estimation
+
+  $$
+  e_i = y_i - \hat{y}_i
+  $$
+  
+
+Consider the linear prediction
+
+$$
+\begin{split}
+\hat{y}_i &= \bx_i'\hat{\bbeta}  \\
+&= \hat{\beta}_1x_{1i} + \hat{\beta}_2x_{2i} + \cdots + \hat{\beta}_Kx_{Ki} .
+\end{split}
+$$
+
+$\hat{y}_i$ is called the 
+
+- **predcited values** for in-sample predictions
+- **forecasts** for out-of-sample predictions
+
+For logit or probit, $\bx_i'\hat{\bbeta}$ is called the logit or probit *index*. The predicted probability is $p_i=\hat{y}_i=F(\bx_i'\hat{\bbeta}),$ where $F(.)$ is the logistic or normal cumulative distribution function.
+For probit, $\hat{y}_i=\Phi(\bx_i'\hat{\bbeta})$ .
+
+$x_{1i},$ $x_{2i},$ $\ldots,$ $x_{Ki}$ are obtained from the data currently in memory and do **NOT** necessarily correspond to the data on the independent variables used to fit the model (obtaining $\hat{\beta}_1,$ $\hat{\beta}_2,$ $\ldots,$ $\hat{\beta}_K$).
+
+
+
+
 ## Forecast
 
-Foreceast: out-of-sample
+Foreceast: **out-of-sample**
 
-Before we are able to forecast, we must populate the exo
+Before we are able to forecast, we must populate the exogenous variables over the entire forecast horizon before solving our model. 添加数据
+
+*Solving our model*: means obtain forecast from our model.
+
+
+
+#### **Procedure**: {.unnumbered .unlist}
+
+1. **Estimate the model**
+
+   ```stata
+   arima y2 x3 y1, ar(1) ma(1)
+   ```
+
+   
+
+2. **Store the estimation results** using `estimate store`
+
+   ```stata
+   estimate store myarima
+   ```
+
+   
+
+3. **Create a forecast model** using `forecast create`. This initialize a new model; we will call the model `mymodel.`
+
+   ```stata
+   forecast create mymodel
+   ```
+
+   The name you give the model mainly controls how output from `forecast` commands is labeled. More importantly, `forecast create` creates the internal data structures Stata uses to keep track of your model.
+
+4. **Add all equations** to the model you just created.
+
+	The following command adds the stored estimation results in `myarima` to the current model `mymodel`.
+
+   ```
+   forecast estimates myarima
+   ```
+
+   
+
+5. **Compute dynamic forecasts** from 2012 to 2024
+
+   ```stata
+   forecast solve, begin(2012) end(2024)
+   ```
+
+
+--------------------------------------------------------------------------------
+
+### Add equations/identifies {.unnumbered}
+
+```stata
+forecast estimates name [, options ]
+```
+
+**Options**:
+
+- `predict(p_options)`:  call `predict` using `p_options`
+
+- `names(namelist[ , replace ])`: use `namelist` for names of left-hand-side (LHS) variables.
+
+  `forecast estimates` creates a new variable in the dataset for each element of `namelist`.  
+
+  If a variable of the same name already exists in your dataset, `forecast estimates` exits with an error unless you specify the `replace` option, in which case existing variables are overwritten.
+
+
+--------------------------------------------------------------------------------
+
+`forecast adjust` adjusts a variable by add factoring, replacing, etc.
+
+
+```stata
+forecast adjust varname = exp [if] [in]
+```
+
+`varname` is the name of the endogenous variable that has been previously added to the model using `forecast estimates` or `forecast coefvector`.
+
+`forecast adjust` specifies an adjustment to be applied to an endogenous variable in the model. Adjustments are typically used to produce alternative forecast scenarios or to incorporate outside information into a model.
+
+
+```stata
+// Adjust the endogenous variable y in forecast to account for the variable shock in 1990
+forecast adjust y = y + shock if year==1990
+```
+
+
+
+**Use example: forecast a panel**
+$$
+\%\Delta \text{dim}_{it} = \beta_0 + \beta_1 \ln(\text{starts}_{it}) + \beta_2 \text{rgspgrowth}_{it} + \beta_3 \text{unrate}_{it} + u_{i} + \varepsilon_{it}
+$$
+
+$u_{i}$ refers to individual fixed effects. 
+
+When we make forecasts for any individual panel, we may want to include it in our forecasts. This can be achieved by using `forecast adjust`.
+
+```stata
+use https://www.stata-press.com/data/r19/statehardware, clear
+generate lndim = ln(dim)
+generate lnstarts = ln(starts)
+quietly xtreg D.lndim lnstarts rgspgrowth unrate if qdate <= tq(2009q4), fe
+predict dlndim_u, u  /* obtain individual fixed effects */
+estimates store dim  /* store estimation results */
+```
+
+With enough observations, we can have more confidence in the estimated panel-specific errors. If we are willing to assume that we have decent estimates of the panel-specific errors and that those panel-level effects will remain constant over the forecast horizon, then we can incorporate them into our forecasts. Because predict only provided us with estimates of the panel-level effects for the estimation sample, we need to extend them into the forecast horizon. An easy way to do that is to use `egen` to create a new set of variables:
+
+```stata
+by state: egen dlndim_u2 = mean(dlndim_u)
+```
+
+We can use `forecast adjust` to incorporate these terms into our forecasts. 
+
+The following commands define our forecast model, including the estimated panel-specific terms:
+
+```stata
+forecast create statemodel, replace   /* create forecast model */
+forecast estimates dim, name(dlndim)  /* add equations, endog variables to bre forecasted */
+forecast adjust dlndim = dlndim + dlndim_u2 /* add state fixed effects */
+```
+
+`dlndim` stands for the first difference of the logarithm of `dim`. We are interested in the level of `dim`, so we need to back out `dim` from `dlndim`.
+
+We use `forecast identity` to obtain the actual `dim` variable.
+
+```stata
+// reverse first difference
+forecast identity lndim = L.lndim + dlndim
+// reverse logarithm
+forecast identity dim = exp(lndim)
+```
+
+We used forecast adjust to perform our adjustment to dlndim immediately after we added those estimation results so that we would not forget to do so.
+However, we could have specified the adjustment at any time. 
+
+Regardless of when you specify an adjustment, `forecast solve` performs those adjustments immediately after the variable being adjusted is computed.
+
+Finally we can solve the model. Here we obtain dynamic forecasts beginning in the first quarter of 2010:
+
+```stata
+forecast solve, begin(tq(2010q1)) log(off)
+```
+
+
+
+
+
+___
+
+### Solve the foreceast {.unnumbered}
+
+```stata
+forecast solve [, { prefix(string) | suffix(string) } options ]
+```
+
+**Options**:
+
+- `prefix(string)` and `suffix(string)` specify prefix/suffix for forecast variables.
+
+  You may specify `prefix()` or `suffix()` but NOT both. 
+
+  By default, forecast values will be prefixed by `f_`.
+
+- `begin(time_constant)` and `end(time_constant)` specify period to begin/end forecasting
+
+- `periods(#)` specify number of periods to forecast
+
+- `static` produce static forecasts instead of dynamic forecasts
+
+  **Actual values** of variables are used wherever lagged values of the endogenous variables appear in the model. Static forecasts are also called **one-step-ahead forecasts**.
+
+  By default, <span style='color:#008B45'>**dynamic forecasts**</span> are produced, which use the forecast values of variables wherever lagged values of the endogenous variables appear in the model. 
+
+- `actuals` use actual values if available instead of forecasts
+
+  `actuals` specifies how nonmissing values of endogenous variables in the forecast horizon are treated. By default, nonmissing values are ignored, and forecasts are produced for all endogenous variables.
+  When you specify `actuals`, `forecast` sets the forecast values <u>equal to the actual values if they are nonmissing</u>. The forecasts for the other endogenous variables are then conditional on the known values of the endogenous variables with nonmissing data.
+
+- `log(off)` suppress the iteration log.
 
 
 
@@ -691,6 +959,21 @@ Options
 
 
 ## Arellano-Bond Estimator
+
+If an equation did contain a lagged dependent variable, then one could use a **dynamic panel-data** (DPD) estimator such as `xtabond`, `xtdpd`, or `xtdpdsys`. DPD estimators are designed for cases where the number of observations per panel $T$ is small.
+
+As shown by @Nickell1981, the bias of the standard
+fixed- and random-effects estimators in the presence of lagged dependent variables is of order $1/T$ and is thus particularly severe when each panel has relatively few observations.
+
+
+@Judson1999 perform Monte Carlo experiments to examine the relative performance of different panel-data estimators in the presence of lagged dependent variables when used with panel datasets having dimensions more commonly encountered in macroeconomic applications. Based on their results, 
+
+- The bias of the standard fixed-effects estimator (LSDV in their notation) is not inconsequential even when $T=20.$
+- For $T=30$, the fixed-effects estimator does work as well as most alternatives. 
+  
+  The only estimator that appreciably outperformed the standard fixed-effects estimator when $T=30$ is the least-squares dummy variable corrected estimator (LSDVC in their notation). 
+
+   @Bruno2005 provides a Stata implementation of that estimator.
 
 The [Arellano–Bond estimator](https://www.stata.com/manuals/xtxtabond.pdf) is for datasets with many panels and few periods. (Technically, the large-sample properties are derived with the number of panels going to infinity and the number of periods held fixed.) The number of instruments increases quadratically in the number of periods. If your dataset is better described by a framework in which both the number of panels and the number of periods is large, then you should consider other estimators such as `xtiveg` or `xtreg, fe`.
 
