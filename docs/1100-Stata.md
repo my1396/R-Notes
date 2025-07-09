@@ -235,8 +235,7 @@ summarize marriage_rate divorce_rate if region == "West"
 
 - `&` (and) and `|` (or) to join conditions.
 
-
-`in range` restricts the scope of the cmd to be applied to a specific observation range.
+<span style='color:#008B45'>`in range`</span> restricts the scope of the cmd to be applied to a specific observation range.
 
 - First observation can be denoted by `f`
 - Last observation can be denoted by `l`
@@ -314,6 +313,76 @@ list sex gender in 1/4
 
 `encode` creates a new variable `gender`, mapping each level in `sex` to a numerical value. `female` becomes 1 and `male` becomes 2.
 
+
+
+`display` displays strings and values of scalar expressions.
+
+```stata
+display [display_directive [display_directive [...]]]
+```
+
+`list` displays the values of variables. If no `varlist` is specified, the values of all the variables are displayed.
+
+```stata
+list [varlist] [if] [in] [, options]
+```
+
+
+
+
+
+___
+
+### System Variables
+
+Expressions may also contain variables (pronounced “underscore variables”), which are built-in system variables that are created and updated by Stata. They are called variables because their names all begin with the underscore character, `_`.
+
+| Var                                           | Description                                                  |
+| --------------------------------------------- | ------------------------------------------------------------ |
+| `_n`                                          | the number of the current observation.                       |
+| `_N`                                          | the total number of observations in the dataset or the number of observations in the current `by()` group. |
+| `_pi`                                         | $\pi$                                                        |
+| `[eqno]_b[varname]` or `[eqno]_coef[varname]` | value of the coefficient on `varname` from the most recently fitted model |
+| `[eqno]_se[varname]`                          | standard error of the coefficient on `varname` from the most recently fit model |
+| `_b[_cons]`                                   | value of the intercept term                                  |
+
+
+
+
+
+___
+
+
+### Matrix
+
+You enter the matrices by row, separate one element from the next by using commas (`,`) and one row from the next by using backslashes (`\`).
+
+To create
+
+$$
+A = \begin{pmatrix}
+1 & 2 \\
+3 & 4
+\end{pmatrix}
+$$
+
+
+```stata
+matrix [input] a = (1,2\3,4)
+matrix list a
+```
+
+`input` is optional.
+
+- without `input`, matrix must be small, can include expressions.
+- with `input`, matrix can be large, but no expressions for the elements.
+
+Menu: Data > Matrices, ado language > Input matrix by hand
+
+Get one element using `matname[r,c]` to get `r` row, `c` column element.
+
+
+Matrix define: <https://www.stata.com/manuals/pmatrixdefine.pdf#pmatrixdefine>
 
 
 ___
@@ -640,7 +709,7 @@ Alternative to `etable`: `eststo`.
 
 ### Stored Results
 
-Stata commands that report results also store the results where they can be subsequently used by other commands or programs. This is documented in the Stored results section of the particular command in the reference manuals.
+Stata commands that report results also store the results where they **can be subsequently used** by other commands or programs. This is documented in the Stored results section of the particular command in the reference manuals.
 
 - e-class commands, such as regress, store their results in `e()`; e-class commands are Stata’s model estimation commands.
 
@@ -654,6 +723,27 @@ return list
 // for e-class command
 ereturn list
 ```
+
+
+
+Most estimation commands leave behind `e(b)` (the coefficient vector) and `e(V)` (the variance–covariance matrix of the estimator):
+
+```stata
+// display coef vector
+matrix list e(b)
+// assign it to a variable
+matrix myb = e(b)
+matrix list myb
+```
+
+You can refer to `e(b)` and `e(V)` in any matrix expression:
+
+```stata
+matrix c = e(b)*invsym(e(V))*e(b)’
+matrix list c
+```
+
+
 
 
 
@@ -805,7 +895,9 @@ forecast estimates name [, options ]
 
 
 
-**Add an itentity to a forecast model** 
+___
+
+**Add an Identity to a `forecast` Model** 
 
 
 ```stata
@@ -834,6 +926,44 @@ Typically, you use `forecast identity` to define the relationship that determine
 
 The generate option of forecast identity is useful when you wish to use a transformation of one or more endogenous variables as a right-hand-side variable in a stochastic equation that describes another endogenous variable.
 
+
+
+___
+
+**Add equations that you obtained elsewhere to your model**
+
+Up untill now, we have been using model output from Stata to add equations to a forecast model, i.e., using `forecast estimates`. 
+
+Common use scenarios of `forecast coefvector`:
+
+- But sometimes, you might see the estimated coefficients for an equation in an article and want to add that equation to your model. In this case, `forecast coefvector` allows you to add equations that are stored as coefficient vectors to a forecast model.
+
+- User-written estimators that do not implement a `predict` command can also be included in forecast models via `forecast coefvector`. 
+
+- `forecast coefvector` can also be useful insituations where you want to simulate time-series data.
+
+```stata
+forecast coefvector cname [, options ]
+```
+
+`cname` is a Stata matrix with one row.
+
+**Options**:
+
+- `variance(vname)`: specify parameter variance matrix of the <span style='color:#008B45'>**estimated parameters**</span>.
+
+  This option only has an effect if you specify the `simulate()` option when calling `forecast solve` and request `sim_technique`’s `betas` or `residuals`.
+
+- `errorvariance(ename) `: specify <span style='color:#008B45'>**additive error term**</span> with variance matrix `ename`, where `ename` is the name of s Stata matrix. The number of rows and columns in `ename` must match the number of equations represented by coefficient vector `cname`. 
+
+  This option only has an effect if you specify the `simulate()` option when calling `forecast solve` and request `sim_technique`’s `betas` or `residuals`.
+
+- `names(namelist[ , replace ])`: instructs forecast coefvector to use namelist as the names of the left-hand-side variables in the coefficient vector being added. By default, forecast coefvector uses the equation names on the column stripe of cname. 
+
+  You must use this option if any of the equation names stored with `cname` contains **time-series operators**.
+
+
+You use `forecast coefvector` to add endogenous variables to your model that are defined by linear equations, where the linear equations are stored in a coefficient (parameter) vector.
 
 
 
@@ -956,7 +1086,33 @@ forecast solve [, { prefix(string) | suffix(string) } options ]
   `actuals` specifies how nonmissing values of endogenous variables in the forecast horizon are treated. By default, nonmissing values are ignored, and forecasts are produced for all endogenous variables.
   When you specify `actuals`, `forecast` sets the forecast values <u>equal to the actual values if they are nonmissing</u>. The forecasts for the other endogenous variables are then conditional on the known values of the endogenous variables with nonmissing data.
 
-- `log(off)` suppress the iteration log.
+- `log(log_level)` `loglevel` takes on one of the following values
+
+  - `on`: default, provides an iteration log showing the current panel and period for which the model is being solved as well as a sequence of dots for each period indicating the number of iterations.
+  - `off`: suppress the iteration log.
+  - `detail`: a detailed iteration log including the current values of the convergence criteria for each period in each panel (in the case of panel data) for which the model is being solved.
+  - `brief`: produces an iteration log showing the current panel being solved but does not show which period within the current panel is being solved.
+
+- `simulate(sim_technique, sim_statistic sim_options)` allows you to simulate your model to obtain measures of uncertainty surrounding the point forecasts produced by the model. Simulating a model involves repeatedly solving the model, each time accounting for the uncertainty associated with the error terms and the estimated coefficient vectors.
+
+  - `sim_technique` can be `betas`, `errors`, or `residuals`.
+
+    - `betas`: draw multivariate-normal parameter vectors
+    - `errors`: draw additive errors from multivariate normal distribution
+    - `residuals`: draw additive residuals based on static forecast errors
+
+  - `sim_statistic` specifies a summary statistic to summarize the forecasts over all the simulations.
+
+  ```stata
+  statistic(statistic, { prefix(string) | suffix(string) })
+  ```
+
+  `statistic` can be `mean`, `variance`, or `stddev`. You may specify either the prefix or the suffix that will be used to name the variables that will contain the requested `statistic`.
+
+  - `sim_options` includes
+    - `saving(filename, …)` save results to file
+    - `nodots` suppress replication dots.  By default, one dot character is displayed for each successful replication. If during a replication convergence is not achieved, forecast solve exits with an error message.
+    - `reps(#)` request that `forecast solve` perform `#` replications; default is `reps(50)`
 
 
 
@@ -1099,7 +1255,7 @@ xtabond n l(0/1).w l(0/2).(k ys) yr1980-yr1984 year, lags(2) vce(robust) noconst
 
 The output would look like the following.
 
-```stata
+<pre class="nowrap"><code>
 Arellano–Bond dynamic panel-data estimation     Number of obs     =        611
 Group variable: id                              Number of groups  =        140
 Time variable: year
@@ -1142,8 +1298,7 @@ Instruments for differenced equation
                   D.yr1983 D.yr1984 D.year
 Instruments for level equation
         Standard: _cons
-```
-
+</code></pre>
 
 
 `xtdpdsys` implements the Arellano–Bover/Blundell–Bond system estimator, which includes the lagged differences of `n` (the dependent variable) as instruments for the level equation.
