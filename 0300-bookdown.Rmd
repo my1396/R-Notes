@@ -147,7 +147,7 @@ Here is a brief example of  `_output.yml`:
 bookdown::gitbook:
   css: style.css
   highlight: tango
-  split_by: section
+  split_by: section+number
   includes:
     in_header: head.html
   config:
@@ -179,9 +179,13 @@ You do NOT need the three dashes `---` in `_output.yml`. In this case, all forma
 
 - `split_by= c("chapter", "chapter+number", "section", "section+number", "rmd", "none")` defaults to `chapter`, which splits the file by the first-level headers. 
 
-    - `section` splits the file by the second-level headers.
+    - `chapter` splits the file by the first-level headers; 
+    
+        A chapter page may be too long if there are many sections within chapters.
+        
+    - `section` splits the file by the <span style='color:#008B45'>second-level</span> headers.
     - `chapter+number` and `section+number`: the chapter/section numbers will be prepended to the HTML filenames. For example: if using `chapter` or `section`, the HTML file names will be `introduction.html`, `literature.html`, etc.; but with the numbering setting, the HTML file names will be `1-introduction.html`, `2-literature.html`, etc.
-    - I prefer `section+number` as it orders all html in the book's section order.
+    - I prefer <span style='color:#008B45'>`section+number`</span> as it *orders all html in the book's section order*. ✅
 
 - The [`includes` option](https://bookdown.org/yihui/bookdown/yaml-options.html) allows you to insert arbitrary custom content before and/or after the body of the output.
 

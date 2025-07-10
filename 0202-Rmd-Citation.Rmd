@@ -93,9 +93,9 @@ csl: biomed-central.csl
 
 ### Bibliography placement
 
-By default, the bibliography will be placed at the end of the document. So, you will want a final header titled `# References` or `# Bibliography` at the end your document.
+By default, the bibliography will be placed *at the end of the document*. So, you will want a final header titled `# References` or `# Bibliography` at the end your document.
 
-If you want to place the bibliography somewhere else, for instance before the appendices, you can insert a `<div id="refs"></div>` html tag in source mode:
+If you want to *place the bibliography somewhere else*, for instance before the appendices, you can insert a `<div id="refs"></div>` html tag in source mode:
 
 ````yml
 # References
@@ -105,9 +105,11 @@ If you want to place the bibliography somewhere else, for instance before the ap
 # Appendix
 ````
 
-If you use the `bookdown::gitbook` output format, by default, the bibliography is split and all citation items that are cited on a given html page are put at the end of that page, so that readers do not have to navigate to a different bibliography page to see the details of citations. 
+Generation of the bibliography can be **suppressed** by setting `suppress-bibliography: true` in the YAML metadata in <span style='color:#008B45'>`index.Rmd`</span> . (Rarely used, as you do want a reference section)
 
-This feature can be disabled by setting the `split_bib` YAML field to `false`, in which case all citations cited in the entire report or book are put on a separate bibliography page. To do this, you can add specific keys in the YAML header:
+If you use the `bookdown::gitbook` output format, by default, the bibliography is split (`split_bib: true`) and all citation items that are cited on a given html page are put at the end of that page, so that readers do not have to navigate to a different bibliography page to see the details of citations. 
+
+This feature can be disabled by setting the `split_bib` YAML field to `false`, in which case all citations cited in the entire report or book are put on a separate bibliography page. To do this, you can add specific keys in the YAML header in <span style='color:#008B45'>`_output.yml`</span>:
 
 ````yml
 ---
@@ -121,7 +123,19 @@ output:
 ---
 ````
 
+When the output format is LaTeX, the list of references will be automatically put in a chapter or section at the end of the document. 
 
+For non-LaTeX output, you can add an empty **reference chapter** as the last chapter of your book. For example, if your <span style='color:#008B45'>last chapter</span> is the Rmd file `06-references.Rmd`, its content can be an inline R expression:
+
+```markdownr
+`r if (knitr::is_html_output()) '# References {-}'`
+```
+
+This will create a level 1 chapter for References used in the whole book. If you don't have this command, the full list of references will be printed twice at the last section of your book.
+
+For more detailed instructions and further examples on how to use citations, please see the “Citations” section of the Pandoc manual: <https://pandoc.org/MANUAL.html#citations>
+
+<https://bookdown.dongzhuoer.com/rstudio/bookdown/citations>
 
 
 
