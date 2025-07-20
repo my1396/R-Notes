@@ -1,6 +1,6 @@
 # Load necessary libraries
+library(tidyverse) 
 library(MASS)    # for mvrnorm
-library(ggplot2) # for plotting
 library(reshape2) # for data reshaping
 library(latex2exp)
 
