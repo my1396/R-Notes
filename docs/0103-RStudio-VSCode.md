@@ -78,7 +78,8 @@ Then, in VS Code, you will need to set Radian as the default R terminal. You can
 
 See [Extension Settings](https://github.com/REditorSupport/vscode-R/wiki/Extension-settings) for a full list of settings of `vscode-R` that can be set in VSCode's `settings.json` file.
 
-### Plot Viewer {.unnumbered .unlisted}
+
+### Plot Viewer {.unnumbered}
 
 [`httpgd`](https://nx10.github.io/httpgd/): A graphics device for R that is accessible via network protocols. This package was created to make it easier to embed live R graphics in integrated development environments and other applications. `httpgd` is required by the interactive plot viewer of the R extension for VS Code.
 
@@ -117,19 +118,40 @@ dev.off()
 
 
 
-### Rmd {.unnumbered .unlisted}
+### Rmd {.unnumbered}
 
-A benefit os using VS code for editing Rmd is that it has a built-in Markdown preview feature. This will show you a live preview of your Rmd file as you edit it.
+You can edit Rmd with either of the two Language Mode:
 
-If using RStudio, you can only get a preview after rendering the site using the `rmarkdown::render_site()` function, which can be slow for large sites. 
+- `R Markdown`: there is a knit button to provide preview but no live preview.
+  
+    If using RStudio, you can only get a preview after rendering 
 
+    - Render the site using: `rmarkdown::render_site()` function, which can be slow for large sites. 
+    - Render the document using: `rmarkdown::render("0103-RStudio-VSCode.Rmd")` function, which is equivalent to clicking the "Knit" button in RStudio.
+
+    Note that 
+
+    - Knit button generate output html in the `docs/` directory; it uses your styles settings in the `_output.yml` file.
+    - `rmarkdown::render` generates output html in the same directory as the Rmd file. It does not apply any settings from `_output.yml` file, so you need to specify any headers you want to load, e.g., mathjax macros.
+  
+    How to decide which Language Mode to use? A rule of thumb is:
+    - If your Rmd has lots of R code you need to run interactively, use `R Markdown`.
+    - If you want to write a static report with minimal R code, use `Markdown`.
+
+      At all cases, it is quite easy to switch between the two modes by changing the Language Mode in the bottom right corner of VS Code. So you can choose either one that suits you best.
+
+- `Markdown`: there is no knit button but you can have a live preview using the `Markdown Preview Enhance` extension.
+    
+    Instead, you need to run the `rmarkdown::render()` function in the terminal or in an R script to render the Rmd file.
 
 
 **Render book**
 
 ```r
-# Render the site
+# Render the site, equivalent to clicking the "Build Book" button in RStudio
 rmarkdown::render_site(output_format = 'bookdown::gitbook', encoding = 'UTF-8')
+# Render the document, equivalent to clicking the "Knit" button in RStudio
+rmarkdown::render("0103-RStudio-VSCode.Rmd")
 ```
 
 

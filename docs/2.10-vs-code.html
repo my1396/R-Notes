@@ -375,7 +375,11 @@ div.csl-indent {
 <li class="chapter" data-level="2.9.1" data-path="2.9-r-startup.html"><a href="2.9-r-startup.html#rprofile"><i class="fa fa-check"></i><b>2.9.1</b> <code>.Rprofile</code></a></li>
 <li class="chapter" data-level="2.9.2" data-path="2.9-r-startup.html"><a href="2.9-r-startup.html#renviron"><i class="fa fa-check"></i><b>2.9.2</b> <code>.Renviron</code></a></li>
 </ul></li>
-<li class="chapter" data-level="2.10" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html"><i class="fa fa-check"></i><b>2.10</b> VS Code</a></li>
+<li class="chapter" data-level="2.10" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html"><i class="fa fa-check"></i><b>2.10</b> VS Code</a>
+<ul>
+<li class="chapter" data-level="" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#plot-viewer"><i class="fa fa-check"></i>Plot Viewer</a></li>
+<li class="chapter" data-level="" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#rmd"><i class="fa fa-check"></i>Rmd</a></li>
+</ul></li>
 </ul></li>
 <li class="chapter" data-level="3" data-path="3-rmd-1.html"><a href="3-rmd-1.html"><i class="fa fa-check"></i><b>3</b> Rmd</a>
 <ul>
@@ -526,8 +530,6 @@ div.csl-indent {
             x.style.display = "none";
           }
         }
-        
-        
     </script>
 </head>
 <div id="vs-code" class="section level2 hasAnchor" number="2.10">
@@ -589,7 +591,7 @@ A: Install <a href="https://github.com/randy3k/radian"><strong>Radian</strong></
 <li><p><code>r.plot.useHttpgd</code>: Use the httpgd package for viewing plots in a VS Code window or in the browser.</p></li>
 </ul>
 <p>See <a href="https://github.com/REditorSupport/vscode-R/wiki/Extension-settings">Extension Settings</a> for a full list of settings of <code>vscode-R</code> that can be set in VSCode’s <code>settings.json</code> file.</p>
-<div id="plot-viewer" class="section level3 unnumbered unlisted hasAnchor">
+<div id="plot-viewer" class="section level3 unnumbered hasAnchor">
 <h3>Plot Viewer<a href="2.10-vs-code.html#plot-viewer" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p><a href="https://nx10.github.io/httpgd/"><code>httpgd</code></a>: A graphics device for R that is accessible via network protocols. This package was created to make it easier to embed live R graphics in integrated development environments and other applications. <code>httpgd</code> is required by the interactive plot viewer of the R extension for VS Code.</p>
 <p>Enable r.plot.useHttpgd in VS Code settings.</p>
@@ -616,13 +618,35 @@ A: Install <a href="https://github.com/randy3k/radian"><strong>Radian</strong></
 <span id="cb55-11"><a href="2.10-vs-code.html#cb55-11" tabindex="-1"></a><span class="co"># Close the graphics device</span></span>
 <span id="cb55-12"><a href="2.10-vs-code.html#cb55-12" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code></pre></div>
 </div>
-<div id="rmd" class="section level3 unnumbered unlisted hasAnchor">
+<div id="rmd" class="section level3 unnumbered hasAnchor">
 <h3>Rmd<a href="2.10-vs-code.html#rmd" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>A benefit os using VS code for editing Rmd is that it has a built-in Markdown preview feature. This will show you a live preview of your Rmd file as you edit it.</p>
-<p>If using RStudio, you can only get a preview after rendering the site using the <code>rmarkdown::render_site()</code> function, which can be slow for large sites.</p>
+<p>You can edit Rmd with either of the two Language Mode:</p>
+<ul>
+<li><p><code>R Markdown</code>: there is a knit button to provide preview but no live preview.</p>
+<p>If using RStudio, you can only get a preview after rendering</p>
+<ul>
+<li>Render the site using: <code>rmarkdown::render_site()</code> function, which can be slow for large sites.</li>
+<li>Render the document using: <code>rmarkdown::render("0103-RStudio-VSCode.Rmd")</code> function, which is equivalent to clicking the “Knit” button in RStudio.</li>
+</ul>
+<p>Note that</p>
+<ul>
+<li>Knit button generate output html in the <code>docs/</code> directory; it uses your styles settings in the <code>_output.yml</code> file.</li>
+<li><code>rmarkdown::render</code> generates output html in the same directory as the Rmd file. It does not apply any settings from <code>_output.yml</code> file, so you need to specify any headers you want to load, e.g., mathjax macros.</li>
+</ul>
+<p>How to decide which Language Mode to use? A rule of thumb is:</p>
+<ul>
+<li><p>If your Rmd has lots of R code you need to run interactively, use <code>R Markdown</code>.</p></li>
+<li><p>If you want to write a static report with minimal R code, use <code>Markdown</code>.</p>
+<p>At all cases, it is quite easy to switch between the two modes by changing the Language Mode in the bottom right corner of VS Code. So you can choose either one that suits you best.</p></li>
+</ul></li>
+<li><p><code>Markdown</code>: there is no knit button but you can have a live preview using the <code>Markdown Preview Enhance</code> extension.</p>
+<p>Instead, you need to run the <code>rmarkdown::render()</code> function in the terminal or in an R script to render the Rmd file.</p></li>
+</ul>
 <p><strong>Render book</strong></p>
-<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="2.10-vs-code.html#cb56-1" tabindex="-1"></a><span class="co"># Render the site</span></span>
-<span id="cb56-2"><a href="2.10-vs-code.html#cb56-2" tabindex="-1"></a>rmarkdown<span class="sc">::</span><span class="fu">render_site</span>(<span class="at">output_format =</span> <span class="st">&#39;bookdown::gitbook&#39;</span>, <span class="at">encoding =</span> <span class="st">&#39;UTF-8&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="2.10-vs-code.html#cb56-1" tabindex="-1"></a><span class="co"># Render the site, equivalent to clicking the &quot;Build Book&quot; button in RStudio</span></span>
+<span id="cb56-2"><a href="2.10-vs-code.html#cb56-2" tabindex="-1"></a>rmarkdown<span class="sc">::</span><span class="fu">render_site</span>(<span class="at">output_format =</span> <span class="st">&#39;bookdown::gitbook&#39;</span>, <span class="at">encoding =</span> <span class="st">&#39;UTF-8&#39;</span>)</span>
+<span id="cb56-3"><a href="2.10-vs-code.html#cb56-3" tabindex="-1"></a><span class="co"># Render the document, equivalent to clicking the &quot;Knit&quot; button in RStudio</span></span>
+<span id="cb56-4"><a href="2.10-vs-code.html#cb56-4" tabindex="-1"></a>rmarkdown<span class="sc">::</span><span class="fu">render</span>(<span class="st">&quot;0103-RStudio-VSCode.Rmd&quot;</span>)</span></code></pre></div>
 <p><strong>View book</strong></p>
 <p>To view the static site in the <code>docs/</code> directory. I installed the VSCode extension <a href="https://marketplace.visualstudio.com/items?itemName=ms-vscode.live-server">Live Preview</a>. All I need to do is select one of the .html files, right-click the preview button in the code editor, and there it is. I can also just navigate to <a href="http://127.0.0.1:3000/docs/" class="uri">http://127.0.0.1:3000/docs/</a> in my browser. It even updates as I add chapters and redo the <code>render_site()</code> command.</p>
 <p>References:</p>
