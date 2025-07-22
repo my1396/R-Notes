@@ -29,7 +29,7 @@ set in the _output.yml file.</p>" />
 <meta name="author" content="Menghan Yuan" />
 
 
-<meta name="date" content="2025-07-20" />
+<meta name="date" content="2025-07-22" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -441,7 +441,8 @@ div.csl-indent {
 <li class="chapter" data-level="4.4.2" data-path="4.4-quarto.html"><a href="4.4-quarto.html#html-theming"><i class="fa fa-check"></i><b>4.4.2</b> HTML Theming</a></li>
 <li class="chapter" data-level="4.4.3" data-path="4.4-quarto.html"><a href="4.4-quarto.html#cross-references-1"><i class="fa fa-check"></i><b>4.4.3</b> Cross References</a></li>
 <li class="chapter" data-level="4.4.4" data-path="4.4-quarto.html"><a href="4.4-quarto.html#equations-2"><i class="fa fa-check"></i><b>4.4.4</b> Equations</a></li>
-<li class="chapter" data-level="4.4.5" data-path="4.4-quarto.html"><a href="4.4-quarto.html#theorems-1"><i class="fa fa-check"></i><b>4.4.5</b> Theorems</a></li>
+<li class="chapter" data-level="4.4.5" data-path="4.4-quarto.html"><a href="4.4-quarto.html#divs-and-spans"><i class="fa fa-check"></i><b>4.4.5</b> Divs and Spans</a></li>
+<li class="chapter" data-level="4.4.6" data-path="4.4-quarto.html"><a href="4.4-quarto.html#theorems-1"><i class="fa fa-check"></i><b>4.4.6</b> Theorems</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="5" data-path="5-basic-r.html"><a href="5-basic-r.html"><i class="fa fa-check"></i><b>5</b> Basic R</a>
@@ -525,6 +526,49 @@ div.csl-indent {
             x.style.display = "none";
           }
         }
+        
+        // Auto-detect system theme preference and apply it
+        function setSystemTheme() {
+          // Check if the browser supports prefers-color-scheme
+          if (window.matchMedia) {
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const book = document.querySelector('.book');
+            
+            if (book) {
+              // Remove existing theme classes
+              book.classList.remove('color-theme-1', 'color-theme-2');
+              
+              if (prefersDark) {
+                // Apply dark theme (color-theme-2)
+                book.classList.add('color-theme-2');
+              } else {
+                // Apply sepia theme (color-theme-1) for light mode
+                book.classList.add('color-theme-1');
+              }
+            }
+          }
+        }
+        
+        // Listen for changes in system theme preference
+        function watchSystemTheme() {
+          if (window.matchMedia) {
+            const darkModeQuery = window.matchMedia('(prefers-color-scheme: dark)');
+            darkModeQuery.addListener(setSystemTheme);
+          }
+        }
+        
+        // Apply theme when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+          setSystemTheme();
+          watchSystemTheme();
+        });
+        
+        // Also try to apply immediately if DOM is already loaded
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', setSystemTheme);
+        } else {
+          setSystemTheme();
+        }
     </script>
 </head>
 <div id="data-manipulation" class="section level2 hasAnchor" number="8.2">
@@ -554,7 +598,7 @@ per line and the values are separated by commas, tabs, or some other delimiter.<
 <p>By default, Stat will check if the file is delimited by tabs or commas based on the first line of data.</p>
 <p><code>export delimited filename</code> writes data into a file in comma-separated (.csv) format by default. You can specify any separation character delimiter that you prefer.</p>
 <p>If <code>filename</code> is specified without an extension, <code>.csv</code> is assumed. If filename contains embedded spaces, enclose it in double quotes.</p>
-<div class="sourceCode" id="cb328"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb328-1"><a href="8.2-data-manipulation.html#cb328-1" tabindex="-1"></a>import delimited [<span class="kw">using</span>] filename [, import_delimited_options]</span></code></pre></div>
+<div class="sourceCode" id="cb332"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb332-1"><a href="8.2-data-manipulation.html#cb332-1" tabindex="-1"></a>import delimited [<span class="kw">using</span>] filename [, import_delimited_options]</span></code></pre></div>
 <p><strong>Options</strong></p>
 <ul>
 <li><p><code>delimiters("chars"[, collapse | asstring] )</code>:</p>
@@ -564,8 +608,8 @@ per line and the values are separated by commas, tabs, or some other delimiter.<
 <li><p><code>collapse</code> treat multiple consecutive delimiters as just one delimiter.</p></li>
 <li><p><code>asstring</code> treat <code>chars</code> as one delimiter. By default, each character in <code>chars</code> is treated as an individual delimiter.</p></li>
 </ul>
-<div class="sourceCode" id="cb329"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb329-1"><a href="8.2-data-manipulation.html#cb329-1" tabindex="-1"></a><span class="co">// use example</span></span>
-<span id="cb329-2"><a href="8.2-data-manipulation.html#cb329-2" tabindex="-1"></a>import delimited auto, delim(<span class="st">&quot; &quot;</span>, <span class="kw">collapse</span>) colrange(:3) rowrange(8) </span></code></pre></div></li>
+<div class="sourceCode" id="cb333"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb333-1"><a href="8.2-data-manipulation.html#cb333-1" tabindex="-1"></a><span class="co">// use example</span></span>
+<span id="cb333-2"><a href="8.2-data-manipulation.html#cb333-2" tabindex="-1"></a>import delimited auto, delim(<span class="st">&quot; &quot;</span>, <span class="kw">collapse</span>) colrange(:3) rowrange(8) </span></code></pre></div></li>
 <li><p><code>clear</code> replace data in memory</p></li>
 </ul>
 <hr />
@@ -573,35 +617,35 @@ per line and the values are separated by commas, tabs, or some other delimiter.<
 <div id="save-estimation-results" class="section level3 hasAnchor" number="8.2.2">
 <h3><span class="header-section-number">8.2.2</span> Save Estimation Results<a href="8.2-data-manipulation.html#save-estimation-results" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p><code>estimates store model_name</code> stores the current (active) estimation results under the name <code>model_name</code>.</p>
-<div class="sourceCode" id="cb330"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb330-1"><a href="8.2-data-manipulation.html#cb330-1" tabindex="-1"></a><span class="co">// Store estimation results as m1 for use later in the same session</span></span>
-<span id="cb330-2"><a href="8.2-data-manipulation.html#cb330-2" tabindex="-1"></a><span class="kw">estimates</span> <span class="kw">store</span> m1</span></code></pre></div>
+<div class="sourceCode" id="cb334"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb334-1"><a href="8.2-data-manipulation.html#cb334-1" tabindex="-1"></a><span class="co">// Store estimation results as m1 for use later in the same session</span></span>
+<span id="cb334-2"><a href="8.2-data-manipulation.html#cb334-2" tabindex="-1"></a><span class="kw">estimates</span> <span class="kw">store</span> m1</span></code></pre></div>
 <p><code>estimates table</code> organizes estimation results from one or more models in a single formatted table.</p>
 <p>If you type estimates table without arguments, a table of the most recent estimation results will be shown.</p>
-<div class="sourceCode" id="cb331"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb331-1"><a href="8.2-data-manipulation.html#cb331-1" tabindex="-1"></a><span class="co">// Display a table of coefficients for stored estimates m1 and m2</span></span>
-<span id="cb331-2"><a href="8.2-data-manipulation.html#cb331-2" tabindex="-1"></a><span class="kw">estimates</span> <span class="kw">table</span> m1 m2</span>
-<span id="cb331-3"><a href="8.2-data-manipulation.html#cb331-3" tabindex="-1"></a><span class="co">// with SE</span></span>
-<span id="cb331-4"><a href="8.2-data-manipulation.html#cb331-4" tabindex="-1"></a><span class="kw">estimates</span> <span class="kw">table</span> m1 m2, se</span>
-<span id="cb331-5"><a href="8.2-data-manipulation.html#cb331-5" tabindex="-1"></a></span>
-<span id="cb331-6"><a href="8.2-data-manipulation.html#cb331-6" tabindex="-1"></a><span class="co">// with sample size, adjusted 𝑅2, and stars</span></span>
-<span id="cb331-7"><a href="8.2-data-manipulation.html#cb331-7" tabindex="-1"></a><span class="kw">estimates</span> <span class="kw">table</span> m1 m2, <span class="kw">stats</span>(<span class="kw">N</span> r2_a) <span class="kw">star</span></span></code></pre></div>
+<div class="sourceCode" id="cb335"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb335-1"><a href="8.2-data-manipulation.html#cb335-1" tabindex="-1"></a><span class="co">// Display a table of coefficients for stored estimates m1 and m2</span></span>
+<span id="cb335-2"><a href="8.2-data-manipulation.html#cb335-2" tabindex="-1"></a><span class="kw">estimates</span> <span class="kw">table</span> m1 m2</span>
+<span id="cb335-3"><a href="8.2-data-manipulation.html#cb335-3" tabindex="-1"></a><span class="co">// with SE</span></span>
+<span id="cb335-4"><a href="8.2-data-manipulation.html#cb335-4" tabindex="-1"></a><span class="kw">estimates</span> <span class="kw">table</span> m1 m2, se</span>
+<span id="cb335-5"><a href="8.2-data-manipulation.html#cb335-5" tabindex="-1"></a></span>
+<span id="cb335-6"><a href="8.2-data-manipulation.html#cb335-6" tabindex="-1"></a><span class="co">// with sample size, adjusted 𝑅2, and stars</span></span>
+<span id="cb335-7"><a href="8.2-data-manipulation.html#cb335-7" tabindex="-1"></a><span class="kw">estimates</span> <span class="kw">table</span> m1 m2, <span class="kw">stats</span>(<span class="kw">N</span> r2_a) <span class="kw">star</span></span></code></pre></div>
 <p><code>estimate save filename</code> save the current active estimation results to <code>filename.ster</code>.</p>
 <div id="etable" class="section level4 unnumbered hasAnchor">
 <h4><code>etable</code><a href="8.2-data-manipulation.html#etable" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p><strong><code>etable</code></strong> allows you to easily create a table of estimation results and export it to a variety of file types, e.g., docx, html, pdf, xlsx, tex, txt, markdown, md.</p>
-<div class="sourceCode" id="cb332"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb332-1"><a href="8.2-data-manipulation.html#cb332-1" tabindex="-1"></a><span class="co">// use example of etable</span></span>
-<span id="cb332-2"><a href="8.2-data-manipulation.html#cb332-2" tabindex="-1"></a>. <span class="kw">clear</span> <span class="ot">all</span></span>
-<span id="cb332-3"><a href="8.2-data-manipulation.html#cb332-3" tabindex="-1"></a>. <span class="kw">webuse</span> nhanes2l</span>
-<span id="cb332-4"><a href="8.2-data-manipulation.html#cb332-4" tabindex="-1"></a>(Second National Health and Nutrition Examination Survey)</span>
-<span id="cb332-5"><a href="8.2-data-manipulation.html#cb332-5" tabindex="-1"></a>. <span class="kw">quietly</span> <span class="kw">regress</span> bpsystol age <span class="kw">weight</span> i.region</span>
-<span id="cb332-6"><a href="8.2-data-manipulation.html#cb332-6" tabindex="-1"></a>. <span class="kw">estimates</span> <span class="kw">store</span> model1</span>
-<span id="cb332-7"><a href="8.2-data-manipulation.html#cb332-7" tabindex="-1"></a></span>
-<span id="cb332-8"><a href="8.2-data-manipulation.html#cb332-8" tabindex="-1"></a>. <span class="kw">quietly</span> <span class="kw">regress</span> bpsystol i.sex <span class="kw">weight</span> i.agegrp</span>
-<span id="cb332-9"><a href="8.2-data-manipulation.html#cb332-9" tabindex="-1"></a>. <span class="kw">estimates</span> <span class="kw">store</span> model2</span>
-<span id="cb332-10"><a href="8.2-data-manipulation.html#cb332-10" tabindex="-1"></a></span>
-<span id="cb332-11"><a href="8.2-data-manipulation.html#cb332-11" tabindex="-1"></a>. <span class="kw">quietly</span> <span class="kw">regress</span> bpsystol age <span class="kw">weight</span> i.agegrp</span>
-<span id="cb332-12"><a href="8.2-data-manipulation.html#cb332-12" tabindex="-1"></a>. <span class="kw">estimates</span> <span class="kw">store</span> model3</span>
-<span id="cb332-13"><a href="8.2-data-manipulation.html#cb332-13" tabindex="-1"></a></span>
-<span id="cb332-14"><a href="8.2-data-manipulation.html#cb332-14" tabindex="-1"></a>. etable, <span class="kw">estimates</span>(model1 model2 model3) showstars showstarsnote <span class="bn">title</span>(<span class="st">&quot;Table 1. Models for systolic blood pressure&quot;</span>) <span class="kw">export</span>(mydoc.docx, <span class="kw">replace</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb336"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb336-1"><a href="8.2-data-manipulation.html#cb336-1" tabindex="-1"></a><span class="co">// use example of etable</span></span>
+<span id="cb336-2"><a href="8.2-data-manipulation.html#cb336-2" tabindex="-1"></a>. <span class="kw">clear</span> <span class="ot">all</span></span>
+<span id="cb336-3"><a href="8.2-data-manipulation.html#cb336-3" tabindex="-1"></a>. <span class="kw">webuse</span> nhanes2l</span>
+<span id="cb336-4"><a href="8.2-data-manipulation.html#cb336-4" tabindex="-1"></a>(Second National Health and Nutrition Examination Survey)</span>
+<span id="cb336-5"><a href="8.2-data-manipulation.html#cb336-5" tabindex="-1"></a>. <span class="kw">quietly</span> <span class="kw">regress</span> bpsystol age <span class="kw">weight</span> i.region</span>
+<span id="cb336-6"><a href="8.2-data-manipulation.html#cb336-6" tabindex="-1"></a>. <span class="kw">estimates</span> <span class="kw">store</span> model1</span>
+<span id="cb336-7"><a href="8.2-data-manipulation.html#cb336-7" tabindex="-1"></a></span>
+<span id="cb336-8"><a href="8.2-data-manipulation.html#cb336-8" tabindex="-1"></a>. <span class="kw">quietly</span> <span class="kw">regress</span> bpsystol i.sex <span class="kw">weight</span> i.agegrp</span>
+<span id="cb336-9"><a href="8.2-data-manipulation.html#cb336-9" tabindex="-1"></a>. <span class="kw">estimates</span> <span class="kw">store</span> model2</span>
+<span id="cb336-10"><a href="8.2-data-manipulation.html#cb336-10" tabindex="-1"></a></span>
+<span id="cb336-11"><a href="8.2-data-manipulation.html#cb336-11" tabindex="-1"></a>. <span class="kw">quietly</span> <span class="kw">regress</span> bpsystol age <span class="kw">weight</span> i.agegrp</span>
+<span id="cb336-12"><a href="8.2-data-manipulation.html#cb336-12" tabindex="-1"></a>. <span class="kw">estimates</span> <span class="kw">store</span> model3</span>
+<span id="cb336-13"><a href="8.2-data-manipulation.html#cb336-13" tabindex="-1"></a></span>
+<span id="cb336-14"><a href="8.2-data-manipulation.html#cb336-14" tabindex="-1"></a>. etable, <span class="kw">estimates</span>(model1 model2 model3) showstars showstarsnote <span class="bn">title</span>(<span class="st">&quot;Table 1. Models for systolic blood pressure&quot;</span>) <span class="kw">export</span>(mydoc.docx, <span class="kw">replace</span>)</span></code></pre></div>
 <p><strong>Options</strong>:</p>
 <ul>
 <li><code>export</code> allows you to specify the output format</li>
@@ -616,23 +660,23 @@ per line and the values are separated by commas, tabs, or some other delimiter.<
 <li><p>e-class commands, such as regress, store their results in <code>e()</code>; e-class commands are Stata’s model estimation commands.</p></li>
 <li><p>r-class commands, such as summarize, store their results in <code>r()</code>; most commands are r-class.</p></li>
 </ul>
-<div class="sourceCode" id="cb333"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb333-1"><a href="8.2-data-manipulation.html#cb333-1" tabindex="-1"></a><span class="co">// for r-class command</span></span>
-<span id="cb333-2"><a href="8.2-data-manipulation.html#cb333-2" tabindex="-1"></a><span class="fu">return</span> <span class="ot">list</span></span>
-<span id="cb333-3"><a href="8.2-data-manipulation.html#cb333-3" tabindex="-1"></a><span class="co">// for e-class command</span></span>
-<span id="cb333-4"><a href="8.2-data-manipulation.html#cb333-4" tabindex="-1"></a><span class="kw">ereturn</span> <span class="ot">list</span></span></code></pre></div>
+<div class="sourceCode" id="cb337"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb337-1"><a href="8.2-data-manipulation.html#cb337-1" tabindex="-1"></a><span class="co">// for r-class command</span></span>
+<span id="cb337-2"><a href="8.2-data-manipulation.html#cb337-2" tabindex="-1"></a><span class="fu">return</span> <span class="ot">list</span></span>
+<span id="cb337-3"><a href="8.2-data-manipulation.html#cb337-3" tabindex="-1"></a><span class="co">// for e-class command</span></span>
+<span id="cb337-4"><a href="8.2-data-manipulation.html#cb337-4" tabindex="-1"></a><span class="kw">ereturn</span> <span class="ot">list</span></span></code></pre></div>
 <p>Most estimation commands leave behind</p>
 <ul>
 <li><code>e(b)</code> the coefficient vector, and</li>
 <li><code>e(V)</code> the variance–covariance matrix of the estimates (VCE)</li>
 </ul>
-<div class="sourceCode" id="cb334"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb334-1"><a href="8.2-data-manipulation.html#cb334-1" tabindex="-1"></a><span class="co">// display coef vector</span></span>
-<span id="cb334-2"><a href="8.2-data-manipulation.html#cb334-2" tabindex="-1"></a><span class="fu">matrix</span> <span class="ot">list</span> <span class="fu">e</span>(b)</span>
-<span id="cb334-3"><a href="8.2-data-manipulation.html#cb334-3" tabindex="-1"></a><span class="co">// assign it to a variable</span></span>
-<span id="cb334-4"><a href="8.2-data-manipulation.html#cb334-4" tabindex="-1"></a><span class="fu">matrix</span> myb = <span class="fu">e</span>(b)</span>
-<span id="cb334-5"><a href="8.2-data-manipulation.html#cb334-5" tabindex="-1"></a><span class="fu">matrix</span> <span class="ot">list</span> myb</span></code></pre></div>
+<div class="sourceCode" id="cb338"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb338-1"><a href="8.2-data-manipulation.html#cb338-1" tabindex="-1"></a><span class="co">// display coef vector</span></span>
+<span id="cb338-2"><a href="8.2-data-manipulation.html#cb338-2" tabindex="-1"></a><span class="fu">matrix</span> <span class="ot">list</span> <span class="fu">e</span>(b)</span>
+<span id="cb338-3"><a href="8.2-data-manipulation.html#cb338-3" tabindex="-1"></a><span class="co">// assign it to a variable</span></span>
+<span id="cb338-4"><a href="8.2-data-manipulation.html#cb338-4" tabindex="-1"></a><span class="fu">matrix</span> myb = <span class="fu">e</span>(b)</span>
+<span id="cb338-5"><a href="8.2-data-manipulation.html#cb338-5" tabindex="-1"></a><span class="fu">matrix</span> <span class="ot">list</span> myb</span></code></pre></div>
 <p>You can refer to <code>e(b)</code> and <code>e(V)</code> in any matrix expression:</p>
-<div class="sourceCode" id="cb335"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb335-1"><a href="8.2-data-manipulation.html#cb335-1" tabindex="-1"></a><span class="fu">matrix</span> c = <span class="fu">e</span>(b)*<span class="fu">invsym</span>(<span class="fu">e</span>(<span class="kw">V</span>))*<span class="fu">e</span>(b)’</span>
-<span id="cb335-2"><a href="8.2-data-manipulation.html#cb335-2" tabindex="-1"></a><span class="fu">matrix</span> <span class="ot">list</span> c</span></code></pre></div>
+<div class="sourceCode" id="cb339"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb339-1"><a href="8.2-data-manipulation.html#cb339-1" tabindex="-1"></a><span class="fu">matrix</span> c = <span class="fu">e</span>(b)*<span class="fu">invsym</span>(<span class="fu">e</span>(<span class="kw">V</span>))*<span class="fu">e</span>(b)’</span>
+<span id="cb339-2"><a href="8.2-data-manipulation.html#cb339-2" tabindex="-1"></a><span class="fu">matrix</span> <span class="ot">list</span> c</span></code></pre></div>
 <p><code>invsym(e(V))</code> returns the inverse of <code>e(V)</code>. Generally, <code>invsym</code> requires a a square, symmetric, and positive-definite matrix.</p>
 </div>
 </div>

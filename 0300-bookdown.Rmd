@@ -140,6 +140,12 @@ These files are explained in greater detail in the following subsections.
 - Collapse the TOC by (sub)section
 
 - Code highlighting
+  
+  Here we use `highlight: tango` to apply the [Tango](https://tango.freedesktop.org/) theme.
+
+  The issue is that Tango highlighting does not work well with dark mode.
+
+  
 
 Here is a brief example of  `_output.yml`:
 

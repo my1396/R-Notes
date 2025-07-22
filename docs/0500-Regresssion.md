@@ -44,10 +44,10 @@ tidy(capm_ml)
 
 ```
 ## # A tibble: 2 × 5
-##   term        estimate std.error statistic       p.value
-##   <chr>          <dbl>     <dbl>     <dbl>         <dbl>
-## 1 (Intercept)  0.00975   0.00764      1.27 0.205        
-## 2 rmrf         1.07      0.166        6.41 0.00000000280
+##   term           estimate   std.error statistic     p.value
+##   <chr>             <dbl>       <dbl>     <dbl>       <dbl>
+## 1 (Intercept) 0.009746761 0.007644518  1.275000 2.047124e-1
+## 2 rmrf        1.066640    0.1663838    6.410718 2.801085e-9
 ```
 
 
@@ -73,10 +73,10 @@ capm_ml %>%
 
 ```
 ## # A tibble: 2 × 6
-##   term        estimate std.error statistic       p.value  variance
-##   <chr>          <dbl>     <dbl>     <dbl>         <dbl>     <dbl>
-## 1 (Intercept)  0.00975   0.00764      1.27 0.205         0.0000584
-## 2 rmrf         1.07      0.166        6.41 0.00000000280 0.0277
+##   term           estimate   std.error statistic     p.value      variance
+##   <chr>             <dbl>       <dbl>     <dbl>       <dbl>         <dbl>
+## 1 (Intercept) 0.009746761 0.007644518  1.275000 2.047124e-1 0.00005843866
+## 2 rmrf        1.066640    0.1663838    6.410718 2.801085e-9 0.02768356
 ```
 
 

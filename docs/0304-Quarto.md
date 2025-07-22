@@ -1,10 +1,14 @@
 ## Quarto
 
+Quarto Guide: <https://quarto.org/docs/guide/>
+
+Quarto Tutorial: <https://jmjung.quarto.pub/m02-advanced-literate-programming/#learning-outcomes>
+
 Host Quarto on [GitHub Pages](https://quarto.org/docs/publishing/github-pages.html).
 
 To get started, change your project configuration `_quarto.yml` to use `docs` as the `output-dir`.
 
-```yml
+```yaml
 project:
   type: book
   output-dir: docs
@@ -12,7 +16,7 @@ project:
 
 Then, add a `.nojekyll` file to the **root of your repository** that tells GitHub Pages not to do additional processing of your published site using Jekyll (the GitHub default site generation tool):
 
-```
+```bash
 touch .nojekyll
 ```
 
@@ -35,6 +39,31 @@ Weakness of Quarto:
     `Bookdown` is reliable. Don't need `yaml` in single `Rmd`, website theme will apply automatically. 
 
 --------------------------------------------------------------------------------
+
+In terminal, run:
+
+- Quarto Render: create the final version of your document for distribution. 
+  
+  `quarto render 0304-Quarto.Rmd --to html`
+
+  Note that `quarto render` can be used to Rmd files too. 
+
+- Quarto Preview: display output in a web browser.
+
+  `quarto preview 0304-Quarto.Rmd`
+
+Alternatively, use command palette in **VS Code**:
+
+- `Quarto: Render Document` to render the document.
+
+  If you have multiple formats, run `Quarto: Render Document` for a specific format.
+
+  `Quarto: Render Project` to render the entire project.
+
+- `Quarto: Preview` to preview the default document in a web browser. If you want to preview a different format, use the `Quarto: Preview Format` command:
+
+
+
 
 ### Book Structure
 
@@ -163,7 +192,7 @@ Rendering the whole website is slow. When you are editing a new section/page, yo
 Difference btw a standalone webpage from a component of a `qmd` project
 
 - Standalone webpage: include `yaml` at the header of the file.
-    
+  
     Fast compile and rendering. ✅
     
 - A component of `qmd` project: added to the file index, no `yaml` needed, format will automatically apply.
@@ -178,11 +207,32 @@ Otherwise, <u>the order of light and dark elements</u> in the theme or brand wil
 
 As of Quarto 1.7, `respect-user-color-scheme` requires JavaScript support: users with JavaScript disabled will see the author-preferred (first) brand or theme.
 
+--------------------------------------------------------------------------------
 
 
 **Theme options**
 
-You can do extensive customization of themes using [Sass](https://sass-lang.com/). Bootstrap defines over 1,400 Sass variables that control fonts, colors, padding, borders, and much more. You can see all of the variables here:
+You can do extensive customization of themes using [Sass variables](https://sass-lang.com/). Bootstrap defines over 1,400 Sass variables that control fonts, colors, padding, borders, and much more. 
+
+The Sass Variables can be specified within SCSS files. These variables should always be prefixed with a `$` and are specified within theme files rather than within YAML options
+
+[Commonly used Sass variables](https://jmjung.quarto.pub/m02-advanced-literate-programming/#sass-variables):
+
+|            | Variable      | Description                                                  |
+| ---------- | ------------- | ------------------------------------------------------------ |
+| **Colors** | `$body-bg`    | The page background color.                                   |
+|            | `$body-color` | The page text color.                                         |
+|            | `$link-color` | The link color.                                              |
+|            | `$input-bg`   | The background color for HTML inputs.                        |
+|            | `$popover-bg` | The background color for popovers <br />(for example, when a citation preview is shown). |
+|            |               |                                                              |
+
+
+
+
+
+
+You can see all of the variables here:
 
 https://github.com/twbs/bootstrap/blob/main/scss/_variables.scss
 
@@ -210,12 +260,12 @@ Ref: <https://quarto.org/docs/output-formats/html-themes.html>
    You can see in @fig-scatterplot, that...
    ```
 
-| `prefix` | Renders    |
-| -------- | ---------- |
-| `fig-`   | Figure 1   |
-| `tbl-`   | Table 1    |
-| `eq-`    | Equation 1 |
-| `sec-`   | Section 1  |
+| Element  | ID         | How to cite |
+| -------- | ---------- | ----------- |
+| Figure   | `#fig-xxx` | `@fig-xxx`  |
+| Table    | `#tbl-xxx` | `@tbl-xxx`  |
+| Equation | `#eq-xxx`  | `@eq-xxx`   |
+| Section  | `#sec-xxx` | `@sec-xxx`  |
 
 
 --------------------------------------------------------------------------------
@@ -248,7 +298,7 @@ Note that the capitalized syntax makes no difference for the default output, but
 
 Change the prefix in inline reference using `*-prefix` options. You can also specify whether references should be hyper-linked using the `ref-hyperlink` option. 
 
-```markdown
+```yaml
 ---
 title: "My Document"
 crossref:
@@ -268,7 +318,7 @@ ___
 
 Load `mathjax.html` in YAML
 
-```markdown
+```yaml
 ---
 title: "Model specifications"
 author: "GDP and climate"
@@ -351,7 +401,7 @@ ___
 Q: How to get rid of the `qmd` dependence file?  
 A: Use 
 
-```css
+```yaml
 format: 
   html:
     self-contained: true
@@ -360,9 +410,49 @@ format:
 
 --------------------------------------------------------------------------------
 
+### Divs and Spans
+
+You can add classes, attributes, and other identifiers to regions of content using Divs and Spans.
+
+Div example
+
+```markdown
+::: {.border} 
+This content can be styled with a border 
+:::
+```
+
+Once rendered to HTML, Quarto will translate the markdown into:
+
+```html
+<div class="border">   
+  <p>This content can be styled with a border</p> 
+</div>
+```
+
+A bracketed sequence of inlines, as one would use to begin a link, will be treated as a Span with attributes if it is followed immediately by attributes:
+
+```markdown
+[This is *some text*]{.class key="val"}
+```
+
+Once rendered to HTML, Quarto will translate the markdown into
+
+```html
+<span class="class" data-key="val">
+  This is <em>some text</em>
+</span>
+```
+
+
+
+
+
+___
+
 ### Theorems 
 
-```
+```latex
 ::: {#thm-line}
 The equation of any straight line, called a linear equation, can be written as:
 
@@ -391,7 +481,7 @@ See Theorem \@ref(thm:thm-line).
 
 To add a name to Theorem, use `name="..."`.
 
-```markdown
+```latex
 ::: {#thm-topo name="Topology Space"}
 A topological space $(X, \Tcal)$ is a set $X$ and a collection $\Tcal \subset \Pcal(X)$ of subsets of $X,$ called open sets, such that ...
 :::
@@ -412,7 +502,7 @@ See Theorem \@ref(thm:thm-topo).
 
 Change the label prefix:
 
-```markdown
+```yaml
 ---
 crossref:
   cnj-title: "Assumption"

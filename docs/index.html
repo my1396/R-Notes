@@ -29,7 +29,7 @@ set in the _output.yml file.</p>" />
 <meta name="author" content="Menghan Yuan" />
 
 
-<meta name="date" content="2025-07-20" />
+<meta name="date" content="2025-07-22" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -441,7 +441,8 @@ div.csl-indent {
 <li class="chapter" data-level="4.4.2" data-path="4.4-quarto.html"><a href="4.4-quarto.html#html-theming"><i class="fa fa-check"></i><b>4.4.2</b> HTML Theming</a></li>
 <li class="chapter" data-level="4.4.3" data-path="4.4-quarto.html"><a href="4.4-quarto.html#cross-references-1"><i class="fa fa-check"></i><b>4.4.3</b> Cross References</a></li>
 <li class="chapter" data-level="4.4.4" data-path="4.4-quarto.html"><a href="4.4-quarto.html#equations-2"><i class="fa fa-check"></i><b>4.4.4</b> Equations</a></li>
-<li class="chapter" data-level="4.4.5" data-path="4.4-quarto.html"><a href="4.4-quarto.html#theorems-1"><i class="fa fa-check"></i><b>4.4.5</b> Theorems</a></li>
+<li class="chapter" data-level="4.4.5" data-path="4.4-quarto.html"><a href="4.4-quarto.html#divs-and-spans"><i class="fa fa-check"></i><b>4.4.5</b> Divs and Spans</a></li>
+<li class="chapter" data-level="4.4.6" data-path="4.4-quarto.html"><a href="4.4-quarto.html#theorems-1"><i class="fa fa-check"></i><b>4.4.6</b> Theorems</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="5" data-path="5-basic-r.html"><a href="5-basic-r.html"><i class="fa fa-check"></i><b>5</b> Basic R</a>
@@ -525,12 +526,55 @@ div.csl-indent {
             x.style.display = "none";
           }
         }
+        
+        // Auto-detect system theme preference and apply it
+        function setSystemTheme() {
+          // Check if the browser supports prefers-color-scheme
+          if (window.matchMedia) {
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const book = document.querySelector('.book');
+            
+            if (book) {
+              // Remove existing theme classes
+              book.classList.remove('color-theme-1', 'color-theme-2');
+              
+              if (prefersDark) {
+                // Apply dark theme (color-theme-2)
+                book.classList.add('color-theme-2');
+              } else {
+                // Apply sepia theme (color-theme-1) for light mode
+                book.classList.add('color-theme-1');
+              }
+            }
+          }
+        }
+        
+        // Listen for changes in system theme preference
+        function watchSystemTheme() {
+          if (window.matchMedia) {
+            const darkModeQuery = window.matchMedia('(prefers-color-scheme: dark)');
+            darkModeQuery.addListener(setSystemTheme);
+          }
+        }
+        
+        // Apply theme when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+          setSystemTheme();
+          watchSystemTheme();
+        });
+        
+        // Also try to apply immediately if DOM is already loaded
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', setSystemTheme);
+        } else {
+          setSystemTheme();
+        }
     </script>
 </head>
 <div id="header">
 <h1 class="title">R Notes</h1>
 <p class="author"><em>Menghan Yuan</em></p>
-<p class="date"><em>2025-07-20</em></p>
+<p class="date"><em>2025-07-22</em></p>
 </div>
 <div id="about" class="section level1 hasAnchor" number="1">
 <h1><span class="header-section-number">Chapter 1</span> About<a href="index.html#about" class="anchor-section" aria-label="Anchor link to header"></a></h1>

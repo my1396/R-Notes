@@ -29,7 +29,7 @@ set in the _output.yml file.</p>" />
 <meta name="author" content="Menghan Yuan" />
 
 
-<meta name="date" content="2025-07-20" />
+<meta name="date" content="2025-07-22" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -441,7 +441,8 @@ div.csl-indent {
 <li class="chapter" data-level="4.4.2" data-path="4.4-quarto.html"><a href="4.4-quarto.html#html-theming"><i class="fa fa-check"></i><b>4.4.2</b> HTML Theming</a></li>
 <li class="chapter" data-level="4.4.3" data-path="4.4-quarto.html"><a href="4.4-quarto.html#cross-references-1"><i class="fa fa-check"></i><b>4.4.3</b> Cross References</a></li>
 <li class="chapter" data-level="4.4.4" data-path="4.4-quarto.html"><a href="4.4-quarto.html#equations-2"><i class="fa fa-check"></i><b>4.4.4</b> Equations</a></li>
-<li class="chapter" data-level="4.4.5" data-path="4.4-quarto.html"><a href="4.4-quarto.html#theorems-1"><i class="fa fa-check"></i><b>4.4.5</b> Theorems</a></li>
+<li class="chapter" data-level="4.4.5" data-path="4.4-quarto.html"><a href="4.4-quarto.html#divs-and-spans"><i class="fa fa-check"></i><b>4.4.5</b> Divs and Spans</a></li>
+<li class="chapter" data-level="4.4.6" data-path="4.4-quarto.html"><a href="4.4-quarto.html#theorems-1"><i class="fa fa-check"></i><b>4.4.6</b> Theorems</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="5" data-path="5-basic-r.html"><a href="5-basic-r.html"><i class="fa fa-check"></i><b>5</b> Basic R</a>
@@ -525,6 +526,49 @@ div.csl-indent {
             x.style.display = "none";
           }
         }
+        
+        // Auto-detect system theme preference and apply it
+        function setSystemTheme() {
+          // Check if the browser supports prefers-color-scheme
+          if (window.matchMedia) {
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const book = document.querySelector('.book');
+            
+            if (book) {
+              // Remove existing theme classes
+              book.classList.remove('color-theme-1', 'color-theme-2');
+              
+              if (prefersDark) {
+                // Apply dark theme (color-theme-2)
+                book.classList.add('color-theme-2');
+              } else {
+                // Apply sepia theme (color-theme-1) for light mode
+                book.classList.add('color-theme-1');
+              }
+            }
+          }
+        }
+        
+        // Listen for changes in system theme preference
+        function watchSystemTheme() {
+          if (window.matchMedia) {
+            const darkModeQuery = window.matchMedia('(prefers-color-scheme: dark)');
+            darkModeQuery.addListener(setSystemTheme);
+          }
+        }
+        
+        // Apply theme when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+          setSystemTheme();
+          watchSystemTheme();
+        });
+        
+        // Also try to apply immediately if DOM is already loaded
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', setSystemTheme);
+        } else {
+          setSystemTheme();
+        }
     </script>
 </head>
 <div id="predict" class="section level2 hasAnchor" number="8.3">
@@ -542,10 +586,10 @@ div.csl-indent {
 <p><code>e(sample)</code>: return <span class="math inline">\(1\)</span> if the observation is in the estimation sample and <span class="math inline">\(0\)</span> otherwise.</p></li>
 <li><p><code>predict</code> can be used in <strong>out-of-sample predictions</strong>, which extende beyond the estimation sample.</p>
 <p>You can load a new dataset and type <code>predict</code> to obtain results for that sample.</p>
-<div class="sourceCode" id="cb336"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb336-1"><a href="8.3-predict.html#cb336-1" tabindex="-1"></a><span class="kw">use</span> dataset1      <span class="co">/* estimation dataset */</span></span>
-<span id="cb336-2"><a href="8.3-predict.html#cb336-2" tabindex="-1"></a>(<span class="kw">fit</span> a <span class="kw">model</span>)</span>
-<span id="cb336-3"><a href="8.3-predict.html#cb336-3" tabindex="-1"></a><span class="kw">use</span> dataset2      <span class="co">/* forecast dataset */</span></span>
-<span id="cb336-4"><a href="8.3-predict.html#cb336-4" tabindex="-1"></a><span class="kw">predict</span> yhat    <span class="co">/* fill in the predictions */</span></span></code></pre></div></li>
+<div class="sourceCode" id="cb340"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb340-1"><a href="8.3-predict.html#cb340-1" tabindex="-1"></a><span class="kw">use</span> dataset1      <span class="co">/* estimation dataset */</span></span>
+<span id="cb340-2"><a href="8.3-predict.html#cb340-2" tabindex="-1"></a>(<span class="kw">fit</span> a <span class="kw">model</span>)</span>
+<span id="cb340-3"><a href="8.3-predict.html#cb340-3" tabindex="-1"></a><span class="kw">use</span> dataset2      <span class="co">/* forecast dataset */</span></span>
+<span id="cb340-4"><a href="8.3-predict.html#cb340-4" tabindex="-1"></a><span class="kw">predict</span> yhat    <span class="co">/* fill in the predictions */</span></span></code></pre></div></li>
 <li><p><code>predict e, residuals</code> will generate a variable <code>e</code> containing the residuals of the estimation</p>
 <p><span class="math display">\[
 e_i = y_i - \hat{y}_i
