@@ -218,14 +218,13 @@ The Sass Variables can be specified within SCSS files. These variables should al
 
 [Commonly used Sass variables](https://jmjung.quarto.pub/m02-advanced-literate-programming/#sass-variables):
 
-|            | Variable      | Description                                                  |
-| ---------- | ------------- | ------------------------------------------------------------ |
-| **Colors** | `$body-bg`    | The page background color.                                   |
-|            | `$body-color` | The page text color.                                         |
-|            | `$link-color` | The link color.                                              |
-|            | `$input-bg`   | The background color for HTML inputs.                        |
-|            | `$popover-bg` | The background color for popovers <br />(for example, when a citation preview is shown). |
-|            |               |                                                              |
+| Category   | Variable        | Description                                                  |
+|:-----------|:----------------|:-------------------------------------------------------------|
+| **Colors** | `$body-bg`      | The page background color.                                   |
+|            | `$body-color`   | The page text color.                                         |
+|            | `$link-color`   | The link color.                                              |
+|            | `$input-bg`     | The background color for HTML inputs.                       |
+|            | `$popover-bg`   | The background color for popovers (for example, when a citation preview is shown). |
 
 
 
