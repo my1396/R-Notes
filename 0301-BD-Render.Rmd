@@ -15,6 +15,11 @@ Other differences:
 
 To switch to K-M, you either use the argument `new_session = TRUE` when calling `render_book()`, or set `new_session: yes` in the configuration file `_bookdown.yml`.
 
+```r
+// render gitbook format only
+rmarkdown::render_site(output_format = "bookdown::gitbook")
+```
+
 
 Everytime you make changes to individual Rmd files or to CSS style files, you can knit the single page using `rmarkdown::render("0100-RStudio.Rmd")` or the Knit button in the source editor. The change will be reflected to your website.
 

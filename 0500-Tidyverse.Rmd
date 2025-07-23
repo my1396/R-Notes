@@ -1,0 +1,268 @@
+# Tidyverse
+
+`tidyverse` is a collection of packages for data analyses. This package is designed to make it easy to install and load multiple `tidyverse` packages in a single step. The following packages are included in the core tidyverse: `ggplot2`, `dplyr`, `tidyr`, `readr`, `purrr`, `tibble`, `stringr`, `forcats`, `lubridate`.
+
+The tidyverse also includes many other packages with more specialised usage. They are not loaded automatically with `library(tidyverse)`, so you’ll need to load each one with its own call to `library()`.
+
+
+
+`tibble` Package
+
+Create a `tibble`, just the same way as `data.fram`, only that without row names.
+
+```r
+tibble(x = 1:5, y = 1, z = x ^ 2 + y)
+```
+
+`tibble()` does much less than `data.frame()`: it never changes the type of the inputs (e.g. it never converts strings to factors!), it never changes the names of variables, it only recycles inputs of length 1, and it never creates `row.names()`.
+
+`as_tibble()` vs `tibble()`:
+
+- `as_tibble()` turns <u>an existing object</u>, such as a data frame or matrix, into a so-called tibble, a data frame with class `tbl_df`. 
+
+- This is in contrast with `tibble()`, which builds a tibble from <u>individual columns</u>. 
+
+  If using `tibble()` on a whole data frame, it would generate a one column `tibble` in which the column contains the data frame.
+
+  `tibble` columns are versatile, can be lists, matrices, tibbles, etc.
+
+```r
+tibble(
+  a = list(c = "three", d = list(4:5))
+)
+#> # A tibble: 2 × 1
+#>   a        
+#>   <named list>
+#> 1 <chr [1]>   
+#> 2 <list [1]> 
+```
+
+
+
+[`reframe`](https://www.tidyverse.org/blog/2023/02/dplyr-1-1-0-pick-reframe-arrange/#reframe) can return an arbitrary number of rows per group, while `summarise()`reduces each group down to a single row and `mutate` returns the same number of rows as the input.
+
+`reframe()` always returns an ungrouped data frame.
+
+`reframe()` is theoretically connected to two functions in tibble, `tibble::enframe()`and `tibble::deframe()`:
+
+- `enframe()`: vector -> data frame
+- `deframe()`: data frame -> vector
+- `reframe()`: data frame -> data frame
+
+
+
+
+
+**Print tibbles**
+
+`tbl_df %>% print(n = Inf)` print all rows. `print.tbl_df` is useful in terms of explicitly and setting arguments like `n` and `width`. 
+
+- `n` 	print the first `n` rows. When `n=Inf`, it means to <span style='color:#008B45'>print all rows</span>.
+- `width` Width of text output to generate. This defaults to `NULL`, which means use the `width` in [`options()`](https://pillar.r-lib.org/reference/pillar_options.html). When `width=Inf`, will <span style='color:#008B45'>print all columns</span>.
+
+ Use `?print.tbl_df` to show help page.
+
+Alternatively, use, `tbl_df %>% data.frame()` to print the whole table. `data.frame` won't round numbers. Usually `tbl` round at the 6-th digit after the decimal point.
+
+`print(as_tibble(mtcars), n = 3)` first convert to `tibble`, then specify the rows to print.
+
+
+
+<span style='color:#008B45'>`data.table`</span> pakage has nice table print settings. You can preview the head and tail at the same time. It doesn't give you column details, such as data type, but it gives you a feeling of the data structure without using `head` and `tail` functions twice.
+
+The `data.table` R package is being used in different fields such as finance and genomics and is especially useful for those of you that are working with large data sets (for example, 1GB to 100GB in RAM).
+
+`data.table` Cheatsheet: <https://www.datacamp.com/cheat-sheet/the-datatable-r-package-cheat-sheet>
+
+
+
+
+
+<span style='color:#008B45'>`dplyr::setdiff(x, y)`</span>  element that is in `x` but not in `y`.
+
+-  `x` and `y` are supposed to have the same structure, i.e., same columns if for data frames.
+
+
+
+
+
+**one row/column tibble**
+
+`as_tibble_row(x)` and `as_tibble_col(x, column_name="value")` convert a vector to one row or one column `tibble`; from `vetor` to `tibble`.
+
+`as_tibble(data, rownames="new_col_name")`  convert (df) to tibble. Flexible with the format of the input data, can be a range of classes.
+
+-   `data`  A data frame, list, matrix, or other object that could reasonably be coerced to a tibble.
+-   `rownames` the name of a new column. Existing rownames are transferred into this column. If `NULL` then remove the rowname column.
+
+
+
+`rownames_to_column(.data, var = "new colname")` and `column_to_rownames(.data, var = "col to use as rownames")` using one column as row names, or converting row names to one column.
+
+-   `.data` needs to be a data frame; strict with input data type;
+-   `var` 
+    -   in <span style='color:#008B45'>`rownames_to_column`</span>: new column name for original rownames in the data.frame, or 
+    -   in <span style='color:#008B45'>`column_to_rownames`</span>: convert tibble to data frame, and specify which column to use as rownames. 
+
+
+
+`enframe` and `deframe` convert **vectors** to tibbles and vice verse.
+
+```r
+enframe(1:3)
+#> # A tibble: 3 × 2
+#>    name value
+#>   <int> <int>
+#> 1     1     1
+#> 2     2     2
+#> 3     3     3
+enframe(c(a = 5, b = 7))
+#> # A tibble: 2 × 2
+#>   name  value
+#>   <chr> <dbl>
+#> 1 a         5
+#> 2 b         7
+enframe(list(one = 1, two = 2:3, three = 4:6))
+#> # A tibble: 3 × 2
+#>   name  value    
+#>   <chr> <list>   
+#> 1 one   <dbl [1]>
+#> 2 two   <int [2]>
+#> 3 three <int [3]>
+deframe(enframe(3:1))
+#> 1 2 3 
+#> 3 2 1 
+deframe(tibble(a = 1:3))
+#> [1] 1 2 3
+deframe(tibble(a = as.list(1:3)))
+#> [[1]]
+#> [1] 1
+#> 
+#> [[2]]
+#> [1] 2
+#> 
+#> [[3]]
+#> [1] 3
+#> 
+```
+
+
+
+
+
+
+
+
+`add_column(df, ..., .after=NULL, .before=NULL)` add new column after the last column.
+
+- `df`: Data frame to append to;
+- `...`:  Name-value pairs to insert;
+- `.before, .after`:  One-based column **index** or column **name** where to add the new columns, default: after last column
+
+
+
+`data %>% mutate(column = .[[2]] - .[[1]])` subset by column positions;
+
+- Here the dot notation in  `.[[2]]` refers to `data`, the variable you pipe into `mutate`. Dot is extra useful here because it allows you to use `data` multiple times. We use it twice in this example.
+
+- Alternatively, `data %>% mutate(column = unlist(pick(2) - pick(1)))`  `unlist` here transform the list generated from `pick(2)-pick(1)` to a vector.
+
+
+
+**Manipulate string columns**
+
+`reg_dict %>% mutate(def = sapply(strsplit(def,"\\."), "[[", 2) )` split a string column and select the 2nd item.
+
+```r
+# alternatively, use separate(def, into, sep, remove=TRUE)
+reg_dict %>% separate(def, c("cli_key", "yr_key"), ".")
+```
+
+
+
+`unite()`  <span style='color:#008B45'>pastes</span> together existing string columns.
+
+```{r eval=FALSE}
+world_unite = world %>%
+  unite("con_reg", continent:region_un, sep = ":", remove = TRUE)
+# remove indicates if the original columns should be removed
+```
+
+`separate()` function does the opposite of `unite()`: it splits one column into multiple columns using either a regular expression or character positions.
+
+```{r eval=FALSE}
+world_separate = world_unite %>% 
+  separate(con_reg, c("continent", "region_un"), sep = ":")
+```
+
+
+
+`rename()` replaces an old name withs a new one. 
+
+```{r eval=FALSE}
+world %>% 
+  rename(name = name_long)
+# renames the lengthy name_long column to simply name
+```
+
+
+
+`set_names()` changes all column names at once, and requires a character vector with a name matching each column.
+
+
+
+**`n_distinct(x)`** This is a faster and more concise equivalent of `length(unique(x))`, # of unique values in `x`.
+
+`add_row(.data, ..., .before = NULL, .after = NULL)  ` add one or more rows of data to an existing data frame, 
+
+- convenient in the way that you can just specify each column with their values.
+- especially conveninet when you just want to **add one row**.
+
+- `...`     <`dynamic-dots`> Name-value pairs, passed on to `tibble()`. 
+  -   Values can be defined only for columns that already exist in `.data` and;
+  -   unset columns will get an `NA` value.
+- `.before`, `.after`  specify the position where you want to add the new row/rows.
+
+```R
+# add_row ---------------------------------
+df <- tibble(x = 1:3, y = 3:1)
+df %>% add_row(x = 4, y = 0)
+```
+
+
+
+**Concatenate rows into a `tibble`**
+
+**`bind_rows(..., .id = NULL)`**  This is an efficient implementation of the common pattern of `do.call(rbind, dfs)`. Match by <span style='color:#008B45'>column names</span>.
+
+The output of `bind_rows()` will contain a column if that column appears in any of the inputs. `rbind` will throw errors if columns do not match.
+
+- `...` 	Data frames to combine.
+
+  - Each argument can either be a data frame, a list that could be a data frame, or a list of data frames.
+
+  - When row-binding, **columns are matched <span style='color:#008B45'>by name</span>**, and any **missing columns will be filled with NA**. So <u>no column is dropped, which is safe</u>.
+
+  - When column-binding (**`bind_cols(df1, df2, ...)`**), rows are matched <span style='color:#FF9900'>**by position**</span>, so all data frames must have the <u>same number of rows</u>. To match by value, not position, see [mutate-joins](http://127.0.0.1:40078/help/library/dplyr/help/mutate-joins).
+
+    Need to be careful when you use `bind_cols`, make sure rows are in the same order in the tables you want to join. 
+
+    - `bind_cols` is equivalent to `cbind`: match by position. Recommend to use `left_join`, which is safer.
+
+    - <span style='color:#008B45'>`bind_rows` is safer than `rbind`</span>: `bind_rows` find matched col names
+
+- `.id`     Data frame identifier.
+
+  - When `.id` is supplied, a new column of identifiers is created to link each row to its original data frame. The labels are taken from the named arguments to `bind_rows()`. When a list of data frames is supplied, the labels are taken from the names of the list. If no names are found a numeric sequence is used instead.
+
+```r
+res = NULL
+for (i in tibbleList)
+   res = bind_rows(res, i)
+
+# or, equivalently,
+bind_rows(tibbleList) # combine all tibbles in the list
+```
+
+
+

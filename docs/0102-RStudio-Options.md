@@ -60,6 +60,29 @@ $width
 | pillar.sigfig | Tibbles print numbers with <span style='color:#00CC66'>**three** significant digits</span> by default, switching to scientific notation if the available space is too small.<br />`options(pillar.sigfig = 4)` to increase the number of digits printed out. |
 
 
+--------------------------------------------------------------------------------
+
+
+`options("RStudioConsoleRender.viewer_mode"="viewer_pane")`
+
+Changes the display location for R Markdown rendering output from the default behavior to the Viewer pane in RStudio.
+
+**Display Options:**
+
+- "viewer_pane": Shows output in RStudio's Viewer pane (bottom-right panel)
+- "window": Opens output in a separate popup window
+- "browser": Opens output in your default web browser
+
+How to Check the Current Default:
+You can verify the current setting (or default if not set) by running:
+
+```r
+getOption("RStudioConsoleRender.viewer_mode")
+```
+
+If it returns NULL, then the system is using the built-in default behavior, which is typically the popup window approach.
+
+
 
 --------------------------------------------------------------------------------
 

@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>5.7 Contingency Table | R Notes</title>
+  <meta name="description" content="<p>This is a minimal example of using the bookdown package to write a book.
+The HTML output format for this example is bookdown::gitbook,
+set in the _output.yml file.</p>" />
+  <meta name="generator" content="bookdown 0.35 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="5.7 Contingency Table | R Notes" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="<p>This is a minimal example of using the bookdown package to write a book.
+The HTML output format for this example is bookdown::gitbook,
+set in the _output.yml file.</p>" />
+  <meta name="github-repo" content="my1396/R-Notes" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="5.7 Contingency Table | R Notes" />
+  
+  <meta name="twitter:description" content="<p>This is a minimal example of using the bookdown package to write a book.
+The HTML output format for this example is bookdown::gitbook,
+set in the _output.yml file.</p>" />
+  
+
+<meta name="author" content="Menghan Yuan" />
+
+
+<meta name="date" content="2025-07-23" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  <link rel="shortcut icon" href="images/r-project-favicon.ico" type="image/x-icon" />
+<link rel="prev" href="5.6-statistical-summary-functions.html"/>
+<link rel="next" href="5.8-data-frame-operations.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+<head>
+    <!-- MathJax config: define new macros -->
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+          tex2jax: {
+            inlineMath: [['$','$'], ['\\(','\\)']],
+            processEscapes: true
+          },
+          TeX: { 
+            inlineMath: [   // start/end delimiter pairs for in-line math
+              ['$', '$'],
+              ['\\(', '\\)']
+            ],
+            displayMath: [  // start/end delimiter pairs for display math
+              ['$$', '$$'],
+              ['\\[', '\\]']
+            ],
+            processEscapes: true, // use \$ to produce a literal dollar sign
+            tags: 'ams',  // should be 'ams', 'none', or 'all'
+            Macros: {
+              vect: ["\\mathbf{#1}", 1],
+              mat: ["\\mathbf{#1}", 1], 
+
+              bA: "\\boldsymbol{A}",
+              bB: "\\boldsymbol{B}",
+              bC: "\\boldsymbol{C}",
+              bD: "\\boldsymbol{D}",
+              bE: "\\boldsymbol{E}",
+              bF: "\\boldsymbol{F}",
+              bG: "\\boldsymbol{G}",
+              bH: "\\boldsymbol{H}",
+              bI: "\\boldsymbol{I}",
+              bJ: "\\boldsymbol{J}",
+              bK: "\\boldsymbol{K}",
+              bL: "\\boldsymbol{L}",
+              bM: "\\boldsymbol{M}",
+              bN: "\\boldsymbol{N}",
+              bP: "\\boldsymbol{P}",
+              bQ: "\\boldsymbol{Q}",
+              bR: "\\boldsymbol{R}",
+              bS: "\\boldsymbol{S}",
+              bT: "\\boldsymbol{T}",
+              bU: "\\boldsymbol{U}",
+              bV: "\\boldsymbol{V}",
+              bW: "\\boldsymbol{W}",
+              bX: "\\boldsymbol{X}",
+              bY: "\\boldsymbol{Y}",
+              bZ: "\\boldsymbol{Z}",
+              ba: "\\boldsymbol{a}",
+              bb: "\\boldsymbol{b}",
+              bc: "\\boldsymbol{c}",
+              bd: "\\boldsymbol{d}",
+              be: "\\boldsymbol{e}",
+              bg: "\\boldsymbol{g}",
+              bh: "\\boldsymbol{h}",
+              bi: "\\boldsymbol{\\imath}",
+              bm: "\\boldsymbol{m}",
+              bp: "\\boldsymbol{p}",
+              bq: "\\boldsymbol{q}",
+              br: "\\boldsymbol{r}",
+              bs: "\\boldsymbol{s}",
+              bt: "\\boldsymbol{t}",
+              bu: "\\boldsymbol{u}",
+              bv: "\\boldsymbol{v}",
+              bw: "\\boldsymbol{w}",
+              bx: "\\boldsymbol{x}",
+              by: "\\boldsymbol{y}",
+
+              Acal: "\\mathcal{A}",
+              Bcal: "\\mathcal{B}",
+              Ccal: "\\mathcal{C}",
+              Dcal: "\\mathcal{D}",
+              Ecal: "\\mathcal{E}",
+              Fcal: "\\mathcal{F}",
+              Gcal: "\\mathcal{G}",
+              Hcal: "\\mathcal{H}",
+              Ical: "\\mathcal{I}",
+              Jcal: "\\mathcal{J}",
+              Kcal: "\\mathcal{K}",
+              Lcal: "\\mathcal{L}",
+              Mcal: "\\mathcal{M}",
+              Ncal: "\\mathcal{N}",
+              Ocal: "\\mathcal{O}",
+              Pcal: "\\mathcal{P}",
+              Qcal: "\\mathcal{Q}",
+              Rcal: "\\mathcal{R}",
+              Scal: "\\mathcal{S}",
+              Tcal: "\\mathcal{T}",
+              Ucal: "\\mathcal{U}",
+              Vcal: "\\mathcal{V}",
+              Wcal: "\\mathcal{W}",
+              Xcal: "\\mathcal{X}",
+              Ycal: "\\mathcal{Y}",
+              Zcal: "\\mathcal{Z}",
+
+              A: "\\mathbb{A}",
+              B: "\\mathbb{B}",
+              C: "\\mathbb{C}",
+              D: "\\mathbb{D}",
+              E: "\\mathbb{E}",
+              F: "\\mathbb{F}",
+              G: "\\mathbb{G}",
+              H: "\\mathbb{H}",
+              I: "\\mathbb{I}",
+              J: "\\mathbb{J}",
+              K: "\\mathbb{K}",
+              L: "\\mathbb{L}",
+              M: "\\mathbb{M}",
+              N: "\\mathbb{N}",
+              O: "\\mathbb{O}",
+              P: "\\mathbb{P}",
+              Q: "\\mathbb{Q}",
+              R: "\\mathbb{R}",
+              S: "\\mathbb{S}",
+              T: "\\mathbb{T}",
+              U: "\\mathbb{U}",
+              V: "\\mathbb{V}",
+              W: "\\mathbb{W}",
+              X: "\\mathbb{X}",
+              Y: "\\mathbb{Y}",
+              Z: "\\mathbb{Z}",
+
+              bAlpha: "\\boldsymbol{\\Alpha}",
+              bBeta: "\\boldsymbol{\\beta}",
+              bDelta: "\\boldsymbol{\\delta}",
+              bEta: "\\boldsymbol{\\eta}",
+              bGamma: "\\boldsymbol{\\Gamma}",
+              bLambda: "\\boldsymbol{\\Lambda}",
+              bOmega: "\\boldsymbol{\\Omega}",
+              bPhi: "\\boldsymbol{\\Phi}",
+              bPi: "\\boldsymbol{\\Pi}",
+              bPsi: "\\boldsymbol{\\Psi}",
+              bSigma: "\\boldsymbol{\\Sigma}",
+              bTau: "\\boldsymbol{\\tau}",
+              bXi: "\\boldsymbol{\\Xi}",
+              bbeta: "\\boldsymbol{\\beta}",
+              bdelta: "\\boldsymbol{\\delta}",
+              blambda: "\\boldsymbol{\\lambda}",
+              bmu: "\\boldsymbol{\\mu}",
+              bphi: "\\boldsymbol{\\phi}",
+              bpi: "\\boldsymbol{\\pi}",
+              bpsi: "\\boldsymbol{\\psi}",
+              brho: "\\boldsymbol{\\rho}",
+              bsigma: "\\boldsymbol{\\sigma}",
+              btau: "\\boldsymbol{\\tau}",
+              bxi: "\\boldsymbol{\\xi}",
+              bEta: "\\boldsymbol{\\eta}",
+              bPhi: "\\boldsymbol{\\Phi}",
+              bPi: "\\boldsymbol{\\Pi}",
+              bPsi: "\\boldsymbol{\\Psi}",
+              bXi: "\\boldsymbol{\\Xi}",
+              blambda: "\\boldsymbol{\\lambda}",
+              bmu: "\\boldsymbol{\\mu}",
+              bphi: "\\boldsymbol{\\phi}",
+              bpi: "\\boldsymbol{\\pi}",
+              bpsi: "\\boldsymbol{\\psi}",
+              brho: "\\boldsymbol{\\rho}",
+              bsigma: "\\boldsymbol{\\sigma}",
+                        
+              curl: ["\\left\\lbrace#1\\right\\rbrace", 1],
+              floor: ["\\left\\lfloor#1\\right\\rfloor", 1],
+              ceil: ["\\left\\lceil#1\\right\\rceil", 1],
+              abs: ["\\left\\lvert#1\\right\\rvert", 1],
+              norm: ["\\left\\lVert#1\\right\\rVert", 1],
+
+              independent: "\\mathrel{\\perp\\!\\!\\perp}",
+
+              var: "\\mathrm{var}",
+              diag: "\\mathrm{diag}",
+              rank: "\\mathrm{rank}",
+              vecc: "\\mathrm{vec}",
+            }
+          }
+        });
+    </script>
+    
+
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro">
+</head>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #204a87; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #8f5902; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #204a87; font-weight: bold; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #ce5c00; font-weight: bold; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">R Notes</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> About</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="1.1-usage.html"><a href="1.1-usage.html"><i class="fa fa-check"></i><b>1.1</b> Usage</a></li>
+<li class="chapter" data-level="1.2" data-path="1.2-render-book.html"><a href="1.2-render-book.html"><i class="fa fa-check"></i><b>1.2</b> Render book</a></li>
+<li class="chapter" data-level="1.3" data-path="1.3-preview-book.html"><a href="1.3-preview-book.html"><i class="fa fa-check"></i><b>1.3</b> Preview book</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="2-rstudio.html"><a href="2-rstudio.html"><i class="fa fa-check"></i><b>2</b> Rstudio</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="2.1-dark-theme.html"><a href="2.1-dark-theme.html"><i class="fa fa-check"></i><b>2.1</b> Dark Theme</a></li>
+<li class="chapter" data-level="2.2" data-path="2.2-update-r.html"><a href="2.2-update-r.html"><i class="fa fa-check"></i><b>2.2</b> Update R</a></li>
+<li class="chapter" data-level="2.3" data-path="2.3-packages-management.html"><a href="2.3-packages-management.html"><i class="fa fa-check"></i><b>2.3</b> Packages Management</a>
+<ul>
+<li class="chapter" data-level="2.3.1" data-path="2.3-packages-management.html"><a href="2.3-packages-management.html#load-packages"><i class="fa fa-check"></i><b>2.3.1</b> Load packages</a></li>
+<li class="chapter" data-level="2.3.2" data-path="2.3-packages-management.html"><a href="2.3-packages-management.html#install-packages"><i class="fa fa-check"></i><b>2.3.2</b> Install packages</a></li>
+<li class="chapter" data-level="2.3.3" data-path="2.3-packages-management.html"><a href="2.3-packages-management.html#update-packages"><i class="fa fa-check"></i><b>2.3.3</b> Update packages</a></li>
+<li class="chapter" data-level="2.3.4" data-path="2.3-packages-management.html"><a href="2.3-packages-management.html#put-your-r-package-on-github"><i class="fa fa-check"></i><b>2.3.4</b> Put your R package on GitHub</a></li>
+</ul></li>
+<li class="chapter" data-level="2.4" data-path="2.4-using-git-with-rstudio.html"><a href="2.4-using-git-with-rstudio.html"><i class="fa fa-check"></i><b>2.4</b> Using Git with RStudio</a></li>
+<li class="chapter" data-level="2.5" data-path="2.5-github-copilot.html"><a href="2.5-github-copilot.html"><i class="fa fa-check"></i><b>2.5</b> GitHub Copilot</a></li>
+<li class="chapter" data-level="2.6" data-path="2.6-save-r-workspace.html"><a href="2.6-save-r-workspace.html"><i class="fa fa-check"></i><b>2.6</b> Save R Workspace</a></li>
+<li class="chapter" data-level="2.7" data-path="2.7-pane-layout.html"><a href="2.7-pane-layout.html"><i class="fa fa-check"></i><b>2.7</b> Pane Layout</a></li>
+<li class="chapter" data-level="2.8" data-path="2.8-options.html"><a href="2.8-options.html"><i class="fa fa-check"></i><b>2.8</b> Options</a></li>
+<li class="chapter" data-level="2.9" data-path="2.9-r-startup.html"><a href="2.9-r-startup.html"><i class="fa fa-check"></i><b>2.9</b> R Startup</a>
+<ul>
+<li class="chapter" data-level="2.9.1" data-path="2.9-r-startup.html"><a href="2.9-r-startup.html#rprofile"><i class="fa fa-check"></i><b>2.9.1</b> <code>.Rprofile</code></a></li>
+<li class="chapter" data-level="2.9.2" data-path="2.9-r-startup.html"><a href="2.9-r-startup.html#renviron"><i class="fa fa-check"></i><b>2.9.2</b> <code>.Renviron</code></a></li>
+</ul></li>
+<li class="chapter" data-level="2.10" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html"><i class="fa fa-check"></i><b>2.10</b> VS Code</a>
+<ul>
+<li class="chapter" data-level="" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#plot-viewer"><i class="fa fa-check"></i>Plot Viewer</a></li>
+<li class="chapter" data-level="" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#rmd"><i class="fa fa-check"></i>Rmd</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="3-rmd-1.html"><a href="3-rmd-1.html"><i class="fa fa-check"></i><b>3</b> Rmd</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="3.1-yaml-metadata.html"><a href="3.1-yaml-metadata.html"><i class="fa fa-check"></i><b>3.1</b> YAML metadata</a>
+<ul>
+<li class="chapter" data-level="3.1.1" data-path="3.1-yaml-metadata.html"><a href="3.1-yaml-metadata.html#render-rmd"><i class="fa fa-check"></i><b>3.1.1</b> Render Rmd</a></li>
+<li class="chapter" data-level="3.1.2" data-path="3.1-yaml-metadata.html"><a href="3.1-yaml-metadata.html#document-dependency"><i class="fa fa-check"></i><b>3.1.2</b> Document dependency</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="3.2-chunk-options.html"><a href="3.2-chunk-options.html"><i class="fa fa-check"></i><b>3.2</b> Chunk Options</a>
+<ul>
+<li class="chapter" data-level="" data-path="3.2-chunk-options.html"><a href="3.2-chunk-options.html#hooks"><i class="fa fa-check"></i>Hooks</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="3.3-print-verbatim-r-code-chunks.html"><a href="3.3-print-verbatim-r-code-chunks.html"><i class="fa fa-check"></i><b>3.3</b> Print Verbatim R code chunks</a></li>
+<li class="chapter" data-level="3.4" data-path="3.4-rmd-basics.html"><a href="3.4-rmd-basics.html"><i class="fa fa-check"></i><b>3.4</b> Rmd Basics</a></li>
+<li class="chapter" data-level="3.5" data-path="3.5-citations.html"><a href="3.5-citations.html"><i class="fa fa-check"></i><b>3.5</b> Citations</a>
+<ul>
+<li class="chapter" data-level="3.5.1" data-path="3.5-citations.html"><a href="3.5-citations.html#bibliographies"><i class="fa fa-check"></i><b>3.5.1</b> Bibliographies</a></li>
+<li class="chapter" data-level="3.5.2" data-path="3.5-citations.html"><a href="3.5-citations.html#bibliography-placement"><i class="fa fa-check"></i><b>3.5.2</b> Bibliography placement</a></li>
+</ul></li>
+<li class="chapter" data-level="3.6" data-path="3.6-cross-references.html"><a href="3.6-cross-references.html"><i class="fa fa-check"></i><b>3.6</b> Cross References</a>
+<ul>
+<li class="chapter" data-level="3.6.1" data-path="3.6-cross-references.html"><a href="3.6-cross-references.html#using-bookdown"><i class="fa fa-check"></i><b>3.6.1</b> Using <code>bookdown</code></a></li>
+<li class="chapter" data-level="3.6.2" data-path="3.6-cross-references.html"><a href="3.6-cross-references.html#using-the-latex-way"><i class="fa fa-check"></i><b>3.6.2</b> Using the LaTeX Way</a></li>
+</ul></li>
+<li class="chapter" data-level="3.7" data-path="3.7-equations.html"><a href="3.7-equations.html"><i class="fa fa-check"></i><b>3.7</b> Equations</a></li>
+<li class="chapter" data-level="3.8" data-path="3.8-theorems.html"><a href="3.8-theorems.html"><i class="fa fa-check"></i><b>3.8</b> Theorems</a></li>
+<li class="chapter" data-level="3.9" data-path="3.9-figures.html"><a href="3.9-figures.html"><i class="fa fa-check"></i><b>3.9</b> Figures</a>
+<ul>
+<li class="chapter" data-level="" data-path="3.9-figures.html"><a href="3.9-figures.html#latex-symbols-in-fig.-caption"><i class="fa fa-check"></i>Latex symbols in Fig. caption</a></li>
+<li class="chapter" data-level="" data-path="3.9-figures.html"><a href="3.9-figures.html#refer-to-another-figure-in-figure-caption"><i class="fa fa-check"></i>Refer to another figure in figure caption</a></li>
+</ul></li>
+<li class="chapter" data-level="3.10" data-path="3.10-tables.html"><a href="3.10-tables.html"><i class="fa fa-check"></i><b>3.10</b> Tables</a>
+<ul>
+<li class="chapter" data-level="3.10.1" data-path="3.10-tables.html"><a href="3.10-tables.html#knitrkable"><i class="fa fa-check"></i><b>3.10.1</b> <code>knitr::kable</code></a></li>
+<li class="chapter" data-level="3.10.2" data-path="3.10-tables.html"><a href="3.10-tables.html#data-frame-printing"><i class="fa fa-check"></i><b>3.10.2</b> Data frame printing</a></li>
+<li class="chapter" data-level="3.10.3" data-path="3.10-tables.html"><a href="3.10-tables.html#stargazer"><i class="fa fa-check"></i><b>3.10.3</b> Stargazer</a></li>
+<li class="chapter" data-level="3.10.4" data-path="3.10-tables.html"><a href="3.10-tables.html#kableextra"><i class="fa fa-check"></i><b>3.10.4</b> <code>kableExtra</code></a></li>
+</ul></li>
+<li class="chapter" data-level="3.11" data-path="3.11-rmd-github-pages.html"><a href="3.11-rmd-github-pages.html"><i class="fa fa-check"></i><b>3.11</b> Rmd GitHub Pages</a>
+<ul>
+<li class="chapter" data-level="" data-path="3.11-rmd-github-pages.html"><a href="3.11-rmd-github-pages.html#project-structure"><i class="fa fa-check"></i>Project structure</a></li>
+<li class="chapter" data-level="" data-path="3.11-rmd-github-pages.html"><a href="3.11-rmd-github-pages.html#site.yml-config"><i class="fa fa-check"></i><code>_site.yml</code> config</a></li>
+<li class="chapter" data-level="" data-path="3.11-rmd-github-pages.html"><a href="3.11-rmd-github-pages.html#index.rmd"><i class="fa fa-check"></i><code>index.Rmd</code></a></li>
+<li class="chapter" data-level="" data-path="3.11-rmd-github-pages.html"><a href="3.11-rmd-github-pages.html#r-scripts"><i class="fa fa-check"></i>R scripts</a></li>
+<li class="chapter" data-level="" data-path="3.11-rmd-github-pages.html"><a href="3.11-rmd-github-pages.html#workflow"><i class="fa fa-check"></i>Workflow</a></li>
+<li class="chapter" data-level="" data-path="3.11-rmd-github-pages.html"><a href="3.11-rmd-github-pages.html#css-style"><i class="fa fa-check"></i>CSS Style</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="4-bookdown.html"><a href="4-bookdown.html"><i class="fa fa-check"></i><b>4</b> bookdown</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="4.1-bookdown-project-structure.html"><a href="4.1-bookdown-project-structure.html"><i class="fa fa-check"></i><b>4.1</b> bookdown project structure</a>
+<ul>
+<li class="chapter" data-level="" data-path="4.1-bookdown-project-structure.html"><a href="4.1-bookdown-project-structure.html#output.yml"><i class="fa fa-check"></i><code>_output.yml</code></a></li>
+<li class="chapter" data-level="" data-path="4.1-bookdown-project-structure.html"><a href="4.1-bookdown-project-structure.html#bookdown.yml"><i class="fa fa-check"></i><code>_bookdown.yml</code></a></li>
+<li class="chapter" data-level="" data-path="4.1-bookdown-project-structure.html"><a href="4.1-bookdown-project-structure.html#index.rmd-1"><i class="fa fa-check"></i><code>index.Rmd</code></a></li>
+<li class="chapter" data-level="" data-path="4.1-bookdown-project-structure.html"><a href="4.1-bookdown-project-structure.html#rmd-files"><i class="fa fa-check"></i><code>.Rmd</code> files</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="4.2-rendering-bookdown.html"><a href="4.2-rendering-bookdown.html"><i class="fa fa-check"></i><b>4.2</b> Rendering bookdown</a></li>
+<li class="chapter" data-level="4.3" data-path="4.3-toggle-visibility-of-solutions.html"><a href="4.3-toggle-visibility-of-solutions.html"><i class="fa fa-check"></i><b>4.3</b> Toggle Visibility of Solutions</a></li>
+<li class="chapter" data-level="4.4" data-path="4.4-quarto.html"><a href="4.4-quarto.html"><i class="fa fa-check"></i><b>4.4</b> Quarto</a>
+<ul>
+<li class="chapter" data-level="4.4.1" data-path="4.4-quarto.html"><a href="4.4-quarto.html#book-structure"><i class="fa fa-check"></i><b>4.4.1</b> Book Structure</a></li>
+<li class="chapter" data-level="4.4.2" data-path="4.4-quarto.html"><a href="4.4-quarto.html#html-theming"><i class="fa fa-check"></i><b>4.4.2</b> HTML Theming</a></li>
+<li class="chapter" data-level="4.4.3" data-path="4.4-quarto.html"><a href="4.4-quarto.html#cross-references-1"><i class="fa fa-check"></i><b>4.4.3</b> Cross References</a></li>
+<li class="chapter" data-level="4.4.4" data-path="4.4-quarto.html"><a href="4.4-quarto.html#equations-2"><i class="fa fa-check"></i><b>4.4.4</b> Equations</a></li>
+<li class="chapter" data-level="4.4.5" data-path="4.4-quarto.html"><a href="4.4-quarto.html#divs-and-spans"><i class="fa fa-check"></i><b>4.4.5</b> Divs and Spans</a></li>
+<li class="chapter" data-level="4.4.6" data-path="4.4-quarto.html"><a href="4.4-quarto.html#theorems-1"><i class="fa fa-check"></i><b>4.4.6</b> Theorems</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="5-basic-r.html"><a href="5-basic-r.html"><i class="fa fa-check"></i><b>5</b> Basic R</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="5.1-data-input-output.html"><a href="5.1-data-input-output.html"><i class="fa fa-check"></i><b>5.1</b> Data Input &amp; Output</a>
+<ul>
+<li class="chapter" data-level="5.1.1" data-path="5.1-data-input-output.html"><a href="5.1-data-input-output.html#read-data"><i class="fa fa-check"></i><b>5.1.1</b> Read Data</a></li>
+<li class="chapter" data-level="5.1.2" data-path="5.1-data-input-output.html"><a href="5.1-data-input-output.html#write-data"><i class="fa fa-check"></i><b>5.1.2</b> Write Data</a></li>
+</ul></li>
+<li class="chapter" data-level="5.2" data-path="5.2-functions.html"><a href="5.2-functions.html"><i class="fa fa-check"></i><b>5.2</b> Functions</a>
+<ul>
+<li class="chapter" data-level="5.2.1" data-path="5.2-functions.html"><a href="5.2-functions.html#inspecting-object-types-and-structure"><i class="fa fa-check"></i><b>5.2.1</b> Inspecting Object Types and Structure</a></li>
+<li class="chapter" data-level="5.2.2" data-path="5.2-functions.html"><a href="5.2-functions.html#type-of-variables"><i class="fa fa-check"></i><b>5.2.2</b> Type of Variables</a></li>
+<li class="chapter" data-level="5.2.3" data-path="5.2-functions.html"><a href="5.2-functions.html#variable-scope"><i class="fa fa-check"></i><b>5.2.3</b> Variable Scope</a></li>
+<li class="chapter" data-level="5.2.4" data-path="5.2-functions.html"><a href="5.2-functions.html#control-structures"><i class="fa fa-check"></i><b>5.2.4</b> Control Structures</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="5.3-basic-r-functions.html"><a href="5.3-basic-r-functions.html"><i class="fa fa-check"></i><b>5.3</b> Basic R functions</a>
+<ul>
+<li class="chapter" data-level="5.3.1" data-path="5.3-basic-r-functions.html"><a href="5.3-basic-r-functions.html#workspace-management"><i class="fa fa-check"></i><b>5.3.1</b> Workspace Management</a></li>
+<li class="chapter" data-level="5.3.2" data-path="5.3-basic-r-functions.html"><a href="5.3-basic-r-functions.html#data-display-and-output"><i class="fa fa-check"></i><b>5.3.2</b> Data Display and Output</a></li>
+<li class="chapter" data-level="5.3.3" data-path="5.3-basic-r-functions.html"><a href="5.3-basic-r-functions.html#data-manipulation-and-transformation"><i class="fa fa-check"></i><b>5.3.3</b> Data Manipulation and Transformation</a></li>
+<li class="chapter" data-level="5.3.4" data-path="5.3-basic-r-functions.html"><a href="5.3-basic-r-functions.html#generate-random-seeds"><i class="fa fa-check"></i><b>5.3.4</b> Generate Random Seeds</a></li>
+</ul></li>
+<li class="chapter" data-level="5.4" data-path="5.4-data-splitting-and-grouping.html"><a href="5.4-data-splitting-and-grouping.html"><i class="fa fa-check"></i><b>5.4</b> Data Splitting and Grouping</a>
+<ul>
+<li class="chapter" data-level="5.4.1" data-path="5.4-data-splitting-and-grouping.html"><a href="5.4-data-splitting-and-grouping.html#the-split-function"><i class="fa fa-check"></i><b>5.4.1</b> The <code>split()</code> Function</a></li>
+<li class="chapter" data-level="5.4.2" data-path="5.4-data-splitting-and-grouping.html"><a href="5.4-data-splitting-and-grouping.html#split-and-apply-operations"><i class="fa fa-check"></i><b>5.4.2</b> Split-and-Apply Operations</a></li>
+</ul></li>
+<li class="chapter" data-level="5.5" data-path="5.5-apply-family.html"><a href="5.5-apply-family.html"><i class="fa fa-check"></i><b>5.5</b> <code>*apply()</code> Family</a>
+<ul>
+<li class="chapter" data-level="5.5.1" data-path="5.5-apply-family.html"><a href="5.5-apply-family.html#paralle-version-of-apply-function"><i class="fa fa-check"></i><b>5.5.1</b> <span style="color:#008B45">Paralle</span> version of <code>apply</code> function</a></li>
+</ul></li>
+<li class="chapter" data-level="5.6" data-path="5.6-statistical-summary-functions.html"><a href="5.6-statistical-summary-functions.html"><i class="fa fa-check"></i><b>5.6</b> Statistical Summary Functions</a></li>
+<li class="chapter" data-level="5.7" data-path="5.7-contingency-table.html"><a href="5.7-contingency-table.html"><i class="fa fa-check"></i><b>5.7</b> Contingency Table</a>
+<ul>
+<li class="chapter" data-level="5.7.1" data-path="5.7-contingency-table.html"><a href="5.7-contingency-table.html#basic-frequency-counting"><i class="fa fa-check"></i><b>5.7.1</b> Basic Frequency Counting</a></li>
+<li class="chapter" data-level="5.7.2" data-path="5.7-contingency-table.html"><a href="5.7-contingency-table.html#creating-contingency-tables"><i class="fa fa-check"></i><b>5.7.2</b> Creating Contingency Tables</a></li>
+<li class="chapter" data-level="5.7.3" data-path="5.7-contingency-table.html"><a href="5.7-contingency-table.html#working-with-arrays-and-multi-dimensional-tables"><i class="fa fa-check"></i><b>5.7.3</b> Working with Arrays and Multi-dimensional Tables</a></li>
+<li class="chapter" data-level="5.7.4" data-path="5.7-contingency-table.html"><a href="5.7-contingency-table.html#flattening-and-exporting-tables"><i class="fa fa-check"></i><b>5.7.4</b> Flattening and Exporting Tables</a></li>
+<li class="chapter" data-level="5.7.5" data-path="5.7-contingency-table.html"><a href="5.7-contingency-table.html#table-visualization-and-formatting"><i class="fa fa-check"></i><b>5.7.5</b> Table Visualization and Formatting</a></li>
+</ul></li>
+<li class="chapter" data-level="5.8" data-path="5.8-data-frame-operations.html"><a href="5.8-data-frame-operations.html"><i class="fa fa-check"></i><b>5.8</b> Data Frame Operations</a>
+<ul>
+<li class="chapter" data-level="" data-path="5.8-data-frame-operations.html"><a href="5.8-data-frame-operations.html#columnrow-wise-operations"><i class="fa fa-check"></i>Column/Row-wise Operations</a></li>
+<li class="chapter" data-level="5.8.1" data-path="5.8-data-frame-operations.html"><a href="5.8-data-frame-operations.html#process-na-values"><i class="fa fa-check"></i><b>5.8.1</b> <span style="color:#008B45"><strong>Process <code>NA</code> values</strong></span></a></li>
+</ul></li>
+<li class="chapter" data-level="5.9" data-path="5.9-matrix-multiplication.html"><a href="5.9-matrix-multiplication.html"><i class="fa fa-check"></i><b>5.9</b> Matrix multiplication</a></li>
+<li class="chapter" data-level="5.10" data-path="5.10-string-operations.html"><a href="5.10-string-operations.html"><i class="fa fa-check"></i><b>5.10</b> String Operations</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="6-tidyverse.html"><a href="6-tidyverse.html"><i class="fa fa-check"></i><b>6</b> Tidyverse</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="6.1-pipe-operator.html"><a href="6.1-pipe-operator.html"><i class="fa fa-check"></i><b>6.1</b> Pipe Operator</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="7-regression.html"><a href="7-regression.html"><i class="fa fa-check"></i><b>7</b> Regression</a></li>
+<li class="chapter" data-level="8" data-path="8-machine-learning.html"><a href="8-machine-learning.html"><i class="fa fa-check"></i><b>8</b> Machine Learning</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="8.1-imbalanced-datasets.html"><a href="8.1-imbalanced-datasets.html"><i class="fa fa-check"></i><b>8.1</b> Imbalanced datasets</a>
+<ul>
+<li class="chapter" data-level="8.1.1" data-path="8.1-imbalanced-datasets.html"><a href="8.1-imbalanced-datasets.html#downsampling-and-upweighting"><i class="fa fa-check"></i><b>8.1.1</b> Downsampling and Upweighting</a></li>
+</ul></li>
+<li class="chapter" data-level="8.2" data-path="8.2-random-forest.html"><a href="8.2-random-forest.html"><i class="fa fa-check"></i><b>8.2</b> Random Forest</a>
+<ul>
+<li class="chapter" data-level="" data-path="8.2-random-forest.html"><a href="8.2-random-forest.html#implementation-in-r"><i class="fa fa-check"></i>Implementation in R</a></li>
+<li class="chapter" data-level="" data-path="8.2-random-forest.html"><a href="8.2-random-forest.html#imbalance-classification"><i class="fa fa-check"></i>Imbalance Classification</a></li>
+</ul></li>
+<li class="chapter" data-level="8.3" data-path="8.3-neural-network.html"><a href="8.3-neural-network.html"><i class="fa fa-check"></i><b>8.3</b> Neural Network</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="9-stata.html"><a href="9-stata.html"><i class="fa fa-check"></i><b>9</b> Stata</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="9.1-basic-syntax.html"><a href="9.1-basic-syntax.html"><i class="fa fa-check"></i><b>9.1</b> Basic syntax</a>
+<ul>
+<li class="chapter" data-level="9.1.1" data-path="9.1-basic-syntax.html"><a href="9.1-basic-syntax.html#system-variables"><i class="fa fa-check"></i><b>9.1.1</b> System Variables</a></li>
+<li class="chapter" data-level="9.1.2" data-path="9.1-basic-syntax.html"><a href="9.1-basic-syntax.html#matrix"><i class="fa fa-check"></i><b>9.1.2</b> Matrix</a></li>
+<li class="chapter" data-level="9.1.3" data-path="9.1-basic-syntax.html"><a href="9.1-basic-syntax.html#factor-variables"><i class="fa fa-check"></i><b>9.1.3</b> Factor Variables</a></li>
+<li class="chapter" data-level="9.1.4" data-path="9.1-basic-syntax.html"><a href="9.1-basic-syntax.html#time-series-varlists"><i class="fa fa-check"></i><b>9.1.4</b> Time series varlists</a></li>
+<li class="chapter" data-level="9.1.5" data-path="9.1-basic-syntax.html"><a href="9.1-basic-syntax.html#labels"><i class="fa fa-check"></i><b>9.1.5</b> Labels</a></li>
+</ul></li>
+<li class="chapter" data-level="9.2" data-path="9.2-data-manipulation.html"><a href="9.2-data-manipulation.html"><i class="fa fa-check"></i><b>9.2</b> Data Manipulation</a>
+<ul>
+<li class="chapter" data-level="9.2.1" data-path="9.2-data-manipulation.html"><a href="9.2-data-manipulation.html#import-and-export"><i class="fa fa-check"></i><b>9.2.1</b> Import and Export</a></li>
+<li class="chapter" data-level="9.2.2" data-path="9.2-data-manipulation.html"><a href="9.2-data-manipulation.html#save-estimation-results"><i class="fa fa-check"></i><b>9.2.2</b> Save Estimation Results</a></li>
+<li class="chapter" data-level="9.2.3" data-path="9.2-data-manipulation.html"><a href="9.2-data-manipulation.html#stored-results"><i class="fa fa-check"></i><b>9.2.3</b> Stored Results</a></li>
+</ul></li>
+<li class="chapter" data-level="9.3" data-path="9.3-predict.html"><a href="9.3-predict.html"><i class="fa fa-check"></i><b>9.3</b> Predict</a></li>
+<li class="chapter" data-level="9.4" data-path="9.4-forecast.html"><a href="9.4-forecast.html"><i class="fa fa-check"></i><b>9.4</b> Forecast</a>
+<ul>
+<li class="chapter" data-level="" data-path="9.4-forecast.html"><a href="9.4-forecast.html#add-equationsidentifies"><i class="fa fa-check"></i>Add equations/identifies</a></li>
+<li class="chapter" data-level="" data-path="9.4-forecast.html"><a href="9.4-forecast.html#solve-the-foreceast"><i class="fa fa-check"></i>Solve the foreceast</a></li>
+<li class="chapter" data-level="" data-path="9.4-forecast.html"><a href="9.4-forecast.html#use-example-forecast-a-panel"><i class="fa fa-check"></i>Use example: forecast a panel</a></li>
+</ul></li>
+<li class="chapter" data-level="9.5" data-path="9.5-panel.html"><a href="9.5-panel.html"><i class="fa fa-check"></i><b>9.5</b> Panel</a></li>
+<li class="chapter" data-level="9.6" data-path="9.6-arellano-bond-estimator.html"><a href="9.6-arellano-bond-estimator.html"><i class="fa fa-check"></i><b>9.6</b> Arellano-Bond Estimator</a>
+<ul>
+<li class="chapter" data-level="9.6.1" data-path="9.6-arellano-bond-estimator.html"><a href="9.6-arellano-bond-estimator.html#xtabond2"><i class="fa fa-check"></i><b>9.6.1</b> xtabond2</a></li>
+</ul></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">R Notes</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<head>
+    <script> 
+        function myFunction(id) {
+          var x = document.getElementById(id); 
+          if (x.style.display === "none") {
+            x.style.display = "block";
+          } else {
+            x.style.display = "none";
+          }
+        }
+    </script>
+</head>
+<div id="contingency-table" class="section level2 hasAnchor" number="5.7">
+<h2><span class="header-section-number">5.7</span> Contingency Table<a href="5.7-contingency-table.html#contingency-table" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p><em>Confusion tables / contingency tables / crosstabs for analyzing categorical data relationships.</em></p>
+<div id="basic-frequency-counting" class="section level3 hasAnchor" number="5.7.1">
+<h3><span class="header-section-number">5.7.1</span> Basic Frequency Counting<a href="5.7-contingency-table.html#basic-frequency-counting" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="the-dplyrcount-function" class="section level4 unnumbered hasAnchor">
+<h4>The <code>dplyr::count()</code> Function<a href="5.7-contingency-table.html#the-dplyrcount-function" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p><span style="color:red"><strong><code>dplyr::count(x, vars=NULL, wt_var=NULL)</code></strong></span> lets you quickly <strong>count the freqency of unique values of one or more variables</strong>. Returns a <code>data.frame</code>.</p>
+<ul>
+<li><p><code>x</code> <u>data frame</u> to be processed</p></li>
+<li><p><code>vars</code> variable(s) to count unique values of.</p>
+<p>If it is one variable, then it returns a frequency table.</p>
+<p>It there are two variables, then it returns the count for each possible combination of categories of the two variables. Return a <code>data.frame</code> with 3 columns. First 2 columns (named after the 2 variables) specify combinations, the third column (<code>Freq</code>) shows the frequency.</p></li>
+<li><p><code>wt_var</code> optional variable to weight by - if this is non-NULL, count will sum up the value of this variable for each combination of id variables.</p></li>
+</ul>
+<p><code>df %&gt;% count(a, b)</code> is roughly equivalent to <code>df %&gt;% group_by(a, b) %&gt;% summarise(n = n())</code>. For each combination of <code>(a,b)</code>, count the frequency.</p>
+<div class="sourceCode" id="cb341"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb341-1"><a href="5.7-contingency-table.html#cb341-1" tabindex="-1"></a><span class="co"># Count of each value of &quot;id&quot; in the first 100 cases</span></span>
+<span id="cb341-2"><a href="5.7-contingency-table.html#cb341-2" tabindex="-1"></a><span class="fu">count</span>(baseball[<span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>,], <span class="at">vars =</span> <span class="st">&quot;id&quot;</span>)</span>
+<span id="cb341-3"><a href="5.7-contingency-table.html#cb341-3" tabindex="-1"></a></span>
+<span id="cb341-4"><a href="5.7-contingency-table.html#cb341-4" tabindex="-1"></a><span class="co"># Count of ids, weighted by their &quot;g&quot; loading</span></span>
+<span id="cb341-5"><a href="5.7-contingency-table.html#cb341-5" tabindex="-1"></a><span class="fu">count</span>(baseball[<span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>,], <span class="at">vars =</span> <span class="st">&quot;id&quot;</span>, <span class="at">wt_var =</span> <span class="st">&quot;g&quot;</span>)</span>
+<span id="cb341-6"><a href="5.7-contingency-table.html#cb341-6" tabindex="-1"></a></span>
+<span id="cb341-7"><a href="5.7-contingency-table.html#cb341-7" tabindex="-1"></a><span class="co"># exercises is a dummay variable in `her.no`</span></span>
+<span id="cb341-8"><a href="5.7-contingency-table.html#cb341-8" tabindex="-1"></a><span class="fu">count</span>(hers.no, exercise)</span>
+<span id="cb341-9"><a href="5.7-contingency-table.html#cb341-9" tabindex="-1"></a><span class="co">#      exercise     n</span></span>
+<span id="cb341-10"><a href="5.7-contingency-table.html#cb341-10" tabindex="-1"></a><span class="co"># 1        0     1191</span></span>
+<span id="cb341-11"><a href="5.7-contingency-table.html#cb341-11" tabindex="-1"></a><span class="co"># 2        1      841</span></span></code></pre></div>
+<p><code>dplyr::tally()</code> works similarly to count, but you need to do <code>group_by</code> first manually. One step more than <code>count</code>.</p>
+<p><code>df %&gt;% group_by(a,b) %&gt;% tally()</code> is equivalent to <code>df %&gt;% group_by(a,b) %&gt;% summarise(n = n())</code>.</p>
+</div>
+<div id="the-dplyrtally-function" class="section level4 unnumbered hasAnchor">
+<h4>The <code>dplyr::tally()</code> Function<a href="5.7-contingency-table.html#the-dplyrtally-function" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p><code>dplyr::tally()</code> works similarly to count, but you need to do <code>group_by</code> first manually. One step more than <code>count</code>.</p>
+</div>
+</div>
+<div id="creating-contingency-tables" class="section level3 hasAnchor" number="5.7.2">
+<h3><span class="header-section-number">5.7.2</span> Creating Contingency Tables<a href="5.7-contingency-table.html#creating-contingency-tables" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="the-table-function" class="section level4 unnumbered hasAnchor">
+<h4>The <code>table()</code> Function<a href="5.7-contingency-table.html#the-table-function" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<ul>
+<li><span style="color:#008B45">Frequency table</span> if providing one variable</li>
+<li><span style="color:#008B45">Cross tabulation table</span> with proportion if providing multiple variables</li>
+</ul>
+<div class="sourceCode" id="cb342"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb342-1"><a href="5.7-contingency-table.html#cb342-1" tabindex="-1"></a><span class="co"># contingency table between chd69 and smoke</span></span>
+<span id="cb342-2"><a href="5.7-contingency-table.html#cb342-2" tabindex="-1"></a><span class="fu">with</span>(contingency_data, <span class="fu">table</span>(chd69, smoke))</span></code></pre></div>
+<p>A relative frequency table can be produced using the function <span style="color:#008B45"><code>prop.table(x, margin=NULL)</code></span>, which takes a table object as argument:</p>
+<p><code>margin</code>: <code>1</code> indicates rows, <code>2</code> indicates columns.</p>
+<div class="sourceCode" id="cb343"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb343-1"><a href="5.7-contingency-table.html#cb343-1" tabindex="-1"></a><span class="fu">with</span>(contingency_data, <span class="fu">table</span>(chd69, smoke)) <span class="sc">%&gt;%</span> </span>
+<span id="cb343-2"><a href="5.7-contingency-table.html#cb343-2" tabindex="-1"></a>        <span class="fu">prop.table</span>()</span></code></pre></div>
+<p>Table tutorial: <a href="https://cran.r-project.org/web/packages/DescTools/vignettes/TablesInR.pdf" class="uri">https://cran.r-project.org/web/packages/DescTools/vignettes/TablesInR.pdf</a></p>
+<p><code>table(..., exclude = if (useNA == "no") c(NA, NaN),       useNA = c("no", "ifany", "always"),       dnn = list.names(...), deparse.level = 1)</code></p>
+<p><code>table()</code> is more flexible than <code>count()</code>. <code>table()</code> accepts <u>vectors, lists, data.frames</u>, but <code>count()</code> accepts <u>data.frames only</u>.</p>
+<ul>
+<li><code>...</code> <strong>one or more objects</strong> which can be interpreted as factors (including character strings), or a list (or data frame) whose components can be so interpreted.</li>
+</ul>
+<p>E.x codes:</p>
+<div class="sourceCode" id="cb344"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb344-1"><a href="5.7-contingency-table.html#cb344-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb344-2"><a href="5.7-contingency-table.html#cb344-2" tabindex="-1"></a>tt <span class="ot">&lt;-</span> <span class="fu">sample</span>(letters, <span class="dv">100</span>, <span class="at">rep=</span><span class="cn">TRUE</span>)</span>
+<span id="cb344-3"><a href="5.7-contingency-table.html#cb344-3" tabindex="-1"></a></span>
+<span id="cb344-4"><a href="5.7-contingency-table.html#cb344-4" tabindex="-1"></a><span class="do">## using table</span></span>
+<span id="cb344-5"><a href="5.7-contingency-table.html#cb344-5" tabindex="-1"></a><span class="fu">table</span>(tt)</span>
+<span id="cb344-6"><a href="5.7-contingency-table.html#cb344-6" tabindex="-1"></a>tt</span>
+<span id="cb344-7"><a href="5.7-contingency-table.html#cb344-7" tabindex="-1"></a>a b c d e f g h i j k l m n o p q r s t u v w x y z </span>
+<span id="cb344-8"><a href="5.7-contingency-table.html#cb344-8" tabindex="-1"></a><span class="dv">2</span> <span class="dv">3</span> <span class="dv">3</span> <span class="dv">3</span> <span class="dv">2</span> <span class="dv">4</span> <span class="dv">6</span> <span class="dv">1</span> <span class="dv">6</span> <span class="dv">5</span> <span class="dv">6</span> <span class="dv">4</span> <span class="dv">7</span> <span class="dv">2</span> <span class="dv">2</span> <span class="dv">2</span> <span class="dv">5</span> <span class="dv">4</span> <span class="dv">5</span> <span class="dv">3</span> <span class="dv">8</span> <span class="dv">4</span> <span class="dv">5</span> <span class="dv">4</span> <span class="dv">3</span> <span class="dv">1</span> </span>
+<span id="cb344-9"><a href="5.7-contingency-table.html#cb344-9" tabindex="-1"></a><span class="do">## using tapply</span></span>
+<span id="cb344-10"><a href="5.7-contingency-table.html#cb344-10" tabindex="-1"></a><span class="fu">tapply</span>(tt, tt, length)</span>
+<span id="cb344-11"><a href="5.7-contingency-table.html#cb344-11" tabindex="-1"></a>a b c d e f g h i j k l m n o p q r s t u v w x y z </span>
+<span id="cb344-12"><a href="5.7-contingency-table.html#cb344-12" tabindex="-1"></a><span class="dv">2</span> <span class="dv">3</span> <span class="dv">3</span> <span class="dv">3</span> <span class="dv">2</span> <span class="dv">4</span> <span class="dv">6</span> <span class="dv">1</span> <span class="dv">6</span> <span class="dv">5</span> <span class="dv">6</span> <span class="dv">4</span> <span class="dv">7</span> <span class="dv">2</span> <span class="dv">2</span> <span class="dv">2</span> <span class="dv">5</span> <span class="dv">4</span> <span class="dv">5</span> <span class="dv">3</span> <span class="dv">8</span> <span class="dv">4</span> <span class="dv">5</span> <span class="dv">4</span> <span class="dv">3</span> <span class="dv">1</span> </span></code></pre></div>
+<p>Another example:</p>
+<div class="sourceCode" id="cb345"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb345-1"><a href="5.7-contingency-table.html#cb345-1" tabindex="-1"></a>breaks <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">1</span>, <span class="fl">3.5</span>, <span class="at">by=</span><span class="fl">0.5</span>)</span>
+<span id="cb345-2"><a href="5.7-contingency-table.html#cb345-2" tabindex="-1"></a>labels <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fl">1.25</span>, <span class="at">by=</span><span class="fl">0.5</span>, <span class="at">length.out=</span><span class="fu">length</span>(breaks)<span class="sc">-</span><span class="dv">1</span>)</span>
+<span id="cb345-3"><a href="5.7-contingency-table.html#cb345-3" tabindex="-1"></a><span class="fu">cut</span>(x<span class="sc">$</span>TCS_reported, <span class="at">breaks=</span>breaks, <span class="at">labels=</span>labels) <span class="sc">%&gt;%</span> <span class="fu">table</span>()</span>
+<span id="cb345-4"><a href="5.7-contingency-table.html#cb345-4" tabindex="-1"></a><span class="co"># .</span></span>
+<span id="cb345-5"><a href="5.7-contingency-table.html#cb345-5" tabindex="-1"></a><span class="co"># 1.25 1.75 2.25 2.75 3.25 </span></span>
+<span id="cb345-6"><a href="5.7-contingency-table.html#cb345-6" tabindex="-1"></a><span class="co"># 3   10    4    5    0 </span></span>
+<span id="cb345-7"><a href="5.7-contingency-table.html#cb345-7" tabindex="-1"></a><span class="fu">apply</span>(x, <span class="dv">2</span>, <span class="cf">function</span>(col) <span class="fu">cut</span>(col, <span class="at">breaks=</span>breaks, <span class="at">labels=</span>labels) <span class="sc">%&gt;%</span> <span class="fu">table</span>())</span>
+<span id="cb345-8"><a href="5.7-contingency-table.html#cb345-8" tabindex="-1"></a><span class="co">#      TCS_reported TCS_global_cvt</span></span>
+<span id="cb345-9"><a href="5.7-contingency-table.html#cb345-9" tabindex="-1"></a><span class="co"># 1.25            3              2</span></span>
+<span id="cb345-10"><a href="5.7-contingency-table.html#cb345-10" tabindex="-1"></a><span class="co"># 1.75           10              5</span></span>
+<span id="cb345-11"><a href="5.7-contingency-table.html#cb345-11" tabindex="-1"></a><span class="co"># 2.25            4             11</span></span>
+<span id="cb345-12"><a href="5.7-contingency-table.html#cb345-12" tabindex="-1"></a><span class="co"># 2.75            5              2</span></span>
+<span id="cb345-13"><a href="5.7-contingency-table.html#cb345-13" tabindex="-1"></a><span class="co"># 3.25            0              2</span></span></code></pre></div>
+</div>
+<div id="the-xtabs-function" class="section level4 unnumbered hasAnchor">
+<h4>The <code>xtabs()</code> Function<a href="5.7-contingency-table.html#the-xtabs-function" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p><span style="color:#008B45"><code>xtabs(formula = ~., data)</code></span> Create a <u>contingency table</u> from cross-classfifying factors.</p>
+<p>We now create a cross-tabulated table to see how occurrences break down across age and gender. Notice we use the <code>cut()</code> function to quickly create 4 arbitrary age groups containing equal numbers of people.</p>
+<div class="sourceCode" id="cb346"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb346-1"><a href="5.7-contingency-table.html#cb346-1" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">xtabs</span>(<span class="sc">~</span> <span class="fu">cut</span>(age,<span class="dv">4</span>) <span class="sc">+</span> gender <span class="sc">+</span> y)</span>
+<span id="cb346-2"><a href="5.7-contingency-table.html#cb346-2" tabindex="-1"></a>, , y <span class="ot">=</span> <span class="dv">0</span></span>
+<span id="cb346-3"><a href="5.7-contingency-table.html#cb346-3" tabindex="-1"></a></span>
+<span id="cb346-4"><a href="5.7-contingency-table.html#cb346-4" tabindex="-1"></a>           gender</span>
+<span id="cb346-5"><a href="5.7-contingency-table.html#cb346-5" tabindex="-1"></a><span class="fu">cut</span>(age, <span class="dv">4</span>)  <span class="dv">0</span>  <span class="dv">1</span></span>
+<span id="cb346-6"><a href="5.7-contingency-table.html#cb346-6" tabindex="-1"></a>  (<span class="fl">18.9</span>,<span class="dv">34</span>] <span class="dv">15</span> <span class="dv">10</span></span>
+<span id="cb346-7"><a href="5.7-contingency-table.html#cb346-7" tabindex="-1"></a>  (<span class="dv">34</span>,<span class="dv">49</span>]   <span class="dv">11</span>  <span class="dv">1</span></span>
+<span id="cb346-8"><a href="5.7-contingency-table.html#cb346-8" tabindex="-1"></a>  (<span class="dv">49</span>,<span class="dv">64</span>]    <span class="dv">1</span>  <span class="dv">0</span></span>
+<span id="cb346-9"><a href="5.7-contingency-table.html#cb346-9" tabindex="-1"></a>  (<span class="dv">64</span>,<span class="fl">79.1</span>]  <span class="dv">0</span>  <span class="dv">0</span></span>
+<span id="cb346-10"><a href="5.7-contingency-table.html#cb346-10" tabindex="-1"></a></span>
+<span id="cb346-11"><a href="5.7-contingency-table.html#cb346-11" tabindex="-1"></a>, , <span class="at">y =</span> <span class="dv">1</span></span>
+<span id="cb346-12"><a href="5.7-contingency-table.html#cb346-12" tabindex="-1"></a></span>
+<span id="cb346-13"><a href="5.7-contingency-table.html#cb346-13" tabindex="-1"></a>           gender</span>
+<span id="cb346-14"><a href="5.7-contingency-table.html#cb346-14" tabindex="-1"></a><span class="fu">cut</span>(age, <span class="dv">4</span>)  <span class="dv">0</span>  <span class="dv">1</span></span>
+<span id="cb346-15"><a href="5.7-contingency-table.html#cb346-15" tabindex="-1"></a>  (<span class="fl">18.9</span>,<span class="dv">34</span>]  <span class="dv">2</span>  <span class="dv">4</span></span>
+<span id="cb346-16"><a href="5.7-contingency-table.html#cb346-16" tabindex="-1"></a>  (<span class="dv">34</span>,<span class="dv">49</span>]    <span class="dv">4</span>  <span class="dv">8</span></span>
+<span id="cb346-17"><a href="5.7-contingency-table.html#cb346-17" tabindex="-1"></a>  (<span class="dv">49</span>,<span class="dv">64</span>]    <span class="dv">5</span> <span class="dv">11</span></span>
+<span id="cb346-18"><a href="5.7-contingency-table.html#cb346-18" tabindex="-1"></a>  (<span class="dv">64</span>,<span class="fl">79.1</span>] <span class="dv">11</span> <span class="dv">17</span></span></code></pre></div>
+</div>
+</div>
+<div id="working-with-arrays-and-multi-dimensional-tables" class="section level3 hasAnchor" number="5.7.3">
+<h3><span class="header-section-number">5.7.3</span> Working with Arrays and Multi-dimensional Tables<a href="5.7-contingency-table.html#working-with-arrays-and-multi-dimensional-tables" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The returned table works like an <span style="color:#008B45"><code>array</code></span>.</p>
+<div id="array-creation-and-manipulation" class="section level4 unnumbered hasAnchor">
+<h4>Array Creation and Manipulation<a href="5.7-contingency-table.html#array-creation-and-manipulation" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div class="sourceCode" id="cb347"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb347-1"><a href="5.7-contingency-table.html#cb347-1" tabindex="-1"></a><span class="co"># Define an empty array</span></span>
+<span id="cb347-2"><a href="5.7-contingency-table.html#cb347-2" tabindex="-1"></a>a <span class="ot">&lt;-</span> <span class="fu">array</span>(<span class="fu">numeric</span>(), <span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">0</span>)) </span>
+<span id="cb347-3"><a href="5.7-contingency-table.html#cb347-3" tabindex="-1"></a></span>
+<span id="cb347-4"><a href="5.7-contingency-table.html#cb347-4" tabindex="-1"></a><span class="sc">&gt;</span> a</span>
+<span id="cb347-5"><a href="5.7-contingency-table.html#cb347-5" tabindex="-1"></a><span class="sc">&lt;</span><span class="dv">2</span> x <span class="dv">3</span> x <span class="dv">0</span> array of double<span class="sc">&gt;</span></span>
+<span id="cb347-6"><a href="5.7-contingency-table.html#cb347-6" tabindex="-1"></a>     [,<span class="dv">1</span>] [,<span class="dv">2</span>] [,<span class="dv">3</span>]</span>
+<span id="cb347-7"><a href="5.7-contingency-table.html#cb347-7" tabindex="-1"></a>[<span class="dv">1</span>,]</span>
+<span id="cb347-8"><a href="5.7-contingency-table.html#cb347-8" tabindex="-1"></a>[<span class="dv">2</span>,]</span></code></pre></div>
+<p>Note that you need <strong>to set at least one dimension to zero</strong>, otherwise the array will contain something by definition.</p>
+<p><code>dim</code> can be</p>
+<ul>
+<li>an integer (will coerce to a vector), or</li>
+<li>a vector giving the maximal indices in each dimension.</li>
+</ul>
+<div class="sourceCode" id="cb348"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb348-1"><a href="5.7-contingency-table.html#cb348-1" tabindex="-1"></a><span class="fu">array</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">24</span>, <span class="at">dim=</span><span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>))</span>
+<span id="cb348-2"><a href="5.7-contingency-table.html#cb348-2" tabindex="-1"></a><span class="co"># equivalently, </span></span>
+<span id="cb348-3"><a href="5.7-contingency-table.html#cb348-3" tabindex="-1"></a><span class="fu">array</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">24</span>, <span class="at">dim=</span><span class="dv">2</span><span class="sc">:</span><span class="dv">4</span>)</span></code></pre></div>
+<p><code>aperm(a, perm)</code> <span style="color:#008B45">Transpose an array</span> by permuting its dimensions.</p>
+<ul>
+<li><code>perm</code> the subscript permutation vector, usually a permutation of the integers <code>1:n</code>, where <code>n</code> is the number of dimensions of <code>a</code>.</li>
+</ul>
+<div class="sourceCode" id="cb349"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb349-1"><a href="5.7-contingency-table.html#cb349-1" tabindex="-1"></a><span class="co"># initialize a 3D arry 2x3x2</span></span>
+<span id="cb349-2"><a href="5.7-contingency-table.html#cb349-2" tabindex="-1"></a><span class="sc">&gt;</span> x  <span class="ot">&lt;-</span> <span class="fu">array</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">12</span>, <span class="at">dim =</span> <span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">2</span>))</span>
+<span id="cb349-3"><a href="5.7-contingency-table.html#cb349-3" tabindex="-1"></a><span class="sc">&gt;</span> x</span>
+<span id="cb349-4"><a href="5.7-contingency-table.html#cb349-4" tabindex="-1"></a>, , <span class="dv">1</span></span>
+<span id="cb349-5"><a href="5.7-contingency-table.html#cb349-5" tabindex="-1"></a></span>
+<span id="cb349-6"><a href="5.7-contingency-table.html#cb349-6" tabindex="-1"></a>     [,<span class="dv">1</span>] [,<span class="dv">2</span>] [,<span class="dv">3</span>]</span>
+<span id="cb349-7"><a href="5.7-contingency-table.html#cb349-7" tabindex="-1"></a>[<span class="dv">1</span>,]    <span class="dv">1</span>    <span class="dv">3</span>    <span class="dv">5</span></span>
+<span id="cb349-8"><a href="5.7-contingency-table.html#cb349-8" tabindex="-1"></a>[<span class="dv">2</span>,]    <span class="dv">2</span>    <span class="dv">4</span>    <span class="dv">6</span></span>
+<span id="cb349-9"><a href="5.7-contingency-table.html#cb349-9" tabindex="-1"></a></span>
+<span id="cb349-10"><a href="5.7-contingency-table.html#cb349-10" tabindex="-1"></a>, , <span class="dv">2</span></span>
+<span id="cb349-11"><a href="5.7-contingency-table.html#cb349-11" tabindex="-1"></a></span>
+<span id="cb349-12"><a href="5.7-contingency-table.html#cb349-12" tabindex="-1"></a>     [,<span class="dv">1</span>] [,<span class="dv">2</span>] [,<span class="dv">3</span>]</span>
+<span id="cb349-13"><a href="5.7-contingency-table.html#cb349-13" tabindex="-1"></a>[<span class="dv">1</span>,]    <span class="dv">7</span>    <span class="dv">9</span>   <span class="dv">11</span></span>
+<span id="cb349-14"><a href="5.7-contingency-table.html#cb349-14" tabindex="-1"></a>[<span class="dv">2</span>,]    <span class="dv">8</span>   <span class="dv">10</span>   <span class="dv">12</span></span>
+<span id="cb349-15"><a href="5.7-contingency-table.html#cb349-15" tabindex="-1"></a></span>
+<span id="cb349-16"><a href="5.7-contingency-table.html#cb349-16" tabindex="-1"></a><span class="co"># array transpose, from 2x3 to 3x2</span></span>
+<span id="cb349-17"><a href="5.7-contingency-table.html#cb349-17" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">aperm</span>(x, <span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">1</span>,<span class="dv">3</span>))</span>
+<span id="cb349-18"><a href="5.7-contingency-table.html#cb349-18" tabindex="-1"></a>, , <span class="dv">1</span></span>
+<span id="cb349-19"><a href="5.7-contingency-table.html#cb349-19" tabindex="-1"></a></span>
+<span id="cb349-20"><a href="5.7-contingency-table.html#cb349-20" tabindex="-1"></a>     [,<span class="dv">1</span>] [,<span class="dv">2</span>]</span>
+<span id="cb349-21"><a href="5.7-contingency-table.html#cb349-21" tabindex="-1"></a>[<span class="dv">1</span>,]    <span class="dv">1</span>    <span class="dv">2</span></span>
+<span id="cb349-22"><a href="5.7-contingency-table.html#cb349-22" tabindex="-1"></a>[<span class="dv">2</span>,]    <span class="dv">3</span>    <span class="dv">4</span></span>
+<span id="cb349-23"><a href="5.7-contingency-table.html#cb349-23" tabindex="-1"></a>[<span class="dv">3</span>,]    <span class="dv">5</span>    <span class="dv">6</span></span>
+<span id="cb349-24"><a href="5.7-contingency-table.html#cb349-24" tabindex="-1"></a></span>
+<span id="cb349-25"><a href="5.7-contingency-table.html#cb349-25" tabindex="-1"></a>, , <span class="dv">2</span></span>
+<span id="cb349-26"><a href="5.7-contingency-table.html#cb349-26" tabindex="-1"></a></span>
+<span id="cb349-27"><a href="5.7-contingency-table.html#cb349-27" tabindex="-1"></a>     [,<span class="dv">1</span>] [,<span class="dv">2</span>]</span>
+<span id="cb349-28"><a href="5.7-contingency-table.html#cb349-28" tabindex="-1"></a>[<span class="dv">1</span>,]    <span class="dv">7</span>    <span class="dv">8</span></span>
+<span id="cb349-29"><a href="5.7-contingency-table.html#cb349-29" tabindex="-1"></a>[<span class="dv">2</span>,]    <span class="dv">9</span>   <span class="dv">10</span></span>
+<span id="cb349-30"><a href="5.7-contingency-table.html#cb349-30" tabindex="-1"></a>[<span class="dv">3</span>,]   <span class="dv">11</span>   <span class="dv">12</span></span></code></pre></div>
+<p>Add data to the array using <code>abind</code>. <code>abind</code> works like <code>rbind/cbind</code> but in a generalized way.
+So, as <code>rbind/cbind</code> add a 1-dimensional structure to a 2-dimensional one, using <code>abind</code> with a 3-dimensional array.</p>
+<p><code>abind(..., along=N)</code> Combine multi-dimensional arrays.</p>
+<ul>
+<li><code>...</code> Any number of vectors, matrices, arrays, or data frames.</li>
+<li><code>along=N</code> (optional) The dimension along which to bind the arrays. The default is the last dimension.</li>
+</ul>
+<div class="sourceCode" id="cb350"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb350-1"><a href="5.7-contingency-table.html#cb350-1" tabindex="-1"></a><span class="co"># Append a matrix </span></span>
+<span id="cb350-2"><a href="5.7-contingency-table.html#cb350-2" tabindex="-1"></a>a <span class="ot">&lt;-</span> <span class="fu">abind</span>(a, <span class="fu">matrix</span>(<span class="dv">5</span>,<span class="at">nrow=</span><span class="dv">2</span>,<span class="at">ncol=</span><span class="dv">3</span>), <span class="at">along=</span><span class="dv">3</span>)</span>
+<span id="cb350-3"><a href="5.7-contingency-table.html#cb350-3" tabindex="-1"></a></span>
+<span id="cb350-4"><a href="5.7-contingency-table.html#cb350-4" tabindex="-1"></a><span class="sc">&gt;</span> a</span>
+<span id="cb350-5"><a href="5.7-contingency-table.html#cb350-5" tabindex="-1"></a>, , <span class="dv">1</span></span>
+<span id="cb350-6"><a href="5.7-contingency-table.html#cb350-6" tabindex="-1"></a></span>
+<span id="cb350-7"><a href="5.7-contingency-table.html#cb350-7" tabindex="-1"></a>     [,<span class="dv">1</span>] [,<span class="dv">2</span>] [,<span class="dv">3</span>]</span>
+<span id="cb350-8"><a href="5.7-contingency-table.html#cb350-8" tabindex="-1"></a>[<span class="dv">1</span>,]    <span class="dv">5</span>    <span class="dv">5</span>    <span class="dv">5</span></span>
+<span id="cb350-9"><a href="5.7-contingency-table.html#cb350-9" tabindex="-1"></a>[<span class="dv">2</span>,]    <span class="dv">5</span>    <span class="dv">5</span>    <span class="dv">5</span></span>
+<span id="cb350-10"><a href="5.7-contingency-table.html#cb350-10" tabindex="-1"></a></span>
+<span id="cb350-11"><a href="5.7-contingency-table.html#cb350-11" tabindex="-1"></a><span class="co"># Append a matrix again</span></span>
+<span id="cb350-12"><a href="5.7-contingency-table.html#cb350-12" tabindex="-1"></a>a <span class="ot">&lt;-</span> <span class="fu">abind</span>(a, <span class="fu">matrix</span>(<span class="dv">7</span>,<span class="at">nrow=</span><span class="dv">2</span>,<span class="at">ncol=</span><span class="dv">3</span>), <span class="at">along=</span><span class="dv">3</span>)</span>
+<span id="cb350-13"><a href="5.7-contingency-table.html#cb350-13" tabindex="-1"></a></span>
+<span id="cb350-14"><a href="5.7-contingency-table.html#cb350-14" tabindex="-1"></a><span class="sc">&gt;</span> a</span>
+<span id="cb350-15"><a href="5.7-contingency-table.html#cb350-15" tabindex="-1"></a>, , <span class="dv">1</span></span>
+<span id="cb350-16"><a href="5.7-contingency-table.html#cb350-16" tabindex="-1"></a></span>
+<span id="cb350-17"><a href="5.7-contingency-table.html#cb350-17" tabindex="-1"></a>     [,<span class="dv">1</span>] [,<span class="dv">2</span>] [,<span class="dv">3</span>]</span>
+<span id="cb350-18"><a href="5.7-contingency-table.html#cb350-18" tabindex="-1"></a>[<span class="dv">1</span>,]    <span class="dv">5</span>    <span class="dv">5</span>    <span class="dv">5</span></span>
+<span id="cb350-19"><a href="5.7-contingency-table.html#cb350-19" tabindex="-1"></a>[<span class="dv">2</span>,]    <span class="dv">5</span>    <span class="dv">5</span>    <span class="dv">5</span></span>
+<span id="cb350-20"><a href="5.7-contingency-table.html#cb350-20" tabindex="-1"></a></span>
+<span id="cb350-21"><a href="5.7-contingency-table.html#cb350-21" tabindex="-1"></a>, , <span class="dv">2</span></span>
+<span id="cb350-22"><a href="5.7-contingency-table.html#cb350-22" tabindex="-1"></a></span>
+<span id="cb350-23"><a href="5.7-contingency-table.html#cb350-23" tabindex="-1"></a>     [,<span class="dv">1</span>] [,<span class="dv">2</span>] [,<span class="dv">3</span>]</span>
+<span id="cb350-24"><a href="5.7-contingency-table.html#cb350-24" tabindex="-1"></a>[<span class="dv">1</span>,]    <span class="dv">7</span>    <span class="dv">7</span>    <span class="dv">7</span></span>
+<span id="cb350-25"><a href="5.7-contingency-table.html#cb350-25" tabindex="-1"></a>[<span class="dv">2</span>,]    <span class="dv">7</span>    <span class="dv">7</span>    <span class="dv">7</span></span></code></pre></div>
+</div>
+</div>
+<div id="flattening-and-exporting-tables" class="section level3 hasAnchor" number="5.7.4">
+<h3><span class="header-section-number">5.7.4</span> Flattening and Exporting Tables<a href="5.7-contingency-table.html#flattening-and-exporting-tables" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="creating-flat-tables-with-ftable" class="section level4 unnumbered hasAnchor">
+<h4>Creating Flat Tables with <code>ftable()</code><a href="5.7-contingency-table.html#creating-flat-tables-with-ftable" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p><span style="color:#008B45"><strong>Save <code>ftable()</code> output to csv</strong></span></p>
+<p>Save to local and you’ll be able to read the data afterwards.</p>
+<p>Higher dimensional tables can be “falttened” into one table using <a href="https://docs.tibco.com/pub/enterprise-runtime-for-R/6.1.4/doc/html/Language_Reference/stats/ftable.html"><code>ftable</code></a>. The resulting three-way table shows the frequencies of all three variables in a “flat” format.</p>
+<div class="sourceCode" id="cb351"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb351-1"><a href="5.7-contingency-table.html#cb351-1" tabindex="-1"></a><span class="co">#view three-way table</span></span>
+<span id="cb351-2"><a href="5.7-contingency-table.html#cb351-2" tabindex="-1"></a>three_way</span>
+<span id="cb351-3"><a href="5.7-contingency-table.html#cb351-3" tabindex="-1"></a></span>
+<span id="cb351-4"><a href="5.7-contingency-table.html#cb351-4" tabindex="-1"></a>, , starter <span class="ot">=</span> No</span>
+<span id="cb351-5"><a href="5.7-contingency-table.html#cb351-5" tabindex="-1"></a></span>
+<span id="cb351-6"><a href="5.7-contingency-table.html#cb351-6" tabindex="-1"></a>    position</span>
+<span id="cb351-7"><a href="5.7-contingency-table.html#cb351-7" tabindex="-1"></a>team F G</span>
+<span id="cb351-8"><a href="5.7-contingency-table.html#cb351-8" tabindex="-1"></a>   A <span class="dv">1</span> <span class="dv">2</span></span>
+<span id="cb351-9"><a href="5.7-contingency-table.html#cb351-9" tabindex="-1"></a>   B <span class="dv">1</span> <span class="dv">1</span></span>
+<span id="cb351-10"><a href="5.7-contingency-table.html#cb351-10" tabindex="-1"></a></span>
+<span id="cb351-11"><a href="5.7-contingency-table.html#cb351-11" tabindex="-1"></a>, , starter <span class="ot">=</span> Yes</span>
+<span id="cb351-12"><a href="5.7-contingency-table.html#cb351-12" tabindex="-1"></a></span>
+<span id="cb351-13"><a href="5.7-contingency-table.html#cb351-13" tabindex="-1"></a>    position</span>
+<span id="cb351-14"><a href="5.7-contingency-table.html#cb351-14" tabindex="-1"></a>team F G</span>
+<span id="cb351-15"><a href="5.7-contingency-table.html#cb351-15" tabindex="-1"></a>   A <span class="dv">1</span> <span class="dv">1</span></span>
+<span id="cb351-16"><a href="5.7-contingency-table.html#cb351-16" tabindex="-1"></a>   B <span class="dv">2</span> <span class="dv">1</span></span>
+<span id="cb351-17"><a href="5.7-contingency-table.html#cb351-17" tabindex="-1"></a></span>
+<span id="cb351-18"><a href="5.7-contingency-table.html#cb351-18" tabindex="-1"></a><span class="co">#convert table to ftable</span></span>
+<span id="cb351-19"><a href="5.7-contingency-table.html#cb351-19" tabindex="-1"></a>three_way_ftable <span class="ot">&lt;-</span> <span class="fu">ftable</span>(three_way)</span>
+<span id="cb351-20"><a href="5.7-contingency-table.html#cb351-20" tabindex="-1"></a></span>
+<span id="cb351-21"><a href="5.7-contingency-table.html#cb351-21" tabindex="-1"></a><span class="co">#view ftable</span></span>
+<span id="cb351-22"><a href="5.7-contingency-table.html#cb351-22" tabindex="-1"></a>three_way_ftable</span>
+<span id="cb351-23"><a href="5.7-contingency-table.html#cb351-23" tabindex="-1"></a></span>
+<span id="cb351-24"><a href="5.7-contingency-table.html#cb351-24" tabindex="-1"></a>              starter No Yes</span>
+<span id="cb351-25"><a href="5.7-contingency-table.html#cb351-25" tabindex="-1"></a>team position               </span>
+<span id="cb351-26"><a href="5.7-contingency-table.html#cb351-26" tabindex="-1"></a>A    F                 <span class="dv">1</span>   <span class="dv">1</span></span>
+<span id="cb351-27"><a href="5.7-contingency-table.html#cb351-27" tabindex="-1"></a>     G                 <span class="dv">2</span>   <span class="dv">1</span></span>
+<span id="cb351-28"><a href="5.7-contingency-table.html#cb351-28" tabindex="-1"></a>B    F                 <span class="dv">1</span>   <span class="dv">2</span></span>
+<span id="cb351-29"><a href="5.7-contingency-table.html#cb351-29" tabindex="-1"></a>     G                 <span class="dv">1</span>   <span class="dv">1</span></span></code></pre></div>
+<p><code>ftable(x)</code> Create ‘flat’ contingency tables. Condense into 2-dimension. Hard to read, but easy to save. 3-D array is difficult to save on the other hand.</p>
+<ul>
+<li><code>x</code> R objects which can be interpreted as factors (including character strings), or a list (or data frame) whose components can be so interpreted, or a contingency table object of class <code>"table"</code> or <code>"ftable"</code>.</li>
+</ul>
+<p>Use <code>stats</code> to first format <code>ftable</code> and then use <code>write.table</code>.</p>
+<div class="sourceCode" id="cb352"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb352-1"><a href="5.7-contingency-table.html#cb352-1" tabindex="-1"></a><span class="co"># `confusion_matrix_all` is an 3D array: 2x2x7</span></span>
+<span id="cb352-2"><a href="5.7-contingency-table.html#cb352-2" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">ftable</span>(confusion_matrix_all)</span>
+<span id="cb352-3"><a href="5.7-contingency-table.html#cb352-3" tabindex="-1"></a><span class="co"># quote=FALSE makes the table more readable</span></span>
+<span id="cb352-4"><a href="5.7-contingency-table.html#cb352-4" tabindex="-1"></a>cont <span class="ot">&lt;-</span> stats<span class="sc">:::</span><span class="fu">format.ftable</span>(df, <span class="at">method =</span> <span class="st">&quot;col.compact&quot;</span>, <span class="at">quote =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb352-5"><a href="5.7-contingency-table.html#cb352-5" tabindex="-1"></a><span class="fu">write.table</span>(cont, <span class="at">sep =</span> <span class="st">&quot;,&quot;</span>, <span class="at">file =</span> <span class="st">&quot;table.csv&quot;</span>)</span>
+<span id="cb352-6"><a href="5.7-contingency-table.html#cb352-6" tabindex="-1"></a><span class="co"># disable row and column names</span></span>
+<span id="cb352-7"><a href="5.7-contingency-table.html#cb352-7" tabindex="-1"></a><span class="fu">write.table</span>(cont, <span class="at">sep =</span> <span class="st">&quot;,&quot;</span>, <span class="at">file =</span> <span class="st">&quot;table.csv&quot;</span>,</span>
+<span id="cb352-8"><a href="5.7-contingency-table.html#cb352-8" tabindex="-1"></a>           <span class="at">row.names =</span> <span class="cn">FALSE</span>, <span class="at">col.names =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<p>Load confusion table</p>
+<div class="sourceCode" id="cb353"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb353-1"><a href="5.7-contingency-table.html#cb353-1" tabindex="-1"></a><span class="co"># read as a regular table</span></span>
+<span id="cb353-2"><a href="5.7-contingency-table.html#cb353-2" tabindex="-1"></a>confusion_ftable <span class="ot">&lt;-</span> <span class="fu">read.table</span>(f_name, <span class="at">sep =</span> <span class="st">&quot;,&quot;</span>, <span class="at">skip =</span> <span class="dv">2</span>)</span>
+<span id="cb353-3"><a href="5.7-contingency-table.html#cb353-3" tabindex="-1"></a><span class="co"># change to array, check if need to transpose</span></span>
+<span id="cb353-4"><a href="5.7-contingency-table.html#cb353-4" tabindex="-1"></a>confusion_ftable <span class="ot">&lt;-</span> <span class="fu">array</span>(confusion_ftable[,<span class="dv">3</span><span class="sc">:</span><span class="dv">12</span>] <span class="sc">%&gt;%</span> <span class="fu">unlist</span>(), </span>
+<span id="cb353-5"><a href="5.7-contingency-table.html#cb353-5" tabindex="-1"></a>      <span class="at">dim =</span> <span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">2</span>,<span class="dv">10</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb353-6"><a href="5.7-contingency-table.html#cb353-6" tabindex="-1"></a>    <span class="fu">aperm</span>(<span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">1</span>,<span class="dv">3</span>))</span>
+<span id="cb353-7"><a href="5.7-contingency-table.html#cb353-7" tabindex="-1"></a><span class="co"># specify dimension names</span></span>
+<span id="cb353-8"><a href="5.7-contingency-table.html#cb353-8" tabindex="-1"></a><span class="fu">dimnames</span>(confusion_ftable) <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">rf.class.test =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>),</span>
+<span id="cb353-9"><a href="5.7-contingency-table.html#cb353-9" tabindex="-1"></a>                        <span class="at">obs.test =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>),</span>
+<span id="cb353-10"><a href="5.7-contingency-table.html#cb353-10" tabindex="-1"></a>                        <span class="at">Group =</span> <span class="fu">paste0</span>(<span class="st">&quot;G&quot;</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>))</span></code></pre></div>
+<p><strong><code>ftable</code> examples</strong></p>
+<div class="sourceCode" id="cb354"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb354-1"><a href="5.7-contingency-table.html#cb354-1" tabindex="-1"></a><span class="sc">&gt;</span> Pet <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Cat&quot;</span>,<span class="st">&quot;Dog&quot;</span>,<span class="st">&quot;Cat&quot;</span>,<span class="st">&quot;Dog&quot;</span>,<span class="st">&quot;Cat&quot;</span>,<span class="st">&quot;Fish&quot;</span>)</span>
+<span id="cb354-2"><a href="5.7-contingency-table.html#cb354-2" tabindex="-1"></a><span class="sc">&gt;</span> Food <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;F1&quot;</span>,<span class="st">&quot;F3&quot;</span>,<span class="st">&quot;F2&quot;</span>,<span class="st">&quot;F4&quot;</span>,<span class="st">&quot;F2&quot;</span>,<span class="st">&quot;F4&quot;</span>)</span>
+<span id="cb354-3"><a href="5.7-contingency-table.html#cb354-3" tabindex="-1"></a><span class="sc">&gt;</span> Sex <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;M&quot;</span>, <span class="st">&quot;M&quot;</span>, <span class="st">&quot;F&quot;</span>, <span class="st">&quot;M&quot;</span>, <span class="st">&quot;F&quot;</span>, <span class="st">&quot;F&quot;</span>)</span>
+<span id="cb354-4"><a href="5.7-contingency-table.html#cb354-4" tabindex="-1"></a><span class="sc">&gt;</span> Color <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Black&quot;</span>, <span class="st">&quot;White&quot;</span>, <span class="st">&quot;Yellow&quot;</span>, <span class="st">&quot;NA&quot;</span>, <span class="st">&quot;White&quot;</span>, <span class="st">&quot;Black&quot;</span> )</span>
+<span id="cb354-5"><a href="5.7-contingency-table.html#cb354-5" tabindex="-1"></a><span class="sc">&gt;</span> ft <span class="ot">&lt;-</span> <span class="fu">ftable</span>(Pet, Food, Sex, Color)</span>
+<span id="cb354-6"><a href="5.7-contingency-table.html#cb354-6" tabindex="-1"></a><span class="sc">&gt;</span> ft</span>
+<span id="cb354-7"><a href="5.7-contingency-table.html#cb354-7" tabindex="-1"></a>              Color Black <span class="cn">NA</span> White Yellow</span>
+<span id="cb354-8"><a href="5.7-contingency-table.html#cb354-8" tabindex="-1"></a>Pet  Food Sex                            </span>
+<span id="cb354-9"><a href="5.7-contingency-table.html#cb354-9" tabindex="-1"></a>Cat  F1   F             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
+<span id="cb354-10"><a href="5.7-contingency-table.html#cb354-10" tabindex="-1"></a>          M             <span class="dv">1</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
+<span id="cb354-11"><a href="5.7-contingency-table.html#cb354-11" tabindex="-1"></a>     F2   F             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">1</span>      <span class="dv">1</span></span>
+<span id="cb354-12"><a href="5.7-contingency-table.html#cb354-12" tabindex="-1"></a>          M             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
+<span id="cb354-13"><a href="5.7-contingency-table.html#cb354-13" tabindex="-1"></a>     F3   F             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
+<span id="cb354-14"><a href="5.7-contingency-table.html#cb354-14" tabindex="-1"></a>          M             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
+<span id="cb354-15"><a href="5.7-contingency-table.html#cb354-15" tabindex="-1"></a>     F4   F             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
+<span id="cb354-16"><a href="5.7-contingency-table.html#cb354-16" tabindex="-1"></a>          M             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
+<span id="cb354-17"><a href="5.7-contingency-table.html#cb354-17" tabindex="-1"></a>Dog  F1   F             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
+<span id="cb354-18"><a href="5.7-contingency-table.html#cb354-18" tabindex="-1"></a>          M             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
+<span id="cb354-19"><a href="5.7-contingency-table.html#cb354-19" tabindex="-1"></a>     F2   F             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
+<span id="cb354-20"><a href="5.7-contingency-table.html#cb354-20" tabindex="-1"></a>          M             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
+<span id="cb354-21"><a href="5.7-contingency-table.html#cb354-21" tabindex="-1"></a>     F3   F             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
+<span id="cb354-22"><a href="5.7-contingency-table.html#cb354-22" tabindex="-1"></a>          M             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">1</span>      <span class="dv">0</span></span>
+<span id="cb354-23"><a href="5.7-contingency-table.html#cb354-23" tabindex="-1"></a>     F4   F             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
+<span id="cb354-24"><a href="5.7-contingency-table.html#cb354-24" tabindex="-1"></a>          M             <span class="dv">0</span>  <span class="dv">1</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
+<span id="cb354-25"><a href="5.7-contingency-table.html#cb354-25" tabindex="-1"></a>Fish F1   F             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
+<span id="cb354-26"><a href="5.7-contingency-table.html#cb354-26" tabindex="-1"></a>          M             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
+<span id="cb354-27"><a href="5.7-contingency-table.html#cb354-27" tabindex="-1"></a>     F2   F             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
+<span id="cb354-28"><a href="5.7-contingency-table.html#cb354-28" tabindex="-1"></a>          M             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
+<span id="cb354-29"><a href="5.7-contingency-table.html#cb354-29" tabindex="-1"></a>     F3   F             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
+<span id="cb354-30"><a href="5.7-contingency-table.html#cb354-30" tabindex="-1"></a>          M             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
+<span id="cb354-31"><a href="5.7-contingency-table.html#cb354-31" tabindex="-1"></a>     F4   F             <span class="dv">1</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
+<span id="cb354-32"><a href="5.7-contingency-table.html#cb354-32" tabindex="-1"></a>          M             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
+<span id="cb354-33"><a href="5.7-contingency-table.html#cb354-33" tabindex="-1"></a><span class="sc">&gt;</span> ft3 <span class="ot">&lt;-</span> <span class="fu">ftable</span>(ft, <span class="at">row.vars =</span> <span class="st">&quot;Food&quot;</span>, <span class="at">col.vars =</span> <span class="fu">c</span>(<span class="st">&quot;Sex&quot;</span>, <span class="st">&quot;Pet&quot;</span>))</span>
+<span id="cb354-34"><a href="5.7-contingency-table.html#cb354-34" tabindex="-1"></a><span class="sc">&gt;</span> ft3</span>
+<span id="cb354-35"><a href="5.7-contingency-table.html#cb354-35" tabindex="-1"></a>     Sex   F            M         </span>
+<span id="cb354-36"><a href="5.7-contingency-table.html#cb354-36" tabindex="-1"></a>     Pet Cat Dog Fish Cat Dog Fish</span>
+<span id="cb354-37"><a href="5.7-contingency-table.html#cb354-37" tabindex="-1"></a>Food                              </span>
+<span id="cb354-38"><a href="5.7-contingency-table.html#cb354-38" tabindex="-1"></a>F1         <span class="dv">0</span>   <span class="dv">0</span>    <span class="dv">0</span>   <span class="dv">1</span>   <span class="dv">0</span>    <span class="dv">0</span></span>
+<span id="cb354-39"><a href="5.7-contingency-table.html#cb354-39" tabindex="-1"></a>F2         <span class="dv">2</span>   <span class="dv">0</span>    <span class="dv">0</span>   <span class="dv">0</span>   <span class="dv">0</span>    <span class="dv">0</span></span>
+<span id="cb354-40"><a href="5.7-contingency-table.html#cb354-40" tabindex="-1"></a>F3         <span class="dv">0</span>   <span class="dv">0</span>    <span class="dv">0</span>   <span class="dv">0</span>   <span class="dv">1</span>    <span class="dv">0</span></span>
+<span id="cb354-41"><a href="5.7-contingency-table.html#cb354-41" tabindex="-1"></a>F4         <span class="dv">0</span>   <span class="dv">0</span>    <span class="dv">1</span>   <span class="dv">0</span>   <span class="dv">1</span>    <span class="dv">0</span></span>
+<span id="cb354-42"><a href="5.7-contingency-table.html#cb354-42" tabindex="-1"></a></span>
+<span id="cb354-43"><a href="5.7-contingency-table.html#cb354-43" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">as.table</span>(ft3)</span>
+<span id="cb354-44"><a href="5.7-contingency-table.html#cb354-44" tabindex="-1"></a>, , Pet <span class="ot">=</span> Cat</span>
+<span id="cb354-45"><a href="5.7-contingency-table.html#cb354-45" tabindex="-1"></a></span>
+<span id="cb354-46"><a href="5.7-contingency-table.html#cb354-46" tabindex="-1"></a>    Sex</span>
+<span id="cb354-47"><a href="5.7-contingency-table.html#cb354-47" tabindex="-1"></a>Food F M</span>
+<span id="cb354-48"><a href="5.7-contingency-table.html#cb354-48" tabindex="-1"></a>  F1 <span class="dv">0</span> <span class="dv">1</span></span>
+<span id="cb354-49"><a href="5.7-contingency-table.html#cb354-49" tabindex="-1"></a>  F2 <span class="dv">2</span> <span class="dv">0</span></span>
+<span id="cb354-50"><a href="5.7-contingency-table.html#cb354-50" tabindex="-1"></a>  F3 <span class="dv">0</span> <span class="dv">0</span></span>
+<span id="cb354-51"><a href="5.7-contingency-table.html#cb354-51" tabindex="-1"></a>  F4 <span class="dv">0</span> <span class="dv">0</span></span>
+<span id="cb354-52"><a href="5.7-contingency-table.html#cb354-52" tabindex="-1"></a></span>
+<span id="cb354-53"><a href="5.7-contingency-table.html#cb354-53" tabindex="-1"></a>, , Pet <span class="ot">=</span> Dog</span>
+<span id="cb354-54"><a href="5.7-contingency-table.html#cb354-54" tabindex="-1"></a></span>
+<span id="cb354-55"><a href="5.7-contingency-table.html#cb354-55" tabindex="-1"></a>    Sex</span>
+<span id="cb354-56"><a href="5.7-contingency-table.html#cb354-56" tabindex="-1"></a>Food F M</span>
+<span id="cb354-57"><a href="5.7-contingency-table.html#cb354-57" tabindex="-1"></a>  F1 <span class="dv">0</span> <span class="dv">0</span></span>
+<span id="cb354-58"><a href="5.7-contingency-table.html#cb354-58" tabindex="-1"></a>  F2 <span class="dv">0</span> <span class="dv">0</span></span>
+<span id="cb354-59"><a href="5.7-contingency-table.html#cb354-59" tabindex="-1"></a>  F3 <span class="dv">0</span> <span class="dv">1</span></span>
+<span id="cb354-60"><a href="5.7-contingency-table.html#cb354-60" tabindex="-1"></a>  F4 <span class="dv">0</span> <span class="dv">1</span></span>
+<span id="cb354-61"><a href="5.7-contingency-table.html#cb354-61" tabindex="-1"></a></span>
+<span id="cb354-62"><a href="5.7-contingency-table.html#cb354-62" tabindex="-1"></a>, , Pet <span class="ot">=</span> Fish</span>
+<span id="cb354-63"><a href="5.7-contingency-table.html#cb354-63" tabindex="-1"></a></span>
+<span id="cb354-64"><a href="5.7-contingency-table.html#cb354-64" tabindex="-1"></a>    Sex</span>
+<span id="cb354-65"><a href="5.7-contingency-table.html#cb354-65" tabindex="-1"></a>Food F M</span>
+<span id="cb354-66"><a href="5.7-contingency-table.html#cb354-66" tabindex="-1"></a>  F1 <span class="dv">0</span> <span class="dv">0</span></span>
+<span id="cb354-67"><a href="5.7-contingency-table.html#cb354-67" tabindex="-1"></a>  F2 <span class="dv">0</span> <span class="dv">0</span></span>
+<span id="cb354-68"><a href="5.7-contingency-table.html#cb354-68" tabindex="-1"></a>  F3 <span class="dv">0</span> <span class="dv">0</span></span>
+<span id="cb354-69"><a href="5.7-contingency-table.html#cb354-69" tabindex="-1"></a>  F4 <span class="dv">1</span> <span class="dv">0</span></span></code></pre></div>
+<p><code>write.ftable</code> has three formats: <code>row.compact</code>, <code>col.compact</code>, and <code>compact</code>.</p>
+<div class="sourceCode" id="cb355"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb355-1"><a href="5.7-contingency-table.html#cb355-1" tabindex="-1"></a><span class="sc">&gt;</span> ft22</span>
+<span id="cb355-2"><a href="5.7-contingency-table.html#cb355-2" tabindex="-1"></a>             Survived    No         Yes      </span>
+<span id="cb355-3"><a href="5.7-contingency-table.html#cb355-3" tabindex="-1"></a>             Age      Child Adult Child Adult</span>
+<span id="cb355-4"><a href="5.7-contingency-table.html#cb355-4" tabindex="-1"></a>Sex    Class                                 </span>
+<span id="cb355-5"><a href="5.7-contingency-table.html#cb355-5" tabindex="-1"></a>Male   <span class="dv">1</span>st                <span class="dv">0</span>   <span class="dv">118</span>     <span class="dv">5</span>    <span class="dv">57</span></span>
+<span id="cb355-6"><a href="5.7-contingency-table.html#cb355-6" tabindex="-1"></a>       <span class="dv">2</span>nd                <span class="dv">0</span>   <span class="dv">154</span>    <span class="dv">11</span>    <span class="dv">14</span></span>
+<span id="cb355-7"><a href="5.7-contingency-table.html#cb355-7" tabindex="-1"></a>       <span class="dv">3</span>rd               <span class="dv">35</span>   <span class="dv">387</span>    <span class="dv">13</span>    <span class="dv">75</span></span>
+<span id="cb355-8"><a href="5.7-contingency-table.html#cb355-8" tabindex="-1"></a>       Crew               <span class="dv">0</span>   <span class="dv">670</span>     <span class="dv">0</span>   <span class="dv">192</span></span>
+<span id="cb355-9"><a href="5.7-contingency-table.html#cb355-9" tabindex="-1"></a>Female <span class="dv">1</span>st                <span class="dv">0</span>     <span class="dv">4</span>     <span class="dv">1</span>   <span class="dv">140</span></span>
+<span id="cb355-10"><a href="5.7-contingency-table.html#cb355-10" tabindex="-1"></a>       <span class="dv">2</span>nd                <span class="dv">0</span>    <span class="dv">13</span>    <span class="dv">13</span>    <span class="dv">80</span></span>
+<span id="cb355-11"><a href="5.7-contingency-table.html#cb355-11" tabindex="-1"></a>       <span class="dv">3</span>rd               <span class="dv">17</span>    <span class="dv">89</span>    <span class="dv">14</span>    <span class="dv">76</span></span>
+<span id="cb355-12"><a href="5.7-contingency-table.html#cb355-12" tabindex="-1"></a>       Crew               <span class="dv">0</span>     <span class="dv">3</span>     <span class="dv">0</span>    <span class="dv">20</span></span>
+<span id="cb355-13"><a href="5.7-contingency-table.html#cb355-13" tabindex="-1"></a><span class="sc">-------------------------------------------------------------</span></span>
+<span id="cb355-14"><a href="5.7-contingency-table.html#cb355-14" tabindex="-1"></a><span class="er">&gt;</span> <span class="fu">write.ftable</span>(ft22, <span class="at">quote =</span> <span class="cn">FALSE</span>, <span class="at">method=</span><span class="st">&quot;row.compact&quot;</span>)</span>
+<span id="cb355-15"><a href="5.7-contingency-table.html#cb355-15" tabindex="-1"></a>             Survived    No         Yes      </span>
+<span id="cb355-16"><a href="5.7-contingency-table.html#cb355-16" tabindex="-1"></a>Sex    Class Age      Child Adult Child Adult</span>
+<span id="cb355-17"><a href="5.7-contingency-table.html#cb355-17" tabindex="-1"></a>Male   <span class="dv">1</span>st                <span class="dv">0</span>   <span class="dv">118</span>     <span class="dv">5</span>    <span class="dv">57</span></span>
+<span id="cb355-18"><a href="5.7-contingency-table.html#cb355-18" tabindex="-1"></a>       <span class="dv">2</span>nd                <span class="dv">0</span>   <span class="dv">154</span>    <span class="dv">11</span>    <span class="dv">14</span></span>
+<span id="cb355-19"><a href="5.7-contingency-table.html#cb355-19" tabindex="-1"></a>       <span class="dv">3</span>rd               <span class="dv">35</span>   <span class="dv">387</span>    <span class="dv">13</span>    <span class="dv">75</span></span>
+<span id="cb355-20"><a href="5.7-contingency-table.html#cb355-20" tabindex="-1"></a>       Crew               <span class="dv">0</span>   <span class="dv">670</span>     <span class="dv">0</span>   <span class="dv">192</span></span>
+<span id="cb355-21"><a href="5.7-contingency-table.html#cb355-21" tabindex="-1"></a>Female <span class="dv">1</span>st                <span class="dv">0</span>     <span class="dv">4</span>     <span class="dv">1</span>   <span class="dv">140</span></span>
+<span id="cb355-22"><a href="5.7-contingency-table.html#cb355-22" tabindex="-1"></a>       <span class="dv">2</span>nd                <span class="dv">0</span>    <span class="dv">13</span>    <span class="dv">13</span>    <span class="dv">80</span></span>
+<span id="cb355-23"><a href="5.7-contingency-table.html#cb355-23" tabindex="-1"></a>       <span class="dv">3</span>rd               <span class="dv">17</span>    <span class="dv">89</span>    <span class="dv">14</span>    <span class="dv">76</span></span>
+<span id="cb355-24"><a href="5.7-contingency-table.html#cb355-24" tabindex="-1"></a>       Crew               <span class="dv">0</span>     <span class="dv">3</span>     <span class="dv">0</span>    <span class="dv">20</span></span>
+<span id="cb355-25"><a href="5.7-contingency-table.html#cb355-25" tabindex="-1"></a><span class="sc">-------------------------------------------------------------</span></span>
+<span id="cb355-26"><a href="5.7-contingency-table.html#cb355-26" tabindex="-1"></a><span class="er">&gt;</span> <span class="fu">write.ftable</span>(ft22, <span class="at">quote =</span> <span class="cn">FALSE</span>, <span class="at">method=</span><span class="st">&quot;col.compact&quot;</span>)</span>
+<span id="cb355-27"><a href="5.7-contingency-table.html#cb355-27" tabindex="-1"></a>       Survived    No         Yes      </span>
+<span id="cb355-28"><a href="5.7-contingency-table.html#cb355-28" tabindex="-1"></a>       Age      Child Adult Child Adult</span>
+<span id="cb355-29"><a href="5.7-contingency-table.html#cb355-29" tabindex="-1"></a>Sex    Class                           </span>
+<span id="cb355-30"><a href="5.7-contingency-table.html#cb355-30" tabindex="-1"></a>Male   <span class="dv">1</span>st          <span class="dv">0</span>   <span class="dv">118</span>     <span class="dv">5</span>    <span class="dv">57</span></span>
+<span id="cb355-31"><a href="5.7-contingency-table.html#cb355-31" tabindex="-1"></a>       <span class="dv">2</span>nd          <span class="dv">0</span>   <span class="dv">154</span>    <span class="dv">11</span>    <span class="dv">14</span></span>
+<span id="cb355-32"><a href="5.7-contingency-table.html#cb355-32" tabindex="-1"></a>       <span class="dv">3</span>rd         <span class="dv">35</span>   <span class="dv">387</span>    <span class="dv">13</span>    <span class="dv">75</span></span>
+<span id="cb355-33"><a href="5.7-contingency-table.html#cb355-33" tabindex="-1"></a>       Crew         <span class="dv">0</span>   <span class="dv">670</span>     <span class="dv">0</span>   <span class="dv">192</span></span>
+<span id="cb355-34"><a href="5.7-contingency-table.html#cb355-34" tabindex="-1"></a>Female <span class="dv">1</span>st          <span class="dv">0</span>     <span class="dv">4</span>     <span class="dv">1</span>   <span class="dv">140</span></span>
+<span id="cb355-35"><a href="5.7-contingency-table.html#cb355-35" tabindex="-1"></a>       <span class="dv">2</span>nd          <span class="dv">0</span>    <span class="dv">13</span>    <span class="dv">13</span>    <span class="dv">80</span></span>
+<span id="cb355-36"><a href="5.7-contingency-table.html#cb355-36" tabindex="-1"></a>       <span class="dv">3</span>rd         <span class="dv">17</span>    <span class="dv">89</span>    <span class="dv">14</span>    <span class="dv">76</span></span>
+<span id="cb355-37"><a href="5.7-contingency-table.html#cb355-37" tabindex="-1"></a>       Crew         <span class="dv">0</span>     <span class="dv">3</span>     <span class="dv">0</span>    <span class="dv">20</span></span>
+<span id="cb355-38"><a href="5.7-contingency-table.html#cb355-38" tabindex="-1"></a><span class="sc">-------------------------------------------------------------</span></span>
+<span id="cb355-39"><a href="5.7-contingency-table.html#cb355-39" tabindex="-1"></a><span class="er">&gt;</span> <span class="fu">write.ftable</span>(ft22, <span class="at">quote =</span> <span class="cn">FALSE</span>, <span class="at">method=</span><span class="st">&quot;compact&quot;</span>)</span>
+<span id="cb355-40"><a href="5.7-contingency-table.html#cb355-40" tabindex="-1"></a>       Survived       No         Yes      </span>
+<span id="cb355-41"><a href="5.7-contingency-table.html#cb355-41" tabindex="-1"></a>Sex    Class <span class="sc">|</span> Age Child Adult Child Adult</span>
+<span id="cb355-42"><a href="5.7-contingency-table.html#cb355-42" tabindex="-1"></a>Male   <span class="dv">1</span>st             <span class="dv">0</span>   <span class="dv">118</span>     <span class="dv">5</span>    <span class="dv">57</span></span>
+<span id="cb355-43"><a href="5.7-contingency-table.html#cb355-43" tabindex="-1"></a>       <span class="dv">2</span>nd             <span class="dv">0</span>   <span class="dv">154</span>    <span class="dv">11</span>    <span class="dv">14</span></span>
+<span id="cb355-44"><a href="5.7-contingency-table.html#cb355-44" tabindex="-1"></a>       <span class="dv">3</span>rd            <span class="dv">35</span>   <span class="dv">387</span>    <span class="dv">13</span>    <span class="dv">75</span></span>
+<span id="cb355-45"><a href="5.7-contingency-table.html#cb355-45" tabindex="-1"></a>       Crew            <span class="dv">0</span>   <span class="dv">670</span>     <span class="dv">0</span>   <span class="dv">192</span></span></code></pre></div>
+</div>
+</div>
+<div id="table-visualization-and-formatting" class="section level3 hasAnchor" number="5.7.5">
+<h3><span class="header-section-number">5.7.5</span> Table Visualization and Formatting<a href="5.7-contingency-table.html#table-visualization-and-formatting" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="professional-table-display-with-flextable" class="section level4 unnumbered hasAnchor">
+<h4>Professional Table Display with <code>flextable</code><a href="5.7-contingency-table.html#professional-table-display-with-flextable" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p><span style="color:#008B45"><strong>Print crosstabs using <code>flextable</code></strong></span></p>
+<p>Good for visualization because they have good typesettings. But you won’t be able to read the data easily as they are buried in tablel aesthetics.</p>
+<table>
+<thead>
+<tr class="header">
+<th align="right"></th>
+<th align="left"></th>
+<th align="center">Observation</th>
+<th align="center"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right"><strong>Prediction</strong></td>
+<td align="left"></td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr class="even">
+<td align="right"></td>
+<td align="left">0</td>
+<td align="center">3108</td>
+<td align="center">531</td>
+</tr>
+<tr class="odd">
+<td align="right"></td>
+<td align="left">1</td>
+<td align="center">35</td>
+<td align="center">49</td>
+</tr>
+</tbody>
+</table>
+<p><a href="https://davidgohel.github.io/flextable/reference/as_flextable.data.frame.html"><code>flextable::as_flextable</code></a> will print the table in the <code>Viewer</code> pane.</p>
+<p><img src="https://drive.google.com/thumbnail?id=1DguPlnaTMwvEgzycxEDJYxSg5f2Un0zE&sz=w1000" alt="flextable" style="display: block; margin-right: auto; margin-left: auto; zoom:100%;" /></p>
+<div class="sourceCode" id="cb356"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb356-1"><a href="5.7-contingency-table.html#cb356-1" tabindex="-1"></a><span class="co"># might need to load `officer` pkg</span></span>
+<span id="cb356-2"><a href="5.7-contingency-table.html#cb356-2" tabindex="-1"></a><span class="co"># library(officer)</span></span>
+<span id="cb356-3"><a href="5.7-contingency-table.html#cb356-3" tabindex="-1"></a><span class="fu">library</span>(flextable)</span>
+<span id="cb356-4"><a href="5.7-contingency-table.html#cb356-4" tabindex="-1"></a>confusion_matrix <span class="sc">%&gt;%</span> </span>
+<span id="cb356-5"><a href="5.7-contingency-table.html#cb356-5" tabindex="-1"></a>    <span class="fu">as_flextable</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb356-6"><a href="5.7-contingency-table.html#cb356-6" tabindex="-1"></a>    <span class="fu">set_caption</span>(</span>
+<span id="cb356-7"><a href="5.7-contingency-table.html#cb356-7" tabindex="-1"></a>        <span class="fu">as_paragraph</span>(</span>
+<span id="cb356-8"><a href="5.7-contingency-table.html#cb356-8" tabindex="-1"></a>            <span class="fu">as_chunk</span>(<span class="st">&quot;Year: 2013&quot;</span>, <span class="co"># specify caption text </span></span>
+<span id="cb356-9"><a href="5.7-contingency-table.html#cb356-9" tabindex="-1"></a>                     <span class="at">props =</span> <span class="fu">fp_text</span>(<span class="at">bold =</span> <span class="cn">TRUE</span>,   <span class="co"># bold face                  </span></span>
+<span id="cb356-10"><a href="5.7-contingency-table.html#cb356-10" tabindex="-1"></a>                                     <span class="at">font.family =</span> <span class="st">&quot;Helvetica&quot;</span> <span class="co"># font family</span></span>
+<span id="cb356-11"><a href="5.7-contingency-table.html#cb356-11" tabindex="-1"></a>                                    )</span>
+<span id="cb356-12"><a href="5.7-contingency-table.html#cb356-12" tabindex="-1"></a>                     )</span>
+<span id="cb356-13"><a href="5.7-contingency-table.html#cb356-13" tabindex="-1"></a>        )</span>
+<span id="cb356-14"><a href="5.7-contingency-table.html#cb356-14" tabindex="-1"></a>    )</span></code></pre></div>
+<p>More about <code>flextable</code>:</p>
+<p><a href="https://blog.djnavarro.net/posts/2024-07-04_flextable/" class="uri">https://blog.djnavarro.net/posts/2024-07-04_flextable/</a></p>
+</div>
+<div id="excel-export-with-xltabr" class="section level4 unnumbered hasAnchor">
+<h4>Excel Export with <code>xltabr</code><a href="5.7-contingency-table.html#excel-export-with-xltabr" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>Write crosstabs into Excel</p>
+<div class="sourceCode" id="cb357"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb357-1"><a href="5.7-contingency-table.html#cb357-1" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">&quot;moj-analytical-services/xltabr&quot;</span>)</span>
+<span id="cb357-2"><a href="5.7-contingency-table.html#cb357-2" tabindex="-1"></a><span class="fu">library</span>(xltabr)</span>
+<span id="cb357-3"><a href="5.7-contingency-table.html#cb357-3" tabindex="-1"></a></span>
+<span id="cb357-4"><a href="5.7-contingency-table.html#cb357-4" tabindex="-1"></a>titles <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&quot;Breakdown of car statistics&quot;</span>, <span class="st">&quot;Cross tabulation of drive and age against type*&quot;</span>)</span>
+<span id="cb357-5"><a href="5.7-contingency-table.html#cb357-5" tabindex="-1"></a>footers <span class="ot">=</span> <span class="st">&quot;*age as of January 2015&quot;</span></span>
+<span id="cb357-6"><a href="5.7-contingency-table.html#cb357-6" tabindex="-1"></a>wb <span class="ot">&lt;-</span> xltabr<span class="sc">::</span><span class="fu">auto_crosstab_to_wb</span>(ct, <span class="at">titles =</span> titles, <span class="at">footers =</span> footers)</span>
+<span id="cb357-7"><a href="5.7-contingency-table.html#cb357-7" tabindex="-1"></a>openxlsx<span class="sc">::</span><span class="fu">openXL</span>(wb)</span></code></pre></div>
+<p>Given a crosstabulation <code>ct</code> produced by <code>reshape2:dcast</code>, the following table is generated.</p>
+<p><img src="https://moj-analytical-services.github.io/xltabr/vignettes/example_1.png?raw=true" alt="xltabr" style="display: block; margin-right: auto; margin-left: auto; zoom:100%;" /></p>
+
+</div>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="5.6-statistical-summary-functions.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="5.8-data-frame-operations.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": true,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "sky",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/my1396/R-Notes/edit/main/0405-Contingence-Table.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["_main.pdf", "_main.epub", "https://github.com/my1396/R-Notes/raw/main/0405-Contingence-Table.Rmd"],
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+},
+"toc_depth": 3,
+"toc_float": true,
+"enableEmoji": true
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

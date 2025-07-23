@@ -486,13 +486,34 @@ rmarkdown::render('input.Rmd', 'all')
 
 --------------------------------------------------------------------------------
 
-[`rmarkdown::render_site(input = ".", output_format = "all",)`](https://pkgs.rstudio.com/rmarkdown/reference/render_site.html) Render all of the R Markdown documents within a directory as a website. There are two requirements for a directory to be rendered as a website:
+[`rmarkdown::render_site(input = ".", output_format = "all")`](https://pkgs.rstudio.com/rmarkdown/reference/render_site.html) Render all of the R Markdown documents within a directory as a website. There are two requirements for a directory to be rendered as a website:
 
 - It must contain either an `index.Rmd` or `index.md` file.
 - It must contain a site configuration file (`_site.yml`).
 
 Note that the "Knit" button in RStudio uses `rmarkdown::render_site` to knit the file in presence of an `index.Rmd` file in the working directory.
 
+
+--------------------------------------------------------------------------------
+
+Fast rendering within the current global environment
+
+```r
+rmarkdown::render(active_document_path, envir=.GlobalEnv)
+```
+
+**What this does:**
+- Uses `.GlobalEnv` to access all objects already loaded in your workspace
+- **Faster rendering** since it skips the overhead of starting a new R session
+- All variables, functions, and loaded packages from your current session are available
+
+
+
+**Caveats:**
+- ⚠️ **Less reproducible** - document depends on current session state
+- ⚠️ **Potential conflicts** - objects in current session might interfere with document
+
+  
 --------------------------------------------------------------------------------
 
 ### Document dependency

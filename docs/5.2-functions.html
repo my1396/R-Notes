@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>5.2 Functions | R Notes</title>
+  <meta name="description" content="<p>This is a minimal example of using the bookdown package to write a book.
+The HTML output format for this example is bookdown::gitbook,
+set in the _output.yml file.</p>" />
+  <meta name="generator" content="bookdown 0.35 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="5.2 Functions | R Notes" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="<p>This is a minimal example of using the bookdown package to write a book.
+The HTML output format for this example is bookdown::gitbook,
+set in the _output.yml file.</p>" />
+  <meta name="github-repo" content="my1396/R-Notes" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="5.2 Functions | R Notes" />
+  
+  <meta name="twitter:description" content="<p>This is a minimal example of using the bookdown package to write a book.
+The HTML output format for this example is bookdown::gitbook,
+set in the _output.yml file.</p>" />
+  
+
+<meta name="author" content="Menghan Yuan" />
+
+
+<meta name="date" content="2025-07-23" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  <link rel="shortcut icon" href="images/r-project-favicon.ico" type="image/x-icon" />
+<link rel="prev" href="5.1-data-input-output.html"/>
+<link rel="next" href="5.3-basic-r-functions.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+<head>
+    <!-- MathJax config: define new macros -->
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+          tex2jax: {
+            inlineMath: [['$','$'], ['\\(','\\)']],
+            processEscapes: true
+          },
+          TeX: { 
+            inlineMath: [   // start/end delimiter pairs for in-line math
+              ['$', '$'],
+              ['\\(', '\\)']
+            ],
+            displayMath: [  // start/end delimiter pairs for display math
+              ['$$', '$$'],
+              ['\\[', '\\]']
+            ],
+            processEscapes: true, // use \$ to produce a literal dollar sign
+            tags: 'ams',  // should be 'ams', 'none', or 'all'
+            Macros: {
+              vect: ["\\mathbf{#1}", 1],
+              mat: ["\\mathbf{#1}", 1], 
+
+              bA: "\\boldsymbol{A}",
+              bB: "\\boldsymbol{B}",
+              bC: "\\boldsymbol{C}",
+              bD: "\\boldsymbol{D}",
+              bE: "\\boldsymbol{E}",
+              bF: "\\boldsymbol{F}",
+              bG: "\\boldsymbol{G}",
+              bH: "\\boldsymbol{H}",
+              bI: "\\boldsymbol{I}",
+              bJ: "\\boldsymbol{J}",
+              bK: "\\boldsymbol{K}",
+              bL: "\\boldsymbol{L}",
+              bM: "\\boldsymbol{M}",
+              bN: "\\boldsymbol{N}",
+              bP: "\\boldsymbol{P}",
+              bQ: "\\boldsymbol{Q}",
+              bR: "\\boldsymbol{R}",
+              bS: "\\boldsymbol{S}",
+              bT: "\\boldsymbol{T}",
+              bU: "\\boldsymbol{U}",
+              bV: "\\boldsymbol{V}",
+              bW: "\\boldsymbol{W}",
+              bX: "\\boldsymbol{X}",
+              bY: "\\boldsymbol{Y}",
+              bZ: "\\boldsymbol{Z}",
+              ba: "\\boldsymbol{a}",
+              bb: "\\boldsymbol{b}",
+              bc: "\\boldsymbol{c}",
+              bd: "\\boldsymbol{d}",
+              be: "\\boldsymbol{e}",
+              bg: "\\boldsymbol{g}",
+              bh: "\\boldsymbol{h}",
+              bi: "\\boldsymbol{\\imath}",
+              bm: "\\boldsymbol{m}",
+              bp: "\\boldsymbol{p}",
+              bq: "\\boldsymbol{q}",
+              br: "\\boldsymbol{r}",
+              bs: "\\boldsymbol{s}",
+              bt: "\\boldsymbol{t}",
+              bu: "\\boldsymbol{u}",
+              bv: "\\boldsymbol{v}",
+              bw: "\\boldsymbol{w}",
+              bx: "\\boldsymbol{x}",
+              by: "\\boldsymbol{y}",
+
+              Acal: "\\mathcal{A}",
+              Bcal: "\\mathcal{B}",
+              Ccal: "\\mathcal{C}",
+              Dcal: "\\mathcal{D}",
+              Ecal: "\\mathcal{E}",
+              Fcal: "\\mathcal{F}",
+              Gcal: "\\mathcal{G}",
+              Hcal: "\\mathcal{H}",
+              Ical: "\\mathcal{I}",
+              Jcal: "\\mathcal{J}",
+              Kcal: "\\mathcal{K}",
+              Lcal: "\\mathcal{L}",
+              Mcal: "\\mathcal{M}",
+              Ncal: "\\mathcal{N}",
+              Ocal: "\\mathcal{O}",
+              Pcal: "\\mathcal{P}",
+              Qcal: "\\mathcal{Q}",
+              Rcal: "\\mathcal{R}",
+              Scal: "\\mathcal{S}",
+              Tcal: "\\mathcal{T}",
+              Ucal: "\\mathcal{U}",
+              Vcal: "\\mathcal{V}",
+              Wcal: "\\mathcal{W}",
+              Xcal: "\\mathcal{X}",
+              Ycal: "\\mathcal{Y}",
+              Zcal: "\\mathcal{Z}",
+
+              A: "\\mathbb{A}",
+              B: "\\mathbb{B}",
+              C: "\\mathbb{C}",
+              D: "\\mathbb{D}",
+              E: "\\mathbb{E}",
+              F: "\\mathbb{F}",
+              G: "\\mathbb{G}",
+              H: "\\mathbb{H}",
+              I: "\\mathbb{I}",
+              J: "\\mathbb{J}",
+              K: "\\mathbb{K}",
+              L: "\\mathbb{L}",
+              M: "\\mathbb{M}",
+              N: "\\mathbb{N}",
+              O: "\\mathbb{O}",
+              P: "\\mathbb{P}",
+              Q: "\\mathbb{Q}",
+              R: "\\mathbb{R}",
+              S: "\\mathbb{S}",
+              T: "\\mathbb{T}",
+              U: "\\mathbb{U}",
+              V: "\\mathbb{V}",
+              W: "\\mathbb{W}",
+              X: "\\mathbb{X}",
+              Y: "\\mathbb{Y}",
+              Z: "\\mathbb{Z}",
+
+              bAlpha: "\\boldsymbol{\\Alpha}",
+              bBeta: "\\boldsymbol{\\beta}",
+              bDelta: "\\boldsymbol{\\delta}",
+              bEta: "\\boldsymbol{\\eta}",
+              bGamma: "\\boldsymbol{\\Gamma}",
+              bLambda: "\\boldsymbol{\\Lambda}",
+              bOmega: "\\boldsymbol{\\Omega}",
+              bPhi: "\\boldsymbol{\\Phi}",
+              bPi: "\\boldsymbol{\\Pi}",
+              bPsi: "\\boldsymbol{\\Psi}",
+              bSigma: "\\boldsymbol{\\Sigma}",
+              bTau: "\\boldsymbol{\\tau}",
+              bXi: "\\boldsymbol{\\Xi}",
+              bbeta: "\\boldsymbol{\\beta}",
+              bdelta: "\\boldsymbol{\\delta}",
+              blambda: "\\boldsymbol{\\lambda}",
+              bmu: "\\boldsymbol{\\mu}",
+              bphi: "\\boldsymbol{\\phi}",
+              bpi: "\\boldsymbol{\\pi}",
+              bpsi: "\\boldsymbol{\\psi}",
+              brho: "\\boldsymbol{\\rho}",
+              bsigma: "\\boldsymbol{\\sigma}",
+              btau: "\\boldsymbol{\\tau}",
+              bxi: "\\boldsymbol{\\xi}",
+              bEta: "\\boldsymbol{\\eta}",
+              bPhi: "\\boldsymbol{\\Phi}",
+              bPi: "\\boldsymbol{\\Pi}",
+              bPsi: "\\boldsymbol{\\Psi}",
+              bXi: "\\boldsymbol{\\Xi}",
+              blambda: "\\boldsymbol{\\lambda}",
+              bmu: "\\boldsymbol{\\mu}",
+              bphi: "\\boldsymbol{\\phi}",
+              bpi: "\\boldsymbol{\\pi}",
+              bpsi: "\\boldsymbol{\\psi}",
+              brho: "\\boldsymbol{\\rho}",
+              bsigma: "\\boldsymbol{\\sigma}",
+                        
+              curl: ["\\left\\lbrace#1\\right\\rbrace", 1],
+              floor: ["\\left\\lfloor#1\\right\\rfloor", 1],
+              ceil: ["\\left\\lceil#1\\right\\rceil", 1],
+              abs: ["\\left\\lvert#1\\right\\rvert", 1],
+              norm: ["\\left\\lVert#1\\right\\rVert", 1],
+
+              independent: "\\mathrel{\\perp\\!\\!\\perp}",
+
+              var: "\\mathrm{var}",
+              diag: "\\mathrm{diag}",
+              rank: "\\mathrm{rank}",
+              vecc: "\\mathrm{vec}",
+            }
+          }
+        });
+    </script>
+    
+
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro">
+</head>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #204a87; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #8f5902; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #204a87; font-weight: bold; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #ce5c00; font-weight: bold; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">R Notes</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> About</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="1.1-usage.html"><a href="1.1-usage.html"><i class="fa fa-check"></i><b>1.1</b> Usage</a></li>
+<li class="chapter" data-level="1.2" data-path="1.2-render-book.html"><a href="1.2-render-book.html"><i class="fa fa-check"></i><b>1.2</b> Render book</a></li>
+<li class="chapter" data-level="1.3" data-path="1.3-preview-book.html"><a href="1.3-preview-book.html"><i class="fa fa-check"></i><b>1.3</b> Preview book</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="2-rstudio.html"><a href="2-rstudio.html"><i class="fa fa-check"></i><b>2</b> Rstudio</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="2.1-dark-theme.html"><a href="2.1-dark-theme.html"><i class="fa fa-check"></i><b>2.1</b> Dark Theme</a></li>
+<li class="chapter" data-level="2.2" data-path="2.2-update-r.html"><a href="2.2-update-r.html"><i class="fa fa-check"></i><b>2.2</b> Update R</a></li>
+<li class="chapter" data-level="2.3" data-path="2.3-packages-management.html"><a href="2.3-packages-management.html"><i class="fa fa-check"></i><b>2.3</b> Packages Management</a>
+<ul>
+<li class="chapter" data-level="2.3.1" data-path="2.3-packages-management.html"><a href="2.3-packages-management.html#load-packages"><i class="fa fa-check"></i><b>2.3.1</b> Load packages</a></li>
+<li class="chapter" data-level="2.3.2" data-path="2.3-packages-management.html"><a href="2.3-packages-management.html#install-packages"><i class="fa fa-check"></i><b>2.3.2</b> Install packages</a></li>
+<li class="chapter" data-level="2.3.3" data-path="2.3-packages-management.html"><a href="2.3-packages-management.html#update-packages"><i class="fa fa-check"></i><b>2.3.3</b> Update packages</a></li>
+<li class="chapter" data-level="2.3.4" data-path="2.3-packages-management.html"><a href="2.3-packages-management.html#put-your-r-package-on-github"><i class="fa fa-check"></i><b>2.3.4</b> Put your R package on GitHub</a></li>
+</ul></li>
+<li class="chapter" data-level="2.4" data-path="2.4-using-git-with-rstudio.html"><a href="2.4-using-git-with-rstudio.html"><i class="fa fa-check"></i><b>2.4</b> Using Git with RStudio</a></li>
+<li class="chapter" data-level="2.5" data-path="2.5-github-copilot.html"><a href="2.5-github-copilot.html"><i class="fa fa-check"></i><b>2.5</b> GitHub Copilot</a></li>
+<li class="chapter" data-level="2.6" data-path="2.6-save-r-workspace.html"><a href="2.6-save-r-workspace.html"><i class="fa fa-check"></i><b>2.6</b> Save R Workspace</a></li>
+<li class="chapter" data-level="2.7" data-path="2.7-pane-layout.html"><a href="2.7-pane-layout.html"><i class="fa fa-check"></i><b>2.7</b> Pane Layout</a></li>
+<li class="chapter" data-level="2.8" data-path="2.8-options.html"><a href="2.8-options.html"><i class="fa fa-check"></i><b>2.8</b> Options</a></li>
+<li class="chapter" data-level="2.9" data-path="2.9-r-startup.html"><a href="2.9-r-startup.html"><i class="fa fa-check"></i><b>2.9</b> R Startup</a>
+<ul>
+<li class="chapter" data-level="2.9.1" data-path="2.9-r-startup.html"><a href="2.9-r-startup.html#rprofile"><i class="fa fa-check"></i><b>2.9.1</b> <code>.Rprofile</code></a></li>
+<li class="chapter" data-level="2.9.2" data-path="2.9-r-startup.html"><a href="2.9-r-startup.html#renviron"><i class="fa fa-check"></i><b>2.9.2</b> <code>.Renviron</code></a></li>
+</ul></li>
+<li class="chapter" data-level="2.10" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html"><i class="fa fa-check"></i><b>2.10</b> VS Code</a>
+<ul>
+<li class="chapter" data-level="" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#plot-viewer"><i class="fa fa-check"></i>Plot Viewer</a></li>
+<li class="chapter" data-level="" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#rmd"><i class="fa fa-check"></i>Rmd</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="3-rmd-1.html"><a href="3-rmd-1.html"><i class="fa fa-check"></i><b>3</b> Rmd</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="3.1-yaml-metadata.html"><a href="3.1-yaml-metadata.html"><i class="fa fa-check"></i><b>3.1</b> YAML metadata</a>
+<ul>
+<li class="chapter" data-level="3.1.1" data-path="3.1-yaml-metadata.html"><a href="3.1-yaml-metadata.html#render-rmd"><i class="fa fa-check"></i><b>3.1.1</b> Render Rmd</a></li>
+<li class="chapter" data-level="3.1.2" data-path="3.1-yaml-metadata.html"><a href="3.1-yaml-metadata.html#document-dependency"><i class="fa fa-check"></i><b>3.1.2</b> Document dependency</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="3.2-chunk-options.html"><a href="3.2-chunk-options.html"><i class="fa fa-check"></i><b>3.2</b> Chunk Options</a>
+<ul>
+<li class="chapter" data-level="" data-path="3.2-chunk-options.html"><a href="3.2-chunk-options.html#hooks"><i class="fa fa-check"></i>Hooks</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="3.3-print-verbatim-r-code-chunks.html"><a href="3.3-print-verbatim-r-code-chunks.html"><i class="fa fa-check"></i><b>3.3</b> Print Verbatim R code chunks</a></li>
+<li class="chapter" data-level="3.4" data-path="3.4-rmd-basics.html"><a href="3.4-rmd-basics.html"><i class="fa fa-check"></i><b>3.4</b> Rmd Basics</a></li>
+<li class="chapter" data-level="3.5" data-path="3.5-citations.html"><a href="3.5-citations.html"><i class="fa fa-check"></i><b>3.5</b> Citations</a>
+<ul>
+<li class="chapter" data-level="3.5.1" data-path="3.5-citations.html"><a href="3.5-citations.html#bibliographies"><i class="fa fa-check"></i><b>3.5.1</b> Bibliographies</a></li>
+<li class="chapter" data-level="3.5.2" data-path="3.5-citations.html"><a href="3.5-citations.html#bibliography-placement"><i class="fa fa-check"></i><b>3.5.2</b> Bibliography placement</a></li>
+</ul></li>
+<li class="chapter" data-level="3.6" data-path="3.6-cross-references.html"><a href="3.6-cross-references.html"><i class="fa fa-check"></i><b>3.6</b> Cross References</a>
+<ul>
+<li class="chapter" data-level="3.6.1" data-path="3.6-cross-references.html"><a href="3.6-cross-references.html#using-bookdown"><i class="fa fa-check"></i><b>3.6.1</b> Using <code>bookdown</code></a></li>
+<li class="chapter" data-level="3.6.2" data-path="3.6-cross-references.html"><a href="3.6-cross-references.html#using-the-latex-way"><i class="fa fa-check"></i><b>3.6.2</b> Using the LaTeX Way</a></li>
+</ul></li>
+<li class="chapter" data-level="3.7" data-path="3.7-equations.html"><a href="3.7-equations.html"><i class="fa fa-check"></i><b>3.7</b> Equations</a></li>
+<li class="chapter" data-level="3.8" data-path="3.8-theorems.html"><a href="3.8-theorems.html"><i class="fa fa-check"></i><b>3.8</b> Theorems</a></li>
+<li class="chapter" data-level="3.9" data-path="3.9-figures.html"><a href="3.9-figures.html"><i class="fa fa-check"></i><b>3.9</b> Figures</a>
+<ul>
+<li class="chapter" data-level="" data-path="3.9-figures.html"><a href="3.9-figures.html#latex-symbols-in-fig.-caption"><i class="fa fa-check"></i>Latex symbols in Fig. caption</a></li>
+<li class="chapter" data-level="" data-path="3.9-figures.html"><a href="3.9-figures.html#refer-to-another-figure-in-figure-caption"><i class="fa fa-check"></i>Refer to another figure in figure caption</a></li>
+</ul></li>
+<li class="chapter" data-level="3.10" data-path="3.10-tables.html"><a href="3.10-tables.html"><i class="fa fa-check"></i><b>3.10</b> Tables</a>
+<ul>
+<li class="chapter" data-level="3.10.1" data-path="3.10-tables.html"><a href="3.10-tables.html#knitrkable"><i class="fa fa-check"></i><b>3.10.1</b> <code>knitr::kable</code></a></li>
+<li class="chapter" data-level="3.10.2" data-path="3.10-tables.html"><a href="3.10-tables.html#data-frame-printing"><i class="fa fa-check"></i><b>3.10.2</b> Data frame printing</a></li>
+<li class="chapter" data-level="3.10.3" data-path="3.10-tables.html"><a href="3.10-tables.html#stargazer"><i class="fa fa-check"></i><b>3.10.3</b> Stargazer</a></li>
+<li class="chapter" data-level="3.10.4" data-path="3.10-tables.html"><a href="3.10-tables.html#kableextra"><i class="fa fa-check"></i><b>3.10.4</b> <code>kableExtra</code></a></li>
+</ul></li>
+<li class="chapter" data-level="3.11" data-path="3.11-rmd-github-pages.html"><a href="3.11-rmd-github-pages.html"><i class="fa fa-check"></i><b>3.11</b> Rmd GitHub Pages</a>
+<ul>
+<li class="chapter" data-level="" data-path="3.11-rmd-github-pages.html"><a href="3.11-rmd-github-pages.html#project-structure"><i class="fa fa-check"></i>Project structure</a></li>
+<li class="chapter" data-level="" data-path="3.11-rmd-github-pages.html"><a href="3.11-rmd-github-pages.html#site.yml-config"><i class="fa fa-check"></i><code>_site.yml</code> config</a></li>
+<li class="chapter" data-level="" data-path="3.11-rmd-github-pages.html"><a href="3.11-rmd-github-pages.html#index.rmd"><i class="fa fa-check"></i><code>index.Rmd</code></a></li>
+<li class="chapter" data-level="" data-path="3.11-rmd-github-pages.html"><a href="3.11-rmd-github-pages.html#r-scripts"><i class="fa fa-check"></i>R scripts</a></li>
+<li class="chapter" data-level="" data-path="3.11-rmd-github-pages.html"><a href="3.11-rmd-github-pages.html#workflow"><i class="fa fa-check"></i>Workflow</a></li>
+<li class="chapter" data-level="" data-path="3.11-rmd-github-pages.html"><a href="3.11-rmd-github-pages.html#css-style"><i class="fa fa-check"></i>CSS Style</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="4-bookdown.html"><a href="4-bookdown.html"><i class="fa fa-check"></i><b>4</b> bookdown</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="4.1-bookdown-project-structure.html"><a href="4.1-bookdown-project-structure.html"><i class="fa fa-check"></i><b>4.1</b> bookdown project structure</a>
+<ul>
+<li class="chapter" data-level="" data-path="4.1-bookdown-project-structure.html"><a href="4.1-bookdown-project-structure.html#output.yml"><i class="fa fa-check"></i><code>_output.yml</code></a></li>
+<li class="chapter" data-level="" data-path="4.1-bookdown-project-structure.html"><a href="4.1-bookdown-project-structure.html#bookdown.yml"><i class="fa fa-check"></i><code>_bookdown.yml</code></a></li>
+<li class="chapter" data-level="" data-path="4.1-bookdown-project-structure.html"><a href="4.1-bookdown-project-structure.html#index.rmd-1"><i class="fa fa-check"></i><code>index.Rmd</code></a></li>
+<li class="chapter" data-level="" data-path="4.1-bookdown-project-structure.html"><a href="4.1-bookdown-project-structure.html#rmd-files"><i class="fa fa-check"></i><code>.Rmd</code> files</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="4.2-rendering-bookdown.html"><a href="4.2-rendering-bookdown.html"><i class="fa fa-check"></i><b>4.2</b> Rendering bookdown</a></li>
+<li class="chapter" data-level="4.3" data-path="4.3-toggle-visibility-of-solutions.html"><a href="4.3-toggle-visibility-of-solutions.html"><i class="fa fa-check"></i><b>4.3</b> Toggle Visibility of Solutions</a></li>
+<li class="chapter" data-level="4.4" data-path="4.4-quarto.html"><a href="4.4-quarto.html"><i class="fa fa-check"></i><b>4.4</b> Quarto</a>
+<ul>
+<li class="chapter" data-level="4.4.1" data-path="4.4-quarto.html"><a href="4.4-quarto.html#book-structure"><i class="fa fa-check"></i><b>4.4.1</b> Book Structure</a></li>
+<li class="chapter" data-level="4.4.2" data-path="4.4-quarto.html"><a href="4.4-quarto.html#html-theming"><i class="fa fa-check"></i><b>4.4.2</b> HTML Theming</a></li>
+<li class="chapter" data-level="4.4.3" data-path="4.4-quarto.html"><a href="4.4-quarto.html#cross-references-1"><i class="fa fa-check"></i><b>4.4.3</b> Cross References</a></li>
+<li class="chapter" data-level="4.4.4" data-path="4.4-quarto.html"><a href="4.4-quarto.html#equations-2"><i class="fa fa-check"></i><b>4.4.4</b> Equations</a></li>
+<li class="chapter" data-level="4.4.5" data-path="4.4-quarto.html"><a href="4.4-quarto.html#divs-and-spans"><i class="fa fa-check"></i><b>4.4.5</b> Divs and Spans</a></li>
+<li class="chapter" data-level="4.4.6" data-path="4.4-quarto.html"><a href="4.4-quarto.html#theorems-1"><i class="fa fa-check"></i><b>4.4.6</b> Theorems</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="5-basic-r.html"><a href="5-basic-r.html"><i class="fa fa-check"></i><b>5</b> Basic R</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="5.1-data-input-output.html"><a href="5.1-data-input-output.html"><i class="fa fa-check"></i><b>5.1</b> Data Input &amp; Output</a>
+<ul>
+<li class="chapter" data-level="5.1.1" data-path="5.1-data-input-output.html"><a href="5.1-data-input-output.html#read-data"><i class="fa fa-check"></i><b>5.1.1</b> Read Data</a></li>
+<li class="chapter" data-level="5.1.2" data-path="5.1-data-input-output.html"><a href="5.1-data-input-output.html#write-data"><i class="fa fa-check"></i><b>5.1.2</b> Write Data</a></li>
+</ul></li>
+<li class="chapter" data-level="5.2" data-path="5.2-functions.html"><a href="5.2-functions.html"><i class="fa fa-check"></i><b>5.2</b> Functions</a>
+<ul>
+<li class="chapter" data-level="5.2.1" data-path="5.2-functions.html"><a href="5.2-functions.html#inspecting-object-types-and-structure"><i class="fa fa-check"></i><b>5.2.1</b> Inspecting Object Types and Structure</a></li>
+<li class="chapter" data-level="5.2.2" data-path="5.2-functions.html"><a href="5.2-functions.html#type-of-variables"><i class="fa fa-check"></i><b>5.2.2</b> Type of Variables</a></li>
+<li class="chapter" data-level="5.2.3" data-path="5.2-functions.html"><a href="5.2-functions.html#variable-scope"><i class="fa fa-check"></i><b>5.2.3</b> Variable Scope</a></li>
+<li class="chapter" data-level="5.2.4" data-path="5.2-functions.html"><a href="5.2-functions.html#control-structures"><i class="fa fa-check"></i><b>5.2.4</b> Control Structures</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="5.3-basic-r-functions.html"><a href="5.3-basic-r-functions.html"><i class="fa fa-check"></i><b>5.3</b> Basic R functions</a>
+<ul>
+<li class="chapter" data-level="5.3.1" data-path="5.3-basic-r-functions.html"><a href="5.3-basic-r-functions.html#workspace-management"><i class="fa fa-check"></i><b>5.3.1</b> Workspace Management</a></li>
+<li class="chapter" data-level="5.3.2" data-path="5.3-basic-r-functions.html"><a href="5.3-basic-r-functions.html#data-display-and-output"><i class="fa fa-check"></i><b>5.3.2</b> Data Display and Output</a></li>
+<li class="chapter" data-level="5.3.3" data-path="5.3-basic-r-functions.html"><a href="5.3-basic-r-functions.html#data-manipulation-and-transformation"><i class="fa fa-check"></i><b>5.3.3</b> Data Manipulation and Transformation</a></li>
+<li class="chapter" data-level="5.3.4" data-path="5.3-basic-r-functions.html"><a href="5.3-basic-r-functions.html#generate-random-seeds"><i class="fa fa-check"></i><b>5.3.4</b> Generate Random Seeds</a></li>
+</ul></li>
+<li class="chapter" data-level="5.4" data-path="5.4-data-splitting-and-grouping.html"><a href="5.4-data-splitting-and-grouping.html"><i class="fa fa-check"></i><b>5.4</b> Data Splitting and Grouping</a>
+<ul>
+<li class="chapter" data-level="5.4.1" data-path="5.4-data-splitting-and-grouping.html"><a href="5.4-data-splitting-and-grouping.html#the-split-function"><i class="fa fa-check"></i><b>5.4.1</b> The <code>split()</code> Function</a></li>
+<li class="chapter" data-level="5.4.2" data-path="5.4-data-splitting-and-grouping.html"><a href="5.4-data-splitting-and-grouping.html#split-and-apply-operations"><i class="fa fa-check"></i><b>5.4.2</b> Split-and-Apply Operations</a></li>
+</ul></li>
+<li class="chapter" data-level="5.5" data-path="5.5-apply-family.html"><a href="5.5-apply-family.html"><i class="fa fa-check"></i><b>5.5</b> <code>*apply()</code> Family</a>
+<ul>
+<li class="chapter" data-level="5.5.1" data-path="5.5-apply-family.html"><a href="5.5-apply-family.html#paralle-version-of-apply-function"><i class="fa fa-check"></i><b>5.5.1</b> <span style="color:#008B45">Paralle</span> version of <code>apply</code> function</a></li>
+</ul></li>
+<li class="chapter" data-level="5.6" data-path="5.6-statistical-summary-functions.html"><a href="5.6-statistical-summary-functions.html"><i class="fa fa-check"></i><b>5.6</b> Statistical Summary Functions</a></li>
+<li class="chapter" data-level="5.7" data-path="5.7-contingency-table.html"><a href="5.7-contingency-table.html"><i class="fa fa-check"></i><b>5.7</b> Contingency Table</a>
+<ul>
+<li class="chapter" data-level="5.7.1" data-path="5.7-contingency-table.html"><a href="5.7-contingency-table.html#basic-frequency-counting"><i class="fa fa-check"></i><b>5.7.1</b> Basic Frequency Counting</a></li>
+<li class="chapter" data-level="5.7.2" data-path="5.7-contingency-table.html"><a href="5.7-contingency-table.html#creating-contingency-tables"><i class="fa fa-check"></i><b>5.7.2</b> Creating Contingency Tables</a></li>
+<li class="chapter" data-level="5.7.3" data-path="5.7-contingency-table.html"><a href="5.7-contingency-table.html#working-with-arrays-and-multi-dimensional-tables"><i class="fa fa-check"></i><b>5.7.3</b> Working with Arrays and Multi-dimensional Tables</a></li>
+<li class="chapter" data-level="5.7.4" data-path="5.7-contingency-table.html"><a href="5.7-contingency-table.html#flattening-and-exporting-tables"><i class="fa fa-check"></i><b>5.7.4</b> Flattening and Exporting Tables</a></li>
+<li class="chapter" data-level="5.7.5" data-path="5.7-contingency-table.html"><a href="5.7-contingency-table.html#table-visualization-and-formatting"><i class="fa fa-check"></i><b>5.7.5</b> Table Visualization and Formatting</a></li>
+</ul></li>
+<li class="chapter" data-level="5.8" data-path="5.8-data-frame-operations.html"><a href="5.8-data-frame-operations.html"><i class="fa fa-check"></i><b>5.8</b> Data Frame Operations</a>
+<ul>
+<li class="chapter" data-level="" data-path="5.8-data-frame-operations.html"><a href="5.8-data-frame-operations.html#columnrow-wise-operations"><i class="fa fa-check"></i>Column/Row-wise Operations</a></li>
+<li class="chapter" data-level="5.8.1" data-path="5.8-data-frame-operations.html"><a href="5.8-data-frame-operations.html#process-na-values"><i class="fa fa-check"></i><b>5.8.1</b> <span style="color:#008B45"><strong>Process <code>NA</code> values</strong></span></a></li>
+</ul></li>
+<li class="chapter" data-level="5.9" data-path="5.9-matrix-multiplication.html"><a href="5.9-matrix-multiplication.html"><i class="fa fa-check"></i><b>5.9</b> Matrix multiplication</a></li>
+<li class="chapter" data-level="5.10" data-path="5.10-string-operations.html"><a href="5.10-string-operations.html"><i class="fa fa-check"></i><b>5.10</b> String Operations</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="6-tidyverse.html"><a href="6-tidyverse.html"><i class="fa fa-check"></i><b>6</b> Tidyverse</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="6.1-pipe-operator.html"><a href="6.1-pipe-operator.html"><i class="fa fa-check"></i><b>6.1</b> Pipe Operator</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="7-regression.html"><a href="7-regression.html"><i class="fa fa-check"></i><b>7</b> Regression</a></li>
+<li class="chapter" data-level="8" data-path="8-machine-learning.html"><a href="8-machine-learning.html"><i class="fa fa-check"></i><b>8</b> Machine Learning</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="8.1-imbalanced-datasets.html"><a href="8.1-imbalanced-datasets.html"><i class="fa fa-check"></i><b>8.1</b> Imbalanced datasets</a>
+<ul>
+<li class="chapter" data-level="8.1.1" data-path="8.1-imbalanced-datasets.html"><a href="8.1-imbalanced-datasets.html#downsampling-and-upweighting"><i class="fa fa-check"></i><b>8.1.1</b> Downsampling and Upweighting</a></li>
+</ul></li>
+<li class="chapter" data-level="8.2" data-path="8.2-random-forest.html"><a href="8.2-random-forest.html"><i class="fa fa-check"></i><b>8.2</b> Random Forest</a>
+<ul>
+<li class="chapter" data-level="" data-path="8.2-random-forest.html"><a href="8.2-random-forest.html#implementation-in-r"><i class="fa fa-check"></i>Implementation in R</a></li>
+<li class="chapter" data-level="" data-path="8.2-random-forest.html"><a href="8.2-random-forest.html#imbalance-classification"><i class="fa fa-check"></i>Imbalance Classification</a></li>
+</ul></li>
+<li class="chapter" data-level="8.3" data-path="8.3-neural-network.html"><a href="8.3-neural-network.html"><i class="fa fa-check"></i><b>8.3</b> Neural Network</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="9-stata.html"><a href="9-stata.html"><i class="fa fa-check"></i><b>9</b> Stata</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="9.1-basic-syntax.html"><a href="9.1-basic-syntax.html"><i class="fa fa-check"></i><b>9.1</b> Basic syntax</a>
+<ul>
+<li class="chapter" data-level="9.1.1" data-path="9.1-basic-syntax.html"><a href="9.1-basic-syntax.html#system-variables"><i class="fa fa-check"></i><b>9.1.1</b> System Variables</a></li>
+<li class="chapter" data-level="9.1.2" data-path="9.1-basic-syntax.html"><a href="9.1-basic-syntax.html#matrix"><i class="fa fa-check"></i><b>9.1.2</b> Matrix</a></li>
+<li class="chapter" data-level="9.1.3" data-path="9.1-basic-syntax.html"><a href="9.1-basic-syntax.html#factor-variables"><i class="fa fa-check"></i><b>9.1.3</b> Factor Variables</a></li>
+<li class="chapter" data-level="9.1.4" data-path="9.1-basic-syntax.html"><a href="9.1-basic-syntax.html#time-series-varlists"><i class="fa fa-check"></i><b>9.1.4</b> Time series varlists</a></li>
+<li class="chapter" data-level="9.1.5" data-path="9.1-basic-syntax.html"><a href="9.1-basic-syntax.html#labels"><i class="fa fa-check"></i><b>9.1.5</b> Labels</a></li>
+</ul></li>
+<li class="chapter" data-level="9.2" data-path="9.2-data-manipulation.html"><a href="9.2-data-manipulation.html"><i class="fa fa-check"></i><b>9.2</b> Data Manipulation</a>
+<ul>
+<li class="chapter" data-level="9.2.1" data-path="9.2-data-manipulation.html"><a href="9.2-data-manipulation.html#import-and-export"><i class="fa fa-check"></i><b>9.2.1</b> Import and Export</a></li>
+<li class="chapter" data-level="9.2.2" data-path="9.2-data-manipulation.html"><a href="9.2-data-manipulation.html#save-estimation-results"><i class="fa fa-check"></i><b>9.2.2</b> Save Estimation Results</a></li>
+<li class="chapter" data-level="9.2.3" data-path="9.2-data-manipulation.html"><a href="9.2-data-manipulation.html#stored-results"><i class="fa fa-check"></i><b>9.2.3</b> Stored Results</a></li>
+</ul></li>
+<li class="chapter" data-level="9.3" data-path="9.3-predict.html"><a href="9.3-predict.html"><i class="fa fa-check"></i><b>9.3</b> Predict</a></li>
+<li class="chapter" data-level="9.4" data-path="9.4-forecast.html"><a href="9.4-forecast.html"><i class="fa fa-check"></i><b>9.4</b> Forecast</a>
+<ul>
+<li class="chapter" data-level="" data-path="9.4-forecast.html"><a href="9.4-forecast.html#add-equationsidentifies"><i class="fa fa-check"></i>Add equations/identifies</a></li>
+<li class="chapter" data-level="" data-path="9.4-forecast.html"><a href="9.4-forecast.html#solve-the-foreceast"><i class="fa fa-check"></i>Solve the foreceast</a></li>
+<li class="chapter" data-level="" data-path="9.4-forecast.html"><a href="9.4-forecast.html#use-example-forecast-a-panel"><i class="fa fa-check"></i>Use example: forecast a panel</a></li>
+</ul></li>
+<li class="chapter" data-level="9.5" data-path="9.5-panel.html"><a href="9.5-panel.html"><i class="fa fa-check"></i><b>9.5</b> Panel</a></li>
+<li class="chapter" data-level="9.6" data-path="9.6-arellano-bond-estimator.html"><a href="9.6-arellano-bond-estimator.html"><i class="fa fa-check"></i><b>9.6</b> Arellano-Bond Estimator</a>
+<ul>
+<li class="chapter" data-level="9.6.1" data-path="9.6-arellano-bond-estimator.html"><a href="9.6-arellano-bond-estimator.html#xtabond2"><i class="fa fa-check"></i><b>9.6.1</b> xtabond2</a></li>
+</ul></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">R Notes</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<head>
+    <script> 
+        function myFunction(id) {
+          var x = document.getElementById(id); 
+          if (x.style.display === "none") {
+            x.style.display = "block";
+          } else {
+            x.style.display = "none";
+          }
+        }
+    </script>
+</head>
+<div id="functions" class="section level2 hasAnchor" number="5.2">
+<h2><span class="header-section-number">5.2</span> Functions<a href="5.2-functions.html#functions" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Function arguments fall into two sets:</p>
+<ul>
+<li><strong>data argument</strong>: give input data to compute on</li>
+<li><strong>detail argument</strong>: control details of the computation</li>
+</ul>
+<p>You can refer to an argument by its unique prefix. That is, <strong>partial matching</strong> is acceptable. But this is generally best avoided to reduce confusion.</p>
+<p>When calling a function you can specify arguments by position, by complete name, or by partial name. Arguments are matched</p>
+<ol style="list-style-type: decimal">
+<li>first by exact name (perfect matching),</li>
+<li>then by prefix matching, and</li>
+<li>finally by position.</li>
+</ol>
+<p>When you call a function and specify arguments, it is recommended to put a space around <code>=</code>, also put a space after a comma, not before.</p>
+<div class="sourceCode" id="cb286"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb286-1"><a href="5.2-functions.html#cb286-1" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="dv">10</span>; y <span class="ot">&lt;-</span> <span class="dv">5</span></span>
+<span id="cb286-2"><a href="5.2-functions.html#cb286-2" tabindex="-1"></a>x <span class="sc">+</span> y</span>
+<span id="cb286-3"><a href="5.2-functions.html#cb286-3" tabindex="-1"></a><span class="co">#&gt; [1] 15</span></span>
+<span id="cb286-4"><a href="5.2-functions.html#cb286-4" tabindex="-1"></a><span class="st">`</span><span class="at">+</span><span class="st">`</span>(x, y)</span>
+<span id="cb286-5"><a href="5.2-functions.html#cb286-5" tabindex="-1"></a><span class="co">#&gt; [1] 15</span></span>
+<span id="cb286-6"><a href="5.2-functions.html#cb286-6" tabindex="-1"></a></span>
+<span id="cb286-7"><a href="5.2-functions.html#cb286-7" tabindex="-1"></a><span class="co"># ----------------------------</span></span>
+<span id="cb286-8"><a href="5.2-functions.html#cb286-8" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>) <span class="fu">print</span>(i)</span>
+<span id="cb286-9"><a href="5.2-functions.html#cb286-9" tabindex="-1"></a><span class="co">#&gt; [1] 1</span></span>
+<span id="cb286-10"><a href="5.2-functions.html#cb286-10" tabindex="-1"></a><span class="co">#&gt; [1] 2</span></span>
+<span id="cb286-11"><a href="5.2-functions.html#cb286-11" tabindex="-1"></a><span class="st">`</span><span class="at">for</span><span class="st">`</span>(i, <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="fu">print</span>(i))</span>
+<span id="cb286-12"><a href="5.2-functions.html#cb286-12" tabindex="-1"></a><span class="co">#&gt; [1] 1</span></span>
+<span id="cb286-13"><a href="5.2-functions.html#cb286-13" tabindex="-1"></a><span class="co">#&gt; [1] 2</span></span>
+<span id="cb286-14"><a href="5.2-functions.html#cb286-14" tabindex="-1"></a></span>
+<span id="cb286-15"><a href="5.2-functions.html#cb286-15" tabindex="-1"></a><span class="co"># ----------------------------</span></span>
+<span id="cb286-16"><a href="5.2-functions.html#cb286-16" tabindex="-1"></a>x[<span class="dv">3</span>]</span>
+<span id="cb286-17"><a href="5.2-functions.html#cb286-17" tabindex="-1"></a><span class="co">#&gt; [1] NA</span></span>
+<span id="cb286-18"><a href="5.2-functions.html#cb286-18" tabindex="-1"></a><span class="co"># Note that only need to call the open braket</span></span>
+<span id="cb286-19"><a href="5.2-functions.html#cb286-19" tabindex="-1"></a><span class="st">`</span><span class="at">[</span><span class="st">`</span>(x, <span class="dv">3</span>)</span>
+<span id="cb286-20"><a href="5.2-functions.html#cb286-20" tabindex="-1"></a><span class="co">#&gt; [1] NA</span></span>
+<span id="cb286-21"><a href="5.2-functions.html#cb286-21" tabindex="-1"></a></span>
+<span id="cb286-22"><a href="5.2-functions.html#cb286-22" tabindex="-1"></a><span class="co"># ----------------------------</span></span>
+<span id="cb286-23"><a href="5.2-functions.html#cb286-23" tabindex="-1"></a>{ <span class="fu">print</span>(<span class="dv">1</span>); <span class="fu">print</span>(<span class="dv">2</span>); <span class="fu">print</span>(<span class="dv">3</span>) }</span>
+<span id="cb286-24"><a href="5.2-functions.html#cb286-24" tabindex="-1"></a><span class="co">#&gt; [1] 1</span></span>
+<span id="cb286-25"><a href="5.2-functions.html#cb286-25" tabindex="-1"></a><span class="co">#&gt; [1] 2</span></span>
+<span id="cb286-26"><a href="5.2-functions.html#cb286-26" tabindex="-1"></a><span class="co">#&gt; [1] 3</span></span>
+<span id="cb286-27"><a href="5.2-functions.html#cb286-27" tabindex="-1"></a><span class="st">`</span><span class="at">{</span><span class="st">`</span>(<span class="fu">print</span>(<span class="dv">1</span>), <span class="fu">print</span>(<span class="dv">2</span>), <span class="fu">print</span>(<span class="dv">3</span>))</span>
+<span id="cb286-28"><a href="5.2-functions.html#cb286-28" tabindex="-1"></a><span class="co">#&gt; [1] 1</span></span>
+<span id="cb286-29"><a href="5.2-functions.html#cb286-29" tabindex="-1"></a><span class="co">#&gt; [1] 2</span></span>
+<span id="cb286-30"><a href="5.2-functions.html#cb286-30" tabindex="-1"></a><span class="co">#&gt; [1] 3</span></span>
+<span id="cb286-31"><a href="5.2-functions.html#cb286-31" tabindex="-1"></a></span>
+<span id="cb286-32"><a href="5.2-functions.html#cb286-32" tabindex="-1"></a><span class="co"># ----------------------------</span></span>
+<span id="cb286-33"><a href="5.2-functions.html#cb286-33" tabindex="-1"></a><span class="fu">sapply</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="st">`</span><span class="at">+</span><span class="st">`</span>, <span class="dv">3</span>)</span>
+<span id="cb286-34"><a href="5.2-functions.html#cb286-34" tabindex="-1"></a><span class="co">#&gt; [1] 4 5 6 7 8</span></span>
+<span id="cb286-35"><a href="5.2-functions.html#cb286-35" tabindex="-1"></a><span class="fu">sapply</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="st">&quot;+&quot;</span>, <span class="dv">3</span>)</span>
+<span id="cb286-36"><a href="5.2-functions.html#cb286-36" tabindex="-1"></a><span class="co">#&gt; [1] 4 5 6 7 8</span></span></code></pre></div>
+<p>Note the difference between <code>+</code> and <code>"+"</code>. The first one is the value of the object called <code>+</code>, and the second is a string containing the character <code>+</code>. The second version works because <code>sapply</code> can be given the name of a function instead of the function itself: if you read the source of <code>sapply()</code>, you’ll see the first line uses <code>match.fun()</code> to find functions given their names.</p>
+<p><strong>Every operation is a function call</strong></p>
+<p>Every operation in R is a function call, whether or not it looks like one. This includes infix operators like <code>+</code>, control flow operators like <code>for</code>, <code>if</code>, and <code>while</code>, subsetting operators like <code>[]</code> and <code>$</code>, and even the curly brace <code>{</code>. This means that each pair of statements in the following example is exactly equivalent. Note that <code>`</code>, the backtick, lets you refer to functions or variables that have otherwise reserved or illegal names:</p>
+<hr />
+<div id="inspecting-object-types-and-structure" class="section level3 hasAnchor" number="5.2.1">
+<h3><span class="header-section-number">5.2.1</span> Inspecting Object Types and Structure<a href="5.2-functions.html#inspecting-object-types-and-structure" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p><code>str(x)</code>, <code>class(x)</code>, and <code>typeof(x)</code></p>
+<p><code>str(x)</code> focus on the <strong>str</strong>ucture not the contents. The output of the <code>str()</code> will vary depending on the type of R object you are passing it.</p>
+<ul>
+<li>For a data frame, the output will show the names of the columns, the class of each column, and the first few rows of data.</li>
+<li>For a list, the output will show the names of the elements in the list, the class of each element, and the value of each element.</li>
+</ul>
+<p><span style="color:#00CC66"><strong><code>class(x)</code></strong> </span> returns a <code>class</code> attribute, a character vector giving the names of the classes from which the object <em>inherits</em>. 变量的类型, eg., dataframe, tibble, vector.</p>
+<ul>
+<li>If the object does not have a class attribute, it has an implicit class, notably <code>"matrix"</code>, <code>"array"</code>, <code>"function"</code> or <code>"numeric"</code> or the result of <code>typeof(x)</code></li>
+<li>A <strong>property</strong> (属性) assigned to an object that determines how generic functions operate with it. It is not a mutually exclusive classification. If an object has no specific class assigned to it, such as a simple numeric vector, it’s class is usually the same as its mode, by convention.</li>
+</ul>
+<p><code>typeof</code> determines the (R internal) <strong>type or storage</strong> mode of any object. 变量里面存储数据的类型, eg., string, numeric, integer.</p>
+<ul>
+<li>Current values are the vector types <code>"logical"</code>, <code>"integer"</code>, <code>"double"</code>,<code>"complex"</code>, <code>"character"</code>, <code>"raw"</code> and <code>"list"</code>, <code>"NULL"</code>, <code>"closure"</code> (function), <code>"special"</code>and <code>"builtin"</code> (basic functions and operators), <code>"environment"</code>, <code>"S4"</code> (some S4 objects) and others that are unlikely to be seen at user level (<code>"symbol"</code>, <code>"pairlist"</code>, <code>"promise"</code>,<code>"language"</code>, <code>"char"</code>, <code>"..."</code>, <code>"any"</code>, <code>"expression"</code>, <code>"externalptr"</code>, <code>"bytecode"</code> and<code>"weakref"</code>).</li>
+<li><code>mode(x)</code> is similar to <code>typeof(x)</code></li>
+<li>mutually exclusive. One object has one <code>typeof</code> and <code>mode</code>.</li>
+</ul>
+<p><code>methods(class="zoo")</code> get a list of functions that have zoo-methods.</p>
+<p><code>attributes(x)</code> returns the object’s attributes/metadata as a list. Some of the most common attributes are: row names and column names, dimensions, and class.</p>
+<ul>
+<li>Attributes are not stored internally as a list and should be thought of as a set and not a vector, i.e, the <em>order</em> of the elements of <code>attributes()</code>does not matter.</li>
+<li>To access a specific attribute, you can use the <a href="https://www.rdocumentation.org/packages/base/versions/3.3.2/topics/attr"><code>attr()</code></a>function.</li>
+</ul>
+<p><code>attr(x, which)</code> Get or set specific attributes of an object.</p>
+<ul>
+<li><code>x</code> an object whose attributes are to be accessed.</li>
+<li><code>which</code> a character string specifying which attribute is to be accessed.</li>
+</ul>
+<p><code>attr(x, which) &lt;- value</code> specify <code>value</code> to the attribute</p>
+<ul>
+<li><code>value</code> an object, the new value of the attribute, or <code>NULL</code> to remove the attribute.</li>
+</ul>
+<div class="sourceCode" id="cb287"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb287-1"><a href="5.2-functions.html#cb287-1" tabindex="-1"></a><span class="co"># create a 2 by 5 matrix</span></span>
+<span id="cb287-2"><a href="5.2-functions.html#cb287-2" tabindex="-1"></a><span class="sc">&gt;</span> x <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span></span>
+<span id="cb287-3"><a href="5.2-functions.html#cb287-3" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">attr</span>(x, <span class="st">&quot;dim&quot;</span>) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">5</span>)</span>
+<span id="cb287-4"><a href="5.2-functions.html#cb287-4" tabindex="-1"></a><span class="sc">&gt;</span> x</span>
+<span id="cb287-5"><a href="5.2-functions.html#cb287-5" tabindex="-1"></a>     [,<span class="dv">1</span>] [,<span class="dv">2</span>] [,<span class="dv">3</span>] [,<span class="dv">4</span>] [,<span class="dv">5</span>]</span>
+<span id="cb287-6"><a href="5.2-functions.html#cb287-6" tabindex="-1"></a>[<span class="dv">1</span>,]    <span class="dv">1</span>    <span class="dv">3</span>    <span class="dv">5</span>    <span class="dv">7</span>    <span class="dv">9</span></span>
+<span id="cb287-7"><a href="5.2-functions.html#cb287-7" tabindex="-1"></a>[<span class="dv">2</span>,]    <span class="dv">2</span>    <span class="dv">4</span>    <span class="dv">6</span>    <span class="dv">8</span>   <span class="dv">10</span></span>
+<span id="cb287-8"><a href="5.2-functions.html#cb287-8" tabindex="-1"></a></span>
+<span id="cb287-9"><a href="5.2-functions.html#cb287-9" tabindex="-1"></a><span class="sc">&gt;</span> my_factor <span class="ot">&lt;-</span> <span class="fu">factor</span>(<span class="fu">c</span>(<span class="st">&quot;A&quot;</span>, <span class="st">&quot;A&quot;</span>, <span class="st">&quot;B&quot;</span>), <span class="at">ordered =</span> T, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;A&quot;</span>, <span class="st">&quot;B&quot;</span>))</span>
+<span id="cb287-10"><a href="5.2-functions.html#cb287-10" tabindex="-1"></a><span class="sc">&gt;</span> my_factor</span>
+<span id="cb287-11"><a href="5.2-functions.html#cb287-11" tabindex="-1"></a>[<span class="dv">1</span>] A A B</span>
+<span id="cb287-12"><a href="5.2-functions.html#cb287-12" tabindex="-1"></a>Levels<span class="sc">:</span> A <span class="sc">&lt;</span> B</span>
+<span id="cb287-13"><a href="5.2-functions.html#cb287-13" tabindex="-1"></a></span>
+<span id="cb287-14"><a href="5.2-functions.html#cb287-14" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">attributes</span>(my_factor)</span>
+<span id="cb287-15"><a href="5.2-functions.html#cb287-15" tabindex="-1"></a><span class="sc">$</span>levels</span>
+<span id="cb287-16"><a href="5.2-functions.html#cb287-16" tabindex="-1"></a>[<span class="dv">1</span>] <span class="st">&quot;A&quot;</span> <span class="st">&quot;B&quot;</span></span>
+<span id="cb287-17"><a href="5.2-functions.html#cb287-17" tabindex="-1"></a></span>
+<span id="cb287-18"><a href="5.2-functions.html#cb287-18" tabindex="-1"></a><span class="sc">$</span>class</span>
+<span id="cb287-19"><a href="5.2-functions.html#cb287-19" tabindex="-1"></a>[<span class="dv">1</span>] <span class="st">&quot;ordered&quot;</span> <span class="st">&quot;factor&quot;</span> </span></code></pre></div>
+<hr />
+<p>Q: What does <code>1L</code> mean?<br />
+A: <code>1L</code> is a shorthand for <code>as.integer(1)</code>. Adding suffix <code>L</code> ensures that the value is treated as an integer and it is useful for memory usage and specific computations involving integer operations.</p>
+<div class="sourceCode" id="cb288"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb288-1"><a href="5.2-functions.html#cb288-1" tabindex="-1"></a><span class="co"># create numerical value</span></span>
+<span id="cb288-2"><a href="5.2-functions.html#cb288-2" tabindex="-1"></a>num_val <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb288-3"><a href="5.2-functions.html#cb288-3" tabindex="-1"></a></span>
+<span id="cb288-4"><a href="5.2-functions.html#cb288-4" tabindex="-1"></a><span class="co"># check the data type</span></span>
+<span id="cb288-5"><a href="5.2-functions.html#cb288-5" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">class</span>(num_val))</span>
+<span id="cb288-6"><a href="5.2-functions.html#cb288-6" tabindex="-1"></a>[<span class="dv">1</span>] <span class="st">&quot;numeric&quot;</span></span>
+<span id="cb288-7"><a href="5.2-functions.html#cb288-7" tabindex="-1"></a></span>
+<span id="cb288-8"><a href="5.2-functions.html#cb288-8" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">typeof</span>(num_val))</span>
+<span id="cb288-9"><a href="5.2-functions.html#cb288-9" tabindex="-1"></a>[<span class="dv">1</span>] <span class="st">&quot;double&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb289"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb289-1"><a href="5.2-functions.html#cb289-1" tabindex="-1"></a><span class="co"># create integer value</span></span>
+<span id="cb289-2"><a href="5.2-functions.html#cb289-2" tabindex="-1"></a>int_val <span class="ot">&lt;-</span> <span class="dv">1</span><span class="dt">L</span></span>
+<span id="cb289-3"><a href="5.2-functions.html#cb289-3" tabindex="-1"></a></span>
+<span id="cb289-4"><a href="5.2-functions.html#cb289-4" tabindex="-1"></a><span class="co"># check the data type</span></span>
+<span id="cb289-5"><a href="5.2-functions.html#cb289-5" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">class</span>(int_val))</span>
+<span id="cb289-6"><a href="5.2-functions.html#cb289-6" tabindex="-1"></a>[<span class="dv">1</span>] <span class="st">&quot;integer&quot;</span></span>
+<span id="cb289-7"><a href="5.2-functions.html#cb289-7" tabindex="-1"></a></span>
+<span id="cb289-8"><a href="5.2-functions.html#cb289-8" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">typeof</span>(int_val))</span>
+<span id="cb289-9"><a href="5.2-functions.html#cb289-9" tabindex="-1"></a>[<span class="dv">1</span>] <span class="st">&quot;integer&quot;</span></span></code></pre></div>
+</div>
+<div id="type-of-variables" class="section level3 hasAnchor" number="5.2.2">
+<h3><span class="header-section-number">5.2.2</span> Type of Variables<a href="5.2-functions.html#type-of-variables" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>There are two types of vectors:</p>
+<ol style="list-style-type: decimal">
+<li><strong>Atomic</strong> vectors, of which there are six types: <strong>logical</strong>, <strong>integer</strong>, <strong>double</strong>, <strong>character</strong>, <strong>complex</strong>, and <strong>raw</strong>. Integer and double vectors are collectively known as <strong>numeric</strong>vectors.</li>
+<li><strong>Lists</strong>, which are sometimes called recursive vectors because lists can contain other lists.</li>
+</ol>
+<p>The chief difference between atomic vectors and lists is that atomic vectors are <strong>homogeneous</strong>, while lists can be <strong>heterogeneous</strong>. There’s one other related object: <code>NULL</code>. <code>NULL</code> is often used to represent the absence of a vector (as opposed to <code>NA</code>which is used to represent the absence of a value in a vector). <code>NULL</code> typically behaves like a vector of length 0. The Figure below summarises the interrelationships.</p>
+<p><img src="https://r4ds.had.co.nz/diagrams/data-structures-overview.png" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:30%;" /></p>
+<div id="variable-coercion" class="section level4 unnumbered hasAnchor">
+<h4>Variable Coercion<a href="5.2-functions.html#variable-coercion" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p><code>as.logical</code> convert 0/1 to boolean values</p>
+<div class="sourceCode" id="cb290"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb290-1"><a href="5.2-functions.html#cb290-1" tabindex="-1"></a><span class="co"># remove NA values</span></span>
+<span id="cb290-2"><a href="5.2-functions.html#cb290-2" tabindex="-1"></a>mask <span class="ot">&lt;-</span> <span class="fu">is.na</span>(reg_data) <span class="sc">%&gt;%</span> <span class="fu">rowSums</span>() <span class="sc">%&gt;%</span> <span class="fu">as.logical</span>()</span>
+<span id="cb290-3"><a href="5.2-functions.html#cb290-3" tabindex="-1"></a>reg_data[mask,]</span>
+<span id="cb290-4"><a href="5.2-functions.html#cb290-4" tabindex="-1"></a>reg_data <span class="ot">&lt;-</span> reg_data[<span class="sc">!</span>mask,]</span></code></pre></div>
+</div>
+<div id="dimension-reduction" class="section level4 unnumbered hasAnchor">
+<h4>Dimension Reduction<a href="5.2-functions.html#dimension-reduction" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>Convert a data frame, tibble, list to an atomic vector</p>
+<p><code>unlist(df)</code> or <code>as.matrix(df) %&gt;% as.vector()</code></p>
+<p>Convert a matrix to a vector</p>
+<p><code>as.vector(x)</code></p>
+<p><span style="color:#008B45"><strong><code>unlist()</code></strong></span> TL;DR: takes in a list, returns a vector.</p>
+<p>It “un-lists” <strong>nested lists</strong> or vectors and converts them into a simple atomic vector. In other words, it takes a list that contains other lists, vectors, or atomic elements and flattens it into a single vector.</p>
+<ul>
+<li>Useful when flatten a nested or hierarchical list to a vector. Dimension reduction.
+<ul>
+<li>Simplifying the structure of a data object</li>
+<li>Passing a list to a function that only accepts vectors</li>
+<li>Combining the elements of a list into a single vector</li>
+</ul></li>
+</ul>
+<div class="sourceCode" id="cb291"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb291-1"><a href="5.2-functions.html#cb291-1" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">list</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>)</span>
+<span id="cb291-2"><a href="5.2-functions.html#cb291-2" tabindex="-1"></a>  [[<span class="dv">1</span>]]</span>
+<span id="cb291-3"><a href="5.2-functions.html#cb291-3" tabindex="-1"></a>  [<span class="dv">1</span>] <span class="dv">1</span></span>
+<span id="cb291-4"><a href="5.2-functions.html#cb291-4" tabindex="-1"></a></span>
+<span id="cb291-5"><a href="5.2-functions.html#cb291-5" tabindex="-1"></a>  [[<span class="dv">2</span>]]</span>
+<span id="cb291-6"><a href="5.2-functions.html#cb291-6" tabindex="-1"></a>  [<span class="dv">1</span>] <span class="dv">2</span></span>
+<span id="cb291-7"><a href="5.2-functions.html#cb291-7" tabindex="-1"></a></span>
+<span id="cb291-8"><a href="5.2-functions.html#cb291-8" tabindex="-1"></a>  [[<span class="dv">3</span>]]</span>
+<span id="cb291-9"><a href="5.2-functions.html#cb291-9" tabindex="-1"></a>  [<span class="dv">1</span>] <span class="dv">3</span></span>
+<span id="cb291-10"><a href="5.2-functions.html#cb291-10" tabindex="-1"></a></span>
+<span id="cb291-11"><a href="5.2-functions.html#cb291-11" tabindex="-1"></a>    [[<span class="dv">4</span>]]</span>
+<span id="cb291-12"><a href="5.2-functions.html#cb291-12" tabindex="-1"></a>    [<span class="dv">1</span>] <span class="dv">4</span></span>
+<span id="cb291-13"><a href="5.2-functions.html#cb291-13" tabindex="-1"></a></span>
+<span id="cb291-14"><a href="5.2-functions.html#cb291-14" tabindex="-1"></a>    [[<span class="dv">5</span>]]</span>
+<span id="cb291-15"><a href="5.2-functions.html#cb291-15" tabindex="-1"></a>    [<span class="dv">1</span>] <span class="dv">5</span></span>
+<span id="cb291-16"><a href="5.2-functions.html#cb291-16" tabindex="-1"></a></span>
+<span id="cb291-17"><a href="5.2-functions.html#cb291-17" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">list</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>) <span class="sc">%&gt;%</span> <span class="fu">unlist</span>()</span>
+<span id="cb291-18"><a href="5.2-functions.html#cb291-18" tabindex="-1"></a>    [<span class="dv">1</span>] <span class="dv">1</span> <span class="dv">2</span> <span class="dv">3</span> <span class="dv">4</span> <span class="dv">5</span></span>
+<span id="cb291-19"><a href="5.2-functions.html#cb291-19" tabindex="-1"></a><span class="co"># flatten a nested list</span></span>
+<span id="cb291-20"><a href="5.2-functions.html#cb291-20" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">list</span>(<span class="at">a =</span> <span class="dv">1</span>, <span class="at">b =</span> <span class="fu">list</span>(<span class="at">c =</span> <span class="dv">2</span>, <span class="at">d =</span> <span class="dv">3</span>), <span class="at">e =</span> <span class="dv">4</span>) <span class="sc">%&gt;%</span> <span class="fu">unlist</span>()</span>
+<span id="cb291-21"><a href="5.2-functions.html#cb291-21" tabindex="-1"></a>  a b.c b.d   e </span>
+<span id="cb291-22"><a href="5.2-functions.html#cb291-22" tabindex="-1"></a>  <span class="dv">1</span>   <span class="dv">2</span>   <span class="dv">3</span>   <span class="dv">4</span> </span>
+<span id="cb291-23"><a href="5.2-functions.html#cb291-23" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">data.frame</span>(<span class="fu">matrix</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">12</span>,<span class="dv">3</span>,<span class="dv">4</span>)) <span class="sc">%&gt;%</span> <span class="fu">unlist</span>() <span class="co"># flatten by column</span></span>
+<span id="cb291-24"><a href="5.2-functions.html#cb291-24" tabindex="-1"></a>X11 X12 X13 X21 X22 X23 X31 X32 X33 X41 X42 X43</span>
+<span id="cb291-25"><a href="5.2-functions.html#cb291-25" tabindex="-1"></a>  <span class="dv">1</span>   <span class="dv">2</span>   <span class="dv">3</span>   <span class="dv">4</span>   <span class="dv">5</span>   <span class="dv">6</span>   <span class="dv">7</span>   <span class="dv">8</span>   <span class="dv">9</span>  <span class="dv">10</span>  <span class="dv">11</span>  <span class="dv">12</span> </span></code></pre></div>
+</div>
+</div>
+<div id="variable-scope" class="section level3 hasAnchor" number="5.2.3">
+<h3><span class="header-section-number">5.2.3</span> Variable Scope<a href="5.2-functions.html#variable-scope" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p><code>with(data, expr, …)</code> Evaluate an R expression, <code>expr</code>, in an environment constructed from <code>data</code>, possibly modifying (a copy of) the original data.</p>
+<ul>
+<li><p><code>expr</code> a single expression or a compounded one, i.e., of the form</p>
+<div class="sourceCode" id="cb292"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb292-1"><a href="5.2-functions.html#cb292-1" tabindex="-1"></a>{</span>
+<span id="cb292-2"><a href="5.2-functions.html#cb292-2" tabindex="-1"></a>     a <span class="ot">&lt;-</span> <span class="fu">somefun</span>() <span class="co"># do some changes to cols</span></span>
+<span id="cb292-3"><a href="5.2-functions.html#cb292-3" tabindex="-1"></a>     b <span class="ot">&lt;-</span> <span class="fu">otherfun</span>()</span>
+<span id="cb292-4"><a href="5.2-functions.html#cb292-4" tabindex="-1"></a>     .....</span>
+<span id="cb292-5"><a href="5.2-functions.html#cb292-5" tabindex="-1"></a>     <span class="fu">rm</span>(unused1, temp) <span class="co"># remove cols you don&#39;t want anymore</span></span>
+<span id="cb292-6"><a href="5.2-functions.html#cb292-6" tabindex="-1"></a>   }</span></code></pre></div></li>
+</ul>
+<p><code>within(data, expr, …)</code> is similar to <code>with</code>, except that it examines the environment after the evaluation of <code>expr</code> and <strong>makes the corresponding modifications</strong> to a copy of <code>data</code> (this may fail in the data frame case if objects are created which cannot be stored in a data frame), and returns it.</p>
+<ul>
+<li>Returned value:
+<ul>
+<li>For <code>within</code>, the modified object.</li>
+<li>For <code>with</code>, the value of the evaluated <code>expr</code>.</li>
+</ul></li>
+</ul>
+<div class="sourceCode" id="cb293"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb293-1"><a href="5.2-functions.html#cb293-1" tabindex="-1"></a><span class="fu">with</span>(mtcars, mpg[cyl <span class="sc">==</span> <span class="dv">8</span>  <span class="sc">&amp;</span>  disp <span class="sc">&gt;</span> <span class="dv">350</span>])</span>
+<span id="cb293-2"><a href="5.2-functions.html#cb293-2" tabindex="-1"></a><span class="co"># is the same as, but nicer than</span></span>
+<span id="cb293-3"><a href="5.2-functions.html#cb293-3" tabindex="-1"></a>mtcars<span class="sc">$</span>mpg[mtcars<span class="sc">$</span>cyl <span class="sc">==</span> <span class="dv">8</span>  <span class="sc">&amp;</span>  mtcars<span class="sc">$</span>disp <span class="sc">&gt;</span> <span class="dv">350</span>]</span></code></pre></div>
+<hr />
+</div>
+<div id="control-structures" class="section level3 hasAnchor" number="5.2.4">
+<h3><span class="header-section-number">5.2.4</span> Control Structures<a href="5.2-functions.html#control-structures" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>A ‘do … until’ loop in R:</p>
+<div class="sourceCode" id="cb294"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb294-1"><a href="5.2-functions.html#cb294-1" tabindex="-1"></a><span class="cf">repeat</span> {</span>
+<span id="cb294-2"><a href="5.2-functions.html#cb294-2" tabindex="-1"></a>  <span class="co"># code</span></span>
+<span id="cb294-3"><a href="5.2-functions.html#cb294-3" tabindex="-1"></a>  <span class="cf">if</span>(stop_condition_is_true) <span class="cf">break</span></span>
+<span id="cb294-4"><a href="5.2-functions.html#cb294-4" tabindex="-1"></a>}</span>
+<span id="cb294-5"><a href="5.2-functions.html#cb294-5" tabindex="-1"></a></span>
+<span id="cb294-6"><a href="5.2-functions.html#cb294-6" tabindex="-1"></a><span class="cf">while</span>(<span class="cn">TRUE</span>){</span>
+<span id="cb294-7"><a href="5.2-functions.html#cb294-7" tabindex="-1"></a>  <span class="co"># Do things</span></span>
+<span id="cb294-8"><a href="5.2-functions.html#cb294-8" tabindex="-1"></a>  <span class="cf">if</span> (stop_condition_is_true) <span class="cf">break</span></span>
+<span id="cb294-9"><a href="5.2-functions.html#cb294-9" tabindex="-1"></a>}</span></code></pre></div>
+<p><strong><code>ifelse(test_expression, x, y)</code></strong></p>
+<p>The returned vector has element from <code>x</code> if the corresponding value of <code>test_expression</code> is <code>TRUE</code>; or from <code>y</code> if the corresponding value of <code>test_expression</code> is <code>FALSE</code>.</p>
+<p>That is the <code>i-th</code> element of result will be <code>x[i]</code> if <code>test_expression[i]</code> is <code>TRUE</code> else it will take the value of <code>y[i]</code>.</p>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="5.1-data-input-output.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="5.3-basic-r-functions.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": true,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "sky",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/my1396/R-Notes/edit/main/0400-BasicR.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["_main.pdf", "_main.epub", "https://github.com/my1396/R-Notes/raw/main/0400-BasicR.Rmd"],
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+},
+"toc_depth": 3,
+"toc_float": true,
+"enableEmoji": true
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

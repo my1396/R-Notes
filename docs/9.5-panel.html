@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>9.5 Panel | R Notes</title>
+  <meta name="description" content="<p>This is a minimal example of using the bookdown package to write a book.
+The HTML output format for this example is bookdown::gitbook,
+set in the _output.yml file.</p>" />
+  <meta name="generator" content="bookdown 0.35 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="9.5 Panel | R Notes" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="<p>This is a minimal example of using the bookdown package to write a book.
+The HTML output format for this example is bookdown::gitbook,
+set in the _output.yml file.</p>" />
+  <meta name="github-repo" content="my1396/R-Notes" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="9.5 Panel | R Notes" />
+  
+  <meta name="twitter:description" content="<p>This is a minimal example of using the bookdown package to write a book.
+The HTML output format for this example is bookdown::gitbook,
+set in the _output.yml file.</p>" />
+  
+
+<meta name="author" content="Menghan Yuan" />
+
+
+<meta name="date" content="2025-07-23" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  <link rel="shortcut icon" href="images/r-project-favicon.ico" type="image/x-icon" />
+<link rel="prev" href="9.4-forecast.html"/>
+<link rel="next" href="9.6-arellano-bond-estimator.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+<head>
+    <!-- MathJax config: define new macros -->
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+          tex2jax: {
+            inlineMath: [['$','$'], ['\\(','\\)']],
+            processEscapes: true
+          },
+          TeX: { 
+            inlineMath: [   // start/end delimiter pairs for in-line math
+              ['$', '$'],
+              ['\\(', '\\)']
+            ],
+            displayMath: [  // start/end delimiter pairs for display math
+              ['$$', '$$'],
+              ['\\[', '\\]']
+            ],
+            processEscapes: true, // use \$ to produce a literal dollar sign
+            tags: 'ams',  // should be 'ams', 'none', or 'all'
+            Macros: {
+              vect: ["\\mathbf{#1}", 1],
+              mat: ["\\mathbf{#1}", 1], 
+
+              bA: "\\boldsymbol{A}",
+              bB: "\\boldsymbol{B}",
+              bC: "\\boldsymbol{C}",
+              bD: "\\boldsymbol{D}",
+              bE: "\\boldsymbol{E}",
+              bF: "\\boldsymbol{F}",
+              bG: "\\boldsymbol{G}",
+              bH: "\\boldsymbol{H}",
+              bI: "\\boldsymbol{I}",
+              bJ: "\\boldsymbol{J}",
+              bK: "\\boldsymbol{K}",
+              bL: "\\boldsymbol{L}",
+              bM: "\\boldsymbol{M}",
+              bN: "\\boldsymbol{N}",
+              bP: "\\boldsymbol{P}",
+              bQ: "\\boldsymbol{Q}",
+              bR: "\\boldsymbol{R}",
+              bS: "\\boldsymbol{S}",
+              bT: "\\boldsymbol{T}",
+              bU: "\\boldsymbol{U}",
+              bV: "\\boldsymbol{V}",
+              bW: "\\boldsymbol{W}",
+              bX: "\\boldsymbol{X}",
+              bY: "\\boldsymbol{Y}",
+              bZ: "\\boldsymbol{Z}",
+              ba: "\\boldsymbol{a}",
+              bb: "\\boldsymbol{b}",
+              bc: "\\boldsymbol{c}",
+              bd: "\\boldsymbol{d}",
+              be: "\\boldsymbol{e}",
+              bg: "\\boldsymbol{g}",
+              bh: "\\boldsymbol{h}",
+              bi: "\\boldsymbol{\\imath}",
+              bm: "\\boldsymbol{m}",
+              bp: "\\boldsymbol{p}",
+              bq: "\\boldsymbol{q}",
+              br: "\\boldsymbol{r}",
+              bs: "\\boldsymbol{s}",
+              bt: "\\boldsymbol{t}",
+              bu: "\\boldsymbol{u}",
+              bv: "\\boldsymbol{v}",
+              bw: "\\boldsymbol{w}",
+              bx: "\\boldsymbol{x}",
+              by: "\\boldsymbol{y}",
+
+              Acal: "\\mathcal{A}",
+              Bcal: "\\mathcal{B}",
+              Ccal: "\\mathcal{C}",
+              Dcal: "\\mathcal{D}",
+              Ecal: "\\mathcal{E}",
+              Fcal: "\\mathcal{F}",
+              Gcal: "\\mathcal{G}",
+              Hcal: "\\mathcal{H}",
+              Ical: "\\mathcal{I}",
+              Jcal: "\\mathcal{J}",
+              Kcal: "\\mathcal{K}",
+              Lcal: "\\mathcal{L}",
+              Mcal: "\\mathcal{M}",
+              Ncal: "\\mathcal{N}",
+              Ocal: "\\mathcal{O}",
+              Pcal: "\\mathcal{P}",
+              Qcal: "\\mathcal{Q}",
+              Rcal: "\\mathcal{R}",
+              Scal: "\\mathcal{S}",
+              Tcal: "\\mathcal{T}",
+              Ucal: "\\mathcal{U}",
+              Vcal: "\\mathcal{V}",
+              Wcal: "\\mathcal{W}",
+              Xcal: "\\mathcal{X}",
+              Ycal: "\\mathcal{Y}",
+              Zcal: "\\mathcal{Z}",
+
+              A: "\\mathbb{A}",
+              B: "\\mathbb{B}",
+              C: "\\mathbb{C}",
+              D: "\\mathbb{D}",
+              E: "\\mathbb{E}",
+              F: "\\mathbb{F}",
+              G: "\\mathbb{G}",
+              H: "\\mathbb{H}",
+              I: "\\mathbb{I}",
+              J: "\\mathbb{J}",
+              K: "\\mathbb{K}",
+              L: "\\mathbb{L}",
+              M: "\\mathbb{M}",
+              N: "\\mathbb{N}",
+              O: "\\mathbb{O}",
+              P: "\\mathbb{P}",
+              Q: "\\mathbb{Q}",
+              R: "\\mathbb{R}",
+              S: "\\mathbb{S}",
+              T: "\\mathbb{T}",
+              U: "\\mathbb{U}",
+              V: "\\mathbb{V}",
+              W: "\\mathbb{W}",
+              X: "\\mathbb{X}",
+              Y: "\\mathbb{Y}",
+              Z: "\\mathbb{Z}",
+
+              bAlpha: "\\boldsymbol{\\Alpha}",
+              bBeta: "\\boldsymbol{\\beta}",
+              bDelta: "\\boldsymbol{\\delta}",
+              bEta: "\\boldsymbol{\\eta}",
+              bGamma: "\\boldsymbol{\\Gamma}",
+              bLambda: "\\boldsymbol{\\Lambda}",
+              bOmega: "\\boldsymbol{\\Omega}",
+              bPhi: "\\boldsymbol{\\Phi}",
+              bPi: "\\boldsymbol{\\Pi}",
+              bPsi: "\\boldsymbol{\\Psi}",
+              bSigma: "\\boldsymbol{\\Sigma}",
+              bTau: "\\boldsymbol{\\tau}",
+              bXi: "\\boldsymbol{\\Xi}",
+              bbeta: "\\boldsymbol{\\beta}",
+              bdelta: "\\boldsymbol{\\delta}",
+              blambda: "\\boldsymbol{\\lambda}",
+              bmu: "\\boldsymbol{\\mu}",
+              bphi: "\\boldsymbol{\\phi}",
+              bpi: "\\boldsymbol{\\pi}",
+              bpsi: "\\boldsymbol{\\psi}",
+              brho: "\\boldsymbol{\\rho}",
+              bsigma: "\\boldsymbol{\\sigma}",
+              btau: "\\boldsymbol{\\tau}",
+              bxi: "\\boldsymbol{\\xi}",
+              bEta: "\\boldsymbol{\\eta}",
+              bPhi: "\\boldsymbol{\\Phi}",
+              bPi: "\\boldsymbol{\\Pi}",
+              bPsi: "\\boldsymbol{\\Psi}",
+              bXi: "\\boldsymbol{\\Xi}",
+              blambda: "\\boldsymbol{\\lambda}",
+              bmu: "\\boldsymbol{\\mu}",
+              bphi: "\\boldsymbol{\\phi}",
+              bpi: "\\boldsymbol{\\pi}",
+              bpsi: "\\boldsymbol{\\psi}",
+              brho: "\\boldsymbol{\\rho}",
+              bsigma: "\\boldsymbol{\\sigma}",
+                        
+              curl: ["\\left\\lbrace#1\\right\\rbrace", 1],
+              floor: ["\\left\\lfloor#1\\right\\rfloor", 1],
+              ceil: ["\\left\\lceil#1\\right\\rceil", 1],
+              abs: ["\\left\\lvert#1\\right\\rvert", 1],
+              norm: ["\\left\\lVert#1\\right\\rVert", 1],
+
+              independent: "\\mathrel{\\perp\\!\\!\\perp}",
+
+              var: "\\mathrm{var}",
+              diag: "\\mathrm{diag}",
+              rank: "\\mathrm{rank}",
+              vecc: "\\mathrm{vec}",
+            }
+          }
+        });
+    </script>
+    
+
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro">
+</head>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #204a87; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #8f5902; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #204a87; font-weight: bold; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #ce5c00; font-weight: bold; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">R Notes</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> About</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="1.1-usage.html"><a href="1.1-usage.html"><i class="fa fa-check"></i><b>1.1</b> Usage</a></li>
+<li class="chapter" data-level="1.2" data-path="1.2-render-book.html"><a href="1.2-render-book.html"><i class="fa fa-check"></i><b>1.2</b> Render book</a></li>
+<li class="chapter" data-level="1.3" data-path="1.3-preview-book.html"><a href="1.3-preview-book.html"><i class="fa fa-check"></i><b>1.3</b> Preview book</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="2-rstudio.html"><a href="2-rstudio.html"><i class="fa fa-check"></i><b>2</b> Rstudio</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="2.1-dark-theme.html"><a href="2.1-dark-theme.html"><i class="fa fa-check"></i><b>2.1</b> Dark Theme</a></li>
+<li class="chapter" data-level="2.2" data-path="2.2-update-r.html"><a href="2.2-update-r.html"><i class="fa fa-check"></i><b>2.2</b> Update R</a></li>
+<li class="chapter" data-level="2.3" data-path="2.3-packages-management.html"><a href="2.3-packages-management.html"><i class="fa fa-check"></i><b>2.3</b> Packages Management</a>
+<ul>
+<li class="chapter" data-level="2.3.1" data-path="2.3-packages-management.html"><a href="2.3-packages-management.html#load-packages"><i class="fa fa-check"></i><b>2.3.1</b> Load packages</a></li>
+<li class="chapter" data-level="2.3.2" data-path="2.3-packages-management.html"><a href="2.3-packages-management.html#install-packages"><i class="fa fa-check"></i><b>2.3.2</b> Install packages</a></li>
+<li class="chapter" data-level="2.3.3" data-path="2.3-packages-management.html"><a href="2.3-packages-management.html#update-packages"><i class="fa fa-check"></i><b>2.3.3</b> Update packages</a></li>
+<li class="chapter" data-level="2.3.4" data-path="2.3-packages-management.html"><a href="2.3-packages-management.html#put-your-r-package-on-github"><i class="fa fa-check"></i><b>2.3.4</b> Put your R package on GitHub</a></li>
+</ul></li>
+<li class="chapter" data-level="2.4" data-path="2.4-using-git-with-rstudio.html"><a href="2.4-using-git-with-rstudio.html"><i class="fa fa-check"></i><b>2.4</b> Using Git with RStudio</a></li>
+<li class="chapter" data-level="2.5" data-path="2.5-github-copilot.html"><a href="2.5-github-copilot.html"><i class="fa fa-check"></i><b>2.5</b> GitHub Copilot</a></li>
+<li class="chapter" data-level="2.6" data-path="2.6-save-r-workspace.html"><a href="2.6-save-r-workspace.html"><i class="fa fa-check"></i><b>2.6</b> Save R Workspace</a></li>
+<li class="chapter" data-level="2.7" data-path="2.7-pane-layout.html"><a href="2.7-pane-layout.html"><i class="fa fa-check"></i><b>2.7</b> Pane Layout</a></li>
+<li class="chapter" data-level="2.8" data-path="2.8-options.html"><a href="2.8-options.html"><i class="fa fa-check"></i><b>2.8</b> Options</a></li>
+<li class="chapter" data-level="2.9" data-path="2.9-r-startup.html"><a href="2.9-r-startup.html"><i class="fa fa-check"></i><b>2.9</b> R Startup</a>
+<ul>
+<li class="chapter" data-level="2.9.1" data-path="2.9-r-startup.html"><a href="2.9-r-startup.html#rprofile"><i class="fa fa-check"></i><b>2.9.1</b> <code>.Rprofile</code></a></li>
+<li class="chapter" data-level="2.9.2" data-path="2.9-r-startup.html"><a href="2.9-r-startup.html#renviron"><i class="fa fa-check"></i><b>2.9.2</b> <code>.Renviron</code></a></li>
+</ul></li>
+<li class="chapter" data-level="2.10" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html"><i class="fa fa-check"></i><b>2.10</b> VS Code</a>
+<ul>
+<li class="chapter" data-level="" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#plot-viewer"><i class="fa fa-check"></i>Plot Viewer</a></li>
+<li class="chapter" data-level="" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#rmd"><i class="fa fa-check"></i>Rmd</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="3-rmd-1.html"><a href="3-rmd-1.html"><i class="fa fa-check"></i><b>3</b> Rmd</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="3.1-yaml-metadata.html"><a href="3.1-yaml-metadata.html"><i class="fa fa-check"></i><b>3.1</b> YAML metadata</a>
+<ul>
+<li class="chapter" data-level="3.1.1" data-path="3.1-yaml-metadata.html"><a href="3.1-yaml-metadata.html#render-rmd"><i class="fa fa-check"></i><b>3.1.1</b> Render Rmd</a></li>
+<li class="chapter" data-level="3.1.2" data-path="3.1-yaml-metadata.html"><a href="3.1-yaml-metadata.html#document-dependency"><i class="fa fa-check"></i><b>3.1.2</b> Document dependency</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="3.2-chunk-options.html"><a href="3.2-chunk-options.html"><i class="fa fa-check"></i><b>3.2</b> Chunk Options</a>
+<ul>
+<li class="chapter" data-level="" data-path="3.2-chunk-options.html"><a href="3.2-chunk-options.html#hooks"><i class="fa fa-check"></i>Hooks</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="3.3-print-verbatim-r-code-chunks.html"><a href="3.3-print-verbatim-r-code-chunks.html"><i class="fa fa-check"></i><b>3.3</b> Print Verbatim R code chunks</a></li>
+<li class="chapter" data-level="3.4" data-path="3.4-rmd-basics.html"><a href="3.4-rmd-basics.html"><i class="fa fa-check"></i><b>3.4</b> Rmd Basics</a></li>
+<li class="chapter" data-level="3.5" data-path="3.5-citations.html"><a href="3.5-citations.html"><i class="fa fa-check"></i><b>3.5</b> Citations</a>
+<ul>
+<li class="chapter" data-level="3.5.1" data-path="3.5-citations.html"><a href="3.5-citations.html#bibliographies"><i class="fa fa-check"></i><b>3.5.1</b> Bibliographies</a></li>
+<li class="chapter" data-level="3.5.2" data-path="3.5-citations.html"><a href="3.5-citations.html#bibliography-placement"><i class="fa fa-check"></i><b>3.5.2</b> Bibliography placement</a></li>
+</ul></li>
+<li class="chapter" data-level="3.6" data-path="3.6-cross-references.html"><a href="3.6-cross-references.html"><i class="fa fa-check"></i><b>3.6</b> Cross References</a>
+<ul>
+<li class="chapter" data-level="3.6.1" data-path="3.6-cross-references.html"><a href="3.6-cross-references.html#using-bookdown"><i class="fa fa-check"></i><b>3.6.1</b> Using <code>bookdown</code></a></li>
+<li class="chapter" data-level="3.6.2" data-path="3.6-cross-references.html"><a href="3.6-cross-references.html#using-the-latex-way"><i class="fa fa-check"></i><b>3.6.2</b> Using the LaTeX Way</a></li>
+</ul></li>
+<li class="chapter" data-level="3.7" data-path="3.7-equations.html"><a href="3.7-equations.html"><i class="fa fa-check"></i><b>3.7</b> Equations</a></li>
+<li class="chapter" data-level="3.8" data-path="3.8-theorems.html"><a href="3.8-theorems.html"><i class="fa fa-check"></i><b>3.8</b> Theorems</a></li>
+<li class="chapter" data-level="3.9" data-path="3.9-figures.html"><a href="3.9-figures.html"><i class="fa fa-check"></i><b>3.9</b> Figures</a>
+<ul>
+<li class="chapter" data-level="" data-path="3.9-figures.html"><a href="3.9-figures.html#latex-symbols-in-fig.-caption"><i class="fa fa-check"></i>Latex symbols in Fig. caption</a></li>
+<li class="chapter" data-level="" data-path="3.9-figures.html"><a href="3.9-figures.html#refer-to-another-figure-in-figure-caption"><i class="fa fa-check"></i>Refer to another figure in figure caption</a></li>
+</ul></li>
+<li class="chapter" data-level="3.10" data-path="3.10-tables.html"><a href="3.10-tables.html"><i class="fa fa-check"></i><b>3.10</b> Tables</a>
+<ul>
+<li class="chapter" data-level="3.10.1" data-path="3.10-tables.html"><a href="3.10-tables.html#knitrkable"><i class="fa fa-check"></i><b>3.10.1</b> <code>knitr::kable</code></a></li>
+<li class="chapter" data-level="3.10.2" data-path="3.10-tables.html"><a href="3.10-tables.html#data-frame-printing"><i class="fa fa-check"></i><b>3.10.2</b> Data frame printing</a></li>
+<li class="chapter" data-level="3.10.3" data-path="3.10-tables.html"><a href="3.10-tables.html#stargazer"><i class="fa fa-check"></i><b>3.10.3</b> Stargazer</a></li>
+<li class="chapter" data-level="3.10.4" data-path="3.10-tables.html"><a href="3.10-tables.html#kableextra"><i class="fa fa-check"></i><b>3.10.4</b> <code>kableExtra</code></a></li>
+</ul></li>
+<li class="chapter" data-level="3.11" data-path="3.11-rmd-github-pages.html"><a href="3.11-rmd-github-pages.html"><i class="fa fa-check"></i><b>3.11</b> Rmd GitHub Pages</a>
+<ul>
+<li class="chapter" data-level="" data-path="3.11-rmd-github-pages.html"><a href="3.11-rmd-github-pages.html#project-structure"><i class="fa fa-check"></i>Project structure</a></li>
+<li class="chapter" data-level="" data-path="3.11-rmd-github-pages.html"><a href="3.11-rmd-github-pages.html#site.yml-config"><i class="fa fa-check"></i><code>_site.yml</code> config</a></li>
+<li class="chapter" data-level="" data-path="3.11-rmd-github-pages.html"><a href="3.11-rmd-github-pages.html#index.rmd"><i class="fa fa-check"></i><code>index.Rmd</code></a></li>
+<li class="chapter" data-level="" data-path="3.11-rmd-github-pages.html"><a href="3.11-rmd-github-pages.html#r-scripts"><i class="fa fa-check"></i>R scripts</a></li>
+<li class="chapter" data-level="" data-path="3.11-rmd-github-pages.html"><a href="3.11-rmd-github-pages.html#workflow"><i class="fa fa-check"></i>Workflow</a></li>
+<li class="chapter" data-level="" data-path="3.11-rmd-github-pages.html"><a href="3.11-rmd-github-pages.html#css-style"><i class="fa fa-check"></i>CSS Style</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="4-bookdown.html"><a href="4-bookdown.html"><i class="fa fa-check"></i><b>4</b> bookdown</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="4.1-bookdown-project-structure.html"><a href="4.1-bookdown-project-structure.html"><i class="fa fa-check"></i><b>4.1</b> bookdown project structure</a>
+<ul>
+<li class="chapter" data-level="" data-path="4.1-bookdown-project-structure.html"><a href="4.1-bookdown-project-structure.html#output.yml"><i class="fa fa-check"></i><code>_output.yml</code></a></li>
+<li class="chapter" data-level="" data-path="4.1-bookdown-project-structure.html"><a href="4.1-bookdown-project-structure.html#bookdown.yml"><i class="fa fa-check"></i><code>_bookdown.yml</code></a></li>
+<li class="chapter" data-level="" data-path="4.1-bookdown-project-structure.html"><a href="4.1-bookdown-project-structure.html#index.rmd-1"><i class="fa fa-check"></i><code>index.Rmd</code></a></li>
+<li class="chapter" data-level="" data-path="4.1-bookdown-project-structure.html"><a href="4.1-bookdown-project-structure.html#rmd-files"><i class="fa fa-check"></i><code>.Rmd</code> files</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="4.2-rendering-bookdown.html"><a href="4.2-rendering-bookdown.html"><i class="fa fa-check"></i><b>4.2</b> Rendering bookdown</a></li>
+<li class="chapter" data-level="4.3" data-path="4.3-toggle-visibility-of-solutions.html"><a href="4.3-toggle-visibility-of-solutions.html"><i class="fa fa-check"></i><b>4.3</b> Toggle Visibility of Solutions</a></li>
+<li class="chapter" data-level="4.4" data-path="4.4-quarto.html"><a href="4.4-quarto.html"><i class="fa fa-check"></i><b>4.4</b> Quarto</a>
+<ul>
+<li class="chapter" data-level="4.4.1" data-path="4.4-quarto.html"><a href="4.4-quarto.html#book-structure"><i class="fa fa-check"></i><b>4.4.1</b> Book Structure</a></li>
+<li class="chapter" data-level="4.4.2" data-path="4.4-quarto.html"><a href="4.4-quarto.html#html-theming"><i class="fa fa-check"></i><b>4.4.2</b> HTML Theming</a></li>
+<li class="chapter" data-level="4.4.3" data-path="4.4-quarto.html"><a href="4.4-quarto.html#cross-references-1"><i class="fa fa-check"></i><b>4.4.3</b> Cross References</a></li>
+<li class="chapter" data-level="4.4.4" data-path="4.4-quarto.html"><a href="4.4-quarto.html#equations-2"><i class="fa fa-check"></i><b>4.4.4</b> Equations</a></li>
+<li class="chapter" data-level="4.4.5" data-path="4.4-quarto.html"><a href="4.4-quarto.html#divs-and-spans"><i class="fa fa-check"></i><b>4.4.5</b> Divs and Spans</a></li>
+<li class="chapter" data-level="4.4.6" data-path="4.4-quarto.html"><a href="4.4-quarto.html#theorems-1"><i class="fa fa-check"></i><b>4.4.6</b> Theorems</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="5-basic-r.html"><a href="5-basic-r.html"><i class="fa fa-check"></i><b>5</b> Basic R</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="5.1-data-input-output.html"><a href="5.1-data-input-output.html"><i class="fa fa-check"></i><b>5.1</b> Data Input &amp; Output</a>
+<ul>
+<li class="chapter" data-level="5.1.1" data-path="5.1-data-input-output.html"><a href="5.1-data-input-output.html#read-data"><i class="fa fa-check"></i><b>5.1.1</b> Read Data</a></li>
+<li class="chapter" data-level="5.1.2" data-path="5.1-data-input-output.html"><a href="5.1-data-input-output.html#write-data"><i class="fa fa-check"></i><b>5.1.2</b> Write Data</a></li>
+</ul></li>
+<li class="chapter" data-level="5.2" data-path="5.2-functions.html"><a href="5.2-functions.html"><i class="fa fa-check"></i><b>5.2</b> Functions</a>
+<ul>
+<li class="chapter" data-level="5.2.1" data-path="5.2-functions.html"><a href="5.2-functions.html#inspecting-object-types-and-structure"><i class="fa fa-check"></i><b>5.2.1</b> Inspecting Object Types and Structure</a></li>
+<li class="chapter" data-level="5.2.2" data-path="5.2-functions.html"><a href="5.2-functions.html#type-of-variables"><i class="fa fa-check"></i><b>5.2.2</b> Type of Variables</a></li>
+<li class="chapter" data-level="5.2.3" data-path="5.2-functions.html"><a href="5.2-functions.html#variable-scope"><i class="fa fa-check"></i><b>5.2.3</b> Variable Scope</a></li>
+<li class="chapter" data-level="5.2.4" data-path="5.2-functions.html"><a href="5.2-functions.html#control-structures"><i class="fa fa-check"></i><b>5.2.4</b> Control Structures</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="5.3-basic-r-functions.html"><a href="5.3-basic-r-functions.html"><i class="fa fa-check"></i><b>5.3</b> Basic R functions</a>
+<ul>
+<li class="chapter" data-level="5.3.1" data-path="5.3-basic-r-functions.html"><a href="5.3-basic-r-functions.html#workspace-management"><i class="fa fa-check"></i><b>5.3.1</b> Workspace Management</a></li>
+<li class="chapter" data-level="5.3.2" data-path="5.3-basic-r-functions.html"><a href="5.3-basic-r-functions.html#data-display-and-output"><i class="fa fa-check"></i><b>5.3.2</b> Data Display and Output</a></li>
+<li class="chapter" data-level="5.3.3" data-path="5.3-basic-r-functions.html"><a href="5.3-basic-r-functions.html#data-manipulation-and-transformation"><i class="fa fa-check"></i><b>5.3.3</b> Data Manipulation and Transformation</a></li>
+<li class="chapter" data-level="5.3.4" data-path="5.3-basic-r-functions.html"><a href="5.3-basic-r-functions.html#generate-random-seeds"><i class="fa fa-check"></i><b>5.3.4</b> Generate Random Seeds</a></li>
+</ul></li>
+<li class="chapter" data-level="5.4" data-path="5.4-data-splitting-and-grouping.html"><a href="5.4-data-splitting-and-grouping.html"><i class="fa fa-check"></i><b>5.4</b> Data Splitting and Grouping</a>
+<ul>
+<li class="chapter" data-level="5.4.1" data-path="5.4-data-splitting-and-grouping.html"><a href="5.4-data-splitting-and-grouping.html#the-split-function"><i class="fa fa-check"></i><b>5.4.1</b> The <code>split()</code> Function</a></li>
+<li class="chapter" data-level="5.4.2" data-path="5.4-data-splitting-and-grouping.html"><a href="5.4-data-splitting-and-grouping.html#split-and-apply-operations"><i class="fa fa-check"></i><b>5.4.2</b> Split-and-Apply Operations</a></li>
+</ul></li>
+<li class="chapter" data-level="5.5" data-path="5.5-apply-family.html"><a href="5.5-apply-family.html"><i class="fa fa-check"></i><b>5.5</b> <code>*apply()</code> Family</a>
+<ul>
+<li class="chapter" data-level="5.5.1" data-path="5.5-apply-family.html"><a href="5.5-apply-family.html#paralle-version-of-apply-function"><i class="fa fa-check"></i><b>5.5.1</b> <span style="color:#008B45">Paralle</span> version of <code>apply</code> function</a></li>
+</ul></li>
+<li class="chapter" data-level="5.6" data-path="5.6-statistical-summary-functions.html"><a href="5.6-statistical-summary-functions.html"><i class="fa fa-check"></i><b>5.6</b> Statistical Summary Functions</a></li>
+<li class="chapter" data-level="5.7" data-path="5.7-contingency-table.html"><a href="5.7-contingency-table.html"><i class="fa fa-check"></i><b>5.7</b> Contingency Table</a>
+<ul>
+<li class="chapter" data-level="5.7.1" data-path="5.7-contingency-table.html"><a href="5.7-contingency-table.html#basic-frequency-counting"><i class="fa fa-check"></i><b>5.7.1</b> Basic Frequency Counting</a></li>
+<li class="chapter" data-level="5.7.2" data-path="5.7-contingency-table.html"><a href="5.7-contingency-table.html#creating-contingency-tables"><i class="fa fa-check"></i><b>5.7.2</b> Creating Contingency Tables</a></li>
+<li class="chapter" data-level="5.7.3" data-path="5.7-contingency-table.html"><a href="5.7-contingency-table.html#working-with-arrays-and-multi-dimensional-tables"><i class="fa fa-check"></i><b>5.7.3</b> Working with Arrays and Multi-dimensional Tables</a></li>
+<li class="chapter" data-level="5.7.4" data-path="5.7-contingency-table.html"><a href="5.7-contingency-table.html#flattening-and-exporting-tables"><i class="fa fa-check"></i><b>5.7.4</b> Flattening and Exporting Tables</a></li>
+<li class="chapter" data-level="5.7.5" data-path="5.7-contingency-table.html"><a href="5.7-contingency-table.html#table-visualization-and-formatting"><i class="fa fa-check"></i><b>5.7.5</b> Table Visualization and Formatting</a></li>
+</ul></li>
+<li class="chapter" data-level="5.8" data-path="5.8-data-frame-operations.html"><a href="5.8-data-frame-operations.html"><i class="fa fa-check"></i><b>5.8</b> Data Frame Operations</a>
+<ul>
+<li class="chapter" data-level="" data-path="5.8-data-frame-operations.html"><a href="5.8-data-frame-operations.html#columnrow-wise-operations"><i class="fa fa-check"></i>Column/Row-wise Operations</a></li>
+<li class="chapter" data-level="5.8.1" data-path="5.8-data-frame-operations.html"><a href="5.8-data-frame-operations.html#process-na-values"><i class="fa fa-check"></i><b>5.8.1</b> <span style="color:#008B45"><strong>Process <code>NA</code> values</strong></span></a></li>
+</ul></li>
+<li class="chapter" data-level="5.9" data-path="5.9-matrix-multiplication.html"><a href="5.9-matrix-multiplication.html"><i class="fa fa-check"></i><b>5.9</b> Matrix multiplication</a></li>
+<li class="chapter" data-level="5.10" data-path="5.10-string-operations.html"><a href="5.10-string-operations.html"><i class="fa fa-check"></i><b>5.10</b> String Operations</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="6-tidyverse.html"><a href="6-tidyverse.html"><i class="fa fa-check"></i><b>6</b> Tidyverse</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="6.1-pipe-operator.html"><a href="6.1-pipe-operator.html"><i class="fa fa-check"></i><b>6.1</b> Pipe Operator</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="7-regression.html"><a href="7-regression.html"><i class="fa fa-check"></i><b>7</b> Regression</a></li>
+<li class="chapter" data-level="8" data-path="8-machine-learning.html"><a href="8-machine-learning.html"><i class="fa fa-check"></i><b>8</b> Machine Learning</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="8.1-imbalanced-datasets.html"><a href="8.1-imbalanced-datasets.html"><i class="fa fa-check"></i><b>8.1</b> Imbalanced datasets</a>
+<ul>
+<li class="chapter" data-level="8.1.1" data-path="8.1-imbalanced-datasets.html"><a href="8.1-imbalanced-datasets.html#downsampling-and-upweighting"><i class="fa fa-check"></i><b>8.1.1</b> Downsampling and Upweighting</a></li>
+</ul></li>
+<li class="chapter" data-level="8.2" data-path="8.2-random-forest.html"><a href="8.2-random-forest.html"><i class="fa fa-check"></i><b>8.2</b> Random Forest</a>
+<ul>
+<li class="chapter" data-level="" data-path="8.2-random-forest.html"><a href="8.2-random-forest.html#implementation-in-r"><i class="fa fa-check"></i>Implementation in R</a></li>
+<li class="chapter" data-level="" data-path="8.2-random-forest.html"><a href="8.2-random-forest.html#imbalance-classification"><i class="fa fa-check"></i>Imbalance Classification</a></li>
+</ul></li>
+<li class="chapter" data-level="8.3" data-path="8.3-neural-network.html"><a href="8.3-neural-network.html"><i class="fa fa-check"></i><b>8.3</b> Neural Network</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="9-stata.html"><a href="9-stata.html"><i class="fa fa-check"></i><b>9</b> Stata</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="9.1-basic-syntax.html"><a href="9.1-basic-syntax.html"><i class="fa fa-check"></i><b>9.1</b> Basic syntax</a>
+<ul>
+<li class="chapter" data-level="9.1.1" data-path="9.1-basic-syntax.html"><a href="9.1-basic-syntax.html#system-variables"><i class="fa fa-check"></i><b>9.1.1</b> System Variables</a></li>
+<li class="chapter" data-level="9.1.2" data-path="9.1-basic-syntax.html"><a href="9.1-basic-syntax.html#matrix"><i class="fa fa-check"></i><b>9.1.2</b> Matrix</a></li>
+<li class="chapter" data-level="9.1.3" data-path="9.1-basic-syntax.html"><a href="9.1-basic-syntax.html#factor-variables"><i class="fa fa-check"></i><b>9.1.3</b> Factor Variables</a></li>
+<li class="chapter" data-level="9.1.4" data-path="9.1-basic-syntax.html"><a href="9.1-basic-syntax.html#time-series-varlists"><i class="fa fa-check"></i><b>9.1.4</b> Time series varlists</a></li>
+<li class="chapter" data-level="9.1.5" data-path="9.1-basic-syntax.html"><a href="9.1-basic-syntax.html#labels"><i class="fa fa-check"></i><b>9.1.5</b> Labels</a></li>
+</ul></li>
+<li class="chapter" data-level="9.2" data-path="9.2-data-manipulation.html"><a href="9.2-data-manipulation.html"><i class="fa fa-check"></i><b>9.2</b> Data Manipulation</a>
+<ul>
+<li class="chapter" data-level="9.2.1" data-path="9.2-data-manipulation.html"><a href="9.2-data-manipulation.html#import-and-export"><i class="fa fa-check"></i><b>9.2.1</b> Import and Export</a></li>
+<li class="chapter" data-level="9.2.2" data-path="9.2-data-manipulation.html"><a href="9.2-data-manipulation.html#save-estimation-results"><i class="fa fa-check"></i><b>9.2.2</b> Save Estimation Results</a></li>
+<li class="chapter" data-level="9.2.3" data-path="9.2-data-manipulation.html"><a href="9.2-data-manipulation.html#stored-results"><i class="fa fa-check"></i><b>9.2.3</b> Stored Results</a></li>
+</ul></li>
+<li class="chapter" data-level="9.3" data-path="9.3-predict.html"><a href="9.3-predict.html"><i class="fa fa-check"></i><b>9.3</b> Predict</a></li>
+<li class="chapter" data-level="9.4" data-path="9.4-forecast.html"><a href="9.4-forecast.html"><i class="fa fa-check"></i><b>9.4</b> Forecast</a>
+<ul>
+<li class="chapter" data-level="" data-path="9.4-forecast.html"><a href="9.4-forecast.html#add-equationsidentifies"><i class="fa fa-check"></i>Add equations/identifies</a></li>
+<li class="chapter" data-level="" data-path="9.4-forecast.html"><a href="9.4-forecast.html#solve-the-foreceast"><i class="fa fa-check"></i>Solve the foreceast</a></li>
+<li class="chapter" data-level="" data-path="9.4-forecast.html"><a href="9.4-forecast.html#use-example-forecast-a-panel"><i class="fa fa-check"></i>Use example: forecast a panel</a></li>
+</ul></li>
+<li class="chapter" data-level="9.5" data-path="9.5-panel.html"><a href="9.5-panel.html"><i class="fa fa-check"></i><b>9.5</b> Panel</a></li>
+<li class="chapter" data-level="9.6" data-path="9.6-arellano-bond-estimator.html"><a href="9.6-arellano-bond-estimator.html"><i class="fa fa-check"></i><b>9.6</b> Arellano-Bond Estimator</a>
+<ul>
+<li class="chapter" data-level="9.6.1" data-path="9.6-arellano-bond-estimator.html"><a href="9.6-arellano-bond-estimator.html#xtabond2"><i class="fa fa-check"></i><b>9.6.1</b> xtabond2</a></li>
+</ul></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">R Notes</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<head>
+    <script> 
+        function myFunction(id) {
+          var x = document.getElementById(id); 
+          if (x.style.display === "none") {
+            x.style.display = "block";
+          } else {
+            x.style.display = "none";
+          }
+        }
+    </script>
+</head>
+<div id="panel" class="section level2 hasAnchor" number="9.5">
+<h2><span class="header-section-number">9.5</span> Panel<a href="9.5-panel.html#panel" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p><strong>Declare panel data</strong></p>
+<p>You must <code>xtset</code> your data before you can use other <code>xt</code> commands.</p>
+<p><code>xtset panelvar timevar</code> declares the data to be a panel in which the order of observations is relevant. When you specify <code>timevar</code>, you can then use time series operators (e.g., <code>L</code>, <code>D</code>).</p>
+<p><strong>Menu</strong></p>
+<p>Statistics &gt; Longitudinal/panel data &gt; Setup and utilities &gt; Declare dataset to be panel data</p>
+<ul>
+<li><code>panelvar</code> panel variable that identifies the unit</li>
+<li><code>timevar</code> optional time variable that identifies the time within panels</li>
+</ul>
+<p>Use <code>describe</code> to show an overview of data structure.</p>
+<p>Sometimes numbers will get recorded as string variables, making it impossible to do almost any command.</p>
+<div class="sourceCode" id="cb468"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb468-1"><a href="9.5-panel.html#cb468-1" tabindex="-1"></a><span class="kw">destring</span> [<span class="kw">varlist</span>], {<span class="kw">gen</span>(newvarlist) | <span class="kw">replace</span>} [options]</span></code></pre></div>
+<ul>
+<li><code>gen(newvarlist)</code> generate new variables for each variable in <code>varlist</code>.</li>
+<li><code>replace</code> replace string variables with numeric variables</li>
+<li><code>ignore("chars")</code> specifies nonnumeric characters be removed.</li>
+</ul>
+<div class="sourceCode" id="cb469"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb469-1"><a href="9.5-panel.html#cb469-1" tabindex="-1"></a><span class="co">// from logd_gdp to rad, convert to numeric, replace &quot;NA&quot; with missing</span></span>
+<span id="cb469-2"><a href="9.5-panel.html#cb469-2" tabindex="-1"></a><span class="kw">destring</span> logd_gdp-rad, <span class="kw">replace</span> ignore(<span class="st">`&quot;</span>NA<span class="st">&quot;&#39;)</span></span></code></pre></div>
+<hr />
+<p><code>xtreg</code> is Stata’s feature for fitting linear models for panel data.</p>
+<p><code>xtreg, fe</code> estimates the parameters of fixed-effects models:</p>
+<div class="sourceCode" id="cb470"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb470-1"><a href="9.5-panel.html#cb470-1" tabindex="-1"></a><span class="kw">xtreg</span> depvar [indepvars] [<span class="kw">if</span>] [<span class="kw">in</span>] [<span class="kw">weight</span>] , <span class="kw">fe</span> [FE_options]</span></code></pre></div>
+<p>Menu: Statistics &gt; Longitudinal/panel data &gt; Linear models &gt; Linear regression (FE, RE, PA, BE, CRE)</p>
+<p>Options</p>
+<ul>
+<li><p><code>vce(robust)</code> use clustered variance that allows for intragroup correlation within
+groups.</p>
+<p>By defualt, SE uses OLS estimates.</p></li>
+</ul>
+
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="9.4-forecast.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="9.6-arellano-bond-estimator.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": true,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "sky",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/my1396/R-Notes/edit/main/1100-Stata.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["_main.pdf", "_main.epub", "https://github.com/my1396/R-Notes/raw/main/1100-Stata.Rmd"],
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+},
+"toc_depth": 3,
+"toc_float": true,
+"enableEmoji": true
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>
