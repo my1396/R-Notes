@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>9.1 OLS | R Notes</title>
+  <meta name="description" content="<p>This is a minimal example of using the bookdown package to write a book.
+The HTML output format for this example is bookdown::gitbook,
+set in the _output.yml file.</p>" />
+  <meta name="generator" content="bookdown 0.35 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="9.1 OLS | R Notes" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="<p>This is a minimal example of using the bookdown package to write a book.
+The HTML output format for this example is bookdown::gitbook,
+set in the _output.yml file.</p>" />
+  <meta name="github-repo" content="my1396/R-Notes" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="9.1 OLS | R Notes" />
+  
+  <meta name="twitter:description" content="<p>This is a minimal example of using the bookdown package to write a book.
+The HTML output format for this example is bookdown::gitbook,
+set in the _output.yml file.</p>" />
+  
+
+<meta name="author" content="Menghan Yuan" />
+
+
+<meta name="date" content="2025-07-24" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  <link rel="shortcut icon" href="images/r-project-favicon.ico" type="image/x-icon" />
+<link rel="prev" href="9-regression.html"/>
+<link rel="next" href="9.2-panel.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+<head>
+    <!-- MathJax config: define new macros -->
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+          tex2jax: {
+            inlineMath: [['$','$'], ['\\(','\\)']],
+            processEscapes: true
+          },
+          TeX: { 
+            inlineMath: [   // start/end delimiter pairs for in-line math
+              ['$', '$'],
+              ['\\(', '\\)']
+            ],
+            displayMath: [  // start/end delimiter pairs for display math
+              ['$$', '$$'],
+              ['\\[', '\\]']
+            ],
+            processEscapes: true, // use \$ to produce a literal dollar sign
+            tags: 'ams',  // should be 'ams', 'none', or 'all'
+            Macros: {
+              vect: ["\\mathbf{#1}", 1],
+              mat: ["\\mathbf{#1}", 1], 
+
+              bA: "\\boldsymbol{A}",
+              bB: "\\boldsymbol{B}",
+              bC: "\\boldsymbol{C}",
+              bD: "\\boldsymbol{D}",
+              bE: "\\boldsymbol{E}",
+              bF: "\\boldsymbol{F}",
+              bG: "\\boldsymbol{G}",
+              bH: "\\boldsymbol{H}",
+              bI: "\\boldsymbol{I}",
+              bJ: "\\boldsymbol{J}",
+              bK: "\\boldsymbol{K}",
+              bL: "\\boldsymbol{L}",
+              bM: "\\boldsymbol{M}",
+              bN: "\\boldsymbol{N}",
+              bP: "\\boldsymbol{P}",
+              bQ: "\\boldsymbol{Q}",
+              bR: "\\boldsymbol{R}",
+              bS: "\\boldsymbol{S}",
+              bT: "\\boldsymbol{T}",
+              bU: "\\boldsymbol{U}",
+              bV: "\\boldsymbol{V}",
+              bW: "\\boldsymbol{W}",
+              bX: "\\boldsymbol{X}",
+              bY: "\\boldsymbol{Y}",
+              bZ: "\\boldsymbol{Z}",
+              ba: "\\boldsymbol{a}",
+              bb: "\\boldsymbol{b}",
+              bc: "\\boldsymbol{c}",
+              bd: "\\boldsymbol{d}",
+              be: "\\boldsymbol{e}",
+              bg: "\\boldsymbol{g}",
+              bh: "\\boldsymbol{h}",
+              bi: "\\boldsymbol{\\imath}",
+              bm: "\\boldsymbol{m}",
+              bp: "\\boldsymbol{p}",
+              bq: "\\boldsymbol{q}",
+              br: "\\boldsymbol{r}",
+              bs: "\\boldsymbol{s}",
+              bt: "\\boldsymbol{t}",
+              bu: "\\boldsymbol{u}",
+              bv: "\\boldsymbol{v}",
+              bw: "\\boldsymbol{w}",
+              bx: "\\boldsymbol{x}",
+              by: "\\boldsymbol{y}",
+
+              Acal: "\\mathcal{A}",
+              Bcal: "\\mathcal{B}",
+              Ccal: "\\mathcal{C}",
+              Dcal: "\\mathcal{D}",
+              Ecal: "\\mathcal{E}",
+              Fcal: "\\mathcal{F}",
+              Gcal: "\\mathcal{G}",
+              Hcal: "\\mathcal{H}",
+              Ical: "\\mathcal{I}",
+              Jcal: "\\mathcal{J}",
+              Kcal: "\\mathcal{K}",
+              Lcal: "\\mathcal{L}",
+              Mcal: "\\mathcal{M}",
+              Ncal: "\\mathcal{N}",
+              Ocal: "\\mathcal{O}",
+              Pcal: "\\mathcal{P}",
+              Qcal: "\\mathcal{Q}",
+              Rcal: "\\mathcal{R}",
+              Scal: "\\mathcal{S}",
+              Tcal: "\\mathcal{T}",
+              Ucal: "\\mathcal{U}",
+              Vcal: "\\mathcal{V}",
+              Wcal: "\\mathcal{W}",
+              Xcal: "\\mathcal{X}",
+              Ycal: "\\mathcal{Y}",
+              Zcal: "\\mathcal{Z}",
+
+              A: "\\mathbb{A}",
+              B: "\\mathbb{B}",
+              C: "\\mathbb{C}",
+              D: "\\mathbb{D}",
+              E: "\\mathbb{E}",
+              F: "\\mathbb{F}",
+              G: "\\mathbb{G}",
+              H: "\\mathbb{H}",
+              I: "\\mathbb{I}",
+              J: "\\mathbb{J}",
+              K: "\\mathbb{K}",
+              L: "\\mathbb{L}",
+              M: "\\mathbb{M}",
+              N: "\\mathbb{N}",
+              O: "\\mathbb{O}",
+              P: "\\mathbb{P}",
+              Q: "\\mathbb{Q}",
+              R: "\\mathbb{R}",
+              S: "\\mathbb{S}",
+              T: "\\mathbb{T}",
+              U: "\\mathbb{U}",
+              V: "\\mathbb{V}",
+              W: "\\mathbb{W}",
+              X: "\\mathbb{X}",
+              Y: "\\mathbb{Y}",
+              Z: "\\mathbb{Z}",
+
+              bAlpha: "\\boldsymbol{\\Alpha}",
+              bBeta: "\\boldsymbol{\\beta}",
+              bDelta: "\\boldsymbol{\\delta}",
+              bEta: "\\boldsymbol{\\eta}",
+              bGamma: "\\boldsymbol{\\Gamma}",
+              bLambda: "\\boldsymbol{\\Lambda}",
+              bOmega: "\\boldsymbol{\\Omega}",
+              bPhi: "\\boldsymbol{\\Phi}",
+              bPi: "\\boldsymbol{\\Pi}",
+              bPsi: "\\boldsymbol{\\Psi}",
+              bSigma: "\\boldsymbol{\\Sigma}",
+              bTau: "\\boldsymbol{\\tau}",
+              bXi: "\\boldsymbol{\\Xi}",
+              bbeta: "\\boldsymbol{\\beta}",
+              bdelta: "\\boldsymbol{\\delta}",
+              blambda: "\\boldsymbol{\\lambda}",
+              bmu: "\\boldsymbol{\\mu}",
+              bphi: "\\boldsymbol{\\phi}",
+              bpi: "\\boldsymbol{\\pi}",
+              bpsi: "\\boldsymbol{\\psi}",
+              brho: "\\boldsymbol{\\rho}",
+              bsigma: "\\boldsymbol{\\sigma}",
+              btau: "\\boldsymbol{\\tau}",
+              bxi: "\\boldsymbol{\\xi}",
+              bEta: "\\boldsymbol{\\eta}",
+              bPhi: "\\boldsymbol{\\Phi}",
+              bPi: "\\boldsymbol{\\Pi}",
+              bPsi: "\\boldsymbol{\\Psi}",
+              bXi: "\\boldsymbol{\\Xi}",
+              blambda: "\\boldsymbol{\\lambda}",
+              bmu: "\\boldsymbol{\\mu}",
+              bphi: "\\boldsymbol{\\phi}",
+              bpi: "\\boldsymbol{\\pi}",
+              bpsi: "\\boldsymbol{\\psi}",
+              brho: "\\boldsymbol{\\rho}",
+              bsigma: "\\boldsymbol{\\sigma}",
+                        
+              curl: ["\\left\\lbrace#1\\right\\rbrace", 1],
+              floor: ["\\left\\lfloor#1\\right\\rfloor", 1],
+              ceil: ["\\left\\lceil#1\\right\\rceil", 1],
+              abs: ["\\left\\lvert#1\\right\\rvert", 1],
+              norm: ["\\left\\lVert#1\\right\\rVert", 1],
+
+              independent: "\\mathrel{\\perp\\!\\!\\perp}",
+
+              var: "\\mathrm{var}",
+              diag: "\\mathrm{diag}",
+              rank: "\\mathrm{rank}",
+              vecc: "\\mathrm{vec}",
+            }
+          }
+        });
+    </script>
+    
+
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro">
+</head>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #204a87; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #8f5902; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #204a87; font-weight: bold; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #ce5c00; font-weight: bold; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">R Notes</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> About</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="1.1-usage.html"><a href="1.1-usage.html"><i class="fa fa-check"></i><b>1.1</b> Usage</a></li>
+<li class="chapter" data-level="1.2" data-path="1.2-render-book.html"><a href="1.2-render-book.html"><i class="fa fa-check"></i><b>1.2</b> Render book</a></li>
+<li class="chapter" data-level="1.3" data-path="1.3-preview-book.html"><a href="1.3-preview-book.html"><i class="fa fa-check"></i><b>1.3</b> Preview book</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="2-rstudio.html"><a href="2-rstudio.html"><i class="fa fa-check"></i><b>2</b> Rstudio</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="2.1-dark-theme.html"><a href="2.1-dark-theme.html"><i class="fa fa-check"></i><b>2.1</b> Dark Theme</a></li>
+<li class="chapter" data-level="2.2" data-path="2.2-update-r.html"><a href="2.2-update-r.html"><i class="fa fa-check"></i><b>2.2</b> Update R</a></li>
+<li class="chapter" data-level="2.3" data-path="2.3-packages-management.html"><a href="2.3-packages-management.html"><i class="fa fa-check"></i><b>2.3</b> Packages Management</a>
+<ul>
+<li class="chapter" data-level="2.3.1" data-path="2.3-packages-management.html"><a href="2.3-packages-management.html#load-packages"><i class="fa fa-check"></i><b>2.3.1</b> Load packages</a></li>
+<li class="chapter" data-level="2.3.2" data-path="2.3-packages-management.html"><a href="2.3-packages-management.html#install-packages"><i class="fa fa-check"></i><b>2.3.2</b> Install packages</a></li>
+<li class="chapter" data-level="2.3.3" data-path="2.3-packages-management.html"><a href="2.3-packages-management.html#update-packages"><i class="fa fa-check"></i><b>2.3.3</b> Update packages</a></li>
+<li class="chapter" data-level="2.3.4" data-path="2.3-packages-management.html"><a href="2.3-packages-management.html#put-your-r-package-on-github"><i class="fa fa-check"></i><b>2.3.4</b> Put your R package on GitHub</a></li>
+</ul></li>
+<li class="chapter" data-level="2.4" data-path="2.4-using-git-with-rstudio.html"><a href="2.4-using-git-with-rstudio.html"><i class="fa fa-check"></i><b>2.4</b> Using Git with RStudio</a></li>
+<li class="chapter" data-level="2.5" data-path="2.5-github-copilot.html"><a href="2.5-github-copilot.html"><i class="fa fa-check"></i><b>2.5</b> GitHub Copilot</a></li>
+<li class="chapter" data-level="2.6" data-path="2.6-save-r-workspace.html"><a href="2.6-save-r-workspace.html"><i class="fa fa-check"></i><b>2.6</b> Save R Workspace</a></li>
+<li class="chapter" data-level="2.7" data-path="2.7-pane-layout.html"><a href="2.7-pane-layout.html"><i class="fa fa-check"></i><b>2.7</b> Pane Layout</a></li>
+<li class="chapter" data-level="2.8" data-path="2.8-options.html"><a href="2.8-options.html"><i class="fa fa-check"></i><b>2.8</b> Options</a></li>
+<li class="chapter" data-level="2.9" data-path="2.9-r-startup.html"><a href="2.9-r-startup.html"><i class="fa fa-check"></i><b>2.9</b> R Startup</a>
+<ul>
+<li class="chapter" data-level="2.9.1" data-path="2.9-r-startup.html"><a href="2.9-r-startup.html#rprofile"><i class="fa fa-check"></i><b>2.9.1</b> <code>.Rprofile</code></a></li>
+<li class="chapter" data-level="2.9.2" data-path="2.9-r-startup.html"><a href="2.9-r-startup.html#renviron"><i class="fa fa-check"></i><b>2.9.2</b> <code>.Renviron</code></a></li>
+</ul></li>
+<li class="chapter" data-level="2.10" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html"><i class="fa fa-check"></i><b>2.10</b> VS Code</a>
+<ul>
+<li class="chapter" data-level="" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#plot-viewer"><i class="fa fa-check"></i>Plot Viewer</a></li>
+<li class="chapter" data-level="" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#rmd"><i class="fa fa-check"></i>Rmd</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="3-rmd-1.html"><a href="3-rmd-1.html"><i class="fa fa-check"></i><b>3</b> Rmd</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="3.1-yaml-metadata.html"><a href="3.1-yaml-metadata.html"><i class="fa fa-check"></i><b>3.1</b> YAML metadata</a>
+<ul>
+<li class="chapter" data-level="3.1.1" data-path="3.1-yaml-metadata.html"><a href="3.1-yaml-metadata.html#render-rmd"><i class="fa fa-check"></i><b>3.1.1</b> Render Rmd</a></li>
+<li class="chapter" data-level="3.1.2" data-path="3.1-yaml-metadata.html"><a href="3.1-yaml-metadata.html#document-dependency"><i class="fa fa-check"></i><b>3.1.2</b> Document dependency</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="3.2-chunk-options.html"><a href="3.2-chunk-options.html"><i class="fa fa-check"></i><b>3.2</b> Chunk Options</a>
+<ul>
+<li class="chapter" data-level="" data-path="3.2-chunk-options.html"><a href="3.2-chunk-options.html#hooks"><i class="fa fa-check"></i>Hooks</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="3.3-print-verbatim-r-code-chunks.html"><a href="3.3-print-verbatim-r-code-chunks.html"><i class="fa fa-check"></i><b>3.3</b> Print Verbatim R code chunks</a></li>
+<li class="chapter" data-level="3.4" data-path="3.4-rmd-basics.html"><a href="3.4-rmd-basics.html"><i class="fa fa-check"></i><b>3.4</b> Rmd Basics</a></li>
+<li class="chapter" data-level="3.5" data-path="3.5-citations.html"><a href="3.5-citations.html"><i class="fa fa-check"></i><b>3.5</b> Citations</a>
+<ul>
+<li class="chapter" data-level="3.5.1" data-path="3.5-citations.html"><a href="3.5-citations.html#bibliographies"><i class="fa fa-check"></i><b>3.5.1</b> Bibliographies</a></li>
+<li class="chapter" data-level="3.5.2" data-path="3.5-citations.html"><a href="3.5-citations.html#bibliography-placement"><i class="fa fa-check"></i><b>3.5.2</b> Bibliography placement</a></li>
+</ul></li>
+<li class="chapter" data-level="3.6" data-path="3.6-cross-references.html"><a href="3.6-cross-references.html"><i class="fa fa-check"></i><b>3.6</b> Cross References</a>
+<ul>
+<li class="chapter" data-level="3.6.1" data-path="3.6-cross-references.html"><a href="3.6-cross-references.html#using-bookdown"><i class="fa fa-check"></i><b>3.6.1</b> Using <code>bookdown</code></a></li>
+<li class="chapter" data-level="3.6.2" data-path="3.6-cross-references.html"><a href="3.6-cross-references.html#using-the-latex-way"><i class="fa fa-check"></i><b>3.6.2</b> Using the LaTeX Way</a></li>
+</ul></li>
+<li class="chapter" data-level="3.7" data-path="3.7-equations.html"><a href="3.7-equations.html"><i class="fa fa-check"></i><b>3.7</b> Equations</a></li>
+<li class="chapter" data-level="3.8" data-path="3.8-theorems.html"><a href="3.8-theorems.html"><i class="fa fa-check"></i><b>3.8</b> Theorems</a></li>
+<li class="chapter" data-level="3.9" data-path="3.9-figures.html"><a href="3.9-figures.html"><i class="fa fa-check"></i><b>3.9</b> Figures</a>
+<ul>
+<li class="chapter" data-level="" data-path="3.9-figures.html"><a href="3.9-figures.html#latex-symbols-in-fig.-caption"><i class="fa fa-check"></i>Latex symbols in Fig. caption</a></li>
+<li class="chapter" data-level="" data-path="3.9-figures.html"><a href="3.9-figures.html#refer-to-another-figure-in-figure-caption"><i class="fa fa-check"></i>Refer to another figure in figure caption</a></li>
+</ul></li>
+<li class="chapter" data-level="3.10" data-path="3.10-tables.html"><a href="3.10-tables.html"><i class="fa fa-check"></i><b>3.10</b> Tables</a>
+<ul>
+<li class="chapter" data-level="3.10.1" data-path="3.10-tables.html"><a href="3.10-tables.html#knitrkable"><i class="fa fa-check"></i><b>3.10.1</b> <code>knitr::kable</code></a></li>
+<li class="chapter" data-level="3.10.2" data-path="3.10-tables.html"><a href="3.10-tables.html#data-frame-printing"><i class="fa fa-check"></i><b>3.10.2</b> Data frame printing</a></li>
+<li class="chapter" data-level="3.10.3" data-path="3.10-tables.html"><a href="3.10-tables.html#stargazer"><i class="fa fa-check"></i><b>3.10.3</b> Stargazer</a></li>
+<li class="chapter" data-level="3.10.4" data-path="3.10-tables.html"><a href="3.10-tables.html#xtable"><i class="fa fa-check"></i><b>3.10.4</b> <code>xtable</code></a></li>
+<li class="chapter" data-level="3.10.5" data-path="3.10-tables.html"><a href="3.10-tables.html#kableextra"><i class="fa fa-check"></i><b>3.10.5</b> <code>kableExtra</code></a></li>
+</ul></li>
+<li class="chapter" data-level="3.11" data-path="3.11-rmd-github-pages.html"><a href="3.11-rmd-github-pages.html"><i class="fa fa-check"></i><b>3.11</b> Rmd GitHub Pages</a>
+<ul>
+<li class="chapter" data-level="" data-path="3.11-rmd-github-pages.html"><a href="3.11-rmd-github-pages.html#project-structure"><i class="fa fa-check"></i>Project structure</a></li>
+<li class="chapter" data-level="" data-path="3.11-rmd-github-pages.html"><a href="3.11-rmd-github-pages.html#site.yml-config"><i class="fa fa-check"></i><code>_site.yml</code> config</a></li>
+<li class="chapter" data-level="" data-path="3.11-rmd-github-pages.html"><a href="3.11-rmd-github-pages.html#index.rmd"><i class="fa fa-check"></i><code>index.Rmd</code></a></li>
+<li class="chapter" data-level="" data-path="3.11-rmd-github-pages.html"><a href="3.11-rmd-github-pages.html#r-scripts"><i class="fa fa-check"></i>R scripts</a></li>
+<li class="chapter" data-level="" data-path="3.11-rmd-github-pages.html"><a href="3.11-rmd-github-pages.html#workflow"><i class="fa fa-check"></i>Workflow</a></li>
+<li class="chapter" data-level="" data-path="3.11-rmd-github-pages.html"><a href="3.11-rmd-github-pages.html#css-style"><i class="fa fa-check"></i>CSS Style</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="4-bookdown.html"><a href="4-bookdown.html"><i class="fa fa-check"></i><b>4</b> bookdown</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="4.1-bookdown-project-structure.html"><a href="4.1-bookdown-project-structure.html"><i class="fa fa-check"></i><b>4.1</b> bookdown project structure</a>
+<ul>
+<li class="chapter" data-level="" data-path="4.1-bookdown-project-structure.html"><a href="4.1-bookdown-project-structure.html#output.yml"><i class="fa fa-check"></i><code>_output.yml</code></a></li>
+<li class="chapter" data-level="" data-path="4.1-bookdown-project-structure.html"><a href="4.1-bookdown-project-structure.html#bookdown.yml"><i class="fa fa-check"></i><code>_bookdown.yml</code></a></li>
+<li class="chapter" data-level="" data-path="4.1-bookdown-project-structure.html"><a href="4.1-bookdown-project-structure.html#index.rmd-1"><i class="fa fa-check"></i><code>index.Rmd</code></a></li>
+<li class="chapter" data-level="" data-path="4.1-bookdown-project-structure.html"><a href="4.1-bookdown-project-structure.html#rmd-files"><i class="fa fa-check"></i><code>.Rmd</code> files</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="4.2-rendering-bookdown.html"><a href="4.2-rendering-bookdown.html"><i class="fa fa-check"></i><b>4.2</b> Rendering bookdown</a></li>
+<li class="chapter" data-level="4.3" data-path="4.3-toggle-visibility-of-solutions.html"><a href="4.3-toggle-visibility-of-solutions.html"><i class="fa fa-check"></i><b>4.3</b> Toggle Visibility of Solutions</a></li>
+<li class="chapter" data-level="4.4" data-path="4.4-quarto.html"><a href="4.4-quarto.html"><i class="fa fa-check"></i><b>4.4</b> Quarto</a>
+<ul>
+<li class="chapter" data-level="4.4.1" data-path="4.4-quarto.html"><a href="4.4-quarto.html#book-structure"><i class="fa fa-check"></i><b>4.4.1</b> Book Structure</a></li>
+<li class="chapter" data-level="4.4.2" data-path="4.4-quarto.html"><a href="4.4-quarto.html#html-theming"><i class="fa fa-check"></i><b>4.4.2</b> HTML Theming</a></li>
+<li class="chapter" data-level="4.4.3" data-path="4.4-quarto.html"><a href="4.4-quarto.html#cross-references-1"><i class="fa fa-check"></i><b>4.4.3</b> Cross References</a></li>
+<li class="chapter" data-level="4.4.4" data-path="4.4-quarto.html"><a href="4.4-quarto.html#equations-2"><i class="fa fa-check"></i><b>4.4.4</b> Equations</a></li>
+<li class="chapter" data-level="4.4.5" data-path="4.4-quarto.html"><a href="4.4-quarto.html#divs-and-spans"><i class="fa fa-check"></i><b>4.4.5</b> Divs and Spans</a></li>
+<li class="chapter" data-level="4.4.6" data-path="4.4-quarto.html"><a href="4.4-quarto.html#theorems-1"><i class="fa fa-check"></i><b>4.4.6</b> Theorems</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="5-basic-r.html"><a href="5-basic-r.html"><i class="fa fa-check"></i><b>5</b> Basic R</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="5.1-data-input-output.html"><a href="5.1-data-input-output.html"><i class="fa fa-check"></i><b>5.1</b> Data Input &amp; Output</a>
+<ul>
+<li class="chapter" data-level="5.1.1" data-path="5.1-data-input-output.html"><a href="5.1-data-input-output.html#read-data"><i class="fa fa-check"></i><b>5.1.1</b> Read Data</a></li>
+<li class="chapter" data-level="5.1.2" data-path="5.1-data-input-output.html"><a href="5.1-data-input-output.html#write-data"><i class="fa fa-check"></i><b>5.1.2</b> Write Data</a></li>
+</ul></li>
+<li class="chapter" data-level="5.2" data-path="5.2-functions.html"><a href="5.2-functions.html"><i class="fa fa-check"></i><b>5.2</b> Functions</a>
+<ul>
+<li class="chapter" data-level="5.2.1" data-path="5.2-functions.html"><a href="5.2-functions.html#inspecting-object-types-and-structure"><i class="fa fa-check"></i><b>5.2.1</b> Inspecting Object Types and Structure</a></li>
+<li class="chapter" data-level="5.2.2" data-path="5.2-functions.html"><a href="5.2-functions.html#type-of-variables"><i class="fa fa-check"></i><b>5.2.2</b> Type of Variables</a></li>
+<li class="chapter" data-level="5.2.3" data-path="5.2-functions.html"><a href="5.2-functions.html#variable-scope"><i class="fa fa-check"></i><b>5.2.3</b> Variable Scope</a></li>
+<li class="chapter" data-level="5.2.4" data-path="5.2-functions.html"><a href="5.2-functions.html#control-structures"><i class="fa fa-check"></i><b>5.2.4</b> Control Structures</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="5.3-basic-r-functions.html"><a href="5.3-basic-r-functions.html"><i class="fa fa-check"></i><b>5.3</b> Basic R functions</a>
+<ul>
+<li class="chapter" data-level="5.3.1" data-path="5.3-basic-r-functions.html"><a href="5.3-basic-r-functions.html#workspace-management"><i class="fa fa-check"></i><b>5.3.1</b> Workspace Management</a></li>
+<li class="chapter" data-level="5.3.2" data-path="5.3-basic-r-functions.html"><a href="5.3-basic-r-functions.html#data-display-and-output"><i class="fa fa-check"></i><b>5.3.2</b> Data Display and Output</a></li>
+<li class="chapter" data-level="5.3.3" data-path="5.3-basic-r-functions.html"><a href="5.3-basic-r-functions.html#data-manipulation-and-transformation"><i class="fa fa-check"></i><b>5.3.3</b> Data Manipulation and Transformation</a></li>
+<li class="chapter" data-level="5.3.4" data-path="5.3-basic-r-functions.html"><a href="5.3-basic-r-functions.html#generate-random-seeds"><i class="fa fa-check"></i><b>5.3.4</b> Generate Random Seeds</a></li>
+<li class="chapter" data-level="5.3.5" data-path="5.3-basic-r-functions.html"><a href="5.3-basic-r-functions.html#draw-random-samples"><i class="fa fa-check"></i><b>5.3.5</b> Draw random samples</a></li>
+<li class="chapter" data-level="5.3.6" data-path="5.3-basic-r-functions.html"><a href="5.3-basic-r-functions.html#fit-a-distribution"><i class="fa fa-check"></i><b>5.3.6</b> Fit a distribution</a></li>
+<li class="chapter" data-level="5.3.7" data-path="5.3-basic-r-functions.html"><a href="5.3-basic-r-functions.html#operation-on-list"><i class="fa fa-check"></i><b>5.3.7</b> Operation on list</a></li>
+</ul></li>
+<li class="chapter" data-level="5.4" data-path="5.4-data-splitting-and-grouping.html"><a href="5.4-data-splitting-and-grouping.html"><i class="fa fa-check"></i><b>5.4</b> Data Splitting and Grouping</a>
+<ul>
+<li class="chapter" data-level="5.4.1" data-path="5.4-data-splitting-and-grouping.html"><a href="5.4-data-splitting-and-grouping.html#the-split-function"><i class="fa fa-check"></i><b>5.4.1</b> The <code>split()</code> Function</a></li>
+<li class="chapter" data-level="5.4.2" data-path="5.4-data-splitting-and-grouping.html"><a href="5.4-data-splitting-and-grouping.html#split-and-apply-operations"><i class="fa fa-check"></i><b>5.4.2</b> Split-and-Apply Operations</a></li>
+</ul></li>
+<li class="chapter" data-level="5.5" data-path="5.5-apply-family.html"><a href="5.5-apply-family.html"><i class="fa fa-check"></i><b>5.5</b> <code>*apply()</code> Family</a>
+<ul>
+<li class="chapter" data-level="5.5.1" data-path="5.5-apply-family.html"><a href="5.5-apply-family.html#parallel-version-of-apply-function"><i class="fa fa-check"></i><b>5.5.1</b> <span style="color:#008B45">Parallel</span> version of <code>apply</code> function</a></li>
+<li class="chapter" data-level="5.5.2" data-path="5.5-apply-family.html"><a href="5.5-apply-family.html#related-functions"><i class="fa fa-check"></i><b>5.5.2</b> Related Functions</a></li>
+</ul></li>
+<li class="chapter" data-level="5.6" data-path="5.6-statistical-summary-functions.html"><a href="5.6-statistical-summary-functions.html"><i class="fa fa-check"></i><b>5.6</b> Statistical Summary Functions</a></li>
+<li class="chapter" data-level="5.7" data-path="5.7-contingency-table.html"><a href="5.7-contingency-table.html"><i class="fa fa-check"></i><b>5.7</b> Contingency Table</a>
+<ul>
+<li class="chapter" data-level="5.7.1" data-path="5.7-contingency-table.html"><a href="5.7-contingency-table.html#basic-frequency-counting"><i class="fa fa-check"></i><b>5.7.1</b> Basic Frequency Counting</a></li>
+<li class="chapter" data-level="5.7.2" data-path="5.7-contingency-table.html"><a href="5.7-contingency-table.html#creating-contingency-tables"><i class="fa fa-check"></i><b>5.7.2</b> Creating Contingency Tables</a></li>
+<li class="chapter" data-level="5.7.3" data-path="5.7-contingency-table.html"><a href="5.7-contingency-table.html#working-with-arrays-and-multi-dimensional-tables"><i class="fa fa-check"></i><b>5.7.3</b> Working with Arrays and Multi-dimensional Tables</a></li>
+<li class="chapter" data-level="5.7.4" data-path="5.7-contingency-table.html"><a href="5.7-contingency-table.html#flattening-and-exporting-tables"><i class="fa fa-check"></i><b>5.7.4</b> Flattening and Exporting Tables</a></li>
+<li class="chapter" data-level="5.7.5" data-path="5.7-contingency-table.html"><a href="5.7-contingency-table.html#table-visualization-and-formatting"><i class="fa fa-check"></i><b>5.7.5</b> Table Visualization and Formatting</a></li>
+</ul></li>
+<li class="chapter" data-level="5.8" data-path="5.8-data-frame-operations.html"><a href="5.8-data-frame-operations.html"><i class="fa fa-check"></i><b>5.8</b> Data Frame Operations</a>
+<ul>
+<li class="chapter" data-level="" data-path="5.8-data-frame-operations.html"><a href="5.8-data-frame-operations.html#columnrow-wise-operations"><i class="fa fa-check"></i>Column/Row-wise Operations</a></li>
+<li class="chapter" data-level="5.8.1" data-path="5.8-data-frame-operations.html"><a href="5.8-data-frame-operations.html#process-na-values"><i class="fa fa-check"></i><b>5.8.1</b> <span style="color:#008B45"><strong>Process <code>NA</code> values</strong></span></a></li>
+</ul></li>
+<li class="chapter" data-level="5.9" data-path="5.9-matrix-multiplication.html"><a href="5.9-matrix-multiplication.html"><i class="fa fa-check"></i><b>5.9</b> Matrix multiplication</a></li>
+<li class="chapter" data-level="5.10" data-path="5.10-string-operations.html"><a href="5.10-string-operations.html"><i class="fa fa-check"></i><b>5.10</b> String Operations</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="6-tidyverse.html"><a href="6-tidyverse.html"><i class="fa fa-check"></i><b>6</b> Tidyverse</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="6.1-basic-operations-on-tibbles.html"><a href="6.1-basic-operations-on-tibbles.html"><i class="fa fa-check"></i><b>6.1</b> Basic operations on tibbles</a>
+<ul>
+<li class="chapter" data-level="6.1.1" data-path="6.1-basic-operations-on-tibbles.html"><a href="6.1-basic-operations-on-tibbles.html#check-unique-values"><i class="fa fa-check"></i><b>6.1.1</b> Check Unique Values</a></li>
+<li class="chapter" data-level="6.1.2" data-path="6.1-basic-operations-on-tibbles.html"><a href="6.1-basic-operations-on-tibbles.html#column-names"><i class="fa fa-check"></i><b>6.1.2</b> Column Names</a></li>
+<li class="chapter" data-level="6.1.3" data-path="6.1-basic-operations-on-tibbles.html"><a href="6.1-basic-operations-on-tibbles.html#column-operations"><i class="fa fa-check"></i><b>6.1.3</b> Column Operations</a></li>
+<li class="chapter" data-level="6.1.4" data-path="6.1-basic-operations-on-tibbles.html"><a href="6.1-basic-operations-on-tibbles.html#mutate"><i class="fa fa-check"></i><b>6.1.4</b> <code>mutate</code></a></li>
+<li class="chapter" data-level="6.1.5" data-path="6.1-basic-operations-on-tibbles.html"><a href="6.1-basic-operations-on-tibbles.html#concatenate-rows-into-a-tibble"><i class="fa fa-check"></i><b>6.1.5</b> Concatenate rows into a <code>tibble</code></a></li>
+<li class="chapter" data-level="6.1.6" data-path="6.1-basic-operations-on-tibbles.html"><a href="6.1-basic-operations-on-tibbles.html#data-subsetting-1"><i class="fa fa-check"></i><b>6.1.6</b> Data Subsetting</a></li>
+<li class="chapter" data-level="6.1.7" data-path="6.1-basic-operations-on-tibbles.html"><a href="6.1-basic-operations-on-tibbles.html#dynamic-selection"><i class="fa fa-check"></i><b>6.1.7</b> Dynamic Selection</a></li>
+<li class="chapter" data-level="6.1.8" data-path="6.1-basic-operations-on-tibbles.html"><a href="6.1-basic-operations-on-tibbles.html#merge"><i class="fa fa-check"></i><b>6.1.8</b> Merge</a></li>
+</ul></li>
+<li class="chapter" data-level="6.2" data-path="6.2-pipe-operator.html"><a href="6.2-pipe-operator.html"><i class="fa fa-check"></i><b>6.2</b> Pipe Operator</a>
+<ul>
+<li class="chapter" data-level="6.2.1" data-path="6.2-pipe-operator.html"><a href="6.2-pipe-operator.html#native-pipe"><i class="fa fa-check"></i><b>6.2.1</b> Native Pipe <code>|&gt;</code></a></li>
+</ul></li>
+<li class="chapter" data-level="6.3" data-path="6.3-categorical-variables.html"><a href="6.3-categorical-variables.html"><i class="fa fa-check"></i><b>6.3</b> Categorical Variables</a>
+<ul>
+<li class="chapter" data-level="6.3.1" data-path="6.3-categorical-variables.html"><a href="6.3-categorical-variables.html#manipulate-string-columns"><i class="fa fa-check"></i><b>6.3.1</b> Manipulate String Columns</a></li>
+<li class="chapter" data-level="6.3.2" data-path="6.3-categorical-variables.html"><a href="6.3-categorical-variables.html#factors"><i class="fa fa-check"></i><b>6.3.2</b> Factors</a></li>
+</ul></li>
+<li class="chapter" data-level="6.4" data-path="6.4-group-and-apply-functions.html"><a href="6.4-group-and-apply-functions.html"><i class="fa fa-check"></i><b>6.4</b> Group and Apply Functions</a>
+<ul>
+<li class="chapter" data-level="6.4.1" data-path="6.4-group-and-apply-functions.html"><a href="6.4-group-and-apply-functions.html#group_by"><i class="fa fa-check"></i><b>6.4.1</b> <code>group_by()</code></a></li>
+<li class="chapter" data-level="6.4.2" data-path="6.4-group-and-apply-functions.html"><a href="6.4-group-and-apply-functions.html#subset-rows"><i class="fa fa-check"></i><b>6.4.2</b> Subset rows</a></li>
+<li class="chapter" data-level="6.4.3" data-path="6.4-group-and-apply-functions.html"><a href="6.4-group-and-apply-functions.html#summarize"><i class="fa fa-check"></i><b>6.4.3</b> Summarize</a></li>
+<li class="chapter" data-level="6.4.4" data-path="6.4-group-and-apply-functions.html"><a href="6.4-group-and-apply-functions.html#split-apply-combine"><i class="fa fa-check"></i><b>6.4.4</b> split-apply-combine</a></li>
+<li class="chapter" data-level="6.4.5" data-path="6.4-group-and-apply-functions.html"><a href="6.4-group-and-apply-functions.html#dplyrgroup_modify"><i class="fa fa-check"></i><b>6.4.5</b> <code>dplyr::group_modify()</code></a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="7-graphics.html"><a href="7-graphics.html"><i class="fa fa-check"></i><b>7</b> Graphics</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="7.1-goodlooking-colors.html"><a href="7.1-goodlooking-colors.html"><i class="fa fa-check"></i><b>7.1</b> Goodlooking Colors</a>
+<ul>
+<li class="chapter" data-level="7.1.1" data-path="7.1-goodlooking-colors.html"><a href="7.1-goodlooking-colors.html#rcolorbrewer"><i class="fa fa-check"></i><b>7.1.1</b> RColorBrewer</a></li>
+<li class="chapter" data-level="7.1.2" data-path="7.1-goodlooking-colors.html"><a href="7.1-goodlooking-colors.html#grey-scale"><i class="fa fa-check"></i><b>7.1.2</b> Grey Scale</a></li>
+<li class="chapter" data-level="7.1.3" data-path="7.1-goodlooking-colors.html"><a href="7.1-goodlooking-colors.html#ggsci"><i class="fa fa-check"></i><b>7.1.3</b> <code>ggsci</code></a></li>
+<li class="chapter" data-level="7.1.4" data-path="7.1-goodlooking-colors.html"><a href="7.1-goodlooking-colors.html#generate-color-palettes"><i class="fa fa-check"></i><b>7.1.4</b> <strong>Generate Color Palettes</strong></a></li>
+</ul></li>
+<li class="chapter" data-level="7.2" data-path="7.2-math-expression-in-figures.html"><a href="7.2-math-expression-in-figures.html"><i class="fa fa-check"></i><b>7.2</b> Math Expression in Figures</a></li>
+<li class="chapter" data-level="7.3" data-path="7.3-ggplot.html"><a href="7.3-ggplot.html"><i class="fa fa-check"></i><b>7.3</b> ggplot</a>
+<ul>
+<li class="chapter" data-level="7.3.1" data-path="7.3-ggplot.html"><a href="7.3-ggplot.html#dual-y-axis-plot"><i class="fa fa-check"></i><b>7.3.1</b> <strong>Dual y-axis plot</strong></a></li>
+<li class="chapter" data-level="7.3.2" data-path="7.3-ggplot.html"><a href="7.3-ggplot.html#aes"><i class="fa fa-check"></i><b>7.3.2</b> <code>aes()</code></a></li>
+<li class="chapter" data-level="7.3.3" data-path="7.3-ggplot.html"><a href="7.3-ggplot.html#add-regression-line"><i class="fa fa-check"></i><b>7.3.3</b> Add regression line</a></li>
+<li class="chapter" data-level="7.3.4" data-path="7.3-ggplot.html"><a href="7.3-ggplot.html#subplots"><i class="fa fa-check"></i><b>7.3.4</b> Subplots</a></li>
+<li class="chapter" data-level="7.3.5" data-path="7.3-ggplot.html"><a href="7.3-ggplot.html#parameters"><i class="fa fa-check"></i><b>7.3.5</b> Parameters</a></li>
+<li class="chapter" data-level="7.3.6" data-path="7.3-ggplot.html"><a href="7.3-ggplot.html#guides-together-with-guide_legend"><i class="fa fa-check"></i><b>7.3.6</b> <code>guides()</code>, together with <code>guide_legend()</code></a></li>
+<li class="chapter" data-level="7.3.7" data-path="7.3-ggplot.html"><a href="7.3-ggplot.html#ggplot-template-for-multi-series"><i class="fa fa-check"></i><b>7.3.7</b> <code>ggplot</code> template for multi-series</a></li>
+<li class="chapter" data-level="7.3.8" data-path="7.3-ggplot.html"><a href="7.3-ggplot.html#grid.gedit"><i class="fa fa-check"></i><b>7.3.8</b> <code>grid.gedit()</code></a></li>
+<li class="chapter" data-level="7.3.9" data-path="7.3-ggplot.html"><a href="7.3-ggplot.html#control-graphics-devices"><i class="fa fa-check"></i><b>7.3.9</b> <strong>Control Graphics Devices</strong></a></li>
+</ul></li>
+<li class="chapter" data-level="7.4" data-path="7.4-plot-raster-data.html"><a href="7.4-plot-raster-data.html"><i class="fa fa-check"></i><b>7.4</b> plot <code>Raster</code> data</a>
+<ul>
+<li class="chapter" data-level="7.4.1" data-path="7.4-plot-raster-data.html"><a href="7.4-plot-raster-data.html#add-patterns-to-shapes"><i class="fa fa-check"></i><b>7.4.1</b> Add Patterns to Shapes</a></li>
+</ul></li>
+<li class="chapter" data-level="7.5" data-path="7.5-histogram.html"><a href="7.5-histogram.html"><i class="fa fa-check"></i><b>7.5</b> Histogram</a></li>
+<li class="chapter" data-level="7.6" data-path="7.6-qq-plot.html"><a href="7.6-qq-plot.html"><i class="fa fa-check"></i><b>7.6</b> QQ-plot</a></li>
+<li class="chapter" data-level="7.7" data-path="7.7-heatmap.html"><a href="7.7-heatmap.html"><i class="fa fa-check"></i><b>7.7</b> Heatmap</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="8-time-series.html"><a href="8-time-series.html"><i class="fa fa-check"></i><b>8</b> Time Series</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="8.1-date.html"><a href="8.1-date.html"><i class="fa fa-check"></i><b>8.1</b> Date</a></li>
+<li class="chapter" data-level="8.2" data-path="8.2-process-data.html"><a href="8.2-process-data.html"><i class="fa fa-check"></i><b>8.2</b> Process Data</a>
+<ul>
+<li class="chapter" data-level="8.2.1" data-path="8.2-process-data.html"><a href="8.2-process-data.html#tidyquant"><i class="fa fa-check"></i><b>8.2.1</b> <code>tidyquant</code></a></li>
+<li class="chapter" data-level="8.2.2" data-path="8.2-process-data.html"><a href="8.2-process-data.html#from-tibble-to-xts"><i class="fa fa-check"></i><b>8.2.2</b> From tibble to <code>xts</code></a></li>
+</ul></li>
+<li class="chapter" data-level="8.3" data-path="8.3-portfolio-return.html"><a href="8.3-portfolio-return.html"><i class="fa fa-check"></i><b>8.3</b> Portfolio Return</a></li>
+<li class="chapter" data-level="8.4" data-path="8.4-plot-ts.html"><a href="8.4-plot-ts.html"><i class="fa fa-check"></i><b>8.4</b> Plot TS</a>
+<ul>
+<li class="chapter" data-level="8.4.1" data-path="8.4-plot-ts.html"><a href="8.4-plot-ts.html#plot.xts"><i class="fa fa-check"></i><b>8.4.1</b> <code>plot.xts</code></a></li>
+<li class="chapter" data-level="8.4.2" data-path="8.4-plot-ts.html"><a href="8.4-plot-ts.html#autoplot"><i class="fa fa-check"></i><b>8.4.2</b> <code>autoplot</code></a></li>
+</ul></li>
+<li class="chapter" data-level="8.5" data-path="8.5-time-series-regression.html"><a href="8.5-time-series-regression.html"><i class="fa fa-check"></i><b>8.5</b> Time Series Regression</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="9-regression.html"><a href="9-regression.html"><i class="fa fa-check"></i><b>9</b> Regression</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="9.1-ols.html"><a href="9.1-ols.html"><i class="fa fa-check"></i><b>9.1</b> OLS</a>
+<ul>
+<li class="chapter" data-level="9.1.1" data-path="9.1-ols.html"><a href="9.1-ols.html#get-the-coef-estimates"><i class="fa fa-check"></i><b>9.1.1</b> Get the coef estimates</a></li>
+<li class="chapter" data-level="9.1.2" data-path="9.1-ols.html"><a href="9.1-ols.html#covariance-matrix"><i class="fa fa-check"></i><b>9.1.2</b> Covariance Matrix</a></li>
+<li class="chapter" data-level="9.1.3" data-path="9.1-ols.html"><a href="9.1-ols.html#model-performance"><i class="fa fa-check"></i><b>9.1.3</b> Model performance</a></li>
+<li class="chapter" data-level="9.1.4" data-path="9.1-ols.html"><a href="9.1-ols.html#model-summary"><i class="fa fa-check"></i><b>9.1.4</b> Model Summary</a></li>
+<li class="chapter" data-level="9.1.5" data-path="9.1-ols.html"><a href="9.1-ols.html#dummy-variable"><i class="fa fa-check"></i><b>9.1.5</b> Dummy variable</a></li>
+</ul></li>
+<li class="chapter" data-level="9.2" data-path="9.2-panel.html"><a href="9.2-panel.html"><i class="fa fa-check"></i><b>9.2</b> Panel</a>
+<ul>
+<li class="chapter" data-level="9.2.1" data-path="9.2-panel.html"><a href="9.2-panel.html#dynamic-panel"><i class="fa fa-check"></i><b>9.2.1</b> Dynamic Panel</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="10-machine-learning.html"><a href="10-machine-learning.html"><i class="fa fa-check"></i><b>10</b> Machine Learning</a>
+<ul>
+<li class="chapter" data-level="10.1" data-path="10.1-imbalanced-datasets.html"><a href="10.1-imbalanced-datasets.html"><i class="fa fa-check"></i><b>10.1</b> Imbalanced datasets</a>
+<ul>
+<li class="chapter" data-level="10.1.1" data-path="10.1-imbalanced-datasets.html"><a href="10.1-imbalanced-datasets.html#downsampling-and-upweighting"><i class="fa fa-check"></i><b>10.1.1</b> Downsampling and Upweighting</a></li>
+</ul></li>
+<li class="chapter" data-level="10.2" data-path="10.2-random-forest.html"><a href="10.2-random-forest.html"><i class="fa fa-check"></i><b>10.2</b> Random Forest</a>
+<ul>
+<li class="chapter" data-level="" data-path="10.2-random-forest.html"><a href="10.2-random-forest.html#implementation-in-r"><i class="fa fa-check"></i>Implementation in R</a></li>
+<li class="chapter" data-level="" data-path="10.2-random-forest.html"><a href="10.2-random-forest.html#imbalance-classification"><i class="fa fa-check"></i>Imbalance Classification</a></li>
+</ul></li>
+<li class="chapter" data-level="10.3" data-path="10.3-neural-network.html"><a href="10.3-neural-network.html"><i class="fa fa-check"></i><b>10.3</b> Neural Network</a></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="11-stata.html"><a href="11-stata.html"><i class="fa fa-check"></i><b>11</b> Stata</a>
+<ul>
+<li class="chapter" data-level="11.1" data-path="11.1-basic-syntax.html"><a href="11.1-basic-syntax.html"><i class="fa fa-check"></i><b>11.1</b> Basic syntax</a>
+<ul>
+<li class="chapter" data-level="11.1.1" data-path="11.1-basic-syntax.html"><a href="11.1-basic-syntax.html#system-variables"><i class="fa fa-check"></i><b>11.1.1</b> System Variables</a></li>
+<li class="chapter" data-level="11.1.2" data-path="11.1-basic-syntax.html"><a href="11.1-basic-syntax.html#matrix"><i class="fa fa-check"></i><b>11.1.2</b> Matrix</a></li>
+<li class="chapter" data-level="11.1.3" data-path="11.1-basic-syntax.html"><a href="11.1-basic-syntax.html#factor-variables"><i class="fa fa-check"></i><b>11.1.3</b> Factor Variables</a></li>
+<li class="chapter" data-level="11.1.4" data-path="11.1-basic-syntax.html"><a href="11.1-basic-syntax.html#time-series-varlists"><i class="fa fa-check"></i><b>11.1.4</b> Time series varlists</a></li>
+<li class="chapter" data-level="11.1.5" data-path="11.1-basic-syntax.html"><a href="11.1-basic-syntax.html#labels"><i class="fa fa-check"></i><b>11.1.5</b> Labels</a></li>
+</ul></li>
+<li class="chapter" data-level="11.2" data-path="11.2-data-manipulation.html"><a href="11.2-data-manipulation.html"><i class="fa fa-check"></i><b>11.2</b> Data Manipulation</a>
+<ul>
+<li class="chapter" data-level="11.2.1" data-path="11.2-data-manipulation.html"><a href="11.2-data-manipulation.html#import-and-export"><i class="fa fa-check"></i><b>11.2.1</b> Import and Export</a></li>
+<li class="chapter" data-level="11.2.2" data-path="11.2-data-manipulation.html"><a href="11.2-data-manipulation.html#save-estimation-results"><i class="fa fa-check"></i><b>11.2.2</b> Save Estimation Results</a></li>
+<li class="chapter" data-level="11.2.3" data-path="11.2-data-manipulation.html"><a href="11.2-data-manipulation.html#stored-results"><i class="fa fa-check"></i><b>11.2.3</b> Stored Results</a></li>
+</ul></li>
+<li class="chapter" data-level="11.3" data-path="11.3-predict.html"><a href="11.3-predict.html"><i class="fa fa-check"></i><b>11.3</b> Predict</a></li>
+<li class="chapter" data-level="11.4" data-path="11.4-forecast.html"><a href="11.4-forecast.html"><i class="fa fa-check"></i><b>11.4</b> Forecast</a>
+<ul>
+<li class="chapter" data-level="" data-path="11.4-forecast.html"><a href="11.4-forecast.html#add-equationsidentifies"><i class="fa fa-check"></i>Add equations/identifies</a></li>
+<li class="chapter" data-level="" data-path="11.4-forecast.html"><a href="11.4-forecast.html#solve-the-foreceast"><i class="fa fa-check"></i>Solve the foreceast</a></li>
+<li class="chapter" data-level="" data-path="11.4-forecast.html"><a href="11.4-forecast.html#use-example-forecast-a-panel"><i class="fa fa-check"></i>Use example: forecast a panel</a></li>
+</ul></li>
+<li class="chapter" data-level="11.5" data-path="11.5-panel-1.html"><a href="11.5-panel-1.html"><i class="fa fa-check"></i><b>11.5</b> Panel</a></li>
+<li class="chapter" data-level="11.6" data-path="11.6-arellano-bond-estimator.html"><a href="11.6-arellano-bond-estimator.html"><i class="fa fa-check"></i><b>11.6</b> Arellano-Bond Estimator</a>
+<ul>
+<li class="chapter" data-level="11.6.1" data-path="11.6-arellano-bond-estimator.html"><a href="11.6-arellano-bond-estimator.html#xtabond2"><i class="fa fa-check"></i><b>11.6.1</b> xtabond2</a></li>
+</ul></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">R Notes</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<head>
+    <script> 
+        function myFunction(id) {
+          var x = document.getElementById(id); 
+          if (x.style.display === "none") {
+            x.style.display = "block";
+          } else {
+            x.style.display = "none";
+          }
+        }
+    </script>
+</head>
+<div id="ols" class="section level2 hasAnchor" number="9.1">
+<h2><span class="header-section-number">9.1</span> OLS<a href="9.1-ols.html#ols" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>When variable names have spaces, use <code>as.formula("`Avg ret` ~ Beta")</code>.</p>
+<ul>
+<li><p>use <code>+ 0</code> or <code>- 1</code> as part of the formula to suppress the intercept.</p></li>
+<li><p><code>~</code>,<code>+</code>, <code>-</code>, <code>*</code> and <code>^</code> as formula operators have special meanings</p>
+<table>
+<colgroup>
+<col width="4%" />
+<col width="41%" />
+<col width="13%" />
+<col width="41%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Symbol</th>
+<th>Purpose</th>
+<th>Example</th>
+<th>In Words</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>~</code></td>
+<td>separate LHS and RHS of formula</td>
+<td><code>y ~ x</code></td>
+<td>regress <code>y</code> on <code>x</code></td>
+</tr>
+<tr class="even">
+<td><code>+</code></td>
+<td>add variable to a formula</td>
+<td><code>y ~ x + z</code></td>
+<td>regress <code>y</code> on <code>x</code> <em>and</em> <code>z</code></td>
+</tr>
+<tr class="odd">
+<td><code>.</code></td>
+<td>denotes “everything else”</td>
+<td><code>y ~ .</code></td>
+<td>regress <code>y</code> on <em>all other variables</em> in a data frame</td>
+</tr>
+<tr class="even">
+<td><code>-</code></td>
+<td>remove variable from a formula</td>
+<td><code>y ~ . - x</code></td>
+<td>regress <code>y</code> on all other variables <em>except</em> <code>x</code></td>
+</tr>
+<tr class="odd">
+<td><code>1</code></td>
+<td>denotes intercept</td>
+<td><code>y ~ x - 1</code></td>
+<td>regress <code>y</code> on <code>x</code> <em>without an intercept</em></td>
+</tr>
+<tr class="even">
+<td><code>:</code></td>
+<td>construct interaction term</td>
+<td><code>y ~ x + z + x:z</code></td>
+<td>regress <code>y</code> on <code>x</code>, <code>z</code>, and the product <code>x</code> times <code>z</code></td>
+</tr>
+<tr class="odd">
+<td><code>*</code></td>
+<td>factor crossing, shorthand for <span style="color:#008B45">levels</span> plus <span style="color:#008B45">interaction</span></td>
+<td><code>y ~ x * z</code></td>
+<td>regress <code>y</code> on <code>x</code>, <code>z</code>, and the product <code>x</code> times <code>z</code>, equivalent to <code>y ~ x + z + x:z</code></td>
+</tr>
+<tr class="even">
+<td><code>^</code></td>
+<td>higher order interactions</td>
+<td><code>y ~ (x + z + w)^3</code></td>
+<td>regress <code>y</code> on <code>x</code>, <code>z</code>, <code>w</code>, all two-way interactions, and the three-way interactions</td>
+</tr>
+<tr class="odd">
+<td><code>I()</code></td>
+<td>“as-is” - override special meanings of other symbols from this table</td>
+<td><code>y ~ x + I(x^2)</code></td>
+<td>regress <code>y</code> on <code>x</code> and <code>x</code> squared</td>
+</tr>
+</tbody>
+</table>
+<ol style="list-style-type: decimal">
+<li>Fun fact: R’s formula syntax originated in <a href="https://www.jstor.org/stable/2346786">this 1973 paper</a> by Wilkinson and Rogers.<a href="https://www.econometrics.blog/post/the-r-formula-cheatsheet/#fnref1">↩︎</a></li>
+<li>Tabel source: <a href="https://www.econometrics.blog/post/the-r-formula-cheatsheet/">Econometrics.blog</a> by Frank DiTraglia.</li>
+</ol></li>
+<li><p>In function <code>formula</code>, <span style="color:#008B45"><code>I</code></span> is used to <a href="https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/AsIs">inhibit the interpretation of operators</a> such as <code>"+"</code>, <code>"-"</code>, <code>"*"</code> and <code>"^"</code> as formula operators, so they are <span style="color:#008B45">used as arithmetical operators</span>. This is interpreted as a symbol by <code>terms.formula</code>.</p>
+<p>For example, <code>y ~ I(a+b)</code> means <code>y</code> regressed on the sum of <code>a</code> and <code>b</code>, while <code>y ~ a + b</code> means <code>y</code> regressed on <code>a</code> and <code>b</code>.</p></li>
+</ul>
+<p><code>Broom</code> takes in regression models and print nice <code>tibble</code>.</p>
+<p><code>broom:tidy(lm, conf.int = FALSE, conf.level = 0.95, exponentiate = FALSE)</code> Tidy summarizes information about the components of a model.</p>
+<ul>
+<li><code>lm</code> An <code>lm</code> object created by <code>stats::lm()</code>.</li>
+<li><code>conf.int=FALSE</code> Defaults to <code>FALSE</code>. Logical indicating whether or not to include a confidence interval in the tidied output.</li>
+<li><code>conf.level=0.95</code> The confidence level to use for the confidence interval if <code>conf.int = TRUE</code>. Defaults to 0.95, which corresponds to a 95 percent confidence interval.</li>
+<li><code>exponentiate = FALSE</code> Defaults to <code>FALSE</code>. Logical indicating whether or not to exponentiate the the coefficient estimates. This is typical for logistic and multinomial regressions, but a bad idea if there is no log or logit link.</li>
+</ul>
+<div class="sourceCode" id="cb629"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb629-1"><a href="9.1-ols.html#cb629-1" tabindex="-1"></a><span class="co"># a CAPM model example</span></span>
+<span id="cb629-2"><a href="9.1-ols.html#cb629-2" tabindex="-1"></a><span class="sc">&gt;</span> reg_ml <span class="ot">&lt;-</span> <span class="fu">lm</span>(eRi<span class="sc">~</span>rmrf, <span class="at">data =</span> company_data)</span>
+<span id="cb629-3"><a href="9.1-ols.html#cb629-3" tabindex="-1"></a><span class="sc">&gt;</span> reg_ml</span>
+<span id="cb629-4"><a href="9.1-ols.html#cb629-4" tabindex="-1"></a></span>
+<span id="cb629-5"><a href="9.1-ols.html#cb629-5" tabindex="-1"></a>Call<span class="sc">:</span></span>
+<span id="cb629-6"><a href="9.1-ols.html#cb629-6" tabindex="-1"></a><span class="fu">lm</span>(<span class="at">formula =</span> eRi <span class="sc">~</span> rmrf, <span class="at">data =</span> company_data)</span>
+<span id="cb629-7"><a href="9.1-ols.html#cb629-7" tabindex="-1"></a></span>
+<span id="cb629-8"><a href="9.1-ols.html#cb629-8" tabindex="-1"></a>Coefficients<span class="sc">:</span></span>
+<span id="cb629-9"><a href="9.1-ols.html#cb629-9" tabindex="-1"></a>(Intercept)         rmrf  </span>
+<span id="cb629-10"><a href="9.1-ols.html#cb629-10" tabindex="-1"></a>     <span class="fl">0.1139</span>       <span class="fl">0.2804</span>  </span>
+<span id="cb629-11"><a href="9.1-ols.html#cb629-11" tabindex="-1"></a></span>
+<span id="cb629-12"><a href="9.1-ols.html#cb629-12" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">summary</span>(reg_ml)</span>
+<span id="cb629-13"><a href="9.1-ols.html#cb629-13" tabindex="-1"></a></span>
+<span id="cb629-14"><a href="9.1-ols.html#cb629-14" tabindex="-1"></a>Call<span class="sc">:</span></span>
+<span id="cb629-15"><a href="9.1-ols.html#cb629-15" tabindex="-1"></a><span class="fu">lm</span>(<span class="at">formula =</span> eRi <span class="sc">~</span> rmrf, <span class="at">data =</span> company_data)</span>
+<span id="cb629-16"><a href="9.1-ols.html#cb629-16" tabindex="-1"></a></span>
+<span id="cb629-17"><a href="9.1-ols.html#cb629-17" tabindex="-1"></a>Residuals<span class="sc">:</span></span>
+<span id="cb629-18"><a href="9.1-ols.html#cb629-18" tabindex="-1"></a>     Min       <span class="dv">1</span>Q   Median       <span class="dv">3</span>Q      Max </span>
+<span id="cb629-19"><a href="9.1-ols.html#cb629-19" tabindex="-1"></a><span class="sc">-</span><span class="fl">10.1312</span>  <span class="sc">-</span><span class="fl">0.6116</span>   <span class="fl">0.0905</span>   <span class="fl">0.6072</span>   <span class="fl">6.8892</span> </span>
+<span id="cb629-20"><a href="9.1-ols.html#cb629-20" tabindex="-1"></a></span>
+<span id="cb629-21"><a href="9.1-ols.html#cb629-21" tabindex="-1"></a>Coefficients<span class="sc">:</span></span>
+<span id="cb629-22"><a href="9.1-ols.html#cb629-22" tabindex="-1"></a>            Estimate Std. Error t value <span class="fu">Pr</span>(<span class="sc">&gt;</span><span class="er">|</span>t<span class="sc">|</span>)   </span>
+<span id="cb629-23"><a href="9.1-ols.html#cb629-23" tabindex="-1"></a>(Intercept)  <span class="fl">0.11393</span>    <span class="fl">0.07835</span>   <span class="fl">1.454</span>  <span class="fl">0.14720</span>   </span>
+<span id="cb629-24"><a href="9.1-ols.html#cb629-24" tabindex="-1"></a>rmrf         <span class="fl">0.28040</span>    <span class="fl">0.09455</span>   <span class="fl">2.966</span>  <span class="fl">0.00331</span> <span class="sc">**</span></span>
+<span id="cb629-25"><a href="9.1-ols.html#cb629-25" tabindex="-1"></a><span class="sc">---</span></span>
+<span id="cb629-26"><a href="9.1-ols.html#cb629-26" tabindex="-1"></a>Signif. codes<span class="sc">:</span>  <span class="dv">0</span> ‘<span class="sc">**</span><span class="er">*</span>’ <span class="fl">0.001</span> ‘<span class="sc">**</span>’ <span class="fl">0.01</span> ‘<span class="sc">*</span>’ <span class="fl">0.05</span> ‘.’ <span class="fl">0.1</span> ‘ ’ <span class="dv">1</span></span>
+<span id="cb629-27"><a href="9.1-ols.html#cb629-27" tabindex="-1"></a></span>
+<span id="cb629-28"><a href="9.1-ols.html#cb629-28" tabindex="-1"></a>Residual standard error<span class="sc">:</span> <span class="fl">1.233</span> on <span class="dv">249</span> degrees of freedom</span>
+<span id="cb629-29"><a href="9.1-ols.html#cb629-29" tabindex="-1"></a>  (<span class="dv">10</span> observations deleted due to missingness)</span>
+<span id="cb629-30"><a href="9.1-ols.html#cb629-30" tabindex="-1"></a>Multiple R<span class="sc">-</span>squared<span class="sc">:</span>  <span class="fl">0.03412</span>,   Adjusted R<span class="sc">-</span>squared<span class="sc">:</span>  <span class="fl">0.03024</span> </span>
+<span id="cb629-31"><a href="9.1-ols.html#cb629-31" tabindex="-1"></a>F<span class="sc">-</span>statistic<span class="sc">:</span> <span class="fl">8.796</span> on <span class="dv">1</span> and <span class="dv">249</span> DF,  p<span class="sc">-</span>value<span class="sc">:</span> <span class="fl">0.003312</span></span></code></pre></div>
+<div id="get-the-coef-estimates" class="section level3 hasAnchor" number="9.1.1">
+<h3><span class="header-section-number">9.1.1</span> Get the coef estimates<a href="9.1-ols.html#get-the-coef-estimates" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p><code>coef(summary(FF_ml))</code> get a matrix of coefficients estimates, including point estiamtes, SEs, t-values, p-values.</p>
+<ul>
+<li>Equivalently, you can use <code>tidy(FF_ml)</code> to return a <code>tibble</code>, which is easier to manipulate and output.</li>
+</ul>
+<div class="sourceCode" id="cb630"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb630-1"><a href="9.1-ols.html#cb630-1" tabindex="-1"></a><span class="co"># `coef()` returns a vector of coef</span></span>
+<span id="cb630-2"><a href="9.1-ols.html#cb630-2" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">coef</span>(reg_ml)</span>
+<span id="cb630-3"><a href="9.1-ols.html#cb630-3" tabindex="-1"></a>(Intercept)        rmrf </span>
+<span id="cb630-4"><a href="9.1-ols.html#cb630-4" tabindex="-1"></a>  <span class="fl">0.1139251</span>   <span class="fl">0.2804040</span> </span>
+<span id="cb630-5"><a href="9.1-ols.html#cb630-5" tabindex="-1"></a></span>
+<span id="cb630-6"><a href="9.1-ols.html#cb630-6" tabindex="-1"></a><span class="co"># `summary()$coef` returns a matrix, including se, t-stat, and pval</span></span>
+<span id="cb630-7"><a href="9.1-ols.html#cb630-7" tabindex="-1"></a><span class="co"># equivalent to `coef(summary(reg_ml))`</span></span>
+<span id="cb630-8"><a href="9.1-ols.html#cb630-8" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">summary</span>(reg_ml)<span class="sc">$</span>coef</span>
+<span id="cb630-9"><a href="9.1-ols.html#cb630-9" tabindex="-1"></a>             Estimate Std. Error  t value    <span class="fu">Pr</span>(<span class="sc">&gt;</span><span class="er">|</span>t<span class="sc">|</span>)</span>
+<span id="cb630-10"><a href="9.1-ols.html#cb630-10" tabindex="-1"></a>(Intercept) <span class="fl">0.1139251</span>  <span class="fl">0.0783512</span> <span class="fl">1.454031</span> <span class="fl">0.147196897</span></span>
+<span id="cb630-11"><a href="9.1-ols.html#cb630-11" tabindex="-1"></a>rmrf        <span class="fl">0.2804040</span>  <span class="fl">0.0945456</span> <span class="fl">2.965807</span> <span class="fl">0.003312303</span></span>
+<span id="cb630-12"><a href="9.1-ols.html#cb630-12" tabindex="-1"></a></span>
+<span id="cb630-13"><a href="9.1-ols.html#cb630-13" tabindex="-1"></a><span class="co"># `broom::tidy` returns a tibble, the rownames become a column named `term`</span></span>
+<span id="cb630-14"><a href="9.1-ols.html#cb630-14" tabindex="-1"></a><span class="co"># column names are more robust, lowercase and with spaces removed</span></span>
+<span id="cb630-15"><a href="9.1-ols.html#cb630-15" tabindex="-1"></a><span class="sc">&gt;</span> broom<span class="sc">::</span><span class="fu">tidy</span>(reg_ml)</span>
+<span id="cb630-16"><a href="9.1-ols.html#cb630-16" tabindex="-1"></a><span class="co"># A tibble: 2 × 5</span></span>
+<span id="cb630-17"><a href="9.1-ols.html#cb630-17" tabindex="-1"></a>  term        estimate std.error statistic p.value</span>
+<span id="cb630-18"><a href="9.1-ols.html#cb630-18" tabindex="-1"></a>  <span class="sc">&lt;</span>chr<span class="sc">&gt;</span>          <span class="er">&lt;</span>dbl<span class="sc">&gt;</span>     <span class="er">&lt;</span>dbl<span class="sc">&gt;</span>     <span class="er">&lt;</span>dbl<span class="sc">&gt;</span>   <span class="er">&lt;</span>dbl<span class="sc">&gt;</span></span>
+<span id="cb630-19"><a href="9.1-ols.html#cb630-19" tabindex="-1"></a><span class="dv">1</span> (Intercept)    <span class="fl">0.114</span>    <span class="fl">0.0784</span>      <span class="fl">1.45</span> <span class="fl">0.147</span>  </span>
+<span id="cb630-20"><a href="9.1-ols.html#cb630-20" tabindex="-1"></a><span class="dv">2</span> rmrf           <span class="fl">0.280</span>    <span class="fl">0.0945</span>      <span class="fl">2.97</span> <span class="fl">0.00331</span></span></code></pre></div>
+<hr />
+</div>
+<div id="covariance-matrix" class="section level3 hasAnchor" number="9.1.2">
+<h3><span class="header-section-number">9.1.2</span> Covariance Matrix<a href="9.1-ols.html#covariance-matrix" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p><code>lmtest::coeftest(ml, vcov.=NULL)</code> <code>coeftest</code> is a generic function for performing z and (quasi-)t Wald tests of estimated coefficients. <code>coefci</code>computes the corresponding Wald confidence intervals.</p>
+<ul>
+<li><p><code>ml</code> The generic function <code>coeftest</code> currently has a default method (which works in particular for <code>"lm"</code> objects) and dedicated methods for objects of class <code>"glm"</code> (as computed by <code>glm</code>), <code>"mlm"</code> (as computed by <code>lm</code> with multivariate responses), <code>"survreg"</code> (as computed by <code>survreg</code>), and <code>"breakpointsfull"</code> (as computed by <code>breakpoints.formula</code>).</p>
+<p>The default method assumes that a <code>coef</code> methods exists, such that <code>coef(x)</code> yields the estimated coefficients.</p></li>
+<li><p><code>vcov.</code> To specify the corresponding covariance matrix <code>vcov.</code> to be used, there are three possibilities:</p>
+<ul>
+<li>It is pre-computed and supplied in argument <code>vcov.</code></li>
+<li>A function for extracting the covariance matrix from <code>x</code> is supplied, e.g., <code>sandwich</code>, <code>vcovHC</code>, <code>vcovCL</code>, or <code>vcovHAC</code> from package <strong>sandwich</strong>.</li>
+<li><code>vcov.</code> is set to <code>NULL</code>, then it is assumed that a <code>vcov</code> method exists, such that <code>vcov(x)</code> yields a covariance matrix.</li>
+</ul></li>
+</ul>
+<div class="sourceCode" id="cb631"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb631-1"><a href="9.1-ols.html#cb631-1" tabindex="-1"></a><span class="fu">library</span>(lmtest)</span>
+<span id="cb631-2"><a href="9.1-ols.html#cb631-2" tabindex="-1"></a><span class="fu">coeftest</span>(ml.gdp, <span class="fu">vcovHC</span>(ml.gdp, <span class="at">type =</span> <span class="st">&#39;HC0&#39;</span>, <span class="at">cluster =</span> <span class="st">&#39;group&#39;</span>))</span>
+<span id="cb631-3"><a href="9.1-ols.html#cb631-3" tabindex="-1"></a></span>
+<span id="cb631-4"><a href="9.1-ols.html#cb631-4" tabindex="-1"></a></span>
+<span id="cb631-5"><a href="9.1-ols.html#cb631-5" tabindex="-1"></a><span class="fu">vcovHAC</span>(lm_phillips)</span>
+<span id="cb631-6"><a href="9.1-ols.html#cb631-6" tabindex="-1"></a><span class="fu">vcovHC</span>(lm_phillips)</span>
+<span id="cb631-7"><a href="9.1-ols.html#cb631-7" tabindex="-1"></a>lm_phillips <span class="sc">%&gt;%</span> <span class="fu">coeftest</span>(., <span class="at">vcov =</span> <span class="fu">vcovHAC</span>(.))</span>
+<span id="cb631-8"><a href="9.1-ols.html#cb631-8" tabindex="-1"></a>lm_phillips <span class="sc">%&gt;%</span> <span class="fu">coeftest</span>(., <span class="at">vcov =</span> <span class="fu">vcovHC</span>(., <span class="at">type =</span> <span class="st">&#39;HC0&#39;</span>))</span></code></pre></div>
+<p>The “sandwich” is two pieces of bread defined by the expected information enclosing a meat defined by the observed information.</p>
+<p>For a linear regression, the estimating equation is:
+<span class="math display">\[
+U(\beta) = \mathbf{X}^T\left(Y - \mathbf{X}^T\beta\right)
+\]</span>
+The expected information (bread) is:
+<span class="math display">\[
+A = \frac{\partial U(\beta)}{\partial \beta} = -(\mathbf{X}^T\mathbf{X})
+\]</span>
+The observed information (meat) is:
+<span class="math display">\[
+B = E\left[U(\beta)U(\beta)^T\right] = \mathbf{X}^T(Y-\mathbf{X}^T\beta)(Y-\mathbf{X}^T\beta)^T\mathbf{X}
+\]</span>
+Note the inner term is a diagonal of constant residuals when the homoscedasticity, independent data assumption is met, then the sandwich covariance estimator which is given by <span class="math inline">\(A^{-1}BA^{-1}\)</span> is the usual linear regression covariance matrix <span class="math inline">\(\sigma^2(X^TX)^{-1}\)</span> where <span class="math inline">\(\sigma^2\)</span> is the variance of the residuals.</p>
+<p>However, that’s rather strict. You get a considerably broader class of estimators by relaxing the assumptions involved around the 𝑛×𝑛 residual matrix:
+<span class="math display">\[
+R = (Y-\mathbf{X}^T\beta)(Y-\mathbf{X}^T\beta)
+\]</span>
+The “HC0” <code>vcovHC</code> estimator is consistent even when the data are not independent. So I will not say that we “assume” the residuals are independent, but I will say that we use “a working independent covariance structure”. Then the matrix 𝑅 is replaced by a diagonal of the residuals
+<span class="math display">\[
+R_{ii} = (Y_i - \beta \mathbf{X}_{I.})^2, \quad 0\text{ elsewhere}
+\]</span>
+This estimator works really well except under small samples (&lt;40 is often purported). The HC1-3 are various finite sample corrections. HC3 is generally the best performing.</p>
+<p><code>sandwich::vcovHC(x, type=c("HC3", "const", "HC", "HC0", "HC1", "HC2", "HC4", "HC4m", "HC5"), cluster )</code> is a function for estimating a <strong>Heteroscedasticity-robust covariance matrix</strong> of parameters for a fixed effects or random effects panel model according to the <strong>White</strong> method.</p>
+<ul>
+<li><p><code>x</code> a fitted model object of class <code>lm</code>;</p></li>
+<li><p><code>type</code> a character string specifying the estimation type.</p>
+<ul>
+<li><code>const</code> gives the usual estimate of the <strong>homoskedastic</strong> covariance matrix of the coefficient estimates:</li>
+</ul>
+<p><span class="math display">\[
+\begin{align}
+V_{\hat{\beta}}^0 &amp;= \sigma^2 (X&#39;X)^{-1} \\
+\hat{V}_{\hat{\beta}}^0 &amp;= s^2 (X&#39;X)^{-1} \\
+s^2 &amp;= \frac{1}{n-k} \sum^n_{i=1}\hat{e_i}^2
+\end{align}
+\]</span></p>
+<p>​ The estimator <span class="math inline">\(s^2\)</span> is unbiased for <span class="math inline">\(\sigma^2\)</span>, known as the “bias-corrected estimator” for <span class="math inline">\(\sigma^2\)</span>.
+<span class="math display">\[
+E[s^2]=\sigma^2
+\]</span></p>
+<ul>
+<li><p><code>"HC"</code> (or equivalently <code>"HC0"</code>) gives White’s estimator
+<span class="math display">\[
+\begin{align*}
+V_{\hat{\beta}}^{HC0} &amp;= (X&#39;X)^{-1}(X&#39;DX)(X&#39;X)^{-1} \\
+D &amp;= E[ee&#39;|X] \\
+\hat{V}_{\hat{\beta}}^{HC0} &amp;= (X&#39;X)^{-1} \left( \sum^n_{i=1} x_i x_i&#39;\hat{e_i}^2 \right) (X&#39;X)^{-1}
+\end{align*}
+\]</span>
+The label “HC” refers to “heteroskedasticity-consistent.” “HC0” refers to this being the baseline <strong>hetetroskedasticity-consistent</strong> covariance matrix estimator.</p>
+<p>The “HC0” is consistent even when the data are not independent, e.g., in the presence of serially correlated errors.</p></li>
+<li><p><code>HC1</code> uses the unbiased estimator <span class="math inline">\(s^2\)</span>, scaling the moment estimator <span class="math inline">\(\hat{\sigma}^2\)</span> by <span class="math inline">\(n/(n-k)\)</span>.
+<span class="math display">\[
+\hat{V}_{\hat{\beta}}^{HC1} = \left (\frac{n}{n-k} \right) (X&#39;X)^{-1} \left( \sum^n_{i=1} x_i x_i&#39;\hat{e_i}^2 \right) (X&#39;X)^{-1}
+\]</span></p></li>
+<li><p><code>HC2</code> uses the standardized residuals <span class="math inline">\(\bar{e}_i\)</span></p></li>
+<li><p><code>HC3</code> uses the prediction errors <span class="math inline">\(\widetilde{e}_i\)</span></p></li>
+</ul></li>
+<li><p><code>cluster</code> Observations may be clustered by <code>"group"</code> (<code>"time"</code>) to account for serial (cross-sectional) correlation.</p></li>
+</ul>
+<p><code>sandwich::vcovHAC(x)</code> Heteroscedasticity and autocorrelation consistent (HAC) estimation of the covariance matrix of the coefficient estimates in a (generalized) linear regression model <code>x</code>, refer to Newey &amp; West (1987, 1994). There are various methods to estimate the autoregressive effect. The default method is Andrews’ (<code>weights = weightsAndrews</code>).</p>
+<p>For HAC standard errors to be valid, we need to assume that the autocorrelations go to zero as the tiem between observations increases (a condition necessary for stationarity), and we need a large sample, but it is not necessary to make a precise assumption about the autocorrelated error model.</p>
+<p>If you have balanced panel data, HAC estimator is overkill. You should use <code>gee</code> from the <code>gee</code> package instead specifying the covariance structure to <code>AR-1</code> or similar.</p>
+<div class="sourceCode" id="cb632"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb632-1"><a href="9.1-ols.html#cb632-1" tabindex="-1"></a><span class="co"># Naive OLS</span></span>
+<span id="cb632-2"><a href="9.1-ols.html#cb632-2" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">vcov</span>(lm_phillips)</span>
+<span id="cb632-3"><a href="9.1-ols.html#cb632-3" tabindex="-1"></a>            (Intercept)       unemp</span>
+<span id="cb632-4"><a href="9.1-ols.html#cb632-4" tabindex="-1"></a>(Intercept)  <span class="fl">0.54830829</span> <span class="sc">-</span><span class="fl">0.08973175</span></span>
+<span id="cb632-5"><a href="9.1-ols.html#cb632-5" tabindex="-1"></a>unemp       <span class="sc">-</span><span class="fl">0.08973175</span>  <span class="fl">0.01582211</span></span>
+<span id="cb632-6"><a href="9.1-ols.html#cb632-6" tabindex="-1"></a></span>
+<span id="cb632-7"><a href="9.1-ols.html#cb632-7" tabindex="-1"></a><span class="co"># HC estimator</span></span>
+<span id="cb632-8"><a href="9.1-ols.html#cb632-8" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">vcovHC</span>(lm_phillips)</span>
+<span id="cb632-9"><a href="9.1-ols.html#cb632-9" tabindex="-1"></a>            (Intercept)       unemp</span>
+<span id="cb632-10"><a href="9.1-ols.html#cb632-10" tabindex="-1"></a>(Intercept)   <span class="fl">0.9319139</span> <span class="sc">-</span><span class="fl">0.16120691</span></span>
+<span id="cb632-11"><a href="9.1-ols.html#cb632-11" tabindex="-1"></a>unemp        <span class="sc">-</span><span class="fl">0.1612069</span>  <span class="fl">0.02912351</span></span>
+<span id="cb632-12"><a href="9.1-ols.html#cb632-12" tabindex="-1"></a></span>
+<span id="cb632-13"><a href="9.1-ols.html#cb632-13" tabindex="-1"></a><span class="co"># HAC estimator</span></span>
+<span id="cb632-14"><a href="9.1-ols.html#cb632-14" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">vcovHAC</span>(lm_phillips)</span>
+<span id="cb632-15"><a href="9.1-ols.html#cb632-15" tabindex="-1"></a>            (Intercept)        unemp</span>
+<span id="cb632-16"><a href="9.1-ols.html#cb632-16" tabindex="-1"></a>(Intercept)  <span class="fl">0.23561076</span> <span class="sc">-</span><span class="fl">0.039847043</span></span>
+<span id="cb632-17"><a href="9.1-ols.html#cb632-17" tabindex="-1"></a>unemp       <span class="sc">-</span><span class="fl">0.03984704</span>  <span class="fl">0.006986272</span></span></code></pre></div>
+<blockquote>
+<p><code>vcovHAC</code> tends to generate very small variance and <a href="https://stats.stackexchange.com/questions/15608/vcovhc-vcovhac-neweywest-which-function-to-use">make all coefficient significant</a>. Be aware of that.</p>
+</blockquote>
+<p>To get a feel for how HAC standard errors are found, consider the simple regression model <span class="math inline">\(y_{t}=\beta_{1}+\beta_{2}x_{t}+e_{t}\)</span>. The variance of the least squares estimator <span class="math inline">\(b_2\)</span> can be written as
+<span class="math display">\[
+\begin{aligned}
+  \text{var}(b_{2}) &amp; = \sum_{t}{w_{t}^{2}\text{var}(e_{t})} + \sum_{t \neq s}{\sum{w_{t}w_{s}\text{cov}(e_{t}, e_{s})}} \\
+                    &amp; =  \sum_{t}{w_{t}^{2}\text{var}(e_{t})} \Bigg[1+\frac{\sum_{t \neq s}{\sum{w_{t}w_{s}\text{cov}(e_{t}, e_{s})}}}{\sum_{t}{w_{t}^{2}\text{var}(e_{t})}}\Bigg]
+\end{aligned}
+\]</span>
+where <span class="math inline">\(w_{t}=(x_{t}-\bar{x})/\sum_{t}{(x_{t}-x_{t-1})^{2}}\)</span>.</p>
+<p>When the errors are not correlated, <span class="math inline">\(\text{cov}(e_{t},e_{t-1})=0\)</span>, and the term in the square brackets is equal to one. The resulting expression <span class="math inline">\(\text{var}(b_{2})=\sum_{t}{w_{t}^{2}}\text{var}(e_{t})\)</span>, is the on used to find HC standard errors. If we denote the quantity in the square brackets in the above equation as <span class="math inline">\(g\)</span> and denote its estimate as <span class="math inline">\(\hat{g}\)</span>, then the relationship between the two estimated variances is
+<span class="math display">\[
+\begin{aligned}
+  \widehat{\text{Var}}_{HAC}(b_{2}) = \widehat{\text{Var}}_{HC}(b_{2}) \times \hat{g}
+\end{aligned}
+\]</span>
+The HAC variance estimate is equal to the HC variance estimate multiplied by an extra term that depends on the serial correlation in errors.</p>
+<p>All these calculations depends on the fact that <span class="math inline">\(x_te_t\)</span> are stationary variables, where <span class="math inline">\(x_t\)</span> are the regressors and <span class="math inline">\(e_t\)</span> are the disturbances. Stationarity is a bit restrictive property, so check whether it holds.</p>
+<p><strong>References</strong>:</p>
+<ul>
+<li><p><code>vcovHC</code> vs <code>vcovHAC</code>: <a href="https://stats.stackexchange.com/a/319922" class="uri">https://stats.stackexchange.com/a/319922</a></p></li>
+<li><p>Andrews DWK (1991). “Heteroskedasticity and Autocorrelation Consistent Covariance Matrix Estimation.” <em>Econometrica</em>, <strong>59</strong>, 817–858.</p></li>
+<li><p>Newey WK &amp; West KD (1987). “A Simple, Positive Semi-Definite, Heteroskedasticity and Autocorrelation Consistent Covariance Matrix.” <em>Econometrica</em>, <strong>55</strong>, 703–708.</p></li>
+<li><p>Newey WK &amp; West KD (1994). “Automatic Lag Selection in Covariance Matrix Estimation.” <em>Review of Economic Studies</em>, <strong>61</strong>, 631–653.</p></li>
+<li><p>Zeileis A (2004). “Econometric Computing with HC and HAC Covariance Matrix Estimators.” <em>Journal of Statistical Software</em>, <strong>11</strong>(10), 1–17.</p></li>
+</ul>
+<hr />
+</div>
+<div id="model-performance" class="section level3 hasAnchor" number="9.1.3">
+<h3><span class="header-section-number">9.1.3</span> Model performance<a href="9.1-ols.html#model-performance" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p><code>broom::glance(lmfit)</code> Several measures of <span style="color:#008B45"><strong>model accuracy</strong></span> are computed for the entire regression, such as <span class="math inline">\(R^2\)</span> and the F-statistic.</p>
+<div class="sourceCode" id="cb633"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb633-1"><a href="9.1-ols.html#cb633-1" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">library</span>(broom)</span>
+<span id="cb633-2"><a href="9.1-ols.html#cb633-2" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">glance</span>(reg_ml)</span>
+<span id="cb633-3"><a href="9.1-ols.html#cb633-3" tabindex="-1"></a><span class="co"># A tibble: 1 × 12</span></span>
+<span id="cb633-4"><a href="9.1-ols.html#cb633-4" tabindex="-1"></a>  r.squared adj.r.squared sigma statistic p.value    df logLik   AIC   BIC deviance</span>
+<span id="cb633-5"><a href="9.1-ols.html#cb633-5" tabindex="-1"></a>      <span class="sc">&lt;</span>dbl<span class="sc">&gt;</span>         <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span>     <span class="er">&lt;</span>dbl<span class="sc">&gt;</span>   <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span>  <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span>    <span class="er">&lt;</span>dbl<span class="sc">&gt;</span></span>
+<span id="cb633-6"><a href="9.1-ols.html#cb633-6" tabindex="-1"></a><span class="dv">1</span>    <span class="fl">0.0341</span>        <span class="fl">0.0302</span>  <span class="fl">1.23</span>      <span class="fl">8.80</span> <span class="fl">0.00331</span>     <span class="dv">1</span>  <span class="sc">-</span><span class="fl">408.</span>  <span class="fl">821.</span>  <span class="fl">832.</span>     <span class="fl">378.</span></span>
+<span id="cb633-7"><a href="9.1-ols.html#cb633-7" tabindex="-1"></a>  df.residual  nobs</span>
+<span id="cb633-8"><a href="9.1-ols.html#cb633-8" tabindex="-1"></a>        <span class="sc">&lt;</span>int<span class="sc">&gt;</span> <span class="er">&lt;</span>int<span class="sc">&gt;</span></span>
+<span id="cb633-9"><a href="9.1-ols.html#cb633-9" tabindex="-1"></a><span class="dv">1</span>         <span class="dv">249</span>   <span class="dv">251</span></span></code></pre></div>
+<p>Augment data with <strong>fitted predictions and residuals</strong></p>
+<p><code>augment(lmfit)</code> print <span style="color:#008B45"><strong>fitted values and residuals</strong></span> for each of the original points in the regression.</p>
+<div class="sourceCode" id="cb634"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb634-1"><a href="9.1-ols.html#cb634-1" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">augment</span>(reg_ml)</span>
+<span id="cb634-2"><a href="9.1-ols.html#cb634-2" tabindex="-1"></a><span class="co"># A tibble: 251 × 9</span></span>
+<span id="cb634-3"><a href="9.1-ols.html#cb634-3" tabindex="-1"></a>   .rownames     eRi  rmrf .fitted .resid    .hat .sigma   .cooksd .std.resid</span>
+<span id="cb634-4"><a href="9.1-ols.html#cb634-4" tabindex="-1"></a>   <span class="sc">&lt;</span>chr<span class="sc">&gt;</span>       <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span>   <span class="er">&lt;</span>dbl<span class="sc">&gt;</span>  <span class="er">&lt;</span>dbl<span class="sc">&gt;</span>   <span class="er">&lt;</span>dbl<span class="sc">&gt;</span>  <span class="er">&lt;</span>dbl<span class="sc">&gt;</span>     <span class="er">&lt;</span>dbl<span class="sc">&gt;</span>      <span class="er">&lt;</span>dbl<span class="sc">&gt;</span></span>
+<span id="cb634-5"><a href="9.1-ols.html#cb634-5" tabindex="-1"></a> <span class="dv">1</span> <span class="dv">1</span>          <span class="fl">0.739</span>   <span class="fl">0.59</span>  <span class="fl">0.279</span>   <span class="fl">0.460</span> <span class="fl">0.00541</span>   <span class="fl">1.23</span> <span class="fl">0.000381</span>       <span class="fl">0.374</span></span>
+<span id="cb634-6"><a href="9.1-ols.html#cb634-6" tabindex="-1"></a> <span class="dv">2</span> <span class="dv">2</span>          <span class="fl">0.785</span>   <span class="fl">0.61</span>  <span class="fl">0.285</span>   <span class="fl">0.500</span> <span class="fl">0.00553</span>   <span class="fl">1.23</span> <span class="fl">0.000459</span>       <span class="fl">0.407</span></span>
+<span id="cb634-7"><a href="9.1-ols.html#cb634-7" tabindex="-1"></a> <span class="dv">3</span> <span class="dv">3</span>          <span class="fl">1.22</span>    <span class="fl">0.32</span>  <span class="fl">0.204</span>   <span class="fl">1.02</span>  <span class="fl">0.00427</span>   <span class="fl">1.23</span> <span class="fl">0.00147</span>        <span class="fl">0.828</span></span>
+<span id="cb634-8"><a href="9.1-ols.html#cb634-8" tabindex="-1"></a> <span class="dv">4</span> <span class="dv">4</span>          <span class="fl">0.0542</span> <span class="sc">-</span><span class="fl">0.81</span> <span class="sc">-</span><span class="fl">0.113</span>   <span class="fl">0.167</span> <span class="fl">0.00883</span>   <span class="fl">1.24</span> <span class="fl">0.0000829</span>      <span class="fl">0.136</span></span>
+<span id="cb634-9"><a href="9.1-ols.html#cb634-9" tabindex="-1"></a> <span class="dv">5</span> <span class="dv">5</span>          <span class="fl">0.467</span>  <span class="sc">-</span><span class="fl">0.59</span> <span class="sc">-</span><span class="fl">0.0515</span>  <span class="fl">0.519</span> <span class="fl">0.00677</span>   <span class="fl">1.23</span> <span class="fl">0.000608</span>       <span class="fl">0.422</span></span>
+<span id="cb634-10"><a href="9.1-ols.html#cb634-10" tabindex="-1"></a> <span class="dv">6</span> <span class="dv">6</span>          <span class="fl">1.03</span>    <span class="fl">1.14</span>  <span class="fl">0.434</span>   <span class="fl">0.592</span> <span class="fl">0.0104</span>    <span class="fl">1.23</span> <span class="fl">0.00122</span>        <span class="fl">0.483</span></span>
+<span id="cb634-11"><a href="9.1-ols.html#cb634-11" tabindex="-1"></a> <span class="dv">7</span> <span class="dv">7</span>          <span class="fl">0.361</span>   <span class="fl">0.09</span>  <span class="fl">0.139</span>   <span class="fl">0.222</span> <span class="fl">0.00398</span>   <span class="fl">1.24</span> <span class="fl">0.0000652</span>      <span class="fl">0.181</span></span>
+<span id="cb634-12"><a href="9.1-ols.html#cb634-12" tabindex="-1"></a> <span class="dv">8</span> <span class="dv">8</span>         <span class="sc">-</span><span class="fl">1.31</span>   <span class="sc">-</span><span class="fl">1.47</span> <span class="sc">-</span><span class="fl">0.298</span>  <span class="sc">-</span><span class="fl">1.01</span>  <span class="fl">0.0184</span>    <span class="fl">1.23</span> <span class="fl">0.00646</span>       <span class="sc">-</span><span class="fl">0.829</span></span>
+<span id="cb634-13"><a href="9.1-ols.html#cb634-13" tabindex="-1"></a> <span class="dv">9</span> <span class="dv">9</span>         <span class="sc">-</span><span class="fl">1.02</span>   <span class="sc">-</span><span class="fl">0.92</span> <span class="sc">-</span><span class="fl">0.144</span>  <span class="sc">-</span><span class="fl">0.873</span> <span class="fl">0.0101</span>    <span class="fl">1.23</span> <span class="fl">0.00258</span>       <span class="sc">-</span><span class="fl">0.712</span></span>
+<span id="cb634-14"><a href="9.1-ols.html#cb634-14" tabindex="-1"></a><span class="dv">10</span> <span class="dv">10</span>        <span class="sc">-</span><span class="fl">2.50</span>   <span class="sc">-</span><span class="fl">1.32</span> <span class="sc">-</span><span class="fl">0.256</span>  <span class="sc">-</span><span class="fl">2.24</span>  <span class="fl">0.0158</span>    <span class="fl">1.23</span> <span class="fl">0.0270</span>        <span class="sc">-</span><span class="fl">1.83</span> </span>
+<span id="cb634-15"><a href="9.1-ols.html#cb634-15" tabindex="-1"></a><span class="co"># ℹ 241 more rows</span></span>
+<span id="cb634-16"><a href="9.1-ols.html#cb634-16" tabindex="-1"></a><span class="co"># ℹ Use `print(n = ...)` to see more rows</span></span></code></pre></div>
+<p><code>plot.lm(x, which=c(1,2,3,5))</code> <a href="https://stat.ethz.ch/R-manual/R-devel/library/stats/html/plot.lm.html" class="uri">https://stat.ethz.ch/R-manual/R-devel/library/stats/html/plot.lm.html</a></p>
+<ul>
+<li><code>which</code> refers to which plots you want to show.
+<ol style="list-style-type: decimal">
+<li>“Residuals vs Fitted” plot</li>
+<li>“Residual Q-Q” plot</li>
+<li>“Scale-Location” plot</li>
+<li>“Cook’s distance” plot</li>
+<li>“Residuals vs Leverage” plot</li>
+<li>“Cook’s dist vs Lev./(1-Lev.)” plot</li>
+</ol></li>
+</ul>
+<hr />
+</div>
+<div id="model-summary" class="section level3 hasAnchor" number="9.1.4">
+<h3><span class="header-section-number">9.1.4</span> Model Summary<a href="9.1-ols.html#model-summary" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p><code>library(modelsummary)</code> supports saving a table directly to file, raw output in console. Different formats are supported: html, tex, markdown, png.</p>
+<p>By default, <code>modelsummary</code> prints the coefficient’s standard error in parentheses below the corresponding estimate. The value of this uncertainty statistic is determined by the <code>statistic</code>argument. The <code>statistic</code> argument accepts any of the column names produced by <code>get_estimates(model)</code>.</p>
+<div class="sourceCode" id="cb635"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb635-1"><a href="9.1-ols.html#cb635-1" tabindex="-1"></a><span class="fu">modelsummary</span>(models, <span class="at">statistic =</span> <span class="st">&#39;std.error&#39;</span>) <span class="co"># default: SE</span></span>
+<span id="cb635-2"><a href="9.1-ols.html#cb635-2" tabindex="-1"></a><span class="fu">modelsummary</span>(models, <span class="at">statistic =</span> <span class="st">&#39;conf.int&#39;</span>)  <span class="co"># CI</span></span>
+<span id="cb635-3"><a href="9.1-ols.html#cb635-3" tabindex="-1"></a><span class="fu">modelsummary</span>(models, <span class="at">statistic =</span> <span class="st">&#39;statistic&#39;</span>) <span class="co"># t stat</span></span></code></pre></div>
+<p>Several statistics under the coefficients.</p>
+<div class="sourceCode" id="cb636"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb636-1"><a href="9.1-ols.html#cb636-1" tabindex="-1"></a><span class="fu">modelsummary</span>(models, <span class="at">gof_omit =</span> <span class="st">&quot;.*&quot;</span>,</span>
+<span id="cb636-2"><a href="9.1-ols.html#cb636-2" tabindex="-1"></a>             <span class="at">statistic =</span> <span class="fu">c</span>(<span class="st">&quot;conf.int&quot;</span>,</span>
+<span id="cb636-3"><a href="9.1-ols.html#cb636-3" tabindex="-1"></a>                           <span class="st">&quot;s.e. = {std.error}&quot;</span>, </span>
+<span id="cb636-4"><a href="9.1-ols.html#cb636-4" tabindex="-1"></a>                           <span class="st">&quot;t = {statistic}&quot;</span>,</span>
+<span id="cb636-5"><a href="9.1-ols.html#cb636-5" tabindex="-1"></a>                           <span class="st">&quot;p = {p.value}&quot;</span>))</span></code></pre></div>
+<p><img src="https://drive.google.com/thumbnail?id=1eB97ZV9aaKOM1sbrcYWwgkB0AikP8mb-&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" /></p>
+<p>CI after coef in the same row</p>
+<div class="sourceCode" id="cb637"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb637-1"><a href="9.1-ols.html#cb637-1" tabindex="-1"></a><span class="fu">modelsummary</span>(models, <span class="at">gof_omit =</span> <span class="st">&quot;.*&quot;</span>,</span>
+<span id="cb637-2"><a href="9.1-ols.html#cb637-2" tabindex="-1"></a>             <span class="at">estimate =</span> <span class="st">&quot;{estimate} [{conf.low}, {conf.high}]&quot;</span>,</span>
+<span id="cb637-3"><a href="9.1-ols.html#cb637-3" tabindex="-1"></a>             <span class="at">statistic =</span> <span class="cn">NULL</span>)</span></code></pre></div>
+<p><img src="https://drive.google.com/thumbnail?id=1XD-p1-2dg8PemPl0nL8WP3LkO3zMkNKp&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" /></p>
+<p>The simplest way to summarize an unsupported model is to create a <code>modelsummary_list</code> object.</p>
+<p>A <code>modelsummary_list</code> is a <strong>list</strong> with two element that conform to the <code>broom</code> package specification:</p>
+<ul>
+<li><p><code>tidy</code> and</p>
+<p><code>tidy</code> is a data.frame with <u>at least</u> three columns: <code>term</code>, <code>estimate</code>, and <code>std.error</code>.</p></li>
+<li><p><code>glance</code>.</p>
+<p><code>glance</code> is a data.frame with only a single row, and where each column will be displayed at the bottom of the table in the goodness-of-fit section.</p></li>
+</ul>
+<pre><code>ti &lt;- data.frame(
+  term = c(&quot;coef1&quot;, &quot;coef2&quot;, &quot;coef3&quot;),
+  estimate = 1:3,
+  std.error = c(pi, exp(1), sqrt(2)))
+
+gl &lt;- data.frame(
+  stat1 = &quot;blah&quot;,
+  stat2 = &quot;blah blah&quot;)
+
+mod &lt;- list(
+  tidy = ti,
+  glance = gl)
+class(mod) &lt;- &quot;modelsummary_list&quot;
+
+modelsummary(mod)</code></pre>
+<p><img src="https://drive.google.com/thumbnail?id=1hNGkkDYiJ5eGrIILmnp6GbncZRaJYFnc&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" /></p>
+<p><strong>Reference</strong>: <a href="https://modelsummary.com/vignettes/modelsummary_extension.html" class="uri">https://modelsummary.com/vignettes/modelsummary_extension.html</a></p>
+</div>
+<div id="dummy-variable" class="section level3 hasAnchor" number="9.1.5">
+<h3><span class="header-section-number">9.1.5</span> Dummy variable<a href="9.1-ols.html#dummy-variable" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p><code>model.matrix</code> creates a design (or model) matrix, e.g., by expanding factors to a set of dummy variables (depending on the contrasts) and expanding interactions similarly.</p>
+<p><code>model.matrix(object, data = environment(object),              contrasts.arg = NULL, xlev = NULL, ...)</code></p>
+<ul>
+<li><code>object</code> an object of an appropriate class. For the default method, a model <a href="http://127.0.0.1:23882/help/library/stats/help/formula">formula</a> or a <code>terms</code>object.</li>
+<li><code>contrasts.arg</code> a list, whose entries are values (numeric matrices, <code>function</code>s or character strings naming functions) to be used as replacement values for the <code>contrasts</code> replacement function and whose names are the names of columns of <code>data</code> containing <code>factor</code>s.</li>
+</ul>
+<div class="sourceCode" id="cb639"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb639-1"><a href="9.1-ols.html#cb639-1" tabindex="-1"></a><span class="co"># expand our data frame so that every factor level of `x1` is represented in a dummy column</span></span>
+<span id="cb639-2"><a href="9.1-ols.html#cb639-2" tabindex="-1"></a><span class="fu">model.matrix</span>( <span class="sc">~</span> x1 <span class="sc">-</span> <span class="dv">1</span>, data) </span>
+<span id="cb639-3"><a href="9.1-ols.html#cb639-3" tabindex="-1"></a></span>
+<span id="cb639-4"><a href="9.1-ols.html#cb639-4" tabindex="-1"></a><span class="co"># merge these dummies to our original data frame</span></span>
+<span id="cb639-5"><a href="9.1-ols.html#cb639-5" tabindex="-1"></a>data_dummy <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(data[ , <span class="sc">!</span> <span class="fu">colnames</span>(data) <span class="sc">%in%</span> <span class="st">&quot;x1&quot;</span>],       <span class="co"># Create dummy data</span></span>
+<span id="cb639-6"><a href="9.1-ols.html#cb639-6" tabindex="-1"></a>                         <span class="fu">model.matrix</span>( <span class="sc">~</span> x1 <span class="sc">-</span> <span class="dv">1</span>, data))</span>
+<span id="cb639-7"><a href="9.1-ols.html#cb639-7" tabindex="-1"></a>data_dummy   </span></code></pre></div>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="9-regression.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="9.2-panel.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": true,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "sky",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/my1396/R-Notes/edit/main/0801-OLS.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["_main.pdf", "_main.epub", "https://github.com/my1396/R-Notes/raw/main/0801-OLS.Rmd"],
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+},
+"toc_depth": 3,
+"toc_float": true,
+"enableEmoji": true
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

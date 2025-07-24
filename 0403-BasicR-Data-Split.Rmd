@@ -124,7 +124,7 @@ More options for spiting data frames: <https://www.spsanderson.com/steveondata/p
 
 #### Manual Split-Apply Pattern {-}
 
-The most common pattern is: `split` → `lapply`
+The most common pattern is: **`split` → `lapply`**
 
 **Example Usage:**
 
@@ -141,6 +141,31 @@ orders_by_product <- split(orders, orders$product)
 
 # Analyze each product category
 lapply(orders_by_product, function(x) sum(x$amount))
+```
+
+--------------------------------------------------------------------------------
+
+Another commonly used combination is: **`split` → `map`**
+
+Apply regression to each group with `map`
+
+```r
+# A more realistic example: split a data frame into pieces, fit a
+# model to each piece, summarise and extract R^2
+mtcars %>%
+  split(.$cyl) %>%
+  map(~ lm(mpg ~ wt, data = .x)) %>%
+  map(summary) %>%
+  map_dbl("r.squared")
+
+# If each element of the output is a data frame, use
+# map_dfr to row-bind them together:
+mtcars %>%
+  split(.$cyl) %>%
+  map(~ lm(mpg ~ wt, data = .x)) %>%
+  map_dfr(~ as.data.frame(t(as.matrix(coef(.)))))
+# (if you also want to preserve the variable names see
+# the broom package)
 ```
 
 #### All-in-One Approach {-}

@@ -7,7 +7,7 @@ The default behavior of `%>%` when multiple arguments are required in the `rhs` 
 dot (`.`) works as **placeholder** in `%>%` 
 
 - if you want `lhs` to the `rhs` call at another position than the first.
-- if you want to use the varaible more than once.
+- if you want to use the variable more than once.
 
 For example, `y %>% f(x, .)` is equivalent to `f(x, y)` and `z %>% f(x, y, arg = .)` is equivalent to `f(x, y, arg = z)`.
 
@@ -116,7 +116,7 @@ rnorm(100) %>% {c(mean(.), sd(.))} # this works well after enclosing the operati
 
 
 
-**Native Pipe `|>`**
+### Native Pipe `|>`
 
 The native pipe was introduced to R in 4.1.0.
 

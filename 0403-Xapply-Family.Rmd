@@ -39,7 +39,6 @@ Arguments:
 
 `lapply(df, FUN)` is a shortcut to `apply(df, MARGIN=2, FUN)`, conducting `FUN` on each column.
 
-We can use `unlist()` to convert the list into a vector.
 
 
 
@@ -166,7 +165,7 @@ df <- do.call('rbind', result)
 
 
 
-### <span style='color:#008B45'>Paralle</span> version of `apply` function
+### <span style='color:#008B45'>Parallel</span> version of `apply` function
 
 `parallel::parLapply` Performs the calculations in parallel, possibly on several nodes
 
@@ -267,4 +266,50 @@ endCluster()
 ```
 
 
+--------------------------------------------------------------------------------
+
+
+### Related Functions
+
+`lapply` returns a list, we can use `unlist()` to convert the list into a vector.
+
+`do.call(what, args)` useful in assembling lists. It applies a given function to the list as a whole, there is only one function call. 
+
+-   `what`, gives a function to call. Common options could be `'c'`, `rbind` or `cbind`.
+    -   either a function or a non-empty character string naming the function to be called.
+
+-   `args`, is a list of arguments to pass to `fun`, and so `do.call("f", list(x, y, z))` is equivalent to `f(x, y, z)`.
+    -   args are passed by through named lists.
+
+-   A good friend with `apply` and `by`, use `do.call(rbind, apply(...))` to form a list result to a data frame.
+
+```r
+x1 <- c(1:10, NA)                             # Example vector with NA
+x1                                            # Print example vector
+# 1  2  3  4  5  6  7  8  9 10 NA
+do.call("sum", list(x1))                      # Basic application of do.call
+# NA
+do.call("sum", list(x1, na.rm = TRUE))        # Specify additional arguments
+# 55
+```
+
+- You can use pipe operator
+
+    ```r
+    list(x1) %>% do.call("sum", .)
+    ```
+
+- But using the new base/native pipe (`|>`) leads to errors performing the same operation:
+
+  ```r
+  myList |> do.call("rbind", .)
+  #> Error in do.call(myList, "rbind", .) : 
+  #>  second argument must be a list
+  ```
+
+  The error happens because <span style='color:#FF9900'>`|>` always inserts into the first argument and does NOT support dot</span>. A workaround is to use **named arguements**:
+
+  ```r
+  myList |> do.call(what = "rbind")
+  ```
 

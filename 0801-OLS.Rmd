@@ -1,0 +1,435 @@
+## OLS
+
+When variable names have spaces, use ```as.formula("`Avg ret` ~ Beta")```.
+
+- use `+ 0` or `- 1` as part of the formula to suppress the intercept.
+
+- `~`,`+`, `-`, `*` and `^` as formula operators have special meanings
+
+  | Symbol | Purpose                                                      | Example             | In Words                                                     |
+  | ------ | ------------------------------------------------------------ | ------------------- | ------------------------------------------------------------ |
+  | `~`    | separate LHS and RHS of formula                              | `y ~ x`             | regress `y` on `x`                                           |
+  | `+`    | add variable to a formula                                    | `y ~ x + z`         | regress `y` on `x` *and* `z`                                 |
+  | `.`    | denotes “everything else”                                    | `y ~ .`             | regress `y` on *all other variables* in a data frame         |
+  | `-`    | remove variable from a formula                               | `y ~ . - x`         | regress `y` on all other variables *except* `x`              |
+  | `1`    | denotes intercept                                            | `y ~ x - 1`         | regress `y` on `x` *without an intercept*                    |
+  | `:`    | construct interaction term                                   | `y ~ x + z + x:z`   | regress `y` on `x`, `z`, and the product `x` times `z`       |
+  | `*`    | factor crossing, shorthand for  <span style='color:#008B45'>levels</span> plus <span style='color:#008B45'>interaction</span> | `y ~ x * z`         | regress `y` on `x`, `z`, and the product `x` times `z`, equivalent to `y ~ x + z + x:z` |
+  | `^`    | higher order interactions                                    | `y ~ (x + z + w)^3` | regress `y` on `x`, `z`, `w`, all two-way interactions, and the three-way interactions |
+  | `I()`  | “as-is” - override special meanings of other symbols from this table | `y ~ x + I(x^2)`    | regress `y` on `x` and `x` squared                           |
+
+  1. Fun fact: R’s formula syntax originated in [this 1973 paper](https://www.jstor.org/stable/2346786) by Wilkinson and Rogers.[↩︎](https://www.econometrics.blog/post/the-r-formula-cheatsheet/#fnref1)
+  2. Tabel source: [Econometrics.blog](https://www.econometrics.blog/post/the-r-formula-cheatsheet/) by Frank DiTraglia.
+
+- In function `formula`, <span style='color:#008B45'>`I`</span> is used to [inhibit the interpretation of operators](https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/AsIs) such as `"+"`, `"-"`, `"*"` and `"^"` as formula operators, so they are <span style='color:#008B45'>used as arithmetical operators</span>. This is interpreted as a symbol by `terms.formula`.
+
+  For example, `y ~ I(a+b)` means `y` regressed on the sum of `a` and `b`, while `y ~ a + b` means `y` regressed on `a` and `b`.
+
+
+
+`Broom` takes in regression models and print nice `tibble`.
+
+
+
+`broom:tidy(lm, conf.int = FALSE, conf.level = 0.95, exponentiate = FALSE)`  Tidy summarizes information about the components of a model.
+
+- `lm` 	An `lm` object created by `stats::lm()`.
+- `conf.int=FALSE`      Defaults to `FALSE`. Logical indicating whether or not to include a confidence interval in the tidied output. 
+- `conf.level=0.95`    The confidence level to use for the confidence interval if `conf.int = TRUE`.  Defaults to 0.95, which corresponds to a 95 percent confidence interval.
+- `exponentiate = FALSE`    Defaults to `FALSE`. Logical indicating whether or not to exponentiate the the coefficient estimates. This is typical for logistic and multinomial regressions, but a bad idea if there is no log or logit link. 
+
+```r
+# a CAPM model example
+> reg_ml <- lm(eRi~rmrf, data = company_data)
+> reg_ml
+
+Call:
+lm(formula = eRi ~ rmrf, data = company_data)
+
+Coefficients:
+(Intercept)         rmrf  
+     0.1139       0.2804  
+
+> summary(reg_ml)
+
+Call:
+lm(formula = eRi ~ rmrf, data = company_data)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-10.1312  -0.6116   0.0905   0.6072   6.8892 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)   
+(Intercept)  0.11393    0.07835   1.454  0.14720   
+rmrf         0.28040    0.09455   2.966  0.00331 **
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 1.233 on 249 degrees of freedom
+  (10 observations deleted due to missingness)
+Multiple R-squared:  0.03412,	Adjusted R-squared:  0.03024 
+F-statistic: 8.796 on 1 and 249 DF,  p-value: 0.003312
+```
+
+
+
+### Get the coef estimates
+
+`coef(summary(FF_ml))` get a matrix of coefficients estimates, including point estiamtes, SEs, t-values, p-values.
+
+- Equivalently, you can use `tidy(FF_ml)` to return a `tibble`, which is easier to manipulate and output.
+
+```r
+# `coef()` returns a vector of coef
+> coef(reg_ml)
+(Intercept)        rmrf 
+  0.1139251   0.2804040 
+
+# `summary()$coef` returns a matrix, including se, t-stat, and pval
+# equivalent to `coef(summary(reg_ml))`
+> summary(reg_ml)$coef
+             Estimate Std. Error  t value    Pr(>|t|)
+(Intercept) 0.1139251  0.0783512 1.454031 0.147196897
+rmrf        0.2804040  0.0945456 2.965807 0.003312303
+
+# `broom::tidy` returns a tibble, the rownames become a column named `term`
+# column names are more robust, lowercase and with spaces removed
+> broom::tidy(reg_ml)
+# A tibble: 2 × 5
+  term        estimate std.error statistic p.value
+  <chr>          <dbl>     <dbl>     <dbl>   <dbl>
+1 (Intercept)    0.114    0.0784      1.45 0.147  
+2 rmrf           0.280    0.0945      2.97 0.00331
+```
+
+--------------------------------------------------------------------------------
+
+### Covariance Matrix
+
+`lmtest::coeftest(ml, vcov.=NULL)` `coeftest` is a generic function for performing z and (quasi-)t Wald tests of estimated coefficients. `coefci`computes the corresponding Wald confidence intervals.
+
+- `ml` 	The generic function `coeftest` currently has a default method (which works in particular for `"lm"` objects) and dedicated methods for objects of class `"glm"` (as computed by `glm`), `"mlm"` (as computed by `lm` with multivariate responses), `"survreg"` (as computed by `survreg`), and `"breakpointsfull"` (as computed by `breakpoints.formula`).
+
+  The default method assumes that a `coef` methods exists, such that `coef(x)` yields the estimated coefficients.
+
+- `vcov.`   To specify the corresponding covariance matrix `vcov.` to be used, there are three possibilities: 
+
+  -   It is pre-computed and supplied in argument `vcov.`
+  -   A function for extracting the covariance matrix from `x` is supplied, e.g., `sandwich`, `vcovHC`, `vcovCL`, or `vcovHAC` from package **sandwich**.
+  -   `vcov.` is set to `NULL`, then it is assumed that a `vcov` method exists, such that `vcov(x)` yields a covariance matrix. 
+
+```R
+library(lmtest)
+coeftest(ml.gdp, vcovHC(ml.gdp, type = 'HC0', cluster = 'group'))
+
+
+vcovHAC(lm_phillips)
+vcovHC(lm_phillips)
+lm_phillips %>% coeftest(., vcov = vcovHAC(.))
+lm_phillips %>% coeftest(., vcov = vcovHC(., type = 'HC0'))
+```
+
+
+
+The "sandwich" is two pieces of bread defined by the expected information enclosing a meat defined by the observed information.
+
+For a linear regression, the estimating equation is:
+$$
+U(\beta) = \mathbf{X}^T\left(Y - \mathbf{X}^T\beta\right)
+$$
+The expected information (bread) is:
+$$
+A = \frac{\partial U(\beta)}{\partial \beta} = -(\mathbf{X}^T\mathbf{X})
+$$
+The observed information (meat) is:
+$$
+B = E\left[U(\beta)U(\beta)^T\right] = \mathbf{X}^T(Y-\mathbf{X}^T\beta)(Y-\mathbf{X}^T\beta)^T\mathbf{X}
+$$
+Note the inner term is a diagonal of constant residuals when the homoscedasticity, independent data assumption is met, then the sandwich covariance estimator which is given by $A^{-1}BA^{-1}$ is the usual linear regression covariance matrix $\sigma^2(X^TX)^{-1}$ where $\sigma^2$ is the variance of the residuals.
+
+However, that's rather strict. You get a considerably broader class of estimators by relaxing the assumptions involved around the 𝑛×𝑛 residual matrix:
+$$
+R = (Y-\mathbf{X}^T\beta)(Y-\mathbf{X}^T\beta)
+$$
+The "HC0" `vcovHC` estimator is consistent even when the data are not independent. So I will not say that we "assume" the residuals are independent, but I will say that we use "a working independent covariance structure". Then the matrix 𝑅 is replaced by a diagonal of the residuals
+$$
+R_{ii} = (Y_i - \beta \mathbf{X}_{I.})^2, \quad 0\text{ elsewhere}
+$$
+This estimator works really well except under small samples (<40 is often purported). The HC1-3 are various finite sample corrections. HC3 is generally the best performing.
+
+
+
+
+
+`sandwich::vcovHC(x, type=c("HC3", "const", "HC", "HC0", "HC1", "HC2", "HC4", "HC4m", "HC5"), cluster )`   is a function for estimating a **Heteroscedasticity-robust covariance matrix** of parameters for a fixed effects or random effects panel model according to the **White** method. 
+
+- `x` 	a fitted model object of class `lm`;
+
+- `type`   a character string specifying the estimation type.
+
+  -   `const` gives the usual estimate of the **homoskedastic** covariance matrix of the coefficient estimates:
+
+  $$
+  \begin{align}
+  V_{\hat{\beta}}^0 &= \sigma^2 (X'X)^{-1} \\
+  \hat{V}_{\hat{\beta}}^0 &= s^2 (X'X)^{-1} \\
+  s^2 &= \frac{1}{n-k} \sum^n_{i=1}\hat{e_i}^2
+  \end{align}
+  $$
+
+  ​	   The estimator $s^2$ is unbiased for $\sigma^2$, known as the "bias-corrected estimator" for $\sigma^2$.
+  $$
+  E[s^2]=\sigma^2
+  $$
+
+
+  - `"HC"` (or equivalently `"HC0"`) gives White's estimator
+    $$
+    \begin{align*}
+    V_{\hat{\beta}}^{HC0} &= (X'X)^{-1}(X'DX)(X'X)^{-1} \\
+    D &= E[ee'|X] \\
+    \hat{V}_{\hat{\beta}}^{HC0} &= (X'X)^{-1} \left( \sum^n_{i=1} x_i x_i'\hat{e_i}^2 \right) (X'X)^{-1}
+    \end{align*}
+    $$
+    The label "HC" refers to "heteroskedasticity-consistent." "HC0" refers to this being the baseline **hetetroskedasticity-consistent** covariance matrix estimator.
+
+    The "HC0" is consistent even when the data are not independent, e.g., in the presence of serially correlated errors. 
+
+  - `HC1` uses the unbiased estimator $s^2$, scaling the moment estimator $\hat{\sigma}^2$ by $n/(n-k)$. 
+    $$
+    \hat{V}_{\hat{\beta}}^{HC1} = \left (\frac{n}{n-k} \right) (X'X)^{-1} \left( \sum^n_{i=1} x_i x_i'\hat{e_i}^2 \right) (X'X)^{-1}
+    $$
+
+  - `HC2` uses the standardized residuals $\bar{e}_i$
+
+  - `HC3` uses the prediction errors $\widetilde{e}_i$
+
+- `cluster`   Observations may be clustered by `"group"` (`"time"`) to account for serial (cross-sectional) correlation.
+
+
+
+
+
+
+
+`sandwich::vcovHAC(x)` Heteroscedasticity and autocorrelation consistent (HAC) estimation of the covariance matrix of the coefficient estimates in a (generalized) linear regression model `x`, refer to Newey & West (1987, 1994). There are various methods to estimate the autoregressive effect. The default method is Andrews' (`weights = weightsAndrews`). 
+
+ For HAC standard errors to be valid, we need to assume that the autocorrelations go to zero as the tiem between observations increases (a condition necessary for stationarity), and we need a large sample, but it is not necessary to make a precise assumption about the autocorrelated error model.
+
+If you have balanced panel data, HAC estimator is overkill. You should use `gee` from the `gee` package instead specifying the covariance structure to `AR-1` or similar.
+
+```R
+# Naive OLS
+> vcov(lm_phillips)
+            (Intercept)       unemp
+(Intercept)  0.54830829 -0.08973175
+unemp       -0.08973175  0.01582211
+
+# HC estimator
+> vcovHC(lm_phillips)
+            (Intercept)       unemp
+(Intercept)   0.9319139 -0.16120691
+unemp        -0.1612069  0.02912351
+
+# HAC estimator
+> vcovHAC(lm_phillips)
+            (Intercept)        unemp
+(Intercept)  0.23561076 -0.039847043
+unemp       -0.03984704  0.006986272
+```
+
+
+
+> `vcovHAC` tends to generate very small variance and [make all coefficient significant](https://stats.stackexchange.com/questions/15608/vcovhc-vcovhac-neweywest-which-function-to-use). Be aware of that.
+
+
+
+To get a feel for how HAC standard errors are found, consider the simple regression model $y_{t}=\beta_{1}+\beta_{2}x_{t}+e_{t}$. The variance of the least squares estimator $b_2$ can be written as
+$$
+\begin{aligned}
+  \text{var}(b_{2}) & = \sum_{t}{w_{t}^{2}\text{var}(e_{t})} + \sum_{t \neq s}{\sum{w_{t}w_{s}\text{cov}(e_{t}, e_{s})}} \\
+                    & =  \sum_{t}{w_{t}^{2}\text{var}(e_{t})} \Bigg[1+\frac{\sum_{t \neq s}{\sum{w_{t}w_{s}\text{cov}(e_{t}, e_{s})}}}{\sum_{t}{w_{t}^{2}\text{var}(e_{t})}}\Bigg]
+\end{aligned}
+$$
+where $w_{t}=(x_{t}-\bar{x})/\sum_{t}{(x_{t}-x_{t-1})^{2}}$.
+
+When the errors are not correlated, $\text{cov}(e_{t},e_{t-1})=0$,  and the term in the square brackets is equal to one. The resulting expression $\text{var}(b_{2})=\sum_{t}{w_{t}^{2}}\text{var}(e_{t})$, is the on used to find HC standard errors. If we denote the quantity in the square brackets in the above equation as $g$ and denote its estimate as $\hat{g}$, then the relationship between the two estimated variances is
+$$
+\begin{aligned}
+  \widehat{\text{Var}}_{HAC}(b_{2}) = \widehat{\text{Var}}_{HC}(b_{2}) \times \hat{g}
+\end{aligned}
+$$
+The HAC variance estimate is equal to the HC variance estimate multiplied by an extra term that depends on the serial correlation in errors.
+
+All these calculations depends on the fact that $x_te_t$ are stationary variables, where $x_t$ are the regressors and $e_t$ are the disturbances. Stationarity is a bit restrictive property, so check whether it holds. 
+
+
+
+
+
+**References**:
+
+- `vcovHC` vs `vcovHAC`: <https://stats.stackexchange.com/a/319922>
+
+- Andrews DWK (1991). “Heteroskedasticity and Autocorrelation Consistent Covariance Matrix Estimation.” *Econometrica*, **59**, 817–858.
+
+- Newey WK & West KD (1987). “A Simple, Positive Semi-Definite, Heteroskedasticity and Autocorrelation Consistent Covariance Matrix.” *Econometrica*, **55**, 703–708.
+
+- Newey WK & West KD (1994). “Automatic Lag Selection in Covariance Matrix Estimation.” *Review of Economic Studies*, **61**, 631–653.
+
+- Zeileis A (2004). “Econometric Computing with HC and HAC Covariance Matrix Estimators.” *Journal of Statistical Software*, **11**(10), 1–17.
+
+--------------------------------------------------------------------------------
+
+
+### Model performance
+
+`broom::glance(lmfit)`       Several measures of <span style='color:#008B45'>**model accuracy**</span> are computed for the entire regression, such as $R^2$ and the F-statistic. 
+
+```r
+> library(broom)
+> glance(reg_ml)
+# A tibble: 1 × 12
+  r.squared adj.r.squared sigma statistic p.value    df logLik   AIC   BIC deviance
+      <dbl>         <dbl> <dbl>     <dbl>   <dbl> <dbl>  <dbl> <dbl> <dbl>    <dbl>
+1    0.0341        0.0302  1.23      8.80 0.00331     1  -408.  821.  832.     378.
+  df.residual  nobs
+        <int> <int>
+1         249   251
+```
+
+
+
+Augment data with **fitted predictions and residuals**
+
+`augment(lmfit)`     print <span style='color:#008B45'>**fitted values and residuals**</span> for each of the original points in the regression. 
+
+```r
+> augment(reg_ml)
+# A tibble: 251 × 9
+   .rownames     eRi  rmrf .fitted .resid    .hat .sigma   .cooksd .std.resid
+   <chr>       <dbl> <dbl>   <dbl>  <dbl>   <dbl>  <dbl>     <dbl>      <dbl>
+ 1 1          0.739   0.59  0.279   0.460 0.00541   1.23 0.000381       0.374
+ 2 2          0.785   0.61  0.285   0.500 0.00553   1.23 0.000459       0.407
+ 3 3          1.22    0.32  0.204   1.02  0.00427   1.23 0.00147        0.828
+ 4 4          0.0542 -0.81 -0.113   0.167 0.00883   1.24 0.0000829      0.136
+ 5 5          0.467  -0.59 -0.0515  0.519 0.00677   1.23 0.000608       0.422
+ 6 6          1.03    1.14  0.434   0.592 0.0104    1.23 0.00122        0.483
+ 7 7          0.361   0.09  0.139   0.222 0.00398   1.24 0.0000652      0.181
+ 8 8         -1.31   -1.47 -0.298  -1.01  0.0184    1.23 0.00646       -0.829
+ 9 9         -1.02   -0.92 -0.144  -0.873 0.0101    1.23 0.00258       -0.712
+10 10        -2.50   -1.32 -0.256  -2.24  0.0158    1.23 0.0270        -1.83 
+# ℹ 241 more rows
+# ℹ Use `print(n = ...)` to see more rows
+```
+
+
+
+`plot.lm(x, which=c(1,2,3,5))`  <https://stat.ethz.ch/R-manual/R-devel/library/stats/html/plot.lm.html>
+
+- `which` 	refers to which plots you want to show.
+  1. "Residuals vs Fitted" plot 
+  2. "Residual Q-Q" plot 
+  3. "Scale-Location" plot 
+  4. "Cook's distance" plot 
+  5. "Residuals vs Leverage" plot
+  6. "Cook's dist vs Lev./(1-Lev.)" plot
+
+
+
+--------------------------------------------------------------------------------
+
+
+### Model Summary
+
+`library(modelsummary)` supports saving a table directly to file, raw output in console. Different formats are supported: html, tex, markdown, png.
+
+By default, `modelsummary` prints the coefficient’s standard error in parentheses below the corresponding estimate. The value of this uncertainty statistic is determined by the `statistic`argument. The `statistic` argument accepts any of the column names produced by `get_estimates(model)`. 
+
+```r
+modelsummary(models, statistic = 'std.error') # default: SE
+modelsummary(models, statistic = 'conf.int')  # CI
+modelsummary(models, statistic = 'statistic') # t stat
+```
+
+Several statistics under the coefficients.
+
+```r
+modelsummary(models, gof_omit = ".*",
+             statistic = c("conf.int",
+                           "s.e. = {std.error}", 
+                           "t = {statistic}",
+                           "p = {p.value}"))
+```
+
+<img src="https://drive.google.com/thumbnail?id=1eB97ZV9aaKOM1sbrcYWwgkB0AikP8mb-&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
+
+CI after coef in the same row
+
+```r
+modelsummary(models, gof_omit = ".*",
+             estimate = "{estimate} [{conf.low}, {conf.high}]",
+             statistic = NULL)
+```
+
+<img src="https://drive.google.com/thumbnail?id=1XD-p1-2dg8PemPl0nL8WP3LkO3zMkNKp&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
+
+
+
+The simplest way to summarize an unsupported model is to create a `modelsummary_list` object.
+
+A `modelsummary_list` is a **list** with two element that conform to the `broom` package specification: 
+
+- `tidy` and 
+
+  `tidy` is a data.frame with <u>at least</u> three columns: `term`, `estimate`, and `std.error`. 
+
+- `glance`. 
+
+  `glance` is a data.frame with only a single row, and where each column will be displayed at the bottom of the table in the goodness-of-fit section. 
+
+```
+ti <- data.frame(
+  term = c("coef1", "coef2", "coef3"),
+  estimate = 1:3,
+  std.error = c(pi, exp(1), sqrt(2)))
+
+gl <- data.frame(
+  stat1 = "blah",
+  stat2 = "blah blah")
+
+mod <- list(
+  tidy = ti,
+  glance = gl)
+class(mod) <- "modelsummary_list"
+
+modelsummary(mod)
+```
+
+<img src="https://drive.google.com/thumbnail?id=1hNGkkDYiJ5eGrIILmnp6GbncZRaJYFnc&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
+
+**Reference**: <https://modelsummary.com/vignettes/modelsummary_extension.html>
+
+
+
+### Dummy variable
+
+`model.matrix` creates a design (or model) matrix, e.g., by expanding factors to a set of dummy variables (depending on the contrasts) and expanding interactions similarly.
+
+`model.matrix(object, data = environment(object),
+             contrasts.arg = NULL, xlev = NULL, ...)`
+
+-   `object` 	 an object of an appropriate class. For the default method, a model [formula](http://127.0.0.1:23882/help/library/stats/help/formula) or a `terms`object.
+-   `contrasts.arg`     a list, whose entries are values (numeric matrices, `function`s or character strings naming functions) to be used as replacement values for the `contrasts` replacement function and whose names are the names of columns of `data` containing `factor`s.
+
+```R
+# expand our data frame so that every factor level of `x1` is represented in a dummy column
+model.matrix( ~ x1 - 1, data) 
+
+# merge these dummies to our original data frame
+data_dummy <- data.frame(data[ , ! colnames(data) %in% "x1"],       # Create dummy data
+                         model.matrix( ~ x1 - 1, data))
+data_dummy   
+```
+

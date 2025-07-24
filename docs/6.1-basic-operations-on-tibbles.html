@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>6.1 Basic operations on tibbles | R Notes</title>
+  <meta name="description" content="<p>This is a minimal example of using the bookdown package to write a book.
+The HTML output format for this example is bookdown::gitbook,
+set in the _output.yml file.</p>" />
+  <meta name="generator" content="bookdown 0.35 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="6.1 Basic operations on tibbles | R Notes" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="<p>This is a minimal example of using the bookdown package to write a book.
+The HTML output format for this example is bookdown::gitbook,
+set in the _output.yml file.</p>" />
+  <meta name="github-repo" content="my1396/R-Notes" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="6.1 Basic operations on tibbles | R Notes" />
+  
+  <meta name="twitter:description" content="<p>This is a minimal example of using the bookdown package to write a book.
+The HTML output format for this example is bookdown::gitbook,
+set in the _output.yml file.</p>" />
+  
+
+<meta name="author" content="Menghan Yuan" />
+
+
+<meta name="date" content="2025-07-24" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  <link rel="shortcut icon" href="images/r-project-favicon.ico" type="image/x-icon" />
+<link rel="prev" href="6-tidyverse.html"/>
+<link rel="next" href="6.2-pipe-operator.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+<head>
+    <!-- MathJax config: define new macros -->
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+          tex2jax: {
+            inlineMath: [['$','$'], ['\\(','\\)']],
+            processEscapes: true
+          },
+          TeX: { 
+            inlineMath: [   // start/end delimiter pairs for in-line math
+              ['$', '$'],
+              ['\\(', '\\)']
+            ],
+            displayMath: [  // start/end delimiter pairs for display math
+              ['$$', '$$'],
+              ['\\[', '\\]']
+            ],
+            processEscapes: true, // use \$ to produce a literal dollar sign
+            tags: 'ams',  // should be 'ams', 'none', or 'all'
+            Macros: {
+              vect: ["\\mathbf{#1}", 1],
+              mat: ["\\mathbf{#1}", 1], 
+
+              bA: "\\boldsymbol{A}",
+              bB: "\\boldsymbol{B}",
+              bC: "\\boldsymbol{C}",
+              bD: "\\boldsymbol{D}",
+              bE: "\\boldsymbol{E}",
+              bF: "\\boldsymbol{F}",
+              bG: "\\boldsymbol{G}",
+              bH: "\\boldsymbol{H}",
+              bI: "\\boldsymbol{I}",
+              bJ: "\\boldsymbol{J}",
+              bK: "\\boldsymbol{K}",
+              bL: "\\boldsymbol{L}",
+              bM: "\\boldsymbol{M}",
+              bN: "\\boldsymbol{N}",
+              bP: "\\boldsymbol{P}",
+              bQ: "\\boldsymbol{Q}",
+              bR: "\\boldsymbol{R}",
+              bS: "\\boldsymbol{S}",
+              bT: "\\boldsymbol{T}",
+              bU: "\\boldsymbol{U}",
+              bV: "\\boldsymbol{V}",
+              bW: "\\boldsymbol{W}",
+              bX: "\\boldsymbol{X}",
+              bY: "\\boldsymbol{Y}",
+              bZ: "\\boldsymbol{Z}",
+              ba: "\\boldsymbol{a}",
+              bb: "\\boldsymbol{b}",
+              bc: "\\boldsymbol{c}",
+              bd: "\\boldsymbol{d}",
+              be: "\\boldsymbol{e}",
+              bg: "\\boldsymbol{g}",
+              bh: "\\boldsymbol{h}",
+              bi: "\\boldsymbol{\\imath}",
+              bm: "\\boldsymbol{m}",
+              bp: "\\boldsymbol{p}",
+              bq: "\\boldsymbol{q}",
+              br: "\\boldsymbol{r}",
+              bs: "\\boldsymbol{s}",
+              bt: "\\boldsymbol{t}",
+              bu: "\\boldsymbol{u}",
+              bv: "\\boldsymbol{v}",
+              bw: "\\boldsymbol{w}",
+              bx: "\\boldsymbol{x}",
+              by: "\\boldsymbol{y}",
+
+              Acal: "\\mathcal{A}",
+              Bcal: "\\mathcal{B}",
+              Ccal: "\\mathcal{C}",
+              Dcal: "\\mathcal{D}",
+              Ecal: "\\mathcal{E}",
+              Fcal: "\\mathcal{F}",
+              Gcal: "\\mathcal{G}",
+              Hcal: "\\mathcal{H}",
+              Ical: "\\mathcal{I}",
+              Jcal: "\\mathcal{J}",
+              Kcal: "\\mathcal{K}",
+              Lcal: "\\mathcal{L}",
+              Mcal: "\\mathcal{M}",
+              Ncal: "\\mathcal{N}",
+              Ocal: "\\mathcal{O}",
+              Pcal: "\\mathcal{P}",
+              Qcal: "\\mathcal{Q}",
+              Rcal: "\\mathcal{R}",
+              Scal: "\\mathcal{S}",
+              Tcal: "\\mathcal{T}",
+              Ucal: "\\mathcal{U}",
+              Vcal: "\\mathcal{V}",
+              Wcal: "\\mathcal{W}",
+              Xcal: "\\mathcal{X}",
+              Ycal: "\\mathcal{Y}",
+              Zcal: "\\mathcal{Z}",
+
+              A: "\\mathbb{A}",
+              B: "\\mathbb{B}",
+              C: "\\mathbb{C}",
+              D: "\\mathbb{D}",
+              E: "\\mathbb{E}",
+              F: "\\mathbb{F}",
+              G: "\\mathbb{G}",
+              H: "\\mathbb{H}",
+              I: "\\mathbb{I}",
+              J: "\\mathbb{J}",
+              K: "\\mathbb{K}",
+              L: "\\mathbb{L}",
+              M: "\\mathbb{M}",
+              N: "\\mathbb{N}",
+              O: "\\mathbb{O}",
+              P: "\\mathbb{P}",
+              Q: "\\mathbb{Q}",
+              R: "\\mathbb{R}",
+              S: "\\mathbb{S}",
+              T: "\\mathbb{T}",
+              U: "\\mathbb{U}",
+              V: "\\mathbb{V}",
+              W: "\\mathbb{W}",
+              X: "\\mathbb{X}",
+              Y: "\\mathbb{Y}",
+              Z: "\\mathbb{Z}",
+
+              bAlpha: "\\boldsymbol{\\Alpha}",
+              bBeta: "\\boldsymbol{\\beta}",
+              bDelta: "\\boldsymbol{\\delta}",
+              bEta: "\\boldsymbol{\\eta}",
+              bGamma: "\\boldsymbol{\\Gamma}",
+              bLambda: "\\boldsymbol{\\Lambda}",
+              bOmega: "\\boldsymbol{\\Omega}",
+              bPhi: "\\boldsymbol{\\Phi}",
+              bPi: "\\boldsymbol{\\Pi}",
+              bPsi: "\\boldsymbol{\\Psi}",
+              bSigma: "\\boldsymbol{\\Sigma}",
+              bTau: "\\boldsymbol{\\tau}",
+              bXi: "\\boldsymbol{\\Xi}",
+              bbeta: "\\boldsymbol{\\beta}",
+              bdelta: "\\boldsymbol{\\delta}",
+              blambda: "\\boldsymbol{\\lambda}",
+              bmu: "\\boldsymbol{\\mu}",
+              bphi: "\\boldsymbol{\\phi}",
+              bpi: "\\boldsymbol{\\pi}",
+              bpsi: "\\boldsymbol{\\psi}",
+              brho: "\\boldsymbol{\\rho}",
+              bsigma: "\\boldsymbol{\\sigma}",
+              btau: "\\boldsymbol{\\tau}",
+              bxi: "\\boldsymbol{\\xi}",
+              bEta: "\\boldsymbol{\\eta}",
+              bPhi: "\\boldsymbol{\\Phi}",
+              bPi: "\\boldsymbol{\\Pi}",
+              bPsi: "\\boldsymbol{\\Psi}",
+              bXi: "\\boldsymbol{\\Xi}",
+              blambda: "\\boldsymbol{\\lambda}",
+              bmu: "\\boldsymbol{\\mu}",
+              bphi: "\\boldsymbol{\\phi}",
+              bpi: "\\boldsymbol{\\pi}",
+              bpsi: "\\boldsymbol{\\psi}",
+              brho: "\\boldsymbol{\\rho}",
+              bsigma: "\\boldsymbol{\\sigma}",
+                        
+              curl: ["\\left\\lbrace#1\\right\\rbrace", 1],
+              floor: ["\\left\\lfloor#1\\right\\rfloor", 1],
+              ceil: ["\\left\\lceil#1\\right\\rceil", 1],
+              abs: ["\\left\\lvert#1\\right\\rvert", 1],
+              norm: ["\\left\\lVert#1\\right\\rVert", 1],
+
+              independent: "\\mathrel{\\perp\\!\\!\\perp}",
+
+              var: "\\mathrm{var}",
+              diag: "\\mathrm{diag}",
+              rank: "\\mathrm{rank}",
+              vecc: "\\mathrm{vec}",
+            }
+          }
+        });
+    </script>
+    
+
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro">
+</head>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #204a87; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #8f5902; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #204a87; font-weight: bold; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #ce5c00; font-weight: bold; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">R Notes</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> About</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="1.1-usage.html"><a href="1.1-usage.html"><i class="fa fa-check"></i><b>1.1</b> Usage</a></li>
+<li class="chapter" data-level="1.2" data-path="1.2-render-book.html"><a href="1.2-render-book.html"><i class="fa fa-check"></i><b>1.2</b> Render book</a></li>
+<li class="chapter" data-level="1.3" data-path="1.3-preview-book.html"><a href="1.3-preview-book.html"><i class="fa fa-check"></i><b>1.3</b> Preview book</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="2-rstudio.html"><a href="2-rstudio.html"><i class="fa fa-check"></i><b>2</b> Rstudio</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="2.1-dark-theme.html"><a href="2.1-dark-theme.html"><i class="fa fa-check"></i><b>2.1</b> Dark Theme</a></li>
+<li class="chapter" data-level="2.2" data-path="2.2-update-r.html"><a href="2.2-update-r.html"><i class="fa fa-check"></i><b>2.2</b> Update R</a></li>
+<li class="chapter" data-level="2.3" data-path="2.3-packages-management.html"><a href="2.3-packages-management.html"><i class="fa fa-check"></i><b>2.3</b> Packages Management</a>
+<ul>
+<li class="chapter" data-level="2.3.1" data-path="2.3-packages-management.html"><a href="2.3-packages-management.html#load-packages"><i class="fa fa-check"></i><b>2.3.1</b> Load packages</a></li>
+<li class="chapter" data-level="2.3.2" data-path="2.3-packages-management.html"><a href="2.3-packages-management.html#install-packages"><i class="fa fa-check"></i><b>2.3.2</b> Install packages</a></li>
+<li class="chapter" data-level="2.3.3" data-path="2.3-packages-management.html"><a href="2.3-packages-management.html#update-packages"><i class="fa fa-check"></i><b>2.3.3</b> Update packages</a></li>
+<li class="chapter" data-level="2.3.4" data-path="2.3-packages-management.html"><a href="2.3-packages-management.html#put-your-r-package-on-github"><i class="fa fa-check"></i><b>2.3.4</b> Put your R package on GitHub</a></li>
+</ul></li>
+<li class="chapter" data-level="2.4" data-path="2.4-using-git-with-rstudio.html"><a href="2.4-using-git-with-rstudio.html"><i class="fa fa-check"></i><b>2.4</b> Using Git with RStudio</a></li>
+<li class="chapter" data-level="2.5" data-path="2.5-github-copilot.html"><a href="2.5-github-copilot.html"><i class="fa fa-check"></i><b>2.5</b> GitHub Copilot</a></li>
+<li class="chapter" data-level="2.6" data-path="2.6-save-r-workspace.html"><a href="2.6-save-r-workspace.html"><i class="fa fa-check"></i><b>2.6</b> Save R Workspace</a></li>
+<li class="chapter" data-level="2.7" data-path="2.7-pane-layout.html"><a href="2.7-pane-layout.html"><i class="fa fa-check"></i><b>2.7</b> Pane Layout</a></li>
+<li class="chapter" data-level="2.8" data-path="2.8-options.html"><a href="2.8-options.html"><i class="fa fa-check"></i><b>2.8</b> Options</a></li>
+<li class="chapter" data-level="2.9" data-path="2.9-r-startup.html"><a href="2.9-r-startup.html"><i class="fa fa-check"></i><b>2.9</b> R Startup</a>
+<ul>
+<li class="chapter" data-level="2.9.1" data-path="2.9-r-startup.html"><a href="2.9-r-startup.html#rprofile"><i class="fa fa-check"></i><b>2.9.1</b> <code>.Rprofile</code></a></li>
+<li class="chapter" data-level="2.9.2" data-path="2.9-r-startup.html"><a href="2.9-r-startup.html#renviron"><i class="fa fa-check"></i><b>2.9.2</b> <code>.Renviron</code></a></li>
+</ul></li>
+<li class="chapter" data-level="2.10" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html"><i class="fa fa-check"></i><b>2.10</b> VS Code</a>
+<ul>
+<li class="chapter" data-level="" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#plot-viewer"><i class="fa fa-check"></i>Plot Viewer</a></li>
+<li class="chapter" data-level="" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#rmd"><i class="fa fa-check"></i>Rmd</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="3-rmd-1.html"><a href="3-rmd-1.html"><i class="fa fa-check"></i><b>3</b> Rmd</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="3.1-yaml-metadata.html"><a href="3.1-yaml-metadata.html"><i class="fa fa-check"></i><b>3.1</b> YAML metadata</a>
+<ul>
+<li class="chapter" data-level="3.1.1" data-path="3.1-yaml-metadata.html"><a href="3.1-yaml-metadata.html#render-rmd"><i class="fa fa-check"></i><b>3.1.1</b> Render Rmd</a></li>
+<li class="chapter" data-level="3.1.2" data-path="3.1-yaml-metadata.html"><a href="3.1-yaml-metadata.html#document-dependency"><i class="fa fa-check"></i><b>3.1.2</b> Document dependency</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="3.2-chunk-options.html"><a href="3.2-chunk-options.html"><i class="fa fa-check"></i><b>3.2</b> Chunk Options</a>
+<ul>
+<li class="chapter" data-level="" data-path="3.2-chunk-options.html"><a href="3.2-chunk-options.html#hooks"><i class="fa fa-check"></i>Hooks</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="3.3-print-verbatim-r-code-chunks.html"><a href="3.3-print-verbatim-r-code-chunks.html"><i class="fa fa-check"></i><b>3.3</b> Print Verbatim R code chunks</a></li>
+<li class="chapter" data-level="3.4" data-path="3.4-rmd-basics.html"><a href="3.4-rmd-basics.html"><i class="fa fa-check"></i><b>3.4</b> Rmd Basics</a></li>
+<li class="chapter" data-level="3.5" data-path="3.5-citations.html"><a href="3.5-citations.html"><i class="fa fa-check"></i><b>3.5</b> Citations</a>
+<ul>
+<li class="chapter" data-level="3.5.1" data-path="3.5-citations.html"><a href="3.5-citations.html#bibliographies"><i class="fa fa-check"></i><b>3.5.1</b> Bibliographies</a></li>
+<li class="chapter" data-level="3.5.2" data-path="3.5-citations.html"><a href="3.5-citations.html#bibliography-placement"><i class="fa fa-check"></i><b>3.5.2</b> Bibliography placement</a></li>
+</ul></li>
+<li class="chapter" data-level="3.6" data-path="3.6-cross-references.html"><a href="3.6-cross-references.html"><i class="fa fa-check"></i><b>3.6</b> Cross References</a>
+<ul>
+<li class="chapter" data-level="3.6.1" data-path="3.6-cross-references.html"><a href="3.6-cross-references.html#using-bookdown"><i class="fa fa-check"></i><b>3.6.1</b> Using <code>bookdown</code></a></li>
+<li class="chapter" data-level="3.6.2" data-path="3.6-cross-references.html"><a href="3.6-cross-references.html#using-the-latex-way"><i class="fa fa-check"></i><b>3.6.2</b> Using the LaTeX Way</a></li>
+</ul></li>
+<li class="chapter" data-level="3.7" data-path="3.7-equations.html"><a href="3.7-equations.html"><i class="fa fa-check"></i><b>3.7</b> Equations</a></li>
+<li class="chapter" data-level="3.8" data-path="3.8-theorems.html"><a href="3.8-theorems.html"><i class="fa fa-check"></i><b>3.8</b> Theorems</a></li>
+<li class="chapter" data-level="3.9" data-path="3.9-figures.html"><a href="3.9-figures.html"><i class="fa fa-check"></i><b>3.9</b> Figures</a>
+<ul>
+<li class="chapter" data-level="" data-path="3.9-figures.html"><a href="3.9-figures.html#latex-symbols-in-fig.-caption"><i class="fa fa-check"></i>Latex symbols in Fig. caption</a></li>
+<li class="chapter" data-level="" data-path="3.9-figures.html"><a href="3.9-figures.html#refer-to-another-figure-in-figure-caption"><i class="fa fa-check"></i>Refer to another figure in figure caption</a></li>
+</ul></li>
+<li class="chapter" data-level="3.10" data-path="3.10-tables.html"><a href="3.10-tables.html"><i class="fa fa-check"></i><b>3.10</b> Tables</a>
+<ul>
+<li class="chapter" data-level="3.10.1" data-path="3.10-tables.html"><a href="3.10-tables.html#knitrkable"><i class="fa fa-check"></i><b>3.10.1</b> <code>knitr::kable</code></a></li>
+<li class="chapter" data-level="3.10.2" data-path="3.10-tables.html"><a href="3.10-tables.html#data-frame-printing"><i class="fa fa-check"></i><b>3.10.2</b> Data frame printing</a></li>
+<li class="chapter" data-level="3.10.3" data-path="3.10-tables.html"><a href="3.10-tables.html#stargazer"><i class="fa fa-check"></i><b>3.10.3</b> Stargazer</a></li>
+<li class="chapter" data-level="3.10.4" data-path="3.10-tables.html"><a href="3.10-tables.html#xtable"><i class="fa fa-check"></i><b>3.10.4</b> <code>xtable</code></a></li>
+<li class="chapter" data-level="3.10.5" data-path="3.10-tables.html"><a href="3.10-tables.html#kableextra"><i class="fa fa-check"></i><b>3.10.5</b> <code>kableExtra</code></a></li>
+</ul></li>
+<li class="chapter" data-level="3.11" data-path="3.11-rmd-github-pages.html"><a href="3.11-rmd-github-pages.html"><i class="fa fa-check"></i><b>3.11</b> Rmd GitHub Pages</a>
+<ul>
+<li class="chapter" data-level="" data-path="3.11-rmd-github-pages.html"><a href="3.11-rmd-github-pages.html#project-structure"><i class="fa fa-check"></i>Project structure</a></li>
+<li class="chapter" data-level="" data-path="3.11-rmd-github-pages.html"><a href="3.11-rmd-github-pages.html#site.yml-config"><i class="fa fa-check"></i><code>_site.yml</code> config</a></li>
+<li class="chapter" data-level="" data-path="3.11-rmd-github-pages.html"><a href="3.11-rmd-github-pages.html#index.rmd"><i class="fa fa-check"></i><code>index.Rmd</code></a></li>
+<li class="chapter" data-level="" data-path="3.11-rmd-github-pages.html"><a href="3.11-rmd-github-pages.html#r-scripts"><i class="fa fa-check"></i>R scripts</a></li>
+<li class="chapter" data-level="" data-path="3.11-rmd-github-pages.html"><a href="3.11-rmd-github-pages.html#workflow"><i class="fa fa-check"></i>Workflow</a></li>
+<li class="chapter" data-level="" data-path="3.11-rmd-github-pages.html"><a href="3.11-rmd-github-pages.html#css-style"><i class="fa fa-check"></i>CSS Style</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="4-bookdown.html"><a href="4-bookdown.html"><i class="fa fa-check"></i><b>4</b> bookdown</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="4.1-bookdown-project-structure.html"><a href="4.1-bookdown-project-structure.html"><i class="fa fa-check"></i><b>4.1</b> bookdown project structure</a>
+<ul>
+<li class="chapter" data-level="" data-path="4.1-bookdown-project-structure.html"><a href="4.1-bookdown-project-structure.html#output.yml"><i class="fa fa-check"></i><code>_output.yml</code></a></li>
+<li class="chapter" data-level="" data-path="4.1-bookdown-project-structure.html"><a href="4.1-bookdown-project-structure.html#bookdown.yml"><i class="fa fa-check"></i><code>_bookdown.yml</code></a></li>
+<li class="chapter" data-level="" data-path="4.1-bookdown-project-structure.html"><a href="4.1-bookdown-project-structure.html#index.rmd-1"><i class="fa fa-check"></i><code>index.Rmd</code></a></li>
+<li class="chapter" data-level="" data-path="4.1-bookdown-project-structure.html"><a href="4.1-bookdown-project-structure.html#rmd-files"><i class="fa fa-check"></i><code>.Rmd</code> files</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="4.2-rendering-bookdown.html"><a href="4.2-rendering-bookdown.html"><i class="fa fa-check"></i><b>4.2</b> Rendering bookdown</a></li>
+<li class="chapter" data-level="4.3" data-path="4.3-toggle-visibility-of-solutions.html"><a href="4.3-toggle-visibility-of-solutions.html"><i class="fa fa-check"></i><b>4.3</b> Toggle Visibility of Solutions</a></li>
+<li class="chapter" data-level="4.4" data-path="4.4-quarto.html"><a href="4.4-quarto.html"><i class="fa fa-check"></i><b>4.4</b> Quarto</a>
+<ul>
+<li class="chapter" data-level="4.4.1" data-path="4.4-quarto.html"><a href="4.4-quarto.html#book-structure"><i class="fa fa-check"></i><b>4.4.1</b> Book Structure</a></li>
+<li class="chapter" data-level="4.4.2" data-path="4.4-quarto.html"><a href="4.4-quarto.html#html-theming"><i class="fa fa-check"></i><b>4.4.2</b> HTML Theming</a></li>
+<li class="chapter" data-level="4.4.3" data-path="4.4-quarto.html"><a href="4.4-quarto.html#cross-references-1"><i class="fa fa-check"></i><b>4.4.3</b> Cross References</a></li>
+<li class="chapter" data-level="4.4.4" data-path="4.4-quarto.html"><a href="4.4-quarto.html#equations-2"><i class="fa fa-check"></i><b>4.4.4</b> Equations</a></li>
+<li class="chapter" data-level="4.4.5" data-path="4.4-quarto.html"><a href="4.4-quarto.html#divs-and-spans"><i class="fa fa-check"></i><b>4.4.5</b> Divs and Spans</a></li>
+<li class="chapter" data-level="4.4.6" data-path="4.4-quarto.html"><a href="4.4-quarto.html#theorems-1"><i class="fa fa-check"></i><b>4.4.6</b> Theorems</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="5-basic-r.html"><a href="5-basic-r.html"><i class="fa fa-check"></i><b>5</b> Basic R</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="5.1-data-input-output.html"><a href="5.1-data-input-output.html"><i class="fa fa-check"></i><b>5.1</b> Data Input &amp; Output</a>
+<ul>
+<li class="chapter" data-level="5.1.1" data-path="5.1-data-input-output.html"><a href="5.1-data-input-output.html#read-data"><i class="fa fa-check"></i><b>5.1.1</b> Read Data</a></li>
+<li class="chapter" data-level="5.1.2" data-path="5.1-data-input-output.html"><a href="5.1-data-input-output.html#write-data"><i class="fa fa-check"></i><b>5.1.2</b> Write Data</a></li>
+</ul></li>
+<li class="chapter" data-level="5.2" data-path="5.2-functions.html"><a href="5.2-functions.html"><i class="fa fa-check"></i><b>5.2</b> Functions</a>
+<ul>
+<li class="chapter" data-level="5.2.1" data-path="5.2-functions.html"><a href="5.2-functions.html#inspecting-object-types-and-structure"><i class="fa fa-check"></i><b>5.2.1</b> Inspecting Object Types and Structure</a></li>
+<li class="chapter" data-level="5.2.2" data-path="5.2-functions.html"><a href="5.2-functions.html#type-of-variables"><i class="fa fa-check"></i><b>5.2.2</b> Type of Variables</a></li>
+<li class="chapter" data-level="5.2.3" data-path="5.2-functions.html"><a href="5.2-functions.html#variable-scope"><i class="fa fa-check"></i><b>5.2.3</b> Variable Scope</a></li>
+<li class="chapter" data-level="5.2.4" data-path="5.2-functions.html"><a href="5.2-functions.html#control-structures"><i class="fa fa-check"></i><b>5.2.4</b> Control Structures</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="5.3-basic-r-functions.html"><a href="5.3-basic-r-functions.html"><i class="fa fa-check"></i><b>5.3</b> Basic R functions</a>
+<ul>
+<li class="chapter" data-level="5.3.1" data-path="5.3-basic-r-functions.html"><a href="5.3-basic-r-functions.html#workspace-management"><i class="fa fa-check"></i><b>5.3.1</b> Workspace Management</a></li>
+<li class="chapter" data-level="5.3.2" data-path="5.3-basic-r-functions.html"><a href="5.3-basic-r-functions.html#data-display-and-output"><i class="fa fa-check"></i><b>5.3.2</b> Data Display and Output</a></li>
+<li class="chapter" data-level="5.3.3" data-path="5.3-basic-r-functions.html"><a href="5.3-basic-r-functions.html#data-manipulation-and-transformation"><i class="fa fa-check"></i><b>5.3.3</b> Data Manipulation and Transformation</a></li>
+<li class="chapter" data-level="5.3.4" data-path="5.3-basic-r-functions.html"><a href="5.3-basic-r-functions.html#generate-random-seeds"><i class="fa fa-check"></i><b>5.3.4</b> Generate Random Seeds</a></li>
+<li class="chapter" data-level="5.3.5" data-path="5.3-basic-r-functions.html"><a href="5.3-basic-r-functions.html#draw-random-samples"><i class="fa fa-check"></i><b>5.3.5</b> Draw random samples</a></li>
+<li class="chapter" data-level="5.3.6" data-path="5.3-basic-r-functions.html"><a href="5.3-basic-r-functions.html#fit-a-distribution"><i class="fa fa-check"></i><b>5.3.6</b> Fit a distribution</a></li>
+<li class="chapter" data-level="5.3.7" data-path="5.3-basic-r-functions.html"><a href="5.3-basic-r-functions.html#operation-on-list"><i class="fa fa-check"></i><b>5.3.7</b> Operation on list</a></li>
+</ul></li>
+<li class="chapter" data-level="5.4" data-path="5.4-data-splitting-and-grouping.html"><a href="5.4-data-splitting-and-grouping.html"><i class="fa fa-check"></i><b>5.4</b> Data Splitting and Grouping</a>
+<ul>
+<li class="chapter" data-level="5.4.1" data-path="5.4-data-splitting-and-grouping.html"><a href="5.4-data-splitting-and-grouping.html#the-split-function"><i class="fa fa-check"></i><b>5.4.1</b> The <code>split()</code> Function</a></li>
+<li class="chapter" data-level="5.4.2" data-path="5.4-data-splitting-and-grouping.html"><a href="5.4-data-splitting-and-grouping.html#split-and-apply-operations"><i class="fa fa-check"></i><b>5.4.2</b> Split-and-Apply Operations</a></li>
+</ul></li>
+<li class="chapter" data-level="5.5" data-path="5.5-apply-family.html"><a href="5.5-apply-family.html"><i class="fa fa-check"></i><b>5.5</b> <code>*apply()</code> Family</a>
+<ul>
+<li class="chapter" data-level="5.5.1" data-path="5.5-apply-family.html"><a href="5.5-apply-family.html#parallel-version-of-apply-function"><i class="fa fa-check"></i><b>5.5.1</b> <span style="color:#008B45">Parallel</span> version of <code>apply</code> function</a></li>
+<li class="chapter" data-level="5.5.2" data-path="5.5-apply-family.html"><a href="5.5-apply-family.html#related-functions"><i class="fa fa-check"></i><b>5.5.2</b> Related Functions</a></li>
+</ul></li>
+<li class="chapter" data-level="5.6" data-path="5.6-statistical-summary-functions.html"><a href="5.6-statistical-summary-functions.html"><i class="fa fa-check"></i><b>5.6</b> Statistical Summary Functions</a></li>
+<li class="chapter" data-level="5.7" data-path="5.7-contingency-table.html"><a href="5.7-contingency-table.html"><i class="fa fa-check"></i><b>5.7</b> Contingency Table</a>
+<ul>
+<li class="chapter" data-level="5.7.1" data-path="5.7-contingency-table.html"><a href="5.7-contingency-table.html#basic-frequency-counting"><i class="fa fa-check"></i><b>5.7.1</b> Basic Frequency Counting</a></li>
+<li class="chapter" data-level="5.7.2" data-path="5.7-contingency-table.html"><a href="5.7-contingency-table.html#creating-contingency-tables"><i class="fa fa-check"></i><b>5.7.2</b> Creating Contingency Tables</a></li>
+<li class="chapter" data-level="5.7.3" data-path="5.7-contingency-table.html"><a href="5.7-contingency-table.html#working-with-arrays-and-multi-dimensional-tables"><i class="fa fa-check"></i><b>5.7.3</b> Working with Arrays and Multi-dimensional Tables</a></li>
+<li class="chapter" data-level="5.7.4" data-path="5.7-contingency-table.html"><a href="5.7-contingency-table.html#flattening-and-exporting-tables"><i class="fa fa-check"></i><b>5.7.4</b> Flattening and Exporting Tables</a></li>
+<li class="chapter" data-level="5.7.5" data-path="5.7-contingency-table.html"><a href="5.7-contingency-table.html#table-visualization-and-formatting"><i class="fa fa-check"></i><b>5.7.5</b> Table Visualization and Formatting</a></li>
+</ul></li>
+<li class="chapter" data-level="5.8" data-path="5.8-data-frame-operations.html"><a href="5.8-data-frame-operations.html"><i class="fa fa-check"></i><b>5.8</b> Data Frame Operations</a>
+<ul>
+<li class="chapter" data-level="" data-path="5.8-data-frame-operations.html"><a href="5.8-data-frame-operations.html#columnrow-wise-operations"><i class="fa fa-check"></i>Column/Row-wise Operations</a></li>
+<li class="chapter" data-level="5.8.1" data-path="5.8-data-frame-operations.html"><a href="5.8-data-frame-operations.html#process-na-values"><i class="fa fa-check"></i><b>5.8.1</b> <span style="color:#008B45"><strong>Process <code>NA</code> values</strong></span></a></li>
+</ul></li>
+<li class="chapter" data-level="5.9" data-path="5.9-matrix-multiplication.html"><a href="5.9-matrix-multiplication.html"><i class="fa fa-check"></i><b>5.9</b> Matrix multiplication</a></li>
+<li class="chapter" data-level="5.10" data-path="5.10-string-operations.html"><a href="5.10-string-operations.html"><i class="fa fa-check"></i><b>5.10</b> String Operations</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="6-tidyverse.html"><a href="6-tidyverse.html"><i class="fa fa-check"></i><b>6</b> Tidyverse</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="6.1-basic-operations-on-tibbles.html"><a href="6.1-basic-operations-on-tibbles.html"><i class="fa fa-check"></i><b>6.1</b> Basic operations on tibbles</a>
+<ul>
+<li class="chapter" data-level="6.1.1" data-path="6.1-basic-operations-on-tibbles.html"><a href="6.1-basic-operations-on-tibbles.html#check-unique-values"><i class="fa fa-check"></i><b>6.1.1</b> Check Unique Values</a></li>
+<li class="chapter" data-level="6.1.2" data-path="6.1-basic-operations-on-tibbles.html"><a href="6.1-basic-operations-on-tibbles.html#column-names"><i class="fa fa-check"></i><b>6.1.2</b> Column Names</a></li>
+<li class="chapter" data-level="6.1.3" data-path="6.1-basic-operations-on-tibbles.html"><a href="6.1-basic-operations-on-tibbles.html#column-operations"><i class="fa fa-check"></i><b>6.1.3</b> Column Operations</a></li>
+<li class="chapter" data-level="6.1.4" data-path="6.1-basic-operations-on-tibbles.html"><a href="6.1-basic-operations-on-tibbles.html#mutate"><i class="fa fa-check"></i><b>6.1.4</b> <code>mutate</code></a></li>
+<li class="chapter" data-level="6.1.5" data-path="6.1-basic-operations-on-tibbles.html"><a href="6.1-basic-operations-on-tibbles.html#concatenate-rows-into-a-tibble"><i class="fa fa-check"></i><b>6.1.5</b> Concatenate rows into a <code>tibble</code></a></li>
+<li class="chapter" data-level="6.1.6" data-path="6.1-basic-operations-on-tibbles.html"><a href="6.1-basic-operations-on-tibbles.html#data-subsetting-1"><i class="fa fa-check"></i><b>6.1.6</b> Data Subsetting</a></li>
+<li class="chapter" data-level="6.1.7" data-path="6.1-basic-operations-on-tibbles.html"><a href="6.1-basic-operations-on-tibbles.html#dynamic-selection"><i class="fa fa-check"></i><b>6.1.7</b> Dynamic Selection</a></li>
+<li class="chapter" data-level="6.1.8" data-path="6.1-basic-operations-on-tibbles.html"><a href="6.1-basic-operations-on-tibbles.html#merge"><i class="fa fa-check"></i><b>6.1.8</b> Merge</a></li>
+</ul></li>
+<li class="chapter" data-level="6.2" data-path="6.2-pipe-operator.html"><a href="6.2-pipe-operator.html"><i class="fa fa-check"></i><b>6.2</b> Pipe Operator</a>
+<ul>
+<li class="chapter" data-level="6.2.1" data-path="6.2-pipe-operator.html"><a href="6.2-pipe-operator.html#native-pipe"><i class="fa fa-check"></i><b>6.2.1</b> Native Pipe <code>|&gt;</code></a></li>
+</ul></li>
+<li class="chapter" data-level="6.3" data-path="6.3-categorical-variables.html"><a href="6.3-categorical-variables.html"><i class="fa fa-check"></i><b>6.3</b> Categorical Variables</a>
+<ul>
+<li class="chapter" data-level="6.3.1" data-path="6.3-categorical-variables.html"><a href="6.3-categorical-variables.html#manipulate-string-columns"><i class="fa fa-check"></i><b>6.3.1</b> Manipulate String Columns</a></li>
+<li class="chapter" data-level="6.3.2" data-path="6.3-categorical-variables.html"><a href="6.3-categorical-variables.html#factors"><i class="fa fa-check"></i><b>6.3.2</b> Factors</a></li>
+</ul></li>
+<li class="chapter" data-level="6.4" data-path="6.4-group-and-apply-functions.html"><a href="6.4-group-and-apply-functions.html"><i class="fa fa-check"></i><b>6.4</b> Group and Apply Functions</a>
+<ul>
+<li class="chapter" data-level="6.4.1" data-path="6.4-group-and-apply-functions.html"><a href="6.4-group-and-apply-functions.html#group_by"><i class="fa fa-check"></i><b>6.4.1</b> <code>group_by()</code></a></li>
+<li class="chapter" data-level="6.4.2" data-path="6.4-group-and-apply-functions.html"><a href="6.4-group-and-apply-functions.html#subset-rows"><i class="fa fa-check"></i><b>6.4.2</b> Subset rows</a></li>
+<li class="chapter" data-level="6.4.3" data-path="6.4-group-and-apply-functions.html"><a href="6.4-group-and-apply-functions.html#summarize"><i class="fa fa-check"></i><b>6.4.3</b> Summarize</a></li>
+<li class="chapter" data-level="6.4.4" data-path="6.4-group-and-apply-functions.html"><a href="6.4-group-and-apply-functions.html#split-apply-combine"><i class="fa fa-check"></i><b>6.4.4</b> split-apply-combine</a></li>
+<li class="chapter" data-level="6.4.5" data-path="6.4-group-and-apply-functions.html"><a href="6.4-group-and-apply-functions.html#dplyrgroup_modify"><i class="fa fa-check"></i><b>6.4.5</b> <code>dplyr::group_modify()</code></a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="7-graphics.html"><a href="7-graphics.html"><i class="fa fa-check"></i><b>7</b> Graphics</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="7.1-goodlooking-colors.html"><a href="7.1-goodlooking-colors.html"><i class="fa fa-check"></i><b>7.1</b> Goodlooking Colors</a>
+<ul>
+<li class="chapter" data-level="7.1.1" data-path="7.1-goodlooking-colors.html"><a href="7.1-goodlooking-colors.html#rcolorbrewer"><i class="fa fa-check"></i><b>7.1.1</b> RColorBrewer</a></li>
+<li class="chapter" data-level="7.1.2" data-path="7.1-goodlooking-colors.html"><a href="7.1-goodlooking-colors.html#grey-scale"><i class="fa fa-check"></i><b>7.1.2</b> Grey Scale</a></li>
+<li class="chapter" data-level="7.1.3" data-path="7.1-goodlooking-colors.html"><a href="7.1-goodlooking-colors.html#ggsci"><i class="fa fa-check"></i><b>7.1.3</b> <code>ggsci</code></a></li>
+<li class="chapter" data-level="7.1.4" data-path="7.1-goodlooking-colors.html"><a href="7.1-goodlooking-colors.html#generate-color-palettes"><i class="fa fa-check"></i><b>7.1.4</b> <strong>Generate Color Palettes</strong></a></li>
+</ul></li>
+<li class="chapter" data-level="7.2" data-path="7.2-math-expression-in-figures.html"><a href="7.2-math-expression-in-figures.html"><i class="fa fa-check"></i><b>7.2</b> Math Expression in Figures</a></li>
+<li class="chapter" data-level="7.3" data-path="7.3-ggplot.html"><a href="7.3-ggplot.html"><i class="fa fa-check"></i><b>7.3</b> ggplot</a>
+<ul>
+<li class="chapter" data-level="7.3.1" data-path="7.3-ggplot.html"><a href="7.3-ggplot.html#dual-y-axis-plot"><i class="fa fa-check"></i><b>7.3.1</b> <strong>Dual y-axis plot</strong></a></li>
+<li class="chapter" data-level="7.3.2" data-path="7.3-ggplot.html"><a href="7.3-ggplot.html#aes"><i class="fa fa-check"></i><b>7.3.2</b> <code>aes()</code></a></li>
+<li class="chapter" data-level="7.3.3" data-path="7.3-ggplot.html"><a href="7.3-ggplot.html#add-regression-line"><i class="fa fa-check"></i><b>7.3.3</b> Add regression line</a></li>
+<li class="chapter" data-level="7.3.4" data-path="7.3-ggplot.html"><a href="7.3-ggplot.html#subplots"><i class="fa fa-check"></i><b>7.3.4</b> Subplots</a></li>
+<li class="chapter" data-level="7.3.5" data-path="7.3-ggplot.html"><a href="7.3-ggplot.html#parameters"><i class="fa fa-check"></i><b>7.3.5</b> Parameters</a></li>
+<li class="chapter" data-level="7.3.6" data-path="7.3-ggplot.html"><a href="7.3-ggplot.html#guides-together-with-guide_legend"><i class="fa fa-check"></i><b>7.3.6</b> <code>guides()</code>, together with <code>guide_legend()</code></a></li>
+<li class="chapter" data-level="7.3.7" data-path="7.3-ggplot.html"><a href="7.3-ggplot.html#ggplot-template-for-multi-series"><i class="fa fa-check"></i><b>7.3.7</b> <code>ggplot</code> template for multi-series</a></li>
+<li class="chapter" data-level="7.3.8" data-path="7.3-ggplot.html"><a href="7.3-ggplot.html#grid.gedit"><i class="fa fa-check"></i><b>7.3.8</b> <code>grid.gedit()</code></a></li>
+<li class="chapter" data-level="7.3.9" data-path="7.3-ggplot.html"><a href="7.3-ggplot.html#control-graphics-devices"><i class="fa fa-check"></i><b>7.3.9</b> <strong>Control Graphics Devices</strong></a></li>
+</ul></li>
+<li class="chapter" data-level="7.4" data-path="7.4-plot-raster-data.html"><a href="7.4-plot-raster-data.html"><i class="fa fa-check"></i><b>7.4</b> plot <code>Raster</code> data</a>
+<ul>
+<li class="chapter" data-level="7.4.1" data-path="7.4-plot-raster-data.html"><a href="7.4-plot-raster-data.html#add-patterns-to-shapes"><i class="fa fa-check"></i><b>7.4.1</b> Add Patterns to Shapes</a></li>
+</ul></li>
+<li class="chapter" data-level="7.5" data-path="7.5-histogram.html"><a href="7.5-histogram.html"><i class="fa fa-check"></i><b>7.5</b> Histogram</a></li>
+<li class="chapter" data-level="7.6" data-path="7.6-qq-plot.html"><a href="7.6-qq-plot.html"><i class="fa fa-check"></i><b>7.6</b> QQ-plot</a></li>
+<li class="chapter" data-level="7.7" data-path="7.7-heatmap.html"><a href="7.7-heatmap.html"><i class="fa fa-check"></i><b>7.7</b> Heatmap</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="8-time-series.html"><a href="8-time-series.html"><i class="fa fa-check"></i><b>8</b> Time Series</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="8.1-date.html"><a href="8.1-date.html"><i class="fa fa-check"></i><b>8.1</b> Date</a></li>
+<li class="chapter" data-level="8.2" data-path="8.2-process-data.html"><a href="8.2-process-data.html"><i class="fa fa-check"></i><b>8.2</b> Process Data</a>
+<ul>
+<li class="chapter" data-level="8.2.1" data-path="8.2-process-data.html"><a href="8.2-process-data.html#tidyquant"><i class="fa fa-check"></i><b>8.2.1</b> <code>tidyquant</code></a></li>
+<li class="chapter" data-level="8.2.2" data-path="8.2-process-data.html"><a href="8.2-process-data.html#from-tibble-to-xts"><i class="fa fa-check"></i><b>8.2.2</b> From tibble to <code>xts</code></a></li>
+</ul></li>
+<li class="chapter" data-level="8.3" data-path="8.3-portfolio-return.html"><a href="8.3-portfolio-return.html"><i class="fa fa-check"></i><b>8.3</b> Portfolio Return</a></li>
+<li class="chapter" data-level="8.4" data-path="8.4-plot-ts.html"><a href="8.4-plot-ts.html"><i class="fa fa-check"></i><b>8.4</b> Plot TS</a>
+<ul>
+<li class="chapter" data-level="8.4.1" data-path="8.4-plot-ts.html"><a href="8.4-plot-ts.html#plot.xts"><i class="fa fa-check"></i><b>8.4.1</b> <code>plot.xts</code></a></li>
+<li class="chapter" data-level="8.4.2" data-path="8.4-plot-ts.html"><a href="8.4-plot-ts.html#autoplot"><i class="fa fa-check"></i><b>8.4.2</b> <code>autoplot</code></a></li>
+</ul></li>
+<li class="chapter" data-level="8.5" data-path="8.5-time-series-regression.html"><a href="8.5-time-series-regression.html"><i class="fa fa-check"></i><b>8.5</b> Time Series Regression</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="9-regression.html"><a href="9-regression.html"><i class="fa fa-check"></i><b>9</b> Regression</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="9.1-ols.html"><a href="9.1-ols.html"><i class="fa fa-check"></i><b>9.1</b> OLS</a>
+<ul>
+<li class="chapter" data-level="9.1.1" data-path="9.1-ols.html"><a href="9.1-ols.html#get-the-coef-estimates"><i class="fa fa-check"></i><b>9.1.1</b> Get the coef estimates</a></li>
+<li class="chapter" data-level="9.1.2" data-path="9.1-ols.html"><a href="9.1-ols.html#covariance-matrix"><i class="fa fa-check"></i><b>9.1.2</b> Covariance Matrix</a></li>
+<li class="chapter" data-level="9.1.3" data-path="9.1-ols.html"><a href="9.1-ols.html#model-performance"><i class="fa fa-check"></i><b>9.1.3</b> Model performance</a></li>
+<li class="chapter" data-level="9.1.4" data-path="9.1-ols.html"><a href="9.1-ols.html#model-summary"><i class="fa fa-check"></i><b>9.1.4</b> Model Summary</a></li>
+<li class="chapter" data-level="9.1.5" data-path="9.1-ols.html"><a href="9.1-ols.html#dummy-variable"><i class="fa fa-check"></i><b>9.1.5</b> Dummy variable</a></li>
+</ul></li>
+<li class="chapter" data-level="9.2" data-path="9.2-panel.html"><a href="9.2-panel.html"><i class="fa fa-check"></i><b>9.2</b> Panel</a>
+<ul>
+<li class="chapter" data-level="9.2.1" data-path="9.2-panel.html"><a href="9.2-panel.html#dynamic-panel"><i class="fa fa-check"></i><b>9.2.1</b> Dynamic Panel</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="10-machine-learning.html"><a href="10-machine-learning.html"><i class="fa fa-check"></i><b>10</b> Machine Learning</a>
+<ul>
+<li class="chapter" data-level="10.1" data-path="10.1-imbalanced-datasets.html"><a href="10.1-imbalanced-datasets.html"><i class="fa fa-check"></i><b>10.1</b> Imbalanced datasets</a>
+<ul>
+<li class="chapter" data-level="10.1.1" data-path="10.1-imbalanced-datasets.html"><a href="10.1-imbalanced-datasets.html#downsampling-and-upweighting"><i class="fa fa-check"></i><b>10.1.1</b> Downsampling and Upweighting</a></li>
+</ul></li>
+<li class="chapter" data-level="10.2" data-path="10.2-random-forest.html"><a href="10.2-random-forest.html"><i class="fa fa-check"></i><b>10.2</b> Random Forest</a>
+<ul>
+<li class="chapter" data-level="" data-path="10.2-random-forest.html"><a href="10.2-random-forest.html#implementation-in-r"><i class="fa fa-check"></i>Implementation in R</a></li>
+<li class="chapter" data-level="" data-path="10.2-random-forest.html"><a href="10.2-random-forest.html#imbalance-classification"><i class="fa fa-check"></i>Imbalance Classification</a></li>
+</ul></li>
+<li class="chapter" data-level="10.3" data-path="10.3-neural-network.html"><a href="10.3-neural-network.html"><i class="fa fa-check"></i><b>10.3</b> Neural Network</a></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="11-stata.html"><a href="11-stata.html"><i class="fa fa-check"></i><b>11</b> Stata</a>
+<ul>
+<li class="chapter" data-level="11.1" data-path="11.1-basic-syntax.html"><a href="11.1-basic-syntax.html"><i class="fa fa-check"></i><b>11.1</b> Basic syntax</a>
+<ul>
+<li class="chapter" data-level="11.1.1" data-path="11.1-basic-syntax.html"><a href="11.1-basic-syntax.html#system-variables"><i class="fa fa-check"></i><b>11.1.1</b> System Variables</a></li>
+<li class="chapter" data-level="11.1.2" data-path="11.1-basic-syntax.html"><a href="11.1-basic-syntax.html#matrix"><i class="fa fa-check"></i><b>11.1.2</b> Matrix</a></li>
+<li class="chapter" data-level="11.1.3" data-path="11.1-basic-syntax.html"><a href="11.1-basic-syntax.html#factor-variables"><i class="fa fa-check"></i><b>11.1.3</b> Factor Variables</a></li>
+<li class="chapter" data-level="11.1.4" data-path="11.1-basic-syntax.html"><a href="11.1-basic-syntax.html#time-series-varlists"><i class="fa fa-check"></i><b>11.1.4</b> Time series varlists</a></li>
+<li class="chapter" data-level="11.1.5" data-path="11.1-basic-syntax.html"><a href="11.1-basic-syntax.html#labels"><i class="fa fa-check"></i><b>11.1.5</b> Labels</a></li>
+</ul></li>
+<li class="chapter" data-level="11.2" data-path="11.2-data-manipulation.html"><a href="11.2-data-manipulation.html"><i class="fa fa-check"></i><b>11.2</b> Data Manipulation</a>
+<ul>
+<li class="chapter" data-level="11.2.1" data-path="11.2-data-manipulation.html"><a href="11.2-data-manipulation.html#import-and-export"><i class="fa fa-check"></i><b>11.2.1</b> Import and Export</a></li>
+<li class="chapter" data-level="11.2.2" data-path="11.2-data-manipulation.html"><a href="11.2-data-manipulation.html#save-estimation-results"><i class="fa fa-check"></i><b>11.2.2</b> Save Estimation Results</a></li>
+<li class="chapter" data-level="11.2.3" data-path="11.2-data-manipulation.html"><a href="11.2-data-manipulation.html#stored-results"><i class="fa fa-check"></i><b>11.2.3</b> Stored Results</a></li>
+</ul></li>
+<li class="chapter" data-level="11.3" data-path="11.3-predict.html"><a href="11.3-predict.html"><i class="fa fa-check"></i><b>11.3</b> Predict</a></li>
+<li class="chapter" data-level="11.4" data-path="11.4-forecast.html"><a href="11.4-forecast.html"><i class="fa fa-check"></i><b>11.4</b> Forecast</a>
+<ul>
+<li class="chapter" data-level="" data-path="11.4-forecast.html"><a href="11.4-forecast.html#add-equationsidentifies"><i class="fa fa-check"></i>Add equations/identifies</a></li>
+<li class="chapter" data-level="" data-path="11.4-forecast.html"><a href="11.4-forecast.html#solve-the-foreceast"><i class="fa fa-check"></i>Solve the foreceast</a></li>
+<li class="chapter" data-level="" data-path="11.4-forecast.html"><a href="11.4-forecast.html#use-example-forecast-a-panel"><i class="fa fa-check"></i>Use example: forecast a panel</a></li>
+</ul></li>
+<li class="chapter" data-level="11.5" data-path="11.5-panel-1.html"><a href="11.5-panel-1.html"><i class="fa fa-check"></i><b>11.5</b> Panel</a></li>
+<li class="chapter" data-level="11.6" data-path="11.6-arellano-bond-estimator.html"><a href="11.6-arellano-bond-estimator.html"><i class="fa fa-check"></i><b>11.6</b> Arellano-Bond Estimator</a>
+<ul>
+<li class="chapter" data-level="11.6.1" data-path="11.6-arellano-bond-estimator.html"><a href="11.6-arellano-bond-estimator.html#xtabond2"><i class="fa fa-check"></i><b>11.6.1</b> xtabond2</a></li>
+</ul></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">R Notes</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<head>
+    <script> 
+        function myFunction(id) {
+          var x = document.getElementById(id); 
+          if (x.style.display === "none") {
+            x.style.display = "block";
+          } else {
+            x.style.display = "none";
+          }
+        }
+    </script>
+</head>
+<div id="basic-operations-on-tibbles" class="section level2 hasAnchor" number="6.1">
+<h2><span class="header-section-number">6.1</span> Basic operations on tibbles<a href="6.1-basic-operations-on-tibbles.html#basic-operations-on-tibbles" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="check-unique-values" class="section level3 hasAnchor" number="6.1.1">
+<h3><span class="header-section-number">6.1.1</span> Check Unique Values<a href="6.1-basic-operations-on-tibbles.html#check-unique-values" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p><strong><code>n_distinct(x)</code></strong> This is a faster and more concise equivalent of <code>length(unique(x))</code>, # of unique values in <code>x</code>.</p>
+<p><code>distinct(df, ..., .keep_all=FALSE)</code> select <strong>distinct/unique</strong> rows, remove duplicate rows.</p>
+<ul>
+<li><p><code>df</code>: table</p></li>
+<li><p><code>...</code>: variables to use when determining uniqueness. If omitted, will use all variables.</p>
+<p>If there are multiple rows for a given combination of inputs, only the first row will be preserved.</p>
+<p>If two variables are provided, then <u>unique combinations of the two</u> are used as key and the first row of each key is preserved.</p></li>
+<li><p><code>.keep_all</code>: If <code>TRUE</code>, keep all variables in <code>df</code></p></li>
+</ul>
+<div class="sourceCode" id="cb395"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb395-1"><a href="6.1-basic-operations-on-tibbles.html#cb395-1" tabindex="-1"></a><span class="co"># unique locations</span></span>
+<span id="cb395-2"><a href="6.1-basic-operations-on-tibbles.html#cb395-2" tabindex="-1"></a>data <span class="sc">%&gt;%</span> </span>
+<span id="cb395-3"><a href="6.1-basic-operations-on-tibbles.html#cb395-3" tabindex="-1"></a>    <span class="fu">distinct</span>(lat, lon)</span></code></pre></div>
+<p><span style="color:#008B45"><code>dplyr::setdiff(x, y)</code></span> element that is in <code>x</code> but not in <code>y</code>.</p>
+<ul>
+<li><code>x</code> and <code>y</code> are supposed to have the same structure, i.e., same columns if for data frames.</li>
+</ul>
+</div>
+<div id="column-names" class="section level3 hasAnchor" number="6.1.2">
+<h3><span class="header-section-number">6.1.2</span> Column Names<a href="6.1-basic-operations-on-tibbles.html#column-names" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p><code>rename()</code> replaces an old name with a new one.</p>
+<div class="sourceCode" id="cb396"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb396-1"><a href="6.1-basic-operations-on-tibbles.html#cb396-1" tabindex="-1"></a>world <span class="sc">%&gt;%</span> </span>
+<span id="cb396-2"><a href="6.1-basic-operations-on-tibbles.html#cb396-2" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">name =</span> name_long)</span>
+<span id="cb396-3"><a href="6.1-basic-operations-on-tibbles.html#cb396-3" tabindex="-1"></a><span class="co"># renames the lengthy name_long column to simply name</span></span></code></pre></div>
+<p><code>magrittr</code> package provides a series of aliases which can be more pleasant to use when composing chains using the <code>%&gt;%</code>operator.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Alias</th>
+<th>Cmd</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>set_colnames</code></td>
+<td>colnames&lt;-</td>
+</tr>
+<tr class="even">
+<td><code>set_rownames</code></td>
+<td>rownames&lt;-</td>
+</tr>
+<tr class="odd">
+<td><code>set_names</code></td>
+<td>names&lt;-</td>
+</tr>
+</tbody>
+</table>
+<p><code>set_names()</code> changes all column names at once, and requires a character vector with a name matching each column.</p>
+<hr />
+</div>
+<div id="column-operations" class="section level3 hasAnchor" number="6.1.3">
+<h3><span class="header-section-number">6.1.3</span> Column Operations<a href="6.1-basic-operations-on-tibbles.html#column-operations" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="create-new-columns" class="section level4 unnumbered unlisted hasAnchor">
+<h4>Create New Columns<a href="6.1-basic-operations-on-tibbles.html#create-new-columns" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p><code>add_column(df, ..., .after=NULL, .before=NULL)</code> add new column after the last column.</p>
+<ul>
+<li><code>df</code>: Data frame to append to;</li>
+<li><code>...</code>: Name-value pairs to insert;</li>
+<li><code>.before, .after</code>: One-based column <strong>index</strong> or column <strong>name</strong> where to add the new columns, default: after last column</li>
+</ul>
+<p><code>data %&gt;% mutate(column = .[[2]] - .[[1]])</code> subset by column positions.</p>
+<ul>
+<li><p>Here the dot notation in <code>.[[2]]</code> refers to <code>data</code>, the variable you pipe into <code>mutate</code>. Dot is extra useful here because it allows you to use <code>data</code> multiple times. We use it twice in this example.</p></li>
+<li><p>Alternatively, <code>data %&gt;% mutate(column = unlist(pick(2) - pick(1)))</code> <code>unlist</code> here transform the list generated from <code>pick(2)-pick(1)</code> to a vector.</p></li>
+</ul>
+</div>
+<div id="order-by-columns" class="section level4 unnumbered unlisted hasAnchor">
+<h4>Order by Columns<a href="6.1-basic-operations-on-tibbles.html#order-by-columns" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p><code>arrange()</code> reorders data frame based on specified columns.</p>
+<div class="sourceCode" id="cb397"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb397-1"><a href="6.1-basic-operations-on-tibbles.html#cb397-1" tabindex="-1"></a><span class="co"># sort mtcars by disp in ascending order</span></span>
+<span id="cb397-2"><a href="6.1-basic-operations-on-tibbles.html#cb397-2" tabindex="-1"></a><span class="fu">arrange</span>(mtcars, disp)</span>
+<span id="cb397-3"><a href="6.1-basic-operations-on-tibbles.html#cb397-3" tabindex="-1"></a><span class="co"># sort mtcars by disp in descending order</span></span>
+<span id="cb397-4"><a href="6.1-basic-operations-on-tibbles.html#cb397-4" tabindex="-1"></a><span class="fu">arrange</span>(mtcars, <span class="fu">desc</span>(disp))</span></code></pre></div>
+<p><code>arrange</code> by column position</p>
+<div class="sourceCode" id="cb398"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb398-1"><a href="6.1-basic-operations-on-tibbles.html#cb398-1" tabindex="-1"></a><span class="co"># sort by first column in the data</span></span>
+<span id="cb398-2"><a href="6.1-basic-operations-on-tibbles.html#cb398-2" tabindex="-1"></a>data <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(.[<span class="dv">1</span>])</span></code></pre></div>
+</div>
+</div>
+<div id="mutate" class="section level3 hasAnchor" number="6.1.4">
+<h3><span class="header-section-number">6.1.4</span> <code>mutate</code><a href="6.1-basic-operations-on-tibbles.html#mutate" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p><code>mutate()</code> adds new columns at the penultimate (second last) position in the <code>sf</code> object (the last one is reserved for the geometry):</p>
+<div class="sourceCode" id="cb399"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb399-1"><a href="6.1-basic-operations-on-tibbles.html#cb399-1" tabindex="-1"></a>world <span class="sc">%&gt;%</span> </span>
+<span id="cb399-2"><a href="6.1-basic-operations-on-tibbles.html#cb399-2" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">pop_dens =</span> pop <span class="sc">/</span> area_km2)</span></code></pre></div>
+<p><code>mutate_at(.tbl, .vars, .funs)</code> applies a function to given columns:</p>
+<ul>
+<li><code>.tbl</code> A tbl object;</li>
+<li><code>.vars</code> A list of columns generated by <code>vars()</code>, a character vector of <u>column names</u>, a numeric vector of <u>column positions</u>, or NULL.</li>
+<li><code>.fun</code> A function fun, a quosure style lambda <code>~ fun(.)</code> or a list of either form.</li>
+</ul>
+<div class="sourceCode" id="cb400"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb400-1"><a href="6.1-basic-operations-on-tibbles.html#cb400-1" tabindex="-1"></a>mtcars <span class="ot">&lt;-</span> mtcars <span class="sc">%&gt;%</span></span>
+<span id="cb400-2"><a href="6.1-basic-operations-on-tibbles.html#cb400-2" tabindex="-1"></a>  <span class="fu">mutate_at</span>(<span class="fu">c</span>(<span class="st">&quot;hp_wt&quot;</span>, <span class="st">&quot;mpg_wt&quot;</span>), log) </span>
+<span id="cb400-3"><a href="6.1-basic-operations-on-tibbles.html#cb400-3" tabindex="-1"></a><span class="co"># note that `across` use together with `mutate`</span></span>
+<span id="cb400-4"><a href="6.1-basic-operations-on-tibbles.html#cb400-4" tabindex="-1"></a>mtcars <span class="ot">&lt;-</span> mtcars <span class="sc">%&gt;%</span></span>
+<span id="cb400-5"><a href="6.1-basic-operations-on-tibbles.html#cb400-5" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(<span class="st">&quot;hp_wt&quot;</span>, <span class="st">&quot;mpg_wt&quot;</span>), log)) </span>
+<span id="cb400-6"><a href="6.1-basic-operations-on-tibbles.html#cb400-6" tabindex="-1"></a><span class="do">## factor as numeric, except for `ISO_C3`</span></span>
+<span id="cb400-7"><a href="6.1-basic-operations-on-tibbles.html#cb400-7" tabindex="-1"></a>agg_dummy <span class="sc">%&gt;%</span> </span>
+<span id="cb400-8"><a href="6.1-basic-operations-on-tibbles.html#cb400-8" tabindex="-1"></a>    <span class="fu">mutate_at</span>(<span class="fu">vars</span>(<span class="sc">-</span>ISO_C3), <span class="sc">~</span><span class="fu">as.numeric</span>(<span class="fu">levels</span>(.)[.]))</span></code></pre></div>
+<p><code>across(.cols, .fnc, .names=NULL)</code> apply the same transformation to multiple columns, allowing you to use <code>select()</code> semantics inside in “data-masking” functions like <code>summarise()</code> and <code>mutate()</code>.</p>
+<ul>
+<li><p><code>.cols</code> Columns to transform. You can NOT select grouping columns because they are already automatically handled by the verb.</p>
+<p>can specify start and end columns using <code>:</code>.</p></li>
+<li><p><code>.fnc</code> Functions to apply to each of the selected columns. Possible values are:</p>
+<ul>
+<li><p>A function, e.g. <code>mean</code>.</p></li>
+<li><p><span style="color:#008B45">A purrr-style lambda, e.g. <code>~ mean(.x, na.rm = TRUE)</code></span></p>
+<div class="sourceCode" id="cb401"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb401-1"><a href="6.1-basic-operations-on-tibbles.html#cb401-1" tabindex="-1"></a><span class="co"># divide each col by 100, except for the Date column.</span></span>
+<span id="cb401-2"><a href="6.1-basic-operations-on-tibbles.html#cb401-2" tabindex="-1"></a>FF_factor <span class="sc">%&gt;%</span> <span class="fu">mutate_at</span>(<span class="fu">vars</span>(<span class="sc">-</span>Date), <span class="sc">~</span>.<span class="sc">/</span><span class="dv">100</span>)</span></code></pre></div></li>
+<li><p>A named list of functions or lambdas, e.g. <code>⁠list(mean = mean, n_miss = ~ sum(is.na(.x))⁠</code>. Each function is applied to each column, and the output is named by combining the function name and the column name using the glue specification in <code>.names</code>.</p></li>
+</ul></li>
+</ul>
+<p><code>mutate()</code> and <code>mutate_at()</code> outputs a new data frame, it does <em>not</em> alter the given data frame. We need to reassign the data frame to be the output of the pipe.</p>
+<p><code>mutate_all(.tbl, .funs, ...)</code> is equivalent to <code>apply(x, 2, FUN)</code>. But <code>apply()</code> works poor when column types are not unanimous. E.g., when a tibble has <code>character</code> and <code>numeric</code> columns, <code>apply()</code> tends to coerce <code>numeric</code> to <code>character</code>, and won’t return the result as you expext.</p>
+<hr />
+</div>
+<div id="concatenate-rows-into-a-tibble" class="section level3 hasAnchor" number="6.1.5">
+<h3><span class="header-section-number">6.1.5</span> Concatenate rows into a <code>tibble</code><a href="6.1-basic-operations-on-tibbles.html#concatenate-rows-into-a-tibble" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p><code>add_row(.data, ..., .before = NULL, .after = NULL)</code> add one or more rows of data to an existing data frame,</p>
+<ul>
+<li><p>convenient in the way that you can just specify each column with their values.</p></li>
+<li><p>especially convenient when you just want to <strong>add one row</strong>.</p></li>
+<li><p><code>...</code> &lt;<code>dynamic-dots</code>&gt; Name-value pairs, passed on to <code>tibble()</code>.</p>
+<ul>
+<li>Values can be defined only for columns that already exist in <code>.data</code> and;</li>
+<li>unset columns will get an <code>NA</code> value.</li>
+</ul></li>
+<li><p><code>.before</code>, <code>.after</code> specify the position where you want to add the new row/rows.</p></li>
+</ul>
+<div class="sourceCode" id="cb402"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb402-1"><a href="6.1-basic-operations-on-tibbles.html#cb402-1" tabindex="-1"></a><span class="co"># add_row ---------------------------------</span></span>
+<span id="cb402-2"><a href="6.1-basic-operations-on-tibbles.html#cb402-2" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">x =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="at">y =</span> <span class="dv">3</span><span class="sc">:</span><span class="dv">1</span>)</span>
+<span id="cb402-3"><a href="6.1-basic-operations-on-tibbles.html#cb402-3" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">add_row</span>(<span class="at">x =</span> <span class="dv">4</span>, <span class="at">y =</span> <span class="dv">0</span>)</span></code></pre></div>
+<p><strong><code>bind_rows(..., .id = NULL)</code></strong> This is an efficient implementation of the common pattern of <code>do.call(rbind, dfs)</code>. Match by <span style="color:#008B45">column names</span>.</p>
+<p>The output of <code>bind_rows()</code> will contain a column if that column appears in any of the inputs. <code>rbind</code> will throw errors if columns do not match.</p>
+<ul>
+<li><p><code>...</code> Data frames to combine.</p>
+<ul>
+<li><p>Each argument can either be a data frame, a list that could be a data frame, or a list of data frames.</p></li>
+<li><p>When row-binding, <strong>columns are matched <span style="color:#008B45">by name</span></strong>, and any <strong>missing columns will be filled with NA</strong>. So <u>no column is dropped, which is safe</u>.</p></li>
+<li><p>When column-binding (<strong><code>bind_cols(df1, df2, ...)</code></strong>), rows are matched <span style="color:#FF9900"><strong>by position</strong></span>, so all data frames must have the <u>same number of rows</u>. To match by value, not position, see <a href="http://127.0.0.1:40078/help/library/dplyr/help/mutate-joins">mutate-joins</a>.</p>
+<p>Need to be careful when you use <code>bind_cols</code>, make sure rows are in the same order in the tables you want to join.</p>
+<ul>
+<li><p><code>bind_cols</code> is equivalent to <code>cbind</code>: match by position. Recommend to use <code>left_join</code>, which is safer.</p></li>
+<li><p><span style="color:#008B45"><code>bind_rows</code> is safer than <code>rbind</code></span>: <code>bind_rows</code> find matched col names</p></li>
+</ul></li>
+</ul></li>
+<li><p><code>.id</code> Data frame identifier.</p>
+<ul>
+<li>When <code>.id</code> is supplied, a new column of identifiers is created to link each row to its original data frame. The labels are taken from the named arguments to <code>bind_rows()</code>. When a list of data frames is supplied, the labels are taken from the names of the list. If no names are found a numeric sequence is used instead.</li>
+</ul></li>
+</ul>
+<div class="sourceCode" id="cb403"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb403-1"><a href="6.1-basic-operations-on-tibbles.html#cb403-1" tabindex="-1"></a>res <span class="ot">=</span> <span class="cn">NULL</span></span>
+<span id="cb403-2"><a href="6.1-basic-operations-on-tibbles.html#cb403-2" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> tibbleList)</span>
+<span id="cb403-3"><a href="6.1-basic-operations-on-tibbles.html#cb403-3" tabindex="-1"></a>   res <span class="ot">=</span> <span class="fu">bind_rows</span>(res, i)</span>
+<span id="cb403-4"><a href="6.1-basic-operations-on-tibbles.html#cb403-4" tabindex="-1"></a></span>
+<span id="cb403-5"><a href="6.1-basic-operations-on-tibbles.html#cb403-5" tabindex="-1"></a><span class="co"># or, equivalently,</span></span>
+<span id="cb403-6"><a href="6.1-basic-operations-on-tibbles.html#cb403-6" tabindex="-1"></a><span class="fu">bind_rows</span>(tibbleList) <span class="co"># combine all tibbles in the list</span></span></code></pre></div>
+<hr />
+</div>
+<div id="data-subsetting-1" class="section level3 hasAnchor" number="6.1.6">
+<h3><span class="header-section-number">6.1.6</span> Data Subsetting<a href="6.1-basic-operations-on-tibbles.html#data-subsetting-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p><code>pull(df, var)</code> pull out a single variable and return a vector. Similar to <code>$</code>, but works well with <code>%&gt;%</code>.</p>
+<p><code>var</code>: A variable specified as:</p>
+<ul>
+<li>a literal variable name</li>
+<li>a positive integer, giving the position counting from the left</li>
+<li>a negative integer, giving the position counting from the right.</li>
+</ul>
+<hr />
+<p><span style="color:red"><strong><code>filter(.data, ..., .preserve=FALSE)</code></strong></span> chooses rows/cases where conditions are true. Unlike base subsetting with <code>[</code>, rows where the condition evaluates to <code>NA</code> are dropped.</p>
+<ul>
+<li><code>...</code> &lt;<code>data-masking</code>&gt; Expressions that return a logical value, and are defined in terms of the variables in <code>.data</code>. If <strong>multiple expressions</strong> are included, they are combined with the <strong><code>&amp;</code></strong> operator. Only rows for which all conditions evaluate to <code>TRUE</code> are kept.</li>
+<li><code>.preserve</code> Relevant when the <code>.data</code> input is grouped. If <code>.preserve = FALSE</code> (the default), the grouping structure is recalculated based on the resulting data, otherwise the grouping is kept as is.</li>
+</ul>
+<div class="sourceCode" id="cb404"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb404-1"><a href="6.1-basic-operations-on-tibbles.html#cb404-1" tabindex="-1"></a><span class="co"># Countries with a life expectancy longer than 82 years</span></span>
+<span id="cb404-2"><a href="6.1-basic-operations-on-tibbles.html#cb404-2" tabindex="-1"></a>world6 <span class="ot">=</span> <span class="fu">filter</span>(world, lifeExp <span class="sc">&gt;</span> <span class="dv">82</span>)</span>
+<span id="cb404-3"><a href="6.1-basic-operations-on-tibbles.html#cb404-3" tabindex="-1"></a><span class="co"># filter based on vector</span></span>
+<span id="cb404-4"><a href="6.1-basic-operations-on-tibbles.html#cb404-4" tabindex="-1"></a><span class="fu">filter</span>(diamonds, cut <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&#39;Ideal&#39;</span>, <span class="st">&#39;Premium&#39;</span>))</span></code></pre></div>
+<p>Useful filter functions:</p>
+<ul>
+<li><code>==</code>, <code>&gt;</code>, <code>&gt;=</code> etc</li>
+<li><code>&amp;</code>, <code>|</code>, <code>!</code>, <code>xor()</code></li>
+<li><code>is.na()</code></li>
+<li><code>between()</code>, <code>near()</code></li>
+</ul>
+<p><code>between(x, left, right)</code> is a shortcut for <code>x &gt;= left &amp; x &lt;= right</code>.</p>
+<p>Ex. <code>x[between(x, -1, 1)]</code></p>
+<hr />
+<p><code>select()</code> subsets by column, <strong><code>slice</code></strong> subsets by <strong>rows</strong>. <strong><code>select()</code></strong> selects <strong>columns</strong> by name or position.</p>
+<div class="sourceCode" id="cb405"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb405-1"><a href="6.1-basic-operations-on-tibbles.html#cb405-1" tabindex="-1"></a>world1 <span class="ot">=</span> dplyr<span class="sc">::</span><span class="fu">select</span>(world, name_long, pop)</span>
+<span id="cb405-2"><a href="6.1-basic-operations-on-tibbles.html#cb405-2" tabindex="-1"></a><span class="fu">names</span>(world1)</span>
+<span id="cb405-3"><a href="6.1-basic-operations-on-tibbles.html#cb405-3" tabindex="-1"></a><span class="co">#&gt; [1] &quot;name_long&quot; &quot;pop&quot;       &quot;geom&quot;</span></span></code></pre></div>
+<p><code>select()</code> also allows subsetting of a range of columns with the help of the <code>:</code> operator:</p>
+<div class="sourceCode" id="cb406"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb406-1"><a href="6.1-basic-operations-on-tibbles.html#cb406-1" tabindex="-1"></a><span class="co"># all columns between name_long and pop (inclusive)</span></span>
+<span id="cb406-2"><a href="6.1-basic-operations-on-tibbles.html#cb406-2" tabindex="-1"></a>world2 <span class="ot">=</span> dplyr<span class="sc">::</span><span class="fu">select</span>(world, name_long<span class="sc">:</span>pop)</span></code></pre></div>
+<p><code>select()</code> can be used to <strong>reorder</strong>/drop variables.</p>
+<div class="sourceCode" id="cb407"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb407-1"><a href="6.1-basic-operations-on-tibbles.html#cb407-1" tabindex="-1"></a><span class="fu">select</span>(df, year, var, state)   <span class="co"># reverses the columns</span></span>
+<span id="cb407-2"><a href="6.1-basic-operations-on-tibbles.html#cb407-2" tabindex="-1"></a><span class="fu">select</span>(df, <span class="sc">-</span>state) <span class="co"># drop column by name &#39;state&#39; </span></span></code></pre></div>
+<p>If you only know you want <strong><code>var</code> in the <em>front</em></strong> and don’t care about the order of the rest, you can do [<em>move one variable in the front</em>]</p>
+<div class="sourceCode" id="cb408"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb408-1"><a href="6.1-basic-operations-on-tibbles.html#cb408-1" tabindex="-1"></a>df <span class="sc">%&gt;%</span></span>
+<span id="cb408-2"><a href="6.1-basic-operations-on-tibbles.html#cb408-2" tabindex="-1"></a>  <span class="fu">select</span>(var, <span class="fu">everything</span>())</span></code></pre></div>
+<p><code>all_of(vars)</code> is used together with <code>select</code> for <em>strict selection</em>. If any of the variables in the character vector is missing, an error is thrown.</p>
+<ul>
+<li><code>vars</code> A vector of character names or numeric locations.</li>
+</ul>
+<p><code>any_of(vars)</code> doesn’t check for missing variables. It is especially <strong>useful with negative selections</strong>, when you would like to make sure a variable is removed.</p>
+<div class="sourceCode" id="cb409"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb409-1"><a href="6.1-basic-operations-on-tibbles.html#cb409-1" tabindex="-1"></a><span class="co"># select columns may or may not exist</span></span>
+<span id="cb409-2"><a href="6.1-basic-operations-on-tibbles.html#cb409-2" tabindex="-1"></a>the_country <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">any_of</span>(<span class="fu">c</span>(<span class="st">&quot;isoa2&quot;</span>, <span class="st">&quot;countryCode&quot;</span>)) )</span>
+<span id="cb409-3"><a href="6.1-basic-operations-on-tibbles.html#cb409-3" tabindex="-1"></a><span class="co"># remove columns may or may not exist</span></span>
+<span id="cb409-4"><a href="6.1-basic-operations-on-tibbles.html#cb409-4" tabindex="-1"></a>the_country <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span><span class="fu">any_of</span>(<span class="fu">c</span>(<span class="st">&quot;isoa2&quot;</span>, <span class="st">&quot;countryCode&quot;</span>)) )</span></code></pre></div>
+<p>This flexibility is useful because it won’t return an error if the variable is not found.</p>
+<p><strong>Selection with conditions</strong></p>
+<p>Functions work together with <code>select</code> to choose cols matching certain conditions: <span style="color:#008B45"><code>starts_with()</code></span>, <span style="color:#008B45"><code>ends_with()</code></span>, <code>contains()</code>. These are selection helpers which match variables according to a given pattern.</p>
+<div class="sourceCode" id="cb410"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb410-1"><a href="6.1-basic-operations-on-tibbles.html#cb410-1" tabindex="-1"></a><span class="sc">&gt;</span> iris <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">starts_with</span>(<span class="st">&quot;Sepal&quot;</span>))</span>
+<span id="cb410-2"><a href="6.1-basic-operations-on-tibbles.html#cb410-2" tabindex="-1"></a><span class="co">#&gt; # A tibble: 150 x 2</span></span>
+<span id="cb410-3"><a href="6.1-basic-operations-on-tibbles.html#cb410-3" tabindex="-1"></a><span class="co">#&gt;   Sepal.Length Sepal.Width</span></span>
+<span id="cb410-4"><a href="6.1-basic-operations-on-tibbles.html#cb410-4" tabindex="-1"></a><span class="co">#&gt;          &lt;dbl&gt;       &lt;dbl&gt;</span></span>
+<span id="cb410-5"><a href="6.1-basic-operations-on-tibbles.html#cb410-5" tabindex="-1"></a><span class="co">#&gt; 1          5.1         3.5</span></span>
+<span id="cb410-6"><a href="6.1-basic-operations-on-tibbles.html#cb410-6" tabindex="-1"></a><span class="co">#&gt; 2          4.9         3  </span></span>
+<span id="cb410-7"><a href="6.1-basic-operations-on-tibbles.html#cb410-7" tabindex="-1"></a><span class="co">#&gt; 3          4.7         3.2</span></span>
+<span id="cb410-8"><a href="6.1-basic-operations-on-tibbles.html#cb410-8" tabindex="-1"></a><span class="co">#&gt; 4          4.6         3.1</span></span>
+<span id="cb410-9"><a href="6.1-basic-operations-on-tibbles.html#cb410-9" tabindex="-1"></a><span class="co">#&gt; # i 146 more rows</span></span>
+<span id="cb410-10"><a href="6.1-basic-operations-on-tibbles.html#cb410-10" tabindex="-1"></a></span>
+<span id="cb410-11"><a href="6.1-basic-operations-on-tibbles.html#cb410-11" tabindex="-1"></a><span class="sc">&gt;</span> iris <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">ends_with</span>(<span class="st">&quot;Width&quot;</span>))</span>
+<span id="cb410-12"><a href="6.1-basic-operations-on-tibbles.html#cb410-12" tabindex="-1"></a><span class="co">#&gt; # A tibble: 150 x 2</span></span>
+<span id="cb410-13"><a href="6.1-basic-operations-on-tibbles.html#cb410-13" tabindex="-1"></a><span class="co">#&gt;   Sepal.Width Petal.Width</span></span>
+<span id="cb410-14"><a href="6.1-basic-operations-on-tibbles.html#cb410-14" tabindex="-1"></a><span class="co">#&gt;         &lt;dbl&gt;       &lt;dbl&gt;</span></span>
+<span id="cb410-15"><a href="6.1-basic-operations-on-tibbles.html#cb410-15" tabindex="-1"></a><span class="co">#&gt; 1         3.5         0.2</span></span>
+<span id="cb410-16"><a href="6.1-basic-operations-on-tibbles.html#cb410-16" tabindex="-1"></a><span class="co">#&gt; 2         3           0.2</span></span>
+<span id="cb410-17"><a href="6.1-basic-operations-on-tibbles.html#cb410-17" tabindex="-1"></a><span class="co">#&gt; 3         3.2         0.2</span></span>
+<span id="cb410-18"><a href="6.1-basic-operations-on-tibbles.html#cb410-18" tabindex="-1"></a><span class="co">#&gt; 4         3.1         0.2</span></span>
+<span id="cb410-19"><a href="6.1-basic-operations-on-tibbles.html#cb410-19" tabindex="-1"></a><span class="co">#&gt; # i 146 more rows</span></span></code></pre></div>
+<hr />
+</div>
+<div id="dynamic-selection" class="section level3 hasAnchor" number="6.1.7">
+<h3><span class="header-section-number">6.1.7</span> Dynamic Selection<a href="6.1-basic-operations-on-tibbles.html#dynamic-selection" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>A <strong><span style="color:red">dynamic</span> subset of variables</strong> when using <code>select</code></p>
+<div class="sourceCode" id="cb411"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb411-1"><a href="6.1-basic-operations-on-tibbles.html#cb411-1" tabindex="-1"></a>dynamic_var <span class="ot">&lt;-</span> <span class="st">&#39;state&#39;</span></span>
+<span id="cb411-2"><a href="6.1-basic-operations-on-tibbles.html#cb411-2" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">select</span>(year, var, <span class="fu">eval</span>(dynamic_var)) <span class="co"># dynamic_var will be parsed as state</span></span>
+<span id="cb411-3"><a href="6.1-basic-operations-on-tibbles.html#cb411-3" tabindex="-1"></a></span>
+<span id="cb411-4"><a href="6.1-basic-operations-on-tibbles.html#cb411-4" tabindex="-1"></a><span class="co"># --- dplyr version 0.7+---</span></span>
+<span id="cb411-5"><a href="6.1-basic-operations-on-tibbles.html#cb411-5" tabindex="-1"></a>multipetal <span class="ot">&lt;-</span> <span class="cf">function</span>(df, n) {</span>
+<span id="cb411-6"><a href="6.1-basic-operations-on-tibbles.html#cb411-6" tabindex="-1"></a>    varname <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="st">&quot;petal&quot;</span>, n , <span class="at">sep=</span><span class="st">&quot;.&quot;</span>)</span>
+<span id="cb411-7"><a href="6.1-basic-operations-on-tibbles.html#cb411-7" tabindex="-1"></a>    <span class="fu">mutate</span>(df, <span class="sc">!!</span><span class="at">varname :=</span> Petal.Width <span class="sc">*</span> n)</span>
+<span id="cb411-8"><a href="6.1-basic-operations-on-tibbles.html#cb411-8" tabindex="-1"></a>}</span>
+<span id="cb411-9"><a href="6.1-basic-operations-on-tibbles.html#cb411-9" tabindex="-1"></a><span class="co"># !! unquote</span></span>
+<span id="cb411-10"><a href="6.1-basic-operations-on-tibbles.html#cb411-10" tabindex="-1"></a><span class="co"># using := to dynamically assign/change parameter names</span></span></code></pre></div>
+<p>variables in the left hand side</p>
+<div class="sourceCode" id="cb412"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb412-1"><a href="6.1-basic-operations-on-tibbles.html#cb412-1" tabindex="-1"></a>plot_v <span class="ot">&lt;-</span> <span class="st">&quot;maize&quot;</span></span>
+<span id="cb412-2"><a href="6.1-basic-operations-on-tibbles.html#cb412-2" tabindex="-1"></a>plot_data <span class="ot">&lt;-</span> plot_data <span class="sc">%&gt;%</span> </span>
+<span id="cb412-3"><a href="6.1-basic-operations-on-tibbles.html#cb412-3" tabindex="-1"></a>    <span class="fu">select</span>(year, plot_v, tmx, pre, rad) <span class="sc">%&gt;%</span> </span>
+<span id="cb412-4"><a href="6.1-basic-operations-on-tibbles.html#cb412-4" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="sc">!!</span><span class="at">plot_v :=</span> <span class="fu">log</span>(<span class="fu">eval</span>(<span class="fu">parse</span>(<span class="at">text =</span> plot_v)) )) <span class="sc">%&gt;%</span> </span>
+<span id="cb412-5"><a href="6.1-basic-operations-on-tibbles.html#cb412-5" tabindex="-1"></a>    <span class="fu">group_by</span>(year) <span class="sc">%&gt;%</span> </span>
+<span id="cb412-6"><a href="6.1-basic-operations-on-tibbles.html#cb412-6" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), <span class="sc">~</span><span class="fu">mean</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) ) )</span>
+<span id="cb412-7"><a href="6.1-basic-operations-on-tibbles.html#cb412-7" tabindex="-1"></a>plot_data    </span></code></pre></div>
+<p>Use <code>!!</code> to unquote a single argument in a function call. <code>!!</code> takes a single expression, evaluates it, and inlines the result in the AST.</p>
+<div class="sourceCode" id="cb413"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb413-1"><a href="6.1-basic-operations-on-tibbles.html#cb413-1" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">expr</span>(<span class="sc">-</span><span class="dv">1</span>)</span>
+<span id="cb413-2"><a href="6.1-basic-operations-on-tibbles.html#cb413-2" tabindex="-1"></a><span class="fu">expr</span>(<span class="fu">f</span>(<span class="sc">!!</span>x, y))</span>
+<span id="cb413-3"><a href="6.1-basic-operations-on-tibbles.html#cb413-3" tabindex="-1"></a><span class="co">#&gt; f(-1, y)</span></span></code></pre></div>
+<p><span style="color:red"><code>rlang::sym(x)</code></span> take a string as input and turn it into symbols</p>
+<p>string <code>x</code> -&gt; expression <code>expr(x)</code> -&gt; evaluate<code>!!expr(x)</code></p>
+<p><strong><code>!!!</code></strong> the behaviour of <code>!!!</code> is known as “spatting” in Ruby, Go, PHP, and Julia. It is closely related to <code>*args</code> (star-args) and <code>**kwarg</code> (star-star-kwargs) in Python, which are sometimes called argument unpacking.</p>
+<p><span style="color:red"><strong><code>:=</code></strong> </span> rather than interpreting <code>var</code> literally (pronounced colon-equals), we want to use the value stored in the variable called <code>var</code>.</p>
+<div class="sourceCode" id="cb414"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb414-1"><a href="6.1-basic-operations-on-tibbles.html#cb414-1" tabindex="-1"></a>tibble<span class="sc">::</span><span class="fu">tibble</span>(<span class="sc">!!</span><span class="at">var :=</span> val)</span>
+<span id="cb414-2"><a href="6.1-basic-operations-on-tibbles.html#cb414-2" tabindex="-1"></a><span class="co">#&gt; # A tibble: 3 x 1</span></span>
+<span id="cb414-3"><a href="6.1-basic-operations-on-tibbles.html#cb414-3" tabindex="-1"></a><span class="co">#&gt;       x</span></span>
+<span id="cb414-4"><a href="6.1-basic-operations-on-tibbles.html#cb414-4" tabindex="-1"></a><span class="co">#&gt;   &lt;dbl&gt;</span></span>
+<span id="cb414-5"><a href="6.1-basic-operations-on-tibbles.html#cb414-5" tabindex="-1"></a><span class="co">#&gt; 1     4</span></span>
+<span id="cb414-6"><a href="6.1-basic-operations-on-tibbles.html#cb414-6" tabindex="-1"></a><span class="co">#&gt; 2     3</span></span>
+<span id="cb414-7"><a href="6.1-basic-operations-on-tibbles.html#cb414-7" tabindex="-1"></a><span class="co">#&gt; 3     9</span></span></code></pre></div>
+<p>Note the use of <code>:=</code> (pronounced colon-equals) rather than <code>=</code>. Unfortunately we need this new operation because R’s grammar does not allow expressions as argument names:</p>
+<p><code>:=</code> is like a vestigial organ: it’s recognised by R’s parser, but it doesn’t have any code associated with it. It looks like an <code>=</code> but allows expressions on either side, making it a more flexible alternative to <code>=</code>. It is used in data.table for similar reasons.</p>
+<hr />
+<div id="se-versions-of-dplyr-verbs" class="section level4 unnumbered unlisted hasAnchor">
+<h4>SE-versions of dplyr verbs<a href="6.1-basic-operations-on-tibbles.html#se-versions-of-dplyr-verbs" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p><a href="https://dplyr.tidyverse.org/reference/se-deprecated.html" class="uri">https://dplyr.tidyverse.org/reference/se-deprecated.html</a></p>
+<p>dplyr used to offer twin versions of each verb suffixed with an underscore. These versions had standard evaluation (SE) semantics: rather than taking arguments by code, like NSE verbs, they took arguments by value. Their purpose was to make it possible to program with dplyr.</p>
+<p>However, dplyr now uses tidy evaluation semantics. NSE verbs still capture their arguments, but you can now unquote parts of these arguments. This offers full programmability with NSE verbs. Thus, the underscored versions are now superfluous.</p>
+<div class="sourceCode" id="cb415"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb415-1"><a href="6.1-basic-operations-on-tibbles.html#cb415-1" tabindex="-1"></a>gcm_name <span class="ot">&lt;-</span> <span class="st">&quot;CanESM5&quot;</span></span>
+<span id="cb415-2"><a href="6.1-basic-operations-on-tibbles.html#cb415-2" tabindex="-1"></a>mergeData <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="fu">get</span>(gcm_name)<span class="sc">&lt;</span><span class="dv">35</span> )</span>
+<span id="cb415-3"><a href="6.1-basic-operations-on-tibbles.html#cb415-3" tabindex="-1"></a>mergeData <span class="sc">%&gt;%</span> <span class="fu">filter_</span>(<span class="fu">sprintf</span>( <span class="st">&quot;%s&lt;35&quot;</span>, gcm_name ) ) <span class="co"># SE version</span></span>
+<span id="cb415-4"><a href="6.1-basic-operations-on-tibbles.html#cb415-4" tabindex="-1"></a>mergeData <span class="sc">%&gt;%</span> <span class="fu">select_</span>(gcm_name) <span class="co"># SE version</span></span></code></pre></div>
+<p><code>select_(.data, .dots=list() )</code></p>
+<ul>
+<li><code>.data</code> A data frame.</li>
+<li><code>.dots</code>, <code>...</code> Pair/values of expressions coercible to lazy objects.</li>
+</ul>
+<div class="sourceCode" id="cb416"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb416-1"><a href="6.1-basic-operations-on-tibbles.html#cb416-1" tabindex="-1"></a>vars <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="fu">list</span>(<span class="st">&#39;cyl&#39;</span>, <span class="st">&#39;mpg&#39;</span>), <span class="fu">list</span>(<span class="st">&#39;vs&#39;</span>, <span class="st">&#39;disp&#39;</span>))</span>
+<span id="cb416-2"><a href="6.1-basic-operations-on-tibbles.html#cb416-2" tabindex="-1"></a><span class="cf">for</span> (v <span class="cf">in</span> vars) {</span>
+<span id="cb416-3"><a href="6.1-basic-operations-on-tibbles.html#cb416-3" tabindex="-1"></a>  <span class="fu">print</span>(mtcars <span class="sc">%&gt;%</span> <span class="fu">select_</span>(<span class="at">.dots =</span> v) <span class="sc">%&gt;%</span> head)</span>
+<span id="cb416-4"><a href="6.1-basic-operations-on-tibbles.html#cb416-4" tabindex="-1"></a>}</span>
+<span id="cb416-5"><a href="6.1-basic-operations-on-tibbles.html#cb416-5" tabindex="-1"></a>                                  cyl  mpg</span>
+<span id="cb416-6"><a href="6.1-basic-operations-on-tibbles.html#cb416-6" tabindex="-1"></a>Mazda RX4           <span class="dv">6</span> <span class="fl">21.0</span></span>
+<span id="cb416-7"><a href="6.1-basic-operations-on-tibbles.html#cb416-7" tabindex="-1"></a>Mazda RX4 Wag       <span class="dv">6</span> <span class="fl">21.0</span></span>
+<span id="cb416-8"><a href="6.1-basic-operations-on-tibbles.html#cb416-8" tabindex="-1"></a>Datsun <span class="dv">710</span>          <span class="dv">4</span> <span class="fl">22.8</span></span>
+<span id="cb416-9"><a href="6.1-basic-operations-on-tibbles.html#cb416-9" tabindex="-1"></a>Hornet <span class="dv">4</span> Drive      <span class="dv">6</span> <span class="fl">21.4</span></span>
+<span id="cb416-10"><a href="6.1-basic-operations-on-tibbles.html#cb416-10" tabindex="-1"></a>Hornet Sportabout   <span class="dv">8</span> <span class="fl">18.7</span></span>
+<span id="cb416-11"><a href="6.1-basic-operations-on-tibbles.html#cb416-11" tabindex="-1"></a>Valiant             <span class="dv">6</span> <span class="fl">18.1</span></span>
+<span id="cb416-12"><a href="6.1-basic-operations-on-tibbles.html#cb416-12" tabindex="-1"></a>                  vs disp</span>
+<span id="cb416-13"><a href="6.1-basic-operations-on-tibbles.html#cb416-13" tabindex="-1"></a>Mazda RX4          <span class="dv">0</span>  <span class="dv">160</span></span>
+<span id="cb416-14"><a href="6.1-basic-operations-on-tibbles.html#cb416-14" tabindex="-1"></a>Mazda RX4 Wag      <span class="dv">0</span>  <span class="dv">160</span></span>
+<span id="cb416-15"><a href="6.1-basic-operations-on-tibbles.html#cb416-15" tabindex="-1"></a>Datsun <span class="dv">710</span>         <span class="dv">1</span>  <span class="dv">108</span></span>
+<span id="cb416-16"><a href="6.1-basic-operations-on-tibbles.html#cb416-16" tabindex="-1"></a>Hornet <span class="dv">4</span> Drive     <span class="dv">1</span>  <span class="dv">258</span></span>
+<span id="cb416-17"><a href="6.1-basic-operations-on-tibbles.html#cb416-17" tabindex="-1"></a>Hornet Sportabout  <span class="dv">0</span>  <span class="dv">360</span></span>
+<span id="cb416-18"><a href="6.1-basic-operations-on-tibbles.html#cb416-18" tabindex="-1"></a>Valiant            <span class="dv">1</span>  <span class="dv">225</span></span></code></pre></div>
+<p>Let’s make something more practical. For each list of variable arguments, we want to group using the first variable and then summarise the grouped data frame by calculating the mean of the second variable. Here, dynamic argument construction really comes into account, because we programmatically construct the arguments of <code>summarise_()</code>, e.g. <code>mean_mpg = mean(mpg)</code> using string concatenation and <code>setNames()</code>:</p>
+<div class="sourceCode" id="cb417"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb417-1"><a href="6.1-basic-operations-on-tibbles.html#cb417-1" tabindex="-1"></a>summarise_vars <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="fu">list</span>(<span class="st">&#39;cyl&#39;</span>, <span class="st">&#39;mpg&#39;</span>), <span class="fu">list</span>(<span class="st">&#39;vs&#39;</span>, <span class="st">&#39;disp&#39;</span>))</span>
+<span id="cb417-2"><a href="6.1-basic-operations-on-tibbles.html#cb417-2" tabindex="-1"></a></span>
+<span id="cb417-3"><a href="6.1-basic-operations-on-tibbles.html#cb417-3" tabindex="-1"></a><span class="cf">for</span> (v <span class="cf">in</span> summarise_vars) {</span>
+<span id="cb417-4"><a href="6.1-basic-operations-on-tibbles.html#cb417-4" tabindex="-1"></a>  group_var <span class="ot">&lt;-</span> v[<span class="dv">1</span>]   <span class="co"># group by this variable</span></span>
+<span id="cb417-5"><a href="6.1-basic-operations-on-tibbles.html#cb417-5" tabindex="-1"></a>  summ <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">&#39;mean(&#39;</span>, v[<span class="dv">2</span>], <span class="st">&#39;)&#39;</span>)  <span class="co"># construct summary method, e.g. mean(mpg)</span></span>
+<span id="cb417-6"><a href="6.1-basic-operations-on-tibbles.html#cb417-6" tabindex="-1"></a>  summ_name <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">&#39;mean_&#39;</span>, v[<span class="dv">2</span>])  <span class="co"># construct summary variable name, e.g. mean_mpg</span></span>
+<span id="cb417-7"><a href="6.1-basic-operations-on-tibbles.html#cb417-7" tabindex="-1"></a></span>
+<span id="cb417-8"><a href="6.1-basic-operations-on-tibbles.html#cb417-8" tabindex="-1"></a>  <span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">&#39;grouping by&#39;</span>, group_var, <span class="st">&#39;and summarising&#39;</span>, summ))</span>
+<span id="cb417-9"><a href="6.1-basic-operations-on-tibbles.html#cb417-9" tabindex="-1"></a></span>
+<span id="cb417-10"><a href="6.1-basic-operations-on-tibbles.html#cb417-10" tabindex="-1"></a>  df_summ <span class="ot">&lt;-</span> mtcars <span class="sc">%&gt;%</span></span>
+<span id="cb417-11"><a href="6.1-basic-operations-on-tibbles.html#cb417-11" tabindex="-1"></a>    <span class="fu">group_by_</span>(<span class="at">.dots =</span> group_var) <span class="sc">%&gt;%</span></span>
+<span id="cb417-12"><a href="6.1-basic-operations-on-tibbles.html#cb417-12" tabindex="-1"></a>    <span class="fu">summarise_</span>(<span class="at">.dots =</span> <span class="fu">setNames</span>(summ, summ_name))</span>
+<span id="cb417-13"><a href="6.1-basic-operations-on-tibbles.html#cb417-13" tabindex="-1"></a></span>
+<span id="cb417-14"><a href="6.1-basic-operations-on-tibbles.html#cb417-14" tabindex="-1"></a>  <span class="fu">print</span>(df_summ)</span>
+<span id="cb417-15"><a href="6.1-basic-operations-on-tibbles.html#cb417-15" tabindex="-1"></a>}</span>
+<span id="cb417-16"><a href="6.1-basic-operations-on-tibbles.html#cb417-16" tabindex="-1"></a></span>
+<span id="cb417-17"><a href="6.1-basic-operations-on-tibbles.html#cb417-17" tabindex="-1"></a><span class="co"># output</span></span>
+<span id="cb417-18"><a href="6.1-basic-operations-on-tibbles.html#cb417-18" tabindex="-1"></a>[<span class="dv">1</span>] <span class="st">&quot;grouping by cyl and summarising mean(mpg)&quot;</span></span>
+<span id="cb417-19"><a href="6.1-basic-operations-on-tibbles.html#cb417-19" tabindex="-1"></a><span class="co"># A tibble: 3 × 2</span></span>
+<span id="cb417-20"><a href="6.1-basic-operations-on-tibbles.html#cb417-20" tabindex="-1"></a>    cyl mean_mpg</span>
+<span id="cb417-21"><a href="6.1-basic-operations-on-tibbles.html#cb417-21" tabindex="-1"></a></span>
+<span id="cb417-22"><a href="6.1-basic-operations-on-tibbles.html#cb417-22" tabindex="-1"></a><span class="dv">1</span>     <span class="dv">4</span> <span class="fl">26.66364</span></span>
+<span id="cb417-23"><a href="6.1-basic-operations-on-tibbles.html#cb417-23" tabindex="-1"></a><span class="dv">2</span>     <span class="dv">6</span> <span class="fl">19.74286</span></span>
+<span id="cb417-24"><a href="6.1-basic-operations-on-tibbles.html#cb417-24" tabindex="-1"></a><span class="dv">3</span>     <span class="dv">8</span> <span class="fl">15.10000</span></span>
+<span id="cb417-25"><a href="6.1-basic-operations-on-tibbles.html#cb417-25" tabindex="-1"></a>[<span class="dv">1</span>] <span class="st">&quot;grouping by vs and summarising mean(disp)&quot;</span></span>
+<span id="cb417-26"><a href="6.1-basic-operations-on-tibbles.html#cb417-26" tabindex="-1"></a><span class="co"># A tibble: 2 × 2</span></span>
+<span id="cb417-27"><a href="6.1-basic-operations-on-tibbles.html#cb417-27" tabindex="-1"></a>     vs mean_disp</span>
+<span id="cb417-28"><a href="6.1-basic-operations-on-tibbles.html#cb417-28" tabindex="-1"></a></span>
+<span id="cb417-29"><a href="6.1-basic-operations-on-tibbles.html#cb417-29" tabindex="-1"></a><span class="dv">1</span>     <span class="dv">0</span>  <span class="fl">307.1500</span></span>
+<span id="cb417-30"><a href="6.1-basic-operations-on-tibbles.html#cb417-30" tabindex="-1"></a><span class="dv">2</span>     <span class="dv">1</span>  <span class="fl">132.4571</span></span></code></pre></div>
+<div class="sourceCode" id="cb418"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb418-1"><a href="6.1-basic-operations-on-tibbles.html#cb418-1" tabindex="-1"></a><span class="co"># To refer to column names that are stored as strings, use the `.data` pronoun:</span></span>
+<span id="cb418-2"><a href="6.1-basic-operations-on-tibbles.html#cb418-2" tabindex="-1"></a>vars <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;mass&quot;</span>, <span class="st">&quot;height&quot;</span>)</span>
+<span id="cb418-3"><a href="6.1-basic-operations-on-tibbles.html#cb418-3" tabindex="-1"></a>cond <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">80</span>, <span class="dv">150</span>)</span>
+<span id="cb418-4"><a href="6.1-basic-operations-on-tibbles.html#cb418-4" tabindex="-1"></a>starwars <span class="sc">%&gt;%</span></span>
+<span id="cb418-5"><a href="6.1-basic-operations-on-tibbles.html#cb418-5" tabindex="-1"></a>  <span class="fu">filter</span>(</span>
+<span id="cb418-6"><a href="6.1-basic-operations-on-tibbles.html#cb418-6" tabindex="-1"></a>    .data[[vars[[<span class="dv">1</span>]]]] <span class="sc">&gt;</span> cond[[<span class="dv">1</span>]],</span>
+<span id="cb418-7"><a href="6.1-basic-operations-on-tibbles.html#cb418-7" tabindex="-1"></a>    .data[[vars[[<span class="dv">2</span>]]]] <span class="sc">&gt;</span> cond[[<span class="dv">2</span>]]</span>
+<span id="cb418-8"><a href="6.1-basic-operations-on-tibbles.html#cb418-8" tabindex="-1"></a>  )</span></code></pre></div>
+</div>
+</div>
+<div id="merge" class="section level3 hasAnchor" number="6.1.8">
+<h3><span class="header-section-number">6.1.8</span> Merge<a href="6.1-basic-operations-on-tibbles.html#merge" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p><code>left_join(x, y, by = NULL, suffix = c(".x", ".y"), ...)</code></p>
+<ul>
+<li><p><code>x,y</code> tbls to join</p></li>
+<li><p><code>by</code> <strong>a character vector</strong> of variables to join by. If <code>NULL</code>, the default, <code>*_join()</code> will do a natural join, using all variables with <strong>common colnames</strong> across the two tables.</p>
+<p>To join by the same variables on <code>x</code> and <code>y</code>, use <code>by = c('ID','year')</code>, note that it is a character vector, can’t use column names directly.</p>
+<p>To join by different variables on <code>x</code> and <code>y</code>, use a <u>named vector</u>. For example, <code>by = c("a" = "b")</code> will match <code>x.a</code> to <code>y.b</code>.</p></li>
+<li><p><code>suffix</code> If there are non-joined duplicate variables in x and y, these suffixes will be added to the output to disambiguate them. Should be a character vector of length 2.</p></li>
+</ul>
+<p><code>merge(x, y, by = NULL, by.x = NULL, by.y = NULL, all = FALSE, ...)</code> is the base R function for joining two data frames.</p>
+<ul>
+<li><p><code>all = FALSE</code> defaults to <code>FALSE</code>, it performs an <u>inner join</u>, retaining only the rows with matching keys.</p>
+<p>If <code>TRUE</code>, it performs a full <u>outer join</u>, retaining all rows from both <code>x</code> and <code>y</code>.</p></li>
+</ul>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="6-tidyverse.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="6.2-pipe-operator.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": true,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "sky",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/my1396/R-Notes/edit/main/0500-Tidyverse.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["_main.pdf", "_main.epub", "https://github.com/my1396/R-Notes/raw/main/0500-Tidyverse.Rmd"],
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+},
+"toc_depth": 3,
+"toc_float": true,
+"enableEmoji": true
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

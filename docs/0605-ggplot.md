@@ -1,0 +1,1418 @@
+## ggplot
+
+Reference: <https://ggplot2.tidyverse.org/reference/index.html>
+
+**Change global settings**
+
+``` r
+theme_set(theme_bw()) # change default theme to theme_bw() globally
+```
+
+
+
+You start with `ggplot()`, supply a dataset and aesthetic mapping (with `aes()`). You then add on layers (like `geom_point()` or `geom_histogram()`), scales (like `scale_colour_brewer()`), faceting specifications (like `facet_wrap()`) and coordinate systems (like `coord_flip()`).
+
+Default theme: `theme_gray()` grey background and white gridlines.
+
+
+
+`ggplot(data = NULL, mapping = aes(), ...)` is used to construct the initial plot object, and is almost always followed by a plus sign (`+`) to add components to the plot. [Doc](https://ggplot2.tidyverse.org/reference/ggplot.html).
+
+The `data =` and `mapping =` specifications in the arguments are optional (and are often omitted in practice), so long as the data and the mapping values are passed into the function in the right order.
+
+There are three common patterns used to invoke `ggplot()`:
+
+- `ggplot(data = df, mapping = aes(x, y, other aesthetics))`
+
+  Recommended if all layers use the same data and the same set of aesthetics, although this method can also be used when adding a layer using data from another data frame.
+
+- `ggplot(data = df)`
+
+  This is useful when one data frame is used predominantly for the plot, but the aesthetics vary from one layer to another. Different x/y-axis.
+
+- `ggplot()`
+
+  This is useful when multiple data frames are used to produce different layers, as is often the case in complex graphics.
+
+
+
+Create a <span style='color:#008B45'>**customized figure theme**</span> code snippet that could be used repetitively.
+
+`theme()` note that when you call it, just use `+ mytheme`  w/o parentheses as it is not a function — it is a theme setting.
+
+```R
+mytheme <- theme(legend.position = "none", # disable legend
+                 legend.spacing.y = unit(0, 'mm'), # spacing between legend title and legend items
+				         legend.key.height = unit(0.8,"line"), # vertical spacing between legend items
+         				 legend.margin = margin(t=0, b=0, unit="mm"), # legend box margins
+                 title = element_text(size=8),
+                 axis.title = element_text(size=rel(1.2)), # use `rel()` to change proportionally to base font size; or a number to specify absolute size as follows;
+                 axis.text = element_text(size=8), # tick labels along axes
+                 panel.grid.minor = element_blank() # remove minor gridlines
+                )
+                
+# p is a ggplot() subject
+p + mytheme
+```
+
+`rel(x)` 	specify sizes relative to the parent.
+
+<span style='color:#008B45'>`theme_bw(base_size = 14)`</span> the default font size is 11 pt, which can be too small. Set `base_size=14` to enlarge the font size for a specific theme.
+
+`theme_get()` returns the current active theme. 
+
+```R
+# get default values of theme parameters
+theme_get()$plot.margin 
+```
+
+**Check default options for a specific theme**
+
+```R
+theme_bw()$legend.spacing
+```
+
+Legend layout
+
+```r
+p + guides(colour = guide_legend(nrow = 1))
+```
+
+
+
+
+--------------------------------------------------------------------------------
+
+
+**Theme**
+
+Explore themes: <https://ggplot2.tidyverse.org/reference/ggtheme.html>
+
+default: `theme_gray()` (with grey background)
+
+normal: **`theme_bw() `** (recommended 结构清晰)
+
+coordinates: `theme_minimal()` (no axis borders 极简风)
+
+with no grid: `theme_classic()` (hard to read)
+
+
+
+
+
+**Wide table to Long table**
+
+`tidyr::gather(data, key = "key", value = "value", ...) ` convert data frame to key-value **long format**.
+
+ `...` is a selection of columns. If empty, all variables are selected. You can supply bare variable names, select all variables between x and z with `x:z`, exclude y with `-y`.
+
+* `key`  	one identifier column that you use to idendify groups, store the **names** of columns that you want to gather/stack;
+
+* `value`  one value column name that put **values** in `key` columns;
+
+* `...`      specification of columns to gather/stack. Allowed values are:
+
+  - variable names, put them just in a sequence, do not need to wrap it in a vector
+
+  - if you want to select all variables between a and e, use a:e. Or could use position index e.g., 1:3.
+
+  - if you want to ***exclude*** a column name y use `-y`, usually the **index/identifier** of the columnss. 
+
+    
+
+`df %>% pivot_longer(c(x, y, z), names_to = "key", values_to = "value")`
+
+​		is equivalent to `df %>% gather("key", "value", x, y, z)`,  more recommended. 
+
+
+
+**Long table to wide table** `spread`, reverse `gather()`
+
+```r
+spread(data, key, value, fill = NA, convert = FALSE, drop = TRUE, sep = NULL)
+```
+
+`key` the column in the long table that will become factor/columns in wide table; the number of new columns equals to the number of categories in `key`; the columns are filled by `value`;
+
+
+
+```r
+df <- data.frame(month=rep(1:3,2),
+                 student=rep(c("Amy", "Bob"), each=3),
+                 A=c(9, 7, 6, 8, 6, 9),
+                 B=c(6, 7, 8, 5, 6, 7))
+
+# 		month student A B
+# 1     1     Amy 	9 6
+# 2     2     Amy 	7 7
+# 3     3     Amy 	6 8
+# 4     1     Bob 	8 5
+# 5     2     Bob 	6 6
+# 6     3     Bob 	9 7
+
+## 1. construct long table
+df %>% 
+  gather(variable, value, -(month:student))
+#       month student variable value
+# 1      1     Amy        A     9
+# 2      2     Amy        A     7
+# 3      3     Amy        A     6
+# 4      1     Bob        A     8
+# 5      2     Bob        A     6
+# 6      3     Bob        A     9
+# 7      1     Amy        B     6
+# 8      2     Amy        B     7
+# 9      3     Amy        B     8
+# 10     1     Bob        B     5
+# 11     2     Bob        B     6
+# 12     3     Bob        B     7
+
+## 2. create identifier column that will become columns in the `spread` step
+df %>% 
+  gather(variable, value, -(month:student)) %>%
+  unite(temp, student, variable)
+#    month  temp value
+# 1      1 Amy_A     9
+# 2      2 Amy_A     7
+# 3      3 Amy_A     6
+# 4      1 Bob_A     8
+# 5      2 Bob_A     6
+# 6      3 Bob_A     9
+# 7      1 Amy_B     6
+# 8      2 Amy_B     7
+# 9      3 Amy_B     8
+# 10     1 Bob_B     5
+# 11     2 Bob_B     6
+# 12     3 Bob_B     7
+
+## 3. `spread` long table, spread the column containing the factor/identifier info
+df %>% 
+  gather(variable, value, -(month:student)) sub%>%
+  unite(temp, student, variable) %>% # first unite
+  spread(temp, value) # then spread
+  
+#   month Amy_A Amy_B Bob_A Bob_B
+# 1     1     9     6     8     5
+# 2     2     7     7     6     6
+# 3     3     6     8     9     7
+```
+
+
+
+`unite(data, col, ..., sep = "_", remove = TRUE, na.rm = FALSE)` paste together multiple columns into a single column or variable (often used as `factor` identifier for long table); return a `string` column.
+
+
+
+`annotate(geom = 'text', label = 'Africa', x = Inf, y = Inf, hjust = 2, vjust = 2) ` Add text/annotation to a designated position.
+
+* Justification (`hjust`, `vjust`):  Horizontal and vertical justification have the same parameterisation, either a string (“top”, “middle”, “bottom”, “left”, “center”, “right”) or a number between 0 and 1:
+  - top = 1, middle = 0.5, bottom = 0
+  - left = 0, center = 0.5, right = 1
+  - Note that you *can* use numbers outside the range (0, 1), but it’s not recommended.
+
+- If `label` is a `TeX` expression, then should use
+
+  ```R
+   annotate("text", x=3, y=40, label=TeX(eqn, output="character"),
+             hjust=0, size = 4, parse = TRUE)
+  ```
+
+
+
+
+
+--------------------------------------------------------------------------------
+
+
+### **Dual y-axis plot**
+
+
+```r
+rescaleY <- function(y1, y2){
+  # useful for plotting figures with dual axis but with different range
+  # y1 is the primary axis    # target to
+  # y2 is the secondary axis  # origin from
+  # rescale y2 to match y1 range
+  # return a-intercept, b-slope
+  ylim1 <- c(min(y1), max(y1))  
+  ylim2 <- c(min(y2), max(y2))
+  b <- (ylim1[2]-ylim1[1])/(ylim2[2]-ylim2[1])
+  a <- ylim1[1]-b*ylim2[1]
+  return (c(a,b)) 
+}
+
+scaleFactor <- rescaleY(the_model_df$temp, the_model_df$rsds)  # rescale rsds to match the range with temp
+
+dev.new()
+p <- ggplot(the_model_df, aes(x = yr)) +
+  geom_line(aes(y = temp, colour = "tmp")) + # bluish
+  geom_line(aes(y = scaleFactor[1]+rsds*scaleFactor[2], colour = "rsds")) + # orange
+  scale_color_discrete(name = "Y series", # legend name
+                       values = c("tmp"="#00BFC4", "rsds"="#F8766D"), # named vector for color scale, specifying colors you want for each series
+                       breaks = c("tmp", "rsds"), # specify order of scales showing up in legend
+                       labels = c("temperature", "radiation") # names/text show up at scales
+                      ) +
+  scale_y_continuous(name = "Temperature [K]",
+    sec.axis = sec_axis(~(.-scaleFactor[1])/scaleFactor[2], name = "Radiation [Wm^-2]")) +
+  labs(x='year', title=the_model) +
+  theme(legend.title = element_blank(), # remove legend title
+        legend.text = element_text(size=8), # change legend font size to smaller
+        # axis.title.x =  element_blank(), # remove x axis title
+        axis.title.y.right=element_text(color="#F8766D"), # y axis label
+        axis.text.y.right=element_text(color="#F8766D"))
+p
+
+# save to file
+ggsave("name.png", path=fig_dir, width=8.93, height=5.74, units="in", dpi=300)
+
+f_name <- paste0("./figures/", "pre_2.png")
+f_name
+ppi <- 300
+png(f_name, width=7.96*ppi, height=4.19*ppi, res=ppi)
+print (p)
+dev.off()
+
+
+plot_png <- function(p, f_name, width, height, ppi=300){
+    # a plot wrapper
+    png(f_name, width=width*ppi, height=height*ppi, res=ppi)
+    print (p)
+    invisible(dev.off())
+}
+```
+
+
+
+The second axis could be either the second `x` or `y` axis.
+
+`sec.axis(trans = NULL,name = waiver(), breaks = waiver(), labels = waiver(), guide = waiver())`
+
+- `trans`  A formula or function of transformation from right to left.
+- `name`   The name/title of the secondary axis.
+- `labels`  A character vector giving labels (must be same length as `breaks`); or a function that takes the breaks as input and returns labels as output
+
+`dup.axis(trans = ~.,name = waiver(), breaks = waiver(), labels = waiver(), guide = waiver())`
+
+is provide as a shorthand for creating a secondary axis that is a duplication of the primary axis, effectively mirroring the primary axis.
+
+
+
+**dual axes rescale**
+
+for dual axes, a major problem is to rescale the second axis so that two axes could be visualized normally.
+
+https://stackoverflow.com/questions/31953747/r-ggplot2-dual-y-axis-facet-wrap-one-histogram-and-other-line
+
+
+
+`scale_*_log10()`, `scale_*_sqrt()` and `scale_*_reverse()` are useful for axis transformation.
+
+
+
+The principal components of every plot can be defined as follow:
+
+- **data** is a data frame
+- **Aesthetics** is used to indicate x and y variables. It can also be used to control the **color**, the **size** or the **shape** of points, the height of bars, **fill** ("inside" color), **linetype**, etc…..
+- **Geometry** defines the type of graphics (**histogram**, **box plot**, **line plot**, **density plot**, **dot plot**, ….)
+
+In most cases you start with `ggplot()`, supply a dataset and aesthetic mapping (with `aes()`). You then add on layers (like `geom_point()` or `geom_histogram()`), scales (like `scale_colour_brewer()`), faceting specifications (like `facet_wrap()`) and coordinate systems (like `coord_flip()`).
+
+```R
+library(ggplot2)
+ggplot(mpg, aes(displ, hwy, colour = class)) +  # plot
+  geom_point() # layer
+```
+
+`aes(x, y, ...)` function that sets aesthetic mappings. `aes()` can be specified either in plot or in layers.
+
+- `color` when in bar plot, `color` means for border, if you want to sepecify bar, you should use `fill`
+
+
+
+### `aes()`
+
+Aesthetic mappings `aes(x, y, ...)` describe how variables in the data are mapped to visual properties (aesthetics) of geoms. Aesthetic mappings can be set in `ggplot()` and in individual layers.
+
+`aes()` is a [quoting function](https://rlang.r-lib.org/reference/topic-defuse.html). This means that its inputs are quoted to be evaluated in the context of the data. This makes it easy to work with variables from the data frame because you can name those directly. The flip side is that you have to use [quasiquotation](https://rlang.r-lib.org/reference/topic-inject.html) to program with `aes()`. See a tidy evaluation tutorial such as the [dplyr programming vignette](https://dplyr.tidyverse.org/articles/programming.html) to learn more about these techniques.
+
+
+
+**Specifying the aesthetics in the plot vs. in the layers**
+
+https://ggplot2-book.org/layers.html
+
+If you only have **one layer** in the plot, the way you specify aesthetics **doesn’t make any matter**. However, **the distinction is important when you start adding additional layers**. These two plots are both valid and interesting, but focus on quite different aspects of the data:
+
+```R
+ggplot(mpg, aes(displ, hwy, colour = class)) + 
+  geom_point() + 
+  geom_smooth(se = FALSE)
+
+ggplot(mpg, aes(displ, hwy)) + 
+  geom_point(aes(colour = class)) + 
+  geom_smooth(se = FALSE)
+```
+
+<img src="https://drive.google.com/thumbnail?id=1zzNj5_3r9toz5YudhpMq4gBGtjIAKRcI&sz=w1000" alt="aes" style="zoom:90%;" />
+
+
+Not easy way to know the most correct method, only trial and error... 😌
+
+Generally, you want to set up the mappings to illuminate the structure underlying the graphic and minimise typing. It may take some time before the best approach is immediately obvious, so if you’ve iterated your way to a complex graphic, it may be worthwhile to rewrite it to make the structure more clear.
+
+Default method for `geom_smooth`: spline smoothing.
+
+```r
+geom_smooth(stat = 'smooth', color = 'Red', method = 'gam', formula = y ~ s(x, bs = "cs"))
+```
+
+
+
+**Setting vs. mapping**
+
+Instead of mapping an aesthetic property to a variable, you can set it to a *single* value by specifying it in the layer parameters. 
+
+We 
+
+- **map** an aesthetic to a variable (e.g., `aes(colour = cut)`) or 
+
+  - mapping will generate each layer for every class in `cut`
+
+- **set** it to a constant (e.g., `colour = "red"`). (See `par()` for a mapping list)
+
+  - assign values for aesthetics
+
+    ```R
+    # specifying aesthetics inside `aes()` or outside is very different
+    
+    # outside `aes()`, passing aesthetic arguments by variable-value pairs
+    ggplot(mpg, aes(cty, hwy)) + 
+      geom_point(colour = "darkblue") 
+    
+    # inside `aes()`
+    # maps (not sets) the colour to the value ‘darkblue’. This effectively creates a new variable containing only the value ‘darkblue’ and then scales it with a colour scale. Because this value is discrete, the default colour scale uses evenly spaced colours on the colour wheel, and since there is only one value this colour is pinkish.
+    
+    ggplot(mpg, aes(cty, hwy)) + 
+    ggplot(mpg, aes(cty, hwy)) + 
+      geom_point(aes(colour = "darkblue"))
+    ```
+
+    ![aes-2](/Users/Menghan/Dropbox/coding_notes/figures/aes-2.png)
+
+  A third approach is to map the value, but override the default scale:
+
+  ```R
+  ggplot(mpg, aes(cty, hwy)) + 
+    geom_point(aes(colour = "darkblue")) + 
+    scale_colour_identity() # Use this set of scales when your data has already been scaled, i.e. it already represents aesthetic values that ggplot2 can handle directly. 
+  ```
+
+  The functions `scale_colour_identity()`, `scale_fill_identity()`, `scale_size_identity()`, etc. work on the aesthetics specified in the scale name: `colour`, `fill`, `size`, etc. Use this set of scales when your data has already been scaled, i.e. it already represents aesthetic values that ggplot2 can handle directly.  This is most useful if you always have a column that already contains colours. 
+
+  
+
+  - assign names for multiple layers
+
+    It’s sometimes useful to map aesthetics to constants. For example, if you want to display multiple layers with varying parameters, you can “name” each layer through "color/colour":
+
+    ```R
+    ggplot(mpg, aes(displ, hwy)) + 
+      geom_point() +
+      geom_smooth(aes(colour = "loess-name"), method = "loess", se = FALSE) + # a layer called "loess-name", generating a colour scale named "loess-name", not actually assigning colors to the series. Need to assign color through a color scale, ex. `scale_color_discrete()`.
+      geom_smooth(aes(colour = "lm-name"), method = "lm", se = FALSE) # a layer called "lm-name"
+    ```
+
+    
+
+`aes()` also standardises aesthetic names by converting `color` to `colour` (also in substrings, e.g., point_color to point_colour) and translating old style R names to ggplot names (e.g., `pch` to `shape` and `cex` to `size`).
+
+
+
+**Continuous scales for data (customize x & y axis)** 
+
+Define your own axis preferences, breaks, limits, labels, ...
+
+`scale_x_continuous()` and `scale_y_continuous()` are the default scales for continuous x and y aesthetics. There are three variants that set the `trans` argument for commonly used transformations:  `scale_*_log10()`, `scale_*_sqrt()` and `scale_*_reverse()`.
+
+`scale_x_continuous(name = waiver(),breaks = waiver(),
+  minor_breaks = waiver(),n.breaks = NULL,labels = waiver(),
+  limits = NULL,expand = waiver(),oob = censor,
+  na.value = NA_real_, trans = "identity",
+  guide = waiver(),position = "bottom",
+  sec.axis = waiver()
+)`
+
+-   <span style='color:#008B45'>**`limits` **</span>
+    -   `NULL` to use the default scale range.
+    -   e.g., `c(0,1)` A numeric vector of length two providing limits of the scale. Use `NA` to refer to the existing minimum or maximum.
+    -   A function that accepts the existing (automatic) limits and returns new limits. Also accepts rlang [lambda](https://rlang.r-lib.org/reference/as_function.html) function notation. Note that setting limits on positional scales will **remove** data outside of the limits. 
+        -   If the purpose is to **zoom**, withouting clipping, use the limit argument in the coordinate system (see `coord_cartesian(xlim=c(0, 100), ylim=c(10, 20))`).
+    -   alternatively, could use `+ xlim(0, 100) + ylim(10, 20)` to achieve the same effects. This is the same as `scale_x_continuous(limits=c(0, 100)) + scale_y_continuous(limits=c(10, 20))`
+-   `breaks` 
+    -   `NULL` for no breaks
+    -   `waiver()` for the default breaks computed by the [transformation object](https://scales.r-lib.org/reference/trans_new.html)
+    -   A numeric vector of positions. Note that the vector will be cut off if the range exceeds the data coverage.
+    -   A function that takes the limits as input and returns breaks as output (e.g., a function returned by `scales::extended_breaks()`). Also accepts rlang [lambda](https://rlang.r-lib.org/reference/as_function.html) function notation.
+
+
+
+Other position scales: `scale_x_binned()`, `scale_x_date()`, `scale_x_discrete()`.
+
+`scale_x_date()` :  class `Date`
+
+`scale_x_datetime()` :  class `POSIXct`
+
+```R
+scale_x_datetime(labels = scales::date_format("%Y", tz = "CET"),
+                 breaks = seq(as.POSIXct("1960-12-31 01:00:00 CET"),
+                              as.POSIXct("2015-02-11 01:00:00 CET"), "10 years")
+                 )
+```
+
+-   `scales::date_format("%Y", tz = "CET")` is a wrapper for formatting dates on the axis.
+
+
+
+`scale_x_time()` :  class `hms`
+
+
+
+`scale_(x|y)_binned()` are scales that discretize continuous position data.  You can use these scales to transform continuous inputs before using it with a geom that requires discrete positions. An example is using `scale_x_binned()` with `geom_bar()` to create a histogram.
+
+
+
+**`scale_*_manual(..., values, breaks = waiver())`**  specify your own set of mappings from levels in the data to aesthetic values.
+
+- `*` could be one of **`color`, `fill`, `size`, `shape`, `linetype`, `alpha`, `discrete` **;
+  - when using `discrete`, have to specify `aesthetics`
+
+`scale_colour_manual(..., values, aesthetics = "colour", breaks = waiver())` 
+
+- `...` Arguments passed on to `discrete_scale`, which is a discrete scale constructor.
+
+  - `palette`  A palette function that when called with a single integer argument (the number of levels in the scale) returns the values that they should take.
+  - `limits` A character vector that defines possible values of the scale and their order
+  - `drop`     Should unused factor levels be omitted from the scale? The default, `TRUE`, uses the levels that appear in the data; `FALSE` to keep all the levels in the factor.
+    - often set to `drop=FALSE`
+  - `na.value`   what aesthetic value should the missing values be displayed as? Useful to remove grey `NA` value area in figures.
+    - often set to **`na.value = NA`**
+  - **`breaks`** A character vector of breaks
+  - <span  style='color:orange'>**`labels`**</span> A character vector giving **scale labels** (must be same length as `breaks`)
+  - `guide` A function used to create **a guide or its name**.
+    - <span  style='color:orange'>**`guide = "legend"`**</span> in `scale_*` is syntactic sugar for `guide = guide_legend()` (e.g. `scale_color_manual(guide = "legend")`). As for how to specify the guide for each scale in more detail, see `guides()`.
+    - Guides can be specified in each `scale_*` or in `guides()`. 
+  - `name`   **The name of the scale**. Used as the axis or legend title. 
+- `values`  a set of aesthetic values to map data values to. The values will be matched in order (usually **alphabetical**) with the limits of the scale, **or with `breaks` if provided**. If this is a **named vector**, then the values will be matched based on the names instead. Data values that don't match will be given `na.value`.
+- `aesthetics`  Character string or vector of character strings listing the **name(s) of the <span  style='color:red'>aesthetic(s)</span> that this scale works with**. This can be useful, for example, to apply colour settings to the `colour` and `fill` aesthetics **at the same time**, via `aesthetics = c("colour", "fill")`.
+
+
+
+`scale_fill_brewer(palette="Dark2")`  use brewer color palettes.
+
+`scale_fill_grey()`  Use grey scale
+
+
+
+`discrete_scale` 	Discrete Scale Constructor.
+
+`discrete_scale(aesthetics, scale_name, palette, name = NULL,  breaks = waiver(), labels = waiver(), legend = NULL, limits = NULL,  expand = waiver(), na.value = NA, drop = TRUE, guide = "legend")`
+
+common discrete scale parameters: `name`, `breaks`, `labels`, `na.value`, `limits` and `guide`.
+
+
+
+```R
+p <- ggplot(mtcars, aes(mpg, wt)) +
+  geom_point(aes(colour = factor(cyl)))
+p + scale_colour_manual(values = c("red", "blue", "green"))
+
+# It's recommended to use a named vector
+cols <- c("8" = "red", "4" = "blue", "6" = "darkgreen", "10" = "orange")
+p + scale_colour_manual(values = cols)
+
+# You can set color and fill aesthetics at the same time
+ggplot(
+  mtcars,
+  aes(mpg, wt, colour = factor(cyl), fill = factor(cyl))
+) +
+  geom_point(shape = 21, alpha = 0.5, size = 2) +
+  scale_colour_manual(
+    values = cols,
+    aesthetics = c("colour", "fill")
+  )
+
+# or you could just choose to plot a subset of category, ex. drop "10"
+# As with other scales you can use breaks to control the appearance/order
+# of the legend.
+p + scale_colour_manual(
+  # name = "Y series", # specify legend name here
+  values = cols, 
+  breaks = c("4", "6", "8"),
+  labels = c("four", "six", "eight")
+)
+
+
+# And limits to control the possible values of the scale
+p + scale_colour_manual(values = cols, limits = c("4", "8"))
+p + scale_colour_manual(values = cols, limits = c("4", "6", "8", "10"))
+```
+
+
+
+<img src="/Users/Menghan/Dropbox/coding_notes/figures/aes-3.png" alt="aes-3" style="zoom:40%;" />
+
+
+
+Enlarge `geom_point()` dot size by setting `size=3`, default to 1.
+
+```r
+# Set aesthetics to fixed value
+ggplot(mtcars, aes(wt, mpg)) + 
+	geom_point(colour = "red", size = 3)
+```
+
+
+
+
+
+```r
+ggplot(aes(x = Sepal.Length), data = iris) + 
+  geom_histogram(color = 'black', fill = NA) + 
+  geom_vline(aes(xintercept=median(iris$Sepal.Length),
+                 color="median"), linetype="dashed",
+             size=1) +
+  geom_vline(aes(xintercept=mean(iris$Sepal.Length),
+                 color="mean"), linetype="dashed",
+             size=1) +
+  scale_color_manual(name = "statistics", values = c(median = "blue", mean = "red"))
+```
+
+<img src="/Users/Menghan/Dropbox/coding_notes/figures/aes-4.png" alt="aes-4" style="zoom:100%;" />
+
+
+
+
+
+
+
+**Reference lines: horizontal, vertical, and diagonal**
+
+`geom_hline(slope, intercept)`, `geom_vline(xintercept)`, `geom_abline(yintercept)` add reference lines (sometimes called rules) to a plot, either horizontal, vertical, or diagonal (specified by slope and intercept). 
+
+
+
+### Add regression line
+
+`geom_smooth(mapping = NULL,data = NULL,
+  stat = "smooth",position = "identity",
+  ...,
+  method = NULL,formula = NULL,se = TRUE,
+  na.rm = FALSE,orientation = NA,
+  show.legend = NA,inherit.aes = TRUE)` 
+
+Addds a trend line over an existing plot. By default, it uses a `LOESS` smooth line. If you want a straight "linear model" line, you can use `method=lm`.
+
+- `method` 	 Smoothing method (function) to use, accepts either `NULL` or a character vector, e.g. <span style='color:#008B45'>**`"lm"`** (linear model)</span>, `"glm"`, `"gam"`, `"loess"` or a function, e.g. `MASS::rlm` or `mgcv::gam`, `stats::lm`, or `stats::loess`. `"auto"` is also accepted for backwards compatibility. It is equivalent to `NULL`.
+
+  Defaults to `loess` (Locally Estimated Scatterplot Smoothing) when there are fewer than 1000 observations, and a `gam` when there are more observations. loess method stands for local regression fitting.
+
+- `formula` 	Formula to use in smoothing function, eg. `y ~ x`, `y ~ poly(x, 2)`, `y ~ log(x)`. `NULL` by default, in which case `method = NULL` implies `formula = y ~ x` when there are fewer than 1,000 observations and `formula = y ~ s(x, bs = "cs")` otherwise.
+
+- `se=TRUE`         Whether to show the uncertainty band.
+
+- `level=.95`     Level of confidence interval (CI) to use (0.95 by default).
+
+- `color`  color for the regression line
+
+- `fill` color for the CI
+
+- `alpha` transparency for the CI
+
+- `show.legend`     logical. Should this layer be included in the legends?
+
+  -  `NA`, the default, includes if any **aesthetics are mapped**. `FALSE` never includes, and
+  -  `TRUE` always includes. It can also be a named logical vector to finely select the aesthetics to display.
+
+
+
+```R
+# fit a linear regression
+geom_smooth(data=subset(long_format,key=="values_ma"),
+                aes(color='lm1', linetype='lm1', size='lm1'), method=lm, se=FALSE) 
+
+# fit a quadratic function
+ggplot(CEF, aes(x=engine.size, y=mean_city.distance)) +
+    geom_point() +
+    geom_smooth(method='lm', formula = y ~ x + I(x^2), size = 1, se=FALSE) +
+    theme(axis.text = element_text(size=rel(1.5)),
+          axis.title = element_text(size=rel(1.5)))
+# fit a degree 3 polynomial regression
+p + geom_smooth(method = "lm", formula = y ~ poly(x, 3), se = FALSE)
+```
+
+
+
+
+
+**Add regression equation to scatter plot**
+
+`ggpubr::stat_regline_equation(label.y=NULL)`
+
+
+```r
+library(ggpubr) # add regression eq to figure
+ggplot(df, aes_string(x="true value", y='predicted value')) +
+    geom_point(shape=1) +    # Use hollow circles, default solid dot
+    geom_text(aes(label=ifelse(Model %in% c('GFDL-ESM4', 'MIROC6'), as.character(Model),'')), hjust=-0.05, vjust=0, size=2) + # add text to outliers
+    labs(subtitle="predicted v.s. true values", x='Simple global TCS [K]', y='Converted global TCS [K]') +
+    geom_smooth(method=lm, se=TRUE) +
+    geom_abline(intercept=0, slope=1, size=0.5, color='red', linetype="dashed") +
+    stat_regline_equation(label.y=3.3) + # add regression equation
+    theme_bw()
+```
+
+
+
+
+
+
+
+`geom_text(data, mapping, check_overlap = FALSE, ...)` add text to the plot	
+
+```r
+ggplot(mtcars, aes(wt, mpg)) +
+	geom_text(aes(label = rownames(mtcars)))
+```
+
+**`ggrepel::geom_text_repel(aes(label=Model), size=3.5, fontface="bold")`**  avoid overlap among labels.
+
+`geom_label()` works similar to `geom_text`, except for that text is wrapped in a box.
+
+Q: How to remove 'a' from legend when using aesthetics and `geom_text`?
+
+A: Set `show.legend = FALSE` in `geom_text`.
+
+**legends** for `geom_text` can only be called via `color`. If `color` is used before, then in order to keep the current color scheme, we have to add a new color scale, using  `ggnewscale::new_scale_color()+` and carrying on what you have to do afterwards.
+
+https://stackoverflow.com/questions/59091627/add-new-legend-for-geom-text-with-text-labels-as-legend-key
+
+```r
+library(ggplot2)
+library(grid)
+library(ggnewscale)
+
+pfda_plot <- ggplot(data=pfdavar,aes(x=X1,y=X2,group=groups))+
+  geom_point(aes(colour=groups))+
+  geom_polygon(data=hulls,alpha=0.2,aes(fill=groups))+
+  xlab("pFDA1")+
+  ylab("pFDA2")+
+  theme_classic()+
+  theme(legend.title=element_blank())+
+  new_scale_color()+   # define a ne color scheme
+  geom_text(aes(label=labels,col=Species),
+  fontface=1,hjust=0,vjust=0,size=3)+
+  scale_color_manual(values=rep("black",18))
+```
+
+The above gives you something close, just that it is all 'a' for geom_text legend. What we need to do now, is change the default 'a', and for this I used [@MarcoSandri's solution to change the default "a" in legend for geom_text()](https://stackoverflow.com/questions/49965758/change-geom-texts-default-a-legend-to-label-string-itself)
+
+```r
+g <- ggplotGrob(pfda_plot)
+lbls <- 1:18
+idx <- which(sapply(g$grobs[[15]][[1]][[1]]$grobs,function(i){
+  "label" %in% names(i)}))
+for(i in 1:length(idx)){
+g$grobs[[15]][[1]][[1]]$grobs[[idx[i]]]$label <- lbls[i]
+}
+grid.draw(g)
+```
+
+
+
+<img src="/Users/Menghan/Dropbox/coding_notes/figures/legend-1.png" alt="legend-1" style="zoom:30%;" />
+
+
+
+`geom(text)`
+
+With `geom_text` or `annotate` in ggplot2, you can set a number of properties of the text. `geom_text` is used to add text from the data frame, and `annotate` is used to add a single text element.
+
+| Name         | Default value |
+| :----------- | :------------ |
+| `size`       | 5             |
+| `family`     | `""` (sans)   |
+| `fontface`   | `plain`       |
+| `lineheight` | 1.2           |
+| `angle`      | 0             |
+| `hjust`      | 0.5           |
+| `vjust`      | 0.5           |
+
+
+
+___
+
+### Subplots
+
+Note that the **group** must be called in the **`X` **argument of `ggplot(aes(x = group, fill = subgroup))`. 
+
+The **subgroup** is called in the **`fill`** argument.
+
+The `facet_wrap(~class, nrow = NULL, `
+`ncol = NULL, scales = "fixed")`  ( Multiple plots by factor in ggplot (facets) ) gives out each variable in an individual panel grouped by `class`. `~class` can also be `vars(class)`. 
+
+-   `facet_grid()` function will produce a grid of plots for each combination of variables that you specify, even if some plots are empty.
+-   `scales='fixed'`  if subplots share x-axes or y-axes; <span style='color:#008B45'>`scales='free'`</span> for each plot having its own axes.
+-   `nrow`, `ncol`     define #of rows/cols
+
+`geom_errorbar()` A [geom](http://sape.inf.usi.ch/quick-reference/ggplot2/geom) that draws error bars, defined by an upper and lower value. This is useful e.g., to draw confidence intervals.
+
+### Parameters
+
+-   **x** - (required) x coordinate of the bar
+-   **ymin** - (required) y coordinate of the lower whisker
+-   **ymax** - (required) y coordinate of the upper whisker
+-   [size](http://sape.inf.usi.ch/quick-reference/ggplot2/size) - (default: 0.5) thickness of the lines
+-   [linetype](http://sape.inf.usi.ch/quick-reference/ggplot2/linetype) - (default: 1=solid) the type of the lines
+-   colour - (default: "black") the color of the lines
+-   width - (default: 0.9) width of the whiskers
+-   [alpha](http://sape.inf.usi.ch/quick-reference/ggplot2/alpha) - (default: 1=opaque) the transparency of the lines
+
+```R
+plot_data <-  Rad_trend_decade_allCON %>% 
+    gather(seasons, values, -CON) %>% 
+    mutate(seasons = factor(seasons, levels=c("DJF", "MAM", "JJA", "SON", "ANN") ),
+           CON = factor(CON, levels=c(CON_levels, "WD") ) 
+          )
+plot_data
+
+
+## group by season
+p_season_box <- ggplot(plot_data, aes(x=CON, y=values, fill=CON) ) +
+    stat_boxplot(geom ='errorbar',
+                 position = position_dodge(width = 0.9)
+                ) +
+    geom_boxplot(outlier.shape = NA,
+                 position = position_dodge(width = 0.9)
+                ) +
+    scale_y_continuous(limits = c(-7, 7), # set limits of y-axis
+                       breaks = seq(-7, 7, by=2)
+                      ) + 
+		facet_wrap(~seasons, nrow=1)
+
+p_season_box 
+```
+
+
+
+**Ignore outliers**
+
+Sometimes it can be useful to hide the outliers, for example when overlaying the raw data points on top of the boxplot. Hiding the outliers can be achieved by setting `outlier.shape = NA`. But the outliers would still affect the y-axis scale and make your box condensed. You need to set `outliers = FALSE` too.
+
+```r
+# set y-axis limits mannually
+ggplot(the_variable, aes(x=Water_receive, y=water_stress, fill=year)) +
+    geom_boxplot(outlier.shape = NA) +
+    scale_y_continuous(limits = quantile(the_variable$water_stress, c(0.1, 0.9)))
+
+# set outliers = FALSE by discarding outliers from the plot
+ggplot(the_variable, aes(x=Water_receive, y=water_stress, fill=year)) +
+    geom_boxplot(outlier.shape = NA, outliers = FALSE) 
+```
+
+
+
+
+
+Deal with Outliers
+
+One idea would be to [*winsorize*](http://en.wikipedia.org/wiki/Winsorising) the data in a two-pass procedure:
+
+1. run a first pass, learn what the bounds are, e.g. cut of at given percentile, or N standard deviation above the mean, or ...
+2. in a second pass, set the values beyond the given bound to the value of that bound
+
+I should stress that this is an *old-fashioned* method which ought to be dominated by more *modern robust techniques* but you still come across it a lot.
+
+
+
+**Grouped bar plot**
+
+The items on the x-axis have x values of 1, 2, 3, and so on, though you typically don’t refer to them by these numerical values. 
+
+-   When you use `geom_bar(width = 0.9)`, it makes each group take up a total width of 0.9 on the x-axis. 组间宽度。
+-   When you use `position_dodge(width = 0.9)`, it spaces the bars so that the *middle* of each bar is right where it would be if the bar width were 0.9 and the bars were touching. 值越大，同一组的bar之间越远。组内bar之间的间距。
+
+
+
+Another option is to calculate `stats` first, and plot `geom_crossbar`. It is much faster this way.
+
+```R
+Rad_trend_decade_group <- Rad_trend_decade_allCON %>% group_by(CON)
+groups <- Rad_trend_decade_group %>% 
+    group_split()
+group_keys(Rad_trend_decade_group)
+
+groups[[1]] %>% select(-CON) %>% apply(2, function(group) boxplot.stats(group)$stats)
+
+trend_summary_tibble <- Rad_trend_decade_group %>% 
+    group_modify(~{
+        .x %>% 
+            select(c("DJF", "MAM", "JJA", "SON", "ANN")) %>% 
+            apply(2, function(group) 
+                boxplot.stats(group)$stats) %>% 
+            as_tibble()
+    }) %>% ungroup()
+trend_summary_tibble <- trend_summary_tibble %>% 
+      mutate(stats = rep(c("low.whisker", "1st.Q", "median", "3rd.Q", "upper.whisker"), 7 ) )
+trend_summary_tibble
+# A tibble: 35 x 7
+# CON      DJF    MAM     JJA    SON    ANN stats        
+# <chr>  <dbl>  <dbl>   <dbl>  <dbl>  <dbl> <chr>        
+# 1 AF    -1.43  -1.44  -2.43   -1.29  -0.768 low.whisker  
+# 2 AF     0.428  0.506 -0.160   0.423  0.543 1st.Q        
+# 3 AF     1.02   1.11   0.393   0.966  0.988 median       
+# 4 AF     1.68   1.84   1.41    1.58   1.42  3rd.Q        
+# 5 AF     3.54   3.84   3.77    3.32   2.73  upper.whisker
+# 6 AS    -1.72  -4.17  -6.84   -3.45  -2.96  low.whisker  
+# 7 AS    -0.282 -0.774 -1.65   -0.974 -0.652 1st.Q        
+# 8 AS     0.192  0.296  0.0631 -0.116  0.168 median       
+# 9 AS     0.673  1.49   1.81    0.674  0.888 3rd.Q        
+# 10 AS     2.11   4.89   7.00    3.15   3.18  upper.whisker
+
+CON_levels <- trend_summary_tibble %>% 
+    filter((stats=="median") &(CON!="WD") ) %>% 
+    arrange(ANN) %>% pull(CON)
+CON_levels
+
+plot_data <- trend_summary_tibble %>% 
+    gather(seasons, values, -CON, -stats) %>% 
+    spread(stats, values)
+plot_data <- plot_data %>% 
+    mutate(seasons = factor(seasons, levels=c("DJF", "MAM", "JJA", "SON", "ANN") ),
+           CON = factor(CON, levels=c(CON_levels, "WD") )
+    )
+plot_data
+# A tibble: 9,072,000 x 3
+#  CON   seasons   values
+# <fct>   <fct>     <dbl>
+# 1 EU    DJF         NA
+# 2 EU    DJF         NA
+# 3 EU    DJF         NA
+# 4 EU    DJF         NA
+# 5 EU    DJF         NA      
+      
+x11()
+dodge <- position_dodge(width=0.9)
+## Group by continent
+# dev.set(dev.prev())
+p_box <- ggplot(plot_data, aes(x=seasons, y=median, fill = seasons) ) +
+    geom_crossbar(aes(ymin = `1st.Q`, ymax = `3rd.Q`), width = 0.8, size=0.35, position = dodge) +
+    geom_errorbar(aes(ymin = low.whisker, ymax = upper.whisker, ), width = 0.8, position = dodge) + 
+    facet_wrap(~CON, nrow=1) + # subplots group by 'CON'
+    labs(y=TeX("SSR Trend \\[$Wm^{-2}/dec$\\]")) +
+    scale_y_continuous(breaks=seq(-6,6,2)) +
+    guides(fill = guide_legend(title="Seasons") ) + # change legend title
+    theme(strip.text = element_text(size=10, face="bold"),
+          axis.text.x = element_text(size=10, face="bold", angle = 90),
+          axis.text.y = element_text(size=10, face="bold"),
+          axis.title.x = element_blank(),
+          legend.position = "bottom",
+          legend.title = element_text(size=10, face="bold"),
+          legend.text = element_text(face="bold")
+          )
+p_box      
+```
+
+
+
+
+
+### `guides()`, together with `guide_legend()`
+
+https://ggplot2-book.org/guides.html#sub-layers-legends
+
+Guides for each scale can be set **scale-by-scale** with the `guide` argument in `scale_*_manual()`, or **en masse** with `guides(...)`.
+
+- `...` 	List of scale name-guide pairs. The guide can either be
+  - a string (i.e. "colorbar" or "legend"), or 
+  - a call to a guide function (i.e. `guide_colourbar()` or<span style='color:#008B45'> **`guide_legend()` **</span>) specifying additional arguments.
+
+```R
+# ggplot object
+
+dat <- data.frame(x = 1:5, y = 1:5, p = 1:5, q = factor(1:5),
+ r = factor(1:5))
+p <- ggplot(dat, aes(x, y, colour = p, size = q, shape = r)) + geom_point()
+
+# without guide specification
+p
+
+# Show colorbar guide for colour.
+# All these examples below have a same effect.
+
+p + guides(colour = "colorbar", size = "legend", shape = "legend")
+p + guides(colour = guide_colorbar(), size = guide_legend(),
+  shape = guide_legend())
+p +
+ scale_colour_continuous(guide = "colorbar") +
+ scale_size_discrete(guide = "legend") +
+ scale_shape(guide = "legend")
+
+ # Remove some guides
+ p + guides(colour = "none")
+ p + guides(colour = "colorbar", size = "none")
+
+##
+# Guides are `integrated` where possible
+##
+p + guides(colour = guide_legend("title"), size = guide_legend("title"),
+  shape = guide_legend("title"))
+
+# same as (more concise)
+g <- guide_legend("title")
+p + guides(colour = g, size = g, shape = g)
+
+p + theme(legend.position = "bottom")
+
+# Set order for multiple guides/legends #
+ggplot(mpg, aes(displ, cty)) +
+  geom_point(aes(size = hwy, colour = cyl, shape = drv)) +
+  guides(
+   colour = guide_colourbar(order = 1),
+   shape = guide_legend(order = 2),
+   size = guide_legend(order = 3)
+ )
+```
+
+`guide_legend(title = waiver(), label = TRUE,
+keywidth = NULL, keyheight = NULL,
+override.aes = list(),
+nrow = NULL, ncol = NULL, byrow = FALSE,
+reverse = FALSE,order = 0,
+...)` 	Legend type guide shows key (i.e., geoms) mapped onto values. Legend guides for various scales are integrated if possible.
+
+- `title` 	        A character string or expression indicating a title of guide. 
+  - `NULL`, the title is not shown. 
+  - By default (`waiver()`), the name of the scale object or the name specified in `labs()` is used for the title.
+
+- `override.aes`   Takes a `list` of aesthetic parameters that will <span style='color:#008B45'>*override*</span> the default legend appearance.
+- `nrow`, `ncol`        The desired <span style='color:#008B45'>number of rows/columns of legends</span>.
+- `reverse`              logical. If `TRUE` the order of legends is reversed.
+- <span style="color:#008B45'">**`order` **</span>                 positive integer less than 99 that <span style='color:#008B45'>specifies the order of this guide</span> among multiple guides. This controls the order in which multiple guides are displayed, **not** the contents of the guide itself. 
+
+
+
+### `ggplot` template for multi-series
+
+<span style="color:#008B45'">Multiple groups aesthetics</span>, e.g., `color`, `size`, `linetype`, ..., if you want an integrated legend, need to set the same title for the aesthetics.
+
+```R
+g <- guide_legend("title", nrow=2, byrow=TRUE) # define legend aes
+# colors
+cols <- c("values"="blue", "values_ma"="blue", "lm1"="red", 
+          "values2"="black", "values_ma2"="black", "lm2"="red")
+# if you don't want to repeat the breaks, you may use `setNames`
+# cols <- setNames(ob = c("blue", "blue", "red", "black", "black", "red"),
+#          				 nm = c("values", "values_ma", "lm1", "values2", "values_ma2", "lm2"))
+
+# line widths
+sizes <- c("values"=0.3, "values_ma"=0.7, "lm1"=0.7,
+           "values2"=0.3, "values_ma2"=0.7, "lm2"=0.7)
+# linetypes
+lines <- c("values"="dashed", "values_ma"="solid", "lm1"="solid",
+           "values2"="dashed", "values_ma2"="solid", "lm2"="solid")
+# breaks:
+#			— if omit a series in `breaks`, the series will be droped; 
+#			— rearrange legend order; 
+breaks <- c("values", "values_ma", "lm1", 
+            "values2", "values_ma2", "lm2")
+# labels, must match the length of `breaks`
+labels <- c("raw", "Gaussian MA", 
+            unname(TeX( sprintf("Reg Line \\textbf{1961-2019}, \\[%.2f, %.2f, %.2f\\] \\[$Wm^{-2}/dec$\\]", decadal_trend["beta"], decadal_trend["lower bound"], decadal_trend["upper bound"]) ) ),
+            "raw2", "Gaussian MA2", 
+            unname(TeX( sprintf("Reg Line2 \\textbf{%s-2019}, \\[%.2f, %.2f, %.2f\\] \\[$Wm^{-2}/dec$\\]", bk_point+1, decadal_trend_2["beta"], decadal_trend_2["lower bound"], decadal_trend_2["upper bound"]) ) )
+)
+
+ggplot() + scale_colour_manual(values = cols, breaks=breaks, labels = labels) +
+    scale_linetype_manual(values=lines, breaks=breaks, labels = labels) +
+    scale_size_manual(values=sizes, breaks=breaks, labels = labels) +
+    theme_bw() +
+    guides(colour=g, linetype=g, size=g # specify all aes for legend at once
+    ) +
+    theme(title = element_text(size=10), # title size
+          axis.title.x = element_blank(), # axis lable
+          legend.title = element_blank(), # remove legend title
+          legend.text = element_text(size=8), # legend scale size
+          legend.position = c(0.37, 0.9), 
+          legend.direction = "horizontal",
+          legend.spacing.y = unit(0, 'mm'), # spacing between legend title and legends;
+          legend.text.align = 0, # legend key align to the left
+          legend.key.height = unit(0.8,"line"), # spacing between legend items;
+          legend.margin = margin(t=0, b=0, unit="mm") # margins around legend box
+    )
+```
+
+-   `legend.position` 	Can be text placement. Five possible values: `“left”`, `“top”`, `“right”`, `“bottom”`, or `"none"` (disable legend).
+    -   The argument `legend.position` can be also a numeric vector `c(x,y)`. In this case it is possible to position the legend inside the plotting area. `x` and `y` are the coordinates of the legend box. Their values should be between `0` and `1`. `c(0,0)` corresponds to the “bottom left” and `c(1,1)` corresponds to the “top right” position.
+
+-   `legend.key.height` 	 the height of the legend key; reduce or add vertical spacing between legend items.
+-   `legend.key.width `            the width of the legend key; 
+-   ` legend.text.align = 0`  <span style='color:#008B45'>align legend keys/text to the left;</span>
+-   `legend.box.background = element_rect(colour = "black", size=1)` add box to legend
+-   `legend.direction` layout of items in legends ("horizontal" or "vertical")
+-   `legend.box` arrangement of multiple legends ("horizontal" or "vertical")
+
+
+
+
+
+`guides()`	re-define guides, an example for `override.aes`; could also be used to remove some legends by specifying e.g.,  `color="none"`.
+
+```R
+guides(fill = FALSE,
+       color = guide_legend(override.aes =
+                      list(fill = c("converted"="#00BFC4", "reported"="#FF6666", obs_col=NA),
+                           color = c("converted"="#00BFC4", "reported"="#FF6666", obs_col="#010912")
+                           )
+                      )
+         )
+
+guides(linetype = FALSE,
+       size = FALSE,
+       color = guide_legend(
+           override.aes = list(
+               linetype = lines,
+               color = cols,
+               size = sizes 
+           		 ),
+           nrow = 2,
+           byrow = TRUE
+           )
+      )
+```
+
+
+
+**Change legend title**
+
+Specify a new legend title for the `color` aesthetic:
+
+- `labs(color="My new title")`
+- `guides(color=guide_legend("My new title"))`
+
+
+
+**Putting two different legends in two columns**
+
+`theme(legend.box = "horizontal")`
+
+
+
+Add legend to `geom_vline`
+
+Need to specify `color` inside `aes`, then use `scale_color_manual` to specify legends.
+
+```r
+ggplot(end_climate, aes(x=end.pre)) +
+    geom_histogram(aes(y = after_stat(density)), binwidth=0.1, fill="#BDBCBC", color="black") + 
+    geom_vline(aes(xintercept=1.734513, color="Burke"), linetype="dashed") +
+    scale_color_manual(values=c("Burke"="red"), labels=c("Burke"="Burke's fixed optimum")) +
+    labs(x="Precipitation in 2019 [Meters]") +
+    theme(legend.position = c(0.8, 0.9),
+          legend.title = element_blank(),
+          axis.title.y = element_blank(), )
+```
+
+<img src="https://drive.google.com/thumbnail?id=1msAI5IfGRrWbpPK-63WIBPQxNT4qmVEo&sz=w1000" alt="histogram" style="display: block; margin-right: auto; margin-left: auto; zoom:60%;" />
+
+
+
+**legend alignment** (irregular legends)
+
+split legends into multiple ragged rows/columns (with different length) as you desire
+
+https://stackoverflow.com/questions/27803710/ggplot2-divide-legend-into-two-columns-each-with-its-own-title
+
+Key idea:
+
+1.  create a dummy factor level and setting its colour to **white** in the legend, so that it can't be seen. 
+2.  so now we have regular levels. Then, we use `scale_fill_manual` to set the color of this **blank level** to "white". <span style='color:red'>**`drop=FALSE`**</span> forces `ggplot` to <span style='color:red'>**keep the blank level in the legend**</span>. 
+3.  Remember to<span style='color:red'> **`factor`**</span> the category column.
+
+```R
+## `factor` the category column, and specify `drop=FALSE`
+diamonds$cut = factor(diamonds$cut, levels=c("Fair","Good"," ","Very Good",
+                                             "Premium","Ideal"))
+
+ggplot(diamonds, aes(color, fill=cut)) + geom_bar() + 
+  scale_fill_manual(values=c(hcl(seq(15,325,length.out=5), 100, 65)[1:2], 
+                             "white",
+                             hcl(seq(15,325,length.out=5), 100, 65)[3:5]),
+                    drop=FALSE) +
+  guides(fill=guide_legend(ncol=2)) +
+  theme(legend.position="bottom")
+```
+
+
+
+Retrieve **environment variable**
+
+```R
+Sys.getenv('PLOTLY_MATHJAX_PATH')
+# set an environment variable
+Sys.setenv('PLOTLY_MATHJAX_PATH' = '/Users/Menghan/Documents/R/MathJax')
+```
+
+Check global setting/options
+
+`options(...)` set options, using `name = value`. 
+
+`getOption(x, default=NULL)` get option values.
+
+- `default` 	if the specified option is not set in the options list, this value is returned. This facilitates retrieving an option and checking whether it is set and setting it separately if not.
+
+  
+
+```R
+> options("device")
+$device
+[1] "RStudioGD"
+```
+
+Check package version
+
+```R
+packageVersion("snow")
+```
+
+
+
+
+
+**Length Unit**
+
+The relation between the absolute units is as follows: 1in = 2.54cm = 25.4mm = 72pt = 6pc
+
+
+
+**Latex symbol in legend labels**
+
+```R
+cols <- c() # specify col vector here
+sizes <- c() # specify linewidth 
+lines <- c() # linetype
+breaks <- c() # group breaks, set legend order;
+
+## note that the use of `unname()` is necessary
+labels <- unname(latex2exp::TeX(c("$A_{t-k}^h$", "$B_{t-k}^h$")))
+
+scale_colour_manual(values = cols, breaks=breaks, labels = labels) +
+    scale_linetype_manual(values=lines, breaks=breaks, labels = labels) +
+    scale_size_manual(values=sizes, breaks=breaks, labels = labels) 
+```
+
+
+
+
+
+### `grid.gedit()`
+
+https://bookdown.org/rdpeng/RProgDA/the-grid-package.html#grobs
+
+https://stackoverflow.com/questions/15059093/ggplot2-adjust-the-symbol-size-in-legends
+
+`grid.gedit(..., grep = TRUE, global = TRUE)` 	Changes the value of one of the slots of a grob and redraws the grob.
+
+-   `...` 	Zero or more named arguments specifying new slot values.
+
+
+
+```R
+# To get the names of all the grobs in the ggplot
+grid.ls(grid.force())    
+
+# The edit - to set the size of the point in the legend to 4 mm
+grid.gedit("key-[-0-9]-1-1", size = unit(4, "mm"))    
+```
+
+
+
+**Transparency in Rstudio**
+
+https://tinyheero.github.io/2015/09/15/semi-transparency-r.html
+
+Error Message:
+
+```R
+Warning message:
+In grid.Call.graphics(L_polygon, x$x, x$y, index) :
+  semi-transparency is not supported on this device: reported only once per page
+```
+
+Fix:
+
+I was able to solve this issue by switching over to <u>use the Cairo graphics device</u>. Make sure you first install the [Cairo R package](https://cran.r-project.org/web/packages/Cairo/index.html).
+
+```R
+install.packages("Cairo")
+```
+
+Once you have that installed, place the following in your ~/.Rprofile 
+
+```bash
+setHook(packageEvent("grDevices", "onLoad"),
+function(...) grDevices::X11.options(type='cairo'))
+options(device='x11') # set default Graphic Device
+```
+
+This makes it so that your default graphics device is set to Cairo whenever you start a new R session. Now open a new R session, and try the same plotting code (from above). You should see a plot with transparency.
+
+
+
+```R
+# get default graphic device
+getOption("device")
+```
+
+
+
+**What’s a graphic device?**
+
+It’s the engine that renders your plot. Common graphics devices are Quartz and X11.
+
+
+
+Install package from source file  `.tar`
+
+`install.packages("~/Downloads/greenbrown_2.4.3.tar", repos = NULL, type="source")`
+
+
+
+### **Control Graphics Devices**
+
+`dev.cur()`	returns a length-one named integer vector giving the number and name of the active device, or 1, the null device, if none is active.
+
+`dev.new()` 	opens a new `RStudioGD` device. 
+
+**`dev.list()`**   returns the numbers of all open devices, except device 1, the null device. 
+
+- This is a numeric vector with a `names` attribute giving the device names, or `NULL` is there is no open device.
+- Usually `2` is `RStudioGD 2`. 
+
+**`dev.set(which = dev.next())`** 	makes the specified device the active device. If there is no device with that number, it is equivalent to `dev.next`. If `which = 1` it opens a new device and selects that.
+
+`dev.prev(which = dev.cur())`  `dev.next` and `dev.prev` select the next/previous open device in the appropriate direction, unless no device is open.
+
+`dev.off(which = dev.cur()) `  shuts down the specified (by default the current) device.
+
+**`graphics.off()`** 	shuts down all open graphics devices. 
+
+
+
+**Save the current graphic object**
+
+```R
+library(grid)
+grab <- grid.grab()
+ggsave(grab, filename = f_name, width=10.9, height=5.82)
+```
+
+- `pdf` device uses inches to specify width and height.
+- `png` and `jpeg` use pixels to specify dimensions.
+
+
+
+**Forward display**
+
+`x11()` opens an interactive graphics device. `x11` is Apple's X server. It is reliable and provides hardware OpenGL acceleration. 
+
+https://www.rdocumentation.org/packages/grDevices/versions/3.6.2/topics/x11
+
+https://www.cgl.ucsf.edu/chimera/data/downloads/1.11.2/mac_x11.html
+
+When you are using a native Mac application (not X windows) and then click on a menu within the X window, <span style='color:#008B45'>the mouse click does not bring up the menu</span>. It just activates the X window and another mouse click is needed to show the menu. <u>To make this work with a single mouse click</u>, use the Mac X server `wm_click_through` preference by typing the following command in a Mac Terminal window:
+
+`defaults write org.x.x11 wm_click_through -bool true`  Disables the default behavior of swallowing window-activating mouse events.
+
+-   Normally Mac OS X swallows window-activating mouse events. This preference causes a window-activating mouse click on an X window to also be processed by the application.
+-   X11 must be <span style='color:#008B45'>restarted</span> after any of these settings are changed. The settings are saved in your `~/Library/Preferences/org.x.x11.plist` file, so they will apply to future sessions. Reissuing the commands with false instead of true will restore the default preference settings.
+
+>   An item that provides <span style='color:#008B45'>click-through</span> is one that a user can activate with one click, even though the item is in an inactive window. (To activate an item that does not support click-through, the user must first make the containing window active and then click the item.) Although click-through can make some user tasks easier, it can also confuse users if they click items unintentionally.
+
+**x11 preferences**
+
+- Input
+
+  <img src="https://drive.google.com/thumbnail?id=1L0sE4wItvdESsM_IMIe2_P4gFX5y7aV-&sz=w1000" alt="image-20221114225826302" style="zoom:50%;" />
+
+- windows
+
+  <img src="https://drive.google.com/thumbnail?id=1SG617Sb_csQRiM6fZ962SqR7ExT9nwLW&sz=w1000" alt="image-20221114225900595" style="zoom:50%;" />
+
+- security
+
+  <img src="https://drive.google.com/thumbnail?id=1PVtE5RnIplueIsxYUWT3ZSCkV8EDStA6&sz=w1000" alt="image-20221114225922001" style="zoom:50%;" />
+
+
+
+<span style='color:orange'>Bug</span>: X11 windows do not raise (come to the front) when the application is activated. 
+
+http://hints.macworld.com/article.php?story=20050714011418999
+
+bind a new key to an AppleScript mac Opt+Tab
+
+https://apple.stackexchange.com/questions/175215/how-do-i-assign-a-keyboard-shortcut-to-an-applescript-i-wrote
+
+<img src="https://drive.google.com/thumbnail?id=1GOLLujeuJt858G2pqv1kkfMwdwJ50kvl&sz=w1000" alt="image-20221115084137151" style="zoom:100%;" />
+
+
+
+For the Quartz device, you can use `quartzFonts()` to see what the default font for each of these keywords is
+
+```R
+quartzFonts()
+# $serif
+# [1] "Times-Roman"      "Times-Bold"       "Times-Italic"     "Times-BoldItalic"
+# 
+# $sans
+# [1] "Helvetica"             "Helvetica-Bold"        "Helvetica-Oblique"     "Helvetica-BoldOblique"
+# 
+# $mono
+# [1] "Courier"             "Courier-Bold"        "Courier-Oblique"     "Courier-BoldOblique"
+
+```
+
+
+
+**Table of font**
+
+http://www.cookbook-r.com/Graphs/Fonts/
+
+Font support in R is generally not very good. It varies between systems, and between output formats.
+
+Sometimes what you see on the screen isn’t necessarily the same as what you get when you output to PNG or PDF. 
+
+PNG output has less suport for font variety; PDF has better support.
+
+| Short Name   | Canonical Name             |
+| ------------ | -------------------------- |
+| mono         | Courier                    |
+| sans         | Helvetica                  |
+| serif        | Times                      |
+|              | AvantGarde                 |
+|              | Bookman                    |
+|              | Helvetica-Narrow           |
+|              | NewCenturySchoolbook       |
+|              | Palatino                   |
+|              | URWGothic                  |
+|              | URWBookman                 |
+|              | NimbusMon                  |
+| URWHelvetica | NimbusSan                  |
+|              | NimbusSanCondNimbusSanCond |
+|              | CenturySchCenturySch       |
+|              | URWPalladio                |
+| URWTimes     | NimbusRom                  |
+
+**`extrafont` package**
+
+https://github.com/wch/extrafont
+

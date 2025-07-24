@@ -318,11 +318,30 @@ paste(shQuote(as.list(Model_vec)), collapse = ", " )
 
 `identical(x, y)` The safe and reliable way to test two objects for being *exactly* equal.
 
-`all.equal(x, y, tolerance=1.5e-8)` floating point comparison, in contrast to exact comparison `identical()`. The `all.equal()` function allows you to test for equality with a difference tolerance of 1.5e-8, "near equality".
+
+`near()` This is a safe way of comparing if two vectors of floating point numbers are (pairwise) equal. This is safer than using `==`, because it has a built in tolerance. Returns a logical vector (TRUE/FALSE for *each element comparison*)
+
+```r
+near(x, y, tol = .Machine$double.eps^0.5)
+```
+
+`all.equal(x, y, tolerance=1.5e-8)` floating point comparison, in contrast to exact comparison `identical()`. The `all.equal()` function allows you to test for equality with a difference tolerance of 1.5e-8, "near equality". It does an overall comparison of the two objects and returns a single TRUE/FALSE, while `near` does a pairwise comparison and returns a logical vector of for the element-wise comparison.
 
 -   If the difference is greater than the tolerance level the function will return the mean relative difference.
 -   return `TRUE` if `x` and `y` are approximately equal; it returns a summary, either equal or not equal; not a complete result of one-by-one comparison;
 
+```r
+x <- c(0.1, 0.2, 0.3)
+y <- c(0.1000001, 0.2000001, 0.3000001)
+
+# near() - element-wise logical vector
+near(x, y)
+# [1] TRUE TRUE TRUE
+
+# all.equal() - single summary result
+all.equal(x, y)
+# [1] TRUE  (if within tolerance)
+```
 
 `subset(x, subset, select, drop = FALSE, …)` 	Subsetting Vectors, Matrices And Data Frames
 
@@ -383,9 +402,7 @@ squish(x, range = c(0+c, 1) )
 --------------------------------------------------------------------------------
 
 
-#### Data Subsetting
-
-
+#### Data Subsetting {-}
 
 <span style='color:#00CC66'>**`subset(x, subset, select, drop = FALSE, ...)`** </span>  subsetting vectors, matrices, tibbles ... This is a generic function, with methods supplied for many data types.
 
@@ -479,6 +496,7 @@ addPval.symbol <- function(x){
 }
 ```
 
+--------------------------------------------------------------------------------
 
 
 ### Generate Random Seeds
@@ -494,4 +512,198 @@ eff_seed <- 25662
 print(sprintf("Seed for session: %s", eff_seed))
 set.seed(eff_seed)
 ```
+
+### Draw random samples
+
+`rbinom(n, size, prob)`  binomial distribution with parameter `size` and `prob`.  
+
+- `size` for the number of trials. 
+
+  - when `size=1`, it generate the Bernoulli distribution
+    $$
+    X = \begin{cases}
+    1 & \text{with prbability }p \\
+    0 & \text{with prbability }1-p \\
+    \end{cases}
+    $$
+
+  Binormial is the sum of Bernoulli
+  $$
+  Y = \sum_{i=1}^{\text{size}} X_i
+  $$
+  The probability is given by
+  $$
+  P(Y=y) = \begin{pmatrix} 
+  \text{size} \\
+  y
+  \end{pmatrix} p^y (1-y)^{\text{size}-y}
+  $$
+  for $y=0, \ldots, \text{size}.$
+
+
+
+Two ways to generate a <span style='color:#008B45'>Bernoulli distribution</span> sample.
+
+1. use `rbinom` and specify size to be 1.
+
+   ```r
+   rbinom(n = 20, size = 1, prob = 0.7)
+   ```
+
+    set `n = 20` to indicate 20 draws from a binomial distribution, set `size = 1`to indicate the distribution is for 1 trial, and `p = 0.7` to specify the distribution is for a “success” probability of 0.7:
+
+
+
+2. use `sample` and specify respective probabilities using `prob`.
+
+   `sample(x, size, replace=FALSE, prob=NULL)`  draw random samples from a sample space using either with or without replacement.
+
+   - `prob` 	a vector of probability weights for obtaining the elements of the vector being sampled. Of the same length as `x`.
+
+   ```r
+   sample(c(0,1), size = 20, replace = TRUE, prob = c(0.3, 0.7))
+   ```
+
+   Here’s a sample of 20 zeroes and ones, where 0 has a 30% chance of being sampled and 1 has a 70% chance of being sampled. 
+
+   
+
+--------------------------------------------------------------------------------
+
+### Fit a distribution
+
+```R
+# fit a lognormal distribution
+library(MASS)
+fit_params <- fitdistr(prices_monthly$AdjustedPrice,"lognormal")
+fit_params$estimate
+x <- prices_monthly$AdjustedPrice %>% {seq(min(.), max(.), length=30)} # data point at which to compute density
+x
+fit <- dlnorm(x, fit_params$estimate['meanlog'], fit_params$estimate['sdlog'])
+```
+
+
+
+--------------------------------------------------------------------------------
+
+
+### Operation on list
+
+`purrr::map(.x, .f, ...)` return a list.  The `map` function transforms its input by applying a function to each element of **a list or atomic vector** and returning an object of the same length as the input.
+
+The <span style='color:#008B45'>main advantage of `map()`</span> is the helpers which allow you to write compact code for common special cases.
+
+- `.x` 	A list or atomic vector.
+
+- `.f`         A function, formula, or vector (not necessarily atomic).
+
+  - `.f` can be a named function, e.g., `mean`.
+
+  - Formula: `~ . + 1` is equivalent to `function(x) x + 1`. 
+
+    This syntax allows you to create very compact anonymous functions.
+
+    - `.` or  `.x`  refer to the first argument.
+    - For a two argument function, use `.x` and `.y`
+    - For more arguments, use `..1`, `..2`, `..3` etc
+
+  - <span style='color:#008B45'>subset lists</span>
+
+    For instance, we need the 2nd element of a nested list. We can use `map(list, 2) `, while `lapply(list, 2) ` doesn't work ;
+
+- `...`     Additional arguments passed on to `.f`.
+
+- Type-specific map functions simply many lines of code
+
+  -   <span style='color:red'>`map_dfr()`</span> and `map_dfc()` return data frames created by row-binding and column-binding respectively. 
+  -   `map_lgl()`, `map_int()`, `map_dbl()` and `map_chr()` return an *atomic vector* of the indicated type (or die trying).
+
+If **character vector**, **numeric vector**, or **list**, it is converted to an extractor function. Character vectors index by <u>name</u> and numeric vectors index by <u>position</u>; use a list to index by position and name at different levels. If a component is not present, the value of `.default` will be returned.
+
+`map()` can be used as a **concise loop**.
+
+```r
+l <- map(1:4, ~ sample(1:10, 15, replace = T))
+str(l)
+#> List of 4
+#>  $ : int [1:15] 7 1 8 8 3 8 2 4 7 10 ...
+#>  $ : int [1:15] 3 1 10 2 5 2 9 8 5 4 ...
+#>  $ : int [1:15] 6 10 9 5 6 7 8 6 10 8 ...
+#>  $ : int [1:15] 9 8 6 4 4 5 2 9 9 6 ...
+```
+
+#### Select first element of nested list {-}
+
+```r
+x <- list(list(1,2), list(3,4), list(5,6))
+# use lapply
+lapply(x, `[[`, 1)
+# use `purrr::map`
+purrr::map(x, 1)
+```
+
+
+
+Use examples of `purrr:map`
+
+```r
+# Generate normal distributions from an atomic vector giving the means
+1:10 %>%
+  map(rnorm, n = 10)
+
+# You can also use an anonymous function
+1:10 %>%
+  map(function(x) rnorm(10, x))
+
+# Or a formula
+1:10 %>%
+  map(~ rnorm(10, .x))
+
+# Simplify output to a vector instead of a list by computing the mean of the distributions
+1:10 %>%
+  map(rnorm, n = 10) %>%  # output a list
+  map_dbl(mean)           # output an atomic vector
+#> [1] 1.328465 2.489343 2.598304 4.208711 5.036009 5.853896 6.943884 7.779394 8.727930 9.793523
+
+> set_names(c("foo", "bar")) %>% map_chr(paste0, ":suffix")
+         foo          bar 
+"foo:suffix" "bar:suffix" 
+```
+
+You can apply regression to each group with `map`, see [Split-and-Apply Operations](#split-and-apply-operations) for more details.
+
+
+
+Find the values that occur in every element.
+
+```r
+# use `intersect` three times
+out <- l[[1]]
+out <- intersect(out, l[[2]])
+out <- intersect(out, l[[3]])
+out <- intersect(out, l[[4]])
+out
+#> [1] 8 4
+
+# alternatively use `reduce` once
+reduce(l, intersect)
+#> [1] 8 4
+```
+
+`purrr::reduce(.x, .f, ...)` takes a vector of length *n* and produces a vector of length 1 by calling a function with a pair of values at a time: `reduce(1:4, f)` is equivalent to `f(f(f(1, 2), 3), 4)`.
+
+<img src="https://drive.google.com/thumbnail?id=1tf9pLkXPOvfRazWsixTxpoPSr5ltw-MT&sz=w1000" alt="purrr: reduce" style="display: block; margin-right: auto; margin-left: auto; zoom:60%;" />
+
+- `.x` 	A list or atomic vector.
+
+
+
+List all the elements that appear in at least one entry. 
+
+```r
+reduce(l, union)
+#>  [1]  7  1  8  3  2  4 10  5  9  6
+```
+
+
 

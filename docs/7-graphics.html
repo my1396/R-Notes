@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 7 Graphics | R Notes</title>
+  <meta name="description" content="<p>This is a minimal example of using the bookdown package to write a book.
+The HTML output format for this example is bookdown::gitbook,
+set in the _output.yml file.</p>" />
+  <meta name="generator" content="bookdown 0.35 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 7 Graphics | R Notes" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="<p>This is a minimal example of using the bookdown package to write a book.
+The HTML output format for this example is bookdown::gitbook,
+set in the _output.yml file.</p>" />
+  <meta name="github-repo" content="my1396/R-Notes" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 7 Graphics | R Notes" />
+  
+  <meta name="twitter:description" content="<p>This is a minimal example of using the bookdown package to write a book.
+The HTML output format for this example is bookdown::gitbook,
+set in the _output.yml file.</p>" />
+  
+
+<meta name="author" content="Menghan Yuan" />
+
+
+<meta name="date" content="2025-07-24" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  <link rel="shortcut icon" href="images/r-project-favicon.ico" type="image/x-icon" />
+<link rel="prev" href="6.4-group-and-apply-functions.html"/>
+<link rel="next" href="multipanel-plot.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+<head>
+    <!-- MathJax config: define new macros -->
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+          tex2jax: {
+            inlineMath: [['$','$'], ['\\(','\\)']],
+            processEscapes: true
+          },
+          TeX: { 
+            inlineMath: [   // start/end delimiter pairs for in-line math
+              ['$', '$'],
+              ['\\(', '\\)']
+            ],
+            displayMath: [  // start/end delimiter pairs for display math
+              ['$$', '$$'],
+              ['\\[', '\\]']
+            ],
+            processEscapes: true, // use \$ to produce a literal dollar sign
+            tags: 'ams',  // should be 'ams', 'none', or 'all'
+            Macros: {
+              vect: ["\\mathbf{#1}", 1],
+              mat: ["\\mathbf{#1}", 1], 
+
+              bA: "\\boldsymbol{A}",
+              bB: "\\boldsymbol{B}",
+              bC: "\\boldsymbol{C}",
+              bD: "\\boldsymbol{D}",
+              bE: "\\boldsymbol{E}",
+              bF: "\\boldsymbol{F}",
+              bG: "\\boldsymbol{G}",
+              bH: "\\boldsymbol{H}",
+              bI: "\\boldsymbol{I}",
+              bJ: "\\boldsymbol{J}",
+              bK: "\\boldsymbol{K}",
+              bL: "\\boldsymbol{L}",
+              bM: "\\boldsymbol{M}",
+              bN: "\\boldsymbol{N}",
+              bP: "\\boldsymbol{P}",
+              bQ: "\\boldsymbol{Q}",
+              bR: "\\boldsymbol{R}",
+              bS: "\\boldsymbol{S}",
+              bT: "\\boldsymbol{T}",
+              bU: "\\boldsymbol{U}",
+              bV: "\\boldsymbol{V}",
+              bW: "\\boldsymbol{W}",
+              bX: "\\boldsymbol{X}",
+              bY: "\\boldsymbol{Y}",
+              bZ: "\\boldsymbol{Z}",
+              ba: "\\boldsymbol{a}",
+              bb: "\\boldsymbol{b}",
+              bc: "\\boldsymbol{c}",
+              bd: "\\boldsymbol{d}",
+              be: "\\boldsymbol{e}",
+              bg: "\\boldsymbol{g}",
+              bh: "\\boldsymbol{h}",
+              bi: "\\boldsymbol{\\imath}",
+              bm: "\\boldsymbol{m}",
+              bp: "\\boldsymbol{p}",
+              bq: "\\boldsymbol{q}",
+              br: "\\boldsymbol{r}",
+              bs: "\\boldsymbol{s}",
+              bt: "\\boldsymbol{t}",
+              bu: "\\boldsymbol{u}",
+              bv: "\\boldsymbol{v}",
+              bw: "\\boldsymbol{w}",
+              bx: "\\boldsymbol{x}",
+              by: "\\boldsymbol{y}",
+
+              Acal: "\\mathcal{A}",
+              Bcal: "\\mathcal{B}",
+              Ccal: "\\mathcal{C}",
+              Dcal: "\\mathcal{D}",
+              Ecal: "\\mathcal{E}",
+              Fcal: "\\mathcal{F}",
+              Gcal: "\\mathcal{G}",
+              Hcal: "\\mathcal{H}",
+              Ical: "\\mathcal{I}",
+              Jcal: "\\mathcal{J}",
+              Kcal: "\\mathcal{K}",
+              Lcal: "\\mathcal{L}",
+              Mcal: "\\mathcal{M}",
+              Ncal: "\\mathcal{N}",
+              Ocal: "\\mathcal{O}",
+              Pcal: "\\mathcal{P}",
+              Qcal: "\\mathcal{Q}",
+              Rcal: "\\mathcal{R}",
+              Scal: "\\mathcal{S}",
+              Tcal: "\\mathcal{T}",
+              Ucal: "\\mathcal{U}",
+              Vcal: "\\mathcal{V}",
+              Wcal: "\\mathcal{W}",
+              Xcal: "\\mathcal{X}",
+              Ycal: "\\mathcal{Y}",
+              Zcal: "\\mathcal{Z}",
+
+              A: "\\mathbb{A}",
+              B: "\\mathbb{B}",
+              C: "\\mathbb{C}",
+              D: "\\mathbb{D}",
+              E: "\\mathbb{E}",
+              F: "\\mathbb{F}",
+              G: "\\mathbb{G}",
+              H: "\\mathbb{H}",
+              I: "\\mathbb{I}",
+              J: "\\mathbb{J}",
+              K: "\\mathbb{K}",
+              L: "\\mathbb{L}",
+              M: "\\mathbb{M}",
+              N: "\\mathbb{N}",
+              O: "\\mathbb{O}",
+              P: "\\mathbb{P}",
+              Q: "\\mathbb{Q}",
+              R: "\\mathbb{R}",
+              S: "\\mathbb{S}",
+              T: "\\mathbb{T}",
+              U: "\\mathbb{U}",
+              V: "\\mathbb{V}",
+              W: "\\mathbb{W}",
+              X: "\\mathbb{X}",
+              Y: "\\mathbb{Y}",
+              Z: "\\mathbb{Z}",
+
+              bAlpha: "\\boldsymbol{\\Alpha}",
+              bBeta: "\\boldsymbol{\\beta}",
+              bDelta: "\\boldsymbol{\\delta}",
+              bEta: "\\boldsymbol{\\eta}",
+              bGamma: "\\boldsymbol{\\Gamma}",
+              bLambda: "\\boldsymbol{\\Lambda}",
+              bOmega: "\\boldsymbol{\\Omega}",
+              bPhi: "\\boldsymbol{\\Phi}",
+              bPi: "\\boldsymbol{\\Pi}",
+              bPsi: "\\boldsymbol{\\Psi}",
+              bSigma: "\\boldsymbol{\\Sigma}",
+              bTau: "\\boldsymbol{\\tau}",
+              bXi: "\\boldsymbol{\\Xi}",
+              bbeta: "\\boldsymbol{\\beta}",
+              bdelta: "\\boldsymbol{\\delta}",
+              blambda: "\\boldsymbol{\\lambda}",
+              bmu: "\\boldsymbol{\\mu}",
+              bphi: "\\boldsymbol{\\phi}",
+              bpi: "\\boldsymbol{\\pi}",
+              bpsi: "\\boldsymbol{\\psi}",
+              brho: "\\boldsymbol{\\rho}",
+              bsigma: "\\boldsymbol{\\sigma}",
+              btau: "\\boldsymbol{\\tau}",
+              bxi: "\\boldsymbol{\\xi}",
+              bEta: "\\boldsymbol{\\eta}",
+              bPhi: "\\boldsymbol{\\Phi}",
+              bPi: "\\boldsymbol{\\Pi}",
+              bPsi: "\\boldsymbol{\\Psi}",
+              bXi: "\\boldsymbol{\\Xi}",
+              blambda: "\\boldsymbol{\\lambda}",
+              bmu: "\\boldsymbol{\\mu}",
+              bphi: "\\boldsymbol{\\phi}",
+              bpi: "\\boldsymbol{\\pi}",
+              bpsi: "\\boldsymbol{\\psi}",
+              brho: "\\boldsymbol{\\rho}",
+              bsigma: "\\boldsymbol{\\sigma}",
+                        
+              curl: ["\\left\\lbrace#1\\right\\rbrace", 1],
+              floor: ["\\left\\lfloor#1\\right\\rfloor", 1],
+              ceil: ["\\left\\lceil#1\\right\\rceil", 1],
+              abs: ["\\left\\lvert#1\\right\\rvert", 1],
+              norm: ["\\left\\lVert#1\\right\\rVert", 1],
+
+              independent: "\\mathrel{\\perp\\!\\!\\perp}",
+
+              var: "\\mathrm{var}",
+              diag: "\\mathrm{diag}",
+              rank: "\\mathrm{rank}",
+              vecc: "\\mathrm{vec}",
+            }
+          }
+        });
+    </script>
+    
+
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro">
+</head>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #204a87; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #8f5902; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #204a87; font-weight: bold; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #ce5c00; font-weight: bold; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">R Notes</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> About</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="1.1-usage.html"><a href="1.1-usage.html"><i class="fa fa-check"></i><b>1.1</b> Usage</a></li>
+<li class="chapter" data-level="1.2" data-path="1.2-render-book.html"><a href="1.2-render-book.html"><i class="fa fa-check"></i><b>1.2</b> Render book</a></li>
+<li class="chapter" data-level="1.3" data-path="1.3-preview-book.html"><a href="1.3-preview-book.html"><i class="fa fa-check"></i><b>1.3</b> Preview book</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="2-rstudio.html"><a href="2-rstudio.html"><i class="fa fa-check"></i><b>2</b> Rstudio</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="2.1-dark-theme.html"><a href="2.1-dark-theme.html"><i class="fa fa-check"></i><b>2.1</b> Dark Theme</a></li>
+<li class="chapter" data-level="2.2" data-path="2.2-update-r.html"><a href="2.2-update-r.html"><i class="fa fa-check"></i><b>2.2</b> Update R</a></li>
+<li class="chapter" data-level="2.3" data-path="2.3-packages-management.html"><a href="2.3-packages-management.html"><i class="fa fa-check"></i><b>2.3</b> Packages Management</a>
+<ul>
+<li class="chapter" data-level="2.3.1" data-path="2.3-packages-management.html"><a href="2.3-packages-management.html#load-packages"><i class="fa fa-check"></i><b>2.3.1</b> Load packages</a></li>
+<li class="chapter" data-level="2.3.2" data-path="2.3-packages-management.html"><a href="2.3-packages-management.html#install-packages"><i class="fa fa-check"></i><b>2.3.2</b> Install packages</a></li>
+<li class="chapter" data-level="2.3.3" data-path="2.3-packages-management.html"><a href="2.3-packages-management.html#update-packages"><i class="fa fa-check"></i><b>2.3.3</b> Update packages</a></li>
+<li class="chapter" data-level="2.3.4" data-path="2.3-packages-management.html"><a href="2.3-packages-management.html#put-your-r-package-on-github"><i class="fa fa-check"></i><b>2.3.4</b> Put your R package on GitHub</a></li>
+</ul></li>
+<li class="chapter" data-level="2.4" data-path="2.4-using-git-with-rstudio.html"><a href="2.4-using-git-with-rstudio.html"><i class="fa fa-check"></i><b>2.4</b> Using Git with RStudio</a></li>
+<li class="chapter" data-level="2.5" data-path="2.5-github-copilot.html"><a href="2.5-github-copilot.html"><i class="fa fa-check"></i><b>2.5</b> GitHub Copilot</a></li>
+<li class="chapter" data-level="2.6" data-path="2.6-save-r-workspace.html"><a href="2.6-save-r-workspace.html"><i class="fa fa-check"></i><b>2.6</b> Save R Workspace</a></li>
+<li class="chapter" data-level="2.7" data-path="2.7-pane-layout.html"><a href="2.7-pane-layout.html"><i class="fa fa-check"></i><b>2.7</b> Pane Layout</a></li>
+<li class="chapter" data-level="2.8" data-path="2.8-options.html"><a href="2.8-options.html"><i class="fa fa-check"></i><b>2.8</b> Options</a></li>
+<li class="chapter" data-level="2.9" data-path="2.9-r-startup.html"><a href="2.9-r-startup.html"><i class="fa fa-check"></i><b>2.9</b> R Startup</a>
+<ul>
+<li class="chapter" data-level="2.9.1" data-path="2.9-r-startup.html"><a href="2.9-r-startup.html#rprofile"><i class="fa fa-check"></i><b>2.9.1</b> <code>.Rprofile</code></a></li>
+<li class="chapter" data-level="2.9.2" data-path="2.9-r-startup.html"><a href="2.9-r-startup.html#renviron"><i class="fa fa-check"></i><b>2.9.2</b> <code>.Renviron</code></a></li>
+</ul></li>
+<li class="chapter" data-level="2.10" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html"><i class="fa fa-check"></i><b>2.10</b> VS Code</a>
+<ul>
+<li class="chapter" data-level="" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#plot-viewer"><i class="fa fa-check"></i>Plot Viewer</a></li>
+<li class="chapter" data-level="" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#rmd"><i class="fa fa-check"></i>Rmd</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="3-rmd-1.html"><a href="3-rmd-1.html"><i class="fa fa-check"></i><b>3</b> Rmd</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="3.1-yaml-metadata.html"><a href="3.1-yaml-metadata.html"><i class="fa fa-check"></i><b>3.1</b> YAML metadata</a>
+<ul>
+<li class="chapter" data-level="3.1.1" data-path="3.1-yaml-metadata.html"><a href="3.1-yaml-metadata.html#render-rmd"><i class="fa fa-check"></i><b>3.1.1</b> Render Rmd</a></li>
+<li class="chapter" data-level="3.1.2" data-path="3.1-yaml-metadata.html"><a href="3.1-yaml-metadata.html#document-dependency"><i class="fa fa-check"></i><b>3.1.2</b> Document dependency</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="3.2-chunk-options.html"><a href="3.2-chunk-options.html"><i class="fa fa-check"></i><b>3.2</b> Chunk Options</a>
+<ul>
+<li class="chapter" data-level="" data-path="3.2-chunk-options.html"><a href="3.2-chunk-options.html#hooks"><i class="fa fa-check"></i>Hooks</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="3.3-print-verbatim-r-code-chunks.html"><a href="3.3-print-verbatim-r-code-chunks.html"><i class="fa fa-check"></i><b>3.3</b> Print Verbatim R code chunks</a></li>
+<li class="chapter" data-level="3.4" data-path="3.4-rmd-basics.html"><a href="3.4-rmd-basics.html"><i class="fa fa-check"></i><b>3.4</b> Rmd Basics</a></li>
+<li class="chapter" data-level="3.5" data-path="3.5-citations.html"><a href="3.5-citations.html"><i class="fa fa-check"></i><b>3.5</b> Citations</a>
+<ul>
+<li class="chapter" data-level="3.5.1" data-path="3.5-citations.html"><a href="3.5-citations.html#bibliographies"><i class="fa fa-check"></i><b>3.5.1</b> Bibliographies</a></li>
+<li class="chapter" data-level="3.5.2" data-path="3.5-citations.html"><a href="3.5-citations.html#bibliography-placement"><i class="fa fa-check"></i><b>3.5.2</b> Bibliography placement</a></li>
+</ul></li>
+<li class="chapter" data-level="3.6" data-path="3.6-cross-references.html"><a href="3.6-cross-references.html"><i class="fa fa-check"></i><b>3.6</b> Cross References</a>
+<ul>
+<li class="chapter" data-level="3.6.1" data-path="3.6-cross-references.html"><a href="3.6-cross-references.html#using-bookdown"><i class="fa fa-check"></i><b>3.6.1</b> Using <code>bookdown</code></a></li>
+<li class="chapter" data-level="3.6.2" data-path="3.6-cross-references.html"><a href="3.6-cross-references.html#using-the-latex-way"><i class="fa fa-check"></i><b>3.6.2</b> Using the LaTeX Way</a></li>
+</ul></li>
+<li class="chapter" data-level="3.7" data-path="3.7-equations.html"><a href="3.7-equations.html"><i class="fa fa-check"></i><b>3.7</b> Equations</a></li>
+<li class="chapter" data-level="3.8" data-path="3.8-theorems.html"><a href="3.8-theorems.html"><i class="fa fa-check"></i><b>3.8</b> Theorems</a></li>
+<li class="chapter" data-level="3.9" data-path="3.9-figures.html"><a href="3.9-figures.html"><i class="fa fa-check"></i><b>3.9</b> Figures</a>
+<ul>
+<li class="chapter" data-level="" data-path="3.9-figures.html"><a href="3.9-figures.html#latex-symbols-in-fig.-caption"><i class="fa fa-check"></i>Latex symbols in Fig. caption</a></li>
+<li class="chapter" data-level="" data-path="3.9-figures.html"><a href="3.9-figures.html#refer-to-another-figure-in-figure-caption"><i class="fa fa-check"></i>Refer to another figure in figure caption</a></li>
+</ul></li>
+<li class="chapter" data-level="3.10" data-path="3.10-tables.html"><a href="3.10-tables.html"><i class="fa fa-check"></i><b>3.10</b> Tables</a>
+<ul>
+<li class="chapter" data-level="3.10.1" data-path="3.10-tables.html"><a href="3.10-tables.html#knitrkable"><i class="fa fa-check"></i><b>3.10.1</b> <code>knitr::kable</code></a></li>
+<li class="chapter" data-level="3.10.2" data-path="3.10-tables.html"><a href="3.10-tables.html#data-frame-printing"><i class="fa fa-check"></i><b>3.10.2</b> Data frame printing</a></li>
+<li class="chapter" data-level="3.10.3" data-path="3.10-tables.html"><a href="3.10-tables.html#stargazer"><i class="fa fa-check"></i><b>3.10.3</b> Stargazer</a></li>
+<li class="chapter" data-level="3.10.4" data-path="3.10-tables.html"><a href="3.10-tables.html#xtable"><i class="fa fa-check"></i><b>3.10.4</b> <code>xtable</code></a></li>
+<li class="chapter" data-level="3.10.5" data-path="3.10-tables.html"><a href="3.10-tables.html#kableextra"><i class="fa fa-check"></i><b>3.10.5</b> <code>kableExtra</code></a></li>
+</ul></li>
+<li class="chapter" data-level="3.11" data-path="3.11-rmd-github-pages.html"><a href="3.11-rmd-github-pages.html"><i class="fa fa-check"></i><b>3.11</b> Rmd GitHub Pages</a>
+<ul>
+<li class="chapter" data-level="" data-path="3.11-rmd-github-pages.html"><a href="3.11-rmd-github-pages.html#project-structure"><i class="fa fa-check"></i>Project structure</a></li>
+<li class="chapter" data-level="" data-path="3.11-rmd-github-pages.html"><a href="3.11-rmd-github-pages.html#site.yml-config"><i class="fa fa-check"></i><code>_site.yml</code> config</a></li>
+<li class="chapter" data-level="" data-path="3.11-rmd-github-pages.html"><a href="3.11-rmd-github-pages.html#index.rmd"><i class="fa fa-check"></i><code>index.Rmd</code></a></li>
+<li class="chapter" data-level="" data-path="3.11-rmd-github-pages.html"><a href="3.11-rmd-github-pages.html#r-scripts"><i class="fa fa-check"></i>R scripts</a></li>
+<li class="chapter" data-level="" data-path="3.11-rmd-github-pages.html"><a href="3.11-rmd-github-pages.html#workflow"><i class="fa fa-check"></i>Workflow</a></li>
+<li class="chapter" data-level="" data-path="3.11-rmd-github-pages.html"><a href="3.11-rmd-github-pages.html#css-style"><i class="fa fa-check"></i>CSS Style</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="4-bookdown.html"><a href="4-bookdown.html"><i class="fa fa-check"></i><b>4</b> bookdown</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="4.1-bookdown-project-structure.html"><a href="4.1-bookdown-project-structure.html"><i class="fa fa-check"></i><b>4.1</b> bookdown project structure</a>
+<ul>
+<li class="chapter" data-level="" data-path="4.1-bookdown-project-structure.html"><a href="4.1-bookdown-project-structure.html#output.yml"><i class="fa fa-check"></i><code>_output.yml</code></a></li>
+<li class="chapter" data-level="" data-path="4.1-bookdown-project-structure.html"><a href="4.1-bookdown-project-structure.html#bookdown.yml"><i class="fa fa-check"></i><code>_bookdown.yml</code></a></li>
+<li class="chapter" data-level="" data-path="4.1-bookdown-project-structure.html"><a href="4.1-bookdown-project-structure.html#index.rmd-1"><i class="fa fa-check"></i><code>index.Rmd</code></a></li>
+<li class="chapter" data-level="" data-path="4.1-bookdown-project-structure.html"><a href="4.1-bookdown-project-structure.html#rmd-files"><i class="fa fa-check"></i><code>.Rmd</code> files</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="4.2-rendering-bookdown.html"><a href="4.2-rendering-bookdown.html"><i class="fa fa-check"></i><b>4.2</b> Rendering bookdown</a></li>
+<li class="chapter" data-level="4.3" data-path="4.3-toggle-visibility-of-solutions.html"><a href="4.3-toggle-visibility-of-solutions.html"><i class="fa fa-check"></i><b>4.3</b> Toggle Visibility of Solutions</a></li>
+<li class="chapter" data-level="4.4" data-path="4.4-quarto.html"><a href="4.4-quarto.html"><i class="fa fa-check"></i><b>4.4</b> Quarto</a>
+<ul>
+<li class="chapter" data-level="4.4.1" data-path="4.4-quarto.html"><a href="4.4-quarto.html#book-structure"><i class="fa fa-check"></i><b>4.4.1</b> Book Structure</a></li>
+<li class="chapter" data-level="4.4.2" data-path="4.4-quarto.html"><a href="4.4-quarto.html#html-theming"><i class="fa fa-check"></i><b>4.4.2</b> HTML Theming</a></li>
+<li class="chapter" data-level="4.4.3" data-path="4.4-quarto.html"><a href="4.4-quarto.html#cross-references-1"><i class="fa fa-check"></i><b>4.4.3</b> Cross References</a></li>
+<li class="chapter" data-level="4.4.4" data-path="4.4-quarto.html"><a href="4.4-quarto.html#equations-2"><i class="fa fa-check"></i><b>4.4.4</b> Equations</a></li>
+<li class="chapter" data-level="4.4.5" data-path="4.4-quarto.html"><a href="4.4-quarto.html#divs-and-spans"><i class="fa fa-check"></i><b>4.4.5</b> Divs and Spans</a></li>
+<li class="chapter" data-level="4.4.6" data-path="4.4-quarto.html"><a href="4.4-quarto.html#theorems-1"><i class="fa fa-check"></i><b>4.4.6</b> Theorems</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="5-basic-r.html"><a href="5-basic-r.html"><i class="fa fa-check"></i><b>5</b> Basic R</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="5.1-data-input-output.html"><a href="5.1-data-input-output.html"><i class="fa fa-check"></i><b>5.1</b> Data Input &amp; Output</a>
+<ul>
+<li class="chapter" data-level="5.1.1" data-path="5.1-data-input-output.html"><a href="5.1-data-input-output.html#read-data"><i class="fa fa-check"></i><b>5.1.1</b> Read Data</a></li>
+<li class="chapter" data-level="5.1.2" data-path="5.1-data-input-output.html"><a href="5.1-data-input-output.html#write-data"><i class="fa fa-check"></i><b>5.1.2</b> Write Data</a></li>
+</ul></li>
+<li class="chapter" data-level="5.2" data-path="5.2-functions.html"><a href="5.2-functions.html"><i class="fa fa-check"></i><b>5.2</b> Functions</a>
+<ul>
+<li class="chapter" data-level="5.2.1" data-path="5.2-functions.html"><a href="5.2-functions.html#inspecting-object-types-and-structure"><i class="fa fa-check"></i><b>5.2.1</b> Inspecting Object Types and Structure</a></li>
+<li class="chapter" data-level="5.2.2" data-path="5.2-functions.html"><a href="5.2-functions.html#type-of-variables"><i class="fa fa-check"></i><b>5.2.2</b> Type of Variables</a></li>
+<li class="chapter" data-level="5.2.3" data-path="5.2-functions.html"><a href="5.2-functions.html#variable-scope"><i class="fa fa-check"></i><b>5.2.3</b> Variable Scope</a></li>
+<li class="chapter" data-level="5.2.4" data-path="5.2-functions.html"><a href="5.2-functions.html#control-structures"><i class="fa fa-check"></i><b>5.2.4</b> Control Structures</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="5.3-basic-r-functions.html"><a href="5.3-basic-r-functions.html"><i class="fa fa-check"></i><b>5.3</b> Basic R functions</a>
+<ul>
+<li class="chapter" data-level="5.3.1" data-path="5.3-basic-r-functions.html"><a href="5.3-basic-r-functions.html#workspace-management"><i class="fa fa-check"></i><b>5.3.1</b> Workspace Management</a></li>
+<li class="chapter" data-level="5.3.2" data-path="5.3-basic-r-functions.html"><a href="5.3-basic-r-functions.html#data-display-and-output"><i class="fa fa-check"></i><b>5.3.2</b> Data Display and Output</a></li>
+<li class="chapter" data-level="5.3.3" data-path="5.3-basic-r-functions.html"><a href="5.3-basic-r-functions.html#data-manipulation-and-transformation"><i class="fa fa-check"></i><b>5.3.3</b> Data Manipulation and Transformation</a></li>
+<li class="chapter" data-level="5.3.4" data-path="5.3-basic-r-functions.html"><a href="5.3-basic-r-functions.html#generate-random-seeds"><i class="fa fa-check"></i><b>5.3.4</b> Generate Random Seeds</a></li>
+<li class="chapter" data-level="5.3.5" data-path="5.3-basic-r-functions.html"><a href="5.3-basic-r-functions.html#draw-random-samples"><i class="fa fa-check"></i><b>5.3.5</b> Draw random samples</a></li>
+<li class="chapter" data-level="5.3.6" data-path="5.3-basic-r-functions.html"><a href="5.3-basic-r-functions.html#fit-a-distribution"><i class="fa fa-check"></i><b>5.3.6</b> Fit a distribution</a></li>
+<li class="chapter" data-level="5.3.7" data-path="5.3-basic-r-functions.html"><a href="5.3-basic-r-functions.html#operation-on-list"><i class="fa fa-check"></i><b>5.3.7</b> Operation on list</a></li>
+</ul></li>
+<li class="chapter" data-level="5.4" data-path="5.4-data-splitting-and-grouping.html"><a href="5.4-data-splitting-and-grouping.html"><i class="fa fa-check"></i><b>5.4</b> Data Splitting and Grouping</a>
+<ul>
+<li class="chapter" data-level="5.4.1" data-path="5.4-data-splitting-and-grouping.html"><a href="5.4-data-splitting-and-grouping.html#the-split-function"><i class="fa fa-check"></i><b>5.4.1</b> The <code>split()</code> Function</a></li>
+<li class="chapter" data-level="5.4.2" data-path="5.4-data-splitting-and-grouping.html"><a href="5.4-data-splitting-and-grouping.html#split-and-apply-operations"><i class="fa fa-check"></i><b>5.4.2</b> Split-and-Apply Operations</a></li>
+</ul></li>
+<li class="chapter" data-level="5.5" data-path="5.5-apply-family.html"><a href="5.5-apply-family.html"><i class="fa fa-check"></i><b>5.5</b> <code>*apply()</code> Family</a>
+<ul>
+<li class="chapter" data-level="5.5.1" data-path="5.5-apply-family.html"><a href="5.5-apply-family.html#parallel-version-of-apply-function"><i class="fa fa-check"></i><b>5.5.1</b> <span style="color:#008B45">Parallel</span> version of <code>apply</code> function</a></li>
+<li class="chapter" data-level="5.5.2" data-path="5.5-apply-family.html"><a href="5.5-apply-family.html#related-functions"><i class="fa fa-check"></i><b>5.5.2</b> Related Functions</a></li>
+</ul></li>
+<li class="chapter" data-level="5.6" data-path="5.6-statistical-summary-functions.html"><a href="5.6-statistical-summary-functions.html"><i class="fa fa-check"></i><b>5.6</b> Statistical Summary Functions</a></li>
+<li class="chapter" data-level="5.7" data-path="5.7-contingency-table.html"><a href="5.7-contingency-table.html"><i class="fa fa-check"></i><b>5.7</b> Contingency Table</a>
+<ul>
+<li class="chapter" data-level="5.7.1" data-path="5.7-contingency-table.html"><a href="5.7-contingency-table.html#basic-frequency-counting"><i class="fa fa-check"></i><b>5.7.1</b> Basic Frequency Counting</a></li>
+<li class="chapter" data-level="5.7.2" data-path="5.7-contingency-table.html"><a href="5.7-contingency-table.html#creating-contingency-tables"><i class="fa fa-check"></i><b>5.7.2</b> Creating Contingency Tables</a></li>
+<li class="chapter" data-level="5.7.3" data-path="5.7-contingency-table.html"><a href="5.7-contingency-table.html#working-with-arrays-and-multi-dimensional-tables"><i class="fa fa-check"></i><b>5.7.3</b> Working with Arrays and Multi-dimensional Tables</a></li>
+<li class="chapter" data-level="5.7.4" data-path="5.7-contingency-table.html"><a href="5.7-contingency-table.html#flattening-and-exporting-tables"><i class="fa fa-check"></i><b>5.7.4</b> Flattening and Exporting Tables</a></li>
+<li class="chapter" data-level="5.7.5" data-path="5.7-contingency-table.html"><a href="5.7-contingency-table.html#table-visualization-and-formatting"><i class="fa fa-check"></i><b>5.7.5</b> Table Visualization and Formatting</a></li>
+</ul></li>
+<li class="chapter" data-level="5.8" data-path="5.8-data-frame-operations.html"><a href="5.8-data-frame-operations.html"><i class="fa fa-check"></i><b>5.8</b> Data Frame Operations</a>
+<ul>
+<li class="chapter" data-level="" data-path="5.8-data-frame-operations.html"><a href="5.8-data-frame-operations.html#columnrow-wise-operations"><i class="fa fa-check"></i>Column/Row-wise Operations</a></li>
+<li class="chapter" data-level="5.8.1" data-path="5.8-data-frame-operations.html"><a href="5.8-data-frame-operations.html#process-na-values"><i class="fa fa-check"></i><b>5.8.1</b> <span style="color:#008B45"><strong>Process <code>NA</code> values</strong></span></a></li>
+</ul></li>
+<li class="chapter" data-level="5.9" data-path="5.9-matrix-multiplication.html"><a href="5.9-matrix-multiplication.html"><i class="fa fa-check"></i><b>5.9</b> Matrix multiplication</a></li>
+<li class="chapter" data-level="5.10" data-path="5.10-string-operations.html"><a href="5.10-string-operations.html"><i class="fa fa-check"></i><b>5.10</b> String Operations</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="6-tidyverse.html"><a href="6-tidyverse.html"><i class="fa fa-check"></i><b>6</b> Tidyverse</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="6.1-basic-operations-on-tibbles.html"><a href="6.1-basic-operations-on-tibbles.html"><i class="fa fa-check"></i><b>6.1</b> Basic operations on tibbles</a>
+<ul>
+<li class="chapter" data-level="6.1.1" data-path="6.1-basic-operations-on-tibbles.html"><a href="6.1-basic-operations-on-tibbles.html#check-unique-values"><i class="fa fa-check"></i><b>6.1.1</b> Check Unique Values</a></li>
+<li class="chapter" data-level="6.1.2" data-path="6.1-basic-operations-on-tibbles.html"><a href="6.1-basic-operations-on-tibbles.html#column-names"><i class="fa fa-check"></i><b>6.1.2</b> Column Names</a></li>
+<li class="chapter" data-level="6.1.3" data-path="6.1-basic-operations-on-tibbles.html"><a href="6.1-basic-operations-on-tibbles.html#column-operations"><i class="fa fa-check"></i><b>6.1.3</b> Column Operations</a></li>
+<li class="chapter" data-level="6.1.4" data-path="6.1-basic-operations-on-tibbles.html"><a href="6.1-basic-operations-on-tibbles.html#mutate"><i class="fa fa-check"></i><b>6.1.4</b> <code>mutate</code></a></li>
+<li class="chapter" data-level="6.1.5" data-path="6.1-basic-operations-on-tibbles.html"><a href="6.1-basic-operations-on-tibbles.html#concatenate-rows-into-a-tibble"><i class="fa fa-check"></i><b>6.1.5</b> Concatenate rows into a <code>tibble</code></a></li>
+<li class="chapter" data-level="6.1.6" data-path="6.1-basic-operations-on-tibbles.html"><a href="6.1-basic-operations-on-tibbles.html#data-subsetting-1"><i class="fa fa-check"></i><b>6.1.6</b> Data Subsetting</a></li>
+<li class="chapter" data-level="6.1.7" data-path="6.1-basic-operations-on-tibbles.html"><a href="6.1-basic-operations-on-tibbles.html#dynamic-selection"><i class="fa fa-check"></i><b>6.1.7</b> Dynamic Selection</a></li>
+<li class="chapter" data-level="6.1.8" data-path="6.1-basic-operations-on-tibbles.html"><a href="6.1-basic-operations-on-tibbles.html#merge"><i class="fa fa-check"></i><b>6.1.8</b> Merge</a></li>
+</ul></li>
+<li class="chapter" data-level="6.2" data-path="6.2-pipe-operator.html"><a href="6.2-pipe-operator.html"><i class="fa fa-check"></i><b>6.2</b> Pipe Operator</a>
+<ul>
+<li class="chapter" data-level="6.2.1" data-path="6.2-pipe-operator.html"><a href="6.2-pipe-operator.html#native-pipe"><i class="fa fa-check"></i><b>6.2.1</b> Native Pipe <code>|&gt;</code></a></li>
+</ul></li>
+<li class="chapter" data-level="6.3" data-path="6.3-categorical-variables.html"><a href="6.3-categorical-variables.html"><i class="fa fa-check"></i><b>6.3</b> Categorical Variables</a>
+<ul>
+<li class="chapter" data-level="6.3.1" data-path="6.3-categorical-variables.html"><a href="6.3-categorical-variables.html#manipulate-string-columns"><i class="fa fa-check"></i><b>6.3.1</b> Manipulate String Columns</a></li>
+<li class="chapter" data-level="6.3.2" data-path="6.3-categorical-variables.html"><a href="6.3-categorical-variables.html#factors"><i class="fa fa-check"></i><b>6.3.2</b> Factors</a></li>
+</ul></li>
+<li class="chapter" data-level="6.4" data-path="6.4-group-and-apply-functions.html"><a href="6.4-group-and-apply-functions.html"><i class="fa fa-check"></i><b>6.4</b> Group and Apply Functions</a>
+<ul>
+<li class="chapter" data-level="6.4.1" data-path="6.4-group-and-apply-functions.html"><a href="6.4-group-and-apply-functions.html#group_by"><i class="fa fa-check"></i><b>6.4.1</b> <code>group_by()</code></a></li>
+<li class="chapter" data-level="6.4.2" data-path="6.4-group-and-apply-functions.html"><a href="6.4-group-and-apply-functions.html#subset-rows"><i class="fa fa-check"></i><b>6.4.2</b> Subset rows</a></li>
+<li class="chapter" data-level="6.4.3" data-path="6.4-group-and-apply-functions.html"><a href="6.4-group-and-apply-functions.html#summarize"><i class="fa fa-check"></i><b>6.4.3</b> Summarize</a></li>
+<li class="chapter" data-level="6.4.4" data-path="6.4-group-and-apply-functions.html"><a href="6.4-group-and-apply-functions.html#split-apply-combine"><i class="fa fa-check"></i><b>6.4.4</b> split-apply-combine</a></li>
+<li class="chapter" data-level="6.4.5" data-path="6.4-group-and-apply-functions.html"><a href="6.4-group-and-apply-functions.html#dplyrgroup_modify"><i class="fa fa-check"></i><b>6.4.5</b> <code>dplyr::group_modify()</code></a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="7-graphics.html"><a href="7-graphics.html"><i class="fa fa-check"></i><b>7</b> Graphics</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="7.1-goodlooking-colors.html"><a href="7.1-goodlooking-colors.html"><i class="fa fa-check"></i><b>7.1</b> Goodlooking Colors</a>
+<ul>
+<li class="chapter" data-level="7.1.1" data-path="7.1-goodlooking-colors.html"><a href="7.1-goodlooking-colors.html#rcolorbrewer"><i class="fa fa-check"></i><b>7.1.1</b> RColorBrewer</a></li>
+<li class="chapter" data-level="7.1.2" data-path="7.1-goodlooking-colors.html"><a href="7.1-goodlooking-colors.html#grey-scale"><i class="fa fa-check"></i><b>7.1.2</b> Grey Scale</a></li>
+<li class="chapter" data-level="7.1.3" data-path="7.1-goodlooking-colors.html"><a href="7.1-goodlooking-colors.html#ggsci"><i class="fa fa-check"></i><b>7.1.3</b> <code>ggsci</code></a></li>
+<li class="chapter" data-level="7.1.4" data-path="7.1-goodlooking-colors.html"><a href="7.1-goodlooking-colors.html#generate-color-palettes"><i class="fa fa-check"></i><b>7.1.4</b> <strong>Generate Color Palettes</strong></a></li>
+</ul></li>
+<li class="chapter" data-level="7.2" data-path="7.2-math-expression-in-figures.html"><a href="7.2-math-expression-in-figures.html"><i class="fa fa-check"></i><b>7.2</b> Math Expression in Figures</a></li>
+<li class="chapter" data-level="7.3" data-path="7.3-ggplot.html"><a href="7.3-ggplot.html"><i class="fa fa-check"></i><b>7.3</b> ggplot</a>
+<ul>
+<li class="chapter" data-level="7.3.1" data-path="7.3-ggplot.html"><a href="7.3-ggplot.html#dual-y-axis-plot"><i class="fa fa-check"></i><b>7.3.1</b> <strong>Dual y-axis plot</strong></a></li>
+<li class="chapter" data-level="7.3.2" data-path="7.3-ggplot.html"><a href="7.3-ggplot.html#aes"><i class="fa fa-check"></i><b>7.3.2</b> <code>aes()</code></a></li>
+<li class="chapter" data-level="7.3.3" data-path="7.3-ggplot.html"><a href="7.3-ggplot.html#add-regression-line"><i class="fa fa-check"></i><b>7.3.3</b> Add regression line</a></li>
+<li class="chapter" data-level="7.3.4" data-path="7.3-ggplot.html"><a href="7.3-ggplot.html#subplots"><i class="fa fa-check"></i><b>7.3.4</b> Subplots</a></li>
+<li class="chapter" data-level="7.3.5" data-path="7.3-ggplot.html"><a href="7.3-ggplot.html#parameters"><i class="fa fa-check"></i><b>7.3.5</b> Parameters</a></li>
+<li class="chapter" data-level="7.3.6" data-path="7.3-ggplot.html"><a href="7.3-ggplot.html#guides-together-with-guide_legend"><i class="fa fa-check"></i><b>7.3.6</b> <code>guides()</code>, together with <code>guide_legend()</code></a></li>
+<li class="chapter" data-level="7.3.7" data-path="7.3-ggplot.html"><a href="7.3-ggplot.html#ggplot-template-for-multi-series"><i class="fa fa-check"></i><b>7.3.7</b> <code>ggplot</code> template for multi-series</a></li>
+<li class="chapter" data-level="7.3.8" data-path="7.3-ggplot.html"><a href="7.3-ggplot.html#grid.gedit"><i class="fa fa-check"></i><b>7.3.8</b> <code>grid.gedit()</code></a></li>
+<li class="chapter" data-level="7.3.9" data-path="7.3-ggplot.html"><a href="7.3-ggplot.html#control-graphics-devices"><i class="fa fa-check"></i><b>7.3.9</b> <strong>Control Graphics Devices</strong></a></li>
+</ul></li>
+<li class="chapter" data-level="7.4" data-path="7.4-plot-raster-data.html"><a href="7.4-plot-raster-data.html"><i class="fa fa-check"></i><b>7.4</b> plot <code>Raster</code> data</a>
+<ul>
+<li class="chapter" data-level="7.4.1" data-path="7.4-plot-raster-data.html"><a href="7.4-plot-raster-data.html#add-patterns-to-shapes"><i class="fa fa-check"></i><b>7.4.1</b> Add Patterns to Shapes</a></li>
+</ul></li>
+<li class="chapter" data-level="7.5" data-path="7.5-histogram.html"><a href="7.5-histogram.html"><i class="fa fa-check"></i><b>7.5</b> Histogram</a></li>
+<li class="chapter" data-level="7.6" data-path="7.6-qq-plot.html"><a href="7.6-qq-plot.html"><i class="fa fa-check"></i><b>7.6</b> QQ-plot</a></li>
+<li class="chapter" data-level="7.7" data-path="7.7-heatmap.html"><a href="7.7-heatmap.html"><i class="fa fa-check"></i><b>7.7</b> Heatmap</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="8-time-series.html"><a href="8-time-series.html"><i class="fa fa-check"></i><b>8</b> Time Series</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="8.1-date.html"><a href="8.1-date.html"><i class="fa fa-check"></i><b>8.1</b> Date</a></li>
+<li class="chapter" data-level="8.2" data-path="8.2-process-data.html"><a href="8.2-process-data.html"><i class="fa fa-check"></i><b>8.2</b> Process Data</a>
+<ul>
+<li class="chapter" data-level="8.2.1" data-path="8.2-process-data.html"><a href="8.2-process-data.html#tidyquant"><i class="fa fa-check"></i><b>8.2.1</b> <code>tidyquant</code></a></li>
+<li class="chapter" data-level="8.2.2" data-path="8.2-process-data.html"><a href="8.2-process-data.html#from-tibble-to-xts"><i class="fa fa-check"></i><b>8.2.2</b> From tibble to <code>xts</code></a></li>
+</ul></li>
+<li class="chapter" data-level="8.3" data-path="8.3-portfolio-return.html"><a href="8.3-portfolio-return.html"><i class="fa fa-check"></i><b>8.3</b> Portfolio Return</a></li>
+<li class="chapter" data-level="8.4" data-path="8.4-plot-ts.html"><a href="8.4-plot-ts.html"><i class="fa fa-check"></i><b>8.4</b> Plot TS</a>
+<ul>
+<li class="chapter" data-level="8.4.1" data-path="8.4-plot-ts.html"><a href="8.4-plot-ts.html#plot.xts"><i class="fa fa-check"></i><b>8.4.1</b> <code>plot.xts</code></a></li>
+<li class="chapter" data-level="8.4.2" data-path="8.4-plot-ts.html"><a href="8.4-plot-ts.html#autoplot"><i class="fa fa-check"></i><b>8.4.2</b> <code>autoplot</code></a></li>
+</ul></li>
+<li class="chapter" data-level="8.5" data-path="8.5-time-series-regression.html"><a href="8.5-time-series-regression.html"><i class="fa fa-check"></i><b>8.5</b> Time Series Regression</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="9-regression.html"><a href="9-regression.html"><i class="fa fa-check"></i><b>9</b> Regression</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="9.1-ols.html"><a href="9.1-ols.html"><i class="fa fa-check"></i><b>9.1</b> OLS</a>
+<ul>
+<li class="chapter" data-level="9.1.1" data-path="9.1-ols.html"><a href="9.1-ols.html#get-the-coef-estimates"><i class="fa fa-check"></i><b>9.1.1</b> Get the coef estimates</a></li>
+<li class="chapter" data-level="9.1.2" data-path="9.1-ols.html"><a href="9.1-ols.html#covariance-matrix"><i class="fa fa-check"></i><b>9.1.2</b> Covariance Matrix</a></li>
+<li class="chapter" data-level="9.1.3" data-path="9.1-ols.html"><a href="9.1-ols.html#model-performance"><i class="fa fa-check"></i><b>9.1.3</b> Model performance</a></li>
+<li class="chapter" data-level="9.1.4" data-path="9.1-ols.html"><a href="9.1-ols.html#model-summary"><i class="fa fa-check"></i><b>9.1.4</b> Model Summary</a></li>
+<li class="chapter" data-level="9.1.5" data-path="9.1-ols.html"><a href="9.1-ols.html#dummy-variable"><i class="fa fa-check"></i><b>9.1.5</b> Dummy variable</a></li>
+</ul></li>
+<li class="chapter" data-level="9.2" data-path="9.2-panel.html"><a href="9.2-panel.html"><i class="fa fa-check"></i><b>9.2</b> Panel</a>
+<ul>
+<li class="chapter" data-level="9.2.1" data-path="9.2-panel.html"><a href="9.2-panel.html#dynamic-panel"><i class="fa fa-check"></i><b>9.2.1</b> Dynamic Panel</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="10-machine-learning.html"><a href="10-machine-learning.html"><i class="fa fa-check"></i><b>10</b> Machine Learning</a>
+<ul>
+<li class="chapter" data-level="10.1" data-path="10.1-imbalanced-datasets.html"><a href="10.1-imbalanced-datasets.html"><i class="fa fa-check"></i><b>10.1</b> Imbalanced datasets</a>
+<ul>
+<li class="chapter" data-level="10.1.1" data-path="10.1-imbalanced-datasets.html"><a href="10.1-imbalanced-datasets.html#downsampling-and-upweighting"><i class="fa fa-check"></i><b>10.1.1</b> Downsampling and Upweighting</a></li>
+</ul></li>
+<li class="chapter" data-level="10.2" data-path="10.2-random-forest.html"><a href="10.2-random-forest.html"><i class="fa fa-check"></i><b>10.2</b> Random Forest</a>
+<ul>
+<li class="chapter" data-level="" data-path="10.2-random-forest.html"><a href="10.2-random-forest.html#implementation-in-r"><i class="fa fa-check"></i>Implementation in R</a></li>
+<li class="chapter" data-level="" data-path="10.2-random-forest.html"><a href="10.2-random-forest.html#imbalance-classification"><i class="fa fa-check"></i>Imbalance Classification</a></li>
+</ul></li>
+<li class="chapter" data-level="10.3" data-path="10.3-neural-network.html"><a href="10.3-neural-network.html"><i class="fa fa-check"></i><b>10.3</b> Neural Network</a></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="11-stata.html"><a href="11-stata.html"><i class="fa fa-check"></i><b>11</b> Stata</a>
+<ul>
+<li class="chapter" data-level="11.1" data-path="11.1-basic-syntax.html"><a href="11.1-basic-syntax.html"><i class="fa fa-check"></i><b>11.1</b> Basic syntax</a>
+<ul>
+<li class="chapter" data-level="11.1.1" data-path="11.1-basic-syntax.html"><a href="11.1-basic-syntax.html#system-variables"><i class="fa fa-check"></i><b>11.1.1</b> System Variables</a></li>
+<li class="chapter" data-level="11.1.2" data-path="11.1-basic-syntax.html"><a href="11.1-basic-syntax.html#matrix"><i class="fa fa-check"></i><b>11.1.2</b> Matrix</a></li>
+<li class="chapter" data-level="11.1.3" data-path="11.1-basic-syntax.html"><a href="11.1-basic-syntax.html#factor-variables"><i class="fa fa-check"></i><b>11.1.3</b> Factor Variables</a></li>
+<li class="chapter" data-level="11.1.4" data-path="11.1-basic-syntax.html"><a href="11.1-basic-syntax.html#time-series-varlists"><i class="fa fa-check"></i><b>11.1.4</b> Time series varlists</a></li>
+<li class="chapter" data-level="11.1.5" data-path="11.1-basic-syntax.html"><a href="11.1-basic-syntax.html#labels"><i class="fa fa-check"></i><b>11.1.5</b> Labels</a></li>
+</ul></li>
+<li class="chapter" data-level="11.2" data-path="11.2-data-manipulation.html"><a href="11.2-data-manipulation.html"><i class="fa fa-check"></i><b>11.2</b> Data Manipulation</a>
+<ul>
+<li class="chapter" data-level="11.2.1" data-path="11.2-data-manipulation.html"><a href="11.2-data-manipulation.html#import-and-export"><i class="fa fa-check"></i><b>11.2.1</b> Import and Export</a></li>
+<li class="chapter" data-level="11.2.2" data-path="11.2-data-manipulation.html"><a href="11.2-data-manipulation.html#save-estimation-results"><i class="fa fa-check"></i><b>11.2.2</b> Save Estimation Results</a></li>
+<li class="chapter" data-level="11.2.3" data-path="11.2-data-manipulation.html"><a href="11.2-data-manipulation.html#stored-results"><i class="fa fa-check"></i><b>11.2.3</b> Stored Results</a></li>
+</ul></li>
+<li class="chapter" data-level="11.3" data-path="11.3-predict.html"><a href="11.3-predict.html"><i class="fa fa-check"></i><b>11.3</b> Predict</a></li>
+<li class="chapter" data-level="11.4" data-path="11.4-forecast.html"><a href="11.4-forecast.html"><i class="fa fa-check"></i><b>11.4</b> Forecast</a>
+<ul>
+<li class="chapter" data-level="" data-path="11.4-forecast.html"><a href="11.4-forecast.html#add-equationsidentifies"><i class="fa fa-check"></i>Add equations/identifies</a></li>
+<li class="chapter" data-level="" data-path="11.4-forecast.html"><a href="11.4-forecast.html#solve-the-foreceast"><i class="fa fa-check"></i>Solve the foreceast</a></li>
+<li class="chapter" data-level="" data-path="11.4-forecast.html"><a href="11.4-forecast.html#use-example-forecast-a-panel"><i class="fa fa-check"></i>Use example: forecast a panel</a></li>
+</ul></li>
+<li class="chapter" data-level="11.5" data-path="11.5-panel-1.html"><a href="11.5-panel-1.html"><i class="fa fa-check"></i><b>11.5</b> Panel</a></li>
+<li class="chapter" data-level="11.6" data-path="11.6-arellano-bond-estimator.html"><a href="11.6-arellano-bond-estimator.html"><i class="fa fa-check"></i><b>11.6</b> Arellano-Bond Estimator</a>
+<ul>
+<li class="chapter" data-level="11.6.1" data-path="11.6-arellano-bond-estimator.html"><a href="11.6-arellano-bond-estimator.html#xtabond2"><i class="fa fa-check"></i><b>11.6.1</b> xtabond2</a></li>
+</ul></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">R Notes</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<head>
+    <script> 
+        function myFunction(id) {
+          var x = document.getElementById(id); 
+          if (x.style.display === "none") {
+            x.style.display = "block";
+          } else {
+            x.style.display = "none";
+          }
+        }
+    </script>
+</head>
+<div id="graphics" class="section level1 hasAnchor" number="7">
+<h1><span class="header-section-number">Chapter 7</span> Graphics<a href="7-graphics.html#graphics" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p><span style="font-size: 1.5em; font-weight: bold;">Base R Plotting</span></p>
+<div id="graphic-parameters" class="section level3 unnumbered unlisted hasAnchor">
+<h3>Graphic Parameters<a href="7-graphics.html#graphic-parameters" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p><code>par()</code> permanently set global graphic parameters in the current session. Doesn’t apply to external graphic devices, e.g., x11.</p>
+<p><span style="color:#008B45"><strong>One nice looking setting</strong></span>:</p>
+<div class="sourceCode" id="cb456"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb456-1"><a href="7-graphics.html#cb456-1" tabindex="-1"></a><span class="fu">par</span>(<span class="at">oma=</span><span class="fu">c</span>(<span class="fl">0.5</span>,<span class="fl">0.5</span>,<span class="dv">0</span>,<span class="dv">2</span>), <span class="at">mar=</span><span class="fu">c</span>(<span class="fl">3.5</span>, <span class="fl">3.5</span>, <span class="dv">2</span>, <span class="dv">1</span>), <span class="at">mgp=</span><span class="fu">c</span>(<span class="fl">2.4</span>,<span class="fl">0.8</span>,<span class="dv">0</span>))</span></code></pre></div>
+<ul>
+<li><p><code>mar</code> inner margins inside the plot area. Use this to set spacing between <span style="color:#008B45">subplots</span>. 内边距</p></li>
+<li><p><code>oma</code> outer margins outside the plot area. If it is a multi-panel figure, use this to set spaing for the <span style="color:#008B45">whole figure</span>. 外边距</p>
+<p>It takes a little trial-and-error to hit on margins that produce the desired spacing.</p>
+<p>If you want all of your panels to have plots that fill the same area, then the <code>bottom+top</code> and <code>left+right</code> margins <span style="color:#008B45">need to be the same</span> in all panels. In the following example, the sum is 0.4 for both, but bottom+top does not need to equal left+right.</p>
+<p><code>oma</code> 和 <code>mar</code> 是叠加的关系。如果有任何图的元素被chop off, 增加内边距。</p></li>
+<li><p>these parameters can also be set inside <code>plot</code>. When use <code>plot.xts</code>, parameters set using <code>par</code> are not honored, have to specify inside the <code>plot.xts</code> function.</p>
+<ul>
+<li><code>plot.xts</code> set <code>mar = c(3, 2, 0, 2)</code>. So any settings before are overwritten.</li>
+</ul></li>
+<li><p>Note that <code>par</code> does not work for <code>ggplot</code> figures, must set margins using <code>theme(plot.margin=margin(t = 0, r = 0, b = 0, l = 0, unit = "pt"))</code>.</p></li>
+</ul>
+<p>Q: Axis title got chopped off.</p>
+<p>A: increase <code>mar</code> to enlarge inner margins. Or, reduce <code>mgp[1]</code> to reduce the margin between title and axis.</p>
+<p>Q: 需要每个subplot 设置各自边距</p>
+<p>A: 每个图开始之前设置<code>par</code>.</p>
+<p>Q: add title to each subplot.</p>
+<p>A: use <code>text</code> to add text in the graph area.</p>
+<p>Q: add text to the whole figure, such as shared y-axis title and figure title.</p>
+<p>A: use <code>mtext(text, side)</code>. 1-bottom, 2-left, 3-right, 4-top.</p>
+<div class="sourceCode" id="cb457"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb457-1"><a href="7-graphics.html#cb457-1" tabindex="-1"></a><span class="co"># multipanel example</span></span>
+<span id="cb457-2"><a href="7-graphics.html#cb457-2" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">2</span>), <span class="at">tcl=</span><span class="sc">-</span><span class="fl">0.5</span>, <span class="at">family=</span><span class="st">&quot;serif&quot;</span>)</span>
+<span id="cb457-3"><a href="7-graphics.html#cb457-3" tabindex="-1"></a></span>
+<span id="cb457-4"><a href="7-graphics.html#cb457-4" tabindex="-1"></a><span class="co"># Top left panel</span></span>
+<span id="cb457-5"><a href="7-graphics.html#cb457-5" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mai=</span><span class="fu">c</span>(<span class="fl">0.2</span>,<span class="fl">0.4</span>,<span class="fl">0.2</span>,<span class="dv">0</span>))</span>
+<span id="cb457-6"><a href="7-graphics.html#cb457-6" tabindex="-1"></a><span class="fu">plot</span>(Sepal.Length<span class="sc">~</span>Sepal.Width, <span class="at">data=</span>iris, <span class="at">subset=</span>(Species<span class="sc">==</span><span class="st">&quot;virginica&quot;</span>), </span>
+<span id="cb457-7"><a href="7-graphics.html#cb457-7" tabindex="-1"></a>     <span class="at">xlab=</span><span class="st">&quot; &quot;</span>, <span class="at">ylab=</span><span class="st">&quot; &quot;</span>, <span class="at">xlim=</span><span class="fu">c</span>(min.width,max.width), <span class="at">ylim=</span><span class="fu">c</span>(min.length,max.length), <span class="at">xaxt=</span><span class="st">&quot;n&quot;</span>)</span>
+<span id="cb457-8"><a href="7-graphics.html#cb457-8" tabindex="-1"></a><span class="fu">axis</span>(<span class="dv">1</span>, <span class="at">labels=</span><span class="cn">FALSE</span>) <span class="co"># drop the numbers in the x-axis</span></span>
+<span id="cb457-9"><a href="7-graphics.html#cb457-9" tabindex="-1"></a><span class="co"># add title to subplot</span></span>
+<span id="cb457-10"><a href="7-graphics.html#cb457-10" tabindex="-1"></a><span class="fu">text</span>((max.width<span class="sc">-</span>min.width)<span class="sc">/</span><span class="dv">2</span> <span class="sc">+</span> min.width, max.length<span class="fl">+0.15</span>, <span class="fu">expression</span>(<span class="fu">italic</span>(<span class="st">&quot;Iris virginica&quot;</span>)))</span>
+<span id="cb457-11"><a href="7-graphics.html#cb457-11" tabindex="-1"></a></span>
+<span id="cb457-12"><a href="7-graphics.html#cb457-12" tabindex="-1"></a><span class="co"># Top right panel</span></span>
+<span id="cb457-13"><a href="7-graphics.html#cb457-13" tabindex="-1"></a><span class="fu">plot.new</span>()</span>
+<span id="cb457-14"><a href="7-graphics.html#cb457-14" tabindex="-1"></a></span>
+<span id="cb457-15"><a href="7-graphics.html#cb457-15" tabindex="-1"></a><span class="co"># Bottom left panel</span></span>
+<span id="cb457-16"><a href="7-graphics.html#cb457-16" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mai=</span><span class="fu">c</span>(<span class="fl">0.4</span>,<span class="fl">0.4</span>,<span class="dv">0</span>,<span class="dv">0</span>))</span>
+<span id="cb457-17"><a href="7-graphics.html#cb457-17" tabindex="-1"></a><span class="fu">plot</span>(Sepal.Length<span class="sc">~</span>Sepal.Width, <span class="at">data=</span>iris, <span class="at">subset=</span>(Species<span class="sc">==</span><span class="st">&quot;versicolor&quot;</span>), <span class="at">xlab=</span><span class="st">&quot; &quot;</span>, <span class="at">ylab=</span><span class="st">&quot; &quot;</span>,</span>
+<span id="cb457-18"><a href="7-graphics.html#cb457-18" tabindex="-1"></a>     <span class="at">xlim=</span><span class="fu">c</span>(min.width,max.width), <span class="at">ylim=</span><span class="fu">c</span>(min.length,max.length))</span>
+<span id="cb457-19"><a href="7-graphics.html#cb457-19" tabindex="-1"></a><span class="fu">text</span>((max.width<span class="sc">-</span>min.width)<span class="sc">/</span><span class="dv">2</span> <span class="sc">+</span> min.width, max.length<span class="fl">+0.15</span>, <span class="fu">expression</span>(<span class="fu">italic</span>(<span class="st">&quot;Iris versicolor&quot;</span>)))</span>
+<span id="cb457-20"><a href="7-graphics.html#cb457-20" tabindex="-1"></a></span>
+<span id="cb457-21"><a href="7-graphics.html#cb457-21" tabindex="-1"></a><span class="co"># Bottom right panel</span></span>
+<span id="cb457-22"><a href="7-graphics.html#cb457-22" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mai=</span><span class="fu">c</span>(<span class="fl">0.4</span>,<span class="fl">0.2</span>,<span class="dv">0</span>,<span class="fl">0.2</span>))</span>
+<span id="cb457-23"><a href="7-graphics.html#cb457-23" tabindex="-1"></a><span class="fu">plot</span>(Sepal.Length<span class="sc">~</span>Sepal.Width, <span class="at">data=</span>iris, <span class="at">subset=</span>(Species<span class="sc">==</span><span class="st">&quot;setosa&quot;</span>), <span class="at">xlab=</span><span class="st">&quot; &quot;</span>, <span class="at">ylab=</span><span class="st">&quot; &quot;</span>,</span>
+<span id="cb457-24"><a href="7-graphics.html#cb457-24" tabindex="-1"></a>     <span class="at">xlim=</span><span class="fu">c</span>(min.width,max.width), <span class="at">ylim=</span><span class="fu">c</span>(min.length,max.length), <span class="at">yaxt=</span><span class="st">&quot;n&quot;</span>)</span>
+<span id="cb457-25"><a href="7-graphics.html#cb457-25" tabindex="-1"></a><span class="fu">axis</span>(<span class="dv">2</span>, <span class="at">labels=</span><span class="cn">FALSE</span>) <span class="co"># drop the number in the y-axis</span></span>
+<span id="cb457-26"><a href="7-graphics.html#cb457-26" tabindex="-1"></a><span class="fu">text</span>((max.width<span class="sc">-</span>min.width)<span class="sc">/</span><span class="dv">2</span> <span class="sc">+</span> min.width, max.length<span class="fl">+0.15</span>, <span class="fu">expression</span>(<span class="fu">italic</span>(<span class="st">&quot;Iris setosa&quot;</span>)))</span>
+<span id="cb457-27"><a href="7-graphics.html#cb457-27" tabindex="-1"></a></span>
+<span id="cb457-28"><a href="7-graphics.html#cb457-28" tabindex="-1"></a><span class="co"># Shared titles for the whole figure</span></span>
+<span id="cb457-29"><a href="7-graphics.html#cb457-29" tabindex="-1"></a><span class="fu">mtext</span>(<span class="st">&quot;Sepal Width&quot;</span>, <span class="at">side=</span><span class="dv">1</span>, <span class="at">outer=</span>T, <span class="at">at=</span><span class="fl">0.5</span>)</span>
+<span id="cb457-30"><a href="7-graphics.html#cb457-30" tabindex="-1"></a><span class="fu">mtext</span>(<span class="st">&quot;Sepal Length&quot;</span>, <span class="at">side=</span><span class="dv">2</span>, <span class="at">outer=</span>T, <span class="at">at=</span><span class="fl">0.5</span>)</span></code></pre></div>
+<p><img src="https://drive.google.com/thumbnail?id=1pvaO5eeoqVjd-uOvRjk1-wf_0FwVBiUd&sz=w1000" alt="Multipanel" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" /></p>
+<p>A 3x3 multiplot figure</p>
+<p>Sometimes <code>for</code> loop works strangely, so use <code>repeat ... break</code> loop.</p>
+<div class="sourceCode" id="cb458"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb458-1"><a href="7-graphics.html#cb458-1" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">3</span>))</span>
+<span id="cb458-2"><a href="7-graphics.html#cb458-2" tabindex="-1"></a>i <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb458-3"><a href="7-graphics.html#cb458-3" tabindex="-1"></a><span class="cf">repeat</span> {</span>
+<span id="cb458-4"><a href="7-graphics.html#cb458-4" tabindex="-1"></a>    plot_data <span class="ot">&lt;-</span> confusion_ftable[,,i]</span>
+<span id="cb458-5"><a href="7-graphics.html#cb458-5" tabindex="-1"></a>    <span class="fu">mosaicplot</span>(<span class="fu">t</span>(plot_data),</span>
+<span id="cb458-6"><a href="7-graphics.html#cb458-6" tabindex="-1"></a>               <span class="at">xlab=</span><span class="st">&quot;Observation&quot;</span>, <span class="at">ylab=</span><span class="st">&quot;Prediction&quot;</span>,</span>
+<span id="cb458-7"><a href="7-graphics.html#cb458-7" tabindex="-1"></a>               <span class="at">main=</span><span class="fu">sprintf</span>(<span class="st">&quot;Group %s&quot;</span>, i), <span class="at">cex.axis =</span> <span class="fl">1.2</span> )</span>
+<span id="cb458-8"><a href="7-graphics.html#cb458-8" tabindex="-1"></a>    i <span class="ot">&lt;-</span> i<span class="sc">+</span><span class="dv">1</span></span>
+<span id="cb458-9"><a href="7-graphics.html#cb458-9" tabindex="-1"></a>    <span class="cf">if</span> (i<span class="sc">==</span><span class="dv">10</span>) <span class="cf">break</span></span>
+<span id="cb458-10"><a href="7-graphics.html#cb458-10" tabindex="-1"></a>}</span></code></pre></div>
+<p><strong>Graphical Parameters <code>par()</code></strong></p>
+<p><a href="https://www.rdocumentation.org/packages/graphics/versions/3.6.2/topics/par" class="uri">https://www.rdocumentation.org/packages/graphics/versions/3.6.2/topics/par</a></p>
+<p><code>?par</code> to get help page in R.</p>
+<table>
+<colgroup>
+<col width="45%" />
+<col width="54%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>oma</td>
+<td><strong>outer margin</strong> in text lines for the whole plotting area, <code>c(bottom, left, top, right)</code>, clockwise from bottom. Mesured in margin lines.<br />By default, <code>par(oma = c(b=0, l=0, t=0, r=0))</code>. <br /><code>oma</code> is set for each panel. Cannot be used for each subfigure.</td>
+</tr>
+<tr class="even">
+<td>omi</td>
+<td>Same as <code>oma</code>, but set outer margins in <strong>inches</strong>.</td>
+</tr>
+<tr class="odd">
+<td>mar</td>
+<td>- <strong>Inner margin</strong>. A numerical vector of the form <code>c(bottom, left, top, right)</code> which gives the number of lines of margin to be specified on the four sides of the plot. The default is <code>c(b=5, l=4, t=4, r=2) + 0.1</code>. Measured in margin lines. <br />- Margin from axis to figure boundaries, cannot be too small, otherwise axis label could be clipped out and invisible for you.<br />- Change this when you have <span style="color:#008B45"><strong>subplots</strong></span> in one panel;</td>
+</tr>
+<tr class="even">
+<td>mai</td>
+<td>Same as <code>mar</code>, but set inner margins in <strong>inches</strong>. By default, <code>par(mai = c(1, 0.8, 0.8, 0.4) + 0.02)</code>.</td>
+</tr>
+<tr class="odd">
+<td>pch</td>
+<td>plot character, 1~25</td>
+</tr>
+<tr class="even">
+<td>cex</td>
+<td>controls the size of text and symbols in the plotting area with respect to the default value of 1.<br />Plot symbol size, if one number, then all symbols scale to the same level; if a vector of the same length with data, then each point scales accordingly.</td>
+</tr>
+<tr class="odd">
+<td>cex.lab</td>
+<td>x- and y-<span style="color:#008B45"><strong>axis title</strong></span> magnification relative to current setting.</td>
+</tr>
+<tr class="even">
+<td>cex.axis</td>
+<td>The magnification to be used for <span style="color:#008B45">axis text</span> relative to the current setting of <code>cex</code>.</td>
+</tr>
+<tr class="odd">
+<td>cex.main</td>
+<td>main title magnification relative to current setting</td>
+</tr>
+<tr class="even">
+<td>col</td>
+<td>controls the color.</td>
+</tr>
+<tr class="odd">
+<td>col.lab</td>
+<td>The color to be used for x and y labels.</td>
+</tr>
+<tr class="even">
+<td>col.axis</td>
+<td>The color to be used for axis annotation.</td>
+</tr>
+<tr class="odd">
+<td><strong>mgp</strong></td>
+<td>The margin line (in mex units) for the <span style="color:#008B45">axis</span> title, axis labels (ticks) and axis line. The default is c(3, 1, 0). Negative distances are allowed, resulting in titles and / or labels inside the plotting region. <br />- <code>mgp[1]</code> defines distance between the axis <strong>titles</strong> and the axes, <br />- <code>mgp[2]</code> defines distance between the axis labels and the axes. <br />- <code>mgp[3]</code> just leave it at 0;<br />Default values are too large. <code>mgp=c(2,0.8,0)</code> looks good.</td>
+</tr>
+<tr class="even">
+<td><span style="color:#008B45"><strong>mfrow</strong>=c(1,1)</span></td>
+<td>layout of subplots, <em>Multiple Figures</em> drawn by <em>row</em>. <code>c(nr, nc)</code> creates an nr-by-nc layout.</td>
+</tr>
+<tr class="odd">
+<td>xpd=T, default as F</td>
+<td>it is OK to plot outside the region, <br />- <code>FALSE</code>: only inside the plot; <br />- <code>TRUE</code>: in the outer plotting area’ <br />- <code>NA</code>: everywhere on your plotting device</td>
+</tr>
+<tr class="even">
+<td>horiz=T</td>
+<td>you want a horizontal legend</td>
+</tr>
+<tr class="odd">
+<td>inset=c(x,y)</td>
+<td>move the legend relative to the ‘bottom’ location</td>
+</tr>
+<tr class="even">
+<td>bty = ‘n’</td>
+<td>Specify the box surrounding the graph area.<br /><code>o</code>: complete box (default parameter), <br /><code>n</code>: no box <br /><code>7</code>: top + right <code>L</code>: bottom + left <code>C</code>: top + left + bottom <code>U</code>: left + bottom + right</td>
+</tr>
+<tr class="odd">
+<td>las=0</td>
+<td>numeric in {0,1,2,3}. 0 always parallel to the axis [<em>default</em>], 1 always horizontal, 2 always perpendicular to the axis, 3 always vertical.</td>
+</tr>
+<tr class="even">
+<td>yaxt / xaxt</td>
+<td>A character which specifies the y/x axis type. Specifying <code>"n"</code> to suppress plotting the axis text. <br />This is useful when you have multiple panels with shared axis labels and titles.</td>
+</tr>
+</tbody>
+</table>
+<p><img src="images/par_mar.png" width="50%" style="display: block; margin: auto;" /></p>
+<p>Every time you change <code>par</code>, first save the orginal one so that could be easily reset, if needed.</p>
+<div class="sourceCode" id="cb459"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb459-1"><a href="7-graphics.html#cb459-1" tabindex="-1"></a>op <span class="ot">&lt;-</span> <span class="fu">par</span>() <span class="co"># save unchanged original defualt one</span></span>
+<span id="cb459-2"><a href="7-graphics.html#cb459-2" tabindex="-1"></a><span class="fu">par</span>(newsettings) <span class="co"># change to the way you need, newsettings can be tag=value or a list of tagged values</span></span>
+<span id="cb459-3"><a href="7-graphics.html#cb459-3" tabindex="-1"></a><span class="fu">par</span>(op) <span class="co"># reset to the default</span></span></code></pre></div>
+<p><code>par()</code> gets <em>reset</em> every time a new device is opened. So use <code>dev.new()</code> and <code>dev.off()</code> to create a new device and close.</p>
+<p><code>par()</code> with no arguments is used to get <em>all</em> the graphical parameters as a named list.</p>
+<p>Several parameters can only be set by a call to <code>par()</code>, others can be set as arguments to <code>plot</code> functions. See <code>?par</code> for which par can only be changed through <code>par()</code>.</p>
+<p>Tip: When you cannot change parameters through <code>plot</code> functions, change through <code>par(newsettings)</code>. Just put it before the <code>plot</code> command, and leave everthing else the same. After the plot, you can restore the settings to default.</p>
+<p>For instance, <code>cex.lab</code> doesn’t work in <code>mosaicplot</code>, you just change the font size through <code>par(cex.lab=1.5)</code> and put it before <code>mosaicplot</code>.</p>
+<p>Q: How to <em>query</em> values of graphical parameters?<br />
+A: Two options: <code>par("cex")</code> or <code>par()$cex</code>.</p>
+<div class="sourceCode" id="cb460"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb460-1"><a href="7-graphics.html#cb460-1" tabindex="-1"></a><span class="co"># query one parameter</span></span>
+<span id="cb460-2"><a href="7-graphics.html#cb460-2" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">par</span>(<span class="st">&quot;cex&quot;</span>)</span>
+<span id="cb460-3"><a href="7-graphics.html#cb460-3" tabindex="-1"></a>[<span class="dv">1</span>] <span class="fl">0.66</span></span>
+<span id="cb460-4"><a href="7-graphics.html#cb460-4" tabindex="-1"></a></span>
+<span id="cb460-5"><a href="7-graphics.html#cb460-5" tabindex="-1"></a><span class="co"># query multiple parameters</span></span>
+<span id="cb460-6"><a href="7-graphics.html#cb460-6" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">par</span>(<span class="fu">c</span>(<span class="st">&quot;cex&quot;</span>, <span class="st">&quot;omi&quot;</span>))</span>
+<span id="cb460-7"><a href="7-graphics.html#cb460-7" tabindex="-1"></a><span class="sc">$</span>cex</span>
+<span id="cb460-8"><a href="7-graphics.html#cb460-8" tabindex="-1"></a>[<span class="dv">1</span>] <span class="fl">0.66</span></span>
+<span id="cb460-9"><a href="7-graphics.html#cb460-9" tabindex="-1"></a></span>
+<span id="cb460-10"><a href="7-graphics.html#cb460-10" tabindex="-1"></a><span class="sc">$</span>omi</span>
+<span id="cb460-11"><a href="7-graphics.html#cb460-11" tabindex="-1"></a>[<span class="dv">1</span>] <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span></span></code></pre></div>
+<p><code>par(cex.lab=1.2)</code> set <code>cex.lab</code> to 1.2. This will enlarge font size for the plot. Defaults to 1.</p>
+</div>
+<div id="plot-example" class="section level3 unnumbered unlisted hasAnchor">
+<h3>Plot example<a href="7-graphics.html#plot-example" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p><a href="https://r-charts.com/base-r/axes/?utm_content=cmp-true" class="uri">https://r-charts.com/base-r/axes/?utm_content=cmp-true</a></p>
+<div class="sourceCode" id="cb461"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb461-1"><a href="7-graphics.html#cb461-1" tabindex="-1"></a>x<span class="ot">&lt;-</span><span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>; y<span class="ot">&lt;-</span>x<span class="sc">*</span>x</span>
+<span id="cb461-2"><a href="7-graphics.html#cb461-2" tabindex="-1"></a><span class="co"># Suppress the axis</span></span>
+<span id="cb461-3"><a href="7-graphics.html#cb461-3" tabindex="-1"></a><span class="fu">plot</span>(x, y, <span class="at">xaxt=</span><span class="st">&quot;n&quot;</span>, <span class="at">yaxt=</span><span class="st">&quot;n&quot;</span>)</span>
+<span id="cb461-4"><a href="7-graphics.html#cb461-4" tabindex="-1"></a><span class="co"># Changing x axis</span></span>
+<span id="cb461-5"><a href="7-graphics.html#cb461-5" tabindex="-1"></a>xtick<span class="ot">&lt;-</span><span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">10</span>, <span class="at">by=</span><span class="dv">5</span>)</span>
+<span id="cb461-6"><a href="7-graphics.html#cb461-6" tabindex="-1"></a><span class="fu">axis</span>(<span class="at">side=</span><span class="dv">1</span>, <span class="at">at=</span>xtick, <span class="at">labels =</span> <span class="cn">FALSE</span>) <span class="co"># Add tick marks</span></span>
+<span id="cb461-7"><a href="7-graphics.html#cb461-7" tabindex="-1"></a><span class="fu">text</span>(<span class="at">x=</span>xtick,  <span class="fu">par</span>(<span class="st">&quot;usr&quot;</span>)[<span class="dv">3</span>], </span>
+<span id="cb461-8"><a href="7-graphics.html#cb461-8" tabindex="-1"></a>     <span class="at">labels =</span> xtick, <span class="at">srt =</span> <span class="dv">45</span>, <span class="at">pos =</span> <span class="dv">1</span>, <span class="at">xpd =</span> <span class="cn">TRUE</span>) <span class="co"># Add tick mark labels</span></span>
+<span id="cb461-9"><a href="7-graphics.html#cb461-9" tabindex="-1"></a><span class="co"># Changing y axis</span></span>
+<span id="cb461-10"><a href="7-graphics.html#cb461-10" tabindex="-1"></a>ytick<span class="ot">&lt;-</span><span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">100</span>, <span class="at">by=</span><span class="dv">50</span>)</span>
+<span id="cb461-11"><a href="7-graphics.html#cb461-11" tabindex="-1"></a><span class="fu">axis</span>(<span class="at">side=</span><span class="dv">2</span>, <span class="at">at=</span>ytick, <span class="at">labels =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb461-12"><a href="7-graphics.html#cb461-12" tabindex="-1"></a><span class="fu">text</span>(<span class="fu">par</span>(<span class="st">&quot;usr&quot;</span>)[<span class="dv">1</span>], ytick,  </span>
+<span id="cb461-13"><a href="7-graphics.html#cb461-13" tabindex="-1"></a>     <span class="at">labels =</span> ytick, <span class="at">srt =</span> <span class="dv">45</span>, <span class="at">pos =</span> <span class="dv">2</span>, <span class="at">xpd =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<p><code>plot()</code> function accepts <a href="https://www.rdocumentation.org/packages/graphics/versions/3.6.2/topics/par">graphical parameters</a> in <code>par</code> to set aesthetics, such as font size, margins. The difference is that settings in <code>plot()</code> apply to current figure, while settings in <code>par</code> apply globally.</p>
+<table>
+<colgroup>
+<col width="42%" />
+<col width="57%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span style="color:#008B45"><code>type='l'</code></span></td>
+<td>what type of plot should be drawn. Default <code>p</code> for <strong>p</strong>oints. Other types:<br/><code>l</code> for <span style="color:#008B45"><strong>l</strong>ines</span>; <code>b</code> for <strong>b</strong>oth; <code>o</code> for Both points and lines “overplotted”;</td>
+</tr>
+<tr class="even">
+<td>main</td>
+<td>main title</td>
+</tr>
+<tr class="odd">
+<td>xlab</td>
+<td>x axis title</td>
+</tr>
+<tr class="even">
+<td>xaxp and yaxp</td>
+<td>customizing where the ticks of each axis start and end and the number of regions to divide the axis specifying vectors of the form <code>c(start, end, number_regions)</code>.</td>
+</tr>
+<tr class="odd">
+<td>xlim and ylim</td>
+<td>set axix limits</td>
+</tr>
+<tr class="even">
+<td>lty</td>
+<td>Line types can either be specified as an integer (0=blank, 1=solid (default), 2=dashed, 3=dotted, 4=dotdash, 5=longdash, 6=twodash) or as one of the character strings <code>"blank"</code>, <code>"solid"</code>, <code>"dashed"</code>, <code>"dotted"</code>, <code>"dotdash"</code>, <code>"longdash"</code>, or <code>"twodash"</code>, where <code>"blank"</code> uses ‘invisible lines’ (i.e., does not draw them).</td>
+</tr>
+<tr class="odd">
+<td>lwd</td>
+<td>line width relative to the default (default=1). 2 is twice as wide.</td>
+</tr>
+<tr class="even">
+<td>col</td>
+<td>default plotting color. <br />- The simplest way is with a character string giving the <u>color name</u> (e.g., <code>"red"</code>). A list of the possible colors can be obtained with the function <code>colors</code>. <br />- Alternatively, colors can be specified directly in terms of their <u>RGB components</u> with a string of the form <code>"#RRGGBB"</code> where each of the pairs <code>RR</code>, <code>GG</code>, <code>BB</code> consist of two <u>hexadecimal digits</u> giving a value in the range <code>00</code> to <code>FF</code>. <br />- Colors can also be specified by giving an index into a small table of colors, the <code>palette</code>: indices wrap round so with the default palette of size 8, <code>10</code> is the same as <code>2</code>. Index <code>0</code> corresponds to the background color. Note that the palette (apart from <code>0</code> which is per-device) is a per-session setting.<br />- You can use <u>an integer without calling a palette</u>. This refers to the default color palette in R. There are only 8 different colors. 1 is black, 2 is red, 3 is green, 4 is blue. Recyle to index the palette.<br />- Add transparency. The <code>rgb()</code> function has an optional 4th argument: <code>rgb(r,g,b,alpha)</code>. The value of <code>alpha</code> is between 0 and 1, with 0 being totally transparent and 1 being totally opaque.</td>
+</tr>
+</tbody>
+</table>
+<p><img src="https://drive.google.com/thumbnail?id=1FN0kqcL-45SsJIxJxfAZMgFJdEws8P_z&sz=w1000" alt="rplot" style="display: block; margin-right: auto; margin-left: auto; zoom:120%;" /></p>
+<p><strong>line type</strong></p>
+<p><img src="https://drive.google.com/thumbnail?id=1v9fZATEfWEFgULLcQ18nGZqpxbIgtohW&sz=w1000" alt="line type" style="display: block; margin-right: auto; margin-left: auto; zoom:100%;" /></p>
+<p>The <strong>lattice</strong> graphics is useful for conditioning types of plots. Make separate plots for each group.</p>
+<div class="sourceCode" id="cb462"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb462-1"><a href="7-graphics.html#cb462-1" tabindex="-1"></a>lattice<span class="sc">::</span><span class="fu">xyplot</span>(drinks <span class="sc">~</span> partyHr <span class="sc">|</span> gender, <span class="at">data=</span>survey, <span class="at">ylab=</span><span class="st">&quot;Drinks/week&quot;</span>, </span>
+<span id="cb462-2"><a href="7-graphics.html#cb462-2" tabindex="-1"></a>       <span class="at">xlab=</span><span class="st">&quot;Party hours/week&quot;</span>)</span></code></pre></div>
+<ul>
+<li><code>xyplot()</code> function in the lattice graphics is analogous to as the <code>plot()</code> function in the base graphics.</li>
+<li>The <code>histogram()</code> function is a lattice graphics function that is analogous to the <code>hist()</code> function in the base graphics.</li>
+</ul>
+<p>The <code>labels</code> argument of the <code>axis</code> function allows customizing the tick mark labels.</p>
+<div class="sourceCode" id="cb463"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb463-1"><a href="7-graphics.html#cb463-1" tabindex="-1"></a><span class="co"># Change X-axis tick labels</span></span>
+<span id="cb463-2"><a href="7-graphics.html#cb463-2" tabindex="-1"></a><span class="fu">plot</span>(x, y, <span class="at">pch =</span> <span class="dv">19</span>, <span class="at">xaxt =</span> <span class="st">&quot;n&quot;</span>)</span>
+<span id="cb463-3"><a href="7-graphics.html#cb463-3" tabindex="-1"></a><span class="fu">axis</span>(<span class="dv">1</span>, <span class="at">at =</span> <span class="fu">seq</span>(<span class="fu">round</span>(<span class="fu">min</span>(x)),</span>
+<span id="cb463-4"><a href="7-graphics.html#cb463-4" tabindex="-1"></a>                 <span class="fu">round</span>(<span class="fu">max</span>(x)), <span class="at">by =</span> <span class="dv">1</span>),</span>
+<span id="cb463-5"><a href="7-graphics.html#cb463-5" tabindex="-1"></a>     <span class="at">labels =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">11</span>)</span></code></pre></div>
+<p>You can join together two plots with different Y-axis scale increasing the margins of the plot, using <code>par(new = TRUE)</code>, creating a new plot without axis or labels and setting a new axis with the <code>axis</code> function.</p>
+<div class="sourceCode" id="cb464"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb464-1"><a href="7-graphics.html#cb464-1" tabindex="-1"></a><span class="co"># Increase the plot margins</span></span>
+<span id="cb464-2"><a href="7-graphics.html#cb464-2" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">4</span>, <span class="dv">4</span>, <span class="dv">4</span>) <span class="sc">+</span> <span class="fl">0.25</span>)</span>
+<span id="cb464-3"><a href="7-graphics.html#cb464-3" tabindex="-1"></a></span>
+<span id="cb464-4"><a href="7-graphics.html#cb464-4" tabindex="-1"></a><span class="co"># Data</span></span>
+<span id="cb464-5"><a href="7-graphics.html#cb464-5" tabindex="-1"></a><span class="fu">plot</span>(x, y, <span class="at">pch =</span> <span class="dv">19</span>, <span class="at">ylab =</span> <span class="st">&quot;Var 1&quot;</span>)</span>
+<span id="cb464-6"><a href="7-graphics.html#cb464-6" tabindex="-1"></a></span>
+<span id="cb464-7"><a href="7-graphics.html#cb464-7" tabindex="-1"></a><span class="co"># Needed to merge the plots</span></span>
+<span id="cb464-8"><a href="7-graphics.html#cb464-8" tabindex="-1"></a><span class="fu">par</span>(<span class="at">new =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb464-9"><a href="7-graphics.html#cb464-9" tabindex="-1"></a></span>
+<span id="cb464-10"><a href="7-graphics.html#cb464-10" tabindex="-1"></a><span class="co"># More data</span></span>
+<span id="cb464-11"><a href="7-graphics.html#cb464-11" tabindex="-1"></a><span class="fu">plot</span>(x <span class="sc">^</span> <span class="dv">2</span>, y <span class="sc">^</span> <span class="dv">2</span>,</span>
+<span id="cb464-12"><a href="7-graphics.html#cb464-12" tabindex="-1"></a>     <span class="at">col =</span> <span class="dv">4</span>, <span class="at">pch =</span> <span class="dv">19</span>,</span>
+<span id="cb464-13"><a href="7-graphics.html#cb464-13" tabindex="-1"></a>     <span class="at">axes =</span> <span class="cn">FALSE</span>, <span class="co"># No axes</span></span>
+<span id="cb464-14"><a href="7-graphics.html#cb464-14" tabindex="-1"></a>     <span class="at">bty =</span> <span class="st">&quot;n&quot;</span>,    <span class="co"># No box</span></span>
+<span id="cb464-15"><a href="7-graphics.html#cb464-15" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">&quot;&quot;</span>, <span class="at">ylab =</span> <span class="st">&quot;&quot;</span>) <span class="co"># No axis labels</span></span>
+<span id="cb464-16"><a href="7-graphics.html#cb464-16" tabindex="-1"></a></span>
+<span id="cb464-17"><a href="7-graphics.html#cb464-17" tabindex="-1"></a><span class="co"># New axis</span></span>
+<span id="cb464-18"><a href="7-graphics.html#cb464-18" tabindex="-1"></a><span class="fu">axis</span>(<span class="dv">4</span>)</span>
+<span id="cb464-19"><a href="7-graphics.html#cb464-19" tabindex="-1"></a><span class="co"># Axis label</span></span>
+<span id="cb464-20"><a href="7-graphics.html#cb464-20" tabindex="-1"></a><span class="fu">mtext</span>(<span class="st">&quot;Var 2&quot;</span>, <span class="at">side =</span> <span class="dv">4</span>, <span class="at">line =</span> <span class="dv">3</span>, <span class="at">col =</span> <span class="dv">4</span>)</span></code></pre></div>
+<p><code>mtext(text, side, line, adj, at)</code> write text into the margins of a plot.</p>
+<ul>
+<li><code>side</code> on which side of the plot (1=bottom, 2=left, 3=top, 4=right).</li>
+<li><code>line</code> set the margin line where to set the text, starting at 0 counting outwards. Defaults to 0.</li>
+<li><code>adj</code> <strong>alignment</strong> for each string in the reading direction from 0 to 1, defaults to 0.5. For strings parallel to the axes, <code>adj = 0</code> means left or bottom alignment, and <code>adj = 1</code> means right or top alignment.</li>
+<li><code>at</code> to <strong>indicate the absolute position where to draw the text</strong> based on the corresponding axis. Allows you to specify locations more precisely than <code>adj</code>. <code>adj</code> uses relative positions.</li>
+</ul>
+</div>
+<div id="plot-symbols" class="section level3 unnumbered unlisted hasAnchor">
+<h3>Plot Symbols<a href="7-graphics.html#plot-symbols" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p><strong><code>pch</code> plot symbol</strong></p>
+<p><strong><code>20</code></strong> small solid circle.</p>
+<p><code>21</code> circle with border and filling. You can colour the inside and outside separately.</p>
+<div class="sourceCode" id="cb465"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb465-1"><a href="7-graphics.html#cb465-1" tabindex="-1"></a><span class="fu">geom_point</span>(<span class="at">shape=</span><span class="dv">21</span>, <span class="at">fill=</span><span class="st">&quot;#008BFF&quot;</span>, <span class="at">color=</span><span class="st">&quot;#008BFF&quot;</span>, <span class="at">alpha=</span><span class="fl">0.8</span>, <span class="at">size=</span><span class="cn">NULL</span>)</span></code></pre></div>
+<p><a href="https://blog.albertkuo.me/post/point-shape-options-in-ggplot/" class="uri">https://blog.albertkuo.me/post/point-shape-options-in-ggplot/</a></p>
+<p>1 2 空心圆, 三角形</p>
+<p>16 17 实心圆, 三角形</p>
+<p>The <code>size</code> aesthetic control the size of points and text, and can be specified with a numerical value (in millimetres) or via a mapping to a continuous variable.</p>
+<p><img src="/Users/menghan/Library/CloudStorage/Dropbox/coding_notes/figures/pch.png" alt="pch" style="zoom:100%;" /></p>
+<p><code>pch</code> 16 midium, 19 large, 20 small</p>
+<p>Linetype</p>
+<p>The <code>linetype</code> aesthetic can be specified with either an integer (0-6), a name (0 = blank, 1 = solid, 2 = dashed, 3 = dotted, 4 = dotdash, 5 = longdash, 6 = twodash),</p>
+<p><img src="https://drive.google.com/thumbnail?id=1HRFrby936OVUw8Zvgisl13T5d41hWJLr&sz=w1000" alt="linetype" style="zoom:120%;" /></p>
+<hr />
+<p><strong>Save figures</strong></p>
+<p><code>png(filename, width = 480, height = 480, units = "px", res = 72, ...)</code></p>
+<ul>
+<li><p><code>unit</code>: one of <code>px</code>, <code>in</code>, <code>cm</code>, or <code>mm</code>. Defaults to <code>px</code>.</p></li>
+<li><p><code>res</code>: The nominal resolution in dpi (number of dot per inch) for bitmap devices (<code>dpi * inches = pixels</code>). The higher the dpi, the sharper the image.</p>
+<p>Default res of 72 dpi is too fuzzy. To remove the graininess, use <code>res=300</code> for a fine-resolution figure.</p></li>
+</ul>
+<p>For the same figure size, the higher the resolution, the larger the zoom of the figure</p>
+<div class="sourceCode" id="cb466"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb466-1"><a href="7-graphics.html#cb466-1" tabindex="-1"></a><span class="fu">png</span>(<span class="at">file=</span><span class="st">&quot;example1.png&quot;</span>, <span class="at">res=</span><span class="dv">100</span>)</span>
+<span id="cb466-2"><a href="7-graphics.html#cb466-2" tabindex="-1"></a><span class="fu">plot</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>)</span>
+<span id="cb466-3"><a href="7-graphics.html#cb466-3" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code></pre></div>
+<figure style="text-align: center;">
+<img src="https://drive.google.com/thumbnail?id=1rRSjgf6n9B8T0V-L9zOx7Okxo8Pfzb3j&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
+<figcaption>
+Resolution 100 ppi.
+</figcaption>
+</figure>
+<div class="sourceCode" id="cb467"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb467-1"><a href="7-graphics.html#cb467-1" tabindex="-1"></a><span class="fu">png</span>(<span class="at">file=</span><span class="st">&quot;example1.png&quot;</span>, <span class="at">res=</span><span class="dv">200</span>)</span>
+<span id="cb467-2"><a href="7-graphics.html#cb467-2" tabindex="-1"></a><span class="fu">plot</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>)</span>
+<span id="cb467-3"><a href="7-graphics.html#cb467-3" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code></pre></div>
+<figure style="text-align: center;">
+<img src="https://drive.google.com/thumbnail?id=1TbskPzzgiD86IdtXenXH58LwpU3WgNus&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
+<figcaption>
+Resolution 100 ppi.
+</figcaption>
+</figure>
+<p><strong>Suggested routine</strong> to find the correct size of your figure using base R:</p>
+<ol style="list-style-type: decimal">
+<li><p>Zoom the plot pane, adjust to the size you are happy with, right click and choose <code>Copy Image Address</code>, you will have a url like</p>
+<p><code>http://127.0.0.1:39903/graphics/plot_zoom_png?width=913&amp;height=563</code></p></li>
+<li><p>The url provides the aspect ratio of your choice and is a good start point for figure size.</p>
+<p>Use 3 times the given size, i.e., width = 913x3, height = 563x3, set <code>res=300</code>, for a high-resolution figure.</p></li>
+</ol>
+<hr />
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="6.4-group-and-apply-functions.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="multipanel-plot.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": true,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "sky",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/my1396/R-Notes/edit/main/0600-Graphics.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["_main.pdf", "_main.epub", "https://github.com/my1396/R-Notes/raw/main/0600-Graphics.Rmd"],
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+},
+"toc_depth": 3,
+"toc_float": true,
+"enableEmoji": true
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

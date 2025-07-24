@@ -6,6 +6,19 @@
 - `rowSums(x)` 	returns sum for each row
 - `setNames()`	updates the column names without having to write another replacement function.
 
+
+
+`magrittr` package provides a series of aliases which can be more pleasant to use when composing chains using the `%>%`operator.
+
+| Alias        | Cmd        |
+| ------------ | ---------- |
+| `set_colnames` | colnames<- |
+| `set_rownames` | rownames<- |
+| `set_names`    | names<-    |
+
+ 
+
+
 `subset(x, subset, select, drop = FALSE, …)` 	Subsetting Vectors, Matrices And Data Frames
 
 - `x` 	 object to be subsetted.
@@ -71,13 +84,17 @@ df[!duplicated(lapply(df, summary))]
 
 ### <span style='color:#008B45'>**Process `NA` values**</span>
 
+`NaN` not a number.  0/0 is an example of a calculation that will produce a `NaN`. `NaN`s print as `NaN`, but generally act like `NA`s. Use `is.nan` to check if `NaN`.
+
+`Inf` is infinite numbers. `is.infinite` find infinite numbers (`Inf`, `-Inf`).
+
+
 `na.omit(x)` remove `NA` values in `x`;
 
 -   `x` 	could be vectors, matrices, and data frames; 
-    -   if `x` is a data frame, romove rows with NA values;
+    -   if `x` is a data frame, remove rows with NA values;
 
-
-returns positions of omitted missing values
+#### Find NA values {-}
 
 `complete.cases(x)` 	return a logical vector indicating which cases/<u>rows</u> are complete.
 
@@ -115,10 +132,7 @@ miss_per_col[41:77, ] %>% t() %>% t()
 -   `x` 	must be a data frame.
 
 
-
-`NaN` not a number.  0/0 is an example of a calculation that will produce a `NaN`. `NaN`s print as `NaN`, but generally act like `NA`s. Use `is.nan` to check if `NaN`.
-
-`Inf` is infinite numbers. `is.infinite` find infinite numbers (`Inf`, `-Inf`).
+`which(is.na(data))` returns positions of omitted missing values
 
 A custom function for handling common missing/invalid values:
 
@@ -140,27 +154,10 @@ cast_na <- function(x){
 }
 ```
 
-`replace.na(data, replace)` Replace NAs with specified values
-
-- `replace` If `data` is a data frame, `replace` takes a list of values, with one value for each column that has `NA` values to be replaced.
-
-  If `data` is a vector, `replace` takes a single value. This single value replaces all of the `NA` values in the vector.
-
-  
-
-`na_if(x, y)` 	that replaces any values in `x` that are equal to `y` with `NA`. It is useful if you want to convert an annoying value to `NA`.
-
-```R
-> na_if(1:5, 5:1)
-# [1]  1  2 NA  4  5
-> y <- c("abc", "def", "", "ghi")
-> na_if(y, "")
-# [1] "abc" "def"  NA  "ghi"
-```
 
 
 
-Keep rows with least nas for duplicated rows
+Keep rows with least NA's for duplicated rows
 
 ```r
 User_Table %>%
@@ -169,12 +166,14 @@ User_Table %>%
 ```
 
 
+#### Fill missing values {-}
 
-
-
-**Fill missing values**
+**Forward/Backward filling**
 
 `tidyr::fill(data, ..., .direction = c("down", "up", "downup", "updown"))` Fill missing values in selected columns using the next or previous entry. This is useful in the common output format where values are not repeated, and are only recorded when they change.
+
+-   `...` 	Columns to fill.
+-   `.direction` Direction in which to fill missing values. Default: "down".
 
 Alternatively, you can use `zoo::na.locf`
 
@@ -188,3 +187,39 @@ na.locf(x, fromLast = TRUE)
 
 `fromLast` defaults to `FALSE`, carry forward. If set to `TRUE`, carry backward.
 
+--------------------------------------------------------------------------------
+
+Replace with specific values
+
+`dplyr::na_if(x, y)` 	that replaces any values in `x` that are equal to `y` with `NA`. It is useful if you want to convert an annoying value to `NA`.
+
+```R
+> na_if(1:5, 5:1)
+# [1]  1  2 NA  4  5
+> y <- c("abc", "def", "", "ghi")
+> na_if(y, "")
+# [1] "abc" "def"  NA  "ghi"
+```
+
+`tidyr::replace_na(data, replace)` Replace NAs with specified values
+
+- `replace` 
+ 
+  - If `data` is a data frame, `replace` takes a list of values, with one value for each column that has `NA` values to be replaced.
+
+    ```R
+    # Replace NAs in a data frame
+    df <- tibble(x = c(1, 2, NA), y = c("a", NA, "b"))
+    df %>% replace_na(list(x = 0, y = "unknown"))
+    ```
+
+  - If `data` is a vector, `replace` takes a single value. This single value replaces all of the `NA` values in the vector.
+
+    ```R
+    # Replace NAs in a vector
+    df %>% dplyr::mutate(x = replace_na(x, 0))
+    # OR
+    df$x %>% replace_na(0)
+    df$y %>% replace_na("unknown")
+    ```
+  
