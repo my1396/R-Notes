@@ -559,7 +559,7 @@ p + scale_colour_manual(values = cols, limits = c("4", "6", "8", "10"))
 
 
 
-<img src="/Users/Menghan/Dropbox/coding_notes/figures/aes-3.png" alt="aes-3" style="zoom:40%;" />
+<img src="https://drive.google.com/thumbnail?id=1Fn_xEBPcZX-kB2-DEgnAhWFhabsuN-c1&sz=w1000" alt="aes-3" style="zoom:40%;" />
 
 
 
@@ -587,7 +587,7 @@ ggplot(aes(x = Sepal.Length), data = iris) +
   scale_color_manual(name = "statistics", values = c(median = "blue", mean = "red"))
 ```
 
-<img src="/Users/Menghan/Dropbox/coding_notes/figures/aes-4.png" alt="aes-4" style="zoom:100%;" />
+<img src="https://drive.google.com/thumbnail?id=1SCc7VsJ3vTwSxlR0_oWBv63jk4pbDHHv&sz=w1000" alt="aes-4" style="zoom:100%;" />
 
 
 
@@ -729,7 +729,7 @@ grid.draw(g)
 
 
 
-<img src="/Users/Menghan/Dropbox/coding_notes/figures/legend-1.png" alt="legend-1" style="zoom:30%;" />
+<img src="https://drive.google.com/thumbnail?id=1AbBPG9AeA6g4GnlenpGy1KOuq1sGI9bh&sz=w1000" alt="legend-1" style="zoom:30%;" />
 
 
 
@@ -1001,7 +1001,7 @@ reverse = FALSE,order = 0,
 
 
 
-### `ggplot` template for multi-series
+### Template for multi-series
 
 <span style="color:#008B45'">Multiple groups aesthetics</span>, e.g., `color`, `size`, `linetype`, ..., if you want an integrated legend, need to set the same title for the aesthetics.
 
@@ -1286,133 +1286,4 @@ Install package from source file  `.tar`
 `install.packages("~/Downloads/greenbrown_2.4.3.tar", repos = NULL, type="source")`
 
 
-
-### **Control Graphics Devices**
-
-`dev.cur()`	returns a length-one named integer vector giving the number and name of the active device, or 1, the null device, if none is active.
-
-`dev.new()` 	opens a new `RStudioGD` device. 
-
-**`dev.list()`**   returns the numbers of all open devices, except device 1, the null device. 
-
-- This is a numeric vector with a `names` attribute giving the device names, or `NULL` is there is no open device.
-- Usually `2` is `RStudioGD 2`. 
-
-**`dev.set(which = dev.next())`** 	makes the specified device the active device. If there is no device with that number, it is equivalent to `dev.next`. If `which = 1` it opens a new device and selects that.
-
-`dev.prev(which = dev.cur())`  `dev.next` and `dev.prev` select the next/previous open device in the appropriate direction, unless no device is open.
-
-`dev.off(which = dev.cur()) `  shuts down the specified (by default the current) device.
-
-**`graphics.off()`** 	shuts down all open graphics devices. 
-
-
-
-**Save the current graphic object**
-
-```R
-library(grid)
-grab <- grid.grab()
-ggsave(grab, filename = f_name, width=10.9, height=5.82)
-```
-
-- `pdf` device uses inches to specify width and height.
-- `png` and `jpeg` use pixels to specify dimensions.
-
-
-
-**Forward display**
-
-`x11()` opens an interactive graphics device. `x11` is Apple's X server. It is reliable and provides hardware OpenGL acceleration. 
-
-https://www.rdocumentation.org/packages/grDevices/versions/3.6.2/topics/x11
-
-https://www.cgl.ucsf.edu/chimera/data/downloads/1.11.2/mac_x11.html
-
-When you are using a native Mac application (not X windows) and then click on a menu within the X window, <span style='color:#008B45'>the mouse click does not bring up the menu</span>. It just activates the X window and another mouse click is needed to show the menu. <u>To make this work with a single mouse click</u>, use the Mac X server `wm_click_through` preference by typing the following command in a Mac Terminal window:
-
-`defaults write org.x.x11 wm_click_through -bool true`  Disables the default behavior of swallowing window-activating mouse events.
-
--   Normally Mac OS X swallows window-activating mouse events. This preference causes a window-activating mouse click on an X window to also be processed by the application.
--   X11 must be <span style='color:#008B45'>restarted</span> after any of these settings are changed. The settings are saved in your `~/Library/Preferences/org.x.x11.plist` file, so they will apply to future sessions. Reissuing the commands with false instead of true will restore the default preference settings.
-
->   An item that provides <span style='color:#008B45'>click-through</span> is one that a user can activate with one click, even though the item is in an inactive window. (To activate an item that does not support click-through, the user must first make the containing window active and then click the item.) Although click-through can make some user tasks easier, it can also confuse users if they click items unintentionally.
-
-**x11 preferences**
-
-- Input
-
-  <img src="https://drive.google.com/thumbnail?id=1L0sE4wItvdESsM_IMIe2_P4gFX5y7aV-&sz=w1000" alt="image-20221114225826302" style="zoom:50%;" />
-
-- windows
-
-  <img src="https://drive.google.com/thumbnail?id=1SG617Sb_csQRiM6fZ962SqR7ExT9nwLW&sz=w1000" alt="image-20221114225900595" style="zoom:50%;" />
-
-- security
-
-  <img src="https://drive.google.com/thumbnail?id=1PVtE5RnIplueIsxYUWT3ZSCkV8EDStA6&sz=w1000" alt="image-20221114225922001" style="zoom:50%;" />
-
-
-
-<span style='color:orange'>Bug</span>: X11 windows do not raise (come to the front) when the application is activated. 
-
-http://hints.macworld.com/article.php?story=20050714011418999
-
-bind a new key to an AppleScript mac Opt+Tab
-
-https://apple.stackexchange.com/questions/175215/how-do-i-assign-a-keyboard-shortcut-to-an-applescript-i-wrote
-
-<img src="https://drive.google.com/thumbnail?id=1GOLLujeuJt858G2pqv1kkfMwdwJ50kvl&sz=w1000" alt="image-20221115084137151" style="zoom:100%;" />
-
-
-
-For the Quartz device, you can use `quartzFonts()` to see what the default font for each of these keywords is
-
-```R
-quartzFonts()
-# $serif
-# [1] "Times-Roman"      "Times-Bold"       "Times-Italic"     "Times-BoldItalic"
-# 
-# $sans
-# [1] "Helvetica"             "Helvetica-Bold"        "Helvetica-Oblique"     "Helvetica-BoldOblique"
-# 
-# $mono
-# [1] "Courier"             "Courier-Bold"        "Courier-Oblique"     "Courier-BoldOblique"
-
-```
-
-
-
-**Table of font**
-
-http://www.cookbook-r.com/Graphs/Fonts/
-
-Font support in R is generally not very good. It varies between systems, and between output formats.
-
-Sometimes what you see on the screen isn’t necessarily the same as what you get when you output to PNG or PDF. 
-
-PNG output has less suport for font variety; PDF has better support.
-
-| Short Name   | Canonical Name             |
-| ------------ | -------------------------- |
-| mono         | Courier                    |
-| sans         | Helvetica                  |
-| serif        | Times                      |
-|              | AvantGarde                 |
-|              | Bookman                    |
-|              | Helvetica-Narrow           |
-|              | NewCenturySchoolbook       |
-|              | Palatino                   |
-|              | URWGothic                  |
-|              | URWBookman                 |
-|              | NimbusMon                  |
-| URWHelvetica | NimbusSan                  |
-|              | NimbusSanCondNimbusSanCond |
-|              | CenturySchCenturySch       |
-|              | URWPalladio                |
-| URWTimes     | NimbusRom                  |
-
-**`extrafont` package**
-
-https://github.com/wch/extrafont
 

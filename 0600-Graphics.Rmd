@@ -2,7 +2,7 @@
 
 <span style="font-size: 1.5em; font-weight: bold;">Base R Plotting</span>
 
-### Graphic Parameters  {.unnumbered .unlisted}
+### Graphic Parameters  {.unnumbered}
 
 `par()` permanently set global graphic parameters in the current session. Doesn't apply to external graphic devices, e.g., x11.
 
@@ -185,7 +185,7 @@ $omi
 
 
 
-### Plot example {.unnumbered .unlisted}
+### Plot example {.unnumbered}
 
 <https://r-charts.com/base-r/axes/?utm_content=cmp-true>
 
@@ -290,7 +290,7 @@ mtext("Var 2", side = 4, line = 3, col = 4)
 
 
 
-### Plot Symbols {.unnumbered .unlisted}
+### Plot Symbols {.unnumbered}
 
 **`pch` plot symbol**
 
@@ -310,7 +310,7 @@ geom_point(shape=21, fill="#008BFF", color="#008BFF", alpha=0.8, size=NULL)
 
 The `size` aesthetic control the size of points and text, and can be specified with a numerical value (in millimetres) or via a mapping to a continuous variable.
 
-<img src="/Users/Menghan/Dropbox/coding_notes/figures/pch.png" alt="pch" style="zoom:100%;" />
+<img src="https://drive.google.com/thumbnail?id=1-WEasfLB8Bhv75I6RLy2SfhaR_yHUXrv&sz=w1000" alt="pch" style="zoom:100%;" />
 
 `pch` 16 midium, 19 large, 20 small
 

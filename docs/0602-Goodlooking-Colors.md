@@ -182,7 +182,7 @@ p_global <- ggplot(global_data_plot, aes(x=year, y=value, col=variable)) +
 
 
 
-<img src="/Users/Menghan/Dropbox/coding_notes/figures/col.png" alt="col" style="zoom:30%;" />
+<img src="https://drive.google.com/thumbnail?id=1QYdo3syeBzt0Nj5QCbfknN3ZAX6gviZ9&sz=w1000" alt="col" style="zoom:30%;" />
 
 **Common Color Models**
 
@@ -212,11 +212,11 @@ heat.colors(4, alpha=1)
 
 
 
-**`colorspace` Package**
+### `colorspace` Package
 
 `colorspace::hcl_palettes()` retrieve all available palettes names.
 
-![hcl](/Users/Menghan/Dropbox/coding_notes/figures/hcl.svg)
+<img src="https://drive.google.com/thumbnail?id=1Q0d1zuXmDl-g-AxJSj8WCKDtOcybfQq4&sz=w1000" alt="hcl" style="display: block; margin-right: auto; margin-left: auto; zoom:100%;" />
 
 Useful functions to choose palette:
 
@@ -290,7 +290,7 @@ colVec = hue_pal()(n)
 plot(1:n, pch = 16, cex = 2, col = colVec)
 ```
 
-<img src="/Users/Menghan/Dropbox/coding_notes/figures/gghue.png" alt="gghue" style="zoom:80%;" />
+<img src="https://drive.google.com/thumbnail?id=1qdUMfHzU3JBRFHLdBJw9xPzCuwa7UY-d&sz=w1000" alt="gghue" style="zoom:80%;" />
 
 ### RColorBrewer
 
@@ -318,7 +318,7 @@ display.brewer.pal(9,"Blues") # show a color strip
 
 
 
-<img src="/Users/Menghan/Dropbox/coding_notes/figures/rcolorbrewer-palette-rcolorbrewer-palettes.png" alt="rcolorbrewer-palette-rcolorbrewer-palettes" style="zoom:80%;" />
+<img src="https://drive.google.com/thumbnail?id=1ZDMhtRyk2q82JKIA_F0lYbdc_IYcKHY1&sz=w1000" alt="rcolorbrewer-palette-rcolorbrewer-palettes" style="zoom:80%;" />
 
 ggplot + ColorBrewer 
 
@@ -461,7 +461,7 @@ The **`viridis`** package contains four sequential color scales: “Viridis” (
 
 - `option`     "magma" (or "A"), "inferno" (or "B"), "plasma" (or "C"), "**viridis**" (or "**D**", the default option) and "cividis" (or "E").
 
-  <img src="/Users/Menghan/Dropbox/coding_notes/figures/viridis-scales.png" alt="viridis-scales" style="zoom:100%;" />
+  <img src="https://drive.google.com/thumbnail?id=1z9Ld2g6oiC46Jut0hOl7KfQKavXSJ9_w&sz=w1000" alt="viridis-scales" style="zoom:100%;" />
 
 ```R
 ## Choose color from viridis
