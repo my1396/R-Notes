@@ -55,10 +55,8 @@ Refer to Section \@ref{my-section}
 Ref: Authoring Books with R Markdown, <https://bookdown.org/yihui/bookdown/github.html>
 
 1. Initialize your local git repository and link to the remote GitHub repo.
-    
+   
     See instructions [HERE][init-git].
-    
-    [init-git]: https://my1396.github.io/Econ-Study/2023/10/12/GitHub101.html#push-an-existing-repository "Initialize git and link to remote"
 
 2. Go to your `_bookdown.yml` file and add `output_dir: "docs"` on a line by itself
 
@@ -105,7 +103,7 @@ directory/
 
 As a summary of these files:
 
-- <a href="#index">`index.Rmd`</a>: **This is the only Rmd document to contain a YAML frontmatter**, and is the first book chapter.
+- <a href="#bd-index">`index.Rmd`</a>: **This is the only Rmd document to contain a YAML frontmatter**, and is the first book chapter.
 
 - Rmd files: A typical bookdown book contains multiple chapters, and each chapter lives in one separate Rmd file.
 
@@ -123,15 +121,22 @@ These files are explained in greater detail in the following subsections.
 
 ### `_output.yml` {.unnumbered}
 
-**`_output.yml`** **Output formats** can be specified either in the YAML metadata of the first Rmd file of the book, or in a separate YAML file named `_output.yml` under the root directory of the book. See [Section 12.4 in *R Markdown: The Definitive Guide*](https://bookdown.org/yihui/rmarkdown/bookdown-output.html#bookdown-output) for a complete list of bookdown output formats. A quick takeaway is that bookdown supports both book types and single documents. 
+**`_output.yml`** **Output formats** can be specified either 
+
+- in the YAML metadata of the first Rmd file of the book (usually <a href="#bd-index">`index.Rmd`</a>), or 
+- in a separate YAML file named `_output.yml` under the root directory of the book. 
+
+See [Section 12.4 in *R Markdown: The Definitive Guide*](https://bookdown.org/yihui/rmarkdown/bookdown-output.html#bookdown-output) for a complete list of bookdown output formats. A quick takeaway is that bookdown supports both book types and single documents. 
 
 **Common uses of `_output.yml`**:
+
+- Specify supported output formats: `bookdown::gitbook`, `bookdown::pdf_book`, `bookdown::epub_book`, etc.
 
 - Add an edit link, e.g., `https://github.com/my1396/R-Notes/edit/main/%s`
 
   This will configure which remote repo to link to and hence allow the page to be downloadable as an `.Rmd`. Also need to specify `download: ["rmd"]`.
 
-- Link to your GitHub in the toolbar (also need <a href="#index">`index.Rmd`</a>)
+- Link to your GitHub in the toolbar (also need <a href="#bd-index">`index.Rmd`</a>)
 
 - Add other sharing links
 
@@ -172,17 +177,49 @@ bookdown::gitbook:
         github: yes
     download: ["pdf", "epub", "rmd"]
     enableEmoji: true
+
 bookdown::pdf_book:
   includes:
     in_header: preamble.tex
   latex_engine: xelatex
   citation_package: natbib
   keep_tex: yes
+
 bookdown::epub_book: default
 ```
 
 You do NOT need the three dashes `---` in `_output.yml`. In this case, all formats should be at the top level, instead of under an `output` field in individual Rmds. 
 
+The output format `bookdown::gitbook` is built upon `rmarkdown::html_document`, which was explained in Section [3.1](https://bookdown.org/yihui/rmarkdown/html-document.html#html-document) in R Markdown: The Definitive Guide. The main difference between rendering in R Markdown and **bookdown** is that a book will generate multiple HTML pages by default. 
+
+[`bookdown::gitbook` settings:](https://bookdown.org/yihui/bookdown/html.html#gitbook-style)
+
+- `css: style.css` specifies one or more custom CSS files to tweak the default CSS style.
+  
+  Note that `bookdown::gitbook` has a set of default CSS files. Use `docs/libs/gitbook-2.6.7/css` to see the default settings.
+  If some of your custom CSS settings are not applied, it is likely due to conflicts with gitbook CSS. You may need to override the default CSS files by appending `!important` to your custom CSS settings.
+
+-  There are several sub-options in the `config` option for you to tweak some details in the user interface. See [here][gitbook-config] for the default settings of `config`.
+
+   - **Font/theme settings**
+
+     ```yaml
+     fontsettings:
+     # changing the default
+       theme: night
+       family: serif
+       size: 3
+     ```
+     
+     You can set the initial value of these settings via the `fontsettings` option. 
+
+      - Font size is measured on a scale of 0-4; the initial value can be set to 1, 2 (default), 3, or 4. 
+      - `theme: white | sepia | night`. Default to `white`.
+   
+  - `download: ["pdf", "epub", "rmd"]` specifies which formats to allow users to download the book in. 
+   
+    When `download: null` (by default), `gitbook()` will look for PDF, EPUB, and MOBI files in the book output directory, and automatically add them to the download option. If you just want to suppress the download button, use `download: false`. 
+   
 - `split_by= c("chapter", "chapter+number", "section", "section+number", "rmd", "none")` defaults to `chapter`, which splits the file by the first-level headers. 
 
     - `chapter` splits the file by the first-level headers; 
@@ -201,7 +238,7 @@ You do NOT need the three dashes `---` in `_output.yml`. In this case, all forma
     
     ```html
     <html>
-  
+    
       <head>
       <!-- head content here, e.g. CSS and JS -->
       </head>
@@ -240,12 +277,12 @@ You do NOT need the three dashes `---` in `_output.yml`. In this case, all forma
     
     Example of MathJax config files: 
     
-        - [`0007bookdown/mathjax_header.html`](https://github.com/matthew-towers/0007bookdown/blob/master/mathjax_header.html) by matthew-towers
+    - [`0007bookdown/mathjax_header.html`](https://github.com/matthew-towers/0007bookdown/blob/master/mathjax_header.html) by matthew-towers
             
-            @matthew-towers uses a very clever approach, probably the easiest setup -- define the command directly in LaTeX and enclode in `<span class="math inline">$...$</span>` to indicate this is inline math.
-        
-        - [Using inline config options](https://docs.mathjax.org/en/v2.7-latest/configuration.html#using-in-line-configuration-options)
-        - [Stack Overflow MathJax](https://stackoverflow.com/questions/76312006/how-to-load-mathjax-extensions-in-bookdown)
+      @matthew-towers uses a very clever approach, probably the easiest setup -- define the command directly in LaTeX and enclode in `<span class="math inline">$...$</span>` to indicate this is inline math.
+      
+    - [Using inline config options](https://docs.mathjax.org/en/v2.7-latest/configuration.html#using-in-line-configuration-options)
+    - [Stack Overflow MathJax](https://stackoverflow.com/questions/76312006/how-to-load-mathjax-extensions-in-bookdown)
     
     [Bookdown uses MathJax 2.7 by default](https://forum.posit.co/t/cannot-load-mathtools-mathjax-extension-in-bookdown/131073). 
     
@@ -267,7 +304,7 @@ You do NOT need the three dashes `---` in `_output.yml`. In this case, all forma
     Note that `MathJax.Hub.Config` is used in [inline configuration](https://docs.mathjax.org/en/v2.7-latest/configuration.html#configuring-mathjax). It is **case-sensitive**. `Macros` has capital `M`, and `TeX`, rather than `tex`, is used.
     
     - A LaTeX source document has a similar structure:
-        
+      
     ```latex
     \documentclass{book}
 
@@ -284,7 +321,7 @@ You do NOT need the three dashes `---` in `_output.yml`. In this case, all forma
     ```
 
 - You can add a **table of contents** using the `toc` option and specify the depth of headers that it applies to using the `toc_depth` option. 
-    
+  
     - If the TOC depth defaults to 3 in `html_document`.
     - For `pdf_document`, if the TOC depth is not explicitly specified, it defaults to 2 (meaning that all level 1 and 2 headers will be included in the TOC).
     
@@ -299,11 +336,12 @@ You do NOT need the three dashes `---` in `_output.yml`. In this case, all forma
     
     `collapse` specifies a level to expand to by default, aka at `#`, `##`, or `###`.  
     
-    I suggest ollapsing at level 2. This way, you get a good overview of what each major topic (level 1 heading) includes, without showing the most detailed items.
+    I suggest collapsing at level 2. This way, you get a good overview of what each major topic (level 1 heading) includes, without showing the most detailed items.
     
     - `collapse: subsection`: At startup, the toc will collapse at the level 2 headings. As you go to one specific subsection, the content inside will expand. You can see level 3 headings. ✅
     - `collapse: section`: At startup, the toc will collapse at the level 1 headings, which keeps the appearance concise. However, a side effect is that level 3 headings will never be displaied when navigating to a specific level 2 heading.
     
+
 bookdown 中文书籍 `_output.yml` 范例: <https://github.com/yihui/bookdown-chinese/blob/96d526572f0c6648d06c2d4bebf57c5fb4eafce3/_output.yml>
 
 - You can set up a **tex template**. 
@@ -336,11 +374,17 @@ bookdown 中文书籍 `_output.yml` 范例: <https://github.com/yihui/bookdown-c
 
 **`_bookdown.yml`**  allows you to specify optional settings to build the book. For example:
 
+- Set [`output_dir: docs`](https://rstudio4edu.github.io/rstudio4edu-book/make-book.html#book-output)
+- Set [`new_session: yes`](https://bookdown.org/yihui/bookdown/new-session.html)
+
+  When set to `yes`, it uses "Knit and Merge" (K–M), and creates a new R session for each chapter, which is useful for avoiding conflicts between packages or variables across chapters.
+
+  The default is `no`, which uses "Merge and Knit" (M-K), where all chapters are knitted in one R session.
 - Change themes
 - Change the chapter name
 - Change [chapter order](https://rstudio4edu.github.io/rstudio4edu-book/book-yours.html#book-order)
-- Set [`new_session: yes`](https://rstudio4edu.github.io/rstudio4edu-book/make-book.html#book-output)
-- Set [`output_dir: docs`](https://rstudio4edu.github.io/rstudio4edu-book/make-book.html#book-output)
+
+
 
 ```yml
 delete_merged_file: true
@@ -360,16 +404,16 @@ Note that you don't need to manually create the `docs` folder, bookdown will cre
 - After you serve your site locally, all supporting files will be output to `docs`. Be sure to add one `.nojekyll` file in `docs` to tell GitHub that your website is not to be built via Jekyll. 
 
 - Because bookdown only overwrites existing files and does not delete unused ones, you can simply delete the `docs` folder so that bookdown will recreate everything necessary without any redundancy. 
-    
+  
     Remember to recreate `.nojekyll` too after bookdown has created the new `docs`.
 
 --------------------------------------------------------------------------------
 
-<a id="index"></a>
+<a id="bd-index"></a>
 
 ### `index.Rmd` {.unnumbered}
 
- 
+
 **`index.Rmd`** <span style='color:#008B45'>**homepage of your website**</span>. Contains the first chapter and the <span style='color:#008B45'>**YAML metadata**</span> which will be applied to all other Rmd pages. 
 
 That is, `index.Rmd` sets the global YAML for the entire website. Moreover, `index.Rmd` is the **only** Rmd document that contains a **YAML frontmatter**. 
@@ -384,7 +428,7 @@ Common uses of `index.Rmd`'s YAML frontmatter:
 - Book cover, title, author, date, and description
 
 - Add **bibliography**
-    
+  
     Once you have one or multiple `.bib` files, you may use the field bibliography in the YAML metadata of your first R Markdown document (which is typically `index.Rmd`), and you can also specify the bibliography style via biblio-style (this only applies to PDF output).
     
     ```yml
@@ -452,7 +496,7 @@ Some content
 
 - Besides `index.Rmd`, other R Markdown files will make up the chapters of your book. By default, `bookdown` merges all Rmd files by the order of filenames, e.g., `01-intro.Rmd` will appear before `02-literature.Rmd`. 
 
-- The Rmd files must start immediately with the chapter title using the first-level heading, e.g., `# Chapter Title`. Note that YAML metadata should <span style='color:#FF9900'>NOT</span> be included in these Rmd files, as it is inherited from the <a href="#index">`index.Rmd`</a> file.
+- The Rmd files must start immediately with the chapter title using the first-level heading, e.g., `# Chapter Title`. Note that YAML metadata should <span style='color:#FF9900'>NOT</span> be included in these Rmd files, as it is inherited from the <a href="#bd-index">`index.Rmd`</a> file.
 
 
 `01-intro.Rmd`
@@ -474,7 +518,7 @@ Here is a review of existing methods.
 
 
 
-
-
+[gitbook-config]: https://bookdown.org/yihui/bookdown/html.html#:~:text=%20We%20display%20the%20default%20sub%2Doptions%20of%20config%20in%20the%20gitbook%20format%20as%20YAML%20metadata%20below%20(note%20that%20they%20are%20indented%20under%20the%20config%20option "Default config for bookdown::gitbook"
+[init-git]: https://my1396.github.io/Econ-Study/2023/10/12/GitHub101.html#push-an-existing-repository "Initialize git and link to remote"
 
 

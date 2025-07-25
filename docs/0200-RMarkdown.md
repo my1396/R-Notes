@@ -52,7 +52,7 @@ There is NO official documentation for R Markdown YAML frontmatter because the Y
 
 For instance, the following metadata
 
-```
+```yaml
 editor_options:
   chunk_output_type: console
 ```
@@ -115,9 +115,12 @@ Book formats:
 
 --------------------------------------------------------------------------------
 
+### Top-level YAML metadata
+
+
 - Many aspects of the LaTeX template used to create PDF documents can be customized using <span style='color:#008B45'>**top-level**</span> [YAML metadata](https://bookdown.org/yihui/rmarkdown/pdf-document.html#tab:latex-vars) (note that these options do <span style='color:#FF9900'>**NOT**</span> appear underneath the `output` section, but rather appear at the top level along with `title`, `author`, and so on). For example:
 
-  ```markdown
+  ```yaml
   ---
   title: "Crop Analysis Q3 2013"
   output: pdf_document
@@ -190,21 +193,19 @@ Book formats:
     |oooo|~~~~~~|ii|ii|~~~~~~|oooo|
     -------------------------------
     ```
-
     
-
   - **`landscape`** - Changes the layout of the document to print in landscape mode.
   - **`openright`, `openany`** - Makes chapters begin either only on right hand pages or on the next page available. This does not work with the article class, as it does not know about chapters. The report class by default starts chapters on the next page available and the book class starts them on right hand pages.
 
 - In PDFs, you can use code, typesetting commands (e.g., `\vspace{12pt}`), and specific packages from LaTeX. 
 
-    1. The `header-includes` option loads LaTeX packages.
+  1. The `header-includes` option loads LaTeX packages.
 
-       Note that `header-includes` is a top-level option that align with `output`.
+      Note that `header-includes` is a top-level option that align with `output`.
 
        
 
-    ```markdown
+    ```yaml
     ---
     output: pdf_document
     header-includes:
@@ -224,7 +225,7 @@ Book formats:
 
     - Chinese/Japanese support
 
-    ````markdown
+    ````yaml
     ---
     output: pdf_document
     header-includes:
@@ -233,9 +234,9 @@ Book formats:
     ````
 
 
-    2. Alternatively, use `extra_dependencies` to  list a character vector of LaTeX packages. This is useful if you need to load multiple packages:
+  2. Alternatively, use `extra_dependencies` to  list a character vector of LaTeX packages. This is useful if you need to load multiple packages:
     
-    ```markdown
+    ```yaml
     ---
     title: "Untitled"
     output: 
@@ -246,7 +247,7 @@ Book formats:
     
     If you need to specify options when loading the package, you can add a second-level to the list and provide the options as a list:
     
-    ```markdown
+    ```yaml
     ---
     title: "Untitled"
     output: 
@@ -282,7 +283,7 @@ Book formats:
 
 --------------------------------------------------------------------------------
 
-**Parameters**
+#### Parameters {-}
 
 We can include variables and R expressions in this header that can be referenced throughout our R Markdown document. For example, the following header defines `start_date` and `end_date` parameters, which will be reflected in a list called `params` later in the R Markdown document. 
 
@@ -316,7 +317,7 @@ foo: bar1baz234
 bar: 123baz
 ```
 
-ref: 
+Ref: 
 
 - [R Markdown anatomy, R Markdown Cookbook](https://bookdown.org/yihui/rmarkdown-cookbook/rmarkdown-anatomy.html#:~:text=In%20short%2C%20we%20can%20include%20variables%20and%20R%20expressions%20in%20this%20header%20that%20can%20be%20referenced%20throughout%20our%20R%20Markdown%20document.)
 - <https://rmarkdown.rstudio.com/lesson-6.html>
@@ -324,7 +325,7 @@ ref:
 
 --------------------------------------------------------------------------------
 
-[**File options**](https://rstudio.github.io/visual-markdown-editing/options.html#file-options)
+#### File options {-}
 
 
 Some aspects of markdown output can be customized via global, project, or file-level options, including:
@@ -344,9 +345,11 @@ editor_options:
 ---
 ```
 
+Ref: <https://rstudio.github.io/visual-markdown-editing/options.html#file-options>
+
 --------------------------------------------------------------------------------
 
-[**MathJax Options**](https://bookdown.dongzhuoer.com/rstudio/rmarkdown-book/html-document#mathjax-equations)
+### MathJax Options
 
 By default, [MathJax](https://www.mathjax.org/) scripts are included in HTML documents for rendering LaTeX and MathML equations. You can use the `mathjax` option to control how MathJax is included:
 
@@ -389,131 +392,9 @@ output:
 ---
 ```
 
+Ref: <https://bookdown.dongzhuoer.com/rstudio/rmarkdown-book/html-document#mathjax-equations>
 
 
---------------------------------------------------------------------------------
-
-### Render Rmd
-
-When you click the `Knit` button (⇧⌘K) in RStudio, generally two processes happen: 
-
-1. The `.Rmd` file is fed to `knitr`, which executes all of the R code chunks and creates a new markdown (`.md`) document which includes the R code and its output.
-2. The `.md` file is then processed by [pandoc](http://pandoc.org/) which is responsible for creating the finished format, e.g., HTML, PDF, MS_Word.
-   - `.md` files can be directly converted to html, but
-   - `.md` to pdf is time-consuming. It first generates `.tex`, then call the LaTeX engine to convert to pdf.
-
-<img src="https://d33wubrfki0l68.cloudfront.net/61d189fd9cdf955058415d3e1b28dd60e1bd7c9b/9791d/images/rmarkdownflow.png" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:100%;" />
-
-There is one function that can do the processes mentioned above: [`rmarkdown::render`](https://pkgs.rstudio.com/rmarkdown/reference/render.html).
-
-`rmarkdown::render(input, output_format = NULL, output_file = NULL, output_dir = NULL, output_options = NULL, output_yaml = NULL)`
-
-| Arguments        | Definition                                                   |
-| ---------------- | ------------------------------------------------------------ |
-| `output_format`  | - `"all"` will render all formats define within the file<br />- Name of a format, e.g., `html_document`, will render to that single format<br />- An output format object, e.g., `html_document(toc = TRUE, toc_depth = 2, includes = includes(before_body = "header.htm"))`, where you can pass on the argument |
-| `output_options` | - **List** of output options that can override the options specified in metadata (e.g could be used to force `self_contained` or `mathjax = "local"`). <br />- Note that this is <span style='color:#008B45'>only valid when the output format is read from **metadata**</span> (i.e. not a custom format object passed to output_format).<br />- `output_options` cannot work together with `xxx_document()`. |
-| `output_yaml`    | Paths to YAML files specifying output formats and their configurations. The first existing one is used. If none are found, then the function searches YAML files specified to the `output_yaml` top-level parameter in the YAML front matter, `_output.yml` or `_output.yaml`, and then uses the first existing one. |
-
-Use examples of `render`, using **output format objects**
-
-```r
-rmarkdown::render("0208-Rmd-GHpage.Rmd", 
-	bookdown::pdf_document2(
-		latex_engine = "xelatex",
-		# template = "latex/template.tex",
-		includes = rmarkdown::includes(
-			in_header = "latex/preamble.tex",
-      before_body = "latex/before_body.tex")
-		))
-
-# This does NOT work as `output_options` is only valid when the format is not an output format object "xxx_document()"
-rmarkdown::render("0208-Rmd-GHpage.Rmd", 
-	bookdown::pdf_document2(
-		latex_engine = "xelatex",
-		# template = "latex/template.tex"), 
-		output_options = list(
-			includes = rmarkdown::includes(
-        in_header = "latex/preamble.tex",
-        before_body = "latex/before_body.tex")
-		))
-
-# render to html
-rmarkdown::render("0304-Quarto.Rmd",  
-    bookdown::html_document2(
-    	includes = rmarkdown::includes(
-        	in_header = "head.html",
-        	before_body = "scripts.html")
-    	))
-```
-
-Note that sometimes the bookdown cross references in Rmd are not rendered when using the `Knit` button. The rendered html shows `Fig. \@ref(fig:ar-res) ` (without the backslash). In this case, using `rmarkdown::render()` **with `output_format = bookdown::html_document2()`** might help.
-
-
-
---------------------------------------------------------------------------------
-
-You can have more than one output formats for your Rmd. For example, you want both the html and pdf output.
-
-When you render the Rmd with `rmarkdown::render()`, it will use the **first output format you specify in the YAML metadata** (if it is missing, the default is `html_document`).
-
-If you do not want to use the first one, you can specify the one you want in the second argument, e.g., for an Rmd document `input.Rmd` with the metadata:
-
-```yml
-output:
-  html_document:
-    toc: true
-  pdf_document:
-    keep_tex: true
-```
-
-You can render it to PDF via:
-
-```r
-# Render to pdf
-rmarkdown::render('input.Rmd', 'pdf_document')
-
-# Render multiple formats
-render("input.Rmd", c("html_document", "pdf_document"))
-
-# Render all formats defined
-rmarkdown::render('input.Rmd', 'all')
-```
-
-- RStudio calls the function `rmarkdown::render()` to render the document in **a new R session**.
-  
-    RStudio does this to ensure **reproducibility**.
-
-
---------------------------------------------------------------------------------
-
-[`rmarkdown::render_site(input = ".", output_format = "all")`](https://pkgs.rstudio.com/rmarkdown/reference/render_site.html) Render all of the R Markdown documents within a directory as a website. There are two requirements for a directory to be rendered as a website:
-
-- It must contain either an `index.Rmd` or `index.md` file.
-- It must contain a site configuration file (`_site.yml`).
-
-Note that the "Knit" button in RStudio uses `rmarkdown::render_site` to knit the file in presence of an `index.Rmd` file in the working directory.
-
-
---------------------------------------------------------------------------------
-
-Fast rendering within the current global environment
-
-```r
-rmarkdown::render(active_document_path, envir=.GlobalEnv)
-```
-
-**What this does:**
-- Uses `.GlobalEnv` to access all objects already loaded in your workspace
-- **Faster rendering** since it skips the overhead of starting a new R session
-- All variables, functions, and loaded packages from your current session are available
-
-
-
-**Caveats:**
-- ⚠️ **Less reproducible** - document depends on current session state
-- ⚠️ **Potential conflicts** - objects in current session might interfere with document
-
-  
 --------------------------------------------------------------------------------
 
 ### Document dependency
@@ -793,7 +674,171 @@ Can specify alternative fonts in `preamble.tex` as follows:
 
 Fonts known to LuaTeX or XeTEX may be loaded by their standard names as you'd speak them out loud, such as Times New Roman or Adobe Garamond. 'Known to' in this case generally means 'exists in a standard fonts location' such as `~/Library/Fonts` on macOS, or `C:\Windows\Fonts` on Windows. In LuaTEX, fonts found in the TEXMF tree can also be loaded by name. In XeTEX, fonts found in the TEXMF tree can be loaded in Windows and Linux, but not on macOS.
 
+
 --------------------------------------------------------------------------------
+
+
+## Render Rmd
+
+When you click the `Knit` button (⇧⌘K) in RStudio, generally two processes happen: 
+
+1. The `.Rmd` file is fed to `knitr`, which executes all of the R code chunks and creates a new markdown (`.md`) document which includes the R code and its output.
+2. The `.md` file is then processed by [pandoc](http://pandoc.org/) which is responsible for creating the finished format, e.g., HTML, PDF, MS_Word.
+   - `.md` files can be directly converted to html, but
+   - `.md` to pdf is time-consuming. It first generates `.tex`, then call the LaTeX engine to convert to pdf.
+
+<img src="https://d33wubrfki0l68.cloudfront.net/61d189fd9cdf955058415d3e1b28dd60e1bd7c9b/9791d/images/rmarkdownflow.png" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:100%;" />
+
+There is one function that can do the processes mentioned above: [`rmarkdown::render`](https://pkgs.rstudio.com/rmarkdown/reference/render.html).
+
+### Render a single document
+
+`rmarkdown::render(input, output_format = NULL, output_file = NULL, output_dir = NULL, output_options = NULL, output_yaml = NULL)`
+
+| Arguments        | Definition                                                                                                                                                                                                                                                                                                                                                                                                     |
+| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `output_format`  | - `"all"` will render all formats define within the file<br />- Name of a format, e.g., `html_document`, will render to that single format<br />- An output format object, e.g., `html_document(toc = TRUE, toc_depth = 2, includes = includes(before_body = "header.htm"))`, where you can pass on the argument                                                                                               |
+| `output_options` | - **List** of output options that can override the options specified in metadata (e.g could be used to force `self_contained` or `mathjax = "local"`). <br />- Note that this is <span style='color:#008B45'>only valid when the output format is read from **metadata**</span> (i.e. not a custom format object passed to output_format).<br />- `output_options` cannot work together with `xxx_document()`. |
+| `output_yaml`    | Paths to YAML files specifying output formats and their configurations. The first existing one is used. If none are found, then the function searches YAML files specified to the `output_yaml` top-level parameter in the YAML front matter, `_output.yml` or `_output.yaml`, and then uses the first existing one.                                                                                           |
+
+Use examples of `render`, using **output format objects**
+
+```r
+rmarkdown::render("0208-Rmd-GHpage.Rmd", 
+	bookdown::pdf_document2(
+		latex_engine = "xelatex",
+		# template = "latex/template.tex",
+		includes = rmarkdown::includes(
+			in_header = "latex/preamble.tex",
+      before_body = "latex/before_body.tex")
+		))
+
+# This does NOT work as `output_options` is only valid when the format is not an output format object "xxx_document()"
+rmarkdown::render("0208-Rmd-GHpage.Rmd", 
+	bookdown::pdf_document2(
+		latex_engine = "xelatex",
+		# template = "latex/template.tex"), 
+		output_options = list(
+			includes = rmarkdown::includes(
+        in_header = "latex/preamble.tex",
+        before_body = "latex/before_body.tex")
+		))
+
+# render to html
+rmarkdown::render("0304-Quarto.Rmd",  
+    bookdown::html_document2(
+    	includes = rmarkdown::includes(
+        	in_header = "head.html",
+        	before_body = "scripts.html")
+    	))
+```
+
+Note that sometimes the bookdown cross references in Rmd are not rendered when using the `Knit` button. The rendered html shows `Fig. \@ref(fig:ar-res) ` (without the backslash). In this case, using `rmarkdown::render()` **with `output_format = bookdown::html_document2()`** might help.
+
+
+
+--------------------------------------------------------------------------------
+
+You can have more than one output formats for your Rmd. For example, you want both the html and pdf output.
+
+When you render the Rmd with `rmarkdown::render()`, it will use the **first output format you specify in the YAML metadata** (if it is missing, the default is `html_document`).
+
+If you do not want to use the first one, you can specify the one you want in the second argument, e.g., for an Rmd document `input.Rmd` with the metadata:
+
+```yml
+output:
+  html_document:
+    toc: true
+  pdf_document:
+    keep_tex: true
+```
+
+You can render it to PDF via:
+
+```r
+# Render to pdf
+rmarkdown::render('input.Rmd', 'pdf_document')
+
+# Render multiple formats
+render("input.Rmd", c("html_document", "pdf_document"))
+
+# Render all formats defined
+rmarkdown::render('input.Rmd', 'all')
+```
+
+- RStudio calls the function `rmarkdown::render()` to render the document in **a new R session**.
+  
+    RStudio does this to ensure **reproducibility**.
+
+
+--------------------------------------------------------------------------------
+
+Fast rendering within the current global environment
+
+```r
+rmarkdown::render(active_document_path, envir=.GlobalEnv)
+```
+
+What this does:
+
+- Uses `.GlobalEnv` to access all objects already loaded in your workspace
+- **Faster rendering** since it skips the overhead of starting a new R session
+- All variables, functions, and loaded packages from your current session are available
+
+
+**Caveats:**
+
+- ⚠️ **Less reproducible** - document depends on current session state
+- ⚠️ **Potential conflicts** - objects in current session might interfere with document
+
+--------------------------------------------------------------------------------
+
+### Render multiple documents as a website
+
+[`rmarkdown::render_site(input = ".", output_format = "all")`](https://pkgs.rstudio.com/rmarkdown/reference/render_site.html) Render all of the R Markdown documents within a directory as a website. 
+
+There are two requirements for a directory to be rendered as a website:
+
+- It must contain either an `index.Rmd` or `index.md` file.
+- It must contain a site configuration file (`_site.yml`).
+
+Note that the "Knit" button in RStudio uses `rmarkdown::render_site` to knit the file in presence of an `index.Rmd` file in the working directory.
+
+| Argument        | Definition                                                      |
+| --------------- | --------------------------------------------------------------- |
+| `input`         | Website directory (or the name of a file within the directory). |
+| `output_format` | R Markdown format to convert to (defaults to "all").            |
+| `encoding`      | Ignored. The encoding is always assumed to be UTF-8.            |
+
+What will happen:
+
+- All output and supporting files are copied to a "_site" subdirectory of the website directory. 
+
+  This is configurable with `output_dir` in `_site.yml`.
+
+  `output_dir`: indicates which directory to copy site content into.
+
+Refer to [Rmd GitHub Pages](#render-rmd-site) for more details about rendering websites.
+
+
+**Use example:**
+
+```r
+# render the entire site, if input_file is not specified
+rmarkdown::render_site()
+
+# render a single file only
+rmarkdown::render_site("about.Rmd")
+```
+
+`rmarkdown::render_site("onefile.Rmd")` is useful when you want to render a single file in the site, e.g., `about.Rmd` or `index.Rmd`, without rendering the entire site. It is useful for testing changes to a single file without having to render the entire site.
+
+- It uses all settings in `_output.yml` to render the file, such as the output format, output directory, and other options.
+- It is faster than rendering the entire site because it only processes the specified file and its dependencies, rather than all files in the site.
+- You can view the updates in the server `http://127.0.0.1:port/`. If the server has live reloading enabled, it automatically detects changes to the file and updates the output in real-time. Then you don't need to restart or refresh the server to see the changes. 
+
+--------------------------------------------------------------------------------
+
 
 ## Chunk Options
 

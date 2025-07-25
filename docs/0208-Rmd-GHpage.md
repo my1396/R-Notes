@@ -20,7 +20,10 @@ ___
 
 Note that the **minimum requirement for any [R Markdown website](https://bookdown.org/yihui/rmarkdown/rmarkdown-site.html)** is that it has an `index.Rmd` file and a `_site.yml` file. 
 
-- <a href="#site">`_site.yml`</a> provides the global YAML header for the site
+- <a href="#site">`_site.yml`</a> configures the behavior of site generation.
+
+  It provides the global YAML header for the site.
+
 - <a href="#index">`index.Rmd`</a> provides the content for the home page of your website.
 
 <div class="figure">
@@ -28,16 +31,29 @@ Note that the **minimum requirement for any [R Markdown website](https://bookdow
 <p class="caption">(\#fig:unnamed-chunk-1)Minimal example of a R Markdown website.</p>
 </div>
 
+#### Render your website {- #render-rmd-site}
 
-If you run `rmarkdown::render_site()` (which is the function triggered by the "Knit" button) from within the directory containing the website, the following will occur:
+If you run **`rmarkdown::render_site()`** (which is the function triggered by the "Knit" button) from within the directory containing the website, the following will occur:
 
-1. All of the `*.Rmd` and `*.md` files in the root website directory will be rendered into HTML. Note, however, that Markdown files beginning with `_` are not rendered (this is a convention to designate files that are to be included by top level Rmd documents as child documents).
+1. All of the `*.Rmd` and `*.md` files in the root website directory will be rendered into HTML. 
+
+   Note that Markdown files beginning with `_` are not rendered (this is a convention to designate files that are to be included by top level Rmd documents as child documents).
 
    - `index.Rmd` controls the content on your main page.
 
 2. The generated HTML files and any supporting files (e.g., CSS and JavaScript) are copied into an output directory (`_site` by default, on Github Pages the output folder is `docs`).
 
-    The HTML files within the output directory are now ready to deploy as a standalone static website.
+    Use `output_dir` (in `_site.yml`) to specify which directory to copy site content into.
+
+The HTML files within the output directory are now ready to deploy as a standalone static website.
+
+```r
+# render the entire site
+rmarkdown::render_site()
+
+# render a single file only
+rmarkdown::render_site("about.Rmd")
+```
 
 --------------------------------------------------------------------------------
 
@@ -131,7 +147,7 @@ A full example of `index.Rmd`. You may use this when you want to write complex c
 ---
 title: "R Notes"
 author: "Menghan Yuan"
-date: "2025-07-24"
+date: "2025-07-25"
 site: rmarkdown::default_site
 documentclass: book
 bibliography: [book.bib, packages.bib]
@@ -311,14 +327,16 @@ If you want to have the pdf output, you add `pdf_document` to your document's YA
 - More options can be passed by:
 
 ```r
-render("0207-Rmd-Table.Rmd", 
-bookdown::pdf_document2(
+rmarkdown::render("0207-Rmd-Table.Rmd", 
+  bookdown::pdf_document2(
     latex_engine = "xelatex",
     keep_tex = TRUE,
     includes = includes(
        in_header = "latex/preamble.tex",
-       before_body= "latex/before_body.tex"))
+       before_body= "latex/before_body.tex"
+       )
     )
+  )
 # `output_options` is not compatible with output format function object
 ```
 

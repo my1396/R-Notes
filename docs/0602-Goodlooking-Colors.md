@@ -94,19 +94,19 @@ HTML color codes: <https://htmlcolorcodes.com/color-chart/>
 
     色调是将颜色与**灰色**（黑色和白色混合）混合后得到的颜色，使原色变得柔和。
 
-    <img src="https://drive.google.com/thumbnail?id=1_6z1SAeZTzXbQvhxh-sA1GA5FDC6x-Ce&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
+    <img src="https://drive.google.com/thumbnail?id=1_6z1SAeZTzXbQvhxh-sA1GA5FDC6x-Ce&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:30%;" />
 
   - Shades / 暗色 (加黑)
 
     A shade is a color mixed with **black**, making it darker.
 
-    <img src="https://drive.google.com/thumbnail?id=1r-xZimLkbwlvKjS4oPy9Gl8tUMe8hXPd&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
+    <img src="https://drive.google.com/thumbnail?id=1r-xZimLkbwlvKjS4oPy9Gl8tUMe8hXPd&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:30%;" />
 
   - Tints / 浅色 (加白)
 
     A tint is a color mixed with **white**, making it lighter.
 
-    <img src="https://drive.google.com/thumbnail?id=1UpyrMYA-sRTnQiOg27O1o2KzWYVe9l6W&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
+    <img src="https://drive.google.com/thumbnail?id=1UpyrMYA-sRTnQiOg27O1o2KzWYVe9l6W&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:30%;" />
 
 - [Chart](https://htmlcolorcodes.com/color-chart/): flat design color chart [standard colors]
 
@@ -182,7 +182,7 @@ p_global <- ggplot(global_data_plot, aes(x=year, y=value, col=variable)) +
 
 
 
-<img src="https://drive.google.com/thumbnail?id=1QYdo3syeBzt0Nj5QCbfknN3ZAX6gviZ9&sz=w1000" alt="col" style="zoom:30%;" />
+<img src="https://drive.google.com/thumbnail?id=1QYdo3syeBzt0Nj5QCbfknN3ZAX6gviZ9&sz=w1000" alt="col" style="zoom:80%;" />
 
 **Common Color Models**
 
