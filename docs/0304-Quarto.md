@@ -40,28 +40,6 @@ Weakness of Quarto:
 
 --------------------------------------------------------------------------------
 
-In terminal, run:
-
-- Quarto Render: create the final version of your document for distribution. 
-  
-  `quarto render 0304-Quarto.Rmd --to html`
-
-  Note that `quarto render` can be used to Rmd files too. 
-
-- Quarto Preview: display output in a web browser.
-
-  `quarto preview 0304-Quarto.Rmd`
-
-Alternatively, use command palette in **VS Code**:
-
-- `Quarto: Render Document` to render the document.
-
-  If you have multiple formats, run `Quarto: Render Document` for a specific format.
-
-  `Quarto: Render Project` to render the entire project.
-
-- `Quarto: Preview` to preview the default document in a web browser. If you want to preview a different format, use the `Quarto: Preview Format` command:
-
 
 
 
@@ -258,8 +236,11 @@ Note that when you make changes to your local `.scss`, the changes will be imple
 
 
 
-Ref: <https://quarto.org/docs/output-formats/html-themes.html>
+Ref: 
 
+- Quarto document: <https://quarto.org/docs/output-formats/html-themes.html>
+
+- Check sass variables: <https://bootswatch.com>
 
 --------------------------------------------------------------------------------
 
@@ -278,19 +259,31 @@ Difference btw a standalone webpage from a component of a `qmd` project
 
     Slow, need to render the whole `qmd` project in order to see your change.
 
+
+
+
+
 #### In terminal {-}
 
-Render a Quarto document to HTML using the command line:
+- Render a Quarto document to HTML using the command line:
 
-```bash
-$quarto render 0304-Quarto.Rmd --to html
-```
+  ```bash
+  $quarto render 0304-Quarto.Rmd --to html
+  ```
 
-You can also render a Quarto project using:
+- Quarto Preview: display output in a web browser.
 
-```bash
-$quarto render --to html
-```
+  ```bash
+  quarto preview 0304-Quarto.Rmd
+  ```
+
+  Note that `quarto render` can be used to Rmd files too. 
+
+- You can also render a Quarto project using:
+
+  ```bash
+  $quarto render --to html
+  ```
 
 #### In VS Code {-}
 
