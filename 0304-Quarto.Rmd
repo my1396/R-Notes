@@ -187,17 +187,7 @@ format:
       light: [cosmo, themes/cosmo-light.scss]
 ```
 
-Rendering the whole website is slow. When you are editing a new section/page, you may want to edit as a standalone webpage and when you are finished, you add the `qmd` file to the `_quarto.yml` file index.
 
-Difference btw a standalone webpage from a component of a `qmd` project
-
-- Standalone webpage: include `yaml` at the header of the file.
-  
-    Fast compile and rendering. ✅
-    
-- A component of `qmd` project: added to the file index, no `yaml` needed, format will automatically apply.
-
-    Slow, need to render the whole `qmd` project in order to see your change.
 
 --------------------------------------------------------------------------------
 
@@ -210,7 +200,36 @@ As of Quarto 1.7, `respect-user-color-scheme` requires JavaScript support: users
 --------------------------------------------------------------------------------
 
 
-**Theme options**
+#### Custom Themes {-}
+
+Your `custom.scss` file might look something like this:
+
+```css
+/*-- scss:defaults --*/
+$h2-font-size:          1.6rem !default;
+$headings-font-weight:  500 !default;
+
+/*-- scss:rules --*/
+h1, h2, h3, h4, h5, h6 {
+  text-shadow: -1px -1px 0 rgba(0, 0, 0, .3);
+}
+```
+
+Note that the variables section is denoted by
+
+- `/*-- scss:defaults --*/`: the defaults section (where Sass variables go) 
+  
+  Used to define global variables that can be used throughout the theme.
+
+- `/*-- scss:rules --*/`: the rules section (where normal CSS rules go)
+  
+  Used to define more fine grained behavior of the theme, such as specific styles for headings, paragraphs, and other elements.
+
+
+--------------------------------------------------------------------------------
+
+
+#### Theme Options {-}
 
 You can do extensive customization of themes using [Sass variables](https://sass-lang.com/). Bootstrap defines over 1,400 Sass variables that control fonts, colors, padding, borders, and much more. 
 
@@ -242,7 +261,75 @@ Note that when you make changes to your local `.scss`, the changes will be imple
 Ref: <https://quarto.org/docs/output-formats/html-themes.html>
 
 
+--------------------------------------------------------------------------------
 
+### Render Quarto
+
+
+Rendering the whole website is slow. When you are editing a new section/page, you may want to edit as a standalone webpage and when you are finished, you add the `qmd` file to the `_quarto.yml` file index.
+
+Difference btw a standalone webpage from a component of a `qmd` project
+
+- Standalone webpage: include `yaml` at the header of the file.
+  
+    Fast compile and rendering. ✅
+    
+- A component of `qmd` project: added to the file index, no `yaml` needed, format will automatically apply.
+
+    Slow, need to render the whole `qmd` project in order to see your change.
+
+#### In terminal {-}
+
+Render a Quarto document to HTML using the command line:
+
+```bash
+$quarto render 0304-Quarto.Rmd --to html
+```
+
+You can also render a Quarto project using:
+
+```bash
+$quarto render --to html
+```
+
+#### In VS Code {-}
+
+You can render a Quarto document in VS Code using the command palette:
+
+- `Quarto: Render Document` to render the document.
+- `Quarto: Render Project` to render the entire project.
+- `Quarto: Preview` to preview the default document in a web browser. If you want to preview a different format, use the `Quarto: Preview Format` command:
+
+```bash
+$ quarto preview 0304-Quarto.Rmd # all formats
+$ quarto preview 0304-Quarto.Rmd --to html # specific format
+``` 
+
+#### In R {-}
+
+`quarto::quarto_render(input = NULL, output_format = "html")` can be used to render a Quarto document or project in R.
+
+- If `input` is not specified, it will render the current Quarto project. If `input` is specified, it will render the specified Quarto document.
+
+- If `output_format` is not specified, it will render the document to HTML. You can specify other formats such as PDF or Word. 
+  - `output_format = "all"` will render all formats specified in the `_quarto.yml` file.
+
+
+```r
+# Render a Quarto document to HTML
+quarto::quarto_render("0304-Quarto.Rmd", output_format = "html")
+# Render a Quarto project to HTML
+quarto::quarto_render(output_format = "html")
+```
+
+```r
+# Render a Quarto document to PDF
+quarto::quarto_render("0304-Quarto.Rmd", output_format = "pdf")
+# Render a Quarto project to PDF
+quarto::quarto_render(output_format = "pdf")
+```
+
+Alternatively, you can use the **Render** button in RStudio. The Render button will render the first format listed in the document YAML. If no format is specified, then it will render to HTML.
 
 --------------------------------------------------------------------------------
 
@@ -511,6 +598,59 @@ crossref:
 
 - `cnj-title`: The title prefix used for conjecture captions.
 - `cnj-prefix`: The prefix used for an <u>inline reference</u> to a conjecture.
+
+--------------------------------------------------------------------------------
+
+### Callouts
+
+There are five different types of callouts available.
+
+- note
+- warning
+- important
+- tip
+- caution
+
+The color and icon will be different depending upon the type that you select. 
+
+````markdown
+::: {.callout-note}
+Note that there are five types of callouts, including:
+`note`, `warning`, `important`, `tip`, and `caution`.
+:::
+
+::: {.callout-tip}
+## Tip with Title
+
+This is an example of a callout with a title.
+:::
+
+::: {.callout-caution collapse="true"}
+## Expand To Learn About Collapse
+
+This is an example of a 'folded' caution callout that can be expanded by the user. You can use `collapse="true"` to collapse it by default or `collapse="false"` to make a collapsible callout that is expanded by default.
+:::
+````
+
+Here are what the various types look like in HTML output:
+
+
+<img src="https://drive.google.com/thumbnail?id=1WVMOAJyHE_09EYkH05KREhKE3A6r1vMj&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
+
+- Callout heading can be defined using 
+  - `title = "Heading"` in the callout header, or
+  - `## Heading` in the callout body
+    
+    It can be any level of heading.
+
+- `icon = false` to disable the icon in the callout.
+- To cross-reference a callout, add an ID attribute that starts with the appropriate callout prefix, e.g., `#nte-xxx`. You can then reference the callout using the usual `@nte-xxx` syntax. 
+- `appearance = "default" | "simple" | "minimal"` 
+  - `default`: to use the default appearance with a background color and border.
+  - `simple`: to remove the background color, but keep the border and icon.
+  - `minimal`: A minimal treatment that applies borders to the callout, but doesn’t include a header background color or icon.
+    
+    `appearance="minimal"` is equivalent to `appearance = "simple" icon = false` in the callout header.
 
 
 

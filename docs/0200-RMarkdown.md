@@ -739,9 +739,9 @@ Note that sometimes the bookdown cross references in Rmd are not rendered when u
 
 --------------------------------------------------------------------------------
 
-You can have more than one output formats for your Rmd. For example, you want both the html and pdf output.
+You can have **more than one output formats** for your Rmd. For example, you want both the html and pdf output.
 
-When you render the Rmd with `rmarkdown::render()`, it will use the **first output format you specify in the YAML metadata** (if it is missing, the default is `html_document`).
+When you render the Rmd with `rmarkdown::render()`, it will use the <span style="color: #008B45; font-weight:bold; ">first output format</span> **you specify** in the YAML metadata (if it is missing, the default is `html_document`).
 
 If you do not want to use the first one, you can specify the one you want in the second argument, e.g., for an Rmd document `input.Rmd` with the metadata:
 
@@ -825,13 +825,17 @@ Refer to [Rmd GitHub Pages](#render-rmd-site) for more details about rendering w
 
 ```r
 # render the entire site, if input_file is not specified
+# render all output formats defined in `_output.yml`
 rmarkdown::render_site()
+
+# render the entire site for gitbook format only
+rmarkdown::render_site(output_format = "bookdown::gitbook")
 
 # render a single file only
 rmarkdown::render_site("about.Rmd")
 ```
 
-`rmarkdown::render_site("onefile.Rmd")` is useful when you want to render a single file in the site, e.g., `about.Rmd` or `index.Rmd`, without rendering the entire site. It is useful for testing changes to a single file without having to render the entire site.
+`rmarkdown::render_site("onefile.Rmd")` is useful when you want to render a single file in the site, e.g., `about.Rmd` or `index.Rmd`, without rendering the entire site. It is useful for **testing changes** to a single file without having to render the entire site.
 
 - It uses all settings in `_output.yml` to render the file, such as the output format, output directory, and other options.
 - It is faster than rendering the entire site because it only processes the specified file and its dependencies, rather than all files in the site.
