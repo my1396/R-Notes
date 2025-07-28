@@ -2,7 +2,7 @@
 
 Distributed Lag model using `dynlm` package, which is useful for dynamic linear models and time series regressions. Lags or differences can directly be specified in the model formula.
 
-The main function used to estimate our model is the `dynlm(formula, data)` function. Within this function, `d()` can be used to specify the **difference** in a variable and `L()` can be used to compute the desired **lag** of the variable.  
+The main function used to estimate our model is the `dynlm(formula, data)` function. Within this function, `d()` can be used to specify the **difference** in a variable and `L()` can be *used* to compute the desired **lag** of the variable.  
 
 `d(u, 1)` means to calculate the first difference in `u`; `L(g, 0:2)` denotes `g` of the current period and the past two periods, $g$, $g_{-1}$, and $g_{-2}$.
 
@@ -41,8 +41,57 @@ Residual standard error: 0.4416 on 303 degrees of freedom
   (0 observations deleted due to missingness)
 Multiple R-squared:  0.5825,	Adjusted R-squared:  0.5784 
 F-statistic: 140.9 on 3 and 303 DF,  p-value: < 2.2e-16
-
 ```
 
+### Lag Polynomial
 
+Let $\rho(L)=1-\rho_1L$ and $\beta(L)=\beta_0+\beta_1L.$
+Now we have $\psi(L)$ such at 
 
+$$
+\rho(L)\psi(L)=\beta(L) .
+$$
+
+We want to find $\psi(L)=\rho(L)^{-1}\beta(L).$
+
+```{r}
+# Compute psi(L) = rho(L)^(-1) * beta(L)
+lag_poly_solution <- function(rho1, beta0, beta1, n_terms = 5) {
+  # Expand (1 - rho1*L)^(-1) as a power series up to n_terms
+  # (1 - rho1*L)^(-1) = 1 + rho1*L + rho1^2*L^2 + ... + rho1^n*L^n
+  rho_inv <- sapply(0:n_terms, function(k) rho1^k)
+  
+  # beta(L) = beta0 + beta1*L
+  # psi(L) = (1 + rho1*L + rho1^2*L^2 + ...)*(beta0 + beta1*L)
+  #         = beta0*(1 + rho1*L + ...) + beta1*L*(1 + rho1*L + ...)
+  #         = beta0*rho_inv + beta1*c(0, rho_inv[1:n_terms])
+  psi <- beta0 * rho_inv
+  psi <- psi + beta1 * c(0, rho_inv[1:n_terms])
+  
+  # Return coefficients: psi0 + psi1*L + psi2*L^2 + ...
+  names(psi) <- paste0("L^", 0:n_terms)
+  return(psi)
+}
+```
+
+```{r}
+# Example usage:
+psi_coef <- lag_poly_solution(rho1 = 0.5, beta0 = 1, beta1 = 2, n_terms = 20)
+psi_coef
+```
+
+Plot the lag polynomial coefficients:
+
+```{r message=FALSE}
+library(tidyverse)
+psi_df <- tibble(
+  lag = 1:21,
+  coef = psi_coef
+)
+
+# Bar plot
+ggplot(psi_df, aes(x = lag, y = coef)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  labs(x = "Lag", y = expression(psi[L]), title = "Lag Polynomial Coefficients") +
+  theme_minimal()
+```

@@ -1007,6 +1007,14 @@ You may use `knitr::opts_chunk$set()` to change the default values of chunk opti
 
 `collapse = TRUE` makes the output more compact, since the R source code and its text output are displayed in a single output block. The default `collapse = FALSE` means R expressions and their text output are separated into different blocks.
 
+--------------------------------------------------------------------------------
+
+`message=TRUE` is often used together with `warning=TRUE` to control whether messages and warnings are displayed in the output document.
+
+- `message=FALSE` will suppress messages from the output document, but the code is still evaluated and messages are still printed to the console.
+  
+  Often used to suppress messages from packages that are not relevant to the output document, such as package loading messages.
+
 
 --------------------------------------------------------------------------------
 

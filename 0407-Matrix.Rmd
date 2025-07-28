@@ -1,6 +1,6 @@
 ## Matrix multiplication
 
-Dot product (element to element multiplication, then sum the result) `sum(x*y)` 
+**Dot product** (element to element multiplication, then sum the result) `sum(x*y)` 
 
 **Matrix product or inner product** of vectors `X %*% Y` is $X^TY$.
 

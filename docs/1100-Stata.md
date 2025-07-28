@@ -1224,17 +1224,17 @@ The following commands define our forecast model, including the estimated panel-
 forecast create statemodel, replace   
 /* add equations, rename the endog variable, D.lndim, to be forecasted as dlndim */
 /* since the original endog variable name includes a time series operator
-	 it is required to name, otherwise will return error */
+   it is required to name, otherwise will return error */
 forecast estimates dim, name(dlndim)  
 /* add state fixed effects */
 forecast adjust dlndim = dlndim + dlndim_u2 
 ```
 
-Note that our dependent variable contains a time series operator, we must use `name(dlndim)` option of `forecast estimates` to specify a valid name for the endogenous variable being added.
+- Note that our dependent variable contains a time series operator, we must use `name(dlndim)` option of `forecast estimates` to specify a valid name for the endogenous variable being added.
 
-`dlndim` stands for the first difference of the logarithm of `dim`. We are interested in the level of `dim`, so we need to back out `dim` from `dlndim`.
+- `dlndim` stands for the first difference of the logarithm of `dim`. We are interested in the level of `dim`, so we need to back out `dim` from `dlndim`.
 
-We use `forecast identity` to obtain the actual `dim` variable.
+  → We use `forecast identity` to obtain the actual `dim` variable.
 
 ```stata
 // reverse first difference, note that you refer to the endog var using the new name, dlndim, now
@@ -1243,8 +1243,8 @@ forecast identity lndim = L.lndim + dlndim
 forecast identity dim = exp(lndim)
 ```
 
-We used forecast adjust to perform our adjustment to dlndim immediately after we added those estimation results so that we would not forget to do so.
-However, we <span style='color:#008B45'>could specifyt the adjustment at any time</span>. 
+We used forecast adjust to perform our adjustment to `dlndim` immediately after we added those estimation results so that we would not forget to do so.
+However, we <span style='color:#008B45'>could specify the adjustment at any time</span>. 
 
 Regardless of when you specify an adjustment, `forecast solve` performs those adjustments immediately after the variable being adjusted is computed.
 
@@ -1310,7 +1310,7 @@ Options
 - `vce(robust)` use clustered variance that allows for intragroup correlation within
   groups.
   
-    By defualt, SE uses OLS estimates.
+    By default, SE uses OLS estimates.
 
 
 

@@ -122,6 +122,18 @@ options(
 
 --------------------------------------------------------------------------------
 
+### FAQ
+
+
+Q: I cannot see my R Objects in the global environment. \
+A: when you click on "**R: (not attached)**" on the bottom bar or type `.vsc.attach()` into the terminal, your objects should start showing up in your global environment.
+
+Q: How to disable `lintr`? \
+A: Set `"r.lsp.diagnostics": false`. Then in command palette, type "Developer: Reload Window" for the changes to take effect.
+
+--------------------------------------------------------------------------------
+
+
 ### Plot Viewer {.unnumbered}
 
 [`httpgd`](https://nx10.github.io/httpgd/): A graphics device for R that is accessible via network protocols. This package was created to make it easier to embed live R graphics in integrated development environments and other applications. `httpgd` is required by the interactive plot viewer of the R extension for VS Code.
