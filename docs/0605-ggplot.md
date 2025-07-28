@@ -92,7 +92,7 @@ default: `theme_gray()` (with grey background)
 
 normal: **`theme_bw() `** (recommended 结构清晰)
 
-coordinates: `theme_minimal()` (no axis borders 极简风)
+coordinates: `theme_minimal()` (no axis borders 极简风) 没有背景填充色，深色模式下预览困难。
 
 with no grid: `theme_classic()` (hard to read)
 
@@ -714,7 +714,7 @@ pfda_plot <- ggplot(data=pfdavar,aes(x=X1,y=X2,group=groups))+
   scale_color_manual(values=rep("black",18))
 ```
 
-The above gives you something close, just that it is all 'a' for geom_text legend. What we need to do now, is change the default 'a', and for this I used [@MarcoSandri's solution to change the default "a" in legend for geom_text()](https://stackoverflow.com/questions/49965758/change-geom-texts-default-a-legend-to-label-string-itself)
+The above gives you something close, just that it is all 'a' for geom_text legend. What we need to do now, is change the default 'a', and for this I used [\@MarcoSandri's solution to change the default "a" in legend for geom_text()](https://stackoverflow.com/questions/49965758/change-geom-texts-default-a-legend-to-label-string-itself)
 
 ```r
 g <- ggplotGrob(pfda_plot)

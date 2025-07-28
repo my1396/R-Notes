@@ -110,8 +110,13 @@ Rmd built-in themes for `html` output: <https://rstudio4edu.github.io/rstudio4ed
 
   **Different flavors of Markdown** may produce different results if there are no blank lines. 🙈🙈
 
+- Need to escape `@` in the text by `\@`, otherwise, it will be interpreted as a citation key, e.g., `@author` or `@citekey`.
+  
+  [Special characters](https://github.com/mattcone/markdown-guide/blob/master/_basic-syntax/escaping-characters.md) that have specific meanings in Markdown, such as `*`, `_`, `#`, `+`, `-`, should be escaped with a backslash (`\`) if you want to display them literally. 
 
-
+  ```markdown
+  \* Without the backslash, this would be a bullet in an unordered list.
+  ```
 
 
 

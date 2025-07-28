@@ -279,7 +279,7 @@ The output format `bookdown::gitbook` is built upon `rmarkdown::html_document`, 
     
     - [`0007bookdown/mathjax_header.html`](https://github.com/matthew-towers/0007bookdown/blob/master/mathjax_header.html) by matthew-towers
             
-      @matthew-towers uses a very clever approach, probably the easiest setup -- define the command directly in LaTeX and enclode in `<span class="math inline">$...$</span>` to indicate this is inline math.
+      \@matthew-towers uses a very clever approach, probably the easiest setup -- define the command directly in LaTeX and enclode in `<span class="math inline">$...$</span>` to indicate this is inline math.
       
     - [Using inline config options](https://docs.mathjax.org/en/v2.7-latest/configuration.html#using-in-line-configuration-options)
     - [Stack Overflow MathJax](https://stackoverflow.com/questions/76312006/how-to-load-mathjax-extensions-in-bookdown)
