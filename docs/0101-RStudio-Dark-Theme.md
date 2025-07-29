@@ -335,6 +335,8 @@ install.packages(
 install.packages("Rcpp", repos="https://rcppcore.github.io/drat")
 ```
 
+--------------------------------------------------------------------------------
+
 **Install from GitHub**
 
 ``` r
@@ -346,16 +348,24 @@ devtools::install_github(repo, ref="HEAD", subdir = NULL)
 
 Ex
 
-``` r
+```r
 # install version 3.5.1
 install_github("tidyverse/ggplot2", ref="ggplot2 3.5.1")
+```
+
+--------------------------------------------------------------------------------
+
+**Install package from source file**  `.tar`
+
+```r
+install.packages("~/Downloads/greenbrown_2.4.3.tar", repos = NULL, type="source")
 ```
 
 ------------------------------------------------------------------------
 
 **Check installed packages**
 
-``` r
+```r
 # print all installed packages
 rownames(installed.packages())
 # check if `ggplot2` is installed

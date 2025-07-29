@@ -397,7 +397,8 @@ We
       geom_point(aes(colour = "darkblue"))
     ```
 
-    ![aes-2](/Users/Menghan/Dropbox/coding_notes/figures/aes-2.png)
+    
+    <img src="https://drive.google.com/thumbnail?id=14sa9X9Ij8ye5w9Ee4Dj0SzqmMxxE4fJ7&sz=w1000" alt="aes-2.png" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
 
   A third approach is to map the value, but override the default scale:
 
@@ -559,7 +560,7 @@ p + scale_colour_manual(values = cols, limits = c("4", "6", "8", "10"))
 
 
 
-<img src="https://drive.google.com/thumbnail?id=1Fn_xEBPcZX-kB2-DEgnAhWFhabsuN-c1&sz=w1000" alt="aes-3" style="zoom:40%;" />
+<img src="https://drive.google.com/thumbnail?id=1Fn_xEBPcZX-kB2-DEgnAhWFhabsuN-c1&sz=w1000" alt="aes-3" style="display: block; margin-right: auto; margin-left: auto; zoom:60%;" />
 
 
 
@@ -587,7 +588,7 @@ ggplot(aes(x = Sepal.Length), data = iris) +
   scale_color_manual(name = "statistics", values = c(median = "blue", mean = "red"))
 ```
 
-<img src="https://drive.google.com/thumbnail?id=1SCc7VsJ3vTwSxlR0_oWBv63jk4pbDHHv&sz=w1000" alt="aes-4" style="zoom:100%;" />
+<img src="https://drive.google.com/thumbnail?id=1SCc7VsJ3vTwSxlR0_oWBv63jk4pbDHHv&sz=w1000" alt="aes-4" style="display: block; margin-right: auto; margin-left: auto; zoom:60%;" />
 
 
 
@@ -729,7 +730,7 @@ grid.draw(g)
 
 
 
-<img src="https://drive.google.com/thumbnail?id=1AbBPG9AeA6g4GnlenpGy1KOuq1sGI9bh&sz=w1000" alt="legend-1" style="zoom:30%;" />
+<img src="https://drive.google.com/thumbnail?id=1AbBPG9AeA6g4GnlenpGy1KOuq1sGI9bh&sz=w1000" alt="legend-1" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;"/>
 
 
 
@@ -1281,9 +1282,6 @@ It’s the engine that renders your plot. Common graphics devices are Quartz and
 
 
 
-Install package from source file  `.tar`
-
-`install.packages("~/Downloads/greenbrown_2.4.3.tar", repos = NULL, type="source")`
 
 
 

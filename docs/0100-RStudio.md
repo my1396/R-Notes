@@ -1,6 +1,6 @@
-# Rstudio
+# RStudio
 
-**Rstudio shortcuts**
+**RStudio shortcuts**
 
 Command Palette: shift+cmd+P, all shortcuts can be accessed via the Command Palette.
 
@@ -213,7 +213,7 @@ By default, RStudio enables inline output (Notebook mode) on all R Markdown docu
 
     <img src="images/chunk output in console.png" width="60%" />
 
-- To add comments to a function, you can type “Roxygen comment” into the Command Palette (shift+cmd+P) while the cursor is in a function and it will automatically add a template structure for writing a comment about your function.
+- To add comments to a function, you can type “**Roxygen comment**” into the Command Palette (shift+cmd+P) while the cursor is in a function and it will automatically add a template structure for writing a comment about your function.
 
   Keyboard shortcut: shift+opt+cmd+R
 
