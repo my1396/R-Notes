@@ -98,42 +98,65 @@ with no grid: `theme_classic()` (hard to read)
 
 
 
+--------------------------------------------------------------------------------
 
 
-**Wide table to Long table**
+### Wide table to Long table
 
 `tidyr::gather(data, key = "key", value = "value", ...) ` convert data frame to key-value **long format**.
 
- `...` is a selection of columns. If empty, all variables are selected. You can supply bare variable names, select all variables between x and z with `x:z`, exclude y with `-y`.
+- `...` is a selection of columns. If empty, all variables are selected. You can supply bare variable names, select all variables between x and z with `x:z`, exclude y with `-y`.
 
-* `key`  	one identifier column that you use to idendify groups, store the **names** of columns that you want to gather/stack;
+- `key`  	one identifier column that you use to identify groups, store the **names** of columns that you want to gather/stack;
 
-* `value`  one value column name that put **values** in `key` columns;
+- `value`  one value column name that put **values** in `key` columns;
 
-* `...`      specification of columns to gather/stack. Allowed values are:
+- `...` specification of columns to gather/stack. Allowed values are:
 
   - variable names, put them just in a sequence, do not need to wrap it in a vector
 
   - if you want to select all variables between a and e, use a:e. Or could use position index e.g., 1:3.
 
-  - if you want to ***exclude*** a column name y use `-y`, usually the **index/identifier** of the columnss. 
-
-    
-
-`df %>% pivot_longer(c(x, y, z), names_to = "key", values_to = "value")`
-
-​		is equivalent to `df %>% gather("key", "value", x, y, z)`,  more recommended. 
+  - if you want to ***exclude*** a column name y use `-y`, usually the **index/identifier** of the columns. 
 
 
+```r
+df %>% pivot_longer(c(x, y, z), names_to = "key", values_to = "value")
+```
 
-**Long table to wide table** `spread`, reverse `gather()`
+is equivalent to `df %>% gather("key", "value", x, y, z)`, more recommended as `gather` is deprecated now. 
+
+
+--------------------------------------------------------------------------------
+
+
+#### Long table to wide table {-}
+
+`spread`, reverses `gather()`
 
 ```r
 spread(data, key, value, fill = NA, convert = FALSE, drop = TRUE, sep = NULL)
 ```
 
-`key` the column in the long table that will become factor/columns in wide table; the number of new columns equals to the number of categories in `key`; the columns are filled by `value`;
+- `key` the column in the long table that will become factor/columns in wide table; the number of new columns equals to the number of categories in `key`; 
+- the columns are filled by `value`;
+- `fill` 	what value to fill in the new columns when there is no data for that category; default to `NA`;
 
+
+It is recommended switching to `pivot_wider()`, which is easier to use, more featureful, and still under active development. 
+
+```r
+pivot_wider(data, names_from = key, values_from = value, names_prefix = "")
+```
+
+- `names_prefix` 	optional prefix to add to the names of the new columns, useful when you want to avoid name conflicts with existing columns.
+
+
+```r
+df %>% spread(key, value) 
+# equivalent to 
+df %>% pivot_wider(names_from = key, values_from = value)
+```
 
 
 ```r

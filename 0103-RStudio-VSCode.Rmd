@@ -7,9 +7,59 @@ You can run R in VS Code. Simply open the folder containing your R scripts in VS
 - By default, this will close the currently open folder. 
 - If you want multiple windows each with their own folder, you first open a new window (Ctrl+Shift+N) and then open the folder in that new window.
 
+
+
 Q: How to run R code interactively? \
 A: Create an R terminal via command **R: Create R Terminal** in the Command Palette. Once an R terminal is ready, you could either select the code or put the cursor at the beginning or ending of the code you want to run, press (<kbd>Ctrl</kbd> + <kbd>Enter</kbd>), and then code will be sent to the active R terminal.
 If you want to run an entire R file, open the file in the editor, and press Ctrl+Shift+S and the file will be sourced in the active R terminal.
+
+
+
+--------------------------------------------------------------------------------
+
+
+### `languageserver` package
+
+The [R language server](https://github.com/REditorSupport/languageserver#servers-implemented) implements the [Language Server Protocol](https://microsoft.github.io/language-server-protocol/specifications/specification-current/) (LSP) and provides a set of language analysis features such as *completion*, providing function signatures, extended function documentation, locating function implementations, occurrences of a symbol or object, *rename symbol*, and code diagnostics and formatting. The R language server statically analyzes R code, and vscode-R interfaces with it to provide the core of this extension's functionality.
+
+The R language server is implemented by the [languageserver](https://github.com/REditorSupport/languageserver) package which performs static code analysis with the latest user documents in `R` and `Rmd` languages. Therefore, it does not rely on an active R session and thus does not require the code to be executed.
+
+#### `lintr` {-}
+
+R code linting (diagnostics) is provided by [lintr](https://github.com/r-lib/lintr) via language server and is enabled by default. It provides syntax error warnings as well as style guidelines.
+
+**Configuration**
+
+To configure the behavior of `lintr`, you should create/edit the global `lintr` config file at `~/.lintr`. Alternatively, you can also create/edit a project-specific lintr config file at `${workspaceFolder}/.lintr`. 
+
+- Do not forget the new **empty line** at the end of the file.
+
+  To be sure that the file is correctly set up you can use:
+
+  ```r
+  read.dcf(".lintr") # Should give no error
+  ```
+
+  If the file is not available in the workspace you can add it with:
+
+  ```r
+  options(lintr.linter_file="Path/to/file/.lintr")
+  ```
+
+  You can also add this line in your `.Rprofile` to not have to run it everytime. [ref ↩︎](︎https://stackoverflow.com/a/77286956)
+
+- Visit [Individual linters](https://lintr.r-lib.org/reference/index.html#individual-linters) for a complete list of supported linters.
+
+- Visit the [Configuring linters](https://lintr.r-lib.org/articles/lintr.html#configuring-linters) for a complete guide to customizing lintr config regarding the list of linters and file or line exclusions.
+
+
+
+Q: How to disable `lintr`? \
+A: Set `"r.lsp.diagnostics": false`. Then in command palette, type "Developer: Reload Window" for the changes to take effect.
+
+
+
+--------------------------------------------------------------------------------
 
 ### Radian
 
@@ -69,7 +119,7 @@ Then, in VS Code, you will need to set Radian as the default R terminal. You can
 - `r.rterm.mac`: Path to the Radian executable.
 - `r.bracketedPaste`: Enables bracketed paste mode, which allows pasting code without executing it immediately. This is useful if you want to paste multiple lines of code into the console at once.
 - `r.sessionWatcher`: Enables [session watcher](https://github-wiki-see.page/m/REditorSupport/vscode-R/wiki/R-Session-watcher) to monitor the R session. Specifically, 
-    
+  
     - Show value of session symbols on hover
     - Show plot output on update and plot history
     - Show htmlwidgets, documentation and shiny apps in WebView
@@ -128,8 +178,7 @@ options(
 Q: I cannot see my R Objects in the global environment. \
 A: when you click on "**R: (not attached)**" on the bottom bar or type `.vsc.attach()` into the terminal, your objects should start showing up in your global environment.
 
-Q: How to disable `lintr`? \
-A: Set `"r.lsp.diagnostics": false`. Then in command palette, type "Developer: Reload Window" for the changes to take effect.
+
 
 --------------------------------------------------------------------------------
 
@@ -189,15 +238,16 @@ You can edit Rmd with either of the two Language Mode:
 
     - Knit button generate output html in the `docs/` directory; it uses your styles settings in the `_output.yml` file.
     - `rmarkdown::render` generates output html in the same directory as the Rmd file. It does not apply any settings from `_output.yml` file, so you need to specify any headers you want to load, e.g., mathjax macros.
-  
+    
+    
     How to decide which Language Mode to use? A rule of thumb is:
     - If your Rmd has lots of R code you need to run interactively, use `R Markdown`.
-    - If you want to write a static report with minimal R code, use `Markdown`.
-
-      At all cases, it is quite easy to switch between the two modes by changing the Language Mode in the bottom right corner of VS Code. So you can choose either one that suits you best.
-
-- `Markdown`: there is no knit button but you can have a live preview using the `Markdown Preview Enhance` extension.
+  - If you want to write a static report with minimal R code, use `Markdown`.
     
+    At all cases, it is quite easy to switch between the two modes by changing the Language Mode in the bottom right corner of VS Code. So you can choose either one that suits you best.
+  
+- `Markdown`: there is no knit button but you can have a live preview using the `Markdown Preview Enhance` extension.
+  
     Instead, you need to run the `rmarkdown::render()` function in the terminal or in an R script to render the Rmd file.
 
 
