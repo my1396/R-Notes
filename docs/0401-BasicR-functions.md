@@ -63,7 +63,7 @@ if(file.exists(data)){
 
 https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/sprintf
 
-- re-use one argument in `fmt`: add <span style='color:#008B45'>**`1$`**</span> between `%`  and `s`, numbers specify the position, `$` as place holder; 
+- <span style='color:#008B45'>**re-use one argument**</span> in `fmt`: add <span style='color:#008B45'>`1$`</span> between `%`  and `s`, numbers specify the position, `$` as place holder; 
 
   Immediately after `%` may come `1$` to `99$` to refer to a numbered argument.
 
@@ -527,7 +527,7 @@ set.seed(eff_seed)
     \end{cases}
     $$
 
-  Binormial is the sum of Bernoulli
+  Binomial is the sum of Bernoulli
   $$
   Y = \sum_{i=1}^{\text{size}} X_i
   $$
