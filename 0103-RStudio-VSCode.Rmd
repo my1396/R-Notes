@@ -20,9 +20,21 @@ If you want to run an entire R file, open the file in the editor, and press Ctrl
 
 ### `languageserver` package
 
-The [R language server](https://github.com/REditorSupport/languageserver#servers-implemented) implements the [Language Server Protocol](https://microsoft.github.io/language-server-protocol/specifications/specification-current/) (LSP) and provides a set of language analysis features such as *completion*, providing function signatures, extended function documentation, locating function implementations, occurrences of a symbol or object, *rename symbol*, and code diagnostics and formatting. The R language server statically analyzes R code, and vscode-R interfaces with it to provide the core of this extension's functionality.
+The [R language server](https://github.com/REditorSupport/vscode-R/wiki/R-Language-Service) implements the [Language Server Protocol](https://microsoft.github.io/language-server-protocol/specifications/specification-current/) (LSP) and provides a set of language analysis features such as *completion*, providing function signatures, extended function documentation, locating function implementations, occurrences of a symbol or object, *rename symbol*, and code diagnostics and formatting. The R language server statically analyzes R code, and `vscode-R` interfaces with it to provide the core of this extension's functionality.
 
 The R language server is implemented by the [languageserver](https://github.com/REditorSupport/languageserver) package which performs static code analysis with the latest user documents in `R` and `Rmd` languages. Therefore, it does not rely on an active R session and thus does not require the code to be executed.
+
+- `styler`
+
+  The language server provides code formatting through the through the [`styler`](https://github.com/r-lib/styler) package in R. See [here](https://github.com/REditorSupport/languageserver#customizing-formatting-style) for configuration.
+
+  Main usage: select the code block you want to format, right-click and select **Format Selection**. Note that this only works in the **Edit Mode** when Vim is enabled.
+
+  Alternatively, right-click at anywhere in the code editor and select **Format Document** to format the entire document. 
+
+- Rename symbol: 
+
+  Place the cursor on the symbol you want to rename, right-click and select **Rename Symbol**. A dialog will pop up, allowing you to enter the new name for the symbol. A refactoring preview will be shown, allowing you to review the changes before applying them.
 
 #### `lintr` {-}
 
