@@ -24,6 +24,8 @@ The [R language server](https://github.com/REditorSupport/vscode-R/wiki/R-Langua
 
 The R language server is implemented by the [languageserver](https://github.com/REditorSupport/languageserver) package which performs static code analysis with the latest user documents in `R` and `Rmd` languages. Therefore, it does not rely on an active R session and thus does not require the code to be executed.
 
+**Highlight Features:**
+
 - `styler`
 
   The language server provides code formatting through the through the [`styler`](https://github.com/r-lib/styler) package in R. See [here](https://github.com/REditorSupport/languageserver#customizing-formatting-style) for configuration.
