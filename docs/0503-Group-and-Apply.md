@@ -207,13 +207,15 @@ ir %>% tally(sort=TRUE) #  same as ir %>% summarize(count=n())
 
 ### Subset rows
 
-- `slice_head()` and `slice_tail()` select the first or last rows.
+- `slice_head(.data, n)` and `slice_tail(.data, n)` select the first or last `n` rows in `.data`.
 - `slice_sample()` randomly selects rows.
-- `slice_min()` and `slice_max()` select rows with the smallest or largest values of a variable.
+- `slice_min(.data, order_by, n)` and `slice_max()` select rows with the smallest or largest values of a variable.
 
 
 
 ```r
+# Similar to head(mtcars, 1):
+mtcars %>% slice(1L)
 # first two rows every group
 df %>% group_by(group) %>% slice_head(n = 2)
 # first row
@@ -286,7 +288,7 @@ by_species %>% group_split() %>% `[[`(1)  # can extract by either position or na
 
 - `.cols` 	Columns to transform.
 
-  could use functinos to select columns, eg, `starts_with("Sepal")`, `where(is.factor)`
+  could use functions to select columns, eg, `starts_with("Sepal")`, `where(is.factor)`
 
 - `.fns` 	  Functions to apply to each of the selected columns.
 

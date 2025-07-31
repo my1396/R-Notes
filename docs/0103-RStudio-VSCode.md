@@ -8,15 +8,14 @@ You can run R in VS Code. Simply open the folder containing your R scripts in VS
 - If you want multiple windows each with their own folder, you first open a new window (Ctrl+Shift+N) and then open the folder in that new window.
 
 
-
 Q: How to run R code interactively? \
 A: Create an R terminal via command **R: Create R Terminal** in the Command Palette. Once an R terminal is ready, you could either select the code or put the cursor at the beginning or ending of the code you want to run, press (<kbd>Ctrl</kbd> + <kbd>Enter</kbd>), and then code will be sent to the active R terminal.
 If you want to run an entire R file, open the file in the editor, and press Ctrl+Shift+S and the file will be sourced in the active R terminal.
 
-
+Q: Why use VS Code for R programming? \
+A: Better integration with Copilot, making it easier to write code with AI assistance. Also, VS Code has a lot of extensions that can enhance your R programming experience, such as `Markdown Preview Enhance`, `Live Server`, and `GitLens`.
 
 --------------------------------------------------------------------------------
-
 
 ### `languageserver` package
 
@@ -24,7 +23,7 @@ The [R language server](https://github.com/REditorSupport/vscode-R/wiki/R-Langua
 
 The R language server is implemented by the [languageserver](https://github.com/REditorSupport/languageserver) package which performs static code analysis with the latest user documents in `R` and `Rmd` languages. Therefore, it does not rely on an active R session and thus does not require the code to be executed.
 
-**Highlight Features:**
+#### Highlight Features:
 
 - `styler`
 
@@ -34,11 +33,14 @@ The R language server is implemented by the [languageserver](https://github.com/
 
   Alternatively, right-click at anywhere in the code editor and select **Format Document** to format the entire document. 
 
-- Rename symbol: 
+- **Rename symbols** 
 
   Place the cursor on the symbol you want to rename, right-click and select **Rename Symbol**. A dialog will pop up, allowing you to enter the new name for the symbol. A refactoring preview will be shown, allowing you to review the changes before applying them.
 
-#### `lintr` {-}
+
+--------------------------------------------------------------------------------
+
+#### `lintr`
 
 R code linting (diagnostics) is provided by [lintr](https://github.com/r-lib/lintr) via language server and is enabled by default. It provides syntax error warnings as well as style guidelines.
 
@@ -145,7 +147,7 @@ Then, in VS Code, you will need to set Radian as the default R terminal. You can
 See [Extension Settings](https://github.com/REditorSupport/vscode-R/wiki/Extension-settings) for a full list of settings of `vscode-R` that can be set in VSCode's `settings.json` file.
 
 
-#### Configuration {-}
+#### Configuration
 
 
 radian can be customized by specifying the below options in various locations:
@@ -178,10 +180,13 @@ options(
 )
 ```
 
-`options(radian.show_vi_mode_prompt = TRUE)`: This option will show the current vi mode in the prompt when using `radian` in vi mode. The prompt will be colored blue and will display the current mode.
+**VI support by `radian`:**
 
-- `[ins]`: insert mode
-- `[nav]`: normal mode
+- `options(radian.editing_mode = "vi")`: set the default editing mode to vi. 
+- `options(radian.show_vi_mode_prompt = TRUE)`: This option will show the current vi mode in the prompt when using `radian` in vi mode. The prompt will be colored blue and will display the current mode.
+
+  - `[ins]`: insert mode
+  - `[nav]`: normal mode
 
 
 --------------------------------------------------------------------------------
@@ -192,16 +197,92 @@ options(
 Q: I cannot see my R Objects in the global environment. \
 A: when you click on "**R: (not attached)**" on the bottom bar or type `.vsc.attach()` into the terminal, your objects should start showing up in your global environment.
 
+Q: How to hide variables in **OUTLINE view**? \
+A: OUTLINE view by default shows all variables in the current R script, making it difficult to locate your true sections. To hide variables, go to command palette, type "Outline: Show", there is a list of objects that you can choose to show or hide (you can choose to set this for workspace or the user). Here is my current setting:
 
+```json
+{
+  "outline.showArrays": false,
+  "outline.showBooleans": false,
+  "outline.showClasses": true,
+  "outline.showConstants": false,
+  "outline.showFields": false // this hides most variables you actually don't want to see
+}
+```
+
+> **Note** that some answers mention that you should use `"outline.showVariables": false`, but this does NOT work for me. Instead, I use `"outline.showFields": false` to hide most variables.
+
+See [HERE](https://code.visualstudio.com/docs/editing/intellisense#_types-of-completions) for a complete list of icons and their meanings in the OUTLINE view. 
+
+The following tables shows the icons that you most commonly see in the OUTLINE view.
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@vscode/codicons@latest/dist/codicon.css">
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Icon</th>
+      <th>Name</th>
+      <th>Symbol type</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><i class="codicon codicon-symbol-method" style="color:#b180d7"></i></td>
+      <td>Methods and Functions</td>
+      <td><code>method</code>, <code>function</code>, <code>constructor</code></td>
+    </tr>
+    <tr>
+      <td><i class="codicon codicon-symbol-variable" style="color:#75beff"></i></td>
+      <td>Variables</td>
+      <td><code>variable</code></td>
+    </tr>
+    <tr>
+      <td><i class="codicon codicon-symbol-field" style="color:#75beff"></i></td>
+      <td>Fields</td>
+      <td><code>field</code></td>
+    </tr>
+    <tr>
+      <td><i class="codicon codicon-symbol-text"></i></td>
+      <td>Words</td>
+      <td><code>text</code></td>
+    </tr>
+    <tr>
+      <td><i class="codicon codicon-symbol-constant"></i></td>
+      <td>Constants</td>
+      <td><code>constant</code></td>
+    </tr>
+    <tr>
+      <td><i class="codicon codicon-symbol-class" style="color:#ee9d28"></i></td>
+      <td>Classes</td>
+      <td><code>class</code></td>
+    </tr>
+    <tr>
+      <td><i class="codicon codicon-symbol-structure"></i></td>
+      <td>Structures</td>
+      <td><code>struct</code></td>
+    </tr>
+    <tr>
+      <td><i class="codicon codicon-symbol-namespace"></i></td>
+      <td>Modules</td>
+      <td><code>module</code></td>
+    </tr>
+    <tr>
+      <td><i class="codicon codicon-symbol-property"></i></td>
+      <td>Properties and Attributes</td>
+      <td><code>property</code></td>
+    </tr>
+  </tbody>
+</table>
 
 --------------------------------------------------------------------------------
 
 
-### Plot Viewer {.unnumbered}
+### Plot Viewer
 
 [`httpgd`](https://nx10.github.io/httpgd/): A graphics device for R that is accessible via network protocols. This package was created to make it easier to embed live R graphics in integrated development environments and other applications. `httpgd` is required by the interactive plot viewer of the R extension for VS Code.
 
-Enable r.plot.useHttpgd in VS Code settings.
+Enable `r.plot.useHttpgd` in VS Code settings.
 
 ```json
 {
@@ -237,7 +318,7 @@ dev.off()
 --------------------------------------------------------------------------------
 
 
-### Rmd {.unnumbered}
+### Work with Rmd
 
 You can edit Rmd with either of the two Language Mode:
 
@@ -288,8 +369,10 @@ rmarkdown::render("0103-RStudio-VSCode.Rmd")
 To view the static site in the `docs/` directory. I installed the VSCode extension [Live Preview](https://marketplace.visualstudio.com/items?itemName=ms-vscode.live-server). All I need to do is select one of the .html files, right-click the preview button in the code editor, and there it is. I can also just navigate to http://127.0.0.1:3000/docs/ in my browser. It even updates as I add chapters and redo the `render_site()` command.
 
 
+--------------------------------------------------------------------------------
 
-References:
+
+**References**:
 
 - [R in Visual Studio Code](https://code.visualstudio.com/docs/languages/r)
 - Settings for `vscode-R`: 
