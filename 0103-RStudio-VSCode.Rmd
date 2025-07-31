@@ -9,8 +9,9 @@ You can run R in VS Code. Simply open the folder containing your R scripts in VS
 
 
 Q: How to run R code interactively? \
-A: Create an R terminal via command **R: Create R Terminal** in the Command Palette. Once an R terminal is ready, you could either select the code or put the cursor at the beginning or ending of the code you want to run, press (<kbd>Ctrl</kbd> + <kbd>Enter</kbd>), and then code will be sent to the active R terminal.
-If you want to run an entire R file, open the file in the editor, and press Ctrl+Shift+S and the file will be sourced in the active R terminal.
+A: Create an R terminal via command **R: Create R Terminal** in the Command Palette. Once an R terminal is ready, you could either select the code or put the cursor at the beginning or ending of the code you want to run, press (<kbd>Ctrl</kbd> + <kbd>Enter</kbd>), and then code will be sent to the active R terminal. 
+
+If you want to run an entire R file, open the file in the editor, and press <kbd>Ctrl+Shift+S</kbd> and the file will be sourced in the active R terminal.
 
 Q: Why use VS Code for R programming? \
 A: Better integration with Copilot, making it easier to write code with AI assistance. Also, VS Code has a lot of extensions that can enhance your R programming experience, such as `Markdown Preview Enhance`, `Live Server`, and `GitLens`.
