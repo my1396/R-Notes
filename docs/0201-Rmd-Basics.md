@@ -7,7 +7,7 @@ To name a chunk, add the name after `r`, it's not necessary to add `label='chunk
 - Must be unique within the document. This is especially important for cache and plot filenames, because these filenames are based on chunk labels. Chunks without labels will be assigned labels like `unnamed-chunk-i`, where `i` is an incremental number.
 - Avoid spaces (`␣`), periods ( `.`), and underscores (`_`) in chunk labels and paths.  If you need separators, you are recommended to use hyphens (`-`) instead. 
 
-`knitr::opts_chunk$set()` changes the default values of chunk options in a document. 
+`knitr::opts_chunk$set()` changes the default values of chunk options in a document. See [here](#common-chunk-options) for commonly used chunk options.
 
 
 --------------------------------------------------------------------------------
@@ -35,12 +35,24 @@ Headings with `#` will appear in the file outline, which is a convenient feature
 
 One exception is level 2 headings in Bookdown:
 
-- By default `Bookdown` starts a new page for each level 2 heading. If you want to keep the style wihtout starting a new page, use an html tag. The heading won't be numbered or included in TOC. However, a downside is that the heading won't show up in the file outline either, making them harder to locate.
+- By default `Bookdown` starts a new page for each level 2 heading. If you want to keep the style without starting a new page, use an html tag. The heading won't be numbered or included in TOC. However, a downside is that the heading won't show up in the file outline either, making them harder to locate.
 
   ```html
   <h2>YAML metadata</h2>
   ```
 
+**Add Section ID**
+
+To add a section ID, use `{#section-id}` at the end of the section title. This is useful for linking to specific sections within the document or from other documents.
+
+```markdown
+Add a section ID
+# Question 1: Variance and Covariance properties {#variance-covariance}
+
+Refer to this section using the ID: [Variance and Covariance properties](#variance-covariance). 
+```
+
+- Bookdown supports cross files linking.
 
 --------------------------------------------------------------------------------
 
@@ -54,9 +66,23 @@ rmarkdown::render("/Users/menghan/Library/CloudStorage/OneDrive-Norduniversitet/
 **Advantages**: fast; load and output results in the global environment; easy to inspect afterwards.
 
 
+--------------------------------------------------------------------------------
 
-Rmd built-in themes for `html` output: <https://rstudio4edu.github.io/rstudio4edu-book/rmd-themes.html>
+Rmd has many built-in themes which can be conveniently applied to your html document.
 
+See here for a preview for some popular html themes: <https://rstudio4edu.github.io/rstudio4edu-book/rmd-themes.html>
+
+Use the following code in either `_site.yml` (if R Markdown websites) or `_output.yml`(if Bookdown websites) to set the theme:
+
+```yaml
+html_document:
+  toc: true
+  toc_depth: 2
+  theme: cerulean
+  highlight: tango
+```
+
+--------------------------------------------------------------------------------
 
 
 `.Rmd` documents can be edited in either `source` or `visual` mode. To switch into visual mode for a given document, use the Source or Visual button at the top-left of the document toolbar (or alternatively the `Cmd+Shift+F4` keyboard shortcut).

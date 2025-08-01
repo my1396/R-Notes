@@ -7,7 +7,7 @@
 - Rdocumentation powered by datacamp, it has interactive interface with good examples, the typesetting also looks better, <https://www.rdocumentation.org>
 
 
-R is case-sensitive.
+R is case-sensitive; comments start with `#`.
 
 Curly brackets or braces `{}` are used to keep code that needs to be run together as a single expression. This is commonly done when writing a function or when writing an `if` statement.
 

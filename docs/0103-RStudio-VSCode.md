@@ -217,7 +217,6 @@ See [HERE](https://code.visualstudio.com/docs/editing/intellisense#_types-of-com
 
 The following tables shows the icons that you most commonly see in the OUTLINE view.
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@vscode/codicons@latest/dist/codicon.css">
 
 <table class="table table-striped">
   <thead>
@@ -321,7 +320,7 @@ dev.off()
 
 ### Work with Rmd
 
-You can edit Rmd with either of the two Language Mode:
+You can edit Rmd with either of the two Language Modes:
 
 - `R Markdown`: there is a knit button to provide preview but no live preview.
   
@@ -337,17 +336,23 @@ You can edit Rmd with either of the two Language Mode:
     
     
     How to decide which Language Mode to use? A rule of thumb is:
+
     - If your Rmd has lots of R code you need to run interactively, use `R Markdown`.
-  - If you want to write a static report with minimal R code, use `Markdown`.
+    - If you want to write a static report with minimal R code, use `Markdown`.
     
-    At all cases, it is quite easy to switch between the two modes by changing the Language Mode in the bottom right corner of VS Code. So you can choose either one that suits you best.
+      At all cases, it is quite easy to switch between the two modes by changing the Language Mode in the bottom right corner of VS Code. So you can choose either one that suits you best.
   
 - `Markdown`: there is no knit button but you can have a live preview using the `Markdown Preview Enhance` extension.
   
-    Instead, you need to run the `rmarkdown::render()` function in the terminal or in an R script to render the Rmd file.
+    Instead, you need to type the command `rmarkdown::render()` in the R console or in an R script to render the Rmd file.
 
 
-**Render book**
+#### Render book
+
+Render the site `rmarkdown::render_site(input = ".", output_format = "all")`
+
+- `rmarkdown::render_site()` without arguments will render **all** formats by default.
+- specify `output_format` to render a specific format, e.g., `bookdown::gitbook`, `bookdown::pdf_book`, etc.
 
 ```r
 # Render the site, equivalent to clicking the "Build Book" button in RStudio
@@ -355,7 +360,19 @@ You can edit Rmd with either of the two Language Mode:
 rmarkdown::render_site()
 # Render a specific output format, e.g., bookdown::gitbook
 rmarkdown::render_site(output_format = 'bookdown::gitbook')
+```
 
+Render a single document has two options:
+
+- `rmarkdown::render_site(file_name)` looks for the `_output.yml` file in the root directory of the site and applies the settings specified in that file. See [HERE](#render-single-rmd) for more details.
+  
+  Recommended for its automatic formatting. ✅
+
+- `rmarkdown::render(input, output_format = NULL)` renders any single Rmd file without applying any settings from `_output.yml` file. See [HERE](#render-rmd-site) for more details.
+  
+  You need to specify any headers you want to load, e.g., mathjax macros. More hassle → less recommended. 
+
+```r
 # Render the document, equivalent to clicking the "Knit" button in RStudio
 # This will apply any global settings for your website and generate the output html in the `docs/` directory.
 rmarkdown::render_site("0103-RStudio-VSCode.Rmd")
@@ -365,9 +382,19 @@ rmarkdown::render("0103-RStudio-VSCode.Rmd")
 ```
 
 
-**View book**
+
+#### View book
 
 To view the static site in the `docs/` directory. I installed the VSCode extension [Live Preview](https://marketplace.visualstudio.com/items?itemName=ms-vscode.live-server). All I need to do is select one of the .html files, right-click the preview button in the code editor, and there it is. I can also just navigate to http://127.0.0.1:3000/docs/ in my browser. It even updates as I add chapters and redo the `render_site()` command.
+
+- If Live Preview is not loading the latest changes, try "**Developer: Reload Window**" in the command palette.
+- A most reliable way is just to open the `docs/xxx.html` file in your browser. This way, not only will it open the file you clicked, but it will also open the entire site.
+  
+  An additional benefit is that your site won't blink when you make changes or build the site. I found the constant blinking of the Live Preview blinding. 
+  
+  Using static files, you simply refresh the browser every time you rebuild the site.
+
+
 
 
 --------------------------------------------------------------------------------

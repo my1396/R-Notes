@@ -691,7 +691,7 @@ When you click the `Knit` button (⇧⌘K) in RStudio, generally two processes h
 
 There is one function that can do the processes mentioned above: [`rmarkdown::render`](https://pkgs.rstudio.com/rmarkdown/reference/render.html).
 
-### Render a single document
+### Render a single document {#render-single-rmd}
 
 `rmarkdown::render(input, output_format = NULL, output_file = NULL, output_dir = NULL, output_options = NULL, output_yaml = NULL)`
 
@@ -773,7 +773,7 @@ rmarkdown::render('input.Rmd', 'all')
 
 --------------------------------------------------------------------------------
 
-Fast rendering within the current global environment
+**Fast rendering within the current global environmen**t
 
 ```r
 rmarkdown::render(active_document_path, envir=.GlobalEnv)
@@ -793,14 +793,17 @@ What this does:
 
 --------------------------------------------------------------------------------
 
-### Render multiple documents as a website
+### Render multiple documents as a website {#render-rmd-site}
 
 [`rmarkdown::render_site(input = ".", output_format = "all")`](https://pkgs.rstudio.com/rmarkdown/reference/render_site.html) Render all of the R Markdown documents within a directory as a website. 
 
 There are two requirements for a directory to be rendered as a website:
 
 - It must contain either an `index.Rmd` or `index.md` file.
-- It must contain a site configuration file (`_site.yml`).
+- It must contain a site configuration file 
+  - R Markdown websites: `_site.yml`.
+  - Bookdown websites: `output.yml` (output formats) and `_bookdown.yml` (book-specific metadata).
+
 
 Note that the "Knit" button in RStudio uses `rmarkdown::render_site` to knit the file in presence of an `index.Rmd` file in the working directory.
 
@@ -945,7 +948,7 @@ The **chunk label** for each chunk is assumed to be unique within the document. 
 
 You may use `knitr::opts_chunk$set()` to change the default values of chunk options in a document. 
 
-**Commonly used chunk options**
+<span id="common-chunk-options">**Commonly used chunk options**</span>
 
 - Complete list [here](https://yihui.org/knitr/options/). Or `?opts_chunk` to get the help page.
 

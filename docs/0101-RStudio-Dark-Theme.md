@@ -127,11 +127,55 @@ Source: <https://github.com/rstudio/rstudio/issues/3420#issuecomment-453154475>
 
 ## Update R {#update-r}
 
-Q: How to tell which version of R you are running?\
+Q: How to tell which version of R you are running? \
 A: In the R terminal, type `R.version`.
 
 The key thing to be aware of is that when you update R, [if you just download the latest version from the website, you will lose all your packages!]{style="color:#FF9900"} ❌
 
+Q: How to understand the version number? \
+A: The version number is in the format `major.minor.patch`, e.g. `4.3.1`. The first number is the major version, the second is the minor version, and the third is the patch version. Major versions are released every 18 months, minor versions are released every 6 months, and patches are released as needed.
+
+
+
+**On Mac, can use [`updater`](https://cran.r-project.org/web/packages/updater/index.html)**
+
+The package re-installs the packages and does not copy them from the previous R installation library. R packages for even minor R releases (e.g. R 4.1 to R 4.2) may not be compatible, which is why its important to re-install the packages and not copy them.
+
+Q: What `updateR` does? \
+A: `{updateR}` restores old libraries from previous version with the following actions, depending the type of releases:
+
+1.  For major releases (R 3.x -> R 4.x), **reinstall** all the packages;
+2.  For minor releases (R 3.5.x -> R 3.6.x), users may choose between reinstall or **copy and paste**all the file folders under `/Library/Frameworks/R.framework/Versions/[old\_version]/library` to `/Library/Frameworks/R.framework/Versions/[new\_version]/library`;
+3.  For patch releases (R 4.0.1 -> R 4.0.2), no actions will be taken.
+
+
+**Usage:**
+
+1. Find the current location of R by running 
+   
+   ```r
+   > .libPaths()
+   [1] "/Library/Frameworks/R.framework/Versions/4.3-x86_64/Resources/library"
+   ```
+
+2. Install R from <https://cran.r-project.org/>. 
+
+3. Install packages.  
+
+    3.1 Open your new version of R and install the `updater` package with `install.packages("updater")`.
+    
+    3.2 Install the previous libraries with `updater::install_pkgs`.
+    
+    ```r
+    updater::install_pkgs(lib.loc = c("<location(s) saved in Step 1>"))
+    ```
+
+Refs: 
+
+- Tutorial: <https://cran.r-project.org/web/packages/updater/refman/updater.html>
+- GitHub, \@Daniel D. Sjoberg : <https://github.com/ddsjoberg/updater>
+
+--------------------------------------------------------------------------------
 
 **On Windows use `installr`**
 
@@ -147,31 +191,6 @@ library(installr)
 # Run the update function
 updateR()
 ```
-
-
-**On Mac, can use [`updater`](https://rdrr.io/cran/updater/)**
-
-The package re-installs the packages and does not copy them from the previous R installation library. R packages for minor R releases (e.g. R 4.1 to R 4.2) may not be compatible, which is why its important to re-install the packages and not copy them.
-
-Usage:
-
-1. Find the current location of R by running 
-```r
-> .libPaths()
-[1] "/Library/Frameworks/R.framework/Versions/4.3-x86_64/Resources/library"
-```
-
-2. Install R from <https://cran.r-project.org/>. 
-
-3. Install packages.  
-
-    3.1 Open your new version of R and install the `updater` package with `install.packages("updater")`.
-    
-    3.2 Run 
-    
-    ```r
-    updater::install_pkgs(lib.loc = c("<location(s) saved in Step 1>"))
-    ```
 
 
 ------------------------------------------------------------------------
@@ -321,6 +340,20 @@ A: Use `remove.packages("dplyr")` or you can use the package manager pane, click
 
 ### Install packages
 
+Packages can be installed from GitHub, GitLab, BioConductor, and any repository listed in `getOption("repos")`. This would typically be from CRAN and any other secondary repositories that may be set.
+
+**Note** that package names are **case-sensitive**, they should match exactly the <i class="fab fa-github" aria-hidden="true"></i> GitHub repository name.
+
+Each time you install an R package from the R command line, you are asked which CRAN mirror, or server, R should use. To set the repository and avoid having to specify this during every package installation, you can add the following line to your `.Rprofile` file:
+
+```r
+options(repos = c(CRAN="https://cloud.r-project.org"))
+```
+
+This code snippet sets the R package repository to the [0-Cloud CRAN mirror](https://cloud.r-project.org) at the start of each R session. `0-Cloud` automatically redirects to servers worldwide, currently sponsored by Posit.
+
+The principle is to choose a mirror location close to you. 
+
 **Install R packages from source**
 
 ``` r
@@ -417,7 +450,7 @@ A: You can go to GitHub repo to check release notes. You will find the latest ve
         update.packages(oldPkgs = "ggplot2")
         ```
 
-        Note that you need to [specify `oldPkgs` explicily]{style="color:#00CC66"} as it is a named argument.
+        Note that you need to [specify `oldPkgs` explicitly]{style="color:#00CC66"} as it is a named argument.
 
 -   Update ALL outdated packages
 
@@ -460,7 +493,9 @@ More about `update.packages`:
 
 -   `update.packages` returns NULL invisibly.
 
--   Be aware that <u>some package updates may cause your previous code to stop working</u>. For this reason, we recommend updating all your packages once at the beginning of each academic year (or semester) – don't do it before an assessment or deadline just in case!
+-   Be aware that <u>some package updates may cause your previous code to stop working</u>. 
+   
+      For this reason, we recommend updating all your packages once at the beginning of each academic year (or semester) – don't do it before an assessment or deadline just in case!
 
 ------------------------------------------------------------------------
 

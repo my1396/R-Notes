@@ -107,9 +107,9 @@ As a summary of these files:
 
 - Rmd files: A typical bookdown book contains multiple chapters, and each chapter lives in one separate Rmd file.
 
-- <a href="#bookdown-config">`_bookdown.yml`</a>: A configuration file for bookdown.
+- <a href="#bookdown-config">`_bookdown.yml`</a>: A configuration file for bookdown; includes book-specific metadata such as output directory, whether to create a new R session for each chapter. 
 
-- <a href="#output">`_output.yml`</a>: It specifies the formatting of the HTML, LaTeX/PDF, and e-books.
+- <a href="#output">`_output.yml`</a>: It specifies the output formatting of the HTML, LaTeX/PDF, e-books, etc.
 
 - `preamble.tex` and `style.css`: They can be used to adjust the appearance and styles of the book output document(s). Knowledge of LaTeX and/or CSS is required.
 

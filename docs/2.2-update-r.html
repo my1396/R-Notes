@@ -29,7 +29,7 @@ set in the _output.yml file.</p>" />
 <meta name="author" content="Menghan Yuan" />
 
 
-<meta name="date" content="2025-07-31" />
+<meta name="date" content="2025-08-01" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -233,8 +233,12 @@ set in the _output.yml file.</p>" />
           }
         });
     </script>
-
+    <!-- Load Google fonts -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro">
+    <!-- Load Font Awesome's icon library -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <!-- Load MS codicon library -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@vscode/codicons@latest/dist/codicon.css">
 </head>
 
 
@@ -392,8 +396,8 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="3.2" data-path="3.2-render-rmd.html"><a href="3.2-render-rmd.html"><i class="fa fa-check"></i><b>3.2</b> Render Rmd</a>
 <ul>
-<li class="chapter" data-level="3.2.1" data-path="3.2-render-rmd.html"><a href="3.2-render-rmd.html#render-a-single-document"><i class="fa fa-check"></i><b>3.2.1</b> Render a single document</a></li>
-<li class="chapter" data-level="3.2.2" data-path="3.2-render-rmd.html"><a href="3.2-render-rmd.html#render-multiple-documents-as-a-website"><i class="fa fa-check"></i><b>3.2.2</b> Render multiple documents as a website</a></li>
+<li class="chapter" data-level="3.2.1" data-path="3.2-render-rmd.html"><a href="3.2-render-rmd.html#render-single-rmd"><i class="fa fa-check"></i><b>3.2.1</b> Render a single document</a></li>
+<li class="chapter" data-level="3.2.2" data-path="3.2-render-rmd.html"><a href="3.2-render-rmd.html#render-rmd-site"><i class="fa fa-check"></i><b>3.2.2</b> Render multiple documents as a website</a></li>
 </ul></li>
 <li class="chapter" data-level="3.3" data-path="3.3-chunk-options.html"><a href="3.3-chunk-options.html"><i class="fa fa-check"></i><b>3.3</b> Chunk Options</a>
 <ul>
@@ -693,31 +697,44 @@ div.csl-indent {
 <p>Q: How to tell which version of R you are running?<br />
 A: In the R terminal, type <code>R.version</code>.</p>
 <p>The key thing to be aware of is that when you update R, <span style="color:#FF9900">if you just download the latest version from the website, you will lose all your packages!</span> ❌</p>
-<p><strong>On Windows use <code>installr</code></strong></p>
-<p>The easiest way to update R and not cause yourself a huge headache is to use the <code>installr</code> package. When you use the <code>updateR()</code> function, a series of dialogue boxes will appear. These should be fairly self-explanatory but there is a <a href="https://www.r-statistics.com/2015/06/a-step-by-step-screenshots-tutorial-for-upgrading-r-on-windows/#google_vignette" title="Guide to update R with `installr`">full step-by-step guide</a> available for how to use <code>installr</code>, simply select “Yes” when it asks if you would like to copy your packages from the older version of R.</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="2.2-update-r.html#cb14-1" tabindex="-1"></a><span class="co"># Install the installr package</span></span>
-<span id="cb14-2"><a href="2.2-update-r.html#cb14-2" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;installr&quot;</span>)</span>
-<span id="cb14-3"><a href="2.2-update-r.html#cb14-3" tabindex="-1"></a></span>
-<span id="cb14-4"><a href="2.2-update-r.html#cb14-4" tabindex="-1"></a><span class="co"># Load installr</span></span>
-<span id="cb14-5"><a href="2.2-update-r.html#cb14-5" tabindex="-1"></a><span class="fu">library</span>(installr)</span>
-<span id="cb14-6"><a href="2.2-update-r.html#cb14-6" tabindex="-1"></a></span>
-<span id="cb14-7"><a href="2.2-update-r.html#cb14-7" tabindex="-1"></a><span class="co"># Run the update function</span></span>
-<span id="cb14-8"><a href="2.2-update-r.html#cb14-8" tabindex="-1"></a><span class="fu">updateR</span>()</span></code></pre></div>
-<p><strong>On Mac, can use <a href="https://rdrr.io/cran/updater/"><code>updater</code></a></strong></p>
-<p>The package re-installs the packages and does not copy them from the previous R installation library. R packages for minor R releases (e.g. R 4.1 to R 4.2) may not be compatible, which is why its important to re-install the packages and not copy them.</p>
-<p>Usage:</p>
+<p>Q: How to understand the version number?<br />
+A: The version number is in the format <code>major.minor.patch</code>, e.g. <code>4.3.1</code>. The first number is the major version, the second is the minor version, and the third is the patch version. Major versions are released every 18 months, minor versions are released every 6 months, and patches are released as needed.</p>
+<p><strong>On Mac, can use <a href="https://cran.r-project.org/web/packages/updater/index.html"><code>updater</code></a></strong></p>
+<p>The package re-installs the packages and does not copy them from the previous R installation library. R packages for even minor R releases (e.g. R 4.1 to R 4.2) may not be compatible, which is why its important to re-install the packages and not copy them.</p>
+<p>Q: What <code>updateR</code> does?<br />
+A: <code>{updateR}</code> restores old libraries from previous version with the following actions, depending the type of releases:</p>
 <ol style="list-style-type: decimal">
-<li>Find the current location of R by running</li>
+<li>For major releases (R 3.x -&gt; R 4.x), <strong>reinstall</strong> all the packages;</li>
+<li>For minor releases (R 3.5.x -&gt; R 3.6.x), users may choose between reinstall or <strong>copy and paste</strong>all the file folders under <code>/Library/Frameworks/R.framework/Versions/[old\_version]/library</code> to <code>/Library/Frameworks/R.framework/Versions/[new\_version]/library</code>;</li>
+<li>For patch releases (R 4.0.1 -&gt; R 4.0.2), no actions will be taken.</li>
 </ol>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="2.2-update-r.html#cb15-1" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">.libPaths</span>()</span>
-<span id="cb15-2"><a href="2.2-update-r.html#cb15-2" tabindex="-1"></a>[<span class="dv">1</span>] <span class="st">&quot;/Library/Frameworks/R.framework/Versions/4.3-x86_64/Resources/library&quot;</span></span></code></pre></div>
-<ol start="2" style="list-style-type: decimal">
+<p><strong>Usage:</strong></p>
+<ol style="list-style-type: decimal">
+<li><p>Find the current location of R by running</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="2.2-update-r.html#cb14-1" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">.libPaths</span>()</span>
+<span id="cb14-2"><a href="2.2-update-r.html#cb14-2" tabindex="-1"></a>[<span class="dv">1</span>] <span class="st">&quot;/Library/Frameworks/R.framework/Versions/4.3-x86_64/Resources/library&quot;</span></span></code></pre></div></li>
 <li><p>Install R from <a href="https://cran.r-project.org/" class="uri">https://cran.r-project.org/</a>.</p></li>
 <li><p>Install packages.</p>
 <p>3.1 Open your new version of R and install the <code>updater</code> package with <code>install.packages("updater")</code>.</p>
-<p>3.2 Run</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="2.2-update-r.html#cb16-1" tabindex="-1"></a>updater<span class="sc">::</span><span class="fu">install_pkgs</span>(<span class="at">lib.loc =</span> <span class="fu">c</span>(<span class="st">&quot;&lt;location(s) saved in Step 1&gt;&quot;</span>))</span></code></pre></div></li>
+<p>3.2 Install the previous libraries with <code>updater::install_pkgs</code>.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="2.2-update-r.html#cb15-1" tabindex="-1"></a>updater<span class="sc">::</span><span class="fu">install_pkgs</span>(<span class="at">lib.loc =</span> <span class="fu">c</span>(<span class="st">&quot;&lt;location(s) saved in Step 1&gt;&quot;</span>))</span></code></pre></div></li>
 </ol>
+<p>Refs:</p>
+<ul>
+<li>Tutorial: <a href="https://cran.r-project.org/web/packages/updater/refman/updater.html" class="uri">https://cran.r-project.org/web/packages/updater/refman/updater.html</a></li>
+<li>GitHub, @Daniel D. Sjoberg : <a href="https://github.com/ddsjoberg/updater" class="uri">https://github.com/ddsjoberg/updater</a></li>
+</ul>
+<hr />
+<p><strong>On Windows use <code>installr</code></strong></p>
+<p>The easiest way to update R and not cause yourself a huge headache is to use the <code>installr</code> package. When you use the <code>updateR()</code> function, a series of dialogue boxes will appear. These should be fairly self-explanatory but there is a <a href="https://www.r-statistics.com/2015/06/a-step-by-step-screenshots-tutorial-for-upgrading-r-on-windows/#google_vignette" title="Guide to update R with `installr`">full step-by-step guide</a> available for how to use <code>installr</code>, simply select “Yes” when it asks if you would like to copy your packages from the older version of R.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="2.2-update-r.html#cb16-1" tabindex="-1"></a><span class="co"># Install the installr package</span></span>
+<span id="cb16-2"><a href="2.2-update-r.html#cb16-2" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;installr&quot;</span>)</span>
+<span id="cb16-3"><a href="2.2-update-r.html#cb16-3" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="2.2-update-r.html#cb16-4" tabindex="-1"></a><span class="co"># Load installr</span></span>
+<span id="cb16-5"><a href="2.2-update-r.html#cb16-5" tabindex="-1"></a><span class="fu">library</span>(installr)</span>
+<span id="cb16-6"><a href="2.2-update-r.html#cb16-6" tabindex="-1"></a></span>
+<span id="cb16-7"><a href="2.2-update-r.html#cb16-7" tabindex="-1"></a><span class="co"># Run the update function</span></span>
+<span id="cb16-8"><a href="2.2-update-r.html#cb16-8" tabindex="-1"></a><span class="fu">updateR</span>()</span></code></pre></div>
 <hr />
 </div>
             </section>
