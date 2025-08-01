@@ -235,8 +235,10 @@ set in the _output.yml file.</p>" />
     </script>
     <!-- Load Google fonts -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro">
-    <!-- Load Font Awesome's icon library -->
+    <!-- Load Font Awesome 6's icon library -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <!-- Font Awesome 4 compatibility shim -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/v4-shims.min.css" />
     <!-- Load MS codicon library -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@vscode/codicons@latest/dist/codicon.css">
 </head>
@@ -703,33 +705,10 @@ div.csl-indent {
 <li><p>upper whisker is the the largest data point within 1.5 × IQR from Q3</p>
 <p>The smaller of <code>max</code> and <code>Q3+1.5*IQR</code></p></li>
 </ul>
-<div class="sourceCode" id="cb372"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb372-1"><a href="5.6-statistical-summary-functions.html#cb372-1" tabindex="-1"></a>box.stat <span class="ot">&lt;-</span> <span class="cf">function</span>(col){</span>
-<span id="cb372-2"><a href="5.6-statistical-summary-functions.html#cb372-2" tabindex="-1"></a>    <span class="co"># Return a vector of statistics of 6 elements, containing </span></span>
-<span id="cb372-3"><a href="5.6-statistical-summary-functions.html#cb372-3" tabindex="-1"></a>    <span class="co"># 1) the extreme of the lower whisker, </span></span>
-<span id="cb372-4"><a href="5.6-statistical-summary-functions.html#cb372-4" tabindex="-1"></a>    <span class="co"># 2) the lower &#39;hinge&#39;, 3) the median, 4)the upper &#39;hinge&#39;, </span></span>
-<span id="cb372-5"><a href="5.6-statistical-summary-functions.html#cb372-5" tabindex="-1"></a>    <span class="co"># 5) the extreme of the upper whisker,</span></span>
-<span id="cb372-6"><a href="5.6-statistical-summary-functions.html#cb372-6" tabindex="-1"></a>    <span class="co"># and 6) the mean.</span></span>
-<span id="cb372-7"><a href="5.6-statistical-summary-functions.html#cb372-7" tabindex="-1"></a>    <span class="fu">setNames</span>(<span class="fu">c</span>(<span class="fu">boxplot.stats</span>(col)<span class="sc">$</span>stats, <span class="fu">mean</span>(<span class="fu">unlist</span>(col), <span class="at">na.rm=</span><span class="cn">TRUE</span>) ),</span>
-<span id="cb372-8"><a href="5.6-statistical-summary-functions.html#cb372-8" tabindex="-1"></a>             <span class="fu">c</span>(<span class="st">&quot;low.whisker&quot;</span>, <span class="st">&quot;1st.Q&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;3rd.Q&quot;</span>, <span class="st">&quot;upper.whisker&quot;</span>, <span class="st">&quot;mean&quot;</span>) )</span>
-<span id="cb372-9"><a href="5.6-statistical-summary-functions.html#cb372-9" tabindex="-1"></a>}</span></code></pre></div>
-<p>Get boxplot and its stats</p>
-<div class="sourceCode" id="cb373"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb373-1"><a href="5.6-statistical-summary-functions.html#cb373-1" tabindex="-1"></a><span class="co"># boxplot of price groupped by make</span></span>
-<span id="cb373-2"><a href="5.6-statistical-summary-functions.html#cb373-2" tabindex="-1"></a><span class="fu">boxplot</span>(price<span class="sc">~</span>make, sample_price2)<span class="sc">$</span>stats <span class="sc">%&gt;%</span> </span>
-<span id="cb373-3"><a href="5.6-statistical-summary-functions.html#cb373-3" tabindex="-1"></a>    <span class="fu">as_tibble</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb373-4"><a href="5.6-statistical-summary-functions.html#cb373-4" tabindex="-1"></a>    <span class="fu">setNames</span>(<span class="fu">c</span>(<span class="st">&quot;bmw&quot;</span>,<span class="st">&quot;toyota&quot;</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb373-5"><a href="5.6-statistical-summary-functions.html#cb373-5" tabindex="-1"></a>    <span class="fu">add_column</span>(<span class="st">&quot;stat&quot;</span><span class="ot">=</span><span class="fu">c</span>(<span class="st">&quot;low.whisker&quot;</span>, <span class="st">&quot;1st.Q&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;3rd.Q&quot;</span>, <span class="st">&quot;upper.whisker&quot;</span>), <span class="at">.before=</span><span class="dv">1</span>)</span></code></pre></div>
-<p>Summary statistics for <span style="color:#00CC66"><strong>box plots</strong></span></p>
-<p><code>boxplot.stats</code> returns the extreme of the lower whisker, the lower ‘hinge’ (Q1 or the 1st quartile), the median (or midhinge), the upper ‘hinge’ (Q3 or the 3rd quartile) and the extreme of the upper whisker.</p>
-<ul>
-<li><p>lower whisker is the smallest data point within 1.5 × IQR from Q1</p>
-<p>The larger of <code>min</code> and <code>Q1–1.5*IQR</code>, <code>IQR=Q3-Q1</code> is the interquartile range.</p></li>
-<li><p>upper whisker is the the largest data point within 1.5 × IQR from Q3</p>
-<p>The smaller of <code>max</code> and <code>Q3+1.5*IQR</code></p></li>
-</ul>
 <div class="sourceCode" id="cb374"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb374-1"><a href="5.6-statistical-summary-functions.html#cb374-1" tabindex="-1"></a>box.stat <span class="ot">&lt;-</span> <span class="cf">function</span>(col){</span>
 <span id="cb374-2"><a href="5.6-statistical-summary-functions.html#cb374-2" tabindex="-1"></a>    <span class="co"># Return a vector of statistics of 6 elements, containing </span></span>
 <span id="cb374-3"><a href="5.6-statistical-summary-functions.html#cb374-3" tabindex="-1"></a>    <span class="co"># 1) the extreme of the lower whisker, </span></span>
-<span id="cb374-4"><a href="5.6-statistical-summary-functions.html#cb374-4" tabindex="-1"></a>    <span class="co"># 2) the lower ‘hinge’, 3) the median, 4)the upper ‘hinge’, </span></span>
+<span id="cb374-4"><a href="5.6-statistical-summary-functions.html#cb374-4" tabindex="-1"></a>    <span class="co"># 2) the lower &#39;hinge&#39;, 3) the median, 4)the upper &#39;hinge&#39;, </span></span>
 <span id="cb374-5"><a href="5.6-statistical-summary-functions.html#cb374-5" tabindex="-1"></a>    <span class="co"># 5) the extreme of the upper whisker,</span></span>
 <span id="cb374-6"><a href="5.6-statistical-summary-functions.html#cb374-6" tabindex="-1"></a>    <span class="co"># and 6) the mean.</span></span>
 <span id="cb374-7"><a href="5.6-statistical-summary-functions.html#cb374-7" tabindex="-1"></a>    <span class="fu">setNames</span>(<span class="fu">c</span>(<span class="fu">boxplot.stats</span>(col)<span class="sc">$</span>stats, <span class="fu">mean</span>(<span class="fu">unlist</span>(col), <span class="at">na.rm=</span><span class="cn">TRUE</span>) ),</span>
@@ -741,6 +720,29 @@ div.csl-indent {
 <span id="cb375-3"><a href="5.6-statistical-summary-functions.html#cb375-3" tabindex="-1"></a>    <span class="fu">as_tibble</span>() <span class="sc">%&gt;%</span> </span>
 <span id="cb375-4"><a href="5.6-statistical-summary-functions.html#cb375-4" tabindex="-1"></a>    <span class="fu">setNames</span>(<span class="fu">c</span>(<span class="st">&quot;bmw&quot;</span>,<span class="st">&quot;toyota&quot;</span>)) <span class="sc">%&gt;%</span> </span>
 <span id="cb375-5"><a href="5.6-statistical-summary-functions.html#cb375-5" tabindex="-1"></a>    <span class="fu">add_column</span>(<span class="st">&quot;stat&quot;</span><span class="ot">=</span><span class="fu">c</span>(<span class="st">&quot;low.whisker&quot;</span>, <span class="st">&quot;1st.Q&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;3rd.Q&quot;</span>, <span class="st">&quot;upper.whisker&quot;</span>), <span class="at">.before=</span><span class="dv">1</span>)</span></code></pre></div>
+<p>Summary statistics for <span style="color:#00CC66"><strong>box plots</strong></span></p>
+<p><code>boxplot.stats</code> returns the extreme of the lower whisker, the lower ‘hinge’ (Q1 or the 1st quartile), the median (or midhinge), the upper ‘hinge’ (Q3 or the 3rd quartile) and the extreme of the upper whisker.</p>
+<ul>
+<li><p>lower whisker is the smallest data point within 1.5 × IQR from Q1</p>
+<p>The larger of <code>min</code> and <code>Q1–1.5*IQR</code>, <code>IQR=Q3-Q1</code> is the interquartile range.</p></li>
+<li><p>upper whisker is the the largest data point within 1.5 × IQR from Q3</p>
+<p>The smaller of <code>max</code> and <code>Q3+1.5*IQR</code></p></li>
+</ul>
+<div class="sourceCode" id="cb376"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb376-1"><a href="5.6-statistical-summary-functions.html#cb376-1" tabindex="-1"></a>box.stat <span class="ot">&lt;-</span> <span class="cf">function</span>(col){</span>
+<span id="cb376-2"><a href="5.6-statistical-summary-functions.html#cb376-2" tabindex="-1"></a>    <span class="co"># Return a vector of statistics of 6 elements, containing </span></span>
+<span id="cb376-3"><a href="5.6-statistical-summary-functions.html#cb376-3" tabindex="-1"></a>    <span class="co"># 1) the extreme of the lower whisker, </span></span>
+<span id="cb376-4"><a href="5.6-statistical-summary-functions.html#cb376-4" tabindex="-1"></a>    <span class="co"># 2) the lower ‘hinge’, 3) the median, 4)the upper ‘hinge’, </span></span>
+<span id="cb376-5"><a href="5.6-statistical-summary-functions.html#cb376-5" tabindex="-1"></a>    <span class="co"># 5) the extreme of the upper whisker,</span></span>
+<span id="cb376-6"><a href="5.6-statistical-summary-functions.html#cb376-6" tabindex="-1"></a>    <span class="co"># and 6) the mean.</span></span>
+<span id="cb376-7"><a href="5.6-statistical-summary-functions.html#cb376-7" tabindex="-1"></a>    <span class="fu">setNames</span>(<span class="fu">c</span>(<span class="fu">boxplot.stats</span>(col)<span class="sc">$</span>stats, <span class="fu">mean</span>(<span class="fu">unlist</span>(col), <span class="at">na.rm=</span><span class="cn">TRUE</span>) ),</span>
+<span id="cb376-8"><a href="5.6-statistical-summary-functions.html#cb376-8" tabindex="-1"></a>             <span class="fu">c</span>(<span class="st">&quot;low.whisker&quot;</span>, <span class="st">&quot;1st.Q&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;3rd.Q&quot;</span>, <span class="st">&quot;upper.whisker&quot;</span>, <span class="st">&quot;mean&quot;</span>) )</span>
+<span id="cb376-9"><a href="5.6-statistical-summary-functions.html#cb376-9" tabindex="-1"></a>}</span></code></pre></div>
+<p>Get boxplot and its stats</p>
+<div class="sourceCode" id="cb377"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb377-1"><a href="5.6-statistical-summary-functions.html#cb377-1" tabindex="-1"></a><span class="co"># boxplot of price groupped by make</span></span>
+<span id="cb377-2"><a href="5.6-statistical-summary-functions.html#cb377-2" tabindex="-1"></a><span class="fu">boxplot</span>(price<span class="sc">~</span>make, sample_price2)<span class="sc">$</span>stats <span class="sc">%&gt;%</span> </span>
+<span id="cb377-3"><a href="5.6-statistical-summary-functions.html#cb377-3" tabindex="-1"></a>    <span class="fu">as_tibble</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb377-4"><a href="5.6-statistical-summary-functions.html#cb377-4" tabindex="-1"></a>    <span class="fu">setNames</span>(<span class="fu">c</span>(<span class="st">&quot;bmw&quot;</span>,<span class="st">&quot;toyota&quot;</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb377-5"><a href="5.6-statistical-summary-functions.html#cb377-5" tabindex="-1"></a>    <span class="fu">add_column</span>(<span class="st">&quot;stat&quot;</span><span class="ot">=</span><span class="fu">c</span>(<span class="st">&quot;low.whisker&quot;</span>, <span class="st">&quot;1st.Q&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;3rd.Q&quot;</span>, <span class="st">&quot;upper.whisker&quot;</span>), <span class="at">.before=</span><span class="dv">1</span>)</span></code></pre></div>
 <p><code>setNames()</code> updates the column names without having to write another replacement function.</p>
 
 </div>

@@ -2,18 +2,17 @@
 
 To name a chunk, add the name after `r`, it's not necessary to add `label='chunk-name'`, but it is possible to do so if you prefer the form `tag=value`. 
 
-**The chunk label**
+**The Chunk Label**
 
 - Must be unique within the document. This is especially important for cache and plot filenames, because these filenames are based on chunk labels. Chunks without labels will be assigned labels like `unnamed-chunk-i`, where `i` is an incremental number.
-- Avoid spaces (`␣`), periods ( `.`), and underscores (`_`) in chunk labels and paths.  If you need separators, you are recommended to use hyphens (`-`) instead. 
+- Avoid spaces (`␣`), periods ( `.`), and underscores (`_`) in chunk labels and paths.  If you need separators, you are recommended to use **hyphens** (`-`) instead. 
 
 `knitr::opts_chunk$set()` changes the default values of chunk options in a document. See [here](#common-chunk-options) for commonly used chunk options.
 
 
 --------------------------------------------------------------------------------
 
-
-**Unnumbered sections**
+**Unnumbered Sections**
 
 Add `{-}` at the end of the section title.
 
@@ -52,7 +51,22 @@ Add a section ID
 Refer to this section using the ID: [Variance and Covariance properties](#variance-covariance). 
 ```
 
-- Bookdown supports cross files linking.
+- Bookdown supports **cross files linking**.
+
+Q: How to cross reference a regular text across files? \
+A: There's **no built-in `@ref()`** syntax for referencing arbitrary inline text. You can achieve this using html anchors. In the source `.Rmd` file (say, `chapter1.Rmd`), write:
+
+```markdown
+<span id="mytext">This is the important concept you want to reference later.</span>
+```
+
+Then, in another `.Rmd` file (say, `chapter2.Rmd`), link to it with:
+
+```markdown
+See [this explanation](#mytext) in Chapter 1.
+```
+
+This works for HTML output only.
 
 --------------------------------------------------------------------------------
 
