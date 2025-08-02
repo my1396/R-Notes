@@ -1,4 +1,4 @@
-## Multipanel Plot {.unnumbered .unlisted}
+## Multipanel Plot
 
 https://felixfan.github.io/stacking-plots-same-x/
 

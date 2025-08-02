@@ -4,13 +4,13 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>11.6 Arellano-Bond Estimator | R Notes</title>
+  <title>7.4 Control Graphics Devices | R Notes</title>
   <meta name="description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
 set in the _output.yml file.</p>" />
   <meta name="generator" content="bookdown 0.35 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="11.6 Arellano-Bond Estimator | R Notes" />
+  <meta property="og:title" content="7.4 Control Graphics Devices | R Notes" />
   <meta property="og:type" content="book" />
   
   <meta property="og:description" content="<p>This is a minimal example of using the bookdown package to write a book.
@@ -19,7 +19,7 @@ set in the _output.yml file.</p>" />
   <meta name="github-repo" content="my1396/R-Notes" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="11.6 Arellano-Bond Estimator | R Notes" />
+  <meta name="twitter:title" content="7.4 Control Graphics Devices | R Notes" />
   
   <meta name="twitter:description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
@@ -36,8 +36,8 @@ set in the _output.yml file.</p>" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   <link rel="shortcut icon" href="images/r-project-favicon.ico" type="image/x-icon" />
-<link rel="prev" href="11.5-panel-1.html"/>
-
+<link rel="prev" href="7.3-math-expression-in-figures.html"/>
+<link rel="next" href="7.5-ggplot.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -703,239 +703,166 @@ div.csl-indent {
         }
     </script>
 </head>
-<div id="arellano-bond-estimator" class="section level2 hasAnchor" number="11.6">
-<h2><span class="header-section-number">11.6</span> Arellano-Bond Estimator<a href="11.6-arellano-bond-estimator.html#arellano-bond-estimator" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>If an equation did contain a lagged dependent variable, then one could use a <strong>dynamic panel-data</strong> (DPD) estimator such as <code>xtabond</code>, <code>xtdpd</code>, or <code>xtdpdsys</code>. DPD estimators are designed for cases where the number of observations per panel <span class="math inline">\(T\)</span> is small.</p>
-<p>As shown by <span class="citation">Nickell (<a href="#ref-Nickell1981">1981</a>)</span>, the bias of the standard
-fixed- and random-effects estimators in the presence of lagged dependent variables is of order <span class="math inline">\(1/T\)</span> and is thus particularly severe when each panel has relatively few observations.</p>
-<p><span class="citation">Judson and Owen (<a href="#ref-Judson1999">1999</a>)</span> perform Monte Carlo experiments to examine the relative performance of different panel-data estimators in the presence of lagged dependent variables when used with panel datasets having dimensions more commonly encountered in macroeconomic applications. Based on their results,</p>
+<div id="control-graphics-devices" class="section level2 hasAnchor" number="7.4">
+<h2><span class="header-section-number">7.4</span> Control Graphics Devices<a href="7.4-control-graphics-devices.html#control-graphics-devices" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p><code>dev.cur()</code> returns a length-one named integer vector giving the number and name of the active device, or 1, the null device, if none is active.</p>
+<p><code>dev.new()</code> opens a new <code>RStudioGD</code> device.</p>
+<p><strong><code>dev.list()</code></strong> returns the numbers of all open devices, except device 1, the null device.</p>
 <ul>
-<li><p>The bias of the standard fixed-effects estimator (LSDV in their notation) is not inconsequential even when <span class="math inline">\(T=20.\)</span></p></li>
-<li><p>For <span class="math inline">\(T=30\)</span>, the fixed-effects estimator does work as well as most alternatives.</p>
-<p>The only estimator that appreciably outperformed the standard fixed-effects estimator when <span class="math inline">\(T=30\)</span> is the least-squares dummy variable corrected estimator (LSDVC in their notation).</p>
-<p><span class="citation">Bruno (<a href="#ref-Bruno2005">2005</a>)</span> provides a Stata implementation of that estimator.</p></li>
+<li>This is a numeric vector with a <code>names</code> attribute giving the device names, or <code>NULL</code> is there is no open device.</li>
+<li>Usually <code>2</code> is <code>RStudioGD 2</code>.</li>
 </ul>
-<p>The <a href="https://www.stata.com/manuals/xtxtabond.pdf">Arellano–Bond estimator</a> is for datasets with many panels and few periods. (Technically, the large-sample properties are derived with the number of panels going to infinity and the number of periods held fixed.) The number of instruments increases quadratically in the number of periods. If your dataset is better described by a framework in which both the number of panels and the number of periods is large, then you should consider other estimators such as <code>xtiveg</code> or <code>xtreg, fe</code>.</p>
-<p>The Arellano-Bond estimator may be obtained in Stata using either the <code>xtabond</code> or <code>xtdpd</code> command.</p>
-<p><code>xtabond</code> fits a linear dynamic panel-data model where the unobserved unit-level effects are correlated with the lags of the dependent variable, known as the Arellano–Bond estimator. This estimator is designed for datasets with many panels and few periods, and it requires that there be <strong>no autocorrelation</strong> in the idiosyncratic errors.</p>
-<p><code>xtabond</code> uses moment conditions in which lags of the dependent variable and first differences of the exogenous variables are instruments for the first-differenced equation.</p>
-<div class="sourceCode" id="cb740"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb740-1"><a href="11.6-arellano-bond-estimator.html#cb740-1" tabindex="-1"></a><span class="kw">xtabond</span> depvar [ indepvars ] [ <span class="kw">if</span> ] [ <span class="kw">in</span> ] [, options ]</span></code></pre></div>
-<p><strong>Options</strong>:</p>
+<p><strong><code>dev.set(which = dev.next())</code></strong> makes the specified device the active device. If there is no device with that number, it is equivalent to <code>dev.next</code>. If <code>which = 1</code> it opens a new device and selects that.</p>
+<p><code>dev.prev(which = dev.cur())</code> <code>dev.next</code> and <code>dev.prev</code> select the next/previous open device in the appropriate direction, unless no device is open.</p>
+<p><code>dev.off(which = dev.cur())</code> shuts down the specified (by default the current) device.</p>
+<p><strong><code>graphics.off()</code></strong> shuts down all open graphics devices.</p>
+<p><strong>Save the current graphic object</strong></p>
+<div class="sourceCode" id="cb522"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb522-1"><a href="7.4-control-graphics-devices.html#cb522-1" tabindex="-1"></a><span class="fu">library</span>(grid)</span>
+<span id="cb522-2"><a href="7.4-control-graphics-devices.html#cb522-2" tabindex="-1"></a>grab <span class="ot">&lt;-</span> <span class="fu">grid.grab</span>()</span>
+<span id="cb522-3"><a href="7.4-control-graphics-devices.html#cb522-3" tabindex="-1"></a><span class="fu">ggsave</span>(grab, <span class="at">filename =</span> f_name, <span class="at">width=</span><span class="fl">10.9</span>, <span class="at">height=</span><span class="fl">5.82</span>)</span></code></pre></div>
 <ul>
-<li><code>lags(#)</code>: #lags of dependent variable as covariates; default is <span style="color:#008B45"><code>lags(1)</code></span></li>
-<li><code>maxldep(#)</code>: maximum lags of dependent variable for use as instruments</li>
-<li><code>maxlags(#)</code>: maximum lags of predetermined and endogenous variables for use as instruments</li>
-<li><code>twostep</code>: compute the two-step estimator instead of the one-step estimator</li>
-<li><code>pre(varlist)</code>: predetermined variables; can be specified more than once</li>
-<li><code>endogenous(varlist)</code>: endogenous variables; can be specified more than once</li>
-<li><code>vce(vcetype)</code>
+<li><code>pdf</code> device uses inches to specify width and height.</li>
+<li><code>png</code> and <code>jpeg</code> use pixels to specify dimensions.</li>
+</ul>
+<div id="save-png" class="section level3 hasAnchor" number="7.4.1">
+<h3><span class="header-section-number">7.4.1</span> Save PNG<a href="7.4-control-graphics-devices.html#save-png" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div class="sourceCode" id="cb523"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb523-1"><a href="7.4-control-graphics-devices.html#cb523-1" tabindex="-1"></a>plot_png <span class="ot">&lt;-</span> <span class="cf">function</span>(p, f_name, width, height, <span class="at">ppi=</span><span class="dv">300</span>){</span>
+<span id="cb523-2"><a href="7.4-control-graphics-devices.html#cb523-2" tabindex="-1"></a>    <span class="co"># a plot wrapper</span></span>
+<span id="cb523-3"><a href="7.4-control-graphics-devices.html#cb523-3" tabindex="-1"></a>    <span class="fu">png</span>(f_name, <span class="at">width=</span>width<span class="sc">*</span>ppi, <span class="at">height=</span>height<span class="sc">*</span>ppi, <span class="at">res=</span>ppi)</span>
+<span id="cb523-4"><a href="7.4-control-graphics-devices.html#cb523-4" tabindex="-1"></a>    <span class="fu">print</span> (p)</span>
+<span id="cb523-5"><a href="7.4-control-graphics-devices.html#cb523-5" tabindex="-1"></a>    <span class="fu">dev.off</span>()</span>
+<span id="cb523-6"><a href="7.4-control-graphics-devices.html#cb523-6" tabindex="-1"></a>}</span></code></pre></div>
 <ul>
-<li><code>vce(gmm)</code> the default, uses the conventionally derived variance estimator for generalized method of moments estimation.</li>
-<li><code>vce(robust)</code>: uses the robust estimator. After one-step estimation, this is the Arellano–Bond robust VCE estimator. After two-step estimation, this is the Windmeijer (2005) WC-robust estimator.</li>
+<li>Sometimes the title got cut off. You can change <code>oma</code> to add more top margin.
+<ul>
+<li>If it doesn’t help, change the dimension of your figure, make it higher by changing the height of the figure output.</li>
+<li><code>par(oma=c(bottom, left, top, right))</code> only works for base-R graphics; use <code>theme(plot.margin = margin(t=7, b=7, r=12, l=7, unit="pt") )</code> to add more margins to <code>ggplot</code> object.</li>
 </ul></li>
-</ul>
-<p><span class="math display" id="eq:AB-model">\[
-\begin{equation} \tag{11.1}
-\begin{split}
-n_{i,t}
-&amp;= \alpha_1 n_{i,t-1} + \alpha_2 n_{i,t-2} + \bbeta&#39;(L) \bx_{it} + \lambda_t + \eta_i + \varepsilon_{i,t} \\
-&amp;= \alpha_1 n_{i,t-1} + \alpha_2 n_{i,t-2}  \\
-&amp;\phantom{=}\quad  + \beta_1 w_{i,t} + \beta_2 w_{i,t-1} \\
-&amp;\phantom{=}\quad  + \beta_3 k_{i,t} + \beta_4 k_{i,t-1} + \beta_5 k_{i,t-2} \\
-&amp;\phantom{=}\quad + \beta_6 ys_{i,t} + \beta_7 ys_{i,t-1} + \beta_8 ys_{i,t-2}  \\
-&amp;\phantom{=}\quad + \gamma_3 d_3 + \dots + \gamma_T d_T + \eta_i + \varepsilon_{i,t},
-\end{split}
-\end{equation}
-\]</span></p>
-<p>where <span class="math inline">\(i=1,\ldots,n\)</span> denotes the firm, and <span class="math inline">\(t=3,\ldots,T\)</span> is the time series dimension.</p>
+<li>You can check the dimension of your figure by right-click on the plot, then “Copy Image Address”, paste the address somewhere, you get the width and height information in the address. You can use this aspect ratio as a start.
 <ul>
-<li><p><span class="math inline">\(n_{i,t}\)</span> is the natural logarithm of <em>employment</em>, first and second lagged were used as independent variables</p></li>
-<li><p><span class="math inline">\(w\)</span> refers to the natural logarithm of <em>wage</em>, up to lag 1</p></li>
-<li><p><span class="math inline">\(k\)</span> is the natural logarithm of <em>capital</em>, up to lag 2</p></li>
-<li><p><span class="math inline">\(ys\)</span> is the natural logarithm of <em>output</em>, up to lag 2</p></li>
-<li><p>Variables <span class="math inline">\(d_3,\ldots,d_T\)</span> are time dummies with corresponding coefficients <span class="math inline">\(\gamma_3,\ldots,\gamma_T.\)</span></p></li>
-<li><p><span class="math inline">\(\eta_i\)</span> is the unobserved individual-specific effects.</p></li>
-<li><p><span class="math inline">\(\varepsilon_{i,t}\)</span> is an idiosyncratic remainder component.</p></li>
+<li>unit: px.</li>
+</ul></li>
+<li>Don’t make the figure too big as the title, axis ticks, will become too small to see in proportion.</li>
 </ul>
-<p>Model <a href="11.6-arellano-bond-estimator.html#eq:AB-model">(11.1)</a> can be implemented using the following command.</p>
-<div class="sourceCode" id="cb741"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb741-1"><a href="11.6-arellano-bond-estimator.html#cb741-1" tabindex="-1"></a><span class="co">// Use example</span></span>
-<span id="cb741-2"><a href="11.6-arellano-bond-estimator.html#cb741-2" tabindex="-1"></a><span class="kw">use</span> https:<span class="co">//www.stata-press.com/data/r19/abdata</span></span>
-<span id="cb741-3"><a href="11.6-arellano-bond-estimator.html#cb741-3" tabindex="-1"></a><span class="kw">xtabond</span> n <span class="ot">l</span>(0/1).<span class="fu">w</span> <span class="ot">l</span>(0/2).(<span class="kw">k</span> ys) yr1980-yr1984 <span class="fu">year</span>, lags(2) <span class="kw">vce</span>(<span class="kw">robust</span>) <span class="kw">noconstant</span></span></code></pre></div>
-<p>The output would look like the following.</p>
-<pre class="nowrap"><code>
-Arellano–Bond dynamic panel-data estimation     Number of obs     =        611
-Group variable: id                              Number of groups  =        140
-Time variable: year
-                                                Obs per group:
-                                                              min =          4
-                                                              avg =   4.364286
-                                                              max =          6
-
-Number of instruments =     40                  Wald chi2(13)     =    1318.68
-                                                Prob > chi2       =     0.0000
-One-step results
-                                     (Std. err. adjusted for clustering on id)
-
-                          Robust
-   n         Coefficient  std. err.      z    P>|z|     [95% conf. interval]
-
-   n     
- L1.           .6286618   .1161942     5.41   0.000     .4009254    .8563983
-         
-   w     
- --.          -.5104249   .1904292    -2.68   0.007    -.8836592   -.1371906
- L1.           .2891446    .140946     2.05   0.040     .0128954    .5653937
- L2.          -.0443653   .0768135    -0.58   0.564     -.194917    .1061865
-         
-   k     
- --.           .3556923   .0603274     5.90   0.000     .2374528    .4739318
- L1.          -.0457102   .0699732    -0.65   0.514    -.1828552    .0914348
- L2.          -.0619721   .0328589    -1.89   0.059    -.1263743    .0024301
-         
-yr1980        -.0282422   .0166363    -1.70   0.090    -.0608488    .0043643
-yr1981        -.0694052    .028961    -2.40   0.017    -.1261677   -.0126426
-yr1982        -.0523678   .0423433    -1.24   0.216    -.1353591    .0306235
-yr1983        -.0256599   .0533747    -0.48   0.631    -.1302723    .0789525
-yr1984        -.0093229   .0696241    -0.13   0.893    -.1457837    .1271379
-year           .0019575   .0119481     0.16   0.870    -.0214604    .0253754
-
-Instruments for differenced equation
-        GMM-type: L(2/.).n
-        Standard: D.w LD.w L2D.w D.k LD.k L2D.k D.yr1980 D.yr1981 D.yr1982
-                  D.yr1983 D.yr1984 D.year
-Instruments for level equation
-        Standard: _cons
-</code></pre>
-<p><code>xtdpdsys</code> implements the Arellano–Bover/Blundell–Bond system estimator, which includes the lagged differences of <code>n</code> (the dependent variable) as instruments for the level equation.</p>
-<hr />
-<p><strong>Test for Autocorrelation</strong></p>
-<p>The moment conditions of these GMM estimators are valid only if there is no serial correlation in the idiosyncratic errors. Because the first difference of white noise is necessarily autocorrelated, we need only concern ourselves with second and higher autocorrelation. We can use <strong><code>estat abond</code></strong> to test for autocorrelation:</p>
-<div class="sourceCode" id="cb742"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb742-1"><a href="11.6-arellano-bond-estimator.html#cb742-1" tabindex="-1"></a>. <span class="kw">estat</span> abond, artests(4)</span>
-<span id="cb742-2"><a href="11.6-arellano-bond-estimator.html#cb742-2" tabindex="-1"></a></span>
-<span id="cb742-3"><a href="11.6-arellano-bond-estimator.html#cb742-3" tabindex="-1"></a>Arellano–Bond <span class="kw">test</span> <span class="kw">for</span> <span class="bn">zero</span> autocorrelation <span class="kw">in</span> first-differenced errors</span>
-<span id="cb742-4"><a href="11.6-arellano-bond-estimator.html#cb742-4" tabindex="-1"></a>H0: No autocorrelation </span>
-<span id="cb742-5"><a href="11.6-arellano-bond-estimator.html#cb742-5" tabindex="-1"></a></span>
-<span id="cb742-6"><a href="11.6-arellano-bond-estimator.html#cb742-6" tabindex="-1"></a>Order         z   Prob &gt; z</span>
-<span id="cb742-7"><a href="11.6-arellano-bond-estimator.html#cb742-7" tabindex="-1"></a>    1   -4.6414     0.0000</span>
-<span id="cb742-8"><a href="11.6-arellano-bond-estimator.html#cb742-8" tabindex="-1"></a>    2   -1.0572     0.2904</span>
-<span id="cb742-9"><a href="11.6-arellano-bond-estimator.html#cb742-9" tabindex="-1"></a>    3   -.19492     0.8455</span>
-<span id="cb742-10"><a href="11.6-arellano-bond-estimator.html#cb742-10" tabindex="-1"></a>    4   .04472      0.9643</span></code></pre></div>
-<p><strong>Test for Overidentifying Restrictions</strong></p>
-<p><code>estat sargan</code> reports the Sargan test of overidentifying restrictions.</p>
-<div class="sourceCode" id="cb743"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb743-1"><a href="11.6-arellano-bond-estimator.html#cb743-1" tabindex="-1"></a>. <span class="kw">estat</span> sargan</span>
-<span id="cb743-2"><a href="11.6-arellano-bond-estimator.html#cb743-2" tabindex="-1"></a></span>
-<span id="cb743-3"><a href="11.6-arellano-bond-estimator.html#cb743-3" tabindex="-1"></a>Sargan <span class="kw">test</span> <span class="kw">of</span> overidentifying restrictions</span>
-<span id="cb743-4"><a href="11.6-arellano-bond-estimator.html#cb743-4" tabindex="-1"></a>H0: Overidentifying restrictions are valid</span>
-<span id="cb743-5"><a href="11.6-arellano-bond-estimator.html#cb743-5" tabindex="-1"></a>        <span class="fu">chi2</span>(25) = 65.81806</span>
-<span id="cb743-6"><a href="11.6-arellano-bond-estimator.html#cb743-6" tabindex="-1"></a>        Prob &gt; <span class="fu">chi2</span> = 0.0000</span></code></pre></div>
-<hr />
-<p><strong>Predetermined Covariates</strong></p>
-<p>Sometimes we cannot assume strict exogeneity. Recall that a variable, <span class="math inline">\(x_{it}\)</span>, is said to be strictly exogenous if <span class="math inline">\(\E[𝑥_{it}\varepsilon_{is}] = 0\)</span> for all <span class="math inline">\(t\)</span> and <span class="math inline">\(s\)</span>.</p>
-<p>If <span class="math inline">\(\E[x_{it}\varepsilon_{is}] \ne 0\)</span> for <span class="math inline">\(s &lt; t\)</span> but <span class="math inline">\(\E[x_{it}\varepsilon_{is}] = 0\)</span> for all <span class="math inline">\(s\ge t,\)</span> the variable is said to be <span style="color:#008B45"><strong>predetermined</strong></span>. Intuitively, if the error term at time <span class="math inline">\(t\)</span> has some feedback on the subsequent realizations of <span class="math inline">\(x_{it},\)</span> <span class="math inline">\(x_{it}\)</span> is a predetermined variable. Because unforecastable errors today might affect future changes in the real wage and in the capital stock, we might suspect that the log of the real product wage and the log of the gross capital stock are predetermined instead of strictly exogenous.</p>
-<p>We also call predetermined <span class="math inline">\(x_{it}\)</span> as <span style="color:#008B45"><strong>sequential exogenous</strong></span>.</p>
-<p>Here we treat <span class="math inline">\(w\)</span> and <span class="math inline">\(k\)</span> as predetermined and use lagged levels as instruments.</p>
-<div class="sourceCode" id="cb744"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb744-1"><a href="11.6-arellano-bond-estimator.html#cb744-1" tabindex="-1"></a><span class="kw">xtabond</span> n <span class="ot">l</span>(0/1).ys yr1980-yr1984 <span class="fu">year</span>, lags(2) twostep pre(<span class="fu">w</span>, lag(1,.)) pre(<span class="kw">k</span>, lag(2,.)) <span class="kw">noconstant</span> <span class="kw">vce</span>(<span class="kw">robust</span>)</span></code></pre></div>
-<p>We are now including GMM-type instruments from the first lag of <code>L.w</code> on back and from the first lag of <code>L2.k</code> on back.</p>
-<p><code>pre(w, lag(1, .))</code> to mean that <code>L.w</code> is a predetermined variable and <code>pre(k, lag(2, .))</code> to mean that <code>L2.k</code> is a predetermined variable.</p>
-<p><strong>Endogenous Covariates</strong></p>
-<p>We might instead suspect that <span class="math inline">\(w\)</span> and <span class="math inline">\(k\)</span> are endogenous in that <span class="math inline">\(\E[x_{it}\varepsilon_{is}] \ne 0\)</span> for <span class="math inline">\(s \le t\)</span> but <span class="math inline">\(\E[x_{it}\varepsilon_{is}] = 0\)</span> for all <span class="math inline">\(s &gt; t.\)</span></p>
-<p>By this definition, endogenous variables differ from predetermined variables only in that the</p>
+<p><strong>Forward display</strong></p>
+<p><code>x11()</code> opens an interactive graphics device. <code>x11</code> is Apple’s X server. It is reliable and provides hardware OpenGL acceleration.</p>
+<p><a href="https://www.rdocumentation.org/packages/grDevices/versions/3.6.2/topics/x11" class="uri">https://www.rdocumentation.org/packages/grDevices/versions/3.6.2/topics/x11</a></p>
+<p><a href="https://www.cgl.ucsf.edu/chimera/data/downloads/1.11.2/mac_x11.html" class="uri">https://www.cgl.ucsf.edu/chimera/data/downloads/1.11.2/mac_x11.html</a></p>
+<p>When you are using a native Mac application (not X windows) and then click on a menu within the X window, <span style="color:#008B45">the mouse click does not bring up the menu</span>. It just activates the X window and another mouse click is needed to show the menu. <u>To make this work with a single mouse click</u>, use the Mac X server <code>wm_click_through</code> preference by typing the following command in a Mac Terminal window:</p>
+<p><code>defaults write org.x.x11 wm_click_through -bool true</code> Disables the default behavior of swallowing window-activating mouse events.</p>
 <ul>
-<li><p>endogenous variables allow for correlation between <span class="math inline">\(x_{it}\)</span> and <span class="math inline">\(\varepsilon_{it}\)</span> at time <span class="math inline">\(t,\)</span> whereas</p>
-<p>Endogenous variables are treated similarly to the <em>lagged dependent variable</em>. Levels of the endogenous variables lagged two or more periods can serve as instruments.</p></li>
-<li><p>predetermined variables do <span style="color:#FF9900"><strong>NOT</strong></span> allow for contemporaneous correlation.</p></li>
+<li>Normally Mac OS X swallows window-activating mouse events. This preference causes a window-activating mouse click on an X window to also be processed by the application.</li>
+<li>X11 must be <span style="color:#008B45">restarted</span> after any of these settings are changed. The settings are saved in your <code>~/Library/Preferences/org.x.x11.plist</code> file, so they will apply to future sessions. Reissuing the commands with false instead of true will restore the default preference settings.</li>
 </ul>
-<p>In this example, we treat <span class="math inline">\(w\)</span> and <span class="math inline">\(k\)</span> as endogenous variables.</p>
-<div class="sourceCode" id="cb745"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb745-1"><a href="11.6-arellano-bond-estimator.html#cb745-1" tabindex="-1"></a><span class="kw">xtabond</span> n <span class="ot">l</span>(0/1).ys yr1980-yr1984 <span class="fu">year</span>, lags(2) twostep endogenous(<span class="fu">w</span>, lag(1,.)) endogenous(<span class="kw">k</span>, lag(2,.)) <span class="kw">noconstant</span> <span class="kw">vce</span>(<span class="kw">robust</span>)</span></code></pre></div>
-<p>Although some estimated coefficients changed in magnitude, none changed in sign, and these results are similar to those obtained by treating <span class="math inline">\(w\)</span> and <span class="math inline">\(k\)</span> as predetermined.</p>
-<p>Prefix <code>xtabond</code> with <code>xi:</code> if you need to include factor variables</p>
-<div class="sourceCode" id="cb746"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb746-1"><a href="11.6-arellano-bond-estimator.html#cb746-1" tabindex="-1"></a><span class="co">// AB estimator with factor variables</span></span>
-<span id="cb746-2"><a href="11.6-arellano-bond-estimator.html#cb746-2" tabindex="-1"></a><span class="kw">xi</span>: <span class="kw">xtabond</span> logd_gdp tmp tmp2 pre pre2 <span class="co">///</span></span>
-<span id="cb746-3"><a href="11.6-arellano-bond-estimator.html#cb746-3" tabindex="-1"></a>    tmp_pre tmp2_pre tmp_pre2 tmp2_pre2 <span class="co">///</span></span>
-<span id="cb746-4"><a href="11.6-arellano-bond-estimator.html#cb746-4" tabindex="-1"></a>    i.<span class="fu">year</span> i.iso|year_id i.iso|year_id2, <span class="co">///</span></span>
-<span id="cb746-5"><a href="11.6-arellano-bond-estimator.html#cb746-5" tabindex="-1"></a>    lags(1) <span class="kw">vce</span>(<span class="kw">robust</span>)</span></code></pre></div>
+<blockquote>
+<p>An item that provides <span style="color:#008B45">click-through</span> is one that a user can activate with one click, even though the item is in an inactive window. (To activate an item that does not support click-through, the user must first make the containing window active and then click the item.) Although click-through can make some user tasks easier, it can also confuse users if they click items unintentionally.</p>
+</blockquote>
+<p><strong>x11 preferences</strong></p>
 <ul>
-<li><p><code>i.year</code>: time fixed effects;</p></li>
-<li><p><code>i.iso|year_id</code>: country-specific linear time trends</p></li>
-<li><p><code>i.iso|year_id2</code>: country-specific quadratic time trends</p></li>
+<li><p>Input</p>
+<p><img src="https://drive.google.com/thumbnail?id=1L0sE4wItvdESsM_IMIe2_P4gFX5y7aV-&sz=w1000" alt="image-20221114225826302" style="zoom:50%;" /></p></li>
+<li><p>windows</p>
+<p><img src="https://drive.google.com/thumbnail?id=1SG617Sb_csQRiM6fZ962SqR7ExT9nwLW&sz=w1000" alt="image-20221114225900595" style="zoom:50%;" /></p></li>
+<li><p>security</p>
+<p><img src="https://drive.google.com/thumbnail?id=1PVtE5RnIplueIsxYUWT3ZSCkV8EDStA6&sz=w1000" alt="image-20221114225922001" style="zoom:50%;" /></p></li>
 </ul>
-<hr />
-<p>Forecast under <code>xtabond</code>:</p>
-<ul>
-<li><a href="https://www.stata.com/stata-news/news29-3/forecast/" class="uri">https://www.stata.com/stata-news/news29-3/forecast/</a></li>
-</ul>
-<hr />
-<div id="xtabond2" class="section level3 hasAnchor" number="11.6.1">
-<h3><span class="header-section-number">11.6.1</span> xtabond2<a href="11.6-arellano-bond-estimator.html#xtabond2" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p><code>xtabond2</code> was written by David Roodman. More versatile than <code>xtabond</code>.</p>
+<p><span style="color:orange">Bug</span>: X11 windows do not raise (come to the front) when the application is activated.</p>
+<p><a href="http://hints.macworld.com/article.php?story=20050714011418999" class="uri">http://hints.macworld.com/article.php?story=20050714011418999</a></p>
+<p>bind a new key to an AppleScript mac Opt+Tab</p>
+<p><a href="https://apple.stackexchange.com/questions/175215/how-do-i-assign-a-keyboard-shortcut-to-an-applescript-i-wrote" class="uri">https://apple.stackexchange.com/questions/175215/how-do-i-assign-a-keyboard-shortcut-to-an-applescript-i-wrote</a></p>
+<p><img src="https://drive.google.com/thumbnail?id=1GOLLujeuJt858G2pqv1kkfMwdwJ50kvl&sz=w1000" alt="image-20221115084137151" style="zoom:100%;" /></p>
+<p>For the Quartz device, you can use <code>quartzFonts()</code> to see what the default font for each of these keywords is</p>
+<div class="sourceCode" id="cb524"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb524-1"><a href="7.4-control-graphics-devices.html#cb524-1" tabindex="-1"></a><span class="fu">quartzFonts</span>()</span>
+<span id="cb524-2"><a href="7.4-control-graphics-devices.html#cb524-2" tabindex="-1"></a><span class="co"># $serif</span></span>
+<span id="cb524-3"><a href="7.4-control-graphics-devices.html#cb524-3" tabindex="-1"></a><span class="co"># [1] &quot;Times-Roman&quot;      &quot;Times-Bold&quot;       &quot;Times-Italic&quot;     &quot;Times-BoldItalic&quot;</span></span>
+<span id="cb524-4"><a href="7.4-control-graphics-devices.html#cb524-4" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb524-5"><a href="7.4-control-graphics-devices.html#cb524-5" tabindex="-1"></a><span class="co"># $sans</span></span>
+<span id="cb524-6"><a href="7.4-control-graphics-devices.html#cb524-6" tabindex="-1"></a><span class="co"># [1] &quot;Helvetica&quot;             &quot;Helvetica-Bold&quot;        &quot;Helvetica-Oblique&quot;     &quot;Helvetica-BoldOblique&quot;</span></span>
+<span id="cb524-7"><a href="7.4-control-graphics-devices.html#cb524-7" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb524-8"><a href="7.4-control-graphics-devices.html#cb524-8" tabindex="-1"></a><span class="co"># $mono</span></span>
+<span id="cb524-9"><a href="7.4-control-graphics-devices.html#cb524-9" tabindex="-1"></a><span class="co"># [1] &quot;Courier&quot;             &quot;Courier-Bold&quot;        &quot;Courier-Oblique&quot;     &quot;Courier-BoldOblique&quot;</span></span></code></pre></div>
+<p><strong>Table of font</strong></p>
+<p><a href="http://www.cookbook-r.com/Graphs/Fonts/" class="uri">http://www.cookbook-r.com/Graphs/Fonts/</a></p>
+<p>Font support in R is generally not very good. It varies between systems, and between output formats.</p>
+<p>Sometimes what you see on the screen isn’t necessarily the same as what you get when you output to PNG or PDF.</p>
+<p>PNG output has less suport for font variety; PDF has better support.</p>
 <table>
-<colgroup>
-<col width="71%" />
-<col width="28%" />
-</colgroup>
 <thead>
 <tr class="header">
-<th><code>xtabond</code></th>
-<th><code>xtabond2</code></th>
+<th>Short Name</th>
+<th>Canonical Name</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Not support factor variables<br />Can be fixed with <code>xi: xtabond</code></td>
-<td>Support factor variables</td>
+<td>mono</td>
+<td>Courier</td>
+</tr>
+<tr class="even">
+<td>sans</td>
+<td>Helvetica</td>
+</tr>
+<tr class="odd">
+<td>serif</td>
+<td>Times</td>
+</tr>
+<tr class="even">
+<td></td>
+<td>AvantGarde</td>
+</tr>
+<tr class="odd">
+<td></td>
+<td>Bookman</td>
+</tr>
+<tr class="even">
+<td></td>
+<td>Helvetica-Narrow</td>
+</tr>
+<tr class="odd">
+<td></td>
+<td>NewCenturySchoolbook</td>
+</tr>
+<tr class="even">
+<td></td>
+<td>Palatino</td>
+</tr>
+<tr class="odd">
+<td></td>
+<td>URWGothic</td>
+</tr>
+<tr class="even">
+<td></td>
+<td>URWBookman</td>
+</tr>
+<tr class="odd">
+<td></td>
+<td>NimbusMon</td>
+</tr>
+<tr class="even">
+<td>URWHelvetica</td>
+<td>NimbusSan</td>
+</tr>
+<tr class="odd">
+<td></td>
+<td>NimbusSanCondNimbusSanCond</td>
+</tr>
+<tr class="even">
+<td></td>
+<td>CenturySchCenturySch</td>
+</tr>
+<tr class="odd">
+<td></td>
+<td>URWPalladio</td>
+</tr>
+<tr class="even">
+<td>URWTimes</td>
+<td>NimbusRom</td>
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb747"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb747-1"><a href="11.6-arellano-bond-estimator.html#cb747-1" tabindex="-1"></a>xtabond2 depvar <span class="kw">varlist</span> [<span class="kw">if</span> <span class="fu">exp</span>] [<span class="kw">in</span> <span class="kw">range</span>] [<span class="kw">weight</span>] [, <span class="dv">level</span>(#)</span>
-<span id="cb747-2"><a href="11.6-arellano-bond-estimator.html#cb747-2" tabindex="-1"></a>        <span class="kw">svmat</span> svvar twostep <span class="kw">robust</span> <span class="kw">cluster</span>(<span class="kw">varlist</span>) <span class="kw">noconstant</span> small </span>
-<span id="cb747-3"><a href="11.6-arellano-bond-estimator.html#cb747-3" tabindex="-1"></a>                gmmopt [gmmopt ...] ivopt [ivopt ...]]</span></code></pre></div>
-<p><strong>Options</strong>:</p>
-<ul>
-<li><p><code>level(#)</code> confidence level, default to <code>level(95)</code></p></li>
-<li><p><code>gmmopt</code></p>
-<div class="sourceCode" id="cb748"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb748-1"><a href="11.6-arellano-bond-estimator.html#cb748-1" tabindex="-1"></a>gmmstyle(<span class="kw">varlist</span> [, laglimits(# #) <span class="kw">collapse</span> orthogonal equation({<span class="fu">diff</span> | <span class="dv">level</span> | both}) passthru <span class="kw">split</span>])</span></code></pre></div>
-<p><code>gmmstyle</code> specifies a set of variables to be used as bases for “GMM-style” instrument sets described in Holtz-Eakin, Newey, and Rosen (1988) and Arellano and Bond (1991). By default xtabond2 uses, for each time period, all available lags of the specified variables in levels dated <span class="math inline">\(t-1\)</span> or earlier as instruments for the transformed equation; and uses the contemporaneous first differences as instruments in the levels equation. These defaults are appropriate for predetermined variables that are not strictly exogenous (Bond 2000). Missing values are always replaced by zeros.</p>
-<p>Since the <code>gmmstyle()</code> varlist allows time-series operators, there are many routes to the same specification. E.g., <code>gmm(w, lag(2 .))</code>, the standard treatment for an endogenous variable, is equivalent to <code>gmm(L.w, lag(1 .))</code>, thus <code>gmm(L.w)</code>.</p></li>
-<li><p><code>ivopt</code></p>
-<div class="sourceCode" id="cb749"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb749-1"><a href="11.6-arellano-bond-estimator.html#cb749-1" tabindex="-1"></a>ivstyle(<span class="kw">varlist</span> [, equation({<span class="fu">diff</span> | <span class="dv">level</span> | both}) passthru mz])</span></code></pre></div>
-<p><code>ivstyle</code> specifies a set of variables to serve as standard instruments, with one column in the instrument matrix per variable. Normally, strictly exogenous regressors are included in <code>ivstyle</code> options, in order to enter the instrument matrix, as well as being listed before the main comma of the command line.</p>
-<p>The <code>equation()</code> suboption specifies which equation(s) should use the instruments:</p>
-<ul>
-<li><code>equation(diff)</code>: first-difference only</li>
-<li><code>equation(level)</code>: levels only</li>
-<li><code>equation(both)</code>: both, default</li>
-</ul></li>
-</ul>
-<p><strong>A matching triplet</strong> using different pkgs to achieve the same results (pp42, <a href="https://journals.sagepub.com/doi/pdf/10.1177/1536867X0900900106">Stata Journal article by David Roodman</a>)</p>
-<div class="sourceCode" id="cb750"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb750-1"><a href="11.6-arellano-bond-estimator.html#cb750-1" tabindex="-1"></a><span class="kw">xtabond</span> n, lags(1) pre(<span class="fu">w</span>, lagstruct(1,.)) pre(<span class="kw">k</span>, endog) <span class="kw">robust</span></span>
-<span id="cb750-2"><a href="11.6-arellano-bond-estimator.html#cb750-2" tabindex="-1"></a>xtdpd n L.n <span class="fu">w</span> L.<span class="fu">w</span> <span class="kw">k</span>, dgmmiv(<span class="fu">w</span> <span class="kw">k</span> n) <span class="kw">vce</span>(<span class="kw">robust</span>)</span>
-<span id="cb750-3"><a href="11.6-arellano-bond-estimator.html#cb750-3" tabindex="-1"></a>xtabond2 n L.n <span class="fu">w</span> L.<span class="fu">w</span> <span class="kw">k</span>, gmmstyle(L.(<span class="fu">w</span> n <span class="kw">k</span>), <span class="kw">eq</span>(<span class="fu">diff</span>)) <span class="kw">robust</span></span></code></pre></div>
-<p><a href="https://www.statalist.org/forums/forum/general-stata-discussion/general/1548924-xtabond-vs-xtabond2-how-to-get-the-same-results" class="uri">https://www.statalist.org/forums/forum/general-stata-discussion/general/1548924-xtabond-vs-xtabond2-how-to-get-the-same-results</a></p>
+<p><strong><code>extrafont</code> package</strong></p>
+<p><a href="https://github.com/wch/extrafont" class="uri">https://github.com/wch/extrafont</a></p>
 
-<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
-<div class="csl-entry">
-Bruno, Giovanni S. F. 2005. <span>“Estimation and Inference in Dynamic Unbalanced Panel-Data Models with a Small Number of Individuals.”</span> <em>The Stata Journal</em> 5: 473–500. <a href="https://www.stata-journal.com/article.html?article=st0091">https://www.stata-journal.com/article.html?article=st0091</a>.
-</div>
-<div class="csl-entry">
-Judson, Ruth A., and Ann L. Owen. 1999. <span>“Estimating Dynamic Panel Data Models: A Guide for Macroeconomists.”</span> <em>Economics Letters</em> 65 (October): 9–15. <a href="https://doi.org/10.1016/S0165-1765(99)00130-5">https://doi.org/10.1016/S0165-1765(99)00130-5</a>.
-</div>
-<div class="csl-entry">
-Nickell, Stephen. 1981. <span>“<span>Biases In Dynamic Models With Fixed Effects</span>.”</span> <em>Econometrica</em> 49 (6): 1417–26.
-</div>
-</div>
-</div>
-</div>
-<!-- </div> -->
-<h3>References</h3>
-<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
-<div id="ref-Bruno2005" class="csl-entry">
-Bruno, Giovanni S. F. 2005. <span>“Estimation and Inference in Dynamic Unbalanced Panel-Data Models with a Small Number of Individuals.”</span> <em>The Stata Journal</em> 5: 473–500. <a href="https://www.stata-journal.com/article.html?article=st0091">https://www.stata-journal.com/article.html?article=st0091</a>.
-</div>
-<div id="ref-Judson1999" class="csl-entry">
-Judson, Ruth A., and Ann L. Owen. 1999. <span>“Estimating Dynamic Panel Data Models: A Guide for Macroeconomists.”</span> <em>Economics Letters</em> 65 (October): 9–15. <a href="https://doi.org/10.1016/S0165-1765(99)00130-5">https://doi.org/10.1016/S0165-1765(99)00130-5</a>.
-</div>
-<div id="ref-Nickell1981" class="csl-entry">
-Nickell, Stephen. 1981. <span>“<span>Biases In Dynamic Models With Fixed Effects</span>.”</span> <em>Econometrica</em> 49 (6): 1417–26.
 </div>
 </div>
             </section>
@@ -943,8 +870,8 @@ Nickell, Stephen. 1981. <span>“<span>Biases In Dynamic Models With Fixed Effec
           </div>
         </div>
       </div>
-<a href="11.5-panel-1.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-
+<a href="7.3-math-expression-in-figures.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="7.5-ggplot.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -975,7 +902,7 @@ gitbook.start({
 "size": 3
 },
 "edit": {
-"link": "https://github.com/my1396/R-Notes/edit/main/1101-Stata-AB-Estimator.Rmd",
+"link": "https://github.com/my1396/R-Notes/edit/main/0604-Graphics-Devices.Rmd",
 "text": "Edit"
 },
 "history": {
@@ -986,7 +913,7 @@ gitbook.start({
 "link": null,
 "text": null
 },
-"download": ["_main.pdf", "_main.epub", "https://github.com/my1396/R-Notes/raw/main/1101-Stata-AB-Estimator.Rmd"],
+"download": ["_main.pdf", "_main.epub", "https://github.com/my1396/R-Notes/raw/main/0604-Graphics-Devices.Rmd"],
 "search": {
 "engine": "fuse",
 "options": null

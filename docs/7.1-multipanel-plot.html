@@ -4,13 +4,13 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>11.6 Arellano-Bond Estimator | R Notes</title>
+  <title>7.1 Multipanel Plot | R Notes</title>
   <meta name="description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
 set in the _output.yml file.</p>" />
   <meta name="generator" content="bookdown 0.35 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="11.6 Arellano-Bond Estimator | R Notes" />
+  <meta property="og:title" content="7.1 Multipanel Plot | R Notes" />
   <meta property="og:type" content="book" />
   
   <meta property="og:description" content="<p>This is a minimal example of using the bookdown package to write a book.
@@ -19,7 +19,7 @@ set in the _output.yml file.</p>" />
   <meta name="github-repo" content="my1396/R-Notes" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="11.6 Arellano-Bond Estimator | R Notes" />
+  <meta name="twitter:title" content="7.1 Multipanel Plot | R Notes" />
   
   <meta name="twitter:description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
@@ -36,8 +36,8 @@ set in the _output.yml file.</p>" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   <link rel="shortcut icon" href="images/r-project-favicon.ico" type="image/x-icon" />
-<link rel="prev" href="11.5-panel-1.html"/>
-
+<link rel="prev" href="7-graphics.html"/>
+<link rel="next" href="7.2-goodlooking-colors.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -703,239 +703,143 @@ div.csl-indent {
         }
     </script>
 </head>
-<div id="arellano-bond-estimator" class="section level2 hasAnchor" number="11.6">
-<h2><span class="header-section-number">11.6</span> Arellano-Bond Estimator<a href="11.6-arellano-bond-estimator.html#arellano-bond-estimator" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>If an equation did contain a lagged dependent variable, then one could use a <strong>dynamic panel-data</strong> (DPD) estimator such as <code>xtabond</code>, <code>xtdpd</code>, or <code>xtdpdsys</code>. DPD estimators are designed for cases where the number of observations per panel <span class="math inline">\(T\)</span> is small.</p>
-<p>As shown by <span class="citation">Nickell (<a href="#ref-Nickell1981">1981</a>)</span>, the bias of the standard
-fixed- and random-effects estimators in the presence of lagged dependent variables is of order <span class="math inline">\(1/T\)</span> and is thus particularly severe when each panel has relatively few observations.</p>
-<p><span class="citation">Judson and Owen (<a href="#ref-Judson1999">1999</a>)</span> perform Monte Carlo experiments to examine the relative performance of different panel-data estimators in the presence of lagged dependent variables when used with panel datasets having dimensions more commonly encountered in macroeconomic applications. Based on their results,</p>
+<div id="multipanel-plot" class="section level2 hasAnchor" number="7.1">
+<h2><span class="header-section-number">7.1</span> Multipanel Plot<a href="7.1-multipanel-plot.html#multipanel-plot" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p><a href="https://felixfan.github.io/stacking-plots-same-x/" class="uri">https://felixfan.github.io/stacking-plots-same-x/</a></p>
+<p><a href="https://stackoverflow.com/questions/13649473/add-a-common-legend-for-combined-ggplots" class="uri">https://stackoverflow.com/questions/13649473/add-a-common-legend-for-combined-ggplots</a></p>
+<div id="with-base-r" class="section level3 hasAnchor" number="7.1.1">
+<h3><span class="header-section-number">7.1.1</span> With Base R<a href="7.1-multipanel-plot.html#with-base-r" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p><code>par(mfrow=c(ncol, nrow))</code> to create a grid for subfigures.</p>
+<p><code>text(labels="(a)", x, y, xpd=T, ...)</code> add labels to subfigures. <code>x</code> and <code>y</code> here are absolute positions.</p>
 <ul>
-<li><p>The bias of the standard fixed-effects estimator (LSDV in their notation) is not inconsequential even when <span class="math inline">\(T=20.\)</span></p></li>
-<li><p>For <span class="math inline">\(T=30\)</span>, the fixed-effects estimator does work as well as most alternatives.</p>
-<p>The only estimator that appreciably outperformed the standard fixed-effects estimator when <span class="math inline">\(T=30\)</span> is the least-squares dummy variable corrected estimator (LSDVC in their notation).</p>
-<p><span class="citation">Bruno (<a href="#ref-Bruno2005">2005</a>)</span> provides a Stata implementation of that estimator.</p></li>
+<li>Can use <code>grconvertX</code> to convert <code>x</code>-axis aboslute postions to relative positions.</li>
+<li>Can use <code>grconvertY</code> to convert <code>y</code>-axis aboslute postions to relative positions.</li>
 </ul>
-<p>The <a href="https://www.stata.com/manuals/xtxtabond.pdf">Arellano–Bond estimator</a> is for datasets with many panels and few periods. (Technically, the large-sample properties are derived with the number of panels going to infinity and the number of periods held fixed.) The number of instruments increases quadratically in the number of periods. If your dataset is better described by a framework in which both the number of panels and the number of periods is large, then you should consider other estimators such as <code>xtiveg</code> or <code>xtreg, fe</code>.</p>
-<p>The Arellano-Bond estimator may be obtained in Stata using either the <code>xtabond</code> or <code>xtdpd</code> command.</p>
-<p><code>xtabond</code> fits a linear dynamic panel-data model where the unobserved unit-level effects are correlated with the lags of the dependent variable, known as the Arellano–Bond estimator. This estimator is designed for datasets with many panels and few periods, and it requires that there be <strong>no autocorrelation</strong> in the idiosyncratic errors.</p>
-<p><code>xtabond</code> uses moment conditions in which lags of the dependent variable and first differences of the exogenous variables are instruments for the first-differenced equation.</p>
-<div class="sourceCode" id="cb740"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb740-1"><a href="11.6-arellano-bond-estimator.html#cb740-1" tabindex="-1"></a><span class="kw">xtabond</span> depvar [ indepvars ] [ <span class="kw">if</span> ] [ <span class="kw">in</span> ] [, options ]</span></code></pre></div>
-<p><strong>Options</strong>:</p>
+<div class="sourceCode" id="cb490"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb490-1"><a href="7.1-multipanel-plot.html#cb490-1" tabindex="-1"></a><span class="co"># add labels to multi-panel figures</span></span>
+<span id="cb490-2"><a href="7.1-multipanel-plot.html#cb490-2" tabindex="-1"></a>put.fig.letter <span class="ot">&lt;-</span> <span class="cf">function</span>(label, <span class="at">location=</span><span class="st">&quot;topleft&quot;</span>, <span class="at">x=</span><span class="cn">NULL</span>, <span class="at">y=</span><span class="cn">NULL</span>, </span>
+<span id="cb490-3"><a href="7.1-multipanel-plot.html#cb490-3" tabindex="-1"></a>                           <span class="at">offset=</span><span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>), ...) {</span>
+<span id="cb490-4"><a href="7.1-multipanel-plot.html#cb490-4" tabindex="-1"></a>    <span class="co"># offset[1]: x-axis buffer, negative to move to the left; positive to move to the right</span></span>
+<span id="cb490-5"><a href="7.1-multipanel-plot.html#cb490-5" tabindex="-1"></a>    <span class="co"># offset[2]: y-axis buffer, negative to move downward; positive to move upward</span></span>
+<span id="cb490-6"><a href="7.1-multipanel-plot.html#cb490-6" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">length</span>(label) <span class="sc">&gt;</span> <span class="dv">1</span>) {</span>
+<span id="cb490-7"><a href="7.1-multipanel-plot.html#cb490-7" tabindex="-1"></a>        <span class="fu">warning</span>(<span class="st">&quot;length(label) &gt; 1, using label[1]&quot;</span>)</span>
+<span id="cb490-8"><a href="7.1-multipanel-plot.html#cb490-8" tabindex="-1"></a>    }</span>
+<span id="cb490-9"><a href="7.1-multipanel-plot.html#cb490-9" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">is.null</span>(x) <span class="sc">|</span> <span class="fu">is.null</span>(y)) {</span>
+<span id="cb490-10"><a href="7.1-multipanel-plot.html#cb490-10" tabindex="-1"></a>        coords <span class="ot">&lt;-</span> <span class="cf">switch</span>(location,</span>
+<span id="cb490-11"><a href="7.1-multipanel-plot.html#cb490-11" tabindex="-1"></a>                         <span class="at">topleft =</span> <span class="fu">c</span>(<span class="fl">0.015</span>,<span class="fl">0.98</span>),</span>
+<span id="cb490-12"><a href="7.1-multipanel-plot.html#cb490-12" tabindex="-1"></a>                         <span class="at">topcenter =</span> <span class="fu">c</span>(<span class="fl">0.5525</span>,<span class="fl">0.98</span>),</span>
+<span id="cb490-13"><a href="7.1-multipanel-plot.html#cb490-13" tabindex="-1"></a>                         <span class="at">topright =</span> <span class="fu">c</span>(<span class="fl">0.985</span>, <span class="fl">0.98</span>),</span>
+<span id="cb490-14"><a href="7.1-multipanel-plot.html#cb490-14" tabindex="-1"></a>                         <span class="at">bottomleft =</span> <span class="fu">c</span>(<span class="fl">0.015</span>, <span class="fl">0.02</span>), </span>
+<span id="cb490-15"><a href="7.1-multipanel-plot.html#cb490-15" tabindex="-1"></a>                         <span class="at">bottomcenter =</span> <span class="fu">c</span>(<span class="fl">0.5525</span>, <span class="fl">0.02</span>), </span>
+<span id="cb490-16"><a href="7.1-multipanel-plot.html#cb490-16" tabindex="-1"></a>                         <span class="at">bottomright =</span> <span class="fu">c</span>(<span class="fl">0.985</span>, <span class="fl">0.02</span>),</span>
+<span id="cb490-17"><a href="7.1-multipanel-plot.html#cb490-17" tabindex="-1"></a>                         <span class="fu">c</span>(<span class="fl">0.015</span>, <span class="fl">0.98</span>) )</span>
+<span id="cb490-18"><a href="7.1-multipanel-plot.html#cb490-18" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb490-19"><a href="7.1-multipanel-plot.html#cb490-19" tabindex="-1"></a>        coords <span class="ot">&lt;-</span> <span class="fu">c</span>(x,y)</span>
+<span id="cb490-20"><a href="7.1-multipanel-plot.html#cb490-20" tabindex="-1"></a>    }</span>
+<span id="cb490-21"><a href="7.1-multipanel-plot.html#cb490-21" tabindex="-1"></a>    this.x <span class="ot">&lt;-</span> <span class="fu">grconvertX</span>(coords[<span class="dv">1</span>] <span class="sc">+</span> offset[<span class="dv">1</span>], <span class="at">from=</span><span class="st">&quot;nfc&quot;</span>, <span class="at">to=</span><span class="st">&quot;user&quot;</span>)</span>
+<span id="cb490-22"><a href="7.1-multipanel-plot.html#cb490-22" tabindex="-1"></a>    this.y <span class="ot">&lt;-</span> <span class="fu">grconvertY</span>(coords[<span class="dv">2</span>] <span class="sc">+</span> offset[<span class="dv">2</span>], <span class="at">from=</span><span class="st">&quot;nfc&quot;</span>, <span class="at">to=</span><span class="st">&quot;user&quot;</span>)</span>
+<span id="cb490-23"><a href="7.1-multipanel-plot.html#cb490-23" tabindex="-1"></a>    <span class="fu">text</span>(<span class="at">labels=</span>label[<span class="dv">1</span>], <span class="at">x=</span>this.x, <span class="at">y=</span>this.y, <span class="at">xpd=</span>T, ...)</span>
+<span id="cb490-24"><a href="7.1-multipanel-plot.html#cb490-24" tabindex="-1"></a>}</span>
+<span id="cb490-25"><a href="7.1-multipanel-plot.html#cb490-25" tabindex="-1"></a>my.locations <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="st">&quot;topleft&quot;</span>, <span class="dv">2</span>)</span>
+<span id="cb490-26"><a href="7.1-multipanel-plot.html#cb490-26" tabindex="-1"></a></span>
+<span id="cb490-27"><a href="7.1-multipanel-plot.html#cb490-27" tabindex="-1"></a>f_name <span class="ot">&lt;-</span> <span class="st">&quot;~/Library/CloudStorage/OneDrive-Norduniversitet/FIN5005 2024Fall/OLS lab/images/diagnostic_plot3.png&quot;</span></span>
+<span id="cb490-28"><a href="7.1-multipanel-plot.html#cb490-28" tabindex="-1"></a><span class="co"># ggsave(f_name)</span></span>
+<span id="cb490-29"><a href="7.1-multipanel-plot.html#cb490-29" tabindex="-1"></a>f_name</span>
+<span id="cb490-30"><a href="7.1-multipanel-plot.html#cb490-30" tabindex="-1"></a><span class="fu">png</span>(f_name, <span class="at">width=</span><span class="fl">8.91</span><span class="sc">*</span>ppi, <span class="at">height=</span><span class="fl">4.85</span><span class="sc">*</span>ppi, <span class="at">res=</span>ppi)</span>
+<span id="cb490-31"><a href="7.1-multipanel-plot.html#cb490-31" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>))</span>
+<span id="cb490-32"><a href="7.1-multipanel-plot.html#cb490-32" tabindex="-1"></a><span class="fu">plot</span>(fit.auto2, <span class="dv">1</span>)</span>
+<span id="cb490-33"><a href="7.1-multipanel-plot.html#cb490-33" tabindex="-1"></a><span class="fu">put.fig.letter</span>(<span class="at">label=</span><span class="st">&quot;(a)&quot;</span>, <span class="at">location=</span>my.locations[<span class="dv">1</span>], <span class="at">font=</span><span class="dv">2</span>, <span class="at">offset =</span> <span class="fu">c</span>(<span class="fl">0.1</span>, <span class="sc">-</span><span class="fl">0.1</span>))</span>
+<span id="cb490-34"><a href="7.1-multipanel-plot.html#cb490-34" tabindex="-1"></a><span class="fu">plot</span>(fit.auto2, <span class="dv">2</span>)</span>
+<span id="cb490-35"><a href="7.1-multipanel-plot.html#cb490-35" tabindex="-1"></a><span class="fu">put.fig.letter</span>(<span class="at">label=</span><span class="st">&quot;(b)&quot;</span>, <span class="at">location=</span>my.locations[<span class="dv">2</span>], <span class="at">font=</span><span class="dv">2</span>, <span class="at">offset =</span> <span class="fu">c</span>(<span class="fl">0.1</span>, <span class="sc">-</span><span class="fl">0.1</span>))</span>
+<span id="cb490-36"><a href="7.1-multipanel-plot.html#cb490-36" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code></pre></div>
+<p><strong>plots alignment</strong></p>
+<p><code>grid::grid.draw(x)</code> draw a grid grob</p>
 <ul>
-<li><code>lags(#)</code>: #lags of dependent variable as covariates; default is <span style="color:#008B45"><code>lags(1)</code></span></li>
-<li><code>maxldep(#)</code>: maximum lags of dependent variable for use as instruments</li>
-<li><code>maxlags(#)</code>: maximum lags of predetermined and endogenous variables for use as instruments</li>
-<li><code>twostep</code>: compute the two-step estimator instead of the one-step estimator</li>
-<li><code>pre(varlist)</code>: predetermined variables; can be specified more than once</li>
-<li><code>endogenous(varlist)</code>: endogenous variables; can be specified more than once</li>
-<li><code>vce(vcetype)</code>
+<li><code>x</code> An object of class <code>"grob"</code> or NULL.</li>
+</ul>
+<div class="sourceCode" id="cb491"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb491-1"><a href="7.1-multipanel-plot.html#cb491-1" tabindex="-1"></a>grid<span class="sc">::</span><span class="fu">grid.draw</span>(<span class="fu">rbind</span>(<span class="fu">ggplotGrob</span>(CI_plot_converted), </span>
+<span id="cb491-2"><a href="7.1-multipanel-plot.html#cb491-2" tabindex="-1"></a>                      <span class="fu">ggplotGrob</span>(CI_plot_simple), </span>
+<span id="cb491-3"><a href="7.1-multipanel-plot.html#cb491-3" tabindex="-1"></a>                <span class="at">size =</span> <span class="st">&quot;last&quot;</span>)) <span class="co"># same width, same height</span></span>
+<span id="cb491-4"><a href="7.1-multipanel-plot.html#cb491-4" tabindex="-1"></a></span>
+<span id="cb491-5"><a href="7.1-multipanel-plot.html#cb491-5" tabindex="-1"></a><span class="co"># or</span></span>
+<span id="cb491-6"><a href="7.1-multipanel-plot.html#cb491-6" tabindex="-1"></a>gridExtra<span class="sc">::</span><span class="fu">grid.arrange</span>(CI_plot_converted, CI_plot_simple, <span class="at">ncol=</span><span class="dv">1</span>, <span class="at">heights =</span> <span class="fu">c</span>(<span class="fl">0.8</span>, <span class="dv">1</span>))</span></code></pre></div>
+</div>
+<div id="with-cowplot-package" class="section level3 hasAnchor" number="7.1.2">
+<h3><span class="header-section-number">7.1.2</span> With <code>cowplot</code> package<a href="7.1-multipanel-plot.html#with-cowplot-package" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p><strong><code>cowplot::plot_grid(p1, p2, p3,            align = 'vh',            labels = c("A", "B", "C"),            hjust = -1,            nrow = 1)</code></strong> Arrange multiple plots into a grid.</p>
+<p><code>plot_grid(..., plotlist = NULL, align = c("none", "h", "v", "hv"),   axis = c("none", "l", "r", "t", "b", "lr", "tb", "tblr"),   nrow = NULL, ncol = NULL, rel_widths = 1, rel_heights = 1,   labels = NULL, label_size = 14, label_fontfamily = NULL,   label_fontface = "bold", label_colour = NULL, label_x = 0,   label_y = 1, hjust = -0.5, vjust = 1.5, scale = 1,   greedy = TRUE)</code></p>
 <ul>
-<li><code>vce(gmm)</code> the default, uses the conventionally derived variance estimator for generalized method of moments estimation.</li>
-<li><code>vce(robust)</code>: uses the robust estimator. After one-step estimation, this is the Arellano–Bond robust VCE estimator. After two-step estimation, this is the Windmeijer (2005) WC-robust estimator.</li>
+<li><p><code>...</code> Plots to be arranged into the grid, separated by comma, e.g., <code>plot_grid(p1, p2, ...)</code>.</p></li>
+<li><p><code>plotlist</code> A <code>list</code> of plots to display. Alternatively, the plots can be provided individually as the first n arguments of the function <code>plot_grid</code>.</p>
+<div class="sourceCode" id="cb492"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb492-1"><a href="7.1-multipanel-plot.html#cb492-1" tabindex="-1"></a>p_list <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb492-2"><a href="7.1-multipanel-plot.html#cb492-2" tabindex="-1"></a>p_list[[<span class="dv">1</span>]] <span class="ot">&lt;-</span> p1</span>
+<span id="cb492-3"><a href="7.1-multipanel-plot.html#cb492-3" tabindex="-1"></a>p_list[[<span class="dv">2</span>]] <span class="ot">&lt;-</span> p2</span>
+<span id="cb492-4"><a href="7.1-multipanel-plot.html#cb492-4" tabindex="-1"></a><span class="fu">plot_grid</span>(<span class="at">plotlist =</span> p_list)</span></code></pre></div></li>
+<li><p><code>align</code> how graphs in the grids should be aligned.</p>
+<ul>
+<li><code>h</code> horizontally</li>
+<li><code>v</code> vertically</li>
+<li><code>hv</code> both horizontally and vertically</li>
+<li><code>none</code> default</li>
 </ul></li>
-</ul>
-<p><span class="math display" id="eq:AB-model">\[
-\begin{equation} \tag{11.1}
-\begin{split}
-n_{i,t}
-&amp;= \alpha_1 n_{i,t-1} + \alpha_2 n_{i,t-2} + \bbeta&#39;(L) \bx_{it} + \lambda_t + \eta_i + \varepsilon_{i,t} \\
-&amp;= \alpha_1 n_{i,t-1} + \alpha_2 n_{i,t-2}  \\
-&amp;\phantom{=}\quad  + \beta_1 w_{i,t} + \beta_2 w_{i,t-1} \\
-&amp;\phantom{=}\quad  + \beta_3 k_{i,t} + \beta_4 k_{i,t-1} + \beta_5 k_{i,t-2} \\
-&amp;\phantom{=}\quad + \beta_6 ys_{i,t} + \beta_7 ys_{i,t-1} + \beta_8 ys_{i,t-2}  \\
-&amp;\phantom{=}\quad + \gamma_3 d_3 + \dots + \gamma_T d_T + \eta_i + \varepsilon_{i,t},
-\end{split}
-\end{equation}
-\]</span></p>
-<p>where <span class="math inline">\(i=1,\ldots,n\)</span> denotes the firm, and <span class="math inline">\(t=3,\ldots,T\)</span> is the time series dimension.</p>
+<li><p><code>rel_widths</code>, <code>rel_heights</code> Numerical vector of relative columns widths. For example, in a two-column grid, <code>rel_widths = c(2, 1)</code> would make the first column twice as wide as the second column.</p></li>
+<li><p><code>labels</code> List of labels to be added to the plots. You can also set <code>labels="AUTO"</code> to auto-generate <strong>upper-case</strong> labels or <code>labels="auto"</code> to auto-generate <strong>lower-case</strong> labels.</p>
 <ul>
-<li><p><span class="math inline">\(n_{i,t}\)</span> is the natural logarithm of <em>employment</em>, first and second lagged were used as independent variables</p></li>
-<li><p><span class="math inline">\(w\)</span> refers to the natural logarithm of <em>wage</em>, up to lag 1</p></li>
-<li><p><span class="math inline">\(k\)</span> is the natural logarithm of <em>capital</em>, up to lag 2</p></li>
-<li><p><span class="math inline">\(ys\)</span> is the natural logarithm of <em>output</em>, up to lag 2</p></li>
-<li><p>Variables <span class="math inline">\(d_3,\ldots,d_T\)</span> are time dummies with corresponding coefficients <span class="math inline">\(\gamma_3,\ldots,\gamma_T.\)</span></p></li>
-<li><p><span class="math inline">\(\eta_i\)</span> is the unobserved individual-specific effects.</p></li>
-<li><p><span class="math inline">\(\varepsilon_{i,t}\)</span> is an idiosyncratic remainder component.</p></li>
-</ul>
-<p>Model <a href="11.6-arellano-bond-estimator.html#eq:AB-model">(11.1)</a> can be implemented using the following command.</p>
-<div class="sourceCode" id="cb741"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb741-1"><a href="11.6-arellano-bond-estimator.html#cb741-1" tabindex="-1"></a><span class="co">// Use example</span></span>
-<span id="cb741-2"><a href="11.6-arellano-bond-estimator.html#cb741-2" tabindex="-1"></a><span class="kw">use</span> https:<span class="co">//www.stata-press.com/data/r19/abdata</span></span>
-<span id="cb741-3"><a href="11.6-arellano-bond-estimator.html#cb741-3" tabindex="-1"></a><span class="kw">xtabond</span> n <span class="ot">l</span>(0/1).<span class="fu">w</span> <span class="ot">l</span>(0/2).(<span class="kw">k</span> ys) yr1980-yr1984 <span class="fu">year</span>, lags(2) <span class="kw">vce</span>(<span class="kw">robust</span>) <span class="kw">noconstant</span></span></code></pre></div>
-<p>The output would look like the following.</p>
-<pre class="nowrap"><code>
-Arellano–Bond dynamic panel-data estimation     Number of obs     =        611
-Group variable: id                              Number of groups  =        140
-Time variable: year
-                                                Obs per group:
-                                                              min =          4
-                                                              avg =   4.364286
-                                                              max =          6
-
-Number of instruments =     40                  Wald chi2(13)     =    1318.68
-                                                Prob > chi2       =     0.0000
-One-step results
-                                     (Std. err. adjusted for clustering on id)
-
-                          Robust
-   n         Coefficient  std. err.      z    P>|z|     [95% conf. interval]
-
-   n     
- L1.           .6286618   .1161942     5.41   0.000     .4009254    .8563983
-         
-   w     
- --.          -.5104249   .1904292    -2.68   0.007    -.8836592   -.1371906
- L1.           .2891446    .140946     2.05   0.040     .0128954    .5653937
- L2.          -.0443653   .0768135    -0.58   0.564     -.194917    .1061865
-         
-   k     
- --.           .3556923   .0603274     5.90   0.000     .2374528    .4739318
- L1.          -.0457102   .0699732    -0.65   0.514    -.1828552    .0914348
- L2.          -.0619721   .0328589    -1.89   0.059    -.1263743    .0024301
-         
-yr1980        -.0282422   .0166363    -1.70   0.090    -.0608488    .0043643
-yr1981        -.0694052    .028961    -2.40   0.017    -.1261677   -.0126426
-yr1982        -.0523678   .0423433    -1.24   0.216    -.1353591    .0306235
-yr1983        -.0256599   .0533747    -0.48   0.631    -.1302723    .0789525
-yr1984        -.0093229   .0696241    -0.13   0.893    -.1457837    .1271379
-year           .0019575   .0119481     0.16   0.870    -.0214604    .0253754
-
-Instruments for differenced equation
-        GMM-type: L(2/.).n
-        Standard: D.w LD.w L2D.w D.k LD.k L2D.k D.yr1980 D.yr1981 D.yr1982
-                  D.yr1983 D.yr1984 D.year
-Instruments for level equation
-        Standard: _cons
-</code></pre>
-<p><code>xtdpdsys</code> implements the Arellano–Bover/Blundell–Bond system estimator, which includes the lagged differences of <code>n</code> (the dependent variable) as instruments for the level equation.</p>
-<hr />
-<p><strong>Test for Autocorrelation</strong></p>
-<p>The moment conditions of these GMM estimators are valid only if there is no serial correlation in the idiosyncratic errors. Because the first difference of white noise is necessarily autocorrelated, we need only concern ourselves with second and higher autocorrelation. We can use <strong><code>estat abond</code></strong> to test for autocorrelation:</p>
-<div class="sourceCode" id="cb742"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb742-1"><a href="11.6-arellano-bond-estimator.html#cb742-1" tabindex="-1"></a>. <span class="kw">estat</span> abond, artests(4)</span>
-<span id="cb742-2"><a href="11.6-arellano-bond-estimator.html#cb742-2" tabindex="-1"></a></span>
-<span id="cb742-3"><a href="11.6-arellano-bond-estimator.html#cb742-3" tabindex="-1"></a>Arellano–Bond <span class="kw">test</span> <span class="kw">for</span> <span class="bn">zero</span> autocorrelation <span class="kw">in</span> first-differenced errors</span>
-<span id="cb742-4"><a href="11.6-arellano-bond-estimator.html#cb742-4" tabindex="-1"></a>H0: No autocorrelation </span>
-<span id="cb742-5"><a href="11.6-arellano-bond-estimator.html#cb742-5" tabindex="-1"></a></span>
-<span id="cb742-6"><a href="11.6-arellano-bond-estimator.html#cb742-6" tabindex="-1"></a>Order         z   Prob &gt; z</span>
-<span id="cb742-7"><a href="11.6-arellano-bond-estimator.html#cb742-7" tabindex="-1"></a>    1   -4.6414     0.0000</span>
-<span id="cb742-8"><a href="11.6-arellano-bond-estimator.html#cb742-8" tabindex="-1"></a>    2   -1.0572     0.2904</span>
-<span id="cb742-9"><a href="11.6-arellano-bond-estimator.html#cb742-9" tabindex="-1"></a>    3   -.19492     0.8455</span>
-<span id="cb742-10"><a href="11.6-arellano-bond-estimator.html#cb742-10" tabindex="-1"></a>    4   .04472      0.9643</span></code></pre></div>
-<p><strong>Test for Overidentifying Restrictions</strong></p>
-<p><code>estat sargan</code> reports the Sargan test of overidentifying restrictions.</p>
-<div class="sourceCode" id="cb743"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb743-1"><a href="11.6-arellano-bond-estimator.html#cb743-1" tabindex="-1"></a>. <span class="kw">estat</span> sargan</span>
-<span id="cb743-2"><a href="11.6-arellano-bond-estimator.html#cb743-2" tabindex="-1"></a></span>
-<span id="cb743-3"><a href="11.6-arellano-bond-estimator.html#cb743-3" tabindex="-1"></a>Sargan <span class="kw">test</span> <span class="kw">of</span> overidentifying restrictions</span>
-<span id="cb743-4"><a href="11.6-arellano-bond-estimator.html#cb743-4" tabindex="-1"></a>H0: Overidentifying restrictions are valid</span>
-<span id="cb743-5"><a href="11.6-arellano-bond-estimator.html#cb743-5" tabindex="-1"></a>        <span class="fu">chi2</span>(25) = 65.81806</span>
-<span id="cb743-6"><a href="11.6-arellano-bond-estimator.html#cb743-6" tabindex="-1"></a>        Prob &gt; <span class="fu">chi2</span> = 0.0000</span></code></pre></div>
-<hr />
-<p><strong>Predetermined Covariates</strong></p>
-<p>Sometimes we cannot assume strict exogeneity. Recall that a variable, <span class="math inline">\(x_{it}\)</span>, is said to be strictly exogenous if <span class="math inline">\(\E[𝑥_{it}\varepsilon_{is}] = 0\)</span> for all <span class="math inline">\(t\)</span> and <span class="math inline">\(s\)</span>.</p>
-<p>If <span class="math inline">\(\E[x_{it}\varepsilon_{is}] \ne 0\)</span> for <span class="math inline">\(s &lt; t\)</span> but <span class="math inline">\(\E[x_{it}\varepsilon_{is}] = 0\)</span> for all <span class="math inline">\(s\ge t,\)</span> the variable is said to be <span style="color:#008B45"><strong>predetermined</strong></span>. Intuitively, if the error term at time <span class="math inline">\(t\)</span> has some feedback on the subsequent realizations of <span class="math inline">\(x_{it},\)</span> <span class="math inline">\(x_{it}\)</span> is a predetermined variable. Because unforecastable errors today might affect future changes in the real wage and in the capital stock, we might suspect that the log of the real product wage and the log of the gross capital stock are predetermined instead of strictly exogenous.</p>
-<p>We also call predetermined <span class="math inline">\(x_{it}\)</span> as <span style="color:#008B45"><strong>sequential exogenous</strong></span>.</p>
-<p>Here we treat <span class="math inline">\(w\)</span> and <span class="math inline">\(k\)</span> as predetermined and use lagged levels as instruments.</p>
-<div class="sourceCode" id="cb744"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb744-1"><a href="11.6-arellano-bond-estimator.html#cb744-1" tabindex="-1"></a><span class="kw">xtabond</span> n <span class="ot">l</span>(0/1).ys yr1980-yr1984 <span class="fu">year</span>, lags(2) twostep pre(<span class="fu">w</span>, lag(1,.)) pre(<span class="kw">k</span>, lag(2,.)) <span class="kw">noconstant</span> <span class="kw">vce</span>(<span class="kw">robust</span>)</span></code></pre></div>
-<p>We are now including GMM-type instruments from the first lag of <code>L.w</code> on back and from the first lag of <code>L2.k</code> on back.</p>
-<p><code>pre(w, lag(1, .))</code> to mean that <code>L.w</code> is a predetermined variable and <code>pre(k, lag(2, .))</code> to mean that <code>L2.k</code> is a predetermined variable.</p>
-<p><strong>Endogenous Covariates</strong></p>
-<p>We might instead suspect that <span class="math inline">\(w\)</span> and <span class="math inline">\(k\)</span> are endogenous in that <span class="math inline">\(\E[x_{it}\varepsilon_{is}] \ne 0\)</span> for <span class="math inline">\(s \le t\)</span> but <span class="math inline">\(\E[x_{it}\varepsilon_{is}] = 0\)</span> for all <span class="math inline">\(s &gt; t.\)</span></p>
-<p>By this definition, endogenous variables differ from predetermined variables only in that the</p>
-<ul>
-<li><p>endogenous variables allow for correlation between <span class="math inline">\(x_{it}\)</span> and <span class="math inline">\(\varepsilon_{it}\)</span> at time <span class="math inline">\(t,\)</span> whereas</p>
-<p>Endogenous variables are treated similarly to the <em>lagged dependent variable</em>. Levels of the endogenous variables lagged two or more periods can serve as instruments.</p></li>
-<li><p>predetermined variables do <span style="color:#FF9900"><strong>NOT</strong></span> allow for contemporaneous correlation.</p></li>
-</ul>
-<p>In this example, we treat <span class="math inline">\(w\)</span> and <span class="math inline">\(k\)</span> as endogenous variables.</p>
-<div class="sourceCode" id="cb745"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb745-1"><a href="11.6-arellano-bond-estimator.html#cb745-1" tabindex="-1"></a><span class="kw">xtabond</span> n <span class="ot">l</span>(0/1).ys yr1980-yr1984 <span class="fu">year</span>, lags(2) twostep endogenous(<span class="fu">w</span>, lag(1,.)) endogenous(<span class="kw">k</span>, lag(2,.)) <span class="kw">noconstant</span> <span class="kw">vce</span>(<span class="kw">robust</span>)</span></code></pre></div>
-<p>Although some estimated coefficients changed in magnitude, none changed in sign, and these results are similar to those obtained by treating <span class="math inline">\(w\)</span> and <span class="math inline">\(k\)</span> as predetermined.</p>
-<p>Prefix <code>xtabond</code> with <code>xi:</code> if you need to include factor variables</p>
-<div class="sourceCode" id="cb746"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb746-1"><a href="11.6-arellano-bond-estimator.html#cb746-1" tabindex="-1"></a><span class="co">// AB estimator with factor variables</span></span>
-<span id="cb746-2"><a href="11.6-arellano-bond-estimator.html#cb746-2" tabindex="-1"></a><span class="kw">xi</span>: <span class="kw">xtabond</span> logd_gdp tmp tmp2 pre pre2 <span class="co">///</span></span>
-<span id="cb746-3"><a href="11.6-arellano-bond-estimator.html#cb746-3" tabindex="-1"></a>    tmp_pre tmp2_pre tmp_pre2 tmp2_pre2 <span class="co">///</span></span>
-<span id="cb746-4"><a href="11.6-arellano-bond-estimator.html#cb746-4" tabindex="-1"></a>    i.<span class="fu">year</span> i.iso|year_id i.iso|year_id2, <span class="co">///</span></span>
-<span id="cb746-5"><a href="11.6-arellano-bond-estimator.html#cb746-5" tabindex="-1"></a>    lags(1) <span class="kw">vce</span>(<span class="kw">robust</span>)</span></code></pre></div>
-<ul>
-<li><p><code>i.year</code>: time fixed effects;</p></li>
-<li><p><code>i.iso|year_id</code>: country-specific linear time trends</p></li>
-<li><p><code>i.iso|year_id2</code>: country-specific quadratic time trends</p></li>
-</ul>
-<hr />
-<p>Forecast under <code>xtabond</code>:</p>
-<ul>
-<li><a href="https://www.stata.com/stata-news/news29-3/forecast/" class="uri">https://www.stata.com/stata-news/news29-3/forecast/</a></li>
-</ul>
-<hr />
-<div id="xtabond2" class="section level3 hasAnchor" number="11.6.1">
-<h3><span class="header-section-number">11.6.1</span> xtabond2<a href="11.6-arellano-bond-estimator.html#xtabond2" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p><code>xtabond2</code> was written by David Roodman. More versatile than <code>xtabond</code>.</p>
-<table>
-<colgroup>
-<col width="71%" />
-<col width="28%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th><code>xtabond</code></th>
-<th><code>xtabond2</code></th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Not support factor variables<br />Can be fixed with <code>xi: xtabond</code></td>
-<td>Support factor variables</td>
-</tr>
-</tbody>
-</table>
-<div class="sourceCode" id="cb747"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb747-1"><a href="11.6-arellano-bond-estimator.html#cb747-1" tabindex="-1"></a>xtabond2 depvar <span class="kw">varlist</span> [<span class="kw">if</span> <span class="fu">exp</span>] [<span class="kw">in</span> <span class="kw">range</span>] [<span class="kw">weight</span>] [, <span class="dv">level</span>(#)</span>
-<span id="cb747-2"><a href="11.6-arellano-bond-estimator.html#cb747-2" tabindex="-1"></a>        <span class="kw">svmat</span> svvar twostep <span class="kw">robust</span> <span class="kw">cluster</span>(<span class="kw">varlist</span>) <span class="kw">noconstant</span> small </span>
-<span id="cb747-3"><a href="11.6-arellano-bond-estimator.html#cb747-3" tabindex="-1"></a>                gmmopt [gmmopt ...] ivopt [ivopt ...]]</span></code></pre></div>
-<p><strong>Options</strong>:</p>
-<ul>
-<li><p><code>level(#)</code> confidence level, default to <code>level(95)</code></p></li>
-<li><p><code>gmmopt</code></p>
-<div class="sourceCode" id="cb748"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb748-1"><a href="11.6-arellano-bond-estimator.html#cb748-1" tabindex="-1"></a>gmmstyle(<span class="kw">varlist</span> [, laglimits(# #) <span class="kw">collapse</span> orthogonal equation({<span class="fu">diff</span> | <span class="dv">level</span> | both}) passthru <span class="kw">split</span>])</span></code></pre></div>
-<p><code>gmmstyle</code> specifies a set of variables to be used as bases for “GMM-style” instrument sets described in Holtz-Eakin, Newey, and Rosen (1988) and Arellano and Bond (1991). By default xtabond2 uses, for each time period, all available lags of the specified variables in levels dated <span class="math inline">\(t-1\)</span> or earlier as instruments for the transformed equation; and uses the contemporaneous first differences as instruments in the levels equation. These defaults are appropriate for predetermined variables that are not strictly exogenous (Bond 2000). Missing values are always replaced by zeros.</p>
-<p>Since the <code>gmmstyle()</code> varlist allows time-series operators, there are many routes to the same specification. E.g., <code>gmm(w, lag(2 .))</code>, the standard treatment for an endogenous variable, is equivalent to <code>gmm(L.w, lag(1 .))</code>, thus <code>gmm(L.w)</code>.</p></li>
-<li><p><code>ivopt</code></p>
-<div class="sourceCode" id="cb749"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb749-1"><a href="11.6-arellano-bond-estimator.html#cb749-1" tabindex="-1"></a>ivstyle(<span class="kw">varlist</span> [, equation({<span class="fu">diff</span> | <span class="dv">level</span> | both}) passthru mz])</span></code></pre></div>
-<p><code>ivstyle</code> specifies a set of variables to serve as standard instruments, with one column in the instrument matrix per variable. Normally, strictly exogenous regressors are included in <code>ivstyle</code> options, in order to enter the instrument matrix, as well as being listed before the main comma of the command line.</p>
-<p>The <code>equation()</code> suboption specifies which equation(s) should use the instruments:</p>
-<ul>
-<li><code>equation(diff)</code>: first-difference only</li>
-<li><code>equation(level)</code>: levels only</li>
-<li><code>equation(both)</code>: both, default</li>
+<li><code>labels=sprintf("(%s)", letters[1:6])</code> lower-case letters with parentheses.</li>
 </ul></li>
+<li><p><span style="color:#008B45&#39;"><code>label_size</code></span> lable font size;</p></li>
+<li><p><span style="color:#008B45&#39;"><code>hjust</code></span> left: positive, right: negative; (label position)</p></li>
+<li><p><code>vjust</code> down: positive, up: negative;</p>
+<p>​</p></li>
 </ul>
-<p><strong>A matching triplet</strong> using different pkgs to achieve the same results (pp42, <a href="https://journals.sagepub.com/doi/pdf/10.1177/1536867X0900900106">Stata Journal article by David Roodman</a>)</p>
-<div class="sourceCode" id="cb750"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb750-1"><a href="11.6-arellano-bond-estimator.html#cb750-1" tabindex="-1"></a><span class="kw">xtabond</span> n, lags(1) pre(<span class="fu">w</span>, lagstruct(1,.)) pre(<span class="kw">k</span>, endog) <span class="kw">robust</span></span>
-<span id="cb750-2"><a href="11.6-arellano-bond-estimator.html#cb750-2" tabindex="-1"></a>xtdpd n L.n <span class="fu">w</span> L.<span class="fu">w</span> <span class="kw">k</span>, dgmmiv(<span class="fu">w</span> <span class="kw">k</span> n) <span class="kw">vce</span>(<span class="kw">robust</span>)</span>
-<span id="cb750-3"><a href="11.6-arellano-bond-estimator.html#cb750-3" tabindex="-1"></a>xtabond2 n L.n <span class="fu">w</span> L.<span class="fu">w</span> <span class="kw">k</span>, gmmstyle(L.(<span class="fu">w</span> n <span class="kw">k</span>), <span class="kw">eq</span>(<span class="fu">diff</span>)) <span class="kw">robust</span></span></code></pre></div>
-<p><a href="https://www.statalist.org/forums/forum/general-stata-discussion/general/1548924-xtabond-vs-xtabond2-how-to-get-the-same-results" class="uri">https://www.statalist.org/forums/forum/general-stata-discussion/general/1548924-xtabond-vs-xtabond2-how-to-get-the-same-results</a></p>
+<div class="sourceCode" id="cb493"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb493-1"><a href="7.1-multipanel-plot.html#cb493-1" tabindex="-1"></a><span class="co"># load cowplot</span></span>
+<span id="cb493-2"><a href="7.1-multipanel-plot.html#cb493-2" tabindex="-1"></a><span class="fu">library</span>(cowplot)</span>
+<span id="cb493-3"><a href="7.1-multipanel-plot.html#cb493-3" tabindex="-1"></a></span>
+<span id="cb493-4"><a href="7.1-multipanel-plot.html#cb493-4" tabindex="-1"></a><span class="co"># down-sampled diamonds data set</span></span>
+<span id="cb493-5"><a href="7.1-multipanel-plot.html#cb493-5" tabindex="-1"></a>dsamp <span class="ot">&lt;-</span> diamonds[<span class="fu">sample</span>(<span class="fu">nrow</span>(diamonds), <span class="dv">1000</span>), ]</span>
+<span id="cb493-6"><a href="7.1-multipanel-plot.html#cb493-6" tabindex="-1"></a></span>
+<span id="cb493-7"><a href="7.1-multipanel-plot.html#cb493-7" tabindex="-1"></a><span class="co"># Make three plots.</span></span>
+<span id="cb493-8"><a href="7.1-multipanel-plot.html#cb493-8" tabindex="-1"></a><span class="co"># We set left and right margins to 0 to remove unnecessary spacing in the</span></span>
+<span id="cb493-9"><a href="7.1-multipanel-plot.html#cb493-9" tabindex="-1"></a><span class="co"># final plot arrangement.</span></span>
+<span id="cb493-10"><a href="7.1-multipanel-plot.html#cb493-10" tabindex="-1"></a><span class="co"># plot.margin = unit(c(top, right, bottom, left), &quot;pt&quot;) for outer margins of plotting area</span></span>
+<span id="cb493-11"><a href="7.1-multipanel-plot.html#cb493-11" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">qplot</span>(carat, price, <span class="at">data=</span>dsamp, <span class="at">colour=</span>clarity) <span class="sc">+</span></span>
+<span id="cb493-12"><a href="7.1-multipanel-plot.html#cb493-12" tabindex="-1"></a>   <span class="fu">theme</span>(<span class="at">plot.margin =</span> <span class="fu">unit</span>(<span class="fu">c</span>(<span class="dv">6</span>,<span class="dv">0</span>,<span class="dv">6</span>,<span class="dv">0</span>), <span class="st">&quot;pt&quot;</span>))</span>
+<span id="cb493-13"><a href="7.1-multipanel-plot.html#cb493-13" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">qplot</span>(depth, price, <span class="at">data=</span>dsamp, <span class="at">colour=</span>clarity) <span class="sc">+</span></span>
+<span id="cb493-14"><a href="7.1-multipanel-plot.html#cb493-14" tabindex="-1"></a>   <span class="fu">theme</span>(<span class="at">plot.margin =</span> <span class="fu">unit</span>(<span class="fu">c</span>(<span class="dv">6</span>,<span class="dv">0</span>,<span class="dv">6</span>,<span class="dv">0</span>), <span class="st">&quot;pt&quot;</span>)) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">&quot;&quot;</span>)</span>
+<span id="cb493-15"><a href="7.1-multipanel-plot.html#cb493-15" tabindex="-1"></a>p3 <span class="ot">&lt;-</span> <span class="fu">qplot</span>(color, price, <span class="at">data=</span>dsamp, <span class="at">colour=</span>clarity) <span class="sc">+</span></span>
+<span id="cb493-16"><a href="7.1-multipanel-plot.html#cb493-16" tabindex="-1"></a>   <span class="fu">theme</span>(<span class="at">plot.margin =</span> <span class="fu">unit</span>(<span class="fu">c</span>(<span class="dv">6</span>,<span class="dv">0</span>,<span class="dv">6</span>,<span class="dv">0</span>), <span class="st">&quot;pt&quot;</span>)) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">&quot;&quot;</span>)</span>
+<span id="cb493-17"><a href="7.1-multipanel-plot.html#cb493-17" tabindex="-1"></a></span>
+<span id="cb493-18"><a href="7.1-multipanel-plot.html#cb493-18" tabindex="-1"></a><span class="co"># arrange the three plots in a single row</span></span>
+<span id="cb493-19"><a href="7.1-multipanel-plot.html#cb493-19" tabindex="-1"></a>prow <span class="ot">&lt;-</span> <span class="fu">plot_grid</span>( p1 <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">&quot;none&quot;</span>),</span>
+<span id="cb493-20"><a href="7.1-multipanel-plot.html#cb493-20" tabindex="-1"></a>           p2 <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">&quot;none&quot;</span>),</span>
+<span id="cb493-21"><a href="7.1-multipanel-plot.html#cb493-21" tabindex="-1"></a>           p3 <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">&quot;none&quot;</span>),</span>
+<span id="cb493-22"><a href="7.1-multipanel-plot.html#cb493-22" tabindex="-1"></a>           <span class="at">align =</span> <span class="st">&#39;vh&#39;</span>,</span>
+<span id="cb493-23"><a href="7.1-multipanel-plot.html#cb493-23" tabindex="-1"></a>           <span class="at">labels =</span> <span class="fu">sprintf</span>(<span class="st">&quot;(%s)&quot;</span>, letters[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>]), <span class="co"># auto lower case letter for labels</span></span>
+<span id="cb493-24"><a href="7.1-multipanel-plot.html#cb493-24" tabindex="-1"></a>           <span class="at">label_size =</span> <span class="dv">14</span>, <span class="co"># label font size</span></span>
+<span id="cb493-25"><a href="7.1-multipanel-plot.html#cb493-25" tabindex="-1"></a>           <span class="at">hjust=</span><span class="dv">0</span>,  <span class="co"># left: positive, right: negative (adjust label position)</span></span>
+<span id="cb493-26"><a href="7.1-multipanel-plot.html#cb493-26" tabindex="-1"></a>           <span class="at">vjust=</span><span class="sc">-</span><span class="dv">1</span>, <span class="co"># down:positive, up:negative</span></span>
+<span id="cb493-27"><a href="7.1-multipanel-plot.html#cb493-27" tabindex="-1"></a>           <span class="at">nrow =</span> <span class="dv">1</span></span>
+<span id="cb493-28"><a href="7.1-multipanel-plot.html#cb493-28" tabindex="-1"></a>           )</span>
+<span id="cb493-29"><a href="7.1-multipanel-plot.html#cb493-29" tabindex="-1"></a></span>
+<span id="cb493-30"><a href="7.1-multipanel-plot.html#cb493-30" tabindex="-1"></a><span class="co"># extract the legend from one of the plots</span></span>
+<span id="cb493-31"><a href="7.1-multipanel-plot.html#cb493-31" tabindex="-1"></a><span class="co"># (clearly the whole thing only makes sense if all plots</span></span>
+<span id="cb493-32"><a href="7.1-multipanel-plot.html#cb493-32" tabindex="-1"></a><span class="co"># have the same legend, so we can arbitrarily pick one.)</span></span>
+<span id="cb493-33"><a href="7.1-multipanel-plot.html#cb493-33" tabindex="-1"></a>legend_b <span class="ot">&lt;-</span> <span class="fu">get_legend</span>(p1 <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">&quot;bottom&quot;</span>))</span>
+<span id="cb493-34"><a href="7.1-multipanel-plot.html#cb493-34" tabindex="-1"></a></span>
+<span id="cb493-35"><a href="7.1-multipanel-plot.html#cb493-35" tabindex="-1"></a><span class="co"># add the legend underneath the row we made earlier. Give it 10% of the height</span></span>
+<span id="cb493-36"><a href="7.1-multipanel-plot.html#cb493-36" tabindex="-1"></a><span class="co"># of one plot (via rel_heights).</span></span>
+<span id="cb493-37"><a href="7.1-multipanel-plot.html#cb493-37" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">plot_grid</span>( prow, legend_b, <span class="at">ncol =</span> <span class="dv">1</span>, <span class="at">rel_heights =</span> <span class="fu">c</span>(<span class="dv">1</span>, .<span class="dv">1</span>))</span>
+<span id="cb493-38"><a href="7.1-multipanel-plot.html#cb493-38" tabindex="-1"></a>p</span></code></pre></div>
+<p>Iregular girds can be created using nested <code>plot_grid</code></p>
+<p>For instance, the first plot is narrower than the second plot, you can create a buffer for the first plot.</p>
+<div class="sourceCode" id="cb494"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb494-1"><a href="7.1-multipanel-plot.html#cb494-1" tabindex="-1"></a><span class="co"># the first figure is half the width of the second figure</span></span>
+<span id="cb494-2"><a href="7.1-multipanel-plot.html#cb494-2" tabindex="-1"></a><span class="fu">plot_grid</span>(<span class="fu">plot_grid</span>(p_hist, <span class="cn">NULL</span>, <span class="at">nrow=</span><span class="dv">1</span>, <span class="at">rel_widths =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>)),</span>
+<span id="cb494-3"><a href="7.1-multipanel-plot.html#cb494-3" tabindex="-1"></a>          p_map_diff <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">plot.margin =</span> <span class="fu">margin</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>)),</span>
+<span id="cb494-4"><a href="7.1-multipanel-plot.html#cb494-4" tabindex="-1"></a>          <span class="at">nrow=</span><span class="dv">2</span>,</span>
+<span id="cb494-5"><a href="7.1-multipanel-plot.html#cb494-5" tabindex="-1"></a>          <span class="at">rel_heights =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="fl">1.2</span>),</span>
+<span id="cb494-6"><a href="7.1-multipanel-plot.html#cb494-6" tabindex="-1"></a>          <span class="at">labels=</span><span class="fu">sprintf</span>(<span class="st">&quot;(%s)&quot;</span>, letters[<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>]), </span>
+<span id="cb494-7"><a href="7.1-multipanel-plot.html#cb494-7" tabindex="-1"></a>          <span class="at">label_size=</span><span class="dv">12</span>)</span></code></pre></div>
+<p><img src="https://drive.google.com/thumbnail?id=1VflWZmC0mH8bbZSMR8Yt18gAev1uGRFN&sz=w1000" alt="Iregular grid" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" /></p>
 
-<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
-<div class="csl-entry">
-Bruno, Giovanni S. F. 2005. <span>“Estimation and Inference in Dynamic Unbalanced Panel-Data Models with a Small Number of Individuals.”</span> <em>The Stata Journal</em> 5: 473–500. <a href="https://www.stata-journal.com/article.html?article=st0091">https://www.stata-journal.com/article.html?article=st0091</a>.
-</div>
-<div class="csl-entry">
-Judson, Ruth A., and Ann L. Owen. 1999. <span>“Estimating Dynamic Panel Data Models: A Guide for Macroeconomists.”</span> <em>Economics Letters</em> 65 (October): 9–15. <a href="https://doi.org/10.1016/S0165-1765(99)00130-5">https://doi.org/10.1016/S0165-1765(99)00130-5</a>.
-</div>
-<div class="csl-entry">
-Nickell, Stephen. 1981. <span>“<span>Biases In Dynamic Models With Fixed Effects</span>.”</span> <em>Econometrica</em> 49 (6): 1417–26.
-</div>
-</div>
-</div>
-</div>
-<!-- </div> -->
-<h3>References</h3>
-<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
-<div id="ref-Bruno2005" class="csl-entry">
-Bruno, Giovanni S. F. 2005. <span>“Estimation and Inference in Dynamic Unbalanced Panel-Data Models with a Small Number of Individuals.”</span> <em>The Stata Journal</em> 5: 473–500. <a href="https://www.stata-journal.com/article.html?article=st0091">https://www.stata-journal.com/article.html?article=st0091</a>.
-</div>
-<div id="ref-Judson1999" class="csl-entry">
-Judson, Ruth A., and Ann L. Owen. 1999. <span>“Estimating Dynamic Panel Data Models: A Guide for Macroeconomists.”</span> <em>Economics Letters</em> 65 (October): 9–15. <a href="https://doi.org/10.1016/S0165-1765(99)00130-5">https://doi.org/10.1016/S0165-1765(99)00130-5</a>.
-</div>
-<div id="ref-Nickell1981" class="csl-entry">
-Nickell, Stephen. 1981. <span>“<span>Biases In Dynamic Models With Fixed Effects</span>.”</span> <em>Econometrica</em> 49 (6): 1417–26.
 </div>
 </div>
             </section>
@@ -943,8 +847,8 @@ Nickell, Stephen. 1981. <span>“<span>Biases In Dynamic Models With Fixed Effec
           </div>
         </div>
       </div>
-<a href="11.5-panel-1.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-
+<a href="7-graphics.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="7.2-goodlooking-colors.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -975,7 +879,7 @@ gitbook.start({
 "size": 3
 },
 "edit": {
-"link": "https://github.com/my1396/R-Notes/edit/main/1101-Stata-AB-Estimator.Rmd",
+"link": "https://github.com/my1396/R-Notes/edit/main/0601-Multipanel-Plot.Rmd",
 "text": "Edit"
 },
 "history": {
@@ -986,7 +890,7 @@ gitbook.start({
 "link": null,
 "text": null
 },
-"download": ["_main.pdf", "_main.epub", "https://github.com/my1396/R-Notes/raw/main/1101-Stata-AB-Estimator.Rmd"],
+"download": ["_main.pdf", "_main.epub", "https://github.com/my1396/R-Notes/raw/main/0601-Multipanel-Plot.Rmd"],
 "search": {
 "engine": "fuse",
 "options": null

@@ -5,7 +5,18 @@
 You can run R in VS Code. Simply open the folder containing your R scripts in VS Code, and then open the command palette (Ctrl+Shift+P) and type "R: Create R terminal". This will start an R session in the terminal.
 
 - By default, this will close the currently open folder. 
-- If you want multiple windows each with their own folder, you first open a new window (Ctrl+Shift+N) and then open the folder in that new window.
+- If you want multiple windows each with their own folder, you first open a new window (`Ctrl` + `Shift` + `N`) and then open the folder in that new window.
+
+
+
+#### Keyboard shortcuts
+
+| Shortcuts             | Function            |
+| --------------------- | ------------------- |
+| `cmd` + `/`           | comment             |
+| `shift` + `cmd` + `M` | user defined; `%>%` |
+| `opt` + `-`           | user defined; `<-`  |
+
 
 
 Q: How to run R code interactively? \
