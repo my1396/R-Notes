@@ -40,7 +40,7 @@ One exception is level 2 headings in Bookdown:
   <h2>YAML metadata</h2>
   ```
 
-**Add Section ID**
+<span style="color: #008B45;">**Add Section ID**</span>
 
 To add a section ID, use `{#section-id}` at the end of the section title. This is useful for linking to specific sections within the document or from other documents.
 
@@ -52,21 +52,26 @@ Refer to this section using the ID: [Variance and Covariance properties](#varian
 ```
 
 - Bookdown supports **cross files linking**.
+- By default, Pandoc will generate an ID for all section headers, e.g., a section `# Hello World` will have an ID `hello-world`. However, we recommend you to **manually assign an ID** to a section header to make sure you do not forget to update the reference label after you change the section header. 
+- Further attributes of section headers can be set using standard [Pandoc syntax](http://pandoc.org/MANUAL.html#heading-identifiers).
+
+--------------------------------------------------------------------------------
 
 Q: How to cross reference a regular text across files? \
-A: There's **no built-in `@ref()`** syntax for referencing arbitrary inline text. You can achieve this using html anchors. In the source `.Rmd` file (say, `chapter1.Rmd`), write:
+A: There's **no built-in `@ref()`** syntax for referencing arbitrary inline text. You can achieve this using html anchors. 
 
-```markdown
-<span id="mytext">This is the important concept you want to reference later.</span>
-```
+- In the source `.Rmd` file (say, `chapter1.Rmd`), write:
 
-Then, in another `.Rmd` file (say, `chapter2.Rmd`), link to it with:
+  ```markdown
+  <span id="mytext">This is the important concept you want to reference later.</span>
+  ```
 
-```markdown
-See [this explanation](#mytext) in Chapter 1.
-```
+- Then, in another `.Rmd` file (say, `chapter2.Rmd`), link to it with:
 
-This works for HTML output only.
+  ```markdown
+  See [this explanation](#mytext) in Chapter 1.
+  ```
+  This works for HTML output only.
 
 --------------------------------------------------------------------------------
 

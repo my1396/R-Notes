@@ -48,7 +48,7 @@
 
 - Color picker tools:
   - [System Color Picker](https://apps.apple.com/us/app/system-color-picker/id1545870783?mt=12) (Mac): Pick colors from anywhere using the built-in color picker.
-  - If you don't want to install additional app, you can use this [website](https://redketchup.io/color-picker), it allows you to upload an image and choose color from.
+  - If you don't want to install additional apps you can use this [website](https://redketchup.io/color-picker), it allows you to upload an image and choose color from.
 
 - Preview of [classes of colormaps](https://matplotlib.org/stable/tutorials/colors/colormaps.html): 
   - Sequential: use a single hue (单一色相); the lightness and saturation value increases monotonically (亮度 饱和度); used for ordered data.
@@ -61,12 +61,11 @@
 - Verify readability of colors. 
   
   Colors should stand out (large contrast ratio), but not be too harsh on the eyes.
-  - [Check WVAG contrast ratio](https://webaim.org/resources/contrastchecker/)
+  - [Check WVAG contrast ratio](https://webaim.org/resources/contrastchecker/) for text
   - Check the [notion icon colors](https://notionicons.so/icon-set/atlas) on both light and dark background
 
 
-**Note** that some times you need to convert colors from one format to another, e.g., from hexadecimal to RGB or vice versa. Use the **Color conversion** tool:
-<https://convertingcolors.com/hex-color-E4E5E5.html?search=#e4e5e5>
+**Note** that some times you need to convert colors from one format to another, e.g., from hexadecimal to RGB or vice versa. Use this [**Color conversion** tool](https://convertingcolors.com/hex-color-E4E5E5.html?search=#e4e5e5).
 
 --------------------------------------------------------------------------------
 
@@ -74,7 +73,9 @@
 
 HTML color codes: <https://htmlcolorcodes.com/color-chart/>
 
-- [Picker](https://htmlcolorcodes.com/color-picker/): can used to generate color palette given a start point using the following approaches. 可根据需要产生不同的色板。
+- [Picker](https://htmlcolorcodes.com/color-picker/): can used to generate color palette given a start point using the following approaches. 
+
+  可根据需要产生不同的色板。
 
   - complementary colors / 互补色
 
@@ -108,21 +109,21 @@ HTML color codes: <https://htmlcolorcodes.com/color-chart/>
 
     色调是将颜色与**灰色**（黑色和白色混合）混合后得到的颜色，使原色变得柔和。
 
-    <img src="https://drive.google.com/thumbnail?id=1_6z1SAeZTzXbQvhxh-sA1GA5FDC6x-Ce&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:30%;" />
+    <img src="https://drive.google.com/thumbnail?id=1_6z1SAeZTzXbQvhxh-sA1GA5FDC6x-Ce&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:40%;" />
 
   - Shades / 暗色 (加黑)
 
     A shade is a color mixed with **black**, making it darker.
 
-    <img src="https://drive.google.com/thumbnail?id=1r-xZimLkbwlvKjS4oPy9Gl8tUMe8hXPd&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:30%;" />
+    <img src="https://drive.google.com/thumbnail?id=1r-xZimLkbwlvKjS4oPy9Gl8tUMe8hXPd&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:40%;" />
 
   - Tints / 浅色 (加白)
 
     A tint is a color mixed with **white**, making it lighter.
 
-    <img src="https://drive.google.com/thumbnail?id=1UpyrMYA-sRTnQiOg27O1o2KzWYVe9l6W&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:30%;" />
+    <img src="https://drive.google.com/thumbnail?id=1UpyrMYA-sRTnQiOg27O1o2KzWYVe9l6W&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:40%;" />
 
-- [Chart](https://htmlcolorcodes.com/color-chart/): flat design color chart [standard colors]
+- [Color Chart](https://htmlcolorcodes.com/color-chart/): flat design color chart [standard colors]
 
 - [HTML Color Names](https://htmlcolorcodes.com/color-names/)
 
@@ -331,13 +332,15 @@ plot(1:n, pch = 16, cex = 2, col = colVec)
 
 <img src="https://drive.google.com/thumbnail?id=1qdUMfHzU3JBRFHLdBJw9xPzCuwa7UY-d&sz=w1000" alt="gghue" style="zoom:80%;" />
 
+--------------------------------------------------------------------------------
+
 ### RColorBrewer
 
 - <span style='color:#008B45'>*Sequential*</span> palettes names are `Blues` `BuGn` `BuPu` `GnBu` `Greens` `Greys` `Oranges` `OrRd` `PuBu` `PuBuGn` `PuRd` `Purples` `RdPu` `Reds` `YlGn` `YlGnBu` `YlOrBr` `YlOrRd`. All the sequential palettes are available in variations from 3 different values up to 9 different values. 
 
 - <span style='color:#008B45'>*Diverging*</span> palettes are `BrBG` `PiYG` `PRGn` `PuOr` `RdBu` `RdGy` `RdYlBu` `RdYlGn` `Spectral`. All the diverging palettes are available in variations from 3 different values up to 11 different values. Suited to centered data with extremes in either direction.
 
-  > For temperature and radiation data visulization, it's recommended to use diverging palettes from **blue to red**. 
+  > For temperature and radiation data visualization, it's recommended to use diverging palettes from **blue to red**. 
 
 
 - <span style='color:#008B45'>*Qualitative*</span> palettes, the lowest number of distinct values available always is 3, but the largest number is different for different palettes. { Accent 8 Dark2 8 Paired 12 Pastel1 9 Pastel2 8 Set1 9 Set2 8 Set3 12 }
@@ -431,6 +434,34 @@ From light (1) to dark (0). Can just start at a larger number and end at a small
 
 --------------------------------------------------------------------------------
 
+### viridis
+
+The **`viridis`** package contains four sequential color scales: “Viridis” (the primary choice) and three alternatives with similar properties (“magma”, “plasma”, and “inferno”).
+
+`viridis(n, alpha = 1, begin = 0, end = 1, direction = 1, option = "D")`
+
+- `n` 	The number of colors (*≥ 1*) to be in the palette.
+
+- `alpha`     The alpha transparency, a number in [0,1], see argument alpha in `hsv`.
+
+- `begin`, `end`    The (corrected) hue in [0,1] at which the viridis colormap begins/ends.
+
+- `direction`     Sets the order of colors in the scale. If 1, the default, colors are ordered from darkest to lightest. If **-1**, the order of colors is **reversed**.
+
+- `option`     "magma" (or "A"), "inferno" (or "B"), "plasma" (or "C"), "**viridis**" (or "**D**", the default option) and "cividis" (or "E").
+
+  <img src="https://drive.google.com/thumbnail?id=1z9Ld2g6oiC46Jut0hOl7KfQKavXSJ9_w&sz=w1000" alt="viridis-scales" style="zoom:100%;" />
+
+```R
+## Choose color from viridis
+# n <- 20 # number of colors you want
+# mycolor <- viridis(n, alpha = 1, begin = 0, end = 1, direction = 1, option = "A")
+# mycolor[10]
+# show_palette(mycolor[10])
+```
+
+--------------------------------------------------------------------------------
+
 ### `ggsci`
 
 Scientific Journal and [Sci-Fi Themed Color Palettes](https://cran.r-project.org/web/packages/ggsci/vignettes/ggsci.html) for ggplot2
@@ -447,9 +478,35 @@ show_col(pal_npg(alpha = 0.6)(9))
 show_col(pal_simpsons("springfield")(9))
 ```
 
+--------------------------------------------------------------------------------
+
+### **Generate and Show Color Palettes**
+
+```R
+gg_color_hue <- function(n) {
+    # generates a sequence of color
+    hues = seq(15, 375, length=n+1)
+    hcl(h=hues, l=65, c=100)[1:n]
+}
+> gg_color_hue(2)
+# "#F8766D"(coral) "#00BFC4"(bluish)
+```
 
 
 
+`hcl(h = 0, c = 35, l = 85, alpha, fixup = TRUE)`	Create a vector of colors from vectors specifying `hue`, `chroma` and `luminance`.
+
+- `h` 	The hue of the color  specified as an angle in the range `[0,360]`. **0** yields **red**, **120** yields **green** **240** yields **blue**, etc. 色相，色调 (颜色的性质)
+- `c`    chrome (purity of intensy of color) 浓淡度，色度
+- `l`     A value in the range [0,100] giving the luminance of the colour. 明暗度
+- `alpha`   numeric vector of values in the range `[0,1]` for alpha transparency channel (0 means transparent and 1 means opaque).
+- `fixup`   a logical value which indicates whether the resulting RGB values should be corrected to ensure that a real color results. if `fixup` is `FALSE` RGB components lying outside the range [0,1] will result in an `NA` value.
+
+
+
+`hcl.colors(n, palette = "viridis", alpha = NULL, rev = FALSE)`	provides a basic and lean implementation of the pre-specified palettes in the **colorspace** package. 
+
+--------------------------------------------------------------------------------
 
 **Show color palette**
 
@@ -477,8 +534,6 @@ show_palette(myColors)
 
 
 
-
-
 ```R
 ## use package RColorBrewer
 library(RColorBrewer)
@@ -486,64 +541,7 @@ brewer.pal(11,"Spectral") # generate a series of color
 display.brewer.pal(11,"Spectral") # show a legend of colors
 ```
 
- 
-### viridis
-
-The **`viridis`** package contains four sequential color scales: “Viridis” (the primary choice) and three alternatives with similar properties (“magma”, “plasma”, and “inferno”).
-
-`viridis(n, alpha = 1, begin = 0, end = 1, direction = 1, option = "D")`
-
-- `n` 	The number of colors (*≥ 1*) to be in the palette.
-
-- `alpha`     The alpha transparency, a number in [0,1], see argument alpha in `hsv`.
-
-- `begin`, `end`    The (corrected) hue in [0,1] at which the viridis colormap begins/ends.
-
-- `direction`     Sets the order of colors in the scale. If 1, the default, colors are ordered from darkest to lightest. If **-1**, the order of colors is **reversed**.
-
-- `option`     "magma" (or "A"), "inferno" (or "B"), "plasma" (or "C"), "**viridis**" (or "**D**", the default option) and "cividis" (or "E").
-
-  <img src="https://drive.google.com/thumbnail?id=1z9Ld2g6oiC46Jut0hOl7KfQKavXSJ9_w&sz=w1000" alt="viridis-scales" style="zoom:100%;" />
-
-```R
-## Choose color from viridis
-# n <- 20 # number of colors you want
-# mycolor <- viridis(n, alpha = 1, begin = 0, end = 1, direction = 1, option = "A")
-# mycolor[10]
-# show_palette(mycolor[10])
-```
-
-
-
-
-
-### **Generate Color Palettes**
-
-```R
-gg_color_hue <- function(n) {
-    # generates a sequence of color
-    hues = seq(15, 375, length=n+1)
-    hcl(h=hues, l=65, c=100)[1:n]
-}
-> gg_color_hue(2)
-# "#F8766D"(coral) "#00BFC4"(bluish)
-```
-
-
-
-`hcl(h = 0, c = 35, l = 85, alpha, fixup = TRUE)`	Create a vector of colors from vectors specifying `hue`, `chroma` and `luminance`.
-
-- `h` 	The hue of the color  specified as an angle in the range `[0,360]`. **0** yields **red**, **120** yields **green** **240** yields **blue**, etc. 色相，色调 (颜色的性质)
-- `c`    chrome (purity of intensy of color) 浓淡度，色度
-- `l`     A value in the range [0,100] giving the luminance of the colour. 明暗度
-- `alpha`   numeric vector of values in the range `[0,1]` for alpha transparency channel (0 means transparent and 1 means opaque).
-- `fixup`   a logical value which indicates whether the resulting RGB values should be corrected to ensure that a real color results. if `fixup` is `FALSE` RGB components lying outside the range [0,1] will result in an `NA` value.
-
-
-
-`hcl.colors(n, palette = "viridis", alpha = NULL, rev = FALSE)`	provides a basic and lean implementation of the pre-specified palettes in the **colorspace** package. 
-
-
+--------------------------------------------------------------------------------
 
 ### Color Interpolation
 

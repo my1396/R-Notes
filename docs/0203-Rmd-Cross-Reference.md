@@ -117,7 +117,7 @@ Refer to [Markdown: cross references](https://my1396.github.io/Econ-Study/2023/1
 
 Note that **cross references between documents** are supported by bookdown. Don't need to specify the file name, just use the ID of the header in the other document. Bookdown will automatically link to the correct document.
 
-More about Section IDs:
+**More about Section IDs:**
 
 By default, Pandoc will generate an ID for all section headers, e.g., a section `# Hello World` will have an ID `hello-world`. However, we recommend you to **manually assign an ID** to a section header to make sure you do not forget to update the reference label after you change the section header. To assign an ID to a section header, simply add `{#id}` to the end of the section header. Further attributes of section headers can be set using standard [Pandoc syntax](http://pandoc.org/MANUAL.html#heading-identifiers).
     
