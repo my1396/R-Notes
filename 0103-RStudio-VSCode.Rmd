@@ -10,12 +10,11 @@ You can run R in VS Code. Simply open the folder containing your R scripts in VS
 
 
 #### Keyboard shortcuts
-
-| Shortcuts             | Function            |
-| --------------------- | ------------------- |
-| `cmd` + `/`           | comment             |
-| `shift` + `cmd` + `M` | user defined; `%>%` |
-| `opt` + `-`           | user defined; `<-`  |
+| Shortcuts                                 | Function              |
+| ------------------------------------------ | --------------------- |
+| `cmd`   + `/`                             | comment               |
+| `shift` + `cmd`  + `M` or `shift` + `ctrl` + `M` | user defined; `%>%`  |
+| `opt`   + `-`                             | user defined; `<-`    |
 
 
 
@@ -311,6 +310,7 @@ The `httpgd` plot viewer supports auto-resizing, light/dark theme mode, plot his
 Getting started with `httpgd`
 
 ```r
+library(httpgd)
 # Start the httpgd graphics device
 hgd()
 
@@ -325,6 +325,18 @@ plot(x, sin(x), type = "l")
 dev.off()
 ```
 
+Q: Plot viewer is missing. \
+A: Run `hgd()` in R and get the url to the viewer. Use the command palette to run "**R Plot: Open httpgd Url**". It will let you enter the url address, fill it in and hit Enter to open the plot viewer. Alternatively, if you want to view in external browser, you can copy the url and paste it in your browser.
+
+
+- `hgd` Initialize device and start server.
+- `hgd_browse` Open the plot viewer in your browser.
+- `unigd::ugd_clear()` Clear all pages in the plot viewer.
+- `unigd::ugd_remove(page = 2)` Remove the second page
+
+Ref:
+
+- [Using httpgd in VSCode: A web-based SVG graphics device](https://renkun.me/2020/06/16/using-httpgd-in-vscode-a-web-based-svg-graphics-device/)
 
 --------------------------------------------------------------------------------
 

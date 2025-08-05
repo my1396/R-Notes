@@ -87,7 +87,7 @@ rmarkdown::render("/Users/menghan/Library/CloudStorage/OneDrive-Norduniversitet/
 
 --------------------------------------------------------------------------------
 
-Rmd has many built-in themes which can be conveniently applied to your html document.
+Rmd has many **built-in themes** which can be conveniently applied to your html document.
 
 See here for a preview for some popular html themes: <https://rstudio4edu.github.io/rstudio4edu-book/rmd-themes.html>
 
@@ -155,30 +155,10 @@ html_document:
 
   **Different flavors of Markdown** may produce different results if there are no blank lines. 🙈🙈
 
-- Need to escape `@` in the text by `\@`, otherwise, it will be interpreted as a citation key, e.g., `@author` or `@citekey`.
+- Need to escape `@` in the text by `\@` in bookdown, otherwise, it will be interpreted as a citation key, e.g., `@author` or `@citekey`.
   
   [Special characters](https://github.com/mattcone/markdown-guide/blob/master/_basic-syntax/escaping-characters.md) that have specific meanings in Markdown, such as `*`, `_`, `#`, `+`, `-`, should be escaped with a backslash (`\`) if you want to display them literally. 
 
   ```markdown
   \* Without the backslash, this would be a bullet in an unordered list.
   ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

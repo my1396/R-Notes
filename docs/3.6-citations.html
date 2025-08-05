@@ -29,7 +29,7 @@ set in the _output.yml file.</p>" />
 <meta name="author" content="Menghan Yuan" />
 
 
-<meta name="date" content="2025-08-04" />
+<meta name="date" content="2025-08-05" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -701,6 +701,40 @@ div.csl-indent {
             x.style.display = "none";
           }
         }
+        
+        // Fix search functionality for GitHub Pages
+        $(document).ready(function() {
+          // Ensure search index loads with correct protocol
+          if (typeof gitbook !== 'undefined' && gitbook.search) {
+            // Force search to use current protocol (http/https)
+            var searchIndex = 'search_index.json';
+            if (window.location.protocol === 'https:') {
+              searchIndex = searchIndex.replace('http:', 'https:');
+            }
+          }
+          
+          // Add small delay to ensure search is initialized - increased for GitHub Pages
+          setTimeout(function() {
+            if (window.gitbook && window.gitbook.search) {
+              window.gitbook.search.init();
+            }
+            
+            // Additional fix: manually trigger search setup if not working
+            var searchInput = document.querySelector('.book-search input');
+            if (searchInput && !searchInput.hasAttribute('data-search-ready')) {
+              searchInput.setAttribute('data-search-ready', 'true');
+              // Force re-initialization of search
+              if (window.lunr && window.gitbook && window.gitbook.search) {
+                try {
+                  window.gitbook.search.setIndex(null);
+                  window.gitbook.search.init();
+                } catch(e) {
+                  console.log('Search reinitialization attempted');
+                }
+              }
+            }
+          }, 2000); // Increased delay for GitHub Pages
+        });
     </script>
 </head>
 <div id="citations" class="section level2 hasAnchor" number="3.6">
@@ -806,7 +840,7 @@ In this case, the bibliographic data files need to be in the bibtex or biblatex 
 <p>This feature can be disabled by setting the <code>split_bib</code> YAML field to <code>false</code>, in which case all citations cited in the entire report or book are put on a separate bibliography page. To do this, you can add specific keys in the YAML header in <span style="color:#008B45"><code>_output.yml</code></span>:</p>
 <div class="sourceCode" id="cb153"><pre class="sourceCode yml"><code class="sourceCode yaml"><span id="cb153-1"><a href="3.6-citations.html#cb153-1" tabindex="-1"></a><span class="pp">---</span></span>
 <span id="cb153-2"><a href="3.6-citations.html#cb153-2" tabindex="-1"></a><span class="fu">author</span><span class="kw">:</span><span class="at"> Research Institute for Nature and Forest</span></span>
-<span id="cb153-3"><a href="3.6-citations.html#cb153-3" tabindex="-1"></a><span class="fu">date</span><span class="kw">:</span><span class="at"> </span><span class="st">&#39;2025-08-04&#39;</span></span>
+<span id="cb153-3"><a href="3.6-citations.html#cb153-3" tabindex="-1"></a><span class="fu">date</span><span class="kw">:</span><span class="at"> </span><span class="st">&#39;2025-08-05&#39;</span></span>
 <span id="cb153-4"><a href="3.6-citations.html#cb153-4" tabindex="-1"></a><span class="fu">site</span><span class="kw">:</span><span class="at"> bookdown::bookdown_site</span></span>
 <span id="cb153-5"><a href="3.6-citations.html#cb153-5" tabindex="-1"></a><span class="fu">output</span><span class="kw">:</span></span>
 <span id="cb153-6"><a href="3.6-citations.html#cb153-6" tabindex="-1"></a><span class="at">  bookdown:</span><span class="fu">:gitbook</span><span class="kw">:</span></span>

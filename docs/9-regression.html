@@ -29,7 +29,7 @@ set in the _output.yml file.</p>" />
 <meta name="author" content="Menghan Yuan" />
 
 
-<meta name="date" content="2025-08-04" />
+<meta name="date" content="2025-08-05" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -701,6 +701,40 @@ div.csl-indent {
             x.style.display = "none";
           }
         }
+        
+        // Fix search functionality for GitHub Pages
+        $(document).ready(function() {
+          // Ensure search index loads with correct protocol
+          if (typeof gitbook !== 'undefined' && gitbook.search) {
+            // Force search to use current protocol (http/https)
+            var searchIndex = 'search_index.json';
+            if (window.location.protocol === 'https:') {
+              searchIndex = searchIndex.replace('http:', 'https:');
+            }
+          }
+          
+          // Add small delay to ensure search is initialized - increased for GitHub Pages
+          setTimeout(function() {
+            if (window.gitbook && window.gitbook.search) {
+              window.gitbook.search.init();
+            }
+            
+            // Additional fix: manually trigger search setup if not working
+            var searchInput = document.querySelector('.book-search input');
+            if (searchInput && !searchInput.hasAttribute('data-search-ready')) {
+              searchInput.setAttribute('data-search-ready', 'true');
+              // Force re-initialization of search
+              if (window.lunr && window.gitbook && window.gitbook.search) {
+                try {
+                  window.gitbook.search.setIndex(null);
+                  window.gitbook.search.init();
+                } catch(e) {
+                  console.log('Search reinitialization attempted');
+                }
+              }
+            }
+          }, 2000); // Increased delay for GitHub Pages
+        });
     </script>
 </head>
 <div id="regression" class="section level1 hasAnchor" number="9">
@@ -737,10 +771,10 @@ div.csl-indent {
 <div class="sourceCode" id="cb645"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb645-1"><a href="9-regression.html#cb645-1" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
 <span id="cb645-2"><a href="9-regression.html#cb645-2" tabindex="-1"></a><span class="fu">tidy</span>(capm_ml)</span></code></pre></div>
 <pre><code>## # A tibble: 2 × 5
-##   term        estimate std.error statistic       p.value
-##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;         &lt;dbl&gt;
-## 1 (Intercept)  0.00975   0.00764      1.27 0.205        
-## 2 rmrf         1.07      0.166        6.41 0.00000000280</code></pre>
+##   term           estimate   std.error statistic     p.value
+##   &lt;chr&gt;             &lt;dbl&gt;       &lt;dbl&gt;     &lt;dbl&gt;       &lt;dbl&gt;
+## 1 (Intercept) 0.009746761 0.007644518  1.275000 2.047124e-1
+## 2 rmrf        1.066640    0.1663838    6.410718 2.801085e-9</code></pre>
 <p>Get the <strong>variance-covariance matrix</strong> with <code>vcov</code>.</p>
 <div class="sourceCode" id="cb647"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb647-1"><a href="9-regression.html#cb647-1" tabindex="-1"></a><span class="fu">vcov</span>(capm_ml)</span></code></pre></div>
 <pre><code>##               (Intercept)          rmrf
@@ -751,10 +785,10 @@ div.csl-indent {
 <span id="cb649-3"><a href="9-regression.html#cb649-3" tabindex="-1"></a>    <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
 <span id="cb649-4"><a href="9-regression.html#cb649-4" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">variance=</span>std.error<span class="sc">^</span><span class="dv">2</span>)</span></code></pre></div>
 <pre><code>## # A tibble: 2 × 6
-##   term        estimate std.error statistic       p.value  variance
-##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;         &lt;dbl&gt;     &lt;dbl&gt;
-## 1 (Intercept)  0.00975   0.00764      1.27 0.205         0.0000584
-## 2 rmrf         1.07      0.166        6.41 0.00000000280 0.0277</code></pre>
+##   term           estimate   std.error statistic     p.value      variance
+##   &lt;chr&gt;             &lt;dbl&gt;       &lt;dbl&gt;     &lt;dbl&gt;       &lt;dbl&gt;         &lt;dbl&gt;
+## 1 (Intercept) 0.009746761 0.007644518  1.275000 2.047124e-1 0.00005843866
+## 2 rmrf        1.066640    0.1663838    6.410718 2.801085e-9 0.02768356</code></pre>
 <p>We can manually calculate as</p>
 <div class="sourceCode" id="cb651"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb651-1"><a href="9-regression.html#cb651-1" tabindex="-1"></a>df <span class="ot">&lt;-</span> (<span class="fu">nrow</span>(capm_ml<span class="sc">$</span>model)<span class="sc">-</span><span class="dv">2</span>)  <span class="co"># degree of freedom</span></span>
 <span id="cb651-2"><a href="9-regression.html#cb651-2" tabindex="-1"></a>sigma2 <span class="ot">&lt;-</span> <span class="fu">sum</span>(capm_ml<span class="sc">$</span>residuals<span class="sc">^</span><span class="dv">2</span>)<span class="sc">/</span>df  <span class="co"># residual variance</span></span>
