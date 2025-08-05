@@ -385,7 +385,8 @@ div.csl-indent {
 <li class="chapter" data-level="2.10.2" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#radian"><i class="fa fa-check"></i><b>2.10.2</b> Radian</a></li>
 <li class="chapter" data-level="2.10.3" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#faq-1"><i class="fa fa-check"></i><b>2.10.3</b> FAQ</a></li>
 <li class="chapter" data-level="2.10.4" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#plot-viewer"><i class="fa fa-check"></i><b>2.10.4</b> Plot Viewer</a></li>
-<li class="chapter" data-level="2.10.5" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#work-with-rmd"><i class="fa fa-check"></i><b>2.10.5</b> Work with Rmd</a></li>
+<li class="chapter" data-level="2.10.5" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#r-debugger"><i class="fa fa-check"></i><b>2.10.5</b> R Debugger</a></li>
+<li class="chapter" data-level="2.10.6" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#work-with-rmd"><i class="fa fa-check"></i><b>2.10.6</b> Work with Rmd</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="3" data-path="3-rmd.html"><a href="3-rmd.html"><i class="fa fa-check"></i><b>3</b> Rmd</a>
@@ -530,8 +531,9 @@ div.csl-indent {
 <li class="chapter" data-level="6.1.4" data-path="6.1-basic-operations-on-tibbles.html"><a href="6.1-basic-operations-on-tibbles.html#mutate"><i class="fa fa-check"></i><b>6.1.4</b> <code>mutate</code></a></li>
 <li class="chapter" data-level="6.1.5" data-path="6.1-basic-operations-on-tibbles.html"><a href="6.1-basic-operations-on-tibbles.html#concatenate-rows-into-a-tibble"><i class="fa fa-check"></i><b>6.1.5</b> Concatenate rows into a <code>tibble</code></a></li>
 <li class="chapter" data-level="6.1.6" data-path="6.1-basic-operations-on-tibbles.html"><a href="6.1-basic-operations-on-tibbles.html#data-subsetting-1"><i class="fa fa-check"></i><b>6.1.6</b> Data Subsetting</a></li>
-<li class="chapter" data-level="6.1.7" data-path="6.1-basic-operations-on-tibbles.html"><a href="6.1-basic-operations-on-tibbles.html#dynamic-selection"><i class="fa fa-check"></i><b>6.1.7</b> Dynamic Selection</a></li>
-<li class="chapter" data-level="6.1.8" data-path="6.1-basic-operations-on-tibbles.html"><a href="6.1-basic-operations-on-tibbles.html#merge"><i class="fa fa-check"></i><b>6.1.8</b> Merge</a></li>
+<li class="chapter" data-level="6.1.7" data-path="6.1-basic-operations-on-tibbles.html"><a href="6.1-basic-operations-on-tibbles.html#indirection"><i class="fa fa-check"></i><b>6.1.7</b> Indirection</a></li>
+<li class="chapter" data-level="6.1.8" data-path="6.1-basic-operations-on-tibbles.html"><a href="6.1-basic-operations-on-tibbles.html#dynamic-selection"><i class="fa fa-check"></i><b>6.1.8</b> Dynamic Selection</a></li>
+<li class="chapter" data-level="6.1.9" data-path="6.1-basic-operations-on-tibbles.html"><a href="6.1-basic-operations-on-tibbles.html#merge"><i class="fa fa-check"></i><b>6.1.9</b> Merge</a></li>
 </ul></li>
 <li class="chapter" data-level="6.2" data-path="6.2-pipe-operator.html"><a href="6.2-pipe-operator.html"><i class="fa fa-check"></i><b>6.2</b> Pipe Operator</a>
 <ul>
@@ -754,15 +756,15 @@ div.csl-indent {
 <hr />
 <div id="dynamic-panel" class="section level3 hasAnchor" number="9.2.1">
 <h3><span class="header-section-number">9.2.1</span> Dynamic Panel<a href="9.2-panel.html#dynamic-panel" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<div class="sourceCode" id="cb670"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb670-1"><a href="9.2-panel.html#cb670-1" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;EmplUK&quot;</span>, <span class="at">package =</span> <span class="st">&quot;plm&quot;</span>)</span>
-<span id="cb670-2"><a href="9.2-panel.html#cb670-2" tabindex="-1"></a>form <span class="ot">&lt;-</span> <span class="fu">log</span>(emp) <span class="sc">~</span> <span class="fu">log</span>(wage) <span class="sc">+</span> <span class="fu">log</span>(capital) <span class="sc">+</span> <span class="fu">log</span>(output)</span>
-<span id="cb670-3"><a href="9.2-panel.html#cb670-3" tabindex="-1"></a><span class="co"># Arellano and Bond (1991), table 4, col. b </span></span>
-<span id="cb670-4"><a href="9.2-panel.html#cb670-4" tabindex="-1"></a>empl_ab <span class="ot">&lt;-</span> <span class="fu">pgmm</span>(</span>
-<span id="cb670-5"><a href="9.2-panel.html#cb670-5" tabindex="-1"></a>    <span class="fu">dynformula</span>(form, <span class="fu">list</span>(<span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>)),</span>
-<span id="cb670-6"><a href="9.2-panel.html#cb670-6" tabindex="-1"></a>    <span class="at">data =</span> EmplUK, <span class="at">index =</span> <span class="fu">c</span>(<span class="st">&quot;firm&quot;</span>, <span class="st">&quot;year&quot;</span>),</span>
-<span id="cb670-7"><a href="9.2-panel.html#cb670-7" tabindex="-1"></a>    <span class="at">effect =</span> <span class="st">&quot;twoways&quot;</span>, <span class="at">model =</span> <span class="st">&quot;twosteps&quot;</span>,</span>
-<span id="cb670-8"><a href="9.2-panel.html#cb670-8" tabindex="-1"></a>    <span class="at">gmm.inst =</span> <span class="sc">~</span> <span class="fu">log</span>(emp), <span class="at">lag.gmm =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">99</span>)) </span>
-<span id="cb670-9"><a href="9.2-panel.html#cb670-9" tabindex="-1"></a>    )</span></code></pre></div>
+<div class="sourceCode" id="cb678"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb678-1"><a href="9.2-panel.html#cb678-1" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;EmplUK&quot;</span>, <span class="at">package =</span> <span class="st">&quot;plm&quot;</span>)</span>
+<span id="cb678-2"><a href="9.2-panel.html#cb678-2" tabindex="-1"></a>form <span class="ot">&lt;-</span> <span class="fu">log</span>(emp) <span class="sc">~</span> <span class="fu">log</span>(wage) <span class="sc">+</span> <span class="fu">log</span>(capital) <span class="sc">+</span> <span class="fu">log</span>(output)</span>
+<span id="cb678-3"><a href="9.2-panel.html#cb678-3" tabindex="-1"></a><span class="co"># Arellano and Bond (1991), table 4, col. b </span></span>
+<span id="cb678-4"><a href="9.2-panel.html#cb678-4" tabindex="-1"></a>empl_ab <span class="ot">&lt;-</span> <span class="fu">pgmm</span>(</span>
+<span id="cb678-5"><a href="9.2-panel.html#cb678-5" tabindex="-1"></a>    <span class="fu">dynformula</span>(form, <span class="fu">list</span>(<span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>)),</span>
+<span id="cb678-6"><a href="9.2-panel.html#cb678-6" tabindex="-1"></a>    <span class="at">data =</span> EmplUK, <span class="at">index =</span> <span class="fu">c</span>(<span class="st">&quot;firm&quot;</span>, <span class="st">&quot;year&quot;</span>),</span>
+<span id="cb678-7"><a href="9.2-panel.html#cb678-7" tabindex="-1"></a>    <span class="at">effect =</span> <span class="st">&quot;twoways&quot;</span>, <span class="at">model =</span> <span class="st">&quot;twosteps&quot;</span>,</span>
+<span id="cb678-8"><a href="9.2-panel.html#cb678-8" tabindex="-1"></a>    <span class="at">gmm.inst =</span> <span class="sc">~</span> <span class="fu">log</span>(emp), <span class="at">lag.gmm =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">99</span>)) </span>
+<span id="cb678-9"><a href="9.2-panel.html#cb678-9" tabindex="-1"></a>    )</span></code></pre></div>
 <p><span class="math display">\[
 \boldsymbol \Gamma_n = \begin {pmatrix}
 \gamma_0 &amp; \gamma_1 &amp; \gamma_2 &amp; \cdots &amp; \gamma_{n - 1} \\ \gamma_1 &amp; \gamma_0 &amp; \gamma_1 &amp; \cdots &amp; \gamma_{n - 2} \\ \gamma_2 &amp; \gamma_1 &amp; \gamma_0 &amp; \cdots &amp; \gamma_{n - 3} \\ \vdots &amp; \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\ \gamma_{n - 1} &amp; \gamma_{n - 2} &amp; \gamma_{n - 3} &amp; \cdots &amp; \gamma_0 \end {pmatrix}

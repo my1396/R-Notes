@@ -869,7 +869,27 @@ Full list of chunk options: <https://yihui.org/knitr/options/>
 
 Chunk options can customize nearly all components of code chunks, such as the source code, text output, plots, and the language of the chunk.
 
+Here is a template I often use:
 
+````md
+```{r, label="setup", include=FALSE}
+# set default chunk options
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE,
+  fig.align = "center",
+  fig.pos = "H"
+  )
+# set default kable options
+opts <- options(knitr.kable.NA = "")
+```
+````
+
+- For demonstration purposes, use `echo = TRUE` to show the source code in the output document.
+- For production documents, you may want to set `echo = FALSE` to hide the source code.
+  - This way, the output will show.
+  - If you want to further hide the output, use `include = FALSE`. This hides both the source code and the output, but the code is still evaluated, and plots are generated.
 
 **Other languages are supported in `Rmd`** 
 
@@ -959,7 +979,7 @@ You may use `knitr::opts_chunk$set()` to change the default values of chunk opti
 | `include=TRUE`       | Whether to include the <span style='color:#32CD32'>chunk **code and output**</span> in the output document—including source code, text output, messages, warnings, and plots. <br />If `FALSE`, nothing will be written into the output document, but the code is <u>still evaluated</u> and plot files are generated if there are any plots in the chunk, so you can manually insert figures later. |
 | `message=TRUE`       | Whether to preserve messages emitted by `message()`          |
 | `warning=TRUE`       | Whether to show warnings in the output produced by `warning()`. |
-| `results='markup'`   | Controls how to display the text results. <br />When `results='markup'` that is to write text output as-is, i.e., write the raw text results directly into the output document without any markups.<br />Useful when priting `stargazer` tables. |
+| `results='markup'`   | Controls how to display the text results. <br />When `results='markup'` that is to write text output as-is, i.e., write the raw text results directly into the output document without any markups.<br />Useful when printing `stargazer` tables. |
 | `comment='##'`       | The prefix to be added before each line of the text output. <br />Set `comment = ''` remove the default `##`. |
 | `collapse=FALSE`     | Whether to, if possible, collapse all the source and output blocks from one code chunk into a single block (by default, they are written to separate blocks). <br />This option only applies to Markdown documents. |
 | `fig.keep='high'`    | How plots in chunks should be kept. <br />`high`: Only keep high-level plots (merge low-level changes into high-level plots). <br />`none`: Discard all plots. <br />`all`: Keep all plots (low-level plot changes may produce new plots). <br />`first`: Only keep the first plot. <br />`last`: Only keep the last plot. <br />If set to a numeric vector, the values are indices of (low-level) plots to keep.<br />If you want to choose the second to the fourth plots, you could use `fig.keep = 2:4` (or remove the first plot via `fig.keep = -1`). |
@@ -981,7 +1001,7 @@ You may use `knitr::opts_chunk$set()` to change the default values of chunk opti
 
   In this case, `results='markup'` means to put the text output in fenced code blocks (```).
 
-- `results='asus'`: Write text output as-is, i.e., write the raw text results directly into the output document without any markups.
+- `results='asis'`: Write text output as-is, i.e., write the raw text results directly into the output document without any markups.
 
   ````md
   ```{r, results='asis'}

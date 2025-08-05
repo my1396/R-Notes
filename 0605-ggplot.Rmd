@@ -84,7 +84,7 @@ p + guides(colour = guide_legend(nrow = 1))
 --------------------------------------------------------------------------------
 
 
-**Theme**
+#### Theme
 
 Explore themes: <https://ggplot2.tidyverse.org/reference/ggtheme.html>
 
@@ -92,7 +92,18 @@ default: `theme_gray()` (with grey background)
 
 normal: **`theme_bw() `** (recommended 结构清晰)
 
-coordinates: `theme_minimal()` (no axis borders 极简风) 没有背景填充色，深色模式下预览困难。
+coordinates: `theme_minimal()` (no axis borders 极简风) 
+
+- Q: 没有背景填充色，深色模式下预览困难。 
+  
+  A: use theme to apply white background:
+
+  ```r
+  theme(plot.background = element_rect(fill = "white", color = NA))
+  ```
+
+  - `plot.background` Background of the entire plot area.
+  - `panel.background` Background of the panel area (the area where the data is plotted).
 
 with no grid: `theme_classic()` (hard to read)
 

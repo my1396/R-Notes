@@ -385,7 +385,8 @@ div.csl-indent {
 <li class="chapter" data-level="2.10.2" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#radian"><i class="fa fa-check"></i><b>2.10.2</b> Radian</a></li>
 <li class="chapter" data-level="2.10.3" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#faq-1"><i class="fa fa-check"></i><b>2.10.3</b> FAQ</a></li>
 <li class="chapter" data-level="2.10.4" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#plot-viewer"><i class="fa fa-check"></i><b>2.10.4</b> Plot Viewer</a></li>
-<li class="chapter" data-level="2.10.5" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#work-with-rmd"><i class="fa fa-check"></i><b>2.10.5</b> Work with Rmd</a></li>
+<li class="chapter" data-level="2.10.5" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#r-debugger"><i class="fa fa-check"></i><b>2.10.5</b> R Debugger</a></li>
+<li class="chapter" data-level="2.10.6" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#work-with-rmd"><i class="fa fa-check"></i><b>2.10.6</b> Work with Rmd</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="3" data-path="3-rmd.html"><a href="3-rmd.html"><i class="fa fa-check"></i><b>3</b> Rmd</a>
@@ -530,8 +531,9 @@ div.csl-indent {
 <li class="chapter" data-level="6.1.4" data-path="6.1-basic-operations-on-tibbles.html"><a href="6.1-basic-operations-on-tibbles.html#mutate"><i class="fa fa-check"></i><b>6.1.4</b> <code>mutate</code></a></li>
 <li class="chapter" data-level="6.1.5" data-path="6.1-basic-operations-on-tibbles.html"><a href="6.1-basic-operations-on-tibbles.html#concatenate-rows-into-a-tibble"><i class="fa fa-check"></i><b>6.1.5</b> Concatenate rows into a <code>tibble</code></a></li>
 <li class="chapter" data-level="6.1.6" data-path="6.1-basic-operations-on-tibbles.html"><a href="6.1-basic-operations-on-tibbles.html#data-subsetting-1"><i class="fa fa-check"></i><b>6.1.6</b> Data Subsetting</a></li>
-<li class="chapter" data-level="6.1.7" data-path="6.1-basic-operations-on-tibbles.html"><a href="6.1-basic-operations-on-tibbles.html#dynamic-selection"><i class="fa fa-check"></i><b>6.1.7</b> Dynamic Selection</a></li>
-<li class="chapter" data-level="6.1.8" data-path="6.1-basic-operations-on-tibbles.html"><a href="6.1-basic-operations-on-tibbles.html#merge"><i class="fa fa-check"></i><b>6.1.8</b> Merge</a></li>
+<li class="chapter" data-level="6.1.7" data-path="6.1-basic-operations-on-tibbles.html"><a href="6.1-basic-operations-on-tibbles.html#indirection"><i class="fa fa-check"></i><b>6.1.7</b> Indirection</a></li>
+<li class="chapter" data-level="6.1.8" data-path="6.1-basic-operations-on-tibbles.html"><a href="6.1-basic-operations-on-tibbles.html#dynamic-selection"><i class="fa fa-check"></i><b>6.1.8</b> Dynamic Selection</a></li>
+<li class="chapter" data-level="6.1.9" data-path="6.1-basic-operations-on-tibbles.html"><a href="6.1-basic-operations-on-tibbles.html#merge"><i class="fa fa-check"></i><b>6.1.9</b> Merge</a></li>
 </ul></li>
 <li class="chapter" data-level="6.2" data-path="6.2-pipe-operator.html"><a href="6.2-pipe-operator.html"><i class="fa fa-check"></i><b>6.2</b> Pipe Operator</a>
 <ul>
@@ -751,43 +753,62 @@ div.csl-indent {
 <li>then by prefix matching, and</li>
 <li>finally by position.</li>
 </ol>
+<p>If you specify arguments by names (full or partial), you can specify them in any order. If you specify arguments by position, you must specify them in the order they are defined in the function.</p>
+<p><strong>Example:</strong></p>
+<p>Here is a <code>read.csv()</code> function.</p>
+<div class="sourceCode" id="cb309"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb309-1"><a href="5.2-functions.html#cb309-1" tabindex="-1"></a><span class="fu">read.csv</span>(file, <span class="at">header =</span> <span class="cn">TRUE</span>, <span class="at">sep =</span> <span class="st">&quot;,&quot;</span>, <span class="at">quote =</span> <span class="st">&quot;</span><span class="sc">\&quot;</span><span class="st">&quot;</span>,</span>
+<span id="cb309-2"><a href="5.2-functions.html#cb309-2" tabindex="-1"></a>         <span class="at">dec =</span> <span class="st">&quot;.&quot;</span>, <span class="at">fill =</span> <span class="cn">TRUE</span>, <span class="at">comment.char =</span> <span class="st">&quot;&quot;</span>, ...)</span></code></pre></div>
+<p>If you call</p>
+<div class="sourceCode" id="cb310"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb310-1"><a href="5.2-functions.html#cb310-1" tabindex="-1"></a><span class="fu">read.csv</span>(<span class="st">&quot;path/to/file.csv&quot;</span>)</span></code></pre></div>
+<p>it will read the file <code>path/to/file.csv</code> with default values for all other arguments.</p>
+<p>But if you call</p>
+<div class="sourceCode" id="cb311"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb311-1"><a href="5.2-functions.html#cb311-1" tabindex="-1"></a><span class="fu">read.csv</span>(<span class="cn">FALSE</span>, <span class="st">&quot;path/to/file.csv&quot;</span>)</span></code></pre></div>
+<p>this will return an error because <code>FALSE</code> is assigned to <code>file</code> and the filename is assigned to the argument <code>header</code>.</p>
+<p>You can run.</p>
+<div class="sourceCode" id="cb312"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb312-1"><a href="5.2-functions.html#cb312-1" tabindex="-1"></a><span class="fu">read.csv</span>(<span class="at">header =</span> <span class="cn">FALSE</span>, <span class="at">file =</span> <span class="st">&quot;path/to/file.csv&quot;</span>)</span></code></pre></div>
+<p><strong>To summarize:</strong></p>
+<ul>
+<li>You can pass the arguments to <code>read.csv</code> without naming them if they are in the order that <code>R</code> expects.</li>
+<li>However, the order of the arguments matter if they are not named.</li>
+</ul>
+<hr />
 <p>When you call a function and specify arguments, it is recommended to put a space around <code>=</code>, also put a space after a comma, not before.</p>
-<div class="sourceCode" id="cb308"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb308-1"><a href="5.2-functions.html#cb308-1" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="dv">10</span>; y <span class="ot">&lt;-</span> <span class="dv">5</span></span>
-<span id="cb308-2"><a href="5.2-functions.html#cb308-2" tabindex="-1"></a>x <span class="sc">+</span> y</span>
-<span id="cb308-3"><a href="5.2-functions.html#cb308-3" tabindex="-1"></a><span class="co">#&gt; [1] 15</span></span>
-<span id="cb308-4"><a href="5.2-functions.html#cb308-4" tabindex="-1"></a><span class="st">`</span><span class="at">+</span><span class="st">`</span>(x, y)</span>
-<span id="cb308-5"><a href="5.2-functions.html#cb308-5" tabindex="-1"></a><span class="co">#&gt; [1] 15</span></span>
-<span id="cb308-6"><a href="5.2-functions.html#cb308-6" tabindex="-1"></a></span>
-<span id="cb308-7"><a href="5.2-functions.html#cb308-7" tabindex="-1"></a><span class="co"># ----------------------------</span></span>
-<span id="cb308-8"><a href="5.2-functions.html#cb308-8" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>) <span class="fu">print</span>(i)</span>
-<span id="cb308-9"><a href="5.2-functions.html#cb308-9" tabindex="-1"></a><span class="co">#&gt; [1] 1</span></span>
-<span id="cb308-10"><a href="5.2-functions.html#cb308-10" tabindex="-1"></a><span class="co">#&gt; [1] 2</span></span>
-<span id="cb308-11"><a href="5.2-functions.html#cb308-11" tabindex="-1"></a><span class="st">`</span><span class="at">for</span><span class="st">`</span>(i, <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="fu">print</span>(i))</span>
-<span id="cb308-12"><a href="5.2-functions.html#cb308-12" tabindex="-1"></a><span class="co">#&gt; [1] 1</span></span>
-<span id="cb308-13"><a href="5.2-functions.html#cb308-13" tabindex="-1"></a><span class="co">#&gt; [1] 2</span></span>
-<span id="cb308-14"><a href="5.2-functions.html#cb308-14" tabindex="-1"></a></span>
-<span id="cb308-15"><a href="5.2-functions.html#cb308-15" tabindex="-1"></a><span class="co"># ----------------------------</span></span>
-<span id="cb308-16"><a href="5.2-functions.html#cb308-16" tabindex="-1"></a>x[<span class="dv">3</span>]</span>
-<span id="cb308-17"><a href="5.2-functions.html#cb308-17" tabindex="-1"></a><span class="co">#&gt; [1] NA</span></span>
-<span id="cb308-18"><a href="5.2-functions.html#cb308-18" tabindex="-1"></a><span class="co"># Note that only need to call the open braket</span></span>
-<span id="cb308-19"><a href="5.2-functions.html#cb308-19" tabindex="-1"></a><span class="st">`</span><span class="at">[</span><span class="st">`</span>(x, <span class="dv">3</span>)</span>
-<span id="cb308-20"><a href="5.2-functions.html#cb308-20" tabindex="-1"></a><span class="co">#&gt; [1] NA</span></span>
-<span id="cb308-21"><a href="5.2-functions.html#cb308-21" tabindex="-1"></a></span>
-<span id="cb308-22"><a href="5.2-functions.html#cb308-22" tabindex="-1"></a><span class="co"># ----------------------------</span></span>
-<span id="cb308-23"><a href="5.2-functions.html#cb308-23" tabindex="-1"></a>{ <span class="fu">print</span>(<span class="dv">1</span>); <span class="fu">print</span>(<span class="dv">2</span>); <span class="fu">print</span>(<span class="dv">3</span>) }</span>
-<span id="cb308-24"><a href="5.2-functions.html#cb308-24" tabindex="-1"></a><span class="co">#&gt; [1] 1</span></span>
-<span id="cb308-25"><a href="5.2-functions.html#cb308-25" tabindex="-1"></a><span class="co">#&gt; [1] 2</span></span>
-<span id="cb308-26"><a href="5.2-functions.html#cb308-26" tabindex="-1"></a><span class="co">#&gt; [1] 3</span></span>
-<span id="cb308-27"><a href="5.2-functions.html#cb308-27" tabindex="-1"></a><span class="st">`</span><span class="at">{</span><span class="st">`</span>(<span class="fu">print</span>(<span class="dv">1</span>), <span class="fu">print</span>(<span class="dv">2</span>), <span class="fu">print</span>(<span class="dv">3</span>))</span>
-<span id="cb308-28"><a href="5.2-functions.html#cb308-28" tabindex="-1"></a><span class="co">#&gt; [1] 1</span></span>
-<span id="cb308-29"><a href="5.2-functions.html#cb308-29" tabindex="-1"></a><span class="co">#&gt; [1] 2</span></span>
-<span id="cb308-30"><a href="5.2-functions.html#cb308-30" tabindex="-1"></a><span class="co">#&gt; [1] 3</span></span>
-<span id="cb308-31"><a href="5.2-functions.html#cb308-31" tabindex="-1"></a></span>
-<span id="cb308-32"><a href="5.2-functions.html#cb308-32" tabindex="-1"></a><span class="co"># ----------------------------</span></span>
-<span id="cb308-33"><a href="5.2-functions.html#cb308-33" tabindex="-1"></a><span class="fu">sapply</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="st">`</span><span class="at">+</span><span class="st">`</span>, <span class="dv">3</span>)</span>
-<span id="cb308-34"><a href="5.2-functions.html#cb308-34" tabindex="-1"></a><span class="co">#&gt; [1] 4 5 6 7 8</span></span>
-<span id="cb308-35"><a href="5.2-functions.html#cb308-35" tabindex="-1"></a><span class="fu">sapply</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="st">&quot;+&quot;</span>, <span class="dv">3</span>)</span>
-<span id="cb308-36"><a href="5.2-functions.html#cb308-36" tabindex="-1"></a><span class="co">#&gt; [1] 4 5 6 7 8</span></span></code></pre></div>
+<div class="sourceCode" id="cb313"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb313-1"><a href="5.2-functions.html#cb313-1" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="dv">10</span>; y <span class="ot">&lt;-</span> <span class="dv">5</span></span>
+<span id="cb313-2"><a href="5.2-functions.html#cb313-2" tabindex="-1"></a>x <span class="sc">+</span> y</span>
+<span id="cb313-3"><a href="5.2-functions.html#cb313-3" tabindex="-1"></a><span class="co">#&gt; [1] 15</span></span>
+<span id="cb313-4"><a href="5.2-functions.html#cb313-4" tabindex="-1"></a><span class="st">`</span><span class="at">+</span><span class="st">`</span>(x, y)</span>
+<span id="cb313-5"><a href="5.2-functions.html#cb313-5" tabindex="-1"></a><span class="co">#&gt; [1] 15</span></span>
+<span id="cb313-6"><a href="5.2-functions.html#cb313-6" tabindex="-1"></a></span>
+<span id="cb313-7"><a href="5.2-functions.html#cb313-7" tabindex="-1"></a><span class="co"># ----------------------------</span></span>
+<span id="cb313-8"><a href="5.2-functions.html#cb313-8" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>) <span class="fu">print</span>(i)</span>
+<span id="cb313-9"><a href="5.2-functions.html#cb313-9" tabindex="-1"></a><span class="co">#&gt; [1] 1</span></span>
+<span id="cb313-10"><a href="5.2-functions.html#cb313-10" tabindex="-1"></a><span class="co">#&gt; [1] 2</span></span>
+<span id="cb313-11"><a href="5.2-functions.html#cb313-11" tabindex="-1"></a><span class="st">`</span><span class="at">for</span><span class="st">`</span>(i, <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="fu">print</span>(i))</span>
+<span id="cb313-12"><a href="5.2-functions.html#cb313-12" tabindex="-1"></a><span class="co">#&gt; [1] 1</span></span>
+<span id="cb313-13"><a href="5.2-functions.html#cb313-13" tabindex="-1"></a><span class="co">#&gt; [1] 2</span></span>
+<span id="cb313-14"><a href="5.2-functions.html#cb313-14" tabindex="-1"></a></span>
+<span id="cb313-15"><a href="5.2-functions.html#cb313-15" tabindex="-1"></a><span class="co"># ----------------------------</span></span>
+<span id="cb313-16"><a href="5.2-functions.html#cb313-16" tabindex="-1"></a>x[<span class="dv">3</span>]</span>
+<span id="cb313-17"><a href="5.2-functions.html#cb313-17" tabindex="-1"></a><span class="co">#&gt; [1] NA</span></span>
+<span id="cb313-18"><a href="5.2-functions.html#cb313-18" tabindex="-1"></a><span class="co"># Note that only need to call the open braket</span></span>
+<span id="cb313-19"><a href="5.2-functions.html#cb313-19" tabindex="-1"></a><span class="st">`</span><span class="at">[</span><span class="st">`</span>(x, <span class="dv">3</span>)</span>
+<span id="cb313-20"><a href="5.2-functions.html#cb313-20" tabindex="-1"></a><span class="co">#&gt; [1] NA</span></span>
+<span id="cb313-21"><a href="5.2-functions.html#cb313-21" tabindex="-1"></a></span>
+<span id="cb313-22"><a href="5.2-functions.html#cb313-22" tabindex="-1"></a><span class="co"># ----------------------------</span></span>
+<span id="cb313-23"><a href="5.2-functions.html#cb313-23" tabindex="-1"></a>{ <span class="fu">print</span>(<span class="dv">1</span>); <span class="fu">print</span>(<span class="dv">2</span>); <span class="fu">print</span>(<span class="dv">3</span>) }</span>
+<span id="cb313-24"><a href="5.2-functions.html#cb313-24" tabindex="-1"></a><span class="co">#&gt; [1] 1</span></span>
+<span id="cb313-25"><a href="5.2-functions.html#cb313-25" tabindex="-1"></a><span class="co">#&gt; [1] 2</span></span>
+<span id="cb313-26"><a href="5.2-functions.html#cb313-26" tabindex="-1"></a><span class="co">#&gt; [1] 3</span></span>
+<span id="cb313-27"><a href="5.2-functions.html#cb313-27" tabindex="-1"></a><span class="st">`</span><span class="at">{</span><span class="st">`</span>(<span class="fu">print</span>(<span class="dv">1</span>), <span class="fu">print</span>(<span class="dv">2</span>), <span class="fu">print</span>(<span class="dv">3</span>))</span>
+<span id="cb313-28"><a href="5.2-functions.html#cb313-28" tabindex="-1"></a><span class="co">#&gt; [1] 1</span></span>
+<span id="cb313-29"><a href="5.2-functions.html#cb313-29" tabindex="-1"></a><span class="co">#&gt; [1] 2</span></span>
+<span id="cb313-30"><a href="5.2-functions.html#cb313-30" tabindex="-1"></a><span class="co">#&gt; [1] 3</span></span>
+<span id="cb313-31"><a href="5.2-functions.html#cb313-31" tabindex="-1"></a></span>
+<span id="cb313-32"><a href="5.2-functions.html#cb313-32" tabindex="-1"></a><span class="co"># ----------------------------</span></span>
+<span id="cb313-33"><a href="5.2-functions.html#cb313-33" tabindex="-1"></a><span class="fu">sapply</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="st">`</span><span class="at">+</span><span class="st">`</span>, <span class="dv">3</span>)</span>
+<span id="cb313-34"><a href="5.2-functions.html#cb313-34" tabindex="-1"></a><span class="co">#&gt; [1] 4 5 6 7 8</span></span>
+<span id="cb313-35"><a href="5.2-functions.html#cb313-35" tabindex="-1"></a><span class="fu">sapply</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="st">&quot;+&quot;</span>, <span class="dv">3</span>)</span>
+<span id="cb313-36"><a href="5.2-functions.html#cb313-36" tabindex="-1"></a><span class="co">#&gt; [1] 4 5 6 7 8</span></span></code></pre></div>
 <p>Note the difference between <code>+</code> and <code>"+"</code>. The first one is the value of the object called <code>+</code>, and the second is a string containing the character <code>+</code>. The second version works because <code>sapply</code> can be given the name of a function instead of the function itself: if you read the source of <code>sapply()</code>, you’ll see the first line uses <code>match.fun()</code> to find functions given their names.</p>
 <p><strong>Every operation is a function call</strong></p>
 <p>Every operation in R is a function call, whether or not it looks like one. This includes infix operators like <code>+</code>, control flow operators like <code>for</code>, <code>if</code>, and <code>while</code>, subsetting operators like <code>[]</code> and <code>$</code>, and even the curly brace <code>{</code>. This means that each pair of statements in the following example is exactly equivalent. Note that <code>`</code>, the backtick, lets you refer to functions or variables that have otherwise reserved or illegal names:</p>
@@ -826,46 +847,46 @@ div.csl-indent {
 <ul>
 <li><code>value</code> an object, the new value of the attribute, or <code>NULL</code> to remove the attribute.</li>
 </ul>
-<div class="sourceCode" id="cb309"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb309-1"><a href="5.2-functions.html#cb309-1" tabindex="-1"></a><span class="co"># create a 2 by 5 matrix</span></span>
-<span id="cb309-2"><a href="5.2-functions.html#cb309-2" tabindex="-1"></a><span class="sc">&gt;</span> x <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span></span>
-<span id="cb309-3"><a href="5.2-functions.html#cb309-3" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">attr</span>(x, <span class="st">&quot;dim&quot;</span>) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">5</span>)</span>
-<span id="cb309-4"><a href="5.2-functions.html#cb309-4" tabindex="-1"></a><span class="sc">&gt;</span> x</span>
-<span id="cb309-5"><a href="5.2-functions.html#cb309-5" tabindex="-1"></a>     [,<span class="dv">1</span>] [,<span class="dv">2</span>] [,<span class="dv">3</span>] [,<span class="dv">4</span>] [,<span class="dv">5</span>]</span>
-<span id="cb309-6"><a href="5.2-functions.html#cb309-6" tabindex="-1"></a>[<span class="dv">1</span>,]    <span class="dv">1</span>    <span class="dv">3</span>    <span class="dv">5</span>    <span class="dv">7</span>    <span class="dv">9</span></span>
-<span id="cb309-7"><a href="5.2-functions.html#cb309-7" tabindex="-1"></a>[<span class="dv">2</span>,]    <span class="dv">2</span>    <span class="dv">4</span>    <span class="dv">6</span>    <span class="dv">8</span>   <span class="dv">10</span></span>
-<span id="cb309-8"><a href="5.2-functions.html#cb309-8" tabindex="-1"></a></span>
-<span id="cb309-9"><a href="5.2-functions.html#cb309-9" tabindex="-1"></a><span class="sc">&gt;</span> my_factor <span class="ot">&lt;-</span> <span class="fu">factor</span>(<span class="fu">c</span>(<span class="st">&quot;A&quot;</span>, <span class="st">&quot;A&quot;</span>, <span class="st">&quot;B&quot;</span>), <span class="at">ordered =</span> T, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;A&quot;</span>, <span class="st">&quot;B&quot;</span>))</span>
-<span id="cb309-10"><a href="5.2-functions.html#cb309-10" tabindex="-1"></a><span class="sc">&gt;</span> my_factor</span>
-<span id="cb309-11"><a href="5.2-functions.html#cb309-11" tabindex="-1"></a>[<span class="dv">1</span>] A A B</span>
-<span id="cb309-12"><a href="5.2-functions.html#cb309-12" tabindex="-1"></a>Levels<span class="sc">:</span> A <span class="sc">&lt;</span> B</span>
-<span id="cb309-13"><a href="5.2-functions.html#cb309-13" tabindex="-1"></a></span>
-<span id="cb309-14"><a href="5.2-functions.html#cb309-14" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">attributes</span>(my_factor)</span>
-<span id="cb309-15"><a href="5.2-functions.html#cb309-15" tabindex="-1"></a><span class="sc">$</span>levels</span>
-<span id="cb309-16"><a href="5.2-functions.html#cb309-16" tabindex="-1"></a>[<span class="dv">1</span>] <span class="st">&quot;A&quot;</span> <span class="st">&quot;B&quot;</span></span>
-<span id="cb309-17"><a href="5.2-functions.html#cb309-17" tabindex="-1"></a></span>
-<span id="cb309-18"><a href="5.2-functions.html#cb309-18" tabindex="-1"></a><span class="sc">$</span>class</span>
-<span id="cb309-19"><a href="5.2-functions.html#cb309-19" tabindex="-1"></a>[<span class="dv">1</span>] <span class="st">&quot;ordered&quot;</span> <span class="st">&quot;factor&quot;</span> </span></code></pre></div>
+<div class="sourceCode" id="cb314"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb314-1"><a href="5.2-functions.html#cb314-1" tabindex="-1"></a><span class="co"># create a 2 by 5 matrix</span></span>
+<span id="cb314-2"><a href="5.2-functions.html#cb314-2" tabindex="-1"></a><span class="sc">&gt;</span> x <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span></span>
+<span id="cb314-3"><a href="5.2-functions.html#cb314-3" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">attr</span>(x, <span class="st">&quot;dim&quot;</span>) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">5</span>)</span>
+<span id="cb314-4"><a href="5.2-functions.html#cb314-4" tabindex="-1"></a><span class="sc">&gt;</span> x</span>
+<span id="cb314-5"><a href="5.2-functions.html#cb314-5" tabindex="-1"></a>     [,<span class="dv">1</span>] [,<span class="dv">2</span>] [,<span class="dv">3</span>] [,<span class="dv">4</span>] [,<span class="dv">5</span>]</span>
+<span id="cb314-6"><a href="5.2-functions.html#cb314-6" tabindex="-1"></a>[<span class="dv">1</span>,]    <span class="dv">1</span>    <span class="dv">3</span>    <span class="dv">5</span>    <span class="dv">7</span>    <span class="dv">9</span></span>
+<span id="cb314-7"><a href="5.2-functions.html#cb314-7" tabindex="-1"></a>[<span class="dv">2</span>,]    <span class="dv">2</span>    <span class="dv">4</span>    <span class="dv">6</span>    <span class="dv">8</span>   <span class="dv">10</span></span>
+<span id="cb314-8"><a href="5.2-functions.html#cb314-8" tabindex="-1"></a></span>
+<span id="cb314-9"><a href="5.2-functions.html#cb314-9" tabindex="-1"></a><span class="sc">&gt;</span> my_factor <span class="ot">&lt;-</span> <span class="fu">factor</span>(<span class="fu">c</span>(<span class="st">&quot;A&quot;</span>, <span class="st">&quot;A&quot;</span>, <span class="st">&quot;B&quot;</span>), <span class="at">ordered =</span> T, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;A&quot;</span>, <span class="st">&quot;B&quot;</span>))</span>
+<span id="cb314-10"><a href="5.2-functions.html#cb314-10" tabindex="-1"></a><span class="sc">&gt;</span> my_factor</span>
+<span id="cb314-11"><a href="5.2-functions.html#cb314-11" tabindex="-1"></a>[<span class="dv">1</span>] A A B</span>
+<span id="cb314-12"><a href="5.2-functions.html#cb314-12" tabindex="-1"></a>Levels<span class="sc">:</span> A <span class="sc">&lt;</span> B</span>
+<span id="cb314-13"><a href="5.2-functions.html#cb314-13" tabindex="-1"></a></span>
+<span id="cb314-14"><a href="5.2-functions.html#cb314-14" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">attributes</span>(my_factor)</span>
+<span id="cb314-15"><a href="5.2-functions.html#cb314-15" tabindex="-1"></a><span class="sc">$</span>levels</span>
+<span id="cb314-16"><a href="5.2-functions.html#cb314-16" tabindex="-1"></a>[<span class="dv">1</span>] <span class="st">&quot;A&quot;</span> <span class="st">&quot;B&quot;</span></span>
+<span id="cb314-17"><a href="5.2-functions.html#cb314-17" tabindex="-1"></a></span>
+<span id="cb314-18"><a href="5.2-functions.html#cb314-18" tabindex="-1"></a><span class="sc">$</span>class</span>
+<span id="cb314-19"><a href="5.2-functions.html#cb314-19" tabindex="-1"></a>[<span class="dv">1</span>] <span class="st">&quot;ordered&quot;</span> <span class="st">&quot;factor&quot;</span> </span></code></pre></div>
 <hr />
 <p>Q: What does <code>1L</code> mean?<br />
 A: <code>1L</code> is a shorthand for <code>as.integer(1)</code>. Adding suffix <code>L</code> ensures that the value is treated as an integer and it is useful for memory usage and specific computations involving integer operations.</p>
-<div class="sourceCode" id="cb310"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb310-1"><a href="5.2-functions.html#cb310-1" tabindex="-1"></a><span class="co"># create numerical value</span></span>
-<span id="cb310-2"><a href="5.2-functions.html#cb310-2" tabindex="-1"></a>num_val <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb310-3"><a href="5.2-functions.html#cb310-3" tabindex="-1"></a></span>
-<span id="cb310-4"><a href="5.2-functions.html#cb310-4" tabindex="-1"></a><span class="co"># check the data type</span></span>
-<span id="cb310-5"><a href="5.2-functions.html#cb310-5" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">class</span>(num_val))</span>
-<span id="cb310-6"><a href="5.2-functions.html#cb310-6" tabindex="-1"></a>[<span class="dv">1</span>] <span class="st">&quot;numeric&quot;</span></span>
-<span id="cb310-7"><a href="5.2-functions.html#cb310-7" tabindex="-1"></a></span>
-<span id="cb310-8"><a href="5.2-functions.html#cb310-8" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">typeof</span>(num_val))</span>
-<span id="cb310-9"><a href="5.2-functions.html#cb310-9" tabindex="-1"></a>[<span class="dv">1</span>] <span class="st">&quot;double&quot;</span></span></code></pre></div>
-<div class="sourceCode" id="cb311"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb311-1"><a href="5.2-functions.html#cb311-1" tabindex="-1"></a><span class="co"># create integer value</span></span>
-<span id="cb311-2"><a href="5.2-functions.html#cb311-2" tabindex="-1"></a>int_val <span class="ot">&lt;-</span> <span class="dv">1</span><span class="dt">L</span></span>
-<span id="cb311-3"><a href="5.2-functions.html#cb311-3" tabindex="-1"></a></span>
-<span id="cb311-4"><a href="5.2-functions.html#cb311-4" tabindex="-1"></a><span class="co"># check the data type</span></span>
-<span id="cb311-5"><a href="5.2-functions.html#cb311-5" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">class</span>(int_val))</span>
-<span id="cb311-6"><a href="5.2-functions.html#cb311-6" tabindex="-1"></a>[<span class="dv">1</span>] <span class="st">&quot;integer&quot;</span></span>
-<span id="cb311-7"><a href="5.2-functions.html#cb311-7" tabindex="-1"></a></span>
-<span id="cb311-8"><a href="5.2-functions.html#cb311-8" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">typeof</span>(int_val))</span>
-<span id="cb311-9"><a href="5.2-functions.html#cb311-9" tabindex="-1"></a>[<span class="dv">1</span>] <span class="st">&quot;integer&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb315"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb315-1"><a href="5.2-functions.html#cb315-1" tabindex="-1"></a><span class="co"># create numerical value</span></span>
+<span id="cb315-2"><a href="5.2-functions.html#cb315-2" tabindex="-1"></a>num_val <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb315-3"><a href="5.2-functions.html#cb315-3" tabindex="-1"></a></span>
+<span id="cb315-4"><a href="5.2-functions.html#cb315-4" tabindex="-1"></a><span class="co"># check the data type</span></span>
+<span id="cb315-5"><a href="5.2-functions.html#cb315-5" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">class</span>(num_val))</span>
+<span id="cb315-6"><a href="5.2-functions.html#cb315-6" tabindex="-1"></a>[<span class="dv">1</span>] <span class="st">&quot;numeric&quot;</span></span>
+<span id="cb315-7"><a href="5.2-functions.html#cb315-7" tabindex="-1"></a></span>
+<span id="cb315-8"><a href="5.2-functions.html#cb315-8" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">typeof</span>(num_val))</span>
+<span id="cb315-9"><a href="5.2-functions.html#cb315-9" tabindex="-1"></a>[<span class="dv">1</span>] <span class="st">&quot;double&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb316"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb316-1"><a href="5.2-functions.html#cb316-1" tabindex="-1"></a><span class="co"># create integer value</span></span>
+<span id="cb316-2"><a href="5.2-functions.html#cb316-2" tabindex="-1"></a>int_val <span class="ot">&lt;-</span> <span class="dv">1</span><span class="dt">L</span></span>
+<span id="cb316-3"><a href="5.2-functions.html#cb316-3" tabindex="-1"></a></span>
+<span id="cb316-4"><a href="5.2-functions.html#cb316-4" tabindex="-1"></a><span class="co"># check the data type</span></span>
+<span id="cb316-5"><a href="5.2-functions.html#cb316-5" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">class</span>(int_val))</span>
+<span id="cb316-6"><a href="5.2-functions.html#cb316-6" tabindex="-1"></a>[<span class="dv">1</span>] <span class="st">&quot;integer&quot;</span></span>
+<span id="cb316-7"><a href="5.2-functions.html#cb316-7" tabindex="-1"></a></span>
+<span id="cb316-8"><a href="5.2-functions.html#cb316-8" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">typeof</span>(int_val))</span>
+<span id="cb316-9"><a href="5.2-functions.html#cb316-9" tabindex="-1"></a>[<span class="dv">1</span>] <span class="st">&quot;integer&quot;</span></span></code></pre></div>
 </div>
 <div id="type-of-variables" class="section level3 hasAnchor" number="5.2.2">
 <h3><span class="header-section-number">5.2.2</span> Type of Variables<a href="5.2-functions.html#type-of-variables" class="anchor-section" aria-label="Anchor link to header"></a></h3>
@@ -879,10 +900,10 @@ A: <code>1L</code> is a shorthand for <code>as.integer(1)</code>. Adding suffix 
 <div id="variable-coercion" class="section level4 unnumbered hasAnchor">
 <h4>Variable Coercion<a href="5.2-functions.html#variable-coercion" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p><code>as.logical</code> convert 0/1 to boolean values</p>
-<div class="sourceCode" id="cb312"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb312-1"><a href="5.2-functions.html#cb312-1" tabindex="-1"></a><span class="co"># remove NA values</span></span>
-<span id="cb312-2"><a href="5.2-functions.html#cb312-2" tabindex="-1"></a>mask <span class="ot">&lt;-</span> <span class="fu">is.na</span>(reg_data) <span class="sc">%&gt;%</span> <span class="fu">rowSums</span>() <span class="sc">%&gt;%</span> <span class="fu">as.logical</span>()</span>
-<span id="cb312-3"><a href="5.2-functions.html#cb312-3" tabindex="-1"></a>reg_data[mask,]</span>
-<span id="cb312-4"><a href="5.2-functions.html#cb312-4" tabindex="-1"></a>reg_data <span class="ot">&lt;-</span> reg_data[<span class="sc">!</span>mask,]</span></code></pre></div>
+<div class="sourceCode" id="cb317"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb317-1"><a href="5.2-functions.html#cb317-1" tabindex="-1"></a><span class="co"># remove NA values</span></span>
+<span id="cb317-2"><a href="5.2-functions.html#cb317-2" tabindex="-1"></a>mask <span class="ot">&lt;-</span> <span class="fu">is.na</span>(reg_data) <span class="sc">%&gt;%</span> <span class="fu">rowSums</span>() <span class="sc">%&gt;%</span> <span class="fu">as.logical</span>()</span>
+<span id="cb317-3"><a href="5.2-functions.html#cb317-3" tabindex="-1"></a>reg_data[mask,]</span>
+<span id="cb317-4"><a href="5.2-functions.html#cb317-4" tabindex="-1"></a>reg_data <span class="ot">&lt;-</span> reg_data[<span class="sc">!</span>mask,]</span></code></pre></div>
 </div>
 <div id="dimension-reduction" class="section level4 unnumbered hasAnchor">
 <h4>Dimension Reduction<a href="5.2-functions.html#dimension-reduction" class="anchor-section" aria-label="Anchor link to header"></a></h4>
@@ -900,31 +921,31 @@ A: <code>1L</code> is a shorthand for <code>as.integer(1)</code>. Adding suffix 
 <li>Combining the elements of a list into a single vector</li>
 </ul></li>
 </ul>
-<div class="sourceCode" id="cb313"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb313-1"><a href="5.2-functions.html#cb313-1" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">list</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>)</span>
-<span id="cb313-2"><a href="5.2-functions.html#cb313-2" tabindex="-1"></a>  [[<span class="dv">1</span>]]</span>
-<span id="cb313-3"><a href="5.2-functions.html#cb313-3" tabindex="-1"></a>  [<span class="dv">1</span>] <span class="dv">1</span></span>
-<span id="cb313-4"><a href="5.2-functions.html#cb313-4" tabindex="-1"></a></span>
-<span id="cb313-5"><a href="5.2-functions.html#cb313-5" tabindex="-1"></a>  [[<span class="dv">2</span>]]</span>
-<span id="cb313-6"><a href="5.2-functions.html#cb313-6" tabindex="-1"></a>  [<span class="dv">1</span>] <span class="dv">2</span></span>
-<span id="cb313-7"><a href="5.2-functions.html#cb313-7" tabindex="-1"></a></span>
-<span id="cb313-8"><a href="5.2-functions.html#cb313-8" tabindex="-1"></a>  [[<span class="dv">3</span>]]</span>
-<span id="cb313-9"><a href="5.2-functions.html#cb313-9" tabindex="-1"></a>  [<span class="dv">1</span>] <span class="dv">3</span></span>
-<span id="cb313-10"><a href="5.2-functions.html#cb313-10" tabindex="-1"></a></span>
-<span id="cb313-11"><a href="5.2-functions.html#cb313-11" tabindex="-1"></a>    [[<span class="dv">4</span>]]</span>
-<span id="cb313-12"><a href="5.2-functions.html#cb313-12" tabindex="-1"></a>    [<span class="dv">1</span>] <span class="dv">4</span></span>
-<span id="cb313-13"><a href="5.2-functions.html#cb313-13" tabindex="-1"></a></span>
-<span id="cb313-14"><a href="5.2-functions.html#cb313-14" tabindex="-1"></a>    [[<span class="dv">5</span>]]</span>
-<span id="cb313-15"><a href="5.2-functions.html#cb313-15" tabindex="-1"></a>    [<span class="dv">1</span>] <span class="dv">5</span></span>
-<span id="cb313-16"><a href="5.2-functions.html#cb313-16" tabindex="-1"></a></span>
-<span id="cb313-17"><a href="5.2-functions.html#cb313-17" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">list</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>) <span class="sc">%&gt;%</span> <span class="fu">unlist</span>()</span>
-<span id="cb313-18"><a href="5.2-functions.html#cb313-18" tabindex="-1"></a>    [<span class="dv">1</span>] <span class="dv">1</span> <span class="dv">2</span> <span class="dv">3</span> <span class="dv">4</span> <span class="dv">5</span></span>
-<span id="cb313-19"><a href="5.2-functions.html#cb313-19" tabindex="-1"></a><span class="co"># flatten a nested list</span></span>
-<span id="cb313-20"><a href="5.2-functions.html#cb313-20" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">list</span>(<span class="at">a =</span> <span class="dv">1</span>, <span class="at">b =</span> <span class="fu">list</span>(<span class="at">c =</span> <span class="dv">2</span>, <span class="at">d =</span> <span class="dv">3</span>), <span class="at">e =</span> <span class="dv">4</span>) <span class="sc">%&gt;%</span> <span class="fu">unlist</span>()</span>
-<span id="cb313-21"><a href="5.2-functions.html#cb313-21" tabindex="-1"></a>  a b.c b.d   e </span>
-<span id="cb313-22"><a href="5.2-functions.html#cb313-22" tabindex="-1"></a>  <span class="dv">1</span>   <span class="dv">2</span>   <span class="dv">3</span>   <span class="dv">4</span> </span>
-<span id="cb313-23"><a href="5.2-functions.html#cb313-23" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">data.frame</span>(<span class="fu">matrix</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">12</span>,<span class="dv">3</span>,<span class="dv">4</span>)) <span class="sc">%&gt;%</span> <span class="fu">unlist</span>() <span class="co"># flatten by column</span></span>
-<span id="cb313-24"><a href="5.2-functions.html#cb313-24" tabindex="-1"></a>X11 X12 X13 X21 X22 X23 X31 X32 X33 X41 X42 X43</span>
-<span id="cb313-25"><a href="5.2-functions.html#cb313-25" tabindex="-1"></a>  <span class="dv">1</span>   <span class="dv">2</span>   <span class="dv">3</span>   <span class="dv">4</span>   <span class="dv">5</span>   <span class="dv">6</span>   <span class="dv">7</span>   <span class="dv">8</span>   <span class="dv">9</span>  <span class="dv">10</span>  <span class="dv">11</span>  <span class="dv">12</span> </span></code></pre></div>
+<div class="sourceCode" id="cb318"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb318-1"><a href="5.2-functions.html#cb318-1" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">list</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>)</span>
+<span id="cb318-2"><a href="5.2-functions.html#cb318-2" tabindex="-1"></a>  [[<span class="dv">1</span>]]</span>
+<span id="cb318-3"><a href="5.2-functions.html#cb318-3" tabindex="-1"></a>  [<span class="dv">1</span>] <span class="dv">1</span></span>
+<span id="cb318-4"><a href="5.2-functions.html#cb318-4" tabindex="-1"></a></span>
+<span id="cb318-5"><a href="5.2-functions.html#cb318-5" tabindex="-1"></a>  [[<span class="dv">2</span>]]</span>
+<span id="cb318-6"><a href="5.2-functions.html#cb318-6" tabindex="-1"></a>  [<span class="dv">1</span>] <span class="dv">2</span></span>
+<span id="cb318-7"><a href="5.2-functions.html#cb318-7" tabindex="-1"></a></span>
+<span id="cb318-8"><a href="5.2-functions.html#cb318-8" tabindex="-1"></a>  [[<span class="dv">3</span>]]</span>
+<span id="cb318-9"><a href="5.2-functions.html#cb318-9" tabindex="-1"></a>  [<span class="dv">1</span>] <span class="dv">3</span></span>
+<span id="cb318-10"><a href="5.2-functions.html#cb318-10" tabindex="-1"></a></span>
+<span id="cb318-11"><a href="5.2-functions.html#cb318-11" tabindex="-1"></a>    [[<span class="dv">4</span>]]</span>
+<span id="cb318-12"><a href="5.2-functions.html#cb318-12" tabindex="-1"></a>    [<span class="dv">1</span>] <span class="dv">4</span></span>
+<span id="cb318-13"><a href="5.2-functions.html#cb318-13" tabindex="-1"></a></span>
+<span id="cb318-14"><a href="5.2-functions.html#cb318-14" tabindex="-1"></a>    [[<span class="dv">5</span>]]</span>
+<span id="cb318-15"><a href="5.2-functions.html#cb318-15" tabindex="-1"></a>    [<span class="dv">1</span>] <span class="dv">5</span></span>
+<span id="cb318-16"><a href="5.2-functions.html#cb318-16" tabindex="-1"></a></span>
+<span id="cb318-17"><a href="5.2-functions.html#cb318-17" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">list</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>) <span class="sc">%&gt;%</span> <span class="fu">unlist</span>()</span>
+<span id="cb318-18"><a href="5.2-functions.html#cb318-18" tabindex="-1"></a>    [<span class="dv">1</span>] <span class="dv">1</span> <span class="dv">2</span> <span class="dv">3</span> <span class="dv">4</span> <span class="dv">5</span></span>
+<span id="cb318-19"><a href="5.2-functions.html#cb318-19" tabindex="-1"></a><span class="co"># flatten a nested list</span></span>
+<span id="cb318-20"><a href="5.2-functions.html#cb318-20" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">list</span>(<span class="at">a =</span> <span class="dv">1</span>, <span class="at">b =</span> <span class="fu">list</span>(<span class="at">c =</span> <span class="dv">2</span>, <span class="at">d =</span> <span class="dv">3</span>), <span class="at">e =</span> <span class="dv">4</span>) <span class="sc">%&gt;%</span> <span class="fu">unlist</span>()</span>
+<span id="cb318-21"><a href="5.2-functions.html#cb318-21" tabindex="-1"></a>  a b.c b.d   e </span>
+<span id="cb318-22"><a href="5.2-functions.html#cb318-22" tabindex="-1"></a>  <span class="dv">1</span>   <span class="dv">2</span>   <span class="dv">3</span>   <span class="dv">4</span> </span>
+<span id="cb318-23"><a href="5.2-functions.html#cb318-23" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">data.frame</span>(<span class="fu">matrix</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">12</span>,<span class="dv">3</span>,<span class="dv">4</span>)) <span class="sc">%&gt;%</span> <span class="fu">unlist</span>() <span class="co"># flatten by column</span></span>
+<span id="cb318-24"><a href="5.2-functions.html#cb318-24" tabindex="-1"></a>X11 X12 X13 X21 X22 X23 X31 X32 X33 X41 X42 X43</span>
+<span id="cb318-25"><a href="5.2-functions.html#cb318-25" tabindex="-1"></a>  <span class="dv">1</span>   <span class="dv">2</span>   <span class="dv">3</span>   <span class="dv">4</span>   <span class="dv">5</span>   <span class="dv">6</span>   <span class="dv">7</span>   <span class="dv">8</span>   <span class="dv">9</span>  <span class="dv">10</span>  <span class="dv">11</span>  <span class="dv">12</span> </span></code></pre></div>
 </div>
 </div>
 <div id="variable-scope" class="section level3 hasAnchor" number="5.2.3">
@@ -932,12 +953,12 @@ A: <code>1L</code> is a shorthand for <code>as.integer(1)</code>. Adding suffix 
 <p><code>with(data, expr, …)</code> Evaluate an R expression, <code>expr</code>, in an environment constructed from <code>data</code>, possibly modifying (a copy of) the original data.</p>
 <ul>
 <li><p><code>expr</code> a single expression or a compounded one, i.e., of the form</p>
-<div class="sourceCode" id="cb314"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb314-1"><a href="5.2-functions.html#cb314-1" tabindex="-1"></a>{</span>
-<span id="cb314-2"><a href="5.2-functions.html#cb314-2" tabindex="-1"></a>     a <span class="ot">&lt;-</span> <span class="fu">somefun</span>() <span class="co"># do some changes to cols</span></span>
-<span id="cb314-3"><a href="5.2-functions.html#cb314-3" tabindex="-1"></a>     b <span class="ot">&lt;-</span> <span class="fu">otherfun</span>()</span>
-<span id="cb314-4"><a href="5.2-functions.html#cb314-4" tabindex="-1"></a>     .....</span>
-<span id="cb314-5"><a href="5.2-functions.html#cb314-5" tabindex="-1"></a>     <span class="fu">rm</span>(unused1, temp) <span class="co"># remove cols you don&#39;t want anymore</span></span>
-<span id="cb314-6"><a href="5.2-functions.html#cb314-6" tabindex="-1"></a>   }</span></code></pre></div></li>
+<div class="sourceCode" id="cb319"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb319-1"><a href="5.2-functions.html#cb319-1" tabindex="-1"></a>{</span>
+<span id="cb319-2"><a href="5.2-functions.html#cb319-2" tabindex="-1"></a>     a <span class="ot">&lt;-</span> <span class="fu">somefun</span>() <span class="co"># do some changes to cols</span></span>
+<span id="cb319-3"><a href="5.2-functions.html#cb319-3" tabindex="-1"></a>     b <span class="ot">&lt;-</span> <span class="fu">otherfun</span>()</span>
+<span id="cb319-4"><a href="5.2-functions.html#cb319-4" tabindex="-1"></a>     .....</span>
+<span id="cb319-5"><a href="5.2-functions.html#cb319-5" tabindex="-1"></a>     <span class="fu">rm</span>(unused1, temp) <span class="co"># remove cols you don&#39;t want anymore</span></span>
+<span id="cb319-6"><a href="5.2-functions.html#cb319-6" tabindex="-1"></a>   }</span></code></pre></div></li>
 </ul>
 <p><code>within(data, expr, …)</code> is similar to <code>with</code>, except that it examines the environment after the evaluation of <code>expr</code> and <strong>makes the corresponding modifications</strong> to a copy of <code>data</code> (this may fail in the data frame case if objects are created which cannot be stored in a data frame), and returns it.</p>
 <ul>
@@ -947,23 +968,23 @@ A: <code>1L</code> is a shorthand for <code>as.integer(1)</code>. Adding suffix 
 <li>For <code>with</code>, the value of the evaluated <code>expr</code>.</li>
 </ul></li>
 </ul>
-<div class="sourceCode" id="cb315"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb315-1"><a href="5.2-functions.html#cb315-1" tabindex="-1"></a><span class="fu">with</span>(mtcars, mpg[cyl <span class="sc">==</span> <span class="dv">8</span>  <span class="sc">&amp;</span>  disp <span class="sc">&gt;</span> <span class="dv">350</span>])</span>
-<span id="cb315-2"><a href="5.2-functions.html#cb315-2" tabindex="-1"></a><span class="co"># is the same as, but nicer than</span></span>
-<span id="cb315-3"><a href="5.2-functions.html#cb315-3" tabindex="-1"></a>mtcars<span class="sc">$</span>mpg[mtcars<span class="sc">$</span>cyl <span class="sc">==</span> <span class="dv">8</span>  <span class="sc">&amp;</span>  mtcars<span class="sc">$</span>disp <span class="sc">&gt;</span> <span class="dv">350</span>]</span></code></pre></div>
+<div class="sourceCode" id="cb320"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb320-1"><a href="5.2-functions.html#cb320-1" tabindex="-1"></a><span class="fu">with</span>(mtcars, mpg[cyl <span class="sc">==</span> <span class="dv">8</span>  <span class="sc">&amp;</span>  disp <span class="sc">&gt;</span> <span class="dv">350</span>])</span>
+<span id="cb320-2"><a href="5.2-functions.html#cb320-2" tabindex="-1"></a><span class="co"># is the same as, but nicer than</span></span>
+<span id="cb320-3"><a href="5.2-functions.html#cb320-3" tabindex="-1"></a>mtcars<span class="sc">$</span>mpg[mtcars<span class="sc">$</span>cyl <span class="sc">==</span> <span class="dv">8</span>  <span class="sc">&amp;</span>  mtcars<span class="sc">$</span>disp <span class="sc">&gt;</span> <span class="dv">350</span>]</span></code></pre></div>
 <hr />
 </div>
 <div id="control-structures" class="section level3 hasAnchor" number="5.2.4">
 <h3><span class="header-section-number">5.2.4</span> Control Structures<a href="5.2-functions.html#control-structures" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>A ‘do … until’ loop in R:</p>
-<div class="sourceCode" id="cb316"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb316-1"><a href="5.2-functions.html#cb316-1" tabindex="-1"></a><span class="cf">repeat</span> {</span>
-<span id="cb316-2"><a href="5.2-functions.html#cb316-2" tabindex="-1"></a>  <span class="co"># code</span></span>
-<span id="cb316-3"><a href="5.2-functions.html#cb316-3" tabindex="-1"></a>  <span class="cf">if</span>(stop_condition_is_true) <span class="cf">break</span></span>
-<span id="cb316-4"><a href="5.2-functions.html#cb316-4" tabindex="-1"></a>}</span>
-<span id="cb316-5"><a href="5.2-functions.html#cb316-5" tabindex="-1"></a></span>
-<span id="cb316-6"><a href="5.2-functions.html#cb316-6" tabindex="-1"></a><span class="cf">while</span>(<span class="cn">TRUE</span>){</span>
-<span id="cb316-7"><a href="5.2-functions.html#cb316-7" tabindex="-1"></a>  <span class="co"># Do things</span></span>
-<span id="cb316-8"><a href="5.2-functions.html#cb316-8" tabindex="-1"></a>  <span class="cf">if</span> (stop_condition_is_true) <span class="cf">break</span></span>
-<span id="cb316-9"><a href="5.2-functions.html#cb316-9" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb321"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb321-1"><a href="5.2-functions.html#cb321-1" tabindex="-1"></a><span class="cf">repeat</span> {</span>
+<span id="cb321-2"><a href="5.2-functions.html#cb321-2" tabindex="-1"></a>  <span class="co"># code</span></span>
+<span id="cb321-3"><a href="5.2-functions.html#cb321-3" tabindex="-1"></a>  <span class="cf">if</span>(stop_condition_is_true) <span class="cf">break</span></span>
+<span id="cb321-4"><a href="5.2-functions.html#cb321-4" tabindex="-1"></a>}</span>
+<span id="cb321-5"><a href="5.2-functions.html#cb321-5" tabindex="-1"></a></span>
+<span id="cb321-6"><a href="5.2-functions.html#cb321-6" tabindex="-1"></a><span class="cf">while</span>(<span class="cn">TRUE</span>){</span>
+<span id="cb321-7"><a href="5.2-functions.html#cb321-7" tabindex="-1"></a>  <span class="co"># Do things</span></span>
+<span id="cb321-8"><a href="5.2-functions.html#cb321-8" tabindex="-1"></a>  <span class="cf">if</span> (stop_condition_is_true) <span class="cf">break</span></span>
+<span id="cb321-9"><a href="5.2-functions.html#cb321-9" tabindex="-1"></a>}</span></code></pre></div>
 <p><strong><code>ifelse(test_expression, x, y)</code></strong></p>
 <p>The returned vector has element from <code>x</code> if the corresponding value of <code>test_expression</code> is <code>TRUE</code>; or from <code>y</code> if the corresponding value of <code>test_expression</code> is <code>FALSE</code>.</p>
 <p>That is the <code>i-th</code> element of result will be <code>x[i]</code> if <code>test_expression[i]</code> is <code>TRUE</code> else it will take the value of <code>y[i]</code>.</p>

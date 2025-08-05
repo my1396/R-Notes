@@ -511,6 +511,36 @@ Functions work together with `select` to choose cols matching certain conditions
 
 --------------------------------------------------------------------------------
 
+### Indirection
+
+Indirection is when you want to get the data-variable from an env-variable instead of directly typing the data-variable’s name. There are two main cases:
+
+- When you have the data-variable in a function argument, you need to **embrace** the argument by surrounding it in doubled braces, like `filter(df, {{ var }})`.
+
+  ```r
+  var_summary <- function(data, var) {
+  data %>%
+    summarise(n = n(), min = min({{ var }}), max = max({{ var }}))
+  }
+  mtcars %>% 
+    group_by(cyl) %>% 
+    var_summary(mpg)
+  ```
+
+- When you have an env-variable that is a character vector, you need to index into the `.data` pronoun with `[[`.
+  
+  ```r
+  for (var in names(mtcars)) {
+    mtcars %>% count(.data[[var]]) %>% print()
+  }
+  ```
+  
+  Note that `.data` is not a data frame; it's a special construct, a pronoun, that allows you to access the current variables either directly, with `.data$x` or indirectly with`.data[[var]]`.
+
+ref: [Programming with dplyr: Indirection](https://dplyr.tidyverse.org/articles/programming.html?q=curly%20braces#indirection)
+
+--------------------------------------------------------------------------------
+
 ### Dynamic Selection
 
 A **<span style='color:red'>dynamic</span> subset of variables** when using `select`
@@ -578,7 +608,11 @@ tibble::tibble(!!var := val)
 
 Note the use of `:=` (pronounced colon-equals) rather than `=`. Unfortunately we need this new operation because R’s grammar does not allow expressions as argument names:
 
-`:=` is like a vestigial organ: it’s recognised by R’s parser, but it doesn’t have any code associated with it. It looks like an `=` but allows expressions on either side, making it a more flexible alternative to `=`. It is used in data.table for similar reasons.
+`:=` is like a vestigial organ: it’s recognized by R’s parser, but it doesn’t have any code associated with it. It looks like an `=` but allows expressions on either side, making it a more flexible alternative to `=`. It is used in data.table for similar reasons.
+
+ref: 
+
+- [Programming with dplyr: Name injection](https://dplyr.tidyverse.org/articles/programming.html?q=curly%20braces#name-injection)
 
 --------------------------------------------------------------------------------
 
@@ -609,7 +643,7 @@ vars <- list(list('cyl', 'mpg'), list('vs', 'disp'))
 for (v in vars) {
   print(mtcars %>% select_(.dots = v) %>% head)
 }
- 								  cyl  mpg
+                  cyl  mpg
 Mazda RX4           6 21.0
 Mazda RX4 Wag       6 21.0
 Datsun 710          4 22.8
@@ -673,6 +707,7 @@ starwars %>%
   )
 ```
 
+--------------------------------------------------------------------------------
 
 ### Merge
 

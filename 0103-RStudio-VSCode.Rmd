@@ -24,7 +24,11 @@ A: Create an R terminal via command **R: Create R Terminal** in the Command Pale
 If you want to run an entire R file, open the file in the editor, and press <kbd>Ctrl+Shift+S</kbd> and the file will be sourced in the active R terminal.
 
 Q: Why use VS Code for R programming? \
-A: Better integration with Copilot, making it easier to write code with AI assistance. Also, VS Code has a lot of extensions that can enhance your R programming experience, such as `Markdown Preview Enhance`, `Live Server`, and `GitLens`.
+A: Several reasons:
+
+- Better integration with Copilot, making it easier to write code with AI assistance. Also, VS Code has a lot of extensions that can enhance your R programming experience, such as `Markdown Preview Enhance`, `Live Server`, and `GitLens`.
+- More responsive and powerful engineering tools such as symbol highlight, find references, rename symbol, etc. integrated to the IDE.
+- Git support is better in VS Code.
 
 --------------------------------------------------------------------------------
 
@@ -48,6 +52,14 @@ The R language server is implemented by the [languageserver](https://github.com/
 
   Place the cursor on the symbol you want to rename, right-click and select **Rename Symbol**. A dialog will pop up, allowing you to enter the new name for the symbol. A refactoring preview will be shown, allowing you to review the changes before applying them.
 
+- **Find References**
+  
+  Right-click on an R object, 
+  - select **Find All References** to find all references to the object in the current workspace.
+    
+    The results will be shown in the **References** view in the Activity Bar on the left side of the window.
+
+  - select *Go To References* open a popup showing all of the uses of the object within the current document.
 
 --------------------------------------------------------------------------------
 
@@ -238,52 +250,54 @@ The following tables shows the icons that you most commonly see in the OUTLINE v
   </thead>
   <tbody>
     <tr>
-      <td><i class="codicon codicon-symbol-method" style="color:#b180d7"></i></td>
+      <td><i class="codicon codicon-symbol-method" style="font-size: 1.2em;color:#b180d7"></i></td>
       <td>Methods and Functions</td>
       <td><code>method</code>, <code>function</code>, <code>constructor</code></td>
     </tr>
     <tr>
-      <td><i class="codicon codicon-symbol-variable" style="color:#75beff"></i></td>
+      <td><i class="codicon codicon-symbol-variable" style="font-size: 1.2em;color:#75beff"></i></td>
       <td>Variables</td>
       <td><code>variable</code></td>
     </tr>
     <tr>
-      <td><i class="codicon codicon-symbol-field" style="color:#75beff"></i></td>
+      <td><i class="codicon codicon-symbol-field" style="font-size: 1.2em;color:#75beff"></i></td>
       <td>Fields</td>
       <td><code>field</code></td>
     </tr>
     <tr>
-      <td><i class="codicon codicon-symbol-text"></i></td>
+      <td><i class="codicon codicon-symbol-text" style="font-size: 1.2em;"></i></td>
       <td>Words</td>
       <td><code>text</code></td>
     </tr>
     <tr>
-      <td><i class="codicon codicon-symbol-constant"></i></td>
+      <td><i class="codicon codicon-symbol-constant" style="font-size: 1.2em;"></i></td>
       <td>Constants</td>
       <td><code>constant</code></td>
     </tr>
     <tr>
-      <td><i class="codicon codicon-symbol-class" style="color:#ee9d28"></i></td>
+      <td><i class="codicon codicon-symbol-class" style="font-size: 1.2em;color:#ee9d28"></i></td>
       <td>Classes</td>
       <td><code>class</code></td>
     </tr>
     <tr>
-      <td><i class="codicon codicon-symbol-structure"></i></td>
+      <td><i class="codicon codicon-symbol-structure" style="font-size: 1.2em;"></i></td>
       <td>Structures</td>
       <td><code>struct</code></td>
     </tr>
     <tr>
-      <td><i class="codicon codicon-symbol-namespace"></i></td>
+      <td><i class="codicon codicon-symbol-namespace" style="font-size: 1.2em;"></i></td>
       <td>Modules</td>
       <td><code>module</code></td>
     </tr>
     <tr>
-      <td><i class="codicon codicon-symbol-property"></i></td>
+      <td><i class="codicon codicon-symbol-property" style="font-size: 1.2em;"></i></td>
       <td>Properties and Attributes</td>
       <td><code>property</code></td>
     </tr>
   </tbody>
 </table>
+
+- Constant <i class="codicon codicon-symbol-constant" style="font-size: 1.2em;vertical-align: middle;"></i> applies to Quarto sections. Need to set `"outline.showConstants": true,` to show sections properly in the OUTLINE view.
 
 --------------------------------------------------------------------------------
 
@@ -331,15 +345,27 @@ A: Run `hgd()` in R and get the url to the viewer. Use the command palette to ru
 
 - `hgd` Initialize device and start server.
 - `hgd_browse` Open the plot viewer in your browser.
+
+Universal graphics device (`unigd`) is a package that provides a set of functions to manage the plot viewer, such as:
+
 - `unigd::ugd_clear()` Clear all pages in the plot viewer.
 - `unigd::ugd_remove(page = 2)` Remove the second page
 
 Ref:
 
-- [Using httpgd in VSCode: A web-based SVG graphics device](https://renkun.me/2020/06/16/using-httpgd-in-vscode-a-web-based-svg-graphics-device/)
+- [Using httpgd in VSCode: A web-based SVG graphics device, \@Kun Ren](https://renkun.me/2020/06/16/using-httpgd-in-vscode-a-web-based-svg-graphics-device/)
 
 --------------------------------------------------------------------------------
 
+### R Debugger
+
+To be added ...
+
+ref: 
+
+- [Debugging R in VSCode, \@Kun Ren](https://renkun.me/2020/09/13/debugging-r-in-vscode/)
+
+--------------------------------------------------------------------------------
 
 ### Work with Rmd
 
