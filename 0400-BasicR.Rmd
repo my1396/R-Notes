@@ -11,7 +11,7 @@ R is case-sensitive; comments start with `#`.
 
 Curly brackets or braces `{}` are used to keep code that needs to be run together as a single expression. This is commonly done when writing a function or when writing an `if` statement.
 
-Double curly brackets `{{}}` are used programming with `tidyverse`. See the `dplyr`programming vignette for details.
+Double curly braces `{{}}` are used programming with `tidyverse`. See the `dplyr`programming vignette for details.
 
 `?Syntax` to check **precedence of operators**.
 
