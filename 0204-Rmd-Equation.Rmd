@@ -38,29 +38,100 @@ I_t =
 
 For equation numbering support in `bookdown` you need to [assign labels](https://bookdown.org/yihui/bookdown/markdown-extensions-by-bookdown.html#equations). 
 
-
 --------------------------------------------------------------------------------
 
-To number and refer to equations, put them in the equation environments and assign labels to them using the syntax `(\#eq:label)`, e.g.,
+For equation numbering support in `bookdown::pdf_document2` you need to [assign labels](https://bookdown.org/yihui/bookdown/markdown-extensions-by-bookdown.html#equations). Default behavior is not adding numbering.
+
+- Use `\begin{equation}...\end{equations}` or `\begin{align}...\end{align}` environments.
+
+  - Use `(\#eq:eq1)` or `\label{eq:eq1}` to add labels.
+  - Automatically add numbering.
+  - Drawback is that rmd does not have preview of equations.
+
+- Do NOT enclose the environments in double dollar signs `$$`. Otherwise, no label is added, but cross-references still show up.
+
+  - `$$` do not add numbering automatically. 
+
+  - But in `bookdown::html_document2`, it is ok to use 
+
+    ```latex
+    $$
+    \begin{equation} 
+    \hat{\beta}_{\text{OLS}} = \left(\sum_{i=1}^n x_i x_i' \right)^{-1} \left(\sum_{i=1}^n x_i y_i \right) . 
+    (\#eq:simple-lm)
+    \end{equation}
+    $$
+    ```
+
+    Assign labels using the syntax <span class="env-green">`(\#eq:label)`</span>.
+
+    The above equation will be rendered as
+
+    $$
+    \begin{equation} 
+    \hat{\beta}_{\text{OLS}} = \left(\sum_{i=1}^n x_i x_i' \right)^{-1} \left(\sum_{i=1}^n x_i y_i \right) . 
+    (\#eq:simple-lm)
+    \end{equation}
+    $$
+
+    Then reference with <span class="env-green">`Eq. \@ref(eq:simple-lm)`</span>, e.g., see Eq. \@ref(eq:simple-lm).
+
+- Use `\@ref(eq:eq1)` (note this use parentheses) or the Latex command  `\eqref{eq:eq1}` (this uses curly braces) to cite the equation.
 
 ```latex
-\begin{align} 
-\frac{d}{dx}\left( \int_{a}^{x} f(u)\,du\right)=f(x)
-(\#eq:binom)
-\end{align}
+Load the dataset and calculate the monthly return in month $r$ ($r_t$) as
+
+\begin{equation}
+r_t = \frac{P_t-P_{t-1}}{P_{t-1}} = \frac{P_t}{P_{t-1}}-1 , 
+(\#eq:eq1)
+\end{equation}
+
+where $P_t$ is the adjusted price in month $t$. 
+
+Test equation1 \@ref(eq:eq1).
+
+Test equation2 \eqref{eq:eq1}.
 ```
 
-It renders the equation below:
+
+<img src="https://drive.google.com/thumbnail?id=1mgX3uwLgTDHF0cMwn04mj9K4GjTOF4TX&sz=w1000" alt="eqn numbering in bookdown" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
 
 
-\begin{align} 
-\frac{d}{dx}\left( \int_{a}^{x} f(u)\,du \right) = f(x)
-(\#eq:binom)
-\end{align}
+- Multilined equations.
+  
+  - Use the `split` environment inside `equation` so that all lines share the same number.
+    
+    Note that the label `(\#eq:label)` must be placed after `\end{split}`.
+
+    ```latex
+    \begin{equation} 
+    \begin{split}
+    \mathrm{Var}(\hat{\beta}) & =\mathrm{Var}((X'X)^{-1}X'y)\\
+    & =(X'X)^{-1}\sigma^{2}
+    \end{split}
+    (\#eq:var-beta)
+    \end{equation} 
+    ```
+
+    will be rendenered as
+
+    $$
+    \begin{equation} (\#eq:var-beta)
+    \begin{split}
+    \mathrm{Var}(\hat{\beta}) & =\mathrm{Var}((X'X)^{-1}X'y)\\
+    & =(X'X)^{-1}\sigma^{2}
+    \end{split}
+    \end{equation}
+    $$
+
+    Note that the label `(\#eq:var-beta)` must be placed before `\begin{split}` or after `\end{split}`, i.e., **outside** the `split` environment.
+
+    Then reference with <span class="env-green">`Eq. \@ref(eq:var-beta)`</span>, e.g., see Eq. \@ref(eq:var-beta).
+
+  - Each line in the `align` environment will be assigned an equation number. We suppressed the number of the first line in the previous example using `\notag`.
 
 
-
-You may refer to it using Eq. <span style='color:#008B45'>**`\@ref(eq:binom)`**</span>, e.g., see Eq \@ref(eq:binom).
+--------------------------------------------------------------------------------
 
 **Naming conventions** for equation labels in **bookdown**:
 
@@ -95,10 +166,12 @@ If you want to provide a specific number to the equation, you can use `\tag{XX.X
   
   `bookdown` does NOT support custom tag though.
   
+  $$
   \begin{align}
   \frac{p(x)}{1-p(x)} = \exp (\beta_0+\beta_1 x) \,.
   (\#eq:my-label-bookdown)
   \end{align}
+  $$
   
   My specific label here, see eq \@ref(eq:my-label-bookdown) (eq. `\@ref(eq:my-label-bookdown)`).
 
@@ -209,7 +282,7 @@ The CDN hosts the most current version of MathJax, as well as older versions, so
 
 --------------------------------------------------------------------------------
 
-**RStudio Equation Live Preview**
+### RStudio Equation Live Preview
 
 
 Q: How to define custom macros that can be used in live equation preview in RStudio?
@@ -239,52 +312,7 @@ You will see `MathJax.js?config=TeX-MML-AM_CHTML` is loaded to parse and enable 
 
 The user configuration file is located under `config/`. You will see your custom defined macros here.
 
---------------------------------------------------------------------------------
 
-For equation numbering support in `bookdown::pdf_document2` you need to [assign labels](https://bookdown.org/yihui/bookdown/markdown-extensions-by-bookdown.html#equations). Defualt behavior is not adding numbering.
-
-- Use `\begin{equation}...\end{equations}` or `\begin{align}...\end{align}` environments.
-
-  - Use `(\#eq:eq1)` or `\label{eq:eq1}` to add labels.
-  - Automatically add numbering.
-  - Drawback is that rmd does not have preview of equations.
-
-- Do NOT enclose the environments in double dollar signs `$$`. Otherwise, no label is added, but cross-references still show up.
-
-  - `$$` do not add numbering automatically. 
-
-  - But in `bookdown::html_document2`, it is ok to use 
-
-    ```latex
-    $$
-    \begin{equation} (\#eq:simple-lm)
-    \hat{\beta}_{\text{OLS}} = \left(\sum_{i=1}^n x_i x_i' \right)^{-1} \left(\sum_{i=1}^n x_i y_i \right) .
-    \end{equation}
-    $$
-    ```
-
-    Then reference with `\@ref(eq:simple-lm)`.
-
-- Use `\@ref(eq:eq1)` (note this use parentheses) or the Latex command  `\eqref{eq:eq1}` (this uses curly braces) to cite the equation.
-
-```latex
-Load the dataset and calculate the monthly return in month $r$ ($r_t$) as
-
-\begin{equation}
-r_t = \frac{P_t-P_{t-1}}{P_{t-1}} = \frac{P_t}{P_{t-1}}-1 , 
-(\#eq:eq1)
-\end{equation}
-
-where $P_t$ is the adjusted price in month $t$. 
-
-Test equation1 \@ref(eq:eq1).
-
-Test equation2 \eqref{eq:eq1}.
-```
-
-
-
-<img src="https://drive.google.com/thumbnail?id=1mgX3uwLgTDHF0cMwn04mj9K4GjTOF4TX&sz=w1000" alt="eqn numbering in bookdown" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
 
 
 

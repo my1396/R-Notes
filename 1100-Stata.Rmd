@@ -171,11 +171,11 @@ Open `do` files in tabs rather than in separate windows: <https://www.reddit.com
 
 ## Basic syntax
 
-**Package management**
+### Package management
 
 Users can add new features to Stata, and some users choose to make new features that they have written available to others via the web. The files that comprise a new feature are called a *package*, and a package usually consists of one or more ado-files and help files.
 
-`ssc install newpkgname`: **Install** `newpkgname` from ssc. The SSC (Statistical Software Components) is the premier Stata download site.
+<span class="env-green">`ssc install newpkgname`</span>: **Install** `newpkgname` from ssc. The SSC (Statistical Software Components) is the premier Stata download site.
 
 `ssc uninstall pkgname` to **uninstall** `pkgname`
 
@@ -183,6 +183,8 @@ Users can add new features to Stata, and some users choose to make new features 
 
 `ssc hot [, n(#)]` a list of most popular pkgs at SSC. `n(#)` to specify the number of pkgs listed.
 
+
+--------------------------------------------------------------------------------
 
 
 Stata is **case-sensitive**: `myvar`, `Myvar` and `MYVAR` are three distinct names.
@@ -196,8 +198,9 @@ x = 1 ; y = 2 ;
 The last semicolon in the above example is unnecessary but allowed.
 
 
+--------------------------------------------------------------------------------
 
-**Types and Declarations**
+#### Types and Declarations 
 
 A variable's type can be described in two perspectives:
 
@@ -280,8 +283,9 @@ summarize marriage_rate divorce_rate in -5/l
 ```
 
 
+--------------------------------------------------------------------------------
 
-**Create new variables**
+#### Create new variables
 
 ```stata
 gen variable = expression      // generate new variables
@@ -1264,7 +1268,28 @@ forecast solve, begin(tq(2010q1)) log(off)
 
 You must `xtset` your data before you can use other `xt` commands.
 
-`xtset panelvar timevar` declares the data to be a panel in which the order of observations is relevant. When you specify `timevar`, you can then use time series operators (e.g., `L`, `D`).
+`xtset panelvar timevar [, tsoptions]` declares the data to be a panel in which the order of observations is relevant. When you specify `timevar`, you can then use time series operators (e.g., `L`, `D`).
+
+`tsoptions` can be specified using
+
+- unit of `timevar`, e.g., `yearly`, `quarterly`.
+- `delta(#)` specifies the time increment between observations in `timevar` units.
+
+**Example**
+
+To set a panel dataset:
+
+```stata
+// string variables not allowed in varlist; need to convert them to numeric
+. egen float country_id = group(iso)
+. egen float year_id = group(year)
+
+. xtset country_id year_id, yearly
+
+Panel variable: country_id (strongly balanced)
+ Time variable: year_id, 1 to 59
+         Delta: 1 year
+```
 
 **Menu**
 

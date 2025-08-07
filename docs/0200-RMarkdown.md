@@ -1174,7 +1174,7 @@ Two options if you want to read external scripts:
 
 
 
-`.Rmd` files
+**`.Rmd` files**
 
 If we have R Markdown documents that we want to share across several pages in the website, we can include them in the parent `.Rmd` document using the `child` chunk option. 
 
@@ -1186,7 +1186,7 @@ Note that the child `.Rmd` files need to be named with a leading `_` so they are
 ````
 
 
-In summary
+**In summary**
 
 - In the .Rmd files, source an `R` script and include a child `.Rmd`
 
