@@ -29,7 +29,7 @@ set in the _output.yml file.</p>" />
 <meta name="author" content="Menghan Yuan" />
 
 
-<meta name="date" content="2025-08-05" />
+<meta name="date" content="2025-08-06" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -404,7 +404,8 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="3.3" data-path="3.3-chunk-options.html"><a href="3.3-chunk-options.html"><i class="fa fa-check"></i><b>3.3</b> Chunk Options</a>
 <ul>
-<li class="chapter" data-level="" data-path="3.3-chunk-options.html"><a href="3.3-chunk-options.html#hooks"><i class="fa fa-check"></i>Hooks</a></li>
+<li class="chapter" data-level="3.3.1" data-path="3.3-chunk-options.html"><a href="3.3-chunk-options.html#global-knitr-options"><i class="fa fa-check"></i><b>3.3.1</b> Global <code>knitr</code> Options</a></li>
+<li class="chapter" data-level="3.3.2" data-path="3.3-chunk-options.html"><a href="3.3-chunk-options.html#hooks"><i class="fa fa-check"></i><b>3.3.2</b> Hooks</a></li>
 </ul></li>
 <li class="chapter" data-level="3.4" data-path="3.4-print-verbatim-r-code-chunks.html"><a href="3.4-print-verbatim-r-code-chunks.html"><i class="fa fa-check"></i><b>3.4</b> Print Verbatim R code chunks</a></li>
 <li class="chapter" data-level="3.5" data-path="3.5-rmd-basics.html"><a href="3.5-rmd-basics.html"><i class="fa fa-check"></i><b>3.5</b> Rmd Basics</a></li>
@@ -744,15 +745,15 @@ div.csl-indent {
 <div id="manipulate-string-columns" class="section level3 hasAnchor" number="6.3.1">
 <h3><span class="header-section-number">6.3.1</span> Manipulate String Columns<a href="6.3-categorical-variables.html#manipulate-string-columns" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p><code>reg_dict %&gt;% mutate(def = sapply(strsplit(def,"\\."), "[[", 2) )</code> split a string column and select the 2nd item.</p>
-<div class="sourceCode" id="cb455"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb455-1"><a href="6.3-categorical-variables.html#cb455-1" tabindex="-1"></a><span class="co"># alternatively, use separate(def, into, sep, remove=TRUE)</span></span>
-<span id="cb455-2"><a href="6.3-categorical-variables.html#cb455-2" tabindex="-1"></a>reg_dict <span class="sc">%&gt;%</span> <span class="fu">separate</span>(def, <span class="fu">c</span>(<span class="st">&quot;cli_key&quot;</span>, <span class="st">&quot;yr_key&quot;</span>), <span class="st">&quot;.&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb466"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb466-1"><a href="6.3-categorical-variables.html#cb466-1" tabindex="-1"></a><span class="co"># alternatively, use separate(def, into, sep, remove=TRUE)</span></span>
+<span id="cb466-2"><a href="6.3-categorical-variables.html#cb466-2" tabindex="-1"></a>reg_dict <span class="sc">%&gt;%</span> <span class="fu">separate</span>(def, <span class="fu">c</span>(<span class="st">&quot;cli_key&quot;</span>, <span class="st">&quot;yr_key&quot;</span>), <span class="st">&quot;.&quot;</span>)</span></code></pre></div>
 <p><code>separate()</code> function does the opposite of <code>unite()</code>: it splits one column into multiple columns using either a regular expression or character positions.</p>
-<div class="sourceCode" id="cb456"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb456-1"><a href="6.3-categorical-variables.html#cb456-1" tabindex="-1"></a>world_separate <span class="ot">=</span> world_unite <span class="sc">%&gt;%</span> </span>
-<span id="cb456-2"><a href="6.3-categorical-variables.html#cb456-2" tabindex="-1"></a>  <span class="fu">separate</span>(con_reg, <span class="fu">c</span>(<span class="st">&quot;continent&quot;</span>, <span class="st">&quot;region_un&quot;</span>), <span class="at">sep =</span> <span class="st">&quot;:&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb467"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb467-1"><a href="6.3-categorical-variables.html#cb467-1" tabindex="-1"></a>world_separate <span class="ot">=</span> world_unite <span class="sc">%&gt;%</span> </span>
+<span id="cb467-2"><a href="6.3-categorical-variables.html#cb467-2" tabindex="-1"></a>  <span class="fu">separate</span>(con_reg, <span class="fu">c</span>(<span class="st">&quot;continent&quot;</span>, <span class="st">&quot;region_un&quot;</span>), <span class="at">sep =</span> <span class="st">&quot;:&quot;</span>)</span></code></pre></div>
 <p><code>unite()</code> <span style="color:#008B45">pastes</span> together existing string columns.</p>
-<div class="sourceCode" id="cb457"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb457-1"><a href="6.3-categorical-variables.html#cb457-1" tabindex="-1"></a>world_unite <span class="ot">=</span> world <span class="sc">%&gt;%</span></span>
-<span id="cb457-2"><a href="6.3-categorical-variables.html#cb457-2" tabindex="-1"></a>  <span class="fu">unite</span>(<span class="st">&quot;con_reg&quot;</span>, continent<span class="sc">:</span>region_un, <span class="at">sep =</span> <span class="st">&quot;:&quot;</span>, <span class="at">remove =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb457-3"><a href="6.3-categorical-variables.html#cb457-3" tabindex="-1"></a><span class="co"># remove indicates if the original columns should be removed</span></span></code></pre></div>
+<div class="sourceCode" id="cb468"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb468-1"><a href="6.3-categorical-variables.html#cb468-1" tabindex="-1"></a>world_unite <span class="ot">=</span> world <span class="sc">%&gt;%</span></span>
+<span id="cb468-2"><a href="6.3-categorical-variables.html#cb468-2" tabindex="-1"></a>  <span class="fu">unite</span>(<span class="st">&quot;con_reg&quot;</span>, continent<span class="sc">:</span>region_un, <span class="at">sep =</span> <span class="st">&quot;:&quot;</span>, <span class="at">remove =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb468-3"><a href="6.3-categorical-variables.html#cb468-3" tabindex="-1"></a><span class="co"># remove indicates if the original columns should be removed</span></span></code></pre></div>
 <hr />
 </div>
 <div id="factors" class="section level3 hasAnchor" number="6.3.2">
@@ -769,35 +770,35 @@ div.csl-indent {
 <li><code>...</code> additional levels to add to the factor.</li>
 <li><code>after</code> position to place the new level(s).</li>
 </ul>
-<div class="sourceCode" id="cb458"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb458-1"><a href="6.3-categorical-variables.html#cb458-1" tabindex="-1"></a>f <span class="ot">&lt;-</span> <span class="fu">factor</span>(<span class="fu">sample</span>(letters[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>], <span class="dv">20</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>))</span>
-<span id="cb458-2"><a href="6.3-categorical-variables.html#cb458-2" tabindex="-1"></a>f</span>
-<span id="cb458-3"><a href="6.3-categorical-variables.html#cb458-3" tabindex="-1"></a><span class="co">#&gt;  [1] c a b a b b a c c b b b b c c c a b b c</span></span>
-<span id="cb458-4"><a href="6.3-categorical-variables.html#cb458-4" tabindex="-1"></a><span class="co">#&gt; Levels: a b c</span></span>
-<span id="cb458-5"><a href="6.3-categorical-variables.html#cb458-5" tabindex="-1"></a><span class="fu">fct_expand</span>(f, <span class="st">&quot;d&quot;</span>, <span class="st">&quot;e&quot;</span>, <span class="st">&quot;f&quot;</span>)</span>
-<span id="cb458-6"><a href="6.3-categorical-variables.html#cb458-6" tabindex="-1"></a><span class="co">#&gt;  [1] c a b a b b a c c b b b b c c c a b b c</span></span>
-<span id="cb458-7"><a href="6.3-categorical-variables.html#cb458-7" tabindex="-1"></a><span class="co">#&gt; Levels: a b c d e f</span></span>
-<span id="cb458-8"><a href="6.3-categorical-variables.html#cb458-8" tabindex="-1"></a><span class="fu">fct_expand</span>(f, letters[<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>])</span>
-<span id="cb458-9"><a href="6.3-categorical-variables.html#cb458-9" tabindex="-1"></a><span class="co">#&gt;  [1] c a b a b b a c c b b b b c c c a b b c</span></span>
-<span id="cb458-10"><a href="6.3-categorical-variables.html#cb458-10" tabindex="-1"></a><span class="co">#&gt; Levels: a b c d e f</span></span>
-<span id="cb458-11"><a href="6.3-categorical-variables.html#cb458-11" tabindex="-1"></a><span class="fu">fct_expand</span>(f, <span class="st">&quot;Z&quot;</span>, <span class="at">after =</span> <span class="dv">0</span>)</span>
-<span id="cb458-12"><a href="6.3-categorical-variables.html#cb458-12" tabindex="-1"></a><span class="co">#&gt;  [1] c a b a b b a c c b b b b c c c a b b c</span></span>
-<span id="cb458-13"><a href="6.3-categorical-variables.html#cb458-13" tabindex="-1"></a><span class="co">#&gt; Levels: Z a b c</span></span></code></pre></div>
+<div class="sourceCode" id="cb469"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb469-1"><a href="6.3-categorical-variables.html#cb469-1" tabindex="-1"></a>f <span class="ot">&lt;-</span> <span class="fu">factor</span>(<span class="fu">sample</span>(letters[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>], <span class="dv">20</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb469-2"><a href="6.3-categorical-variables.html#cb469-2" tabindex="-1"></a>f</span>
+<span id="cb469-3"><a href="6.3-categorical-variables.html#cb469-3" tabindex="-1"></a><span class="co">#&gt;  [1] c a b a b b a c c b b b b c c c a b b c</span></span>
+<span id="cb469-4"><a href="6.3-categorical-variables.html#cb469-4" tabindex="-1"></a><span class="co">#&gt; Levels: a b c</span></span>
+<span id="cb469-5"><a href="6.3-categorical-variables.html#cb469-5" tabindex="-1"></a><span class="fu">fct_expand</span>(f, <span class="st">&quot;d&quot;</span>, <span class="st">&quot;e&quot;</span>, <span class="st">&quot;f&quot;</span>)</span>
+<span id="cb469-6"><a href="6.3-categorical-variables.html#cb469-6" tabindex="-1"></a><span class="co">#&gt;  [1] c a b a b b a c c b b b b c c c a b b c</span></span>
+<span id="cb469-7"><a href="6.3-categorical-variables.html#cb469-7" tabindex="-1"></a><span class="co">#&gt; Levels: a b c d e f</span></span>
+<span id="cb469-8"><a href="6.3-categorical-variables.html#cb469-8" tabindex="-1"></a><span class="fu">fct_expand</span>(f, letters[<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>])</span>
+<span id="cb469-9"><a href="6.3-categorical-variables.html#cb469-9" tabindex="-1"></a><span class="co">#&gt;  [1] c a b a b b a c c b b b b c c c a b b c</span></span>
+<span id="cb469-10"><a href="6.3-categorical-variables.html#cb469-10" tabindex="-1"></a><span class="co">#&gt; Levels: a b c d e f</span></span>
+<span id="cb469-11"><a href="6.3-categorical-variables.html#cb469-11" tabindex="-1"></a><span class="fu">fct_expand</span>(f, <span class="st">&quot;Z&quot;</span>, <span class="at">after =</span> <span class="dv">0</span>)</span>
+<span id="cb469-12"><a href="6.3-categorical-variables.html#cb469-12" tabindex="-1"></a><span class="co">#&gt;  [1] c a b a b b a c c b b b b c c c a b b c</span></span>
+<span id="cb469-13"><a href="6.3-categorical-variables.html#cb469-13" tabindex="-1"></a><span class="co">#&gt; Levels: Z a b c</span></span></code></pre></div>
 <p><code>fct_drop(f, only = NULL)</code> drop unused levels.</p>
-<div class="sourceCode" id="cb459"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb459-1"><a href="6.3-categorical-variables.html#cb459-1" tabindex="-1"></a>f <span class="ot">&lt;-</span> <span class="fu">factor</span>(<span class="fu">c</span>(<span class="st">&quot;a&quot;</span>, <span class="st">&quot;b&quot;</span>), <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;a&quot;</span>, <span class="st">&quot;b&quot;</span>, <span class="st">&quot;c&quot;</span>))</span>
-<span id="cb459-2"><a href="6.3-categorical-variables.html#cb459-2" tabindex="-1"></a>f</span>
-<span id="cb459-3"><a href="6.3-categorical-variables.html#cb459-3" tabindex="-1"></a><span class="co">#&gt; [1] a b</span></span>
-<span id="cb459-4"><a href="6.3-categorical-variables.html#cb459-4" tabindex="-1"></a><span class="co">#&gt; Levels: a b c</span></span>
-<span id="cb459-5"><a href="6.3-categorical-variables.html#cb459-5" tabindex="-1"></a><span class="fu">fct_drop</span>(f)</span>
-<span id="cb459-6"><a href="6.3-categorical-variables.html#cb459-6" tabindex="-1"></a><span class="co">#&gt; [1] a b</span></span>
-<span id="cb459-7"><a href="6.3-categorical-variables.html#cb459-7" tabindex="-1"></a><span class="co">#&gt; Levels: a b</span></span>
-<span id="cb459-8"><a href="6.3-categorical-variables.html#cb459-8" tabindex="-1"></a></span>
-<span id="cb459-9"><a href="6.3-categorical-variables.html#cb459-9" tabindex="-1"></a><span class="co"># Set only to restrict which levels to drop</span></span>
-<span id="cb459-10"><a href="6.3-categorical-variables.html#cb459-10" tabindex="-1"></a><span class="fu">fct_drop</span>(f, <span class="at">only =</span> <span class="st">&quot;a&quot;</span>)</span>
-<span id="cb459-11"><a href="6.3-categorical-variables.html#cb459-11" tabindex="-1"></a><span class="co">#&gt; [1] a b</span></span>
-<span id="cb459-12"><a href="6.3-categorical-variables.html#cb459-12" tabindex="-1"></a><span class="co">#&gt; Levels: a b c</span></span>
-<span id="cb459-13"><a href="6.3-categorical-variables.html#cb459-13" tabindex="-1"></a><span class="fu">fct_drop</span>(f, <span class="at">only =</span> <span class="st">&quot;c&quot;</span>)</span>
-<span id="cb459-14"><a href="6.3-categorical-variables.html#cb459-14" tabindex="-1"></a><span class="co">#&gt; [1] a b</span></span>
-<span id="cb459-15"><a href="6.3-categorical-variables.html#cb459-15" tabindex="-1"></a><span class="co">#&gt; Levels: a b</span></span></code></pre></div>
+<div class="sourceCode" id="cb470"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb470-1"><a href="6.3-categorical-variables.html#cb470-1" tabindex="-1"></a>f <span class="ot">&lt;-</span> <span class="fu">factor</span>(<span class="fu">c</span>(<span class="st">&quot;a&quot;</span>, <span class="st">&quot;b&quot;</span>), <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;a&quot;</span>, <span class="st">&quot;b&quot;</span>, <span class="st">&quot;c&quot;</span>))</span>
+<span id="cb470-2"><a href="6.3-categorical-variables.html#cb470-2" tabindex="-1"></a>f</span>
+<span id="cb470-3"><a href="6.3-categorical-variables.html#cb470-3" tabindex="-1"></a><span class="co">#&gt; [1] a b</span></span>
+<span id="cb470-4"><a href="6.3-categorical-variables.html#cb470-4" tabindex="-1"></a><span class="co">#&gt; Levels: a b c</span></span>
+<span id="cb470-5"><a href="6.3-categorical-variables.html#cb470-5" tabindex="-1"></a><span class="fu">fct_drop</span>(f)</span>
+<span id="cb470-6"><a href="6.3-categorical-variables.html#cb470-6" tabindex="-1"></a><span class="co">#&gt; [1] a b</span></span>
+<span id="cb470-7"><a href="6.3-categorical-variables.html#cb470-7" tabindex="-1"></a><span class="co">#&gt; Levels: a b</span></span>
+<span id="cb470-8"><a href="6.3-categorical-variables.html#cb470-8" tabindex="-1"></a></span>
+<span id="cb470-9"><a href="6.3-categorical-variables.html#cb470-9" tabindex="-1"></a><span class="co"># Set only to restrict which levels to drop</span></span>
+<span id="cb470-10"><a href="6.3-categorical-variables.html#cb470-10" tabindex="-1"></a><span class="fu">fct_drop</span>(f, <span class="at">only =</span> <span class="st">&quot;a&quot;</span>)</span>
+<span id="cb470-11"><a href="6.3-categorical-variables.html#cb470-11" tabindex="-1"></a><span class="co">#&gt; [1] a b</span></span>
+<span id="cb470-12"><a href="6.3-categorical-variables.html#cb470-12" tabindex="-1"></a><span class="co">#&gt; Levels: a b c</span></span>
+<span id="cb470-13"><a href="6.3-categorical-variables.html#cb470-13" tabindex="-1"></a><span class="fu">fct_drop</span>(f, <span class="at">only =</span> <span class="st">&quot;c&quot;</span>)</span>
+<span id="cb470-14"><a href="6.3-categorical-variables.html#cb470-14" tabindex="-1"></a><span class="co">#&gt; [1] a b</span></span>
+<span id="cb470-15"><a href="6.3-categorical-variables.html#cb470-15" tabindex="-1"></a><span class="co">#&gt; Levels: a b</span></span></code></pre></div>
 
 </div>
 </div>

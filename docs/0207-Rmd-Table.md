@@ -1,5 +1,7 @@
 ## Tables
 
+
+
 <span style='color:#00CC66'>**Cross reference tables**</span>
 
 Using `bookdown` cmd: `\@ref(tab:chunk-label)`.
@@ -118,7 +120,7 @@ To show the `tibble` information (number of row/columns, and group information) 
 ```markdown
 ---
 title: "Use caption with df_print set to page"
-date: "2025-08-05"
+date: "2025-08-06"
 output:
   bookdown::html_document2:
     df_print: paged
@@ -284,8 +286,8 @@ Note that you need to specify `results="asis"` in the chunk options.  This optio
 
 - Note that `*`'s do not show properly in html output, see Fig. \@ref(fig:stargazer1), need to specify in the footnote (`notes`) manually.
 
-<div class="figure">
-<img src="images/stargazer1.png" alt="Failed to show significance codes." width="198" />
+<div class="figure" style="text-align: center">
+<img src="images/stargazer1.png" alt="Failed to show significance codes." width="80%" />
 <p class="caption">(\#fig:stargazer1)Failed to show significance codes.</p>
 </div>
 
@@ -301,8 +303,8 @@ apply(data[,-1], 2, get_stat) %>%
 ````
 
 
-<div class="figure">
-<img src="images/stargazer1.png" alt="Correct significance codes." width="198" />
+<div class="figure" style="text-align: center">
+<img src="images/stargazer1.png" alt="Correct significance codes." width="80%" />
 <p class="caption">(\#fig:stargazer2)Correct significance codes.</p>
 </div>
 

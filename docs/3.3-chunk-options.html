@@ -29,7 +29,7 @@ set in the _output.yml file.</p>" />
 <meta name="author" content="Menghan Yuan" />
 
 
-<meta name="date" content="2025-08-05" />
+<meta name="date" content="2025-08-06" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -404,7 +404,8 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="3.3" data-path="3.3-chunk-options.html"><a href="3.3-chunk-options.html"><i class="fa fa-check"></i><b>3.3</b> Chunk Options</a>
 <ul>
-<li class="chapter" data-level="" data-path="3.3-chunk-options.html"><a href="3.3-chunk-options.html#hooks"><i class="fa fa-check"></i>Hooks</a></li>
+<li class="chapter" data-level="3.3.1" data-path="3.3-chunk-options.html"><a href="3.3-chunk-options.html#global-knitr-options"><i class="fa fa-check"></i><b>3.3.1</b> Global <code>knitr</code> Options</a></li>
+<li class="chapter" data-level="3.3.2" data-path="3.3-chunk-options.html"><a href="3.3-chunk-options.html#hooks"><i class="fa fa-check"></i><b>3.3.2</b> Hooks</a></li>
 </ul></li>
 <li class="chapter" data-level="3.4" data-path="3.4-print-verbatim-r-code-chunks.html"><a href="3.4-print-verbatim-r-code-chunks.html"><i class="fa fa-check"></i><b>3.4</b> Print Verbatim R code chunks</a></li>
 <li class="chapter" data-level="3.5" data-path="3.5-rmd-basics.html"><a href="3.5-rmd-basics.html"><i class="fa fa-check"></i><b>3.5</b> Rmd Basics</a></li>
@@ -862,7 +863,7 @@ div.csl-indent {
 </tr>
 <tr class="even">
 <td><code>results='markup'</code></td>
-<td>Controls how to display the text results. <br />When <code>results='markup'</code> that is to write text output as-is, i.e., write the raw text results directly into the output document without any markups.<br />Useful when printing <code>stargazer</code> tables.</td>
+<td>Controls how to display the text results. <br />When <code>results='asis'</code> that is to write text output as-is, i.e., write the raw text results directly into the output document without any markups.<br />Useful when printing <code>stargazer</code> tables.</td>
 </tr>
 <tr class="odd">
 <td><code>comment='##'</code></td>
@@ -892,15 +893,71 @@ div.csl-indent {
 </table>
 <p><span style="color:#32CD32"><code>results='markup'</code></span> note plural form for result<strong>s</strong>.</p>
 <ul>
-<li><p><code>results='markup'</code>: Default. Mark up text output with the appropriate environments depending on the output format. For example, for R Markdown, if the text output is a character string <code>"[1] 1 2 3"</code>, the actual output that <strong>knitr</strong> produces will be:</p>
+<li><p><code>results='markup'</code>: Defaults to <code>`markup`</code>. Mark up text output with the appropriate environments depending on the output format.</p>
+<p><code>results='markup'</code> means to put the text output in fenced code blocks (<code>```</code>), treat output <strong>verbatim</strong>. → Not interpreted as Markdown.</p>
+<p>Useful when you just want to show plain output, like from <code>print()</code>, <code>cat()</code>, or basic text generation.</p>
+<p>For example, for R Markdown, if the text output is a character string <code>"[1] 1 2 3"</code>, the actual output that <strong>knitr</strong> produces will be:</p>
 <div class="sourceCode" id="cb106"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb106-1"><a href="3.3-chunk-options.html#cb106-1" tabindex="-1"></a><span class="st">```</span></span>
 <span id="cb106-2"><a href="3.3-chunk-options.html#cb106-2" tabindex="-1"></a><span class="at">[1] 1 2 3</span></span>
 <span id="cb106-3"><a href="3.3-chunk-options.html#cb106-3" tabindex="-1"></a><span class="st">```</span></span></code></pre></div>
-<p>In this case, <code>results='markup'</code> means to put the text output in fenced code blocks (```).</p></li>
-<li><p><code>results='asis'</code>: Write text output as-is, i.e., write the raw text results directly into the output document without any markups.</p>
-<div class="sourceCode" id="cb107"><pre class="sourceCode md"><code class="sourceCode markdown"><span id="cb107-1"><a href="3.3-chunk-options.html#cb107-1" tabindex="-1"></a><span class="in">```{r, results=&#39;asis&#39;}</span></span>
+<p>Ex2</p>
+<div class="sourceCode" id="cb107"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb107-1"><a href="3.3-chunk-options.html#cb107-1" tabindex="-1"></a><span class="in">```{r, results=&#39;asis&#39;}</span></span>
 <span id="cb107-2"><a href="3.3-chunk-options.html#cb107-2" tabindex="-1"></a><span class="in">cat(&quot;I&#39;m raw **Markdown** content.\n&quot;)</span></span>
 <span id="cb107-3"><a href="3.3-chunk-options.html#cb107-3" tabindex="-1"></a><span class="in">```</span></span></code></pre></div>
+<p>will be rendered as</p>
+<div class="sourceCode" id="cb108"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb108-1"><a href="3.3-chunk-options.html#cb108-1" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb108-2"><a href="3.3-chunk-options.html#cb108-2" tabindex="-1"></a><span class="in">I&#39;m raw **Markdown** content.</span></span>
+<span id="cb108-3"><a href="3.3-chunk-options.html#cb108-3" tabindex="-1"></a><span class="in">```</span></span></code></pre></div>
+<p>Any markdown format like <code>**</code> will not be rendenered as bold; will be printed as plain source code output.</p></li>
+<li><p><code>results='asis'</code>: Write text output as-is, i.e., write the raw text results directly into the output document without any markups. → Output is interpreted as Markdown.</p>
+<p>Useful when you want to genrates Markdown that will be rendered directly.</p>
+<ul>
+<li>You must ensure the output is valid Markdown, or it may break the document.</li>
+</ul>
+<p><strong>Ex1</strong></p>
+<div class="sourceCode" id="cb109"><pre class="sourceCode md"><code class="sourceCode markdown"><span id="cb109-1"><a href="3.3-chunk-options.html#cb109-1" tabindex="-1"></a><span class="in">```{r, results=&#39;asis&#39;}</span></span>
+<span id="cb109-2"><a href="3.3-chunk-options.html#cb109-2" tabindex="-1"></a><span class="in">cat(&quot;I&#39;m raw **Markdown** content.\n&quot;)</span></span>
+<span id="cb109-3"><a href="3.3-chunk-options.html#cb109-3" tabindex="-1"></a><span class="in">```</span></span></code></pre></div>
+<p>Will be rendered as</p>
+<blockquote>
+<p>I’m raw <strong>Markdown</strong> content.</p>
+</blockquote>
+<p><strong>Ex2</strong></p>
+<pre><code>```{r, results=&#39;asis&#39;}
+cat(&quot;## This is a level-2 header\n&quot;)
+cat(&quot;*This will be italicized*\n&quot;)
+cat(&quot;**This will be bold**\n&quot;)
+```</code></pre>
+<p>Will be rendered as</p>
+<blockquote>
+<h2>
+This is a level-2 header
+</h2>
+<p><em>This will be italicized</em></p>
+<p><strong>This will be bold</strong></p>
+</blockquote>
+<p><strong>In summary, all formats will be applied.</strong></p>
+<p><strong>Other use cases:</strong></p>
+<ul>
+<li><p>This can be particularly useful when you want to generate content dynamically from R code.</p>
+<div class="sourceCode" id="cb111"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb111-1"><a href="3.3-chunk-options.html#cb111-1" tabindex="-1"></a><span class="in">```{r, results=&#39;asis&#39;}</span></span>
+<span id="cb111-2"><a href="3.3-chunk-options.html#cb111-2" tabindex="-1"></a><span class="in">cat(paste0(&quot;- `&quot;, names(iris), &quot;`&quot;), sep = &quot;\n&quot;)</span></span>
+<span id="cb111-3"><a href="3.3-chunk-options.html#cb111-3" tabindex="-1"></a><span class="in">```</span></span></code></pre></div>
+<p>will be rendered as</p>
+<div class="sourceCode" id="cb112"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb112-1"><a href="3.3-chunk-options.html#cb112-1" tabindex="-1"></a><span class="ss">- </span><span class="in">`Sepal.Length`</span></span>
+<span id="cb112-2"><a href="3.3-chunk-options.html#cb112-2" tabindex="-1"></a><span class="ss">- </span><span class="in">`Sepal.Width`</span></span>
+<span id="cb112-3"><a href="3.3-chunk-options.html#cb112-3" tabindex="-1"></a><span class="ss">- </span><span class="in">`Petal.Length`</span></span>
+<span id="cb112-4"><a href="3.3-chunk-options.html#cb112-4" tabindex="-1"></a><span class="ss">- </span><span class="in">`Petal.Width`</span></span>
+<span id="cb112-5"><a href="3.3-chunk-options.html#cb112-5" tabindex="-1"></a><span class="ss">- </span><span class="in">`Species`</span></span></code></pre></div></li>
+<li><p>Use <code>stargazer</code> to generate LaTeX tables.</p>
+<div class="sourceCode" id="cb113"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb113-1"><a href="3.3-chunk-options.html#cb113-1" tabindex="-1"></a><span class="in">```{r, include=TRUE, results=&#39;asis&#39;}</span></span>
+<span id="cb113-2"><a href="3.3-chunk-options.html#cb113-2" tabindex="-1"></a><span class="in">stargazer(capm_ml, FF_ml, type=&#39;latex&#39;, header=FALSE,</span></span>
+<span id="cb113-3"><a href="3.3-chunk-options.html#cb113-3" tabindex="-1"></a><span class="in">          digits=4, no.space = TRUE,</span></span>
+<span id="cb113-4"><a href="3.3-chunk-options.html#cb113-4" tabindex="-1"></a><span class="in">          title=&quot;Regression Results for META&quot;,</span></span>
+<span id="cb113-5"><a href="3.3-chunk-options.html#cb113-5" tabindex="-1"></a><span class="in">          label = &quot;tab:reg-table&quot;)</span></span>
+<span id="cb113-6"><a href="3.3-chunk-options.html#cb113-6" tabindex="-1"></a><span class="in">```</span></span></code></pre></div>
+<p>This will outout LaTeX code to your document, which will be formatted scientifically.</p></li>
+</ul>
 <p>Sometime, you encounter the following error messages when you have R codes within <code>enumerate</code> environment.</p>
 <blockquote>
 <p>You can’t use <code>macro parameter character #</code> in horizontal mode.</p>
@@ -923,8 +980,50 @@ div.csl-indent {
 <p>Often used to suppress messages from packages that are not relevant to the output document, such as package loading messages.</p></li>
 </ul>
 <hr />
-<div id="hooks" class="section level3 unnumbered hasAnchor">
-<h3>Hooks<a href="3.3-chunk-options.html#hooks" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="global-knitr-options" class="section level3 hasAnchor" number="3.3.1">
+<h3><span class="header-section-number">3.3.1</span> Global <code>knitr</code> Options<a href="3.3-chunk-options.html#global-knitr-options" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>First check your configuration (<code>_bookdown.yml</code>)</p>
+<ul>
+<li><p>when you are using <code>new_session = FALSE</code>, use <code>index.Rmd</code> to set global options. It will be applied to all files in the book.</p></li>
+<li><p>if you are using <code>new_session = TRUE</code>, you need to <span style="color: #008B45;">apply them per file</span> because each file is knitted independently.</p>
+<p>You can create a file with the common R code and load this file in each document.</p></li>
+</ul>
+<p><strong>Read external scripts into a chunk</strong></p>
+<p>Two options if you want to read external scripts:</p>
+<ul>
+<li><p>Source <code>.R</code> scripts</p>
+<div class="sourceCode" id="cb114"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb114-1"><a href="3.3-chunk-options.html#cb114-1" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb114-2"><a href="3.3-chunk-options.html#cb114-2" tabindex="-1"></a><span class="in">source(&quot;setup.R&quot;)</span></span>
+<span id="cb114-3"><a href="3.3-chunk-options.html#cb114-3" tabindex="-1"></a><span class="in">```</span></span></code></pre></div>
+<p>You will NOT be able to see the source code by default. You can use <code>source(..., echo = TRUE)</code>, but the source code will NOT be properly syntax highlighted.</p></li>
+<li><p>Use the <code>file</code> option of a chunk.</p>
+<p>This method allows you to see the source code, and it has proper syntax highlighting.</p>
+<div class="sourceCode" id="cb115"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb115-1"><a href="3.3-chunk-options.html#cb115-1" tabindex="-1"></a><span class="in">```{r file=&#39;setup.R&#39;}</span></span>
+<span id="cb115-2"><a href="3.3-chunk-options.html#cb115-2" tabindex="-1"></a><span class="in">```</span></span></code></pre></div>
+<p>You can load as many scripts as you want, just put them in a character vector:</p>
+<div class="sourceCode" id="cb116"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb116-1"><a href="3.3-chunk-options.html#cb116-1" tabindex="-1"></a><span class="in">```{r file=c(&#39;one.R&#39;, &#39;two.R&#39;)}</span></span>
+<span id="cb116-2"><a href="3.3-chunk-options.html#cb116-2" tabindex="-1"></a><span class="in">```</span></span></code></pre></div>
+<p>You can even read scripts of other languages.</p>
+<pre class="markcown"><code>```{python, file=&#39;script.py&#39;}
+```</code></pre></li>
+</ul>
+<p><code>.Rmd</code> files</p>
+<p>If we have R Markdown documents that we want to share across several pages in the website, we can include them in the parent <code>.Rmd</code> document using the <code>child</code> chunk option.</p>
+<p>Note that the child <code>.Rmd</code> files need to be named with a leading <code>_</code> so they are not compiled as standalone documents during the site rendering.</p>
+<div class="sourceCode" id="cb118"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb118-1"><a href="3.3-chunk-options.html#cb118-1" tabindex="-1"></a><span class="in">```{r, child = &quot;_setup.Rmd&quot;, include=FALSE}</span></span>
+<span id="cb118-2"><a href="3.3-chunk-options.html#cb118-2" tabindex="-1"></a><span class="in">```</span></span></code></pre></div>
+<p>In summary</p>
+<ul>
+<li>In the .Rmd files, source an <code>R</code> script and include a child <code>.Rmd</code></li>
+</ul>
+<p>Ref:</p>
+<ul>
+<li><a href="https://bookdown.org/yihui/rmarkdown-cookbook/option-code.html">R Markdown Cookbook: §16.2 Read external scripts into a chunk</a></li>
+</ul>
+<hr />
+</div>
+<div id="hooks" class="section level3 hasAnchor" number="3.3.2">
+<h3><span class="header-section-number">3.3.2</span> Hooks<a href="3.3-chunk-options.html#hooks" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>The object <code>knit_hooks</code> in the <strong>knitr</strong> package is used to set hooks; the basic usage is <code>knitr::knit_hooks$set(name = FUN)</code> (see <a href="https://yihui.org/knitr/objects/">objects</a> for details) where <code>name</code> is the name of a chunk option (can be arbitrary), and <code>FUN</code> is a function.</p>
 <p>There are two types of hooks:</p>
 <ul>
@@ -936,19 +1035,19 @@ div.csl-indent {
 <p>Hook functions may have different forms, depending what they are designed to do.</p>
 <p><strong>Chunk hooks</strong></p>
 <p>For example, we define a <strong>custom chunk hook</strong> function for the <code>small_mar</code> option</p>
-<div class="sourceCode" id="cb108"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb108-1"><a href="3.3-chunk-options.html#cb108-1" tabindex="-1"></a>knitr<span class="sc">::</span>knit_hooks<span class="sc">$</span><span class="fu">set</span>(<span class="at">small_mar =</span> <span class="cf">function</span>(before, ...) {</span>
-<span id="cb108-2"><a href="3.3-chunk-options.html#cb108-2" tabindex="-1"></a>  <span class="cf">if</span> (before)</span>
-<span id="cb108-3"><a href="3.3-chunk-options.html#cb108-3" tabindex="-1"></a>    <span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">4</span>, .<span class="dv">1</span>, .<span class="dv">1</span>))  <span class="co"># smaller top/right margin</span></span>
-<span id="cb108-4"><a href="3.3-chunk-options.html#cb108-4" tabindex="-1"></a>})</span></code></pre></div>
+<div class="sourceCode" id="cb119"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb119-1"><a href="3.3-chunk-options.html#cb119-1" tabindex="-1"></a>knitr<span class="sc">::</span>knit_hooks<span class="sc">$</span><span class="fu">set</span>(<span class="at">small_mar =</span> <span class="cf">function</span>(before, ...) {</span>
+<span id="cb119-2"><a href="3.3-chunk-options.html#cb119-2" tabindex="-1"></a>  <span class="cf">if</span> (before)</span>
+<span id="cb119-3"><a href="3.3-chunk-options.html#cb119-3" tabindex="-1"></a>    <span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">4</span>, .<span class="dv">1</span>, .<span class="dv">1</span>))  <span class="co"># smaller top/right margin</span></span>
+<span id="cb119-4"><a href="3.3-chunk-options.html#cb119-4" tabindex="-1"></a>})</span></code></pre></div>
 <p>Then this function will be called for a chunk option like the following (<code>small_mar</code> doesn’t have to be <code>TRUE</code>; it can be any non-<code>NULL</code> value):</p>
-<div class="sourceCode" id="cb109"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb109-1"><a href="3.3-chunk-options.html#cb109-1" tabindex="-1"></a><span class="st">```</span><span class="at">{r, myplot, small_mar=TRUE}</span></span>
-<span id="cb109-2"><a href="3.3-chunk-options.html#cb109-2" tabindex="-1"></a><span class="at">hist(rnorm(100), main = &#39;&#39;)</span></span>
-<span id="cb109-3"><a href="3.3-chunk-options.html#cb109-3" tabindex="-1"></a><span class="st">```</span></span></code></pre></div>
+<div class="sourceCode" id="cb120"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb120-1"><a href="3.3-chunk-options.html#cb120-1" tabindex="-1"></a><span class="st">```</span><span class="at">{r, myplot, small_mar=TRUE}</span></span>
+<span id="cb120-2"><a href="3.3-chunk-options.html#cb120-2" tabindex="-1"></a><span class="at">hist(rnorm(100), main = &#39;&#39;)</span></span>
+<span id="cb120-3"><a href="3.3-chunk-options.html#cb120-3" tabindex="-1"></a><span class="st">```</span></span></code></pre></div>
 <hr />
 <p><strong>Output hooks</strong></p>
 <p>With the <strong>knitr</strong> package, you have control over every piece of output from your code chunks, such as source code, text output, messages, and plots. The control is achieved through “output hooks.”</p>
 <p>Available output hook names:</p>
-<div class="sourceCode" id="cb110"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb110-1"><a href="3.3-chunk-options.html#cb110-1" tabindex="-1"></a><span class="fu">names</span>(knitr<span class="sc">:::</span>.default.hooks)</span></code></pre></div>
+<div class="sourceCode" id="cb121"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb121-1"><a href="3.3-chunk-options.html#cb121-1" tabindex="-1"></a><span class="fu">names</span>(knitr<span class="sc">:::</span>.default.hooks)</span></code></pre></div>
 <pre><code>##  [1] &quot;source&quot;          &quot;output&quot;          &quot;warning&quot;         &quot;message&quot;        
 ##  [5] &quot;error&quot;           &quot;plot&quot;            &quot;inline&quot;          &quot;chunk&quot;          
 ##  [9] &quot;text&quot;            &quot;evaluate.inline&quot; &quot;evaluate&quot;        &quot;document&quot;</code></pre>
@@ -958,40 +1057,40 @@ div.csl-indent {
 <li><code>output</code>: processing text output.</li>
 </ul>
 <p>You may obtain the actual hooks from the object <code>knit_hooks</code> via the <code>get()</code> method, e.g.,</p>
-<div class="sourceCode" id="cb112"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb112-1"><a href="3.3-chunk-options.html#cb112-1" tabindex="-1"></a><span class="co"># for meaningful output, the code below should be</span></span>
-<span id="cb112-2"><a href="3.3-chunk-options.html#cb112-2" tabindex="-1"></a><span class="co"># executed *inside* a code chunk of a knitr document</span></span>
-<span id="cb112-3"><a href="3.3-chunk-options.html#cb112-3" tabindex="-1"></a>knitr<span class="sc">::</span>knit_hooks<span class="sc">$</span><span class="fu">get</span>(<span class="st">&quot;source&quot;</span>)</span>
-<span id="cb112-4"><a href="3.3-chunk-options.html#cb112-4" tabindex="-1"></a>knitr<span class="sc">::</span>knit_hooks<span class="sc">$</span><span class="fu">get</span>(<span class="st">&quot;output&quot;</span>)</span>
-<span id="cb112-5"><a href="3.3-chunk-options.html#cb112-5" tabindex="-1"></a><span class="co"># or knitr::knit_hooks$get(c(&#39;source&#39;, &#39;output&#39;))</span></span></code></pre></div>
+<div class="sourceCode" id="cb123"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb123-1"><a href="3.3-chunk-options.html#cb123-1" tabindex="-1"></a><span class="co"># for meaningful output, the code below should be</span></span>
+<span id="cb123-2"><a href="3.3-chunk-options.html#cb123-2" tabindex="-1"></a><span class="co"># executed *inside* a code chunk of a knitr document</span></span>
+<span id="cb123-3"><a href="3.3-chunk-options.html#cb123-3" tabindex="-1"></a>knitr<span class="sc">::</span>knit_hooks<span class="sc">$</span><span class="fu">get</span>(<span class="st">&quot;source&quot;</span>)</span>
+<span id="cb123-4"><a href="3.3-chunk-options.html#cb123-4" tabindex="-1"></a>knitr<span class="sc">::</span>knit_hooks<span class="sc">$</span><span class="fu">get</span>(<span class="st">&quot;output&quot;</span>)</span>
+<span id="cb123-5"><a href="3.3-chunk-options.html#cb123-5" tabindex="-1"></a><span class="co"># or knitr::knit_hooks$get(c(&#39;source&#39;, &#39;output&#39;))</span></span></code></pre></div>
 <p>A custom output hook is registered through the <code>set()</code> method of <code>knit_hooks</code>. Because this method will override the existing default hook, we recommend that you save a copy of an existing hook, process the output elements in your own way, and pass the results to the default hook.</p>
 <p>When the text output from a code chunk is lengthy, you may want to only show the first few lines. For example, when printing a data frame of a few thousand rows, it may not be helpful to show the full data, and the first few lines may be enough. Below we redefine the <code>output</code> hook so that we can control the maximum number of lines via a custom chunk option <code>out.lines</code>:</p>
-<div class="sourceCode" id="cb113"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb113-1"><a href="3.3-chunk-options.html#cb113-1" tabindex="-1"></a><span class="co"># save the built-in output hook</span></span>
-<span id="cb113-2"><a href="3.3-chunk-options.html#cb113-2" tabindex="-1"></a>hook_output <span class="ot">&lt;-</span> knitr<span class="sc">::</span>knit_hooks<span class="sc">$</span><span class="fu">get</span>(<span class="st">&quot;output&quot;</span>)</span>
-<span id="cb113-3"><a href="3.3-chunk-options.html#cb113-3" tabindex="-1"></a></span>
-<span id="cb113-4"><a href="3.3-chunk-options.html#cb113-4" tabindex="-1"></a><span class="co"># set a new output hook to truncate text output</span></span>
-<span id="cb113-5"><a href="3.3-chunk-options.html#cb113-5" tabindex="-1"></a>knitr<span class="sc">::</span>knit_hooks<span class="sc">$</span><span class="fu">set</span>(<span class="at">output =</span> <span class="cf">function</span>(x, options) {</span>
-<span id="cb113-6"><a href="3.3-chunk-options.html#cb113-6" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.null</span>(n <span class="ot">&lt;-</span> options<span class="sc">$</span>out.lines)) {</span>
-<span id="cb113-7"><a href="3.3-chunk-options.html#cb113-7" tabindex="-1"></a>    x <span class="ot">&lt;-</span> xfun<span class="sc">::</span><span class="fu">split_lines</span>(x)</span>
-<span id="cb113-8"><a href="3.3-chunk-options.html#cb113-8" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">length</span>(x) <span class="sc">&gt;</span> n) {</span>
-<span id="cb113-9"><a href="3.3-chunk-options.html#cb113-9" tabindex="-1"></a>      <span class="co"># truncate the output</span></span>
-<span id="cb113-10"><a href="3.3-chunk-options.html#cb113-10" tabindex="-1"></a>      x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">head</span>(x, n), <span class="st">&quot;....</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
-<span id="cb113-11"><a href="3.3-chunk-options.html#cb113-11" tabindex="-1"></a>    }</span>
-<span id="cb113-12"><a href="3.3-chunk-options.html#cb113-12" tabindex="-1"></a>    x <span class="ot">&lt;-</span> <span class="fu">paste</span>(x, <span class="at">collapse =</span> <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
-<span id="cb113-13"><a href="3.3-chunk-options.html#cb113-13" tabindex="-1"></a>  }</span>
-<span id="cb113-14"><a href="3.3-chunk-options.html#cb113-14" tabindex="-1"></a>  <span class="fu">hook_output</span>(x, options)</span>
-<span id="cb113-15"><a href="3.3-chunk-options.html#cb113-15" tabindex="-1"></a>})</span></code></pre></div>
+<div class="sourceCode" id="cb124"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb124-1"><a href="3.3-chunk-options.html#cb124-1" tabindex="-1"></a><span class="co"># save the built-in output hook</span></span>
+<span id="cb124-2"><a href="3.3-chunk-options.html#cb124-2" tabindex="-1"></a>hook_output <span class="ot">&lt;-</span> knitr<span class="sc">::</span>knit_hooks<span class="sc">$</span><span class="fu">get</span>(<span class="st">&quot;output&quot;</span>)</span>
+<span id="cb124-3"><a href="3.3-chunk-options.html#cb124-3" tabindex="-1"></a></span>
+<span id="cb124-4"><a href="3.3-chunk-options.html#cb124-4" tabindex="-1"></a><span class="co"># set a new output hook to truncate text output</span></span>
+<span id="cb124-5"><a href="3.3-chunk-options.html#cb124-5" tabindex="-1"></a>knitr<span class="sc">::</span>knit_hooks<span class="sc">$</span><span class="fu">set</span>(<span class="at">output =</span> <span class="cf">function</span>(x, options) {</span>
+<span id="cb124-6"><a href="3.3-chunk-options.html#cb124-6" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.null</span>(n <span class="ot">&lt;-</span> options<span class="sc">$</span>out.lines)) {</span>
+<span id="cb124-7"><a href="3.3-chunk-options.html#cb124-7" tabindex="-1"></a>    x <span class="ot">&lt;-</span> xfun<span class="sc">::</span><span class="fu">split_lines</span>(x)</span>
+<span id="cb124-8"><a href="3.3-chunk-options.html#cb124-8" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">length</span>(x) <span class="sc">&gt;</span> n) {</span>
+<span id="cb124-9"><a href="3.3-chunk-options.html#cb124-9" tabindex="-1"></a>      <span class="co"># truncate the output</span></span>
+<span id="cb124-10"><a href="3.3-chunk-options.html#cb124-10" tabindex="-1"></a>      x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">head</span>(x, n), <span class="st">&quot;....</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb124-11"><a href="3.3-chunk-options.html#cb124-11" tabindex="-1"></a>    }</span>
+<span id="cb124-12"><a href="3.3-chunk-options.html#cb124-12" tabindex="-1"></a>    x <span class="ot">&lt;-</span> <span class="fu">paste</span>(x, <span class="at">collapse =</span> <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb124-13"><a href="3.3-chunk-options.html#cb124-13" tabindex="-1"></a>  }</span>
+<span id="cb124-14"><a href="3.3-chunk-options.html#cb124-14" tabindex="-1"></a>  <span class="fu">hook_output</span>(x, options)</span>
+<span id="cb124-15"><a href="3.3-chunk-options.html#cb124-15" tabindex="-1"></a>})</span></code></pre></div>
 <p>The basic idea of the above hook function is that if the number of lines of the text output is greater than the threshold set in the chunk option <code>out.lines</code> (stored in the variable <code>n</code> in the function body), we only keep the first <code>n</code> lines and add an ellipsis (<code>....</code>) to indicate the output is truncated.</p>
 <p>Now we can test the new <code>output</code> hook by setting the chunk option <code>out.lines = 4</code> on the chunk below:</p>
-<div class="sourceCode" id="cb114"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb114-1"><a href="3.3-chunk-options.html#cb114-1" tabindex="-1"></a><span class="in">```{r out.lines = 4}</span></span>
-<span id="cb114-2"><a href="3.3-chunk-options.html#cb114-2" tabindex="-1"></a><span class="in">print(cars)</span></span>
-<span id="cb114-3"><a href="3.3-chunk-options.html#cb114-3" tabindex="-1"></a><span class="in">```</span></span></code></pre></div>
+<div class="sourceCode" id="cb125"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb125-1"><a href="3.3-chunk-options.html#cb125-1" tabindex="-1"></a><span class="in">```{r out.lines = 4}</span></span>
+<span id="cb125-2"><a href="3.3-chunk-options.html#cb125-2" tabindex="-1"></a><span class="in">print(cars)</span></span>
+<span id="cb125-3"><a href="3.3-chunk-options.html#cb125-3" tabindex="-1"></a><span class="in">```</span></span></code></pre></div>
 <pre><code>##    speed dist
 ## 1      4    2
 ## 2      4   10
 ## 3      7    4
 ....</code></pre>
 <p>And you see four lines of output as expected.</p>
-<div class="sourceCode" id="cb116"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb116-1"><a href="3.3-chunk-options.html#cb116-1" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">head</span>(cars, <span class="dv">10</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb127"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb127-1"><a href="3.3-chunk-options.html#cb127-1" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">head</span>(cars, <span class="dv">10</span>))</span></code></pre></div>
 <pre><code>##    speed dist
 ## 1      4    2
 ## 2      4   10
@@ -1004,9 +1103,9 @@ div.csl-indent {
 ## 9     10   34
 ## 10    11   17</code></pre>
 <p>Since we have stored the original <code>output</code> hook in <code>hook_output</code>, we can restore it by calling the <code>set()</code> method again:</p>
-<div class="sourceCode" id="cb118"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb118-1"><a href="3.3-chunk-options.html#cb118-1" tabindex="-1"></a>knitr<span class="sc">::</span>knit_hooks<span class="sc">$</span><span class="fu">set</span>(<span class="at">output =</span> hook_output)</span></code></pre></div>
+<div class="sourceCode" id="cb129"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb129-1"><a href="3.3-chunk-options.html#cb129-1" tabindex="-1"></a>knitr<span class="sc">::</span>knit_hooks<span class="sc">$</span><span class="fu">set</span>(<span class="at">output =</span> hook_output)</span></code></pre></div>
 <p>Now we print the data frame again. The default behavior is to print the whole data frame.</p>
-<div class="sourceCode" id="cb119"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb119-1"><a href="3.3-chunk-options.html#cb119-1" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">head</span>(cars, <span class="dv">10</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb130"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb130-1"><a href="3.3-chunk-options.html#cb130-1" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">head</span>(cars, <span class="dv">10</span>))</span></code></pre></div>
 <pre><code>##    speed dist
 ## 1      4    2
 ## 2      4   10

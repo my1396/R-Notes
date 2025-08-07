@@ -235,7 +235,7 @@ Book formats:
 
 
   2. Alternatively, use `extra_dependencies` to  list a character vector of LaTeX packages. This is useful if you need to load multiple packages:
-    
+
     ```yaml
     ---
     title: "Untitled"
@@ -979,7 +979,7 @@ You may use `knitr::opts_chunk$set()` to change the default values of chunk opti
 | `include=TRUE`       | Whether to include the <span style='color:#32CD32'>chunk **code and output**</span> in the output document—including source code, text output, messages, warnings, and plots. <br />If `FALSE`, nothing will be written into the output document, but the code is <u>still evaluated</u> and plot files are generated if there are any plots in the chunk, so you can manually insert figures later. |
 | `message=TRUE`       | Whether to preserve messages emitted by `message()`          |
 | `warning=TRUE`       | Whether to show warnings in the output produced by `warning()`. |
-| `results='markup'`   | Controls how to display the text results. <br />When `results='markup'` that is to write text output as-is, i.e., write the raw text results directly into the output document without any markups.<br />Useful when printing `stargazer` tables. |
+| `results='markup'`   | Controls how to display the text results. <br />When `results='asis'` that is to write text output as-is, i.e., write the raw text results directly into the output document without any markups.<br />Useful when printing `stargazer` tables. |
 | `comment='##'`       | The prefix to be added before each line of the text output. <br />Set `comment = ''` remove the default `##`. |
 | `collapse=FALSE`     | Whether to, if possible, collapse all the source and output blocks from one code chunk into a single block (by default, they are written to separate blocks). <br />This option only applies to Markdown documents. |
 | `fig.keep='high'`    | How plots in chunks should be kept. <br />`high`: Only keep high-level plots (merge low-level changes into high-level plots). <br />`none`: Discard all plots. <br />`all`: Keep all plots (low-level plot changes may produce new plots). <br />`first`: Only keep the first plot. <br />`last`: Only keep the last plot. <br />If set to a numeric vector, the values are indices of (low-level) plots to keep.<br />If you want to choose the second to the fourth plots, you could use `fig.keep = 2:4` (or remove the first plot via `fig.keep = -1`). |
@@ -991,7 +991,13 @@ You may use `knitr::opts_chunk$set()` to change the default values of chunk opti
 
 <span style='color:#32CD32'>`results='markup'`</span>  note plural form for result**s**.
 
-- `results='markup'`: Default. Mark up text output with the appropriate environments depending on the output format. For example, for R Markdown, if the text output is a character string `"[1] 1 2 3"`, the actual output that **knitr** produces will be:
+- `results='markup'`: Defaults to `` `markup` ``. Mark up text output with the appropriate environments depending on the output format. 
+
+  `results='markup'` means to put the text output in fenced code blocks (```` ``` ````), treat output **verbatim**. → Not interpreted as Markdown.
+
+  Useful when you just want to show plain output, like from `print()`, `cat()`, or basic text generation.
+
+  For example, for R Markdown, if the text output is a character string `"[1] 1 2 3"`, the actual output that **knitr** produces will be:
 
   ~~~r
   ```
@@ -999,16 +1005,94 @@ You may use `knitr::opts_chunk$set()` to change the default values of chunk opti
   ```
   ~~~
 
-  In this case, `results='markup'` means to put the text output in fenced code blocks (```).
+  Ex2
 
-- `results='asis'`: Write text output as-is, i.e., write the raw text results directly into the output document without any markups.
+  ````markdown
+  ```{r, results='asis'}`r ''`
+  cat("I'm raw **Markdown** content.\n")
+  ```
+  ````
+
+  will be rendered as
+
+  ````markdown
+  ```
+  I'm raw **Markdown** content.
+  ```
+  ````
+
+  Any markdown format like `**` will not be rendenered as bold; will be printed as plain source code output. 
+
+- `results='asis'`: Write text output as-is, i.e., write the raw text results directly into the output document without any markups. → Output is interpreted as Markdown.
+
+  Useful when you want to genrates Markdown that will be rendered directly.
+
+  - You must ensure the output is valid Markdown, or it may break the document.
+
+  **Ex1**
 
   ````md
   ```{r, results='asis'}`r ''`
   cat("I'm raw **Markdown** content.\n")
   ```
   ````
-  
+
+  Will be rendered as
+
+  > I'm raw **Markdown** content.
+
+  **Ex2**
+
+  ````
+  ```{r, results='asis'}`r ''`
+  cat("## This is a level-2 header\n")
+  cat("*This will be italicized*\n")
+  cat("**This will be bold**\n")
+  ```
+  ````
+
+  Will be rendered as
+
+  > <h2>This is a level-2 header</h2>
+  >
+  > *This will be italicized*
+  >
+  > **This will be bold**
+
+  **In summary, all formats will be applied.**
+
+  **Other use cases:**
+
+  - This can be particularly useful when you want to generate content dynamically from R code.
+
+    ````markdown
+    ```{r, results='asis'}`r ''`
+    cat(paste0("- `", names(iris), "`"), sep = "\n")
+    ```
+    ````
+
+    will be rendered as
+
+    ```markdown
+    - `Sepal.Length`
+    - `Sepal.Width`
+    - `Petal.Length`
+    - `Petal.Width`
+    - `Species`
+    ```
+
+  - Use `stargazer` to generate LaTeX tables.
+
+    ````markdown
+    ```{r, include=TRUE, results='asis'}`r ''`
+    stargazer(capm_ml, FF_ml, type='latex', header=FALSE,
+              digits=4, no.space = TRUE,
+              title="Regression Results for META",
+              label = "tab:reg-table")
+    ```
+    ````
+
+    This will outout LaTeX code to your document, which will be formatted scientifically.
 
   Sometime, you encounter the following error messages when you have R codes within `enumerate` environment.
 
@@ -1038,10 +1122,83 @@ You may use `knitr::opts_chunk$set()` to change the default values of chunk opti
   
   Often used to suppress messages from packages that are not relevant to the output document, such as package loading messages.
 
+--------------------------------------------------------------------------------
+
+### Global `knitr` Options
+
+First check your configuration (`_bookdown.yml`)
+
+- when you are using `new_session = FALSE`, use `index.Rmd` to set global options. It will be applied to all files in the book.
+
+- if you are using `new_session = TRUE`, you need to <span style="color: #008B45;">apply them per file</span> because each file is knitted independently.
+  
+  You can create a file with the common R code and load this file in each document.
+
+
+**Read external scripts into a chunk**
+
+Two options if you want to read external scripts:
+
+- Source `.R` scripts
+
+  ````markdown
+  ```{r}`r ''`
+  source("setup.R")
+  ```
+  ````
+
+  You will NOT be able to see the source code by default. You can use `source(..., echo = TRUE)`, but the source code will NOT be properly syntax highlighted.
+
+- Use the `file` option of a chunk.
+
+  This method allows you to see the source code, and it has proper syntax highlighting.
+
+  ````markdown
+  ```{r file='setup.R'}`r ''`
+  ```
+  ````
+
+  You can load as many scripts as you want, just put them in a character vector:
+
+  ````markdown
+  ```{r file=c('one.R', 'two.R')}`r ''`
+  ```
+  ````
+
+  You can even read scripts of other languages.
+
+  ````markcown
+  ```{python, file='script.py'}`r ''`
+  ```
+  ````
+
+
+
+**`.Rmd` files**
+
+If we have R Markdown documents that we want to share across several pages in the website, we can include them in the parent `.Rmd` document using the `child` chunk option. 
+
+Note that the child `.Rmd` files need to be named with a leading `_` so they are not compiled as standalone documents during the site rendering.
+
+````markdown
+```{r, child = "_setup.Rmd", include=FALSE}`r ''`
+```
+````
+
+
+**In summary**
+
+- In the .Rmd files, source an `R` script and include a child `.Rmd`
+
+
+Ref:
+
+- [R Markdown Cookbook: §16.2 Read external scripts into a chunk](https://bookdown.org/yihui/rmarkdown-cookbook/option-code.html)
+
 
 --------------------------------------------------------------------------------
 
-### Hooks {.unnumbered}
+### Hooks
 
 The object `knit_hooks` in the **knitr** package is used to set hooks; the basic usage is `knitr::knit_hooks$set(name = FUN)` (see [objects](https://yihui.org/knitr/objects/) for details) where `name` is the name of a chunk option (can be arbitrary), and `FUN` is a function. 
 
@@ -1244,7 +1401,10 @@ This method makes use of **Markdown Syntax** for code.
 Q: What is the Markdown Syntax for code?  
 A: 
 
-- Inline code use a pair of backticks, e.g., `` `code` ``.  To use $n$ literal backticks, use at least $n+1$ backticks outside. Note that use a space to separate your outside backticks from your literal backtick(s). For example, to generate `` `code` ``, you use ``` ``␣`code`␣`` ``` (i.e., two backticks + space + one backtick + `code` + one backtick + space + two backticks). Note that you need to write sequentially.
+- Inline code use a pair of backticks, e.g., `` `code` ``.  To use $n$ literal backticks, use at least $n+1$ backticks outside. 
+  - Note that use <span style="color: #008B45;">a space</span> (`␣`) to separate your outside backticks from your literal backtick(s). 
+    
+    For example, to generate `` `code` ``, you use ``` ``␣`code`␣`` ``` (i.e., two backticks + space + one backtick + `code` + one backtick + space + two backticks). Note that you need to write sequentially.
 
 - Plain code blocks can be written either
 

@@ -1,7 +1,7 @@
 --- 
 title: "R Notes"
 author: "Menghan Yuan"
-date: "2025-08-05"
+date: "2025-08-06"
 site: bookdown::bookdown_site
 bibliography: [book.bib, packages.bib]
 # url: your book url like https://bookdown.org/yihui/bookdown
@@ -27,6 +27,7 @@ classoption:
   - twoside
   - openright
 ---
+
 
 # About
 
