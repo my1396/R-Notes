@@ -72,7 +72,7 @@ Where do the YAML fields in rmd come from?
 
 YAML can set values of the template variables, such as `title`, `author`, and `date` of the document. 
 
-- The `output` field is used by rmarkdown to apply the <span style='color:#008B45'>**output format function**</span> `rmarkdown::html_document()` in the rendering process.
+- The `output` field is used by rmarkdown to apply the <span class="env-green">**output format function**</span> `rmarkdown::html_document()` in the rendering process.
 
   There are two types of output formats in the **rmarkdown** package: documents (e.g., `pdf_document`), and presentations (e.g., `beamer_presentation`).
 
@@ -92,7 +92,7 @@ YAML can set values of the template variables, such as `title`, `author`, and `d
 
 **`bookdown` wrappers** of base markdown format
 
-<span style='color:#008B45'>`bookdown` output formats</span> allow numbering and cross-referencing figures/tables/equations. It takes the format `html_document2`, in general, `markdown_document2` is a wrapper for the base format `markdown_document`. With the `bookdown` output format, you can cross-reference sections by their ID's using the same syntax when sections are numbered. 
+<span class="env-green">`bookdown` output formats</span> allow numbering and cross-referencing figures/tables/equations. It takes the format `html_document2`, in general, `markdown_document2` is a wrapper for the base format `markdown_document`. With the `bookdown` output format, you can cross-reference sections by their ID's using the same syntax when sections are numbered. 
 
 Other bookdown output format examples for **single documents**: `bookdown::pdf_document2`, `bookdown::beamer_presentation2`, `bookdown::tufte_html2`, `bookdown::word_document2`. See Page 12 of the [reference manual](https://cran.r-project.org/web/packages/bookdown/bookdown.pdf) for a complete list of supported formats by `bookdown`.
 
@@ -118,7 +118,7 @@ Book formats:
 ### Top-level YAML metadata
 
 
-- Many aspects of the LaTeX template used to create PDF documents can be customized using <span style='color:#008B45'>**top-level**</span> [YAML metadata](https://bookdown.org/yihui/rmarkdown/pdf-document.html#tab:latex-vars) (note that these options do <span style='color:#FF9900'>**NOT**</span> appear underneath the `output` section, but rather appear at the top level along with `title`, `author`, and so on). For example:
+- Many aspects of the LaTeX template used to create PDF documents can be customized using <span class="env-green">**top-level**</span> [YAML metadata](https://bookdown.org/yihui/rmarkdown/pdf-document.html#tab:latex-vars) (note that these options do <span style='color:#FF9900'>**NOT**</span> appear underneath the `output` section, but rather appear at the top level along with `title`, `author`, and so on). For example:
 
   ```yaml
   ---
@@ -278,7 +278,7 @@ Book formats:
 
     - `keep_tex: true`  if you want to keep intermediate TeX. Easy to debug. Defaults to `false`.
 
-    To learn which arguments a format takes, read the format's help page in R, e.g. <span style='color:#008B45'>**`?html_document`**</span>.
+  To learn which arguments a format takes, read the format's help page in R, e.g. <span class="env-green">**`?html_document`**</span>.
 
 
 --------------------------------------------------------------------------------
@@ -419,7 +419,7 @@ output:
 
 ### Loading LaTeX packages {.unlisted .unnumbered}
 
-We can load additional LaTeX packages using the [`extra_dependencies`](https://bookdown.org/yihui/rmarkdown-cookbook/latex-extra.html) option <span style='color:#008B45'>**within** the `pdf_document`</span> YAML settings. 
+We can load additional LaTeX packages using the [`extra_dependencies`](https://bookdown.org/yihui/rmarkdown-cookbook/latex-extra.html) option <span class="env-green">**within** the `pdf_document`</span> YAML settings. 
 
 This allows us to provide a list of LaTeX packages to be loaded in the intermediate LaTeX output document, e.g.,
 
@@ -698,7 +698,7 @@ There is one function that can do the processes mentioned above: [`rmarkdown::re
 | Arguments        | Definition                                                                                                                                                                                                                                                                                                                                                                                                     |
 | ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `output_format`  | - `"all"` will render all formats define within the file<br />- Name of a format, e.g., `html_document`, will render to that single format<br />- An output format object, e.g., `html_document(toc = TRUE, toc_depth = 2, includes = includes(before_body = "header.htm"))`, where you can pass on the argument                                                                                               |
-| `output_options` | - **List** of output options that can override the options specified in metadata (e.g could be used to force `self_contained` or `mathjax = "local"`). <br />- Note that this is <span style='color:#008B45'>only valid when the output format is read from **metadata**</span> (i.e. not a custom format object passed to output_format).<br />- `output_options` cannot work together with `xxx_document()`. |
+| `output_options` | - **List** of output options that can override the options specified in metadata (e.g could be used to force `self_contained` or `mathjax = "local"`). <br />- Note that this is <span class="env-green">only valid when the output format is read from **metadata**</span> (i.e. not a custom format object passed to output_format).<br />- `output_options` cannot work together with `xxx_document()`. |
 | `output_yaml`    | Paths to YAML files specifying output formats and their configurations. The first existing one is used. If none are found, then the function searches YAML files specified to the `output_yaml` top-level parameter in the YAML front matter, `_output.yml` or `_output.yaml`, and then uses the first existing one.                                                                                           |
 
 Use examples of `render`, using **output format objects**

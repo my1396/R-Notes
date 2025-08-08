@@ -47,7 +47,7 @@ While nearly everything in Stata can be done via the menus, you're better off ty
 
 ### Do-file {.unlisted .unnumbered}
 
-It is <span style='color:#008B45'>**recommended** to run `do` files as a whole</span>. (This is different than R.) 
+It is <span class="env-green">**recommended** to run `do` files as a whole</span>. (This is different than R.) 
 
 You <span style='color:#FF9900'>**cannot**</span> re-run commands freely in Stata. 
 
@@ -268,7 +268,7 @@ summarize marriage_rate divorce_rate if region == "West"
 
 - `&` (and) and `|` (or) to join conditions.
 
-<span style='color:#008B45'>`in range`</span> restricts the scope of the cmd to be applied to a specific observation range.
+<span class="env-green">`in range`</span> restricts the scope of the cmd to be applied to a specific observation range.
 
 - First observation can be denoted by `f`
 - Last observation can be denoted by `l`
@@ -300,7 +300,7 @@ replace variable = expression  // replace the value of existing variables
 
 `generate exp2 = exp^2` generate the square of `exp`
 
-`egen`: Extensions to `generate`; creates a new variable based on <span style='color:#008B45'>`egen` functions</span> of existing variables.
+`egen`: Extensions to `generate`; creates a new variable based on <span class="env-green">`egen` functions</span> of existing variables.
 
 Q: What are `egen` functions? \
 A: The functions are specifically written for `egen`.
@@ -518,7 +518,7 @@ By default, `xi` will create interaction variables starting with `_I`.  This can
 | `i.varname`                                              | creates dummies for categorical variable `varname`           |
 | `i.varname1*i.varname2`                                  | creates dummies for categorical variables `varname1` and `varname2`: main effects and all interactions |
 | `i.varname1*varname3`                                    | creates dummies for categorical variable `varname1` and *continuous* variable `varname3`: main effects and all interactions |
-| <span style='color:#008B45'>`i.varname1|varname3`</span> | creates dummies for categorical variable `varname1` and *continuous* variable `varname3`: all interactions and main effect of `varname3`, but <span style='color:#FF9900'>**NO**</span> main effect of `varname1` |
+| <span class="env-green">`i.varname1|varname3`</span> | creates dummies for categorical variable `varname1` and *continuous* variable `varname3`: all interactions and main effect of `varname3`, but <span style='color:#FF9900'>**NO**</span> main effect of `varname1` |
 
 - `xi` expands both numeric and string categorical variables.
 
@@ -974,7 +974,7 @@ forecast estimates modelname [, options]
 
   `forecast estimates` creates a new variable in the dataset for each element of `namelist`.  
 
-  You <span style='color:#008B45'>**MUST**</span> use this option of any of the LHS variables contains time series operators, e.g., `D.`, `L.`.
+  You <span class="env-green">**MUST**</span> use this option of any of the LHS variables contains time series operators, e.g., `D.`, `L.`.
   
   If a variable of the same name already exists in your dataset, `forecast estimates` exits with an error unless you specify the `replace` option, in which case existing variables are overwritten.
   
@@ -1048,11 +1048,11 @@ forecast coefvector cname [, options ]
 
 **Options**:
 
-- `variance(vname)`: specify parameter variance matrix of the <span style='color:#008B45'>**estimated parameters**</span>.
+- `variance(vname)`: specify parameter variance matrix of the <span class="env-green">**estimated parameters**</span>.
 
   This option only has an effect if you specify the `simulate()` option when calling `forecast solve` and request `sim_technique`’s `betas` or `residuals`.
 
-- `errorvariance(ename) `: specify <span style='color:#008B45'>**additive error term**</span> with variance matrix `ename`, where `ename` is the name of s Stata matrix. The number of rows and columns in `ename` must match the number of equations represented by coefficient vector `cname`. 
+- `errorvariance(ename) `: specify <span class="env-green">**additive error term**</span> with variance matrix `ename`, where `ename` is the name of s Stata matrix. The number of rows and columns in `ename` must match the number of equations represented by coefficient vector `cname`. 
 
   This option only has an effect if you specify the `simulate()` option when calling `forecast solve` and request `sim_technique`’s `betas` or `residuals`.
 
@@ -1150,7 +1150,7 @@ forecast solve [, { prefix(string) | suffix(string) } options ]
 
   **Actual values** of variables are used wherever lagged values of the endogenous variables appear in the model. Static forecasts are also called **one-step-ahead forecasts**.
 
-  By default, <span style='color:#008B45'>**dynamic forecasts**</span> are produced, which use the *forecast values of variables wherever lagged values of the endogenous variables* appear in the model. 
+  By default, <span class="env-green">**dynamic forecasts**</span> are produced, which use the *forecast values of variables wherever lagged values of the endogenous variables* appear in the model. 
 
 - `actuals` use actual values if available instead of forecasts
 
@@ -1248,7 +1248,7 @@ forecast identity dim = exp(lndim)
 ```
 
 We used forecast adjust to perform our adjustment to `dlndim` immediately after we added those estimation results so that we would not forget to do so.
-However, we <span style='color:#008B45'>could specify the adjustment at any time</span>. 
+However, we <span class="env-green">could specify the adjustment at any time</span>. 
 
 Regardless of when you specify an adjustment, `forecast solve` performs those adjustments immediately after the variable being adjusted is computed.
 

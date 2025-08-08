@@ -63,7 +63,7 @@ if(file.exists(data)){
 
 https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/sprintf
 
-- <span style='color:#008B45'>**re-use one argument**</span> in `fmt`: add <span style='color:#008B45'>`1$`</span> between `%`  and `s`, numbers specify the position, `$` as place holder; 
+- <span class="env-green">**re-use one argument**</span> in `fmt`: add <span class="env-green">`1$`</span> between `%`  and `s`, numbers specify the position, `$` as place holder; 
 
   Immediately after `%` may come `1$` to `99$` to refer to a numbered argument.
 
@@ -174,7 +174,7 @@ The `cat` function, in contrast, **interprets** code-specific information (e.g. 
 
 Creating a comma separated string vector
 
-- <span style='color:#008B45'>single quotes</span>
+- <span class="env-green">single quotes</span>
 
   ```r
   > paste(shQuote(seq(1:5)), collapse=", ")

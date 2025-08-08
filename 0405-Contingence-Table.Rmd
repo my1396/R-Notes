@@ -47,15 +47,15 @@ count(hers.no, exercise)
 
 #### The `table()` Function {-}
 
--   <span style='color:#008B45'>Frequency table</span> if providing one variable
--   <span style='color:#008B45'>Cross tabulation table</span> with proportion if providing multiple variables
+-   <span class="env-green">Frequency table</span> if providing one variable
+-   <span class="env-green">Cross tabulation table</span> with proportion if providing multiple variables
 
 ```r
 # contingency table between chd69 and smoke
 with(contingency_data, table(chd69, smoke))
 ```
 
-A relative frequency table can be produced using the function <span style='color:#008B45'>`prop.table(x, margin=NULL)`</span>, which takes a table object as argument:
+A relative frequency table can be produced using the function <span class="env-green">`prop.table(x, margin=NULL)`</span>, which takes a table object as argument:
 
 `margin`: `1` indicates rows, `2` indicates columns.
 
@@ -114,7 +114,7 @@ apply(x, 2, function(col) cut(col, breaks=breaks, labels=labels) %>% table())
 
 #### The `xtabs()` Function {-}
 
-<span style='color:#008B45'>`xtabs(formula = ~., data)`</span>	Create a <u>contingency table</u> from cross-classfifying factors.
+<span class="env-green">`xtabs(formula = ~., data)`</span>	Create a <u>contingency table</u> from cross-classfifying factors.
 
 We now create a cross-tabulated table to see how occurrences break down across age and gender. Notice we use the `cut()` function to quickly create 4 arbitrary age groups containing equal numbers of people. 
 
@@ -141,7 +141,7 @@ cut(age, 4)  0  1
 
 ### Working with Arrays and Multi-dimensional Tables
 
-The returned table works like an <span style='color:#008B45'>`array`</span>. 
+The returned table works like an <span class="env-green">`array`</span>. 
 
 #### Array Creation and Manipulation {-}
 
@@ -169,7 +169,7 @@ array(1:24, dim=c(2,3,4))
 array(1:24, dim=2:4)
 ```
 
-`aperm(a, perm)` <span style='color:#008B45'>Transpose an array</span> by permuting its dimensions.
+`aperm(a, perm)` <span class="env-green">Transpose an array</span> by permuting its dimensions.
 
 - `perm`  	the subscript permutation vector, usually a permutation of the integers `1:n`, where `n` is the number of dimensions of `a`.
 
@@ -251,7 +251,7 @@ a <- abind(a, matrix(7,nrow=2,ncol=3), along=3)
 
 #### Creating Flat Tables with `ftable()` {-}
 
-<span style='color:#008B45'>**Save `ftable()` output to csv**</span>
+<span class="env-green">**Save `ftable()` output to csv**</span>
 
 Save to local and you'll be able to read the data afterwards.
 
@@ -456,7 +456,7 @@ Male   1st             0   118     5    57
 
 #### Professional Table Display with `flextable` {-}
 
-<span style='color:#008B45'>**Print crosstabs using `flextable`**</span>
+<span class="env-green">**Print crosstabs using `flextable`**</span>
 
 Good for visualization because they have good typesettings. But you won't be able to read the data easily as they are buried in tablel aesthetics.
 

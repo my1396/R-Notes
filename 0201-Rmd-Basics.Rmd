@@ -101,6 +101,10 @@ html_document:
   highlight: tango
 ```
 
+- `theme` specifies the theme to use for the presentation (available themes are `"default"`, `"simple"`, `"sky"`, `"beige"`, `"serif"`, `"solarized"`, `"blood"`, `"moon"`, `"night"`, `"black"`, `"league"`, and `"white"`).
+- [`highlight`](https://elastic-lovelace-155848.netlify.app/highlighters.html) specifies the syntax highlighting style. Supported styles include `"default"`, `"tango"`, `"pygments"`, `"kate"`, `"monochrome"`, `"espresso"`, `"zenburn"`, and `"haddock"`. Pass null to prevent syntax highlighting.
+
+
 --------------------------------------------------------------------------------
 
 

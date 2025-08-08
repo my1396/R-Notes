@@ -526,7 +526,7 @@ Convert a matrix to a vector
 
 
 
-<span style='color:#008B45'>**`unlist()`**</span> TL;DR: takes in a list, returns a vector. 
+<span class="env-green">**`unlist()`**</span> TL;DR: takes in a list, returns a vector. 
 
 It “un-lists” **nested lists** or vectors and converts them into a simple atomic vector. In other words, it takes a list that contains other lists, vectors, or atomic elements and flattens it into a single vector.
 
