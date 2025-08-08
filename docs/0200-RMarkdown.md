@@ -168,7 +168,7 @@ Book formats:
     Q: Why Inner margin is narrow?  
     A: The reason for this is that with two pages side by side, you actually have only THREE margins - the left, right and middle. The middle margin is made up from the inside margins of both pages, and so these are smaller because they add together to make the middle margin. If they were bigger, then you would end up with too much whitespace in the middle.
 
-    ```r
+    ```
     o - outside margin
     i - inside margin
     b - binding offset
@@ -1377,14 +1377,14 @@ References:
 
 - use `knitr::inline_expr`.
 
-``````markdown
+````markdown
 ---
 title: "Test inline expr"
 output: html_document
 ---
 
 To use `chunk_reveal("walrus", title = "## Walrus operator")` inline, you can wrap it in R inline chunk like this `` `r chunk_reveal("walrus", title = "## Walrus operator")` ``
-``````
+````
 
 
 **Including verbatim R code chunks inside R Markdown**

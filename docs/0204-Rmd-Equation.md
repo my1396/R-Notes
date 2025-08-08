@@ -239,7 +239,7 @@ Default configuration used by the `rmarkdown` package is given by `rmarkdown:::m
 
 Change `Mathjax` configuration to `CommonHTML` using the following codes.
 
-```markdown
+```yaml
 ---
 title: "Trouble with MathJax"
 output: 
@@ -290,7 +290,7 @@ Q: How to define custom macros that can be used in live equation preview in RStu
 
 A: Go to `/Applications/RStudio.app/Contents/Resources/app/resources/mathjax-27/config/TeX-MML-AM_CHTML.js`, add your custom macros as follows.
 
-```css
+```javascript
 MathJax.Hub.Config({
   extensions: ['[a11y]/accessibility-menu.js'],
   TeX: {
