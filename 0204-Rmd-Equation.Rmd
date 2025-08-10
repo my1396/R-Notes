@@ -15,7 +15,7 @@ Rstudio equation previews do NOT work well with indented equations. $\rightarrow
 
 **Multi-case** functions using `\begin{cases}`
 
-```markdown
+```latex
 \begin{align*}
 I_t = 
 \begin{cases}
@@ -76,7 +76,7 @@ For equation numbering support in `bookdown::pdf_document2` you need to [assign 
 
     Then reference with <span class="env-green">`Eq. \@ref(eq:simple-lm)`</span>, e.g., see Eq. \@ref(eq:simple-lm).
 
-- Use `\@ref(eq:eq1)` (note this use parentheses) or the Latex command  `\eqref{eq:eq1}` (this uses curly braces) to cite the equation.
+- Use `\@ref(eq:eq1)` (note this uses **parentheses**) or the Latex command  `\eqref{eq:eq1}` (this uses **curly braces**) to cite the equation label.
 
 ```latex
 Load the dataset and calculate the monthly return in month $r$ ($r_t$) as
@@ -97,7 +97,7 @@ Test equation2 \eqref{eq:eq1}.
 <img src="https://drive.google.com/thumbnail?id=1mgX3uwLgTDHF0cMwn04mj9K4GjTOF4TX&sz=w1000" alt="eqn numbering in bookdown" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
 
 
-- Multilined equations.
+- **Multilined equations.**
   
   - Use the `split` environment inside `equation` so that all lines share the same number.
     
@@ -151,28 +151,46 @@ If you want to provide a specific number to the equation, you can use `\tag{XX.X
 
 - With LaTeX
   
-  LaTex allows custom labels.
+  LaTeX allows custom labels.
   
+  ```latex
+  \begin{align} \label{eq:my-label-latex} \tag{my label latex}
+  \frac{p(x)}{1-p(x)} = \exp (\beta_0+\beta_1 x) \,.
+  \end{align}
+  ```
+
+  will be rendered as
+
   \begin{align} \label{eq:my-label-latex} \tag{my label latex}
   \frac{p(x)}{1-p(x)} = \exp (\beta_0+\beta_1 x) \,.
   \end{align}
 
   My specific label here, see eq \eqref{eq:my-label-latex} (`\eqref{eq:my-label-latex}`).
-
+  
+  Cross reference using bookdown does NOT work: \@ref{eq:my-label-latex} (eq. `\@ref(eq:my-label-latex)`).
 
 --------------------------------------------------------------------------------
 
 - With `bookdown`
   
-  `bookdown` does NOT support custom tag though.
+  `bookdown` does NOT support custom tag though. Don't use this.
   
-  $$
+  ```latex
   \begin{align}
   \frac{p(x)}{1-p(x)} = \exp (\beta_0+\beta_1 x) \,.
-  (\#eq:my-label-bookdown)
+  (\#eq:my-label-bookdown) \tag{my label bookdown}
+  \end{align}
+  ```
+  
+  will be rendered as
+  
+  $$
+  \begin{align} (\#eq:my-label-bookdown) \tag{my label bookdown}
+  \frac{p(x)}{1-p(x)} = \exp (\beta_0+\beta_1 x) \,.
   \end{align}
   $$
   
+  The equation does not show properly; there are two `\tag{}`.
   My specific label here, see eq \@ref(eq:my-label-bookdown) (eq. `\@ref(eq:my-label-bookdown)`).
 
 --------------------------------------------------------------------------------
@@ -303,7 +321,9 @@ MathJax.Hub.Config({
 });
 ```
 
-RStudio functions like a web browser, you can a web inspector to inspect every element of the appearance. 
+**RStudio DevTools**
+
+RStudio functions like a web browser, you can use a web inspector to inspect every element of the appearance. 
 Simply right-click pretty much anywhere on RStudio, and hit "Inspect Element" and **RStudio DevTools** will appear.
 
 The MathJax supporting files can be found in `Sources` → `Page` → `Electron Isolated Context` → `mathjax`.
