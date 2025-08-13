@@ -104,7 +104,7 @@ Environment Variables examples:
 
 
 
-[Rstudio doesnn't load Rprofile or Renviron](https://community.rstudio.com/t/rstudio-doesnnt-load-rprofile-or-renviron/57721)
+[Rstudio doesn't load Rprofile or Renviron](https://community.rstudio.com/t/rstudio-doesnnt-load-rprofile-or-renviron/57721)
 
 I store my `Rprofile` and `Renviron` in non-default places (i.e. `~/.config/R`). When opening `R` in a normal shell, my environment is loaded perfectly fine. When opening Rstudio, it doesn't load my options, settings or paths.
 
@@ -156,7 +156,7 @@ R will source only one `.Rprofile` file.  If there is a project-level `.Rprofile
 
 So if you have both a project-specific `.Rprofile` file and a user `.Rprofile` file that you want to use, you explicitly source the user-level `.Rprofile` at the top of your project-level `.Rprofile` with `source("~/.Rprofile")`.
 
-`.Rprofile` files are sourced as regular R code, so setting environment variables must be done inside a `Sys.setenv(key = "value")` call.
+`.Rprofile` files are sourced as <span class="env-green">**regular R code**</span>, so setting environment variables must be done inside a `Sys.setenv(key = "value")` call.
 
 --------------------------------------------------------------------------------
 

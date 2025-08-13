@@ -49,11 +49,15 @@ Double curly braces `{{}}` are used programming with `tidyverse`. See the `dplyr
 ```R
 datalist = list(mtcars = mtcars, pressure=pressure)
 saveRDS(datalist, "twodatasets.RDS")
-rm(list=ls())
+rm(list = ls())
 
 datalist = readRDS("twodatasets.RDS")
 datalist
 ```
+
+`rm(list = ls())` removes all objects in the current environment. It will not unload the packages that you have loaded.
+
+If you want to both remove all objects and unload all packages, you can restart your R session.
 
 
 --------------------------------------------------------------------------------
@@ -607,6 +611,8 @@ mtcars$mpg[mtcars$cyl == 8  &  mtcars$disp > 350]
 
 ### Control Structures
 
+Note all keywords are lowercase here.
+
 A 'do ... until' loop in R:
 
 ```r
@@ -621,6 +627,22 @@ while(TRUE){
 }
 ```
 
+`break` statement can break out of a loop. 
+
+`next` statement causes the loop to skip the current iteration and start the next one. 
+
+`switch(exp, case1, case2, ...)` the expression is matched with the list of values and the corresponding value is returned.
+
+```r
+a <- 4
+switch(a,
+       "1"="this is the first case in switch",
+       "2"="this is the second case in switch",
+       "3"="this is the third case in switch",
+       "4"="this is the fourth case in switch",
+       "5"="this is the fifth case in switch"
+       )
+```
 
 
 **`ifelse(test_expression, x, y)`**
@@ -629,3 +651,6 @@ The returned vector has element from `x` if the corresponding value of `test_exp
 
 That is the `i-th` element of result will be `x[i]` if `test_expression[i]` is `TRUE` else it will take the value of `y[i]`.
 
+ref: 
+
+- [R programming for Data Science, chap 13, control structures](https://bookdown.org/rdpeng/rprogdatascience/control-structures.html)

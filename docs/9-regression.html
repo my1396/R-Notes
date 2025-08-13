@@ -29,7 +29,7 @@ set in the _output.yml file.</p>" />
 <meta name="author" content="Menghan Yuan" />
 
 
-<meta name="date" content="2025-08-08" />
+<meta name="date" content="2025-08-12" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -754,14 +754,14 @@ div.csl-indent {
 <div id="regression" class="section level1 hasAnchor" number="9">
 <h1><span class="header-section-number">Chapter 9</span> Regression<a href="9-regression.html#regression" class="anchor-section" aria-label="Anchor link to header"></a></h1>
 <p>Use example:</p>
-<div class="sourceCode" id="cb664"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb664-1"><a href="9-regression.html#cb664-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb664-2"><a href="9-regression.html#cb664-2" tabindex="-1"></a>reg_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;https://raw.githubusercontent.com/my1396/course_dataset/refs/heads/main/META_monthly_factor_model_2014-2024.csv&quot;</span>)</span>
-<span id="cb664-3"><a href="9-regression.html#cb664-3" tabindex="-1"></a>reg_data <span class="ot">&lt;-</span> reg_data <span class="sc">%&gt;%</span> </span>
-<span id="cb664-4"><a href="9-regression.html#cb664-4" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">return =</span> adjusted<span class="sc">/</span><span class="fu">lag</span>(adjusted)<span class="sc">-</span><span class="dv">1</span>,</span>
-<span id="cb664-5"><a href="9-regression.html#cb664-5" tabindex="-1"></a>           <span class="at">eRi =</span> return<span class="sc">-</span>RF)</span>
-<span id="cb664-6"><a href="9-regression.html#cb664-6" tabindex="-1"></a><span class="do">## CAPM</span></span>
-<span id="cb664-7"><a href="9-regression.html#cb664-7" tabindex="-1"></a>capm_ml <span class="ot">&lt;-</span> <span class="fu">lm</span>(eRi<span class="sc">~</span>rmrf, <span class="at">data=</span>reg_data)</span>
-<span id="cb664-8"><a href="9-regression.html#cb664-8" tabindex="-1"></a><span class="fu">summary</span>(capm_ml)</span></code></pre></div>
+<div class="sourceCode" id="cb665"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb665-1"><a href="9-regression.html#cb665-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb665-2"><a href="9-regression.html#cb665-2" tabindex="-1"></a>reg_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;https://raw.githubusercontent.com/my1396/course_dataset/refs/heads/main/META_monthly_factor_model_2014-2024.csv&quot;</span>)</span>
+<span id="cb665-3"><a href="9-regression.html#cb665-3" tabindex="-1"></a>reg_data <span class="ot">&lt;-</span> reg_data <span class="sc">%&gt;%</span> </span>
+<span id="cb665-4"><a href="9-regression.html#cb665-4" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">return =</span> adjusted<span class="sc">/</span><span class="fu">lag</span>(adjusted)<span class="sc">-</span><span class="dv">1</span>,</span>
+<span id="cb665-5"><a href="9-regression.html#cb665-5" tabindex="-1"></a>           <span class="at">eRi =</span> return<span class="sc">-</span>RF)</span>
+<span id="cb665-6"><a href="9-regression.html#cb665-6" tabindex="-1"></a><span class="do">## CAPM</span></span>
+<span id="cb665-7"><a href="9-regression.html#cb665-7" tabindex="-1"></a>capm_ml <span class="ot">&lt;-</span> <span class="fu">lm</span>(eRi<span class="sc">~</span>rmrf, <span class="at">data=</span>reg_data)</span>
+<span id="cb665-8"><a href="9-regression.html#cb665-8" tabindex="-1"></a><span class="fu">summary</span>(capm_ml)</span></code></pre></div>
 <pre><code>## 
 ## Call:
 ## lm(formula = eRi ~ rmrf, data = reg_data)
@@ -782,35 +782,35 @@ div.csl-indent {
 ## Multiple R-squared:  0.2504, Adjusted R-squared:  0.2444 
 ## F-statistic:  41.1 on 1 and 123 DF,  p-value: 2.801e-09</code></pre>
 <p>Get the <strong>coefficient table</strong> with <code>broom::tidy</code>.</p>
-<div class="sourceCode" id="cb666"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb666-1"><a href="9-regression.html#cb666-1" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
-<span id="cb666-2"><a href="9-regression.html#cb666-2" tabindex="-1"></a><span class="fu">tidy</span>(capm_ml)</span></code></pre></div>
+<div class="sourceCode" id="cb667"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb667-1"><a href="9-regression.html#cb667-1" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
+<span id="cb667-2"><a href="9-regression.html#cb667-2" tabindex="-1"></a><span class="fu">tidy</span>(capm_ml)</span></code></pre></div>
 <pre><code>## # A tibble: 2 × 5
 ##   term        estimate std.error statistic       p.value
 ##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;         &lt;dbl&gt;
 ## 1 (Intercept)  0.00975   0.00764      1.27 0.205        
 ## 2 rmrf         1.07      0.166        6.41 0.00000000280</code></pre>
 <p>Get the <strong>variance-covariance matrix</strong> with <code>vcov</code>.</p>
-<div class="sourceCode" id="cb668"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb668-1"><a href="9-regression.html#cb668-1" tabindex="-1"></a><span class="fu">vcov</span>(capm_ml)</span></code></pre></div>
+<div class="sourceCode" id="cb669"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb669-1"><a href="9-regression.html#cb669-1" tabindex="-1"></a><span class="fu">vcov</span>(capm_ml)</span></code></pre></div>
 <pre><code>##               (Intercept)          rmrf
 ## (Intercept)  5.843866e-05 -0.0002760605
 ## rmrf        -2.760605e-04  0.0276835643</code></pre>
-<div class="sourceCode" id="cb670"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb670-1"><a href="9-regression.html#cb670-1" tabindex="-1"></a><span class="co"># verify using coef table</span></span>
-<span id="cb670-2"><a href="9-regression.html#cb670-2" tabindex="-1"></a>capm_ml <span class="sc">%&gt;%</span> </span>
-<span id="cb670-3"><a href="9-regression.html#cb670-3" tabindex="-1"></a>    <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb670-4"><a href="9-regression.html#cb670-4" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">variance=</span>std.error<span class="sc">^</span><span class="dv">2</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb671"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb671-1"><a href="9-regression.html#cb671-1" tabindex="-1"></a><span class="co"># verify using coef table</span></span>
+<span id="cb671-2"><a href="9-regression.html#cb671-2" tabindex="-1"></a>capm_ml <span class="sc">%&gt;%</span> </span>
+<span id="cb671-3"><a href="9-regression.html#cb671-3" tabindex="-1"></a>    <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb671-4"><a href="9-regression.html#cb671-4" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">variance=</span>std.error<span class="sc">^</span><span class="dv">2</span>)</span></code></pre></div>
 <pre><code>## # A tibble: 2 × 6
 ##   term        estimate std.error statistic       p.value  variance
 ##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;         &lt;dbl&gt;     &lt;dbl&gt;
 ## 1 (Intercept)  0.00975   0.00764      1.27 0.205         0.0000584
 ## 2 rmrf         1.07      0.166        6.41 0.00000000280 0.0277</code></pre>
 <p>We can manually calculate as</p>
-<div class="sourceCode" id="cb672"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb672-1"><a href="9-regression.html#cb672-1" tabindex="-1"></a>df <span class="ot">&lt;-</span> (<span class="fu">nrow</span>(capm_ml<span class="sc">$</span>model)<span class="sc">-</span><span class="dv">2</span>)  <span class="co"># degree of freedom</span></span>
-<span id="cb672-2"><a href="9-regression.html#cb672-2" tabindex="-1"></a>sigma2 <span class="ot">&lt;-</span> <span class="fu">sum</span>(capm_ml<span class="sc">$</span>residuals<span class="sc">^</span><span class="dv">2</span>)<span class="sc">/</span>df  <span class="co"># residual variance</span></span>
-<span id="cb672-3"><a href="9-regression.html#cb672-3" tabindex="-1"></a><span class="co"># 1st column of lm$model is the depend. var.</span></span>
-<span id="cb672-4"><a href="9-regression.html#cb672-4" tabindex="-1"></a>X <span class="ot">&lt;-</span> capm_ml<span class="sc">$</span>model[, <span class="dv">2</span>, drop<span class="ot">=</span><span class="cn">FALSE</span>] <span class="sc">%&gt;%</span> <span class="fu">as.matrix</span>()</span>
-<span id="cb672-5"><a href="9-regression.html#cb672-5" tabindex="-1"></a>X <span class="ot">&lt;-</span> <span class="fu">cbind</span>(<span class="dv">1</span>, X)  <span class="co"># add intercept</span></span>
-<span id="cb672-6"><a href="9-regression.html#cb672-6" tabindex="-1"></a>V <span class="ot">&lt;-</span> <span class="fu">solve</span>(<span class="fu">t</span>(X) <span class="sc">%*%</span> X) <span class="sc">*</span> sigma2</span>
-<span id="cb672-7"><a href="9-regression.html#cb672-7" tabindex="-1"></a>V</span></code></pre></div>
+<div class="sourceCode" id="cb673"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb673-1"><a href="9-regression.html#cb673-1" tabindex="-1"></a>df <span class="ot">&lt;-</span> (<span class="fu">nrow</span>(capm_ml<span class="sc">$</span>model)<span class="sc">-</span><span class="dv">2</span>)  <span class="co"># degree of freedom</span></span>
+<span id="cb673-2"><a href="9-regression.html#cb673-2" tabindex="-1"></a>sigma2 <span class="ot">&lt;-</span> <span class="fu">sum</span>(capm_ml<span class="sc">$</span>residuals<span class="sc">^</span><span class="dv">2</span>)<span class="sc">/</span>df  <span class="co"># residual variance</span></span>
+<span id="cb673-3"><a href="9-regression.html#cb673-3" tabindex="-1"></a><span class="co"># 1st column of lm$model is the depend. var.</span></span>
+<span id="cb673-4"><a href="9-regression.html#cb673-4" tabindex="-1"></a>X <span class="ot">&lt;-</span> capm_ml<span class="sc">$</span>model[, <span class="dv">2</span>, drop<span class="ot">=</span><span class="cn">FALSE</span>] <span class="sc">%&gt;%</span> <span class="fu">as.matrix</span>()</span>
+<span id="cb673-5"><a href="9-regression.html#cb673-5" tabindex="-1"></a>X <span class="ot">&lt;-</span> <span class="fu">cbind</span>(<span class="dv">1</span>, X)  <span class="co"># add intercept</span></span>
+<span id="cb673-6"><a href="9-regression.html#cb673-6" tabindex="-1"></a>V <span class="ot">&lt;-</span> <span class="fu">solve</span>(<span class="fu">t</span>(X) <span class="sc">%*%</span> X) <span class="sc">*</span> sigma2</span>
+<span id="cb673-7"><a href="9-regression.html#cb673-7" tabindex="-1"></a>V</span></code></pre></div>
 <pre><code>##                             rmrf
 ##       5.843866e-05 -0.0002760605
 ## rmrf -2.760605e-04  0.0276835643</code></pre>
@@ -818,17 +818,17 @@ div.csl-indent {
 <ul>
 <li>To get estimated covariance matrix for the coefficients, you need to multiply <code>cov.unscaled</code> by the estimate of the error variance.</li>
 </ul>
-<div class="sourceCode" id="cb674"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb674-1"><a href="9-regression.html#cb674-1" tabindex="-1"></a><span class="fu">solve</span>(<span class="fu">t</span>(X) <span class="sc">%*%</span> X)</span></code></pre></div>
+<div class="sourceCode" id="cb675"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb675-1"><a href="9-regression.html#cb675-1" tabindex="-1"></a><span class="fu">solve</span>(<span class="fu">t</span>(X) <span class="sc">%*%</span> X)</span></code></pre></div>
 <pre><code>##                          rmrf
 ##       0.008395487 -0.03965975
 ## rmrf -0.039659745  3.97711043</code></pre>
-<div class="sourceCode" id="cb676"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb676-1"><a href="9-regression.html#cb676-1" tabindex="-1"></a><span class="fu">summary</span>(capm_ml)<span class="sc">$</span>cov.unscaled</span></code></pre></div>
+<div class="sourceCode" id="cb677"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb677-1"><a href="9-regression.html#cb677-1" tabindex="-1"></a><span class="fu">summary</span>(capm_ml)<span class="sc">$</span>cov.unscaled</span></code></pre></div>
 <pre><code>##              (Intercept)        rmrf
 ## (Intercept)  0.008395487 -0.03965975
 ## rmrf        -0.039659745  3.97711043</code></pre>
-<div class="sourceCode" id="cb678"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb678-1"><a href="9-regression.html#cb678-1" tabindex="-1"></a><span class="fu">all.equal</span>(<span class="fu">solve</span>(<span class="fu">t</span>(X) <span class="sc">%*%</span> X), </span>
-<span id="cb678-2"><a href="9-regression.html#cb678-2" tabindex="-1"></a>          <span class="fu">summary</span>(capm_ml)<span class="sc">$</span>cov.unscaled, </span>
-<span id="cb678-3"><a href="9-regression.html#cb678-3" tabindex="-1"></a>          <span class="at">check.attributes =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb679"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb679-1"><a href="9-regression.html#cb679-1" tabindex="-1"></a><span class="fu">all.equal</span>(<span class="fu">solve</span>(<span class="fu">t</span>(X) <span class="sc">%*%</span> X), </span>
+<span id="cb679-2"><a href="9-regression.html#cb679-2" tabindex="-1"></a>          <span class="fu">summary</span>(capm_ml)<span class="sc">$</span>cov.unscaled, </span>
+<span id="cb679-3"><a href="9-regression.html#cb679-3" tabindex="-1"></a>          <span class="at">check.attributes =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <pre><code>## [1] TRUE</code></pre>
 <p><strong>References</strong>:</p>
 <ul>

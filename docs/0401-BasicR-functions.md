@@ -520,6 +520,7 @@ set.seed(eff_seed)
 - `size` for the number of trials. 
 
   - when `size=1`, it generate the Bernoulli distribution
+  
     $$
     X = \begin{cases}
     1 & \text{with prbability }p \\
@@ -527,18 +528,18 @@ set.seed(eff_seed)
     \end{cases}
     $$
 
-  Binomial is the sum of Bernoulli
-  $$
-  Y = \sum_{i=1}^{\text{size}} X_i
-  $$
-  The probability is given by
-  $$
-  P(Y=y) = \begin{pmatrix} 
-  \text{size} \\
-  y
-  \end{pmatrix} p^y (1-y)^{\text{size}-y}
-  $$
-  for $y=0, \ldots, \text{size}.$
+Binomial is the sum of Bernoulli
+$$
+Y = \sum_{i=1}^{\text{size}} X_i
+$$
+The probability is given by
+$$
+P(Y=y) = \begin{pmatrix} 
+\text{size} \\
+y
+\end{pmatrix} p^y (1-y)^{\text{size}-y}
+$$
+for $y=0, \ldots, \text{size}.$
 
 
 

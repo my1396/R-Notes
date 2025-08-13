@@ -120,7 +120,7 @@ To show the `tibble` information (number of row/columns, and group information) 
 ```markdown
 ---
 title: "Use caption with df_print set to page"
-date: "2025-08-08"
+date: "2025-08-12"
 output:
   bookdown::html_document2:
     df_print: paged
