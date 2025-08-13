@@ -165,6 +165,8 @@ val_labels(data$gor) # get value labels
 
 **Read fixed width text files**
 
+#### Base R functions
+
 `read.fwf(file, widths)`
 
 -   `widths` 	integer vector, giving the widths of the fixed-width fields (of one line), or list of integer vectors giving widths for multiline records.
@@ -225,13 +227,33 @@ data
 ```
 
 
+--------------------------------------------------------------------------------
 
+#### `readr`
 
-`read_delim(f_name, delim=";")` allows you to specify the delimeter as `;`.
+The major difference of `readr` is that it returns a `tibble` instead of a data frame.
 
-`readr::read_csv(f_name, na = c("..", NA, ""), `
-		   `locale = locale(encoding = "UTF-8"), `
-		   `col_types = cols(Date = col_date(format = "%m/%d/%y")) )`  read <span style='color:#00CC66'>comma separated values</span>.
+`read_delim(f_name, delim = ";", col_names = TRUE, skip = 0)` allows you to specify the delimeter as `;`.
+
+- `col_names = TRUE`  whether the first row contains column names.
+- `skip = 0`  number of lines to skip before reading the data. Default is `0`, meaning no lines are skipped.
+
+`read_delim(f_name, delim = "\t")` read tab separated values.
+
+`read_tsv()` read <span style='color:#00CC66'>tab separated values</span>.
+
+--------------------------------------------------------------------------------
+
+Read <span style='color:#00CC66'>comma separated values</span>.
+
+```r
+readr::read_csv(
+  f_name,
+  na = c("..", NA, ""),
+  locale = locale(encoding = "UTF-8"),
+  col_types = cols(Date = col_date(format = "%m/%d/%y"))
+)
+```
 
 - `col_types` specify column types. Could be created by `list()` or `cols()`.
 
@@ -242,7 +264,7 @@ data
   - set `show_col_types = FALSE` for one time setting, or 
   - set `options(readr.show_col_types = FALSE)` for the current sessions' global options setting.  If want to change permanently everytime when R starts, put ` options(readr.show_col_types = FALSE)`  in `.Rprofile` as global options.
 
-`read_tsv()` read <span style='color:#00CC66'>tab separated values</span>.
+
 
 `read_csv2(f_name, na = c("..", NA, ""))`  use <span style='color:#00CC66'>semicolon `;` to separate values</span>; and use comma `,` for the decimal point. This is common in some <u>European countries</u>.
 

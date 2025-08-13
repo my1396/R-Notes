@@ -176,7 +176,7 @@ A: `{updateR}` restores old libraries from previous version with the following 
     ```
 
 
-Use example
+**Use example**
 
 ```r
 > library(updater)
@@ -234,7 +234,7 @@ Be aware that <u>some package updates may cause your previous code to stop worki
 - For this reason, we recommend updating all your packages once at the beginning of each academic year (or semester) – don't do it before an assessment or deadline just in case!
 
 Q: When should I update R? \
-A: When I see many packages print a warning message that they are build under a newer version of R, I will update R. Every 6 months or so would be quite sufficient.
+A: When I see many packages print a warning message that they are built under a newer version of R, I will update R. Every 6 months or so would be quite sufficient.
 
 ------------------------------------------------------------------------
 

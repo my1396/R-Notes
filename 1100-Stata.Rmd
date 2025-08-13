@@ -88,7 +88,7 @@ Our suggestion is that you keep your do files short enough that when you're work
 
   Example: `0-master.do`, `1-data-clean.do`, `2-stylized-facts.do`, …
 
-  You can then organize them in sub-do-files: if you have diﬀerent set of stylized facts, you
+  You can then organize them in sub-do-files: if you have different set of stylized facts, you
 
   could have: `2.1-stylized-facts-geography.do`, `2.2-stylized-facts-count.do` etc. . . .
 
@@ -102,13 +102,24 @@ Our suggestion is that you keep your do files short enough that when you're work
 
 --------------------------------------------------------------------------------
 
-**Comments**
+### Comments
 
-- `//` for single line comment
-- `/* */` for multiple line comment
+- `//` for single line comment; rest-of-line comment;
+- `/* */` for multiple line comment; enclosed comment;
 - `//#` or `**#` add a bookmark
+- `///` line-join indicator
 
-**Continuation lines**: `///` Everything after `///` to the end of the current line is considered a comment. The next line joins with the current line. Therefore, `///` allows you to split long lines across multiple lines in the do-file.
+Note that  the `//` comment indicator and the `///` indicator must be preceded by one or more blanks.
+
+See [[U] 16.1.2 Comments and blank lines in do-files](https://www.stata.com/manuals13/u16.pdf#u16.1.2Commentsandblanklinesindo-files) for more details.
+
+
+**Continuation lines**: `///` 
+
+
+`///` is called the line-join indicator or line continuation marker. It makes long lines more readable.
+
+Everything after `///` to the end of the current line is considered a comment. The next line joins with the current line. Therefore, `///` allows you to split long lines across multiple lines in the **do-file**.
 
 Summary of ways to break long lines:
 
@@ -127,8 +138,45 @@ Summary of ways to break long lines:
     Once you declear `#delimit ;`, all lines must end in `;`. Stata treats carriage returns as no different from blanks.
 
 - you can comment out the line break by using `/* */` comment delimiters, or 
+
 - you can use the `///` line-join indicator.
 
+
+Example
+
+```stata
+replace final_result = ///
+    sqrt(first_side^2 + second_side^2) ///
+    if type == "rectangle"
+```
+
+equivalently, you can use `/* */` to break long lines: 
+
+```stata
+replace final_result = /*
+    */ sqrt(first_side^2 + second_side^2) /*
+    */ if type == "rectangle"
+```
+
+
+N.B. There's NO line continuation marker (`///`) in the command window.
+
+In the command window, the enter key sends what has been written on the line to Stata. There is no way to continue a long command on a second line, without sending the first (incomplete) line to Stata.
+
+
+You can add comments after `///`.
+
+```stata
+args a /// input parameter for a
+     b /// input parameter for b
+     c // input parameter for c
+```
+
+is equivalent to
+
+```stata
+args a b c
+```
 
 --------------------------------------------------------------------------------
 
@@ -361,11 +409,50 @@ display [display_directive [display_directive [...]]]
 list [varlist] [if] [in] [, options]
 ```
 
+--------------------------------------------------------------------------------
+
+#### Refer to a range of variables
+
+How can I list, drop, and keep a consecutive set of variables without typing the names individually?
+
+- list all variables starting with a certain prefix
+- list all variables between two variables
+- combination of the two
+
+```stata
+// list all variables starting with a certain prefix
+.  list var* // all variables starting with "var"
+
+// list all variables between two variables
+.  list var1-var5 // all variables between var1 and var5
+
+// combination of the two
+.  list var1 var3-var5 
+```
+
+If you want to consider reordering the variables in your dataset, `order, sequential` will put the variables in alphabetical order (and does mostly smart things with numeric suffixes).
+
+```stata
+. order *, sequential
+```
+
+the resulting order will be:
+
+```stata
+1.  alpha
+2.  beta
+3.  gamma
+4.  v1
+5.  v2
+6.  v3
+7.  v4
+```
+
+`order, sequential` is smart enough to know that `v10` comes after `v9` and not between `v1` and `v2`, which pure alphabetical order would specify. For online help, type `help order` in Stata, or see [D] order.
 
 
+--------------------------------------------------------------------------------
 
-
-___
 
 ### System Variables
 
@@ -648,7 +735,23 @@ label values map_name
 label values rep3 rep_label
 ```
 
+--------------------------------------------------------------------------------
 
+### Output format
+
+
+`%` indicates the start of a format specification.
+
+`%9.2f` means a floating-point number with 9 characters wide, including 2 digits after the decimal point.
+
+- the first digit states the width of the results
+- the second digit after the decimal point states the number of digits after the decimal point
+- `f` for fixed format. Alternatively,
+  - `e` for scientific notation
+
+
+
+ref: [U] [12.5 Data: Formats, control how data are displayed](https://www.stata.com/manuals/u12.pdf#u12.5.4Stringformats)
 
 
 
@@ -730,12 +833,41 @@ ___
 
 ```stata
 // Store estimation results as m1 for use later in the same session
-estimates store m1
+. estimates store m1
+// to get them back 
+. estimates restore m1
+// Find out what you have stored 
+. estimates dir
 ```
 
-`estimates table` organizes estimation results from one or more models in a single formatted table.
+--------------------------------------------------------------------------------
 
-If you type estimates table without arguments, a table of the most recent estimation results will be shown.
+`estimate save` saves the current active estimation results to a file with the extension `.ster`. 
+
+```stata
+// Save the current active estimation results
+. estimate save basemodel
+file basemodel.ster saved
+```
+
+In a different session, you can reload those results:
+
+```stata
+// Load the saved estimation results
+. estimates use basemodel
+// Display the results
+. estimates table
+```
+
+Q: What is the difference between `estimates store` and `estimates save`? \
+A: Once estimation results are stored, you can use other `estimates`
+commands to produce tables and reports from them.
+
+--------------------------------------------------------------------------------
+
+[`estimates table [namelist] [, options]`](https://www.stata.com/manuals/restimatestable.pdf) <span class="env-green">organizes estimation results</span> from one or more models in a single formatted table.
+
+If you type estimates table without arguments, a table of the most recent estimation coefficients will be shown.
 
 ```stata
 // Display a table of coefficients for stored estimates m1 and m2
@@ -747,15 +879,77 @@ estimates table m1 m2, se
 estimates table m1 m2, stats(N r2_a) star
 ```
 
+You can add more results to show using options:
+
+- `stats(scalarlist)` reports additional statistics in the table. Below are commonly used result identifiers:
+
+  - `N` for sample size
+  - `r2_a` for adjusted $R^2$
+  - `r2` for $R^2$
+  - `F` for F-statistic
+  - `chi2` for chi-squared statistic
+  - `p` for p-value
+  
+  `stats(N r2_a)` to show sample size and adjusted $R^2$
+- `star` shows stars for significance levels.
+  
+  - By default, `star(.05 .01 .001)`, which uses the following significance levels:
+    - `*` for $p < 0.05$
+    - `**` for $p < 0.01$
+    - `***` for $p < 0.001$
+  
+  - You can change the significance levels using `star(.1 .05 .01)` to set the levels to 0.10, 0.05, and 0.01, respectively.
+  
+  - N.B. the `star` option may not be combined with the `se`, `t`, or `p` option. 
+  
+  An error will be returned if you try to combine them:
+    
+    ```stata
+    .  estimate table, star se t p star
+    option star not allowed
+    ```
 
 
-`estimate save filename` save the current active estimation results to `filename.ster`. 
+- `b[%fmt]` how to format the coefficients.
+- `se[%fmt]` show standard errors and use optional format
+- `t[%fmt]` show $t$ or $z$ statistics and use optional format
+- `p[%fmt]` show $p$ values and use optional format
+- `varlabel` display variable labels rather than variable names
 
 
+```stata
+// show stars for sig. levels
+. estimate table, star
+// show se, t, and p values
+.  estimate table, se t p
+```
+
+All statistics are shown in order under the coefficients. If you have a long list of variables, the table can be very long.
+
+You can use `keep(varlist)` to keep only the variables you want to show in the table.
+
+- `varlist` is a list of variables you want to keep in the table.
+  - A list of variables can be specified as `keep(var1 var2 var3)`. 
+    
+    Names are separated by spaces.
+  
+  - Not possible to use variable ranges, e.g., `keep(var1-var3)` will return an error.
+  
+  - When you have multiple equations, use `eqn_name:varname` to specify the variable in a specific equation.
+
+
+Example of a long variable list
+
+```stata
+estimate table, keep(L1.logd_gdp tmp tmp2 pre pre2 tmp_pre tmp2_pre tmp_pre2 tmp2_pre2) se t p 
+```
+
+
+--------------------------------------------------------------------------------
 
 #### `etable` {.unnumbered}
 
-**`etable`**  allows you to easily create a table of estimation results and export it to a variety of file types, e.g., docx, html, pdf, xlsx, tex, txt, markdown, md.
+**`etable`** allows you to easily create a table of estimation results and export it to a variety of file types, e.g., `docx`, `html`, `pdf`, `xlsx`, `tex`, `txt`, `markdown`, `md`.
 
 ```stata
 // use example of etable
@@ -776,6 +970,7 @@ estimates table m1 m2, stats(N r2_a) star
 
 **Options**:
 
+- `showstars` and `showstarsnote` shows stars and notes for significance levels.
 - `export` allows you to specify the output format
 
 Alternative to `etable`: `eststo`.
@@ -787,9 +982,15 @@ Alternative to `etable`: `eststo`.
 
 Stata commands that report results also store the results where they **can be subsequently used** by other commands or programs. This is documented in the Stored results section of the particular command in the reference manuals.
 
-- e-class commands, such as regress, store their results in `e()`; e-class commands are Stata’s model estimation commands.
+- r-class commands, such as summarize, store their results in `r()`;
+  
+  most commands are r-class.
 
-- r-class commands, such as summarize, store their results in `r()`; most commands are r-class.
+- e-class commands, such as regress, store their results in `e()`; 
+  
+  e-class commands are Stata’s model estimation commands.
+
+
 
 
 
