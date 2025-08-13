@@ -75,7 +75,7 @@ in the `$(R RHOME)/etc/Rprofile.site` file. Read `?Startup` for how to customize
 * E.x.  
 
 
-```r
+``` r
 ymd(20101215)
 #> [1] "2010-12-15"
 mdy("4/1/17")

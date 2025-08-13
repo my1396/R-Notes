@@ -267,7 +267,7 @@ world %>%
 `arrange()` reorders data frame based on specified columns.
 
 
-```r
+``` r
 # sort mtcars by disp in ascending order
 arrange(mtcars, disp)
 # sort mtcars by disp in descending order
@@ -286,7 +286,7 @@ data %>% arrange(.[1])
 `mutate()` adds new columns at the penultimate (second last) position in the `sf` object (the last one is reserved for the geometry):
 
 
-```r
+``` r
 world %>% 
   mutate(pop_dens = pop / area_km2)
 ```
@@ -298,7 +298,7 @@ world %>%
 -   `.fun`     A function fun, a quosure style lambda ` ~ fun(.)` or a list of either form.
 
 
-```r
+``` r
 mtcars <- mtcars %>%
   mutate_at(c("hp_wt", "mpg_wt"), log) 
 # note that `across` use together with `mutate`
@@ -411,7 +411,7 @@ bind_rows(tibbleList) # combine all tibbles in the list
 -   `.preserve`   Relevant when the `.data` input is grouped. If `.preserve = FALSE` (the default), the grouping structure is recalculated based on the resulting data, otherwise the grouping is kept as is.
 
 
-```r
+``` r
 # Countries with a life expectancy longer than 82 years
 world6 = filter(world, lifeExp > 82)
 # filter based on vector
@@ -436,7 +436,7 @@ Ex. `x[between(x, -1, 1)]`
 `select()` subsets by column, **`slice`** subsets by **rows**.  **`select()`** selects **columns** by name or position.
 
 
-```r
+``` r
 world1 = dplyr::select(world, name_long, pop)
 names(world1)
 #> [1] "name_long" "pop"       "geom"
@@ -445,7 +445,7 @@ names(world1)
 `select()` also allows subsetting of a range of columns with the help of the `:` operator:
 
 
-```r
+``` r
 # all columns between name_long and pop (inclusive)
 world2 = dplyr::select(world, name_long:pop)
 ```
@@ -453,7 +453,7 @@ world2 = dplyr::select(world, name_long:pop)
 `select()` can be used to **reorder**/drop variables.
 
 
-```r
+``` r
 select(df, year, var, state)   # reverses the columns
 select(df, -state) # drop column by name 'state' 
 ```
@@ -461,7 +461,7 @@ select(df, -state) # drop column by name 'state'
 If you only know you want **`var` in the *front*** and don't care about the order of the rest, you can do [*move one variable in the front*]
 
 
-```r
+``` r
 df %>%
   select(var, everything())
 ```
@@ -546,7 +546,7 @@ ref: [Programming with dplyr: Indirection](https://dplyr.tidyverse.org/articles/
 A **<span style='color:red'>dynamic</span> subset of variables** when using `select`
 
 
-```r
+``` r
 dynamic_var <- 'state'
 df %>% select(year, var, eval(dynamic_var)) # dynamic_var will be parsed as state
 

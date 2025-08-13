@@ -261,7 +261,7 @@ df %>%
 ### **Dual y-axis plot**
 
 
-```r
+``` r
 rescaleY <- function(y1, y2){
   # useful for plotting figures with dual axis but with different range
   # y1 is the primary axis    # target to
@@ -694,7 +694,7 @@ p + geom_smooth(method = "lm", formula = y ~ poly(x, 3), se = FALSE)
 `ggpubr::stat_regline_equation(label.y=NULL)`
 
 
-```r
+``` r
 library(ggpubr) # add regression eq to figure
 ggplot(df, aes_string(x="true value", y='predicted value')) +
     geom_point(shape=1) +    # Use hollow circles, default solid dot

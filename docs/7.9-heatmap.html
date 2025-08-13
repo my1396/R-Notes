@@ -8,7 +8,7 @@
   <meta name="description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
 set in the _output.yml file.</p>" />
-  <meta name="generator" content="bookdown 0.35 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.43 and GitBook 2.6.7" />
 
   <meta property="og:title" content="7.9 Heatmap | R Notes" />
   <meta property="og:type" content="book" />
@@ -29,7 +29,7 @@ set in the _output.yml file.</p>" />
 <meta name="author" content="Menghan Yuan" />
 
 
-<meta name="date" content="2025-08-12" />
+<meta name="date" content="2025-08-13" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -386,7 +386,9 @@ div.csl-indent {
 <li class="chapter" data-level="2.10.3" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#faq-1"><i class="fa fa-check"></i><b>2.10.3</b> FAQ</a></li>
 <li class="chapter" data-level="2.10.4" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#plot-viewer"><i class="fa fa-check"></i><b>2.10.4</b> Plot Viewer</a></li>
 <li class="chapter" data-level="2.10.5" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#r-debugger"><i class="fa fa-check"></i><b>2.10.5</b> R Debugger</a></li>
-<li class="chapter" data-level="2.10.6" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#work-with-rmd"><i class="fa fa-check"></i><b>2.10.6</b> Work with Rmd</a></li>
+<li class="chapter" data-level="2.10.6" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#emulating-rstudioapi-functions"><i class="fa fa-check"></i><b>2.10.6</b> Emulating <code>rstudioapi</code> functions</a></li>
+<li class="chapter" data-level="2.10.7" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#work-with-rmd"><i class="fa fa-check"></i><b>2.10.7</b> Work with Rmd</a></li>
+<li class="chapter" data-level="2.10.8" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#extensions"><i class="fa fa-check"></i><b>2.10.8</b> Extensions</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="3" data-path="3-rmd.html"><a href="3-rmd.html"><i class="fa fa-check"></i><b>3</b> Rmd</a>
@@ -754,27 +756,27 @@ div.csl-indent {
 <div id="heatmap" class="section level2 hasAnchor" number="7.9">
 <h2><span class="header-section-number">7.9</span> Heatmap<a href="7.9-heatmap.html#heatmap" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>The <code>lattice</code> package allows to build <a href="https://www.r-graph-gallery.com/heatmap.html">heatmaps</a> thanks to the <code>levelplot()</code> function.</p>
-<div class="sourceCode" id="cb610"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb610-1"><a href="7.9-heatmap.html#cb610-1" tabindex="-1"></a><span class="co"># Load the lattice package</span></span>
-<span id="cb610-2"><a href="7.9-heatmap.html#cb610-2" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;lattice&quot;</span>)</span>
-<span id="cb610-3"><a href="7.9-heatmap.html#cb610-3" tabindex="-1"></a> </span>
-<span id="cb610-4"><a href="7.9-heatmap.html#cb610-4" tabindex="-1"></a><span class="co"># Dummy data</span></span>
-<span id="cb610-5"><a href="7.9-heatmap.html#cb610-5" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">1</span>,<span class="dv">10</span>, <span class="at">length.out=</span><span class="dv">20</span>)</span>
-<span id="cb610-6"><a href="7.9-heatmap.html#cb610-6" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">1</span>,<span class="dv">10</span>, <span class="at">length.out=</span><span class="dv">20</span>)</span>
-<span id="cb610-7"><a href="7.9-heatmap.html#cb610-7" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(<span class="at">X=</span>x, <span class="at">Y=</span>y)</span>
-<span id="cb610-8"><a href="7.9-heatmap.html#cb610-8" tabindex="-1"></a>data<span class="sc">$</span>Z <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="dv">400</span>, <span class="dv">0</span>, <span class="dv">5</span>)</span>
-<span id="cb610-9"><a href="7.9-heatmap.html#cb610-9" tabindex="-1"></a></span>
-<span id="cb610-10"><a href="7.9-heatmap.html#cb610-10" tabindex="-1"></a><span class="do">## Try it out</span></span>
-<span id="cb610-11"><a href="7.9-heatmap.html#cb610-11" tabindex="-1"></a><span class="fu">levelplot</span>(Z <span class="sc">~</span> X<span class="sc">*</span>Y, <span class="at">data=</span>data  ,<span class="at">xlab=</span><span class="st">&quot;X&quot;</span>,</span>
-<span id="cb610-12"><a href="7.9-heatmap.html#cb610-12" tabindex="-1"></a>          <span class="at">main=</span><span class="st">&quot;&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb613"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb613-1"><a href="7.9-heatmap.html#cb613-1" tabindex="-1"></a><span class="co"># Load the lattice package</span></span>
+<span id="cb613-2"><a href="7.9-heatmap.html#cb613-2" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;lattice&quot;</span>)</span>
+<span id="cb613-3"><a href="7.9-heatmap.html#cb613-3" tabindex="-1"></a> </span>
+<span id="cb613-4"><a href="7.9-heatmap.html#cb613-4" tabindex="-1"></a><span class="co"># Dummy data</span></span>
+<span id="cb613-5"><a href="7.9-heatmap.html#cb613-5" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">1</span>,<span class="dv">10</span>, <span class="at">length.out=</span><span class="dv">20</span>)</span>
+<span id="cb613-6"><a href="7.9-heatmap.html#cb613-6" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">1</span>,<span class="dv">10</span>, <span class="at">length.out=</span><span class="dv">20</span>)</span>
+<span id="cb613-7"><a href="7.9-heatmap.html#cb613-7" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(<span class="at">X=</span>x, <span class="at">Y=</span>y)</span>
+<span id="cb613-8"><a href="7.9-heatmap.html#cb613-8" tabindex="-1"></a>data<span class="sc">$</span>Z <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="dv">400</span>, <span class="dv">0</span>, <span class="dv">5</span>)</span>
+<span id="cb613-9"><a href="7.9-heatmap.html#cb613-9" tabindex="-1"></a></span>
+<span id="cb613-10"><a href="7.9-heatmap.html#cb613-10" tabindex="-1"></a><span class="do">## Try it out</span></span>
+<span id="cb613-11"><a href="7.9-heatmap.html#cb613-11" tabindex="-1"></a><span class="fu">levelplot</span>(Z <span class="sc">~</span> X<span class="sc">*</span>Y, <span class="at">data=</span>data  ,<span class="at">xlab=</span><span class="st">&quot;X&quot;</span>,</span>
+<span id="cb613-12"><a href="7.9-heatmap.html#cb613-12" tabindex="-1"></a>          <span class="at">main=</span><span class="st">&quot;&quot;</span>)</span></code></pre></div>
 <p>Previous example of this document was based on a data frame at the long format. In pactice, however, a <strong>square matrix</strong> is more often used.</p>
-<div class="sourceCode" id="cb611"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb611-1"><a href="7.9-heatmap.html#cb611-1" tabindex="-1"></a><span class="do">## S3 method for class &#39;matrix&#39;</span></span>
-<span id="cb611-2"><a href="7.9-heatmap.html#cb611-2" tabindex="-1"></a><span class="fu">levelplot</span>(z, <span class="at">data =</span> <span class="cn">NULL</span>, <span class="at">aspect =</span> <span class="st">&quot;iso&quot;</span>,</span>
-<span id="cb611-3"><a href="7.9-heatmap.html#cb611-3" tabindex="-1"></a>          ..., xlim, ylim,</span>
-<span id="cb611-4"><a href="7.9-heatmap.html#cb611-4" tabindex="-1"></a>          <span class="at">row.values =</span> <span class="fu">seq_len</span>(<span class="fu">nrow</span>(x)),</span>
-<span id="cb611-5"><a href="7.9-heatmap.html#cb611-5" tabindex="-1"></a>          <span class="at">column.values =</span> <span class="fu">seq_len</span>(<span class="fu">ncol</span>(x)),</span>
-<span id="cb611-6"><a href="7.9-heatmap.html#cb611-6" tabindex="-1"></a>          <span class="at">main=</span><span class="fu">paste</span>(<span class="st">&quot;predicted radiation:&quot;</span>,timeVals[timeLayer]), </span>
-<span id="cb611-7"><a href="7.9-heatmap.html#cb611-7" tabindex="-1"></a>          <span class="at">ylab=</span><span class="st">&quot;latitude&quot;</span>, <span class="at">xlab=</span><span class="st">&quot;longitude&quot;</span>,</span>
-<span id="cb611-8"><a href="7.9-heatmap.html#cb611-8" tabindex="-1"></a>          <span class="at">col.regions=</span><span class="fu">cls</span>(<span class="dv">256</span>), <span class="at">cuts=</span><span class="dv">255</span>, <span class="at">at=</span><span class="fu">seq</span>(<span class="dv">0</span>,<span class="dv">450</span>,<span class="at">length.out=</span><span class="dv">256</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb614"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb614-1"><a href="7.9-heatmap.html#cb614-1" tabindex="-1"></a><span class="do">## S3 method for class &#39;matrix&#39;</span></span>
+<span id="cb614-2"><a href="7.9-heatmap.html#cb614-2" tabindex="-1"></a><span class="fu">levelplot</span>(z, <span class="at">data =</span> <span class="cn">NULL</span>, <span class="at">aspect =</span> <span class="st">&quot;iso&quot;</span>,</span>
+<span id="cb614-3"><a href="7.9-heatmap.html#cb614-3" tabindex="-1"></a>          ..., xlim, ylim,</span>
+<span id="cb614-4"><a href="7.9-heatmap.html#cb614-4" tabindex="-1"></a>          <span class="at">row.values =</span> <span class="fu">seq_len</span>(<span class="fu">nrow</span>(x)),</span>
+<span id="cb614-5"><a href="7.9-heatmap.html#cb614-5" tabindex="-1"></a>          <span class="at">column.values =</span> <span class="fu">seq_len</span>(<span class="fu">ncol</span>(x)),</span>
+<span id="cb614-6"><a href="7.9-heatmap.html#cb614-6" tabindex="-1"></a>          <span class="at">main=</span><span class="fu">paste</span>(<span class="st">&quot;predicted radiation:&quot;</span>,timeVals[timeLayer]), </span>
+<span id="cb614-7"><a href="7.9-heatmap.html#cb614-7" tabindex="-1"></a>          <span class="at">ylab=</span><span class="st">&quot;latitude&quot;</span>, <span class="at">xlab=</span><span class="st">&quot;longitude&quot;</span>,</span>
+<span id="cb614-8"><a href="7.9-heatmap.html#cb614-8" tabindex="-1"></a>          <span class="at">col.regions=</span><span class="fu">cls</span>(<span class="dv">256</span>), <span class="at">cuts=</span><span class="dv">255</span>, <span class="at">at=</span><span class="fu">seq</span>(<span class="dv">0</span>,<span class="dv">450</span>,<span class="at">length.out=</span><span class="dv">256</span>))</span></code></pre></div>
 <ul>
 <li><code>z</code> <code>z</code> is a numeric response evaluated on a rectangular grid defined by row.values and column.values</li>
 <li><code>col.regions</code> color vector to be used</li>
@@ -782,24 +784,24 @@ div.csl-indent {
 <li><code>at</code> A numeric vector giving breakpoints along the range of <code>z</code>.</li>
 </ul>
 <p>A wrapper for <code>layerplot</code> with pre-defined color palette, axis title and etc.</p>
-<div class="sourceCode" id="cb612"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb612-1"><a href="7.9-heatmap.html#cb612-1" tabindex="-1"></a>level_plot <span class="ot">&lt;-</span> <span class="cf">function</span>(r, <span class="at">col_vec=</span><span class="fu">c</span>(<span class="st">&quot;black&quot;</span>,<span class="st">&quot;red&quot;</span>,<span class="st">&quot;yellow&quot;</span>,<span class="st">&quot;white&quot;</span>)){</span>
-<span id="cb612-2"><a href="7.9-heatmap.html#cb612-2" tabindex="-1"></a>    <span class="do">## for plotting 0.5*0.5 degree map</span></span>
-<span id="cb612-3"><a href="7.9-heatmap.html#cb612-3" tabindex="-1"></a>    <span class="co"># @params r: RasterLayer or matrix</span></span>
-<span id="cb612-4"><a href="7.9-heatmap.html#cb612-4" tabindex="-1"></a>    <span class="co"># @params col_vec: color vector palette for legend</span></span>
-<span id="cb612-5"><a href="7.9-heatmap.html#cb612-5" tabindex="-1"></a>  </span>
-<span id="cb612-6"><a href="7.9-heatmap.html#cb612-6" tabindex="-1"></a>    cl <span class="ot">&lt;-</span> <span class="fu">colorRampPalette</span>(col_vec)</span>
-<span id="cb612-7"><a href="7.9-heatmap.html#cb612-7" tabindex="-1"></a>    latVec <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="at">from=</span><span class="sc">-</span><span class="fl">89.75</span>,<span class="at">to=</span><span class="fl">89.75</span>,<span class="at">by=</span><span class="fl">0.5</span>)  <span class="co">#for plotting</span></span>
-<span id="cb612-8"><a href="7.9-heatmap.html#cb612-8" tabindex="-1"></a>        lonVec <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="at">from=</span><span class="sc">-</span><span class="fl">179.75</span>,<span class="at">to=</span><span class="fl">179.75</span>,<span class="at">by=</span><span class="fl">0.5</span>)  <span class="co">#for plotting</span></span>
-<span id="cb612-9"><a href="7.9-heatmap.html#cb612-9" tabindex="-1"></a>  </span>
-<span id="cb612-10"><a href="7.9-heatmap.html#cb612-10" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">class</span>(r) <span class="sc">==</span> <span class="st">&quot;RasterLayer&quot;</span>){</span>
-<span id="cb612-11"><a href="7.9-heatmap.html#cb612-11" tabindex="-1"></a>        <span class="co"># flip raster upside down, raster reads from top left</span></span>
-<span id="cb612-12"><a href="7.9-heatmap.html#cb612-12" tabindex="-1"></a>        layerPlot <span class="ot">&lt;-</span> <span class="fu">levelplot</span>(<span class="fu">t</span>(<span class="fu">as.matrix</span>(r))[,<span class="fu">seq</span>(<span class="dv">360</span>,<span class="dv">1</span>)],<span class="at">row.values=</span>lonVec,<span class="at">column.values=</span>latVec,<span class="at">main=</span><span class="fu">paste</span>(<span class="st">&quot;predicted radiation:&quot;</span>,<span class="fu">getZ</span>(r)),<span class="at">ylab=</span><span class="st">&quot;latitude&quot;</span>,<span class="at">xlab=</span><span class="st">&quot;longitude&quot;</span>,<span class="at">col.regions=</span><span class="fu">cls</span>(<span class="dv">256</span>),<span class="at">cuts=</span><span class="dv">255</span>,<span class="at">at=</span><span class="fu">seq</span>(<span class="dv">0</span>,<span class="dv">450</span>,<span class="at">length.out=</span><span class="dv">256</span>))</span>
-<span id="cb612-13"><a href="7.9-heatmap.html#cb612-13" tabindex="-1"></a>    } <span class="cf">else</span> <span class="cf">if</span>(<span class="fu">class</span>(r) <span class="sc">==</span> <span class="st">&quot;matrix&quot;</span>){</span>
-<span id="cb612-14"><a href="7.9-heatmap.html#cb612-14" tabindex="-1"></a>        <span class="co"># levelplot reads from bottom left</span></span>
-<span id="cb612-15"><a href="7.9-heatmap.html#cb612-15" tabindex="-1"></a>        layerPlot <span class="ot">&lt;-</span> <span class="fu">levelplot</span>(r,<span class="at">row.values=</span>lonVec,<span class="at">column.values=</span>latVec,<span class="at">ylab=</span><span class="st">&quot;latitude&quot;</span>,<span class="at">xlab=</span><span class="st">&quot;longitude&quot;</span>,<span class="at">col.regions=</span><span class="fu">cls</span>(<span class="dv">256</span>),<span class="at">cuts=</span><span class="dv">255</span>,<span class="at">at=</span><span class="fu">seq</span>(<span class="dv">0</span>,<span class="dv">450</span>,<span class="at">length.out=</span><span class="dv">256</span>))</span>
-<span id="cb612-16"><a href="7.9-heatmap.html#cb612-16" tabindex="-1"></a>    }</span>
-<span id="cb612-17"><a href="7.9-heatmap.html#cb612-17" tabindex="-1"></a>    <span class="fu">print</span>(layerPlot)</span>
-<span id="cb612-18"><a href="7.9-heatmap.html#cb612-18" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb615"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb615-1"><a href="7.9-heatmap.html#cb615-1" tabindex="-1"></a>level_plot <span class="ot">&lt;-</span> <span class="cf">function</span>(r, <span class="at">col_vec=</span><span class="fu">c</span>(<span class="st">&quot;black&quot;</span>,<span class="st">&quot;red&quot;</span>,<span class="st">&quot;yellow&quot;</span>,<span class="st">&quot;white&quot;</span>)){</span>
+<span id="cb615-2"><a href="7.9-heatmap.html#cb615-2" tabindex="-1"></a>    <span class="do">## for plotting 0.5*0.5 degree map</span></span>
+<span id="cb615-3"><a href="7.9-heatmap.html#cb615-3" tabindex="-1"></a>    <span class="co"># @params r: RasterLayer or matrix</span></span>
+<span id="cb615-4"><a href="7.9-heatmap.html#cb615-4" tabindex="-1"></a>    <span class="co"># @params col_vec: color vector palette for legend</span></span>
+<span id="cb615-5"><a href="7.9-heatmap.html#cb615-5" tabindex="-1"></a>  </span>
+<span id="cb615-6"><a href="7.9-heatmap.html#cb615-6" tabindex="-1"></a>    cl <span class="ot">&lt;-</span> <span class="fu">colorRampPalette</span>(col_vec)</span>
+<span id="cb615-7"><a href="7.9-heatmap.html#cb615-7" tabindex="-1"></a>    latVec <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="at">from=</span><span class="sc">-</span><span class="fl">89.75</span>,<span class="at">to=</span><span class="fl">89.75</span>,<span class="at">by=</span><span class="fl">0.5</span>)  <span class="co">#for plotting</span></span>
+<span id="cb615-8"><a href="7.9-heatmap.html#cb615-8" tabindex="-1"></a>        lonVec <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="at">from=</span><span class="sc">-</span><span class="fl">179.75</span>,<span class="at">to=</span><span class="fl">179.75</span>,<span class="at">by=</span><span class="fl">0.5</span>)  <span class="co">#for plotting</span></span>
+<span id="cb615-9"><a href="7.9-heatmap.html#cb615-9" tabindex="-1"></a>  </span>
+<span id="cb615-10"><a href="7.9-heatmap.html#cb615-10" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">class</span>(r) <span class="sc">==</span> <span class="st">&quot;RasterLayer&quot;</span>){</span>
+<span id="cb615-11"><a href="7.9-heatmap.html#cb615-11" tabindex="-1"></a>        <span class="co"># flip raster upside down, raster reads from top left</span></span>
+<span id="cb615-12"><a href="7.9-heatmap.html#cb615-12" tabindex="-1"></a>        layerPlot <span class="ot">&lt;-</span> <span class="fu">levelplot</span>(<span class="fu">t</span>(<span class="fu">as.matrix</span>(r))[,<span class="fu">seq</span>(<span class="dv">360</span>,<span class="dv">1</span>)],<span class="at">row.values=</span>lonVec,<span class="at">column.values=</span>latVec,<span class="at">main=</span><span class="fu">paste</span>(<span class="st">&quot;predicted radiation:&quot;</span>,<span class="fu">getZ</span>(r)),<span class="at">ylab=</span><span class="st">&quot;latitude&quot;</span>,<span class="at">xlab=</span><span class="st">&quot;longitude&quot;</span>,<span class="at">col.regions=</span><span class="fu">cls</span>(<span class="dv">256</span>),<span class="at">cuts=</span><span class="dv">255</span>,<span class="at">at=</span><span class="fu">seq</span>(<span class="dv">0</span>,<span class="dv">450</span>,<span class="at">length.out=</span><span class="dv">256</span>))</span>
+<span id="cb615-13"><a href="7.9-heatmap.html#cb615-13" tabindex="-1"></a>    } <span class="cf">else</span> <span class="cf">if</span>(<span class="fu">class</span>(r) <span class="sc">==</span> <span class="st">&quot;matrix&quot;</span>){</span>
+<span id="cb615-14"><a href="7.9-heatmap.html#cb615-14" tabindex="-1"></a>        <span class="co"># levelplot reads from bottom left</span></span>
+<span id="cb615-15"><a href="7.9-heatmap.html#cb615-15" tabindex="-1"></a>        layerPlot <span class="ot">&lt;-</span> <span class="fu">levelplot</span>(r,<span class="at">row.values=</span>lonVec,<span class="at">column.values=</span>latVec,<span class="at">ylab=</span><span class="st">&quot;latitude&quot;</span>,<span class="at">xlab=</span><span class="st">&quot;longitude&quot;</span>,<span class="at">col.regions=</span><span class="fu">cls</span>(<span class="dv">256</span>),<span class="at">cuts=</span><span class="dv">255</span>,<span class="at">at=</span><span class="fu">seq</span>(<span class="dv">0</span>,<span class="dv">450</span>,<span class="at">length.out=</span><span class="dv">256</span>))</span>
+<span id="cb615-16"><a href="7.9-heatmap.html#cb615-16" tabindex="-1"></a>    }</span>
+<span id="cb615-17"><a href="7.9-heatmap.html#cb615-17" tabindex="-1"></a>    <span class="fu">print</span>(layerPlot)</span>
+<span id="cb615-18"><a href="7.9-heatmap.html#cb615-18" tabindex="-1"></a>}</span></code></pre></div>
 
 </div>
 <!-- </div> -->
@@ -823,45 +825,45 @@ div.csl-indent {
 <script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
-"sharing": {
-"github": true,
-"facebook": true,
-"twitter": true,
-"linkedin": false,
-"weibo": false,
-"instapaper": false,
-"vk": false,
-"whatsapp": false,
-"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
-},
-"fontsettings": {
-"theme": "night",
-"family": "sans",
-"size": 3
-},
-"edit": {
-"link": "https://github.com/my1396/R-Notes/edit/main/0608-Heatmap.Rmd",
-"text": "Edit"
-},
-"history": {
-"link": null,
-"text": null
-},
-"view": {
-"link": null,
-"text": null
-},
-"download": ["_main.pdf", "_main.epub", "https://github.com/my1396/R-Notes/raw/main/0608-Heatmap.Rmd"],
-"search": {
-"engine": "fuse",
-"options": null
-},
-"toc": {
-"collapse": "subsection"
-},
-"toc_depth": 3,
-"toc_float": true,
-"enableEmoji": true
+  "sharing": {
+    "github": true,
+    "facebook": true,
+    "twitter": true,
+    "linkedin": false,
+    "weibo": false,
+    "instapaper": false,
+    "vk": false,
+    "whatsapp": false,
+    "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+  },
+  "fontsettings": {
+    "theme": "night",
+    "family": "sans",
+    "size": 3
+  },
+  "edit": {
+    "link": "https://github.com/my1396/R-Notes/edit/main/0608-Heatmap.Rmd",
+    "text": "Edit"
+  },
+  "history": {
+    "link": null,
+    "text": null
+  },
+  "view": {
+    "link": null,
+    "text": null
+  },
+  "download": ["_main.pdf", "_main.epub", "https://github.com/my1396/R-Notes/raw/main/0608-Heatmap.Rmd"],
+  "search": {
+    "engine": "fuse",
+    "options": null
+  },
+  "toc": {
+    "collapse": "subsection"
+  },
+  "toc_depth": 3,
+  "toc_float": true,
+  "enableEmoji": true
 });
 });
 </script>

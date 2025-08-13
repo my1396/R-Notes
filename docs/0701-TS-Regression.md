@@ -55,7 +55,7 @@ $$
 We want to find $\psi(L)=\rho(L)^{-1}\beta(L).$
 
 
-```r
+``` r
 # Compute psi(L) = rho(L)^(-1) * beta(L)
 lag_poly_solution <- function(rho1, beta0, beta1, n_terms = 5) {
   # Expand (1 - rho1*L)^(-1) as a power series up to n_terms
@@ -76,7 +76,7 @@ lag_poly_solution <- function(rho1, beta0, beta1, n_terms = 5) {
 ```
 
 
-```r
+``` r
 # Example usage:
 psi_coef <- lag_poly_solution(rho1 = 0.5, beta0 = 1, beta1 = 2, n_terms = 20)
 psi_coef
@@ -96,7 +96,7 @@ psi_coef
 Plot the lag polynomial coefficients:
 
 
-```r
+``` r
 library(tidyverse)
 psi_df <- tibble(
   lag = 1:21,

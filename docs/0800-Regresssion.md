@@ -3,7 +3,7 @@
 Use example:
 
 
-```r
+``` r
 library(tidyverse)
 reg_data <- read_csv("https://raw.githubusercontent.com/my1396/course_dataset/refs/heads/main/META_monthly_factor_model_2014-2024.csv")
 reg_data <- reg_data %>% 
@@ -39,7 +39,7 @@ summary(capm_ml)
 Get the **coefficient table** with `broom::tidy`.
 
 
-```r
+``` r
 library(broom)
 tidy(capm_ml)
 ```
@@ -56,7 +56,7 @@ tidy(capm_ml)
 Get the **variance-covariance matrix** with `vcov`.
 
 
-```r
+``` r
 vcov(capm_ml)
 ```
 
@@ -66,7 +66,7 @@ vcov(capm_ml)
 ## rmrf        -2.760605e-04  0.0276835643
 ```
 
-```r
+``` r
 # verify using coef table
 capm_ml %>% 
     tidy() %>% 
@@ -84,7 +84,7 @@ capm_ml %>%
 
 We can manually calculate as
 
-```r
+``` r
 df <- (nrow(capm_ml$model)-2)  # degree of freedom
 sigma2 <- sum(capm_ml$residuals^2)/df  # residual variance
 # 1st column of lm$model is the depend. var.
@@ -106,7 +106,7 @@ Note that `cov.unscaled` returns the **unscaled** covariance matrix, $(X'X)^{-1}
 - To get estimated covariance matrix for the coefficients, you need to multiply `cov.unscaled` by the estimate of the error variance.
 
 
-```r
+``` r
 solve(t(X) %*% X)
 ```
 
@@ -116,7 +116,7 @@ solve(t(X) %*% X)
 ## rmrf -0.039659745  3.97711043
 ```
 
-```r
+``` r
 summary(capm_ml)$cov.unscaled
 ```
 
@@ -126,7 +126,7 @@ summary(capm_ml)$cov.unscaled
 ## rmrf        -0.039659745  3.97711043
 ```
 
-```r
+``` r
 all.equal(solve(t(X) %*% X), 
           summary(capm_ml)$cov.unscaled, 
           check.attributes = FALSE)

@@ -106,7 +106,7 @@ Fix: Force the font color to be black.
 First run this edited version of `kableExtra:::print.kableExtra()`:
 
 
-```r
+``` r
 print.kableExtra <- function (x, ...) {
   view_html <- getOption("kableExtra_view_html", TRUE)
   if (view_html & interactive()) {

@@ -8,7 +8,7 @@
 <span style='color:#008B45'>**One nice looking setting**</span>: 
 
 
-```r
+``` r
 par(oma=c(0.5,0.5,0,2), mar=c(3.5, 3.5, 2, 1), mgp=c(2.4,0.8,0))
 ```
 
@@ -140,7 +140,7 @@ https://www.rdocumentation.org/packages/graphics/versions/3.6.2/topics/par
 Every time you change `par`, first save the orginal one so that could be easily reset, if needed. 
 
 
-```r
+``` r
 op <- par() # save unchanged original defualt one
 par(newsettings) # change to the way you need, newsettings can be tag=value or a list of tagged values
 par(op) # reset to the default

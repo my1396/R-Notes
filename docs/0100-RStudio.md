@@ -200,7 +200,14 @@ install.packages(
   repos = NULL)
 ```
 
-Now go to Tools \> Modify Keyboard Shortcuts and search for "dashes". Here you can define the keyboard combination by clicking inside the empty Shortcut field and pressing the desired key-combination on your keyboard. Click Apply, and that's it!
+**Set up keyboard shortcuts** in RStudio for the two packages.
+
+Now go to `Tools` \> `Modify Keyboard Shortcuts` and search for "dashes". Here you can define the keyboard combination by clicking inside the empty Shortcut field and pressing the desired key-combination on your keyboard. Click `Apply`, and that's it!
+
+The shortcuts I use are:
+
+- `ctrl + shift + S` (hyphen) to insert `---` and 
+- `ctrl + shift + =` (equal sign) to insert `===`.
 
 ------------------------------------------------------------------------
 
@@ -209,7 +216,7 @@ Now go to Tools \> Modify Keyboard Shortcuts and search for "dashes". Here you c
 - In `Rmd` files, send the R code chunk output to the console. \
 By default, RStudio enables inline output (Notebook mode) on all R Markdown documents. You can disable notebook mode by clicking the gear button in the editor toolbar, and choosing `Chunk Output in Console`.
 
-    To use the console by default for all your R Markdown documentsm: Tools -> Options -> R Markdown -> Uncheck `Show output inline for all R Markdown documents`.
+    To use the console by default for all your R Markdown documents: Tools -> Options -> R Markdown -> Uncheck `Show output inline for all R Markdown documents`.
 
     <img src="images/chunk output in console.png" width="60%" />
 

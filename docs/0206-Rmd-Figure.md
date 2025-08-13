@@ -25,7 +25,7 @@ Use code chunk label to cross reference, e.g., <span style='color:#00CC66'>`Fig.
 **Output directly to document**
 
 
-```r
+``` r
 library(quantmod)
 aapl <- getSymbols("AAPL", 
            src = 'yahoo', 
@@ -45,7 +45,7 @@ plot(aapl$AAPL.Close)
 ~~~~
 
 <div class="figure">
-<img src="0206-Rmd-Figure_files/figure-html/unnamed-chunk-2-1.png" alt="`out.width=&quot;50%&quot;`, fig.asp set to 0.62. Note that text font scales too, hard to read." width="50%" />
+<img src="0206-Rmd-Figure_files/figure-html/unnamed-chunk-2-1.png" alt="`out.width="50%"`, fig.asp set to 0.62. Note that text font scales too, hard to read." width="50%" />
 <p class="caption">(\#fig:unnamed-chunk-2)`out.width="50%"`, fig.asp set to 0.62. Note that text font scales too, hard to read.</p>
 </div>
 
@@ -73,7 +73,7 @@ plot(aapl$AAPL.Close)
 ~~~~
 
 <div class="figure">
-<img src="0206-Rmd-Figure_files/figure-html/unnamed-chunk-4-1.png" alt="`out.width=&quot;100%&quot;`, fig.asp set to 0.6. Note that the plot text got zoomed too, can be too large." width="100%" />
+<img src="0206-Rmd-Figure_files/figure-html/unnamed-chunk-4-1.png" alt="`out.width="100%"`, fig.asp set to 0.6. Note that the plot text got zoomed too, can be too large." width="100%" />
 <p class="caption">(\#fig:unnamed-chunk-4)`out.width="100%"`, fig.asp set to 0.6. Note that the plot text got zoomed too, can be too large.</p>
 </div>
 
@@ -86,7 +86,7 @@ This approach preserves your preference better, maintains the relative size of y
 No cropping, no fuss.
 
 
-```r
+``` r
 f_name <- "images/aapl.png"
 png(f_name, width=2594, height=1600, res=300)
 plot(aapl$AAPL.Close)
@@ -100,7 +100,7 @@ knitr::include_graphics(f_name)
 ~~~~
 
 <div class="figure">
-<img src="images/aapl.png" alt="include_graphics with `out.width=&quot;50%&quot;`." width="50%" />
+<img src="images/aapl.png" alt="include_graphics with `out.width="50%"`." width="50%" />
 <p class="caption">(\#fig:unnamed-chunk-6)include_graphics with `out.width="50%"`.</p>
 </div>
 
@@ -113,7 +113,7 @@ knitr::include_graphics(f_name)
 ~~~~
 
 <div class="figure">
-<img src="images/aapl.png" alt="include_graphics with `out.width=&quot;100%&quot;`." width="100%" />
+<img src="images/aapl.png" alt="include_graphics with `out.width="100%"`." width="100%" />
 <p class="caption">(\#fig:unnamed-chunk-7)include_graphics with `out.width="100%"`.</p>
 </div>
 
@@ -294,7 +294,7 @@ plot_A
 <br>
 
 <div class="figure">
-<img src="0206-Rmd-Figure_files/figure-html/firstplot-1.png" alt="Source Figure to be referenced. **Note that when specifying `out.width=&quot;60%&quot;`, the text in the figure is scaled too small.**" width="60%" />
+<img src="0206-Rmd-Figure_files/figure-html/firstplot-1.png" alt="Source Figure to be referenced. **Note that when specifying `out.width="60%"`, the text in the figure is scaled too small.**" width="60%" />
 <p class="caption">(\#fig:firstplot)Source Figure to be referenced. **Note that when specifying `out.width="60%"`, the text in the figure is scaled too small.**</p>
 </div>
 
@@ -309,7 +309,7 @@ plot_A + geom_line(alpha = .75,col = "red")
 <br>
 
 <div class="figure">
-<img src="0206-Rmd-Figure_files/figure-html/secondplot-1.png" alt="This is the same as Fig.: \@ref(fig:firstplot) but now with a red line and `out.width=&quot;100%&quot;`." width="672" />
+<img src="0206-Rmd-Figure_files/figure-html/secondplot-1.png" alt="This is the same as Fig.: \@ref(fig:firstplot) but now with a red line and `out.width="100%"`." width="672" />
 <p class="caption">(\#fig:secondplot)This is the same as Fig.: \@ref(fig:firstplot) but now with a red line and `out.width="100%"`.</p>
 </div>
 

@@ -2,33 +2,47 @@
 
 [`vscode-R`](https://github.com/REditorSupport/vscode-R/wiki) is the R Extension for Visual Studio Code. The extension is mainly focused on providing language service based on static code analysis and user interactivity between VS Code and R sessions.
 
-You can run R in VS Code. Simply open the folder containing your R scripts in VS Code, and then open the command palette (Ctrl+Shift+P) and type "R: Create R terminal". This will start an R session in the terminal.
+You can run R in VS Code. Simply open the folder containing your R scripts in VS Code, and then open the command palette (`Cmd+Shift+P`) and type "R: Create R terminal". This will start an R session in the terminal.
 
 - By default, this will close the currently open folder. 
 - If you want multiple windows each with their own folder, you first open a new window (`Ctrl` + `Shift` + `N`) and then open the folder in that new window.
 
+`rstudioapi::restartSession()` will restart the R session.
+
+Command Palette, type "**R: Interrupt R**" to interrupt the current R session.
 
 
 #### Keyboard shortcuts
-| Shortcuts                                 | Function              |
-| ------------------------------------------ | --------------------- |
-| `cmd`   + `/`                             | comment               |
-| `shift` + `cmd`  + `M` or `shift` + `ctrl` + `M` | user defined; `%>%`  |
-| `opt`   + `-`                             | user defined; `<-`    |
+
+|                    Shortcuts                     |      Function       |
+| :----------------------------------------------: | :-----------------: |
+|                  `cmd`   + `/`                   |       comment       |
+| `shift` + `cmd`  + `M`<br>`shift` + `ctrl` + `M` | user defined; `%>%` |
+|                  `opt`   + `-`                   | user defined; `<-`  |
+
+- For commonly used general keyboard shortcuts (not limited to R), see [HERE](https://my1396.github.io/Econ-Study/2024/08/12/Productivity-Tools.html#keyboard-shortcuts).
+
+- [Suggested keyboard shortcuts](https://github.com/REditorSupport/vscode-R/wiki/Keyboard-shortcuts) for R in VS Code.
+
+- For user defined shortcuts, you can add them in the `keybindings.json` file.
 
 
+--------------------------------------------------------------------------------
 
 Q: How to run R code interactively? \
 A: Create an R terminal via command **R: Create R Terminal** in the Command Palette. Once an R terminal is ready, you could either select the code or put the cursor at the beginning or ending of the code you want to run, press (<kbd>Ctrl</kbd> + <kbd>Enter</kbd>), and then code will be sent to the active R terminal. 
 
 If you want to run an entire R file, open the file in the editor, and press <kbd>Ctrl+Shift+S</kbd> and the file will be sourced in the active R terminal.
 
-Q: Why use VS Code for R programming? \
+--------------------------------------------------------------------------------
+
+Q: Why use VS Code for R programming instead of RStudio? \
 A: Several reasons:
 
-- Better integration with Copilot, making it easier to write code with AI assistance. Also, VS Code has a lot of extensions that can enhance your R programming experience, such as `Markdown Preview Enhance`, `Live Server`, and `GitLens`.
+- Better integration with Copilot, making it easier to write code with AI assistance. 
 - More responsive and powerful engineering tools such as symbol highlight, find references, rename symbol, etc. integrated to the IDE.
-- Git support is better in VS Code.
+- VS Code has a lot of extensions that can enhance your R programming experience, such as `Markdown Preview Enhance`, `Live Server`, and `GitLens`.
+- Git support is better in VS Code, making it easier for version control and collaboration.
 
 --------------------------------------------------------------------------------
 
@@ -37,6 +51,8 @@ A: Several reasons:
 The [R language server](https://github.com/REditorSupport/vscode-R/wiki/R-Language-Service) implements the [Language Server Protocol](https://microsoft.github.io/language-server-protocol/specifications/specification-current/) (LSP) and provides a set of language analysis features such as *completion*, providing function signatures, extended function documentation, locating function implementations, occurrences of a symbol or object, *rename symbol*, and code diagnostics and formatting. The R language server statically analyzes R code, and `vscode-R` interfaces with it to provide the core of this extension's functionality.
 
 The R language server is implemented by the [languageserver](https://github.com/REditorSupport/languageserver) package which performs static code analysis with the latest user documents in `R` and `Rmd` languages. Therefore, it does not rely on an active R session and thus does not require the code to be executed.
+
+[vscode-R settings](https://github.com/REditorSupport/vscode-R/wiki/R-options)
 
 #### Highlight Features:
 
@@ -365,6 +381,80 @@ ref:
 
 - [Debugging R in VSCode, \@Kun Ren](https://renkun.me/2020/09/13/debugging-r-in-vscode/)
 
+
+
+--------------------------------------------------------------------------------
+
+### Emulating `rstudioapi` functions 
+
+The VSCode-R extension is compatible with a subset of RStudio Addins via an `{rstudioapi}` emulation layer. Nearly all of the document inspection and manipulation API is supported, allowing RStudio add-ins and packages that rely on `rstudioapi` to function within VS Code.
+
+-   This emulation is achieved by "duck punching" or "monkey patching" the `rstudioapi` functions within the R session running in VS Code. This means the original `rstudioapi` functions are replaced with custom implementations that communicate with VS Code instead of RStudio.
+
+-   To enable RStudio Addins, you may need to add `options(vsc.rstudioapi = TRUE)` to your `~/.Rprofile` file. This ensures the `rstudioapi` emulation is loaded when your R session starts.
+
+    `getOption("vsc.rstudioapi")` will return `TRUE` if the emulation is enabled.
+
+--------------------------------------------------------------------------------
+
+**Use RStudio Addins from VS Code** 
+
+How to use your RStudio Addins in VS Code after enabling the emulation:
+
+-  Use the command palette (`Ctrl+Shift+P`) and type "**R: Launch RStudio Addin**".
+-  You will see a list of available RStudio add-ins that you can run directly from VS Code. 
+-  Choose the add-in you want to run, and it will execute in the current R session.
+
+--------------------------------------------------------------------------------
+
+You can also bind a keyboard shortcut to **launch the RStudio Addin picker** (command id: `r.launchAddinPicker`):
+
+```json
+{
+	"key": "ctrl+shift+A",  // launch RStudio Addin
+	"command": "r.launchAddinPicker",
+	"when": "editorTextFocus && (editorLangId == 'markdown' || editorLangId == 'r' || editorLangId == 'rmd' || editorLangId == 'quarto')"
+},
+```
+
+This will allow you to quickly access and run RStudio add-ins without needing to open the command palette each time.
+
+--------------------------------------------------------------------------------
+
+To **launch a specific RStudio addin**, you can map a direct keybinding to the addin R functions. 
+
+- The function can be found in `inst/rstudion/addins.dcf` file of the addin-providing-package's source. 
+  - Look for the keyword `Binding` in the file to find the function name.
+  - The package name is the repository name of the addin-providing package.
+
+Use example: Here I want to invoke two RStudio addins: `shoRtcut::set_new_chapter()` and `shoRtcut2::set_new_chapter2()`. 
+
+Add the following keybindings to your `keybindings.json` file:
+
+```json
+{
+  "description": "Pad line with dashes",
+  "key": "ctrl+shift+S",
+  "command": "r.runCommand",
+  "when": "editorTextFocus && (editorLangId == 'markdown' || editorLangId == 'r' || editorLangId == 'rmd' || editorLangId == 'quarto')",
+  "args": "shoRtcut:::set_new_chapter()"
+},
+{
+  "description": "Pad line with equals",
+  "key": "ctrl+shift+=",
+  "command": "r.runCommand",
+  "when": "editorTextFocus && (editorLangId == 'markdown' || editorLangId == 'r' || editorLangId == 'rmd' || editorLangId == 'quarto')",
+  "args": "shoRtcut2:::set_new_chapter2()"
+},
+```
+
+Now you can use
+
+- `Ctrl+Shift+S` to pad a line with dashes, and 
+- `Ctrl+Shift+=` to pad a line with equals.
+
+ref: [RStudio addin support in VSCode-R](https://github.com/REditorSupport/vscode-R/wiki/RStudio-addin-support)
+
 --------------------------------------------------------------------------------
 
 ### Work with Rmd
@@ -444,7 +534,15 @@ To view the static site in the `docs/` directory. I installed the VSCode extensi
   Using static files, you simply refresh the browser every time you rebuild the site.
 
 
+### Extensions
 
+[`R Tools`](https://marketplace.visualstudio.com/items?itemName=Mikhail-Arkhipov.r) provides support for the R language, including syntax checking, completions, code formatting, formatting as you type, tooltips, linting.
+
+Open the Command Palette and type '**R:**' to see list of available commands and shortcuts.
+
+ref
+
+- [vscode-R Wiki: R Markdown](https://github.com/REditorSupport/vscode-R/wiki/R-Markdown)
 
 --------------------------------------------------------------------------------
 
@@ -452,8 +550,9 @@ To view the static site in the `docs/` directory. I installed the VSCode extensi
 **References**:
 
 - [R in Visual Studio Code](https://code.visualstudio.com/docs/languages/r)
-- Settings for `vscode-R`: 
+- Set up `vscode-R`: 
   - <https://renkun.me/2019/12/26/writing-r-in-vscode-interacting-with-an-r-session/>
   - <https://francojc.github.io/posts/r-in-vscode/>
+  - [VS Code for R on macOS](https://jimgar.github.io/posts/vs-code-macos-r/post.html#extensions)
 - Getting started with `httpgd`: <https://nx10.github.io/httpgd/articles/getting-started.html>
 - Bookdown in VS code: <https://www.bendirt.com/bookdown/>

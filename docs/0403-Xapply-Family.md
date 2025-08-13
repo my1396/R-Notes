@@ -227,7 +227,7 @@ Apply a function on subsets of a RasterStack or RasterBrick. The layers to be co
 
 
 
-```r
+``` r
 num_yearss <- rep(1:55, each=12) # 55 years
 r_year <- stackApply(r, indices=num_years, fun=mean, na.rm=T)
 

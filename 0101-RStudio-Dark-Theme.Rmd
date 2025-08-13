@@ -130,6 +130,10 @@ Source: <https://github.com/rstudio/rstudio/issues/3420#issuecomment-453154475>
 Q: How to tell which version of R you are running? \
 A: In the R terminal, type `R.version`.
 
+`sessioninfo::session_info()` print information about the current R session, including the R version, packages loaded, and where they were loaded from.
+
+
+
 The key thing to be aware of is that when you update R, [if you just download the latest version from the website, you will lose all your packages!]{style="color:#FF9900"} ❌
 
 Q: How to understand the version number? \
@@ -169,6 +173,32 @@ A: `{updateR}` restores old libraries from previous version with the following 
     ```r
     updater::install_pkgs(lib.loc = c("<location(s) saved in Step 1>"))
     ```
+
+
+Use example
+
+```r
+> library(updater)
+> install_pkgs(lib.loc = c("/Library/Frameworks/R.framework/Versions/4.3-x86_64/Resources/library"))
+
+── Importing Package Information ───────────────────────────────────────────────
+ℹ Found 377 packages
+→ CRAN: abind, AER, alphavantager, anytime, AsioHeaders, askpass, assertthat, backports, base64enc, bayestestR, bdsmatrix, BH, bigD, bit, bit64, bitops, blob, bookdown, …, zip, and zoo
+→ GitHub: addinexamples, ggplot2, httpgd, rstudiothemes, xltabr, and xtsExtra
+→ R-Forge: IntroCompFinR
+→ Unknown: shoRtcut and shoRtcut2
+
+── Installing Packages ─────────────────────────────────────────────────────────
+ℹ Packages in repositories CRAN, R-Forge, and Unknown will be installed from CRAN (<https://cran.rstudio.com/>)
+
+Do you want to proceed? [y/N]: 
+```
+
+Type `y` to proceed with the installation of packages. 
+
+A progress bar and `ETA` will show the Estimated Time Remaining until the installation is finished. It will take a while to install all the packages, depending on your internet speed and the number of packages you have installed. 
+
+For a moderate user, it may take about 10 minutes to install all the packages.
 
 Refs: 
 
@@ -383,11 +413,15 @@ Ex
 ```r
 # install version 3.5.1
 install_github("tidyverse/ggplot2", ref="ggplot2 3.5.1")
+
+# install your own package
+devtools::install_github("my1396/shoRtcut") # insert dash
+devtools::install_github("my1396/shoRtcut2") # insert equal sign
 ```
 
 --------------------------------------------------------------------------------
 
-**Install package from source file**  `.tar`
+**Install package from source file** `.tar`
 
 ```r
 install.packages("~/Downloads/greenbrown_2.4.3.tar", repos = NULL, type="source")

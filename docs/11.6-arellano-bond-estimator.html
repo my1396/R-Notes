@@ -8,7 +8,7 @@
   <meta name="description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
 set in the _output.yml file.</p>" />
-  <meta name="generator" content="bookdown 0.35 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.43 and GitBook 2.6.7" />
 
   <meta property="og:title" content="11.6 Arellano-Bond Estimator | R Notes" />
   <meta property="og:type" content="book" />
@@ -29,7 +29,7 @@ set in the _output.yml file.</p>" />
 <meta name="author" content="Menghan Yuan" />
 
 
-<meta name="date" content="2025-08-12" />
+<meta name="date" content="2025-08-13" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -386,7 +386,9 @@ div.csl-indent {
 <li class="chapter" data-level="2.10.3" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#faq-1"><i class="fa fa-check"></i><b>2.10.3</b> FAQ</a></li>
 <li class="chapter" data-level="2.10.4" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#plot-viewer"><i class="fa fa-check"></i><b>2.10.4</b> Plot Viewer</a></li>
 <li class="chapter" data-level="2.10.5" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#r-debugger"><i class="fa fa-check"></i><b>2.10.5</b> R Debugger</a></li>
-<li class="chapter" data-level="2.10.6" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#work-with-rmd"><i class="fa fa-check"></i><b>2.10.6</b> Work with Rmd</a></li>
+<li class="chapter" data-level="2.10.6" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#emulating-rstudioapi-functions"><i class="fa fa-check"></i><b>2.10.6</b> Emulating <code>rstudioapi</code> functions</a></li>
+<li class="chapter" data-level="2.10.7" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#work-with-rmd"><i class="fa fa-check"></i><b>2.10.7</b> Work with Rmd</a></li>
+<li class="chapter" data-level="2.10.8" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#extensions"><i class="fa fa-check"></i><b>2.10.8</b> Extensions</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="3" data-path="3-rmd.html"><a href="3-rmd.html"><i class="fa fa-check"></i><b>3</b> Rmd</a>
@@ -767,7 +769,7 @@ fixed- and random-effects estimators in the presence of lagged dependent variabl
 <p>The Arellano-Bond estimator may be obtained in Stata using either the <code>xtabond</code> or <code>xtdpd</code> command.</p>
 <p><code>xtabond</code> fits a linear dynamic panel-data model where the unobserved unit-level effects are correlated with the lags of the dependent variable, known as the Arellano–Bond estimator. This estimator is designed for datasets with many panels and few periods, and it requires that there be <strong>no autocorrelation</strong> in the idiosyncratic errors.</p>
 <p><code>xtabond</code> uses moment conditions in which lags of the dependent variable and first differences of the exogenous variables are instruments for the first-differenced equation.</p>
-<div class="sourceCode" id="cb763"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb763-1"><a href="11.6-arellano-bond-estimator.html#cb763-1" tabindex="-1"></a><span class="kw">xtabond</span> depvar [ indepvars ] [ <span class="kw">if</span> ] [ <span class="kw">in</span> ] [, options ]</span></code></pre></div>
+<div class="sourceCode" id="cb766"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb766-1"><a href="11.6-arellano-bond-estimator.html#cb766-1" tabindex="-1"></a><span class="kw">xtabond</span> depvar [ indepvars ] [ <span class="kw">if</span> ] [ <span class="kw">in</span> ] [, options ]</span></code></pre></div>
 <p><strong>Options</strong>:</p>
 <ul>
 <li><code>lags(#)</code>: #lags of dependent variable as covariates; default is <span style="color:#008B45"><code>lags(1)</code></span></li>
@@ -806,9 +808,9 @@ n_{i,t}
 <li><p><span class="math inline">\(\varepsilon_{i,t}\)</span> is an idiosyncratic remainder component.</p></li>
 </ul>
 <p>Model <a href="11.6-arellano-bond-estimator.html#eq:AB-model">(11.1)</a> can be implemented using the following command.</p>
-<div class="sourceCode" id="cb764"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb764-1"><a href="11.6-arellano-bond-estimator.html#cb764-1" tabindex="-1"></a><span class="co">// Use example</span></span>
-<span id="cb764-2"><a href="11.6-arellano-bond-estimator.html#cb764-2" tabindex="-1"></a><span class="kw">use</span> https:<span class="co">//www.stata-press.com/data/r19/abdata</span></span>
-<span id="cb764-3"><a href="11.6-arellano-bond-estimator.html#cb764-3" tabindex="-1"></a><span class="kw">xtabond</span> n <span class="ot">l</span>(0/1).<span class="fu">w</span> <span class="ot">l</span>(0/2).(<span class="kw">k</span> ys) yr1980-yr1984 <span class="fu">year</span>, lags(2) <span class="kw">vce</span>(<span class="kw">robust</span>) <span class="kw">noconstant</span></span></code></pre></div>
+<div class="sourceCode" id="cb767"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb767-1"><a href="11.6-arellano-bond-estimator.html#cb767-1" tabindex="-1"></a><span class="co">// Use example</span></span>
+<span id="cb767-2"><a href="11.6-arellano-bond-estimator.html#cb767-2" tabindex="-1"></a><span class="kw">use</span> https:<span class="co">//www.stata-press.com/data/r19/abdata</span></span>
+<span id="cb767-3"><a href="11.6-arellano-bond-estimator.html#cb767-3" tabindex="-1"></a><span class="kw">xtabond</span> n <span class="ot">l</span>(0/1).<span class="fu">w</span> <span class="ot">l</span>(0/2).(<span class="kw">k</span> ys) yr1980-yr1984 <span class="fu">year</span>, lags(2) <span class="kw">vce</span>(<span class="kw">robust</span>) <span class="kw">noconstant</span></span></code></pre></div>
 <p>The output would look like the following.</p>
 <pre class="nowrap"><code>
 Arellano–Bond dynamic panel-data estimation     Number of obs     =        611
@@ -858,31 +860,31 @@ Instruments for level equation
 <hr />
 <p><strong>Test for Autocorrelation</strong></p>
 <p>The moment conditions of these GMM estimators are valid only if there is no serial correlation in the idiosyncratic errors. Because the first difference of white noise is necessarily autocorrelated, we need only concern ourselves with second and higher autocorrelation. We can use <strong><code>estat abond</code></strong> to test for autocorrelation:</p>
-<div class="sourceCode" id="cb765"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb765-1"><a href="11.6-arellano-bond-estimator.html#cb765-1" tabindex="-1"></a>. <span class="kw">estat</span> abond, artests(4)</span>
-<span id="cb765-2"><a href="11.6-arellano-bond-estimator.html#cb765-2" tabindex="-1"></a></span>
-<span id="cb765-3"><a href="11.6-arellano-bond-estimator.html#cb765-3" tabindex="-1"></a>Arellano–Bond <span class="kw">test</span> <span class="kw">for</span> <span class="bn">zero</span> autocorrelation <span class="kw">in</span> first-differenced errors</span>
-<span id="cb765-4"><a href="11.6-arellano-bond-estimator.html#cb765-4" tabindex="-1"></a>H0: No autocorrelation </span>
-<span id="cb765-5"><a href="11.6-arellano-bond-estimator.html#cb765-5" tabindex="-1"></a></span>
-<span id="cb765-6"><a href="11.6-arellano-bond-estimator.html#cb765-6" tabindex="-1"></a>Order         z   Prob &gt; z</span>
-<span id="cb765-7"><a href="11.6-arellano-bond-estimator.html#cb765-7" tabindex="-1"></a>    1   -4.6414     0.0000</span>
-<span id="cb765-8"><a href="11.6-arellano-bond-estimator.html#cb765-8" tabindex="-1"></a>    2   -1.0572     0.2904</span>
-<span id="cb765-9"><a href="11.6-arellano-bond-estimator.html#cb765-9" tabindex="-1"></a>    3   -.19492     0.8455</span>
-<span id="cb765-10"><a href="11.6-arellano-bond-estimator.html#cb765-10" tabindex="-1"></a>    4   .04472      0.9643</span></code></pre></div>
+<div class="sourceCode" id="cb768"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb768-1"><a href="11.6-arellano-bond-estimator.html#cb768-1" tabindex="-1"></a>. <span class="kw">estat</span> abond, artests(4)</span>
+<span id="cb768-2"><a href="11.6-arellano-bond-estimator.html#cb768-2" tabindex="-1"></a></span>
+<span id="cb768-3"><a href="11.6-arellano-bond-estimator.html#cb768-3" tabindex="-1"></a>Arellano–Bond <span class="kw">test</span> <span class="kw">for</span> <span class="bn">zero</span> autocorrelation <span class="kw">in</span> first-differenced errors</span>
+<span id="cb768-4"><a href="11.6-arellano-bond-estimator.html#cb768-4" tabindex="-1"></a>H0: No autocorrelation </span>
+<span id="cb768-5"><a href="11.6-arellano-bond-estimator.html#cb768-5" tabindex="-1"></a></span>
+<span id="cb768-6"><a href="11.6-arellano-bond-estimator.html#cb768-6" tabindex="-1"></a>Order         z   Prob &gt; z</span>
+<span id="cb768-7"><a href="11.6-arellano-bond-estimator.html#cb768-7" tabindex="-1"></a>    1   -4.6414     0.0000</span>
+<span id="cb768-8"><a href="11.6-arellano-bond-estimator.html#cb768-8" tabindex="-1"></a>    2   -1.0572     0.2904</span>
+<span id="cb768-9"><a href="11.6-arellano-bond-estimator.html#cb768-9" tabindex="-1"></a>    3   -.19492     0.8455</span>
+<span id="cb768-10"><a href="11.6-arellano-bond-estimator.html#cb768-10" tabindex="-1"></a>    4   .04472      0.9643</span></code></pre></div>
 <p><strong>Test for Overidentifying Restrictions</strong></p>
 <p><code>estat sargan</code> reports the Sargan test of overidentifying restrictions.</p>
-<div class="sourceCode" id="cb766"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb766-1"><a href="11.6-arellano-bond-estimator.html#cb766-1" tabindex="-1"></a>. <span class="kw">estat</span> sargan</span>
-<span id="cb766-2"><a href="11.6-arellano-bond-estimator.html#cb766-2" tabindex="-1"></a></span>
-<span id="cb766-3"><a href="11.6-arellano-bond-estimator.html#cb766-3" tabindex="-1"></a>Sargan <span class="kw">test</span> <span class="kw">of</span> overidentifying restrictions</span>
-<span id="cb766-4"><a href="11.6-arellano-bond-estimator.html#cb766-4" tabindex="-1"></a>H0: Overidentifying restrictions are valid</span>
-<span id="cb766-5"><a href="11.6-arellano-bond-estimator.html#cb766-5" tabindex="-1"></a>        <span class="fu">chi2</span>(25) = 65.81806</span>
-<span id="cb766-6"><a href="11.6-arellano-bond-estimator.html#cb766-6" tabindex="-1"></a>        Prob &gt; <span class="fu">chi2</span> = 0.0000</span></code></pre></div>
+<div class="sourceCode" id="cb769"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb769-1"><a href="11.6-arellano-bond-estimator.html#cb769-1" tabindex="-1"></a>. <span class="kw">estat</span> sargan</span>
+<span id="cb769-2"><a href="11.6-arellano-bond-estimator.html#cb769-2" tabindex="-1"></a></span>
+<span id="cb769-3"><a href="11.6-arellano-bond-estimator.html#cb769-3" tabindex="-1"></a>Sargan <span class="kw">test</span> <span class="kw">of</span> overidentifying restrictions</span>
+<span id="cb769-4"><a href="11.6-arellano-bond-estimator.html#cb769-4" tabindex="-1"></a>H0: Overidentifying restrictions are valid</span>
+<span id="cb769-5"><a href="11.6-arellano-bond-estimator.html#cb769-5" tabindex="-1"></a>        <span class="fu">chi2</span>(25) = 65.81806</span>
+<span id="cb769-6"><a href="11.6-arellano-bond-estimator.html#cb769-6" tabindex="-1"></a>        Prob &gt; <span class="fu">chi2</span> = 0.0000</span></code></pre></div>
 <hr />
 <p><strong>Predetermined Covariates</strong></p>
 <p>Sometimes we cannot assume strict exogeneity. Recall that a variable, <span class="math inline">\(x_{it}\)</span>, is said to be strictly exogenous if <span class="math inline">\(\E[𝑥_{it}\varepsilon_{is}] = 0\)</span> for all <span class="math inline">\(t\)</span> and <span class="math inline">\(s\)</span>.</p>
 <p>If <span class="math inline">\(\E[x_{it}\varepsilon_{is}] \ne 0\)</span> for <span class="math inline">\(s &lt; t\)</span> but <span class="math inline">\(\E[x_{it}\varepsilon_{is}] = 0\)</span> for all <span class="math inline">\(s\ge t,\)</span> the variable is said to be <span style="color:#008B45"><strong>predetermined</strong></span>. Intuitively, if the error term at time <span class="math inline">\(t\)</span> has some feedback on the subsequent realizations of <span class="math inline">\(x_{it},\)</span> <span class="math inline">\(x_{it}\)</span> is a predetermined variable. Because unforecastable errors today might affect future changes in the real wage and in the capital stock, we might suspect that the log of the real product wage and the log of the gross capital stock are predetermined instead of strictly exogenous.</p>
 <p>We also call predetermined <span class="math inline">\(x_{it}\)</span> as <span style="color:#008B45"><strong>sequential exogenous</strong></span>.</p>
 <p>Here we treat <span class="math inline">\(w\)</span> and <span class="math inline">\(k\)</span> as predetermined and use lagged levels as instruments.</p>
-<div class="sourceCode" id="cb767"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb767-1"><a href="11.6-arellano-bond-estimator.html#cb767-1" tabindex="-1"></a><span class="kw">xtabond</span> n <span class="ot">l</span>(0/1).ys yr1980-yr1984 <span class="fu">year</span>, lags(2) twostep pre(<span class="fu">w</span>, lag(1,.)) pre(<span class="kw">k</span>, lag(2,.)) <span class="kw">noconstant</span> <span class="kw">vce</span>(<span class="kw">robust</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb770"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb770-1"><a href="11.6-arellano-bond-estimator.html#cb770-1" tabindex="-1"></a><span class="kw">xtabond</span> n <span class="ot">l</span>(0/1).ys yr1980-yr1984 <span class="fu">year</span>, lags(2) twostep pre(<span class="fu">w</span>, lag(1,.)) pre(<span class="kw">k</span>, lag(2,.)) <span class="kw">noconstant</span> <span class="kw">vce</span>(<span class="kw">robust</span>)</span></code></pre></div>
 <p>We are now including GMM-type instruments from the first lag of <code>L.w</code> on back and from the first lag of <code>L2.k</code> on back.</p>
 <p><code>pre(w, lag(1, .))</code> to mean that <code>L.w</code> is a predetermined variable and <code>pre(k, lag(2, .))</code> to mean that <code>L2.k</code> is a predetermined variable.</p>
 <p><strong>Endogenous Covariates</strong></p>
@@ -894,14 +896,14 @@ Instruments for level equation
 <li><p>predetermined variables do <span style="color:#FF9900"><strong>NOT</strong></span> allow for contemporaneous correlation.</p></li>
 </ul>
 <p>In this example, we treat <span class="math inline">\(w\)</span> and <span class="math inline">\(k\)</span> as endogenous variables.</p>
-<div class="sourceCode" id="cb768"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb768-1"><a href="11.6-arellano-bond-estimator.html#cb768-1" tabindex="-1"></a><span class="kw">xtabond</span> n <span class="ot">l</span>(0/1).ys yr1980-yr1984 <span class="fu">year</span>, lags(2) twostep endogenous(<span class="fu">w</span>, lag(1,.)) endogenous(<span class="kw">k</span>, lag(2,.)) <span class="kw">noconstant</span> <span class="kw">vce</span>(<span class="kw">robust</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb771"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb771-1"><a href="11.6-arellano-bond-estimator.html#cb771-1" tabindex="-1"></a><span class="kw">xtabond</span> n <span class="ot">l</span>(0/1).ys yr1980-yr1984 <span class="fu">year</span>, lags(2) twostep endogenous(<span class="fu">w</span>, lag(1,.)) endogenous(<span class="kw">k</span>, lag(2,.)) <span class="kw">noconstant</span> <span class="kw">vce</span>(<span class="kw">robust</span>)</span></code></pre></div>
 <p>Although some estimated coefficients changed in magnitude, none changed in sign, and these results are similar to those obtained by treating <span class="math inline">\(w\)</span> and <span class="math inline">\(k\)</span> as predetermined.</p>
 <p>Prefix <code>xtabond</code> with <code>xi:</code> if you need to include factor variables</p>
-<div class="sourceCode" id="cb769"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb769-1"><a href="11.6-arellano-bond-estimator.html#cb769-1" tabindex="-1"></a><span class="co">// AB estimator with factor variables</span></span>
-<span id="cb769-2"><a href="11.6-arellano-bond-estimator.html#cb769-2" tabindex="-1"></a><span class="kw">xi</span>: <span class="kw">xtabond</span> logd_gdp tmp tmp2 pre pre2 <span class="co">///</span></span>
-<span id="cb769-3"><a href="11.6-arellano-bond-estimator.html#cb769-3" tabindex="-1"></a>    tmp_pre tmp2_pre tmp_pre2 tmp2_pre2 <span class="co">///</span></span>
-<span id="cb769-4"><a href="11.6-arellano-bond-estimator.html#cb769-4" tabindex="-1"></a>    i.<span class="fu">year</span> i.iso|year_id i.iso|year_id2, <span class="co">///</span></span>
-<span id="cb769-5"><a href="11.6-arellano-bond-estimator.html#cb769-5" tabindex="-1"></a>    lags(1) <span class="kw">vce</span>(<span class="kw">robust</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb772"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb772-1"><a href="11.6-arellano-bond-estimator.html#cb772-1" tabindex="-1"></a><span class="co">// AB estimator with factor variables</span></span>
+<span id="cb772-2"><a href="11.6-arellano-bond-estimator.html#cb772-2" tabindex="-1"></a><span class="kw">xi</span>: <span class="kw">xtabond</span> logd_gdp tmp tmp2 pre pre2 <span class="co">///</span></span>
+<span id="cb772-3"><a href="11.6-arellano-bond-estimator.html#cb772-3" tabindex="-1"></a>    tmp_pre tmp2_pre tmp_pre2 tmp2_pre2 <span class="co">///</span></span>
+<span id="cb772-4"><a href="11.6-arellano-bond-estimator.html#cb772-4" tabindex="-1"></a>    i.<span class="fu">year</span> i.iso|year_id i.iso|year_id2, <span class="co">///</span></span>
+<span id="cb772-5"><a href="11.6-arellano-bond-estimator.html#cb772-5" tabindex="-1"></a>    lags(1) <span class="kw">vce</span>(<span class="kw">robust</span>)</span></code></pre></div>
 <ul>
 <li><p><code>i.year</code>: time fixed effects;</p></li>
 <li><p><code>i.iso|year_id</code>: country-specific linear time trends</p></li>
@@ -934,18 +936,18 @@ Instruments for level equation
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb770"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb770-1"><a href="11.6-arellano-bond-estimator.html#cb770-1" tabindex="-1"></a>xtabond2 depvar <span class="kw">varlist</span> [<span class="kw">if</span> <span class="fu">exp</span>] [<span class="kw">in</span> <span class="kw">range</span>] [<span class="kw">weight</span>] [, <span class="dv">level</span>(#)</span>
-<span id="cb770-2"><a href="11.6-arellano-bond-estimator.html#cb770-2" tabindex="-1"></a>        <span class="kw">svmat</span> svvar twostep <span class="kw">robust</span> <span class="kw">cluster</span>(<span class="kw">varlist</span>) <span class="kw">noconstant</span> small </span>
-<span id="cb770-3"><a href="11.6-arellano-bond-estimator.html#cb770-3" tabindex="-1"></a>                gmmopt [gmmopt ...] ivopt [ivopt ...]]</span></code></pre></div>
+<div class="sourceCode" id="cb773"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb773-1"><a href="11.6-arellano-bond-estimator.html#cb773-1" tabindex="-1"></a>xtabond2 depvar <span class="kw">varlist</span> [<span class="kw">if</span> <span class="fu">exp</span>] [<span class="kw">in</span> <span class="kw">range</span>] [<span class="kw">weight</span>] [, <span class="dv">level</span>(#)</span>
+<span id="cb773-2"><a href="11.6-arellano-bond-estimator.html#cb773-2" tabindex="-1"></a>        <span class="kw">svmat</span> svvar twostep <span class="kw">robust</span> <span class="kw">cluster</span>(<span class="kw">varlist</span>) <span class="kw">noconstant</span> small </span>
+<span id="cb773-3"><a href="11.6-arellano-bond-estimator.html#cb773-3" tabindex="-1"></a>                gmmopt [gmmopt ...] ivopt [ivopt ...]]</span></code></pre></div>
 <p><strong>Options</strong>:</p>
 <ul>
 <li><p><code>level(#)</code> confidence level, default to <code>level(95)</code></p></li>
 <li><p><code>gmmopt</code></p>
-<div class="sourceCode" id="cb771"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb771-1"><a href="11.6-arellano-bond-estimator.html#cb771-1" tabindex="-1"></a>gmmstyle(<span class="kw">varlist</span> [, laglimits(# #) <span class="kw">collapse</span> orthogonal equation({<span class="fu">diff</span> | <span class="dv">level</span> | both}) passthru <span class="kw">split</span>])</span></code></pre></div>
+<div class="sourceCode" id="cb774"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb774-1"><a href="11.6-arellano-bond-estimator.html#cb774-1" tabindex="-1"></a>gmmstyle(<span class="kw">varlist</span> [, laglimits(# #) <span class="kw">collapse</span> orthogonal equation({<span class="fu">diff</span> | <span class="dv">level</span> | both}) passthru <span class="kw">split</span>])</span></code></pre></div>
 <p><code>gmmstyle</code> specifies a set of variables to be used as bases for “GMM-style” instrument sets described in Holtz-Eakin, Newey, and Rosen (1988) and Arellano and Bond (1991). By default xtabond2 uses, for each time period, all available lags of the specified variables in levels dated <span class="math inline">\(t-1\)</span> or earlier as instruments for the transformed equation; and uses the contemporaneous first differences as instruments in the levels equation. These defaults are appropriate for predetermined variables that are not strictly exogenous (Bond 2000). Missing values are always replaced by zeros.</p>
 <p>Since the <code>gmmstyle()</code> varlist allows time-series operators, there are many routes to the same specification. E.g., <code>gmm(w, lag(2 .))</code>, the standard treatment for an endogenous variable, is equivalent to <code>gmm(L.w, lag(1 .))</code>, thus <code>gmm(L.w)</code>.</p></li>
 <li><p><code>ivopt</code></p>
-<div class="sourceCode" id="cb772"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb772-1"><a href="11.6-arellano-bond-estimator.html#cb772-1" tabindex="-1"></a>ivstyle(<span class="kw">varlist</span> [, equation({<span class="fu">diff</span> | <span class="dv">level</span> | both}) passthru mz])</span></code></pre></div>
+<div class="sourceCode" id="cb775"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb775-1"><a href="11.6-arellano-bond-estimator.html#cb775-1" tabindex="-1"></a>ivstyle(<span class="kw">varlist</span> [, equation({<span class="fu">diff</span> | <span class="dv">level</span> | both}) passthru mz])</span></code></pre></div>
 <p><code>ivstyle</code> specifies a set of variables to serve as standard instruments, with one column in the instrument matrix per variable. Normally, strictly exogenous regressors are included in <code>ivstyle</code> options, in order to enter the instrument matrix, as well as being listed before the main comma of the command line.</p>
 <p>The <code>equation()</code> suboption specifies which equation(s) should use the instruments:</p>
 <ul>
@@ -955,9 +957,9 @@ Instruments for level equation
 </ul></li>
 </ul>
 <p><strong>A matching triplet</strong> using different pkgs to achieve the same results (pp42, <a href="https://journals.sagepub.com/doi/pdf/10.1177/1536867X0900900106">Stata Journal article by David Roodman</a>)</p>
-<div class="sourceCode" id="cb773"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb773-1"><a href="11.6-arellano-bond-estimator.html#cb773-1" tabindex="-1"></a><span class="kw">xtabond</span> n, lags(1) pre(<span class="fu">w</span>, lagstruct(1,.)) pre(<span class="kw">k</span>, endog) <span class="kw">robust</span></span>
-<span id="cb773-2"><a href="11.6-arellano-bond-estimator.html#cb773-2" tabindex="-1"></a>xtdpd n L.n <span class="fu">w</span> L.<span class="fu">w</span> <span class="kw">k</span>, dgmmiv(<span class="fu">w</span> <span class="kw">k</span> n) <span class="kw">vce</span>(<span class="kw">robust</span>)</span>
-<span id="cb773-3"><a href="11.6-arellano-bond-estimator.html#cb773-3" tabindex="-1"></a>xtabond2 n L.n <span class="fu">w</span> L.<span class="fu">w</span> <span class="kw">k</span>, gmmstyle(L.(<span class="fu">w</span> n <span class="kw">k</span>), <span class="kw">eq</span>(<span class="fu">diff</span>)) <span class="kw">robust</span></span></code></pre></div>
+<div class="sourceCode" id="cb776"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb776-1"><a href="11.6-arellano-bond-estimator.html#cb776-1" tabindex="-1"></a><span class="kw">xtabond</span> n, lags(1) pre(<span class="fu">w</span>, lagstruct(1,.)) pre(<span class="kw">k</span>, endog) <span class="kw">robust</span></span>
+<span id="cb776-2"><a href="11.6-arellano-bond-estimator.html#cb776-2" tabindex="-1"></a>xtdpd n L.n <span class="fu">w</span> L.<span class="fu">w</span> <span class="kw">k</span>, dgmmiv(<span class="fu">w</span> <span class="kw">k</span> n) <span class="kw">vce</span>(<span class="kw">robust</span>)</span>
+<span id="cb776-3"><a href="11.6-arellano-bond-estimator.html#cb776-3" tabindex="-1"></a>xtabond2 n L.n <span class="fu">w</span> L.<span class="fu">w</span> <span class="kw">k</span>, gmmstyle(L.(<span class="fu">w</span> n <span class="kw">k</span>), <span class="kw">eq</span>(<span class="fu">diff</span>)) <span class="kw">robust</span></span></code></pre></div>
 <p><a href="https://www.statalist.org/forums/forum/general-stata-discussion/general/1548924-xtabond-vs-xtabond2-how-to-get-the-same-results" class="uri">https://www.statalist.org/forums/forum/general-stata-discussion/general/1548924-xtabond-vs-xtabond2-how-to-get-the-same-results</a></p>
 
 </div>
@@ -994,45 +996,45 @@ Nickell, Stephen. 1981. <span>“<span>Biases In Dynamic Models With Fixed Effec
 <script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
-"sharing": {
-"github": true,
-"facebook": true,
-"twitter": true,
-"linkedin": false,
-"weibo": false,
-"instapaper": false,
-"vk": false,
-"whatsapp": false,
-"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
-},
-"fontsettings": {
-"theme": "night",
-"family": "sans",
-"size": 3
-},
-"edit": {
-"link": "https://github.com/my1396/R-Notes/edit/main/1101-Stata-AB-Estimator.Rmd",
-"text": "Edit"
-},
-"history": {
-"link": null,
-"text": null
-},
-"view": {
-"link": null,
-"text": null
-},
-"download": ["_main.pdf", "_main.epub", "https://github.com/my1396/R-Notes/raw/main/1101-Stata-AB-Estimator.Rmd"],
-"search": {
-"engine": "fuse",
-"options": null
-},
-"toc": {
-"collapse": "subsection"
-},
-"toc_depth": 3,
-"toc_float": true,
-"enableEmoji": true
+  "sharing": {
+    "github": true,
+    "facebook": true,
+    "twitter": true,
+    "linkedin": false,
+    "weibo": false,
+    "instapaper": false,
+    "vk": false,
+    "whatsapp": false,
+    "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+  },
+  "fontsettings": {
+    "theme": "night",
+    "family": "sans",
+    "size": 3
+  },
+  "edit": {
+    "link": "https://github.com/my1396/R-Notes/edit/main/1101-Stata-AB-Estimator.Rmd",
+    "text": "Edit"
+  },
+  "history": {
+    "link": null,
+    "text": null
+  },
+  "view": {
+    "link": null,
+    "text": null
+  },
+  "download": ["_main.pdf", "_main.epub", "https://github.com/my1396/R-Notes/raw/main/1101-Stata-AB-Estimator.Rmd"],
+  "search": {
+    "engine": "fuse",
+    "options": null
+  },
+  "toc": {
+    "collapse": "subsection"
+  },
+  "toc_depth": 3,
+  "toc_float": true,
+  "enableEmoji": true
 });
 });
 </script>

@@ -8,7 +8,7 @@
   <meta name="description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
 set in the _output.yml file.</p>" />
-  <meta name="generator" content="bookdown 0.35 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.43 and GitBook 2.6.7" />
 
   <meta property="og:title" content="Chapter 11 Stata | R Notes" />
   <meta property="og:type" content="book" />
@@ -29,7 +29,7 @@ set in the _output.yml file.</p>" />
 <meta name="author" content="Menghan Yuan" />
 
 
-<meta name="date" content="2025-08-12" />
+<meta name="date" content="2025-08-13" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -386,7 +386,9 @@ div.csl-indent {
 <li class="chapter" data-level="2.10.3" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#faq-1"><i class="fa fa-check"></i><b>2.10.3</b> FAQ</a></li>
 <li class="chapter" data-level="2.10.4" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#plot-viewer"><i class="fa fa-check"></i><b>2.10.4</b> Plot Viewer</a></li>
 <li class="chapter" data-level="2.10.5" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#r-debugger"><i class="fa fa-check"></i><b>2.10.5</b> R Debugger</a></li>
-<li class="chapter" data-level="2.10.6" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#work-with-rmd"><i class="fa fa-check"></i><b>2.10.6</b> Work with Rmd</a></li>
+<li class="chapter" data-level="2.10.6" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#emulating-rstudioapi-functions"><i class="fa fa-check"></i><b>2.10.6</b> Emulating <code>rstudioapi</code> functions</a></li>
+<li class="chapter" data-level="2.10.7" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#work-with-rmd"><i class="fa fa-check"></i><b>2.10.7</b> Work with Rmd</a></li>
+<li class="chapter" data-level="2.10.8" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#extensions"><i class="fa fa-check"></i><b>2.10.8</b> Extensions</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="3" data-path="3-rmd.html"><a href="3-rmd.html"><i class="fa fa-check"></i><b>3</b> Rmd</a>
@@ -804,9 +806,9 @@ div.csl-indent {
 <p><strong>Do-file Rule of Thumb</strong></p>
 <ul>
 <li><p>Your <code>.do</code> file begins with loading a dataset and ends with saving one.</p>
-<div class="sourceCode" id="cb697"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb697-1"><a href="11-stata.html#cb697-1" tabindex="-1"></a><span class="kw">use</span> ..., <span class="kw">clear</span> <span class="co">// begin</span></span>
-<span id="cb697-2"><a href="11-stata.html#cb697-2" tabindex="-1"></a><span class="co">/* your code */</span></span>
-<span id="cb697-3"><a href="11-stata.html#cb697-3" tabindex="-1"></a><span class="kw">save</span> ..., <span class="kw">replace</span> <span class="co">// end</span></span></code></pre></div></li>
+<div class="sourceCode" id="cb700"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb700-1"><a href="11-stata.html#cb700-1" tabindex="-1"></a><span class="kw">use</span> ..., <span class="kw">clear</span> <span class="co">// begin</span></span>
+<span id="cb700-2"><a href="11-stata.html#cb700-2" tabindex="-1"></a><span class="co">/* your code */</span></span>
+<span id="cb700-3"><a href="11-stata.html#cb700-3" tabindex="-1"></a><span class="kw">save</span> ..., <span class="kw">replace</span> <span class="co">// end</span></span></code></pre></div></li>
 <li><p>Never modify the raw data files. Save the results of your data cleaning in a new file.</p></li>
 <li><p>Every data file is created by a script. Convert your interactive data cleaning session to a <code>.do</code> file.</p></li>
 <li><p>No data file is modified by multiple scripts.</p></li>
@@ -838,13 +840,13 @@ div.csl-indent {
 <p>Summary of ways to break long lines:</p>
 <ul>
 <li><p>You can change the end-of-line delimiter to <code>;</code> by using <code>#delimit</code>,</p>
-<div class="sourceCode" id="cb698"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb698-1"><a href="11-stata.html#cb698-1" tabindex="-1"></a>#delimit ; <span class="co">// change the line delimiter to semicolon</span></span>
-<span id="cb698-2"><a href="11-stata.html#cb698-2" tabindex="-1"></a><span class="kw">summarize</span> <span class="kw">weight</span> price displ headroom rep78 <span class="fu">length</span> turn gear_ratio</span>
-<span id="cb698-3"><a href="11-stata.html#cb698-3" tabindex="-1"></a>    <span class="kw">if</span> <span class="fu">substr</span>(company,1,4)==<span class="st">&quot;Ford&quot;</span> |</span>
-<span id="cb698-4"><a href="11-stata.html#cb698-4" tabindex="-1"></a>       <span class="fu">substr</span>(company,1,2)==<span class="st">&quot;GM&quot;</span>, <span class="kw">detail</span> ;</span>
-<span id="cb698-5"><a href="11-stata.html#cb698-5" tabindex="-1"></a><span class="kw">gen</span> <span class="kw">byte</span> ford = <span class="fu">substr</span>(company,1,4)==<span class="st">&quot;Ford&quot;</span> ;</span>
-<span id="cb698-6"><a href="11-stata.html#cb698-6" tabindex="-1"></a>#delimit <span class="kw">cr</span> <span class="co">// change the delimiter back to carriage return</span></span>
-<span id="cb698-7"><a href="11-stata.html#cb698-7" tabindex="-1"></a><span class="kw">gen</span> <span class="kw">byte</span> gm = <span class="fu">substr</span>(company,1,2)==<span class="st">&quot;GM&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb701"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb701-1"><a href="11-stata.html#cb701-1" tabindex="-1"></a>#delimit ; <span class="co">// change the line delimiter to semicolon</span></span>
+<span id="cb701-2"><a href="11-stata.html#cb701-2" tabindex="-1"></a><span class="kw">summarize</span> <span class="kw">weight</span> price displ headroom rep78 <span class="fu">length</span> turn gear_ratio</span>
+<span id="cb701-3"><a href="11-stata.html#cb701-3" tabindex="-1"></a>    <span class="kw">if</span> <span class="fu">substr</span>(company,1,4)==<span class="st">&quot;Ford&quot;</span> |</span>
+<span id="cb701-4"><a href="11-stata.html#cb701-4" tabindex="-1"></a>       <span class="fu">substr</span>(company,1,2)==<span class="st">&quot;GM&quot;</span>, <span class="kw">detail</span> ;</span>
+<span id="cb701-5"><a href="11-stata.html#cb701-5" tabindex="-1"></a><span class="kw">gen</span> <span class="kw">byte</span> ford = <span class="fu">substr</span>(company,1,4)==<span class="st">&quot;Ford&quot;</span> ;</span>
+<span id="cb701-6"><a href="11-stata.html#cb701-6" tabindex="-1"></a>#delimit <span class="kw">cr</span> <span class="co">// change the delimiter back to carriage return</span></span>
+<span id="cb701-7"><a href="11-stata.html#cb701-7" tabindex="-1"></a><span class="kw">gen</span> <span class="kw">byte</span> gm = <span class="fu">substr</span>(company,1,2)==<span class="st">&quot;GM&quot;</span></span></code></pre></div>
 <p>Once you declear <code>#delimit ;</code>, all lines must end in <code>;</code>. Stata treats carriage returns as no different from blanks.</p></li>
 <li><p>you can comment out the line break by using <code>/* */</code> comment delimiters, or</p></li>
 <li><p>you can use the <code>///</code> line-join indicator.</p></li>
@@ -859,10 +861,10 @@ div.csl-indent {
 <p><code>exit, clear</code> to quit Stata. If the dataset in memory has changed since the last time it was saved, Stata will refuse to quit unless you specify <code>clear</code>.</p>
 <hr />
 <p><strong>Abbreviation rules</strong>: Stata allows abbreviations. You can abbreviate commands, variable names, and options.</p>
-<div class="sourceCode" id="cb699"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb699-1"><a href="11-stata.html#cb699-1" tabindex="-1"></a><span class="co">// full command</span></span>
-<span id="cb699-2"><a href="11-stata.html#cb699-2" tabindex="-1"></a>. <span class="kw">summarize</span> myvar, <span class="kw">detail</span></span>
-<span id="cb699-3"><a href="11-stata.html#cb699-3" tabindex="-1"></a><span class="co">// use abbr. to achieve the same function</span></span>
-<span id="cb699-4"><a href="11-stata.html#cb699-4" tabindex="-1"></a>. <span class="kw">sum</span> myv, <span class="kw">d</span></span></code></pre></div>
+<div class="sourceCode" id="cb702"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb702-1"><a href="11-stata.html#cb702-1" tabindex="-1"></a><span class="co">// full command</span></span>
+<span id="cb702-2"><a href="11-stata.html#cb702-2" tabindex="-1"></a>. <span class="kw">summarize</span> myvar, <span class="kw">detail</span></span>
+<span id="cb702-3"><a href="11-stata.html#cb702-3" tabindex="-1"></a><span class="co">// use abbr. to achieve the same function</span></span>
+<span id="cb702-4"><a href="11-stata.html#cb702-4" tabindex="-1"></a>. <span class="kw">sum</span> myv, <span class="kw">d</span></span></code></pre></div>
 <p>As a general rule, command, option, and variable names may be abbreviated to the shortest string of characters that uniquely identifies them.</p>
 <p>When you read the Stata manual, it uses underlines to denote the minimal abbreviation for a command or option.</p>
 <p>E.g. When you see <span style="font-family: monospace"><u>ap</u>pend</span>, it means you can use <code>ap</code> to denote <code>append</code>.
@@ -893,45 +895,45 @@ allowable abbreviation for <code>describe</code> is <code>desc</code>.</p>
 <script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
-"sharing": {
-"github": true,
-"facebook": true,
-"twitter": true,
-"linkedin": false,
-"weibo": false,
-"instapaper": false,
-"vk": false,
-"whatsapp": false,
-"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
-},
-"fontsettings": {
-"theme": "night",
-"family": "sans",
-"size": 3
-},
-"edit": {
-"link": "https://github.com/my1396/R-Notes/edit/main/1100-Stata.Rmd",
-"text": "Edit"
-},
-"history": {
-"link": null,
-"text": null
-},
-"view": {
-"link": null,
-"text": null
-},
-"download": ["_main.pdf", "_main.epub", "https://github.com/my1396/R-Notes/raw/main/1100-Stata.Rmd"],
-"search": {
-"engine": "fuse",
-"options": null
-},
-"toc": {
-"collapse": "subsection"
-},
-"toc_depth": 3,
-"toc_float": true,
-"enableEmoji": true
+  "sharing": {
+    "github": true,
+    "facebook": true,
+    "twitter": true,
+    "linkedin": false,
+    "weibo": false,
+    "instapaper": false,
+    "vk": false,
+    "whatsapp": false,
+    "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+  },
+  "fontsettings": {
+    "theme": "night",
+    "family": "sans",
+    "size": 3
+  },
+  "edit": {
+    "link": "https://github.com/my1396/R-Notes/edit/main/1100-Stata.Rmd",
+    "text": "Edit"
+  },
+  "history": {
+    "link": null,
+    "text": null
+  },
+  "view": {
+    "link": null,
+    "text": null
+  },
+  "download": ["_main.pdf", "_main.epub", "https://github.com/my1396/R-Notes/raw/main/1100-Stata.Rmd"],
+  "search": {
+    "engine": "fuse",
+    "options": null
+  },
+  "toc": {
+    "collapse": "subsection"
+  },
+  "toc_depth": 3,
+  "toc_float": true,
+  "enableEmoji": true
 });
 });
 </script>

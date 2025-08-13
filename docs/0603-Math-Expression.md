@@ -12,7 +12,7 @@ Two options
 Trick: use `\\,` or `\\;` to show white space in math mode. `\\;` is a larger space than `\\,`.
 
 
-```r
+``` r
 # There is an R package called latex2exp which may be helpful. It has function TeX which accepts some LaTeX expressions enclosed with dollar sign $ as in this example:
 
 library(latex2exp)

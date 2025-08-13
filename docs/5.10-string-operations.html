@@ -8,7 +8,7 @@
   <meta name="description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
 set in the _output.yml file.</p>" />
-  <meta name="generator" content="bookdown 0.35 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.43 and GitBook 2.6.7" />
 
   <meta property="og:title" content="5.10 String Operations | R Notes" />
   <meta property="og:type" content="book" />
@@ -29,7 +29,7 @@ set in the _output.yml file.</p>" />
 <meta name="author" content="Menghan Yuan" />
 
 
-<meta name="date" content="2025-08-12" />
+<meta name="date" content="2025-08-13" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -386,7 +386,9 @@ div.csl-indent {
 <li class="chapter" data-level="2.10.3" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#faq-1"><i class="fa fa-check"></i><b>2.10.3</b> FAQ</a></li>
 <li class="chapter" data-level="2.10.4" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#plot-viewer"><i class="fa fa-check"></i><b>2.10.4</b> Plot Viewer</a></li>
 <li class="chapter" data-level="2.10.5" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#r-debugger"><i class="fa fa-check"></i><b>2.10.5</b> R Debugger</a></li>
-<li class="chapter" data-level="2.10.6" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#work-with-rmd"><i class="fa fa-check"></i><b>2.10.6</b> Work with Rmd</a></li>
+<li class="chapter" data-level="2.10.6" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#emulating-rstudioapi-functions"><i class="fa fa-check"></i><b>2.10.6</b> Emulating <code>rstudioapi</code> functions</a></li>
+<li class="chapter" data-level="2.10.7" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#work-with-rmd"><i class="fa fa-check"></i><b>2.10.7</b> Work with Rmd</a></li>
+<li class="chapter" data-level="2.10.8" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#extensions"><i class="fa fa-check"></i><b>2.10.8</b> Extensions</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="3" data-path="3-rmd.html"><a href="3-rmd.html"><i class="fa fa-check"></i><b>3</b> Rmd</a>
@@ -756,20 +758,20 @@ div.csl-indent {
 <p><code>stringr::str_starts(string, pattern)</code></p>
 <p><code>str_detect(string, pattern)</code> returns a logical vector with <code>TRUE</code> for each element of <code>string</code> that matches <code>pattern</code> and <code>FALSE</code> otherwise.</p>
 <p><code>str_locate(string, pattern)</code> returns the <code>start</code> and <code>end</code> position of the first match;</p>
-<div class="sourceCode" id="cb426"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb426-1"><a href="5.10-string-operations.html#cb426-1" tabindex="-1"></a><span class="co"># match a pattern and select</span></span>
-<span id="cb426-2"><a href="5.10-string-operations.html#cb426-2" tabindex="-1"></a>data <span class="sc">%&gt;%</span> </span>
-<span id="cb426-3"><a href="5.10-string-operations.html#cb426-3" tabindex="-1"></a>        <span class="fu">mutate</span>(<span class="at">end =</span> <span class="fu">str_locate</span>(key,<span class="st">&quot;_sd&quot;</span>)[<span class="dv">1</span>],</span>
-<span id="cb426-4"><a href="5.10-string-operations.html#cb426-4" tabindex="-1"></a>                 <span class="at">name =</span> <span class="fu">str_sub</span>(key, <span class="dv">1</span>, end<span class="dv">-1</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb429"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb429-1"><a href="5.10-string-operations.html#cb429-1" tabindex="-1"></a><span class="co"># match a pattern and select</span></span>
+<span id="cb429-2"><a href="5.10-string-operations.html#cb429-2" tabindex="-1"></a>data <span class="sc">%&gt;%</span> </span>
+<span id="cb429-3"><a href="5.10-string-operations.html#cb429-3" tabindex="-1"></a>        <span class="fu">mutate</span>(<span class="at">end =</span> <span class="fu">str_locate</span>(key,<span class="st">&quot;_sd&quot;</span>)[<span class="dv">1</span>],</span>
+<span id="cb429-4"><a href="5.10-string-operations.html#cb429-4" tabindex="-1"></a>                 <span class="at">name =</span> <span class="fu">str_sub</span>(key, <span class="dv">1</span>, end<span class="dv">-1</span>))</span></code></pre></div>
 <p><code>str_locate_all(string, pattern)</code> returns the <code>start</code> and <code>end</code> position of each match.</p>
 <p><code>str_sub(string, start = 1L, end = -1L)</code> Extract substrings from a character vector.</p>
 <p>Negative indices index from end of string.</p>
-<div class="sourceCode" id="cb427"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb427-1"><a href="5.10-string-operations.html#cb427-1" tabindex="-1"></a><span class="co"># replace substring with specific value</span></span>
-<span id="cb427-2"><a href="5.10-string-operations.html#cb427-2" tabindex="-1"></a><span class="fu">str_sub</span>(string, <span class="at">start =</span> <span class="dv">1</span><span class="dt">L</span>, <span class="at">end =</span> <span class="sc">-</span><span class="dv">1</span><span class="dt">L</span>, <span class="at">omit_na =</span> <span class="cn">FALSE</span>) <span class="ot">&lt;-</span> value</span>
-<span id="cb427-3"><a href="5.10-string-operations.html#cb427-3" tabindex="-1"></a></span>
-<span id="cb427-4"><a href="5.10-string-operations.html#cb427-4" tabindex="-1"></a><span class="co"># A pair of integer vectors defining the range of characters to extract</span></span>
-<span id="cb427-5"><a href="5.10-string-operations.html#cb427-5" tabindex="-1"></a>hw <span class="ot">&lt;-</span> <span class="st">&quot;Hadley Wickham&quot;</span></span>
-<span id="cb427-6"><a href="5.10-string-operations.html#cb427-6" tabindex="-1"></a><span class="fu">str_sub</span>(hw, <span class="at">start=</span><span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">8</span>), <span class="at">end=</span><span class="fu">c</span>(<span class="dv">6</span>, <span class="dv">14</span>)) <span class="co"># select 1-6 and 8-14</span></span>
-<span id="cb427-7"><a href="5.10-string-operations.html#cb427-7" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Hadley&quot;  &quot;Wickham&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb430"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb430-1"><a href="5.10-string-operations.html#cb430-1" tabindex="-1"></a><span class="co"># replace substring with specific value</span></span>
+<span id="cb430-2"><a href="5.10-string-operations.html#cb430-2" tabindex="-1"></a><span class="fu">str_sub</span>(string, <span class="at">start =</span> <span class="dv">1</span><span class="dt">L</span>, <span class="at">end =</span> <span class="sc">-</span><span class="dv">1</span><span class="dt">L</span>, <span class="at">omit_na =</span> <span class="cn">FALSE</span>) <span class="ot">&lt;-</span> value</span>
+<span id="cb430-3"><a href="5.10-string-operations.html#cb430-3" tabindex="-1"></a></span>
+<span id="cb430-4"><a href="5.10-string-operations.html#cb430-4" tabindex="-1"></a><span class="co"># A pair of integer vectors defining the range of characters to extract</span></span>
+<span id="cb430-5"><a href="5.10-string-operations.html#cb430-5" tabindex="-1"></a>hw <span class="ot">&lt;-</span> <span class="st">&quot;Hadley Wickham&quot;</span></span>
+<span id="cb430-6"><a href="5.10-string-operations.html#cb430-6" tabindex="-1"></a><span class="fu">str_sub</span>(hw, <span class="at">start=</span><span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">8</span>), <span class="at">end=</span><span class="fu">c</span>(<span class="dv">6</span>, <span class="dv">14</span>)) <span class="co"># select 1-6 and 8-14</span></span>
+<span id="cb430-7"><a href="5.10-string-operations.html#cb430-7" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Hadley&quot;  &quot;Wickham&quot;</span></span></code></pre></div>
 <p><code>base::substr(name, start, end)</code></p>
 <p><code>base::substring(name, start, end=1000000L)</code> if not providing <code>end</code>, will subset from <code>start</code> until the end of the string.</p>
 <p><code>base::</code> is to specify using base R function.</p>
@@ -796,45 +798,45 @@ div.csl-indent {
 <script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
-"sharing": {
-"github": true,
-"facebook": true,
-"twitter": true,
-"linkedin": false,
-"weibo": false,
-"instapaper": false,
-"vk": false,
-"whatsapp": false,
-"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
-},
-"fontsettings": {
-"theme": "night",
-"family": "sans",
-"size": 3
-},
-"edit": {
-"link": "https://github.com/my1396/R-Notes/edit/main/0408-String-Operations.Rmd",
-"text": "Edit"
-},
-"history": {
-"link": null,
-"text": null
-},
-"view": {
-"link": null,
-"text": null
-},
-"download": ["_main.pdf", "_main.epub", "https://github.com/my1396/R-Notes/raw/main/0408-String-Operations.Rmd"],
-"search": {
-"engine": "fuse",
-"options": null
-},
-"toc": {
-"collapse": "subsection"
-},
-"toc_depth": 3,
-"toc_float": true,
-"enableEmoji": true
+  "sharing": {
+    "github": true,
+    "facebook": true,
+    "twitter": true,
+    "linkedin": false,
+    "weibo": false,
+    "instapaper": false,
+    "vk": false,
+    "whatsapp": false,
+    "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+  },
+  "fontsettings": {
+    "theme": "night",
+    "family": "sans",
+    "size": 3
+  },
+  "edit": {
+    "link": "https://github.com/my1396/R-Notes/edit/main/0408-String-Operations.Rmd",
+    "text": "Edit"
+  },
+  "history": {
+    "link": null,
+    "text": null
+  },
+  "view": {
+    "link": null,
+    "text": null
+  },
+  "download": ["_main.pdf", "_main.epub", "https://github.com/my1396/R-Notes/raw/main/0408-String-Operations.Rmd"],
+  "search": {
+    "engine": "fuse",
+    "options": null
+  },
+  "toc": {
+    "collapse": "subsection"
+  },
+  "toc_depth": 3,
+  "toc_float": true,
+  "enableEmoji": true
 });
 });
 </script>

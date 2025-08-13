@@ -83,7 +83,7 @@ Bagging is a general approach, but its most well-known application is in the ran
 3. For a given data-point, each of the $\boldsymbol{B}$ trees in the forest contributes a prediction or “vote”, with the majority (or average) of these votes forming the random forest’s final prediction, $\hat{y}_i$
 
 
-```r
+``` r
 knitr::include_graphics("images/rf.png")
 ```
 

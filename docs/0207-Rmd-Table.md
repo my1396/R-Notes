@@ -35,7 +35,7 @@ Table: (\#tab:mtcars)The mtcars data.
 `knitr::kable(x, format="pipe")` is useful when you want to copy-and-paste R output from console to other document, e.g., markdown.
 
 
-```r
+``` r
 knitr::kable(mtcars[1:5, 1:5], format = "pipe")
 |                  |  mpg| cyl| disp|  hp| drat|
 |:-----------------|----:|---:|----:|---:|----:|
@@ -120,7 +120,7 @@ To show the `tibble` information (number of row/columns, and group information) 
 ```markdown
 ---
 title: "Use caption with df_print set to page"
-date: "2025-08-12"
+date: "2025-08-13"
 output:
   bookdown::html_document2:
     df_print: paged

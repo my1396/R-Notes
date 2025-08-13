@@ -301,7 +301,7 @@ Useful functions to choose palette:
 **`ggplot_build()`** takes the plot object, and performs all steps necessary to produce an object that can be rendered. This function outputs two pieces: a list of data frames (one for each layer), and a panel object, which contain all information about axis limits, breaks etc.
 
 
-```r
+``` r
 # get color scheme/palettes used in ggplot figure
 p_data <- ggplot2::ggplot_build(p)$data[[1]]
 mask <- !colnames(p_data) %in% c('x', 'y')
@@ -324,7 +324,7 @@ p_color <- p_data[,mask] %>% distinct
 **Choose color around the color wheel**
 
 
-```r
+``` r
 n = 4
 colVec = hue_pal()(n)
 plot(1:n, pch = 16, cex = 2, col = colVec)

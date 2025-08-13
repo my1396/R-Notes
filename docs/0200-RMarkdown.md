@@ -1242,7 +1242,7 @@ With the **knitr** package, you have control over every piece of output from you
 Available output hook names:
 
 
-```r
+``` r
 names(knitr:::.default.hooks)
 ```
 
@@ -1272,7 +1272,7 @@ A custom output hook is registered through the `set()` method of `knit_hooks`. B
 When the text output from a code chunk is lengthy, you may want to only show the first few lines. For example, when printing a data frame of a few thousand rows, it may not be helpful to show the full data, and the first few lines may be enough. Below we redefine the `output` hook so that we can control the maximum number of lines via a custom chunk option `out.lines`:
 
 
-```r
+``` r
 # save the built-in output hook
 hook_output <- knitr::knit_hooks$get("output")
 
@@ -1314,7 +1314,7 @@ And you see four lines of output as expected.
 
 
 
-```r
+``` r
 print(head(cars, 10))
 ```
 
@@ -1336,14 +1336,14 @@ print(head(cars, 10))
 Since we have stored the original `output` hook in `hook_output`, we can restore it by calling the `set()` method again:
 
 
-```r
+``` r
 knitr::knit_hooks$set(output = hook_output)
 ```
 
 Now we print the data frame again. The default behavior is to print the whole data frame.
 
 
-```r
+``` r
 print(head(cars, 10))
 ```
 
@@ -1411,14 +1411,14 @@ cat(output_code)
 Write this code in your R Markdown document:
 
 
-````r
+````` r
 output_code <-
 "````markdown
 `r ''````{r}
 plot(cars)
 ``` \n````"
 cat(output_code)
-````
+`````
 
 `````
 ````markdown
@@ -1432,14 +1432,14 @@ plot(cars)
 or
 
 
-````r
+````` r
 output_code <-
 "````markdown
 ```{r}`r ''`
 plot(cars)
 ``` \n````"
 cat(output_code)
-````
+`````
 
 `````
 ````markdown

@@ -285,7 +285,7 @@ paste(shQuote(as.list(Model_vec)), collapse = ", " )
 - `rep(x, each)`  	repeat each element in `x` by `times`
 
 
-```r
+``` r
 # repeat x as a whole
 > rep(c(0, 0, 7), times = 3)
 # [1] 0 0 7 0 0 7 0 0 7

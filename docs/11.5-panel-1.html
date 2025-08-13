@@ -8,7 +8,7 @@
   <meta name="description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
 set in the _output.yml file.</p>" />
-  <meta name="generator" content="bookdown 0.35 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.43 and GitBook 2.6.7" />
 
   <meta property="og:title" content="11.5 Panel | R Notes" />
   <meta property="og:type" content="book" />
@@ -29,7 +29,7 @@ set in the _output.yml file.</p>" />
 <meta name="author" content="Menghan Yuan" />
 
 
-<meta name="date" content="2025-08-12" />
+<meta name="date" content="2025-08-13" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -386,7 +386,9 @@ div.csl-indent {
 <li class="chapter" data-level="2.10.3" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#faq-1"><i class="fa fa-check"></i><b>2.10.3</b> FAQ</a></li>
 <li class="chapter" data-level="2.10.4" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#plot-viewer"><i class="fa fa-check"></i><b>2.10.4</b> Plot Viewer</a></li>
 <li class="chapter" data-level="2.10.5" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#r-debugger"><i class="fa fa-check"></i><b>2.10.5</b> R Debugger</a></li>
-<li class="chapter" data-level="2.10.6" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#work-with-rmd"><i class="fa fa-check"></i><b>2.10.6</b> Work with Rmd</a></li>
+<li class="chapter" data-level="2.10.6" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#emulating-rstudioapi-functions"><i class="fa fa-check"></i><b>2.10.6</b> Emulating <code>rstudioapi</code> functions</a></li>
+<li class="chapter" data-level="2.10.7" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#work-with-rmd"><i class="fa fa-check"></i><b>2.10.7</b> Work with Rmd</a></li>
+<li class="chapter" data-level="2.10.8" data-path="2.10-vs-code.html"><a href="2.10-vs-code.html#extensions"><i class="fa fa-check"></i><b>2.10.8</b> Extensions</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="3" data-path="3-rmd.html"><a href="3-rmd.html"><i class="fa fa-check"></i><b>3</b> Rmd</a>
@@ -763,15 +765,15 @@ div.csl-indent {
 </ul>
 <p><strong>Example</strong></p>
 <p>To set a panel dataset:</p>
-<div class="sourceCode" id="cb759"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb759-1"><a href="11.5-panel-1.html#cb759-1" tabindex="-1"></a><span class="co">// string variables not allowed in varlist; need to convert them to numeric</span></span>
-<span id="cb759-2"><a href="11.5-panel-1.html#cb759-2" tabindex="-1"></a>. <span class="kw">egen</span> <span class="kw">float</span> country_id = <span class="fu">group</span>(iso)</span>
-<span id="cb759-3"><a href="11.5-panel-1.html#cb759-3" tabindex="-1"></a>. <span class="kw">egen</span> <span class="kw">float</span> year_id = <span class="fu">group</span>(<span class="fu">year</span>)</span>
-<span id="cb759-4"><a href="11.5-panel-1.html#cb759-4" tabindex="-1"></a></span>
-<span id="cb759-5"><a href="11.5-panel-1.html#cb759-5" tabindex="-1"></a>. xtset country_id year_id, <span class="fu">yearly</span></span>
-<span id="cb759-6"><a href="11.5-panel-1.html#cb759-6" tabindex="-1"></a></span>
-<span id="cb759-7"><a href="11.5-panel-1.html#cb759-7" tabindex="-1"></a>Panel <span class="kw">variable</span>: country_id (strongly balanced)</span>
-<span id="cb759-8"><a href="11.5-panel-1.html#cb759-8" tabindex="-1"></a> Time <span class="kw">variable</span>: year_id, 1 to 59</span>
-<span id="cb759-9"><a href="11.5-panel-1.html#cb759-9" tabindex="-1"></a>         Delta: 1 <span class="fu">year</span></span></code></pre></div>
+<div class="sourceCode" id="cb762"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb762-1"><a href="11.5-panel-1.html#cb762-1" tabindex="-1"></a><span class="co">// string variables not allowed in varlist; need to convert them to numeric</span></span>
+<span id="cb762-2"><a href="11.5-panel-1.html#cb762-2" tabindex="-1"></a>. <span class="kw">egen</span> <span class="kw">float</span> country_id = <span class="fu">group</span>(iso)</span>
+<span id="cb762-3"><a href="11.5-panel-1.html#cb762-3" tabindex="-1"></a>. <span class="kw">egen</span> <span class="kw">float</span> year_id = <span class="fu">group</span>(<span class="fu">year</span>)</span>
+<span id="cb762-4"><a href="11.5-panel-1.html#cb762-4" tabindex="-1"></a></span>
+<span id="cb762-5"><a href="11.5-panel-1.html#cb762-5" tabindex="-1"></a>. xtset country_id year_id, <span class="fu">yearly</span></span>
+<span id="cb762-6"><a href="11.5-panel-1.html#cb762-6" tabindex="-1"></a></span>
+<span id="cb762-7"><a href="11.5-panel-1.html#cb762-7" tabindex="-1"></a>Panel <span class="kw">variable</span>: country_id (strongly balanced)</span>
+<span id="cb762-8"><a href="11.5-panel-1.html#cb762-8" tabindex="-1"></a> Time <span class="kw">variable</span>: year_id, 1 to 59</span>
+<span id="cb762-9"><a href="11.5-panel-1.html#cb762-9" tabindex="-1"></a>         Delta: 1 <span class="fu">year</span></span></code></pre></div>
 <p><strong>Menu</strong></p>
 <p>Statistics &gt; Longitudinal/panel data &gt; Setup and utilities &gt; Declare dataset to be panel data</p>
 <ul>
@@ -780,18 +782,18 @@ div.csl-indent {
 </ul>
 <p>Use <code>describe</code> to show an overview of data structure.</p>
 <p>Sometimes numbers will get recorded as string variables, making it impossible to do almost any command.</p>
-<div class="sourceCode" id="cb760"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb760-1"><a href="11.5-panel-1.html#cb760-1" tabindex="-1"></a><span class="kw">destring</span> [<span class="kw">varlist</span>], {<span class="kw">gen</span>(newvarlist) | <span class="kw">replace</span>} [options]</span></code></pre></div>
+<div class="sourceCode" id="cb763"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb763-1"><a href="11.5-panel-1.html#cb763-1" tabindex="-1"></a><span class="kw">destring</span> [<span class="kw">varlist</span>], {<span class="kw">gen</span>(newvarlist) | <span class="kw">replace</span>} [options]</span></code></pre></div>
 <ul>
 <li><code>gen(newvarlist)</code> generate new variables for each variable in <code>varlist</code>.</li>
 <li><code>replace</code> replace string variables with numeric variables</li>
 <li><code>ignore("chars")</code> specifies nonnumeric characters be removed.</li>
 </ul>
-<div class="sourceCode" id="cb761"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb761-1"><a href="11.5-panel-1.html#cb761-1" tabindex="-1"></a><span class="co">// from logd_gdp to rad, convert to numeric, replace &quot;NA&quot; with missing</span></span>
-<span id="cb761-2"><a href="11.5-panel-1.html#cb761-2" tabindex="-1"></a><span class="kw">destring</span> logd_gdp-rad, <span class="kw">replace</span> ignore(<span class="st">`&quot;</span>NA<span class="st">&quot;&#39;)</span></span></code></pre></div>
+<div class="sourceCode" id="cb764"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb764-1"><a href="11.5-panel-1.html#cb764-1" tabindex="-1"></a><span class="co">// from logd_gdp to rad, convert to numeric, replace &quot;NA&quot; with missing</span></span>
+<span id="cb764-2"><a href="11.5-panel-1.html#cb764-2" tabindex="-1"></a><span class="kw">destring</span> logd_gdp-rad, <span class="kw">replace</span> ignore(<span class="st">`&quot;</span>NA<span class="st">&quot;&#39;)</span></span></code></pre></div>
 <hr />
 <p><code>xtreg</code> is Stata’s feature for fitting linear models for panel data.</p>
 <p><code>xtreg, fe</code> estimates the parameters of fixed-effects models:</p>
-<div class="sourceCode" id="cb762"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb762-1"><a href="11.5-panel-1.html#cb762-1" tabindex="-1"></a><span class="kw">xtreg</span> depvar [indepvars] [<span class="kw">if</span>] [<span class="kw">in</span>] [<span class="kw">weight</span>] , <span class="kw">fe</span> [FE_options]</span></code></pre></div>
+<div class="sourceCode" id="cb765"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb765-1"><a href="11.5-panel-1.html#cb765-1" tabindex="-1"></a><span class="kw">xtreg</span> depvar [indepvars] [<span class="kw">if</span>] [<span class="kw">in</span>] [<span class="kw">weight</span>] , <span class="kw">fe</span> [FE_options]</span></code></pre></div>
 <p>Menu: Statistics &gt; Longitudinal/panel data &gt; Linear models &gt; Linear regression (FE, RE, PA, BE, CRE)</p>
 <p>Options</p>
 <ul>
@@ -821,45 +823,45 @@ groups.</p>
 <script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
-"sharing": {
-"github": true,
-"facebook": true,
-"twitter": true,
-"linkedin": false,
-"weibo": false,
-"instapaper": false,
-"vk": false,
-"whatsapp": false,
-"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
-},
-"fontsettings": {
-"theme": "night",
-"family": "sans",
-"size": 3
-},
-"edit": {
-"link": "https://github.com/my1396/R-Notes/edit/main/1100-Stata.Rmd",
-"text": "Edit"
-},
-"history": {
-"link": null,
-"text": null
-},
-"view": {
-"link": null,
-"text": null
-},
-"download": ["_main.pdf", "_main.epub", "https://github.com/my1396/R-Notes/raw/main/1100-Stata.Rmd"],
-"search": {
-"engine": "fuse",
-"options": null
-},
-"toc": {
-"collapse": "subsection"
-},
-"toc_depth": 3,
-"toc_float": true,
-"enableEmoji": true
+  "sharing": {
+    "github": true,
+    "facebook": true,
+    "twitter": true,
+    "linkedin": false,
+    "weibo": false,
+    "instapaper": false,
+    "vk": false,
+    "whatsapp": false,
+    "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+  },
+  "fontsettings": {
+    "theme": "night",
+    "family": "sans",
+    "size": 3
+  },
+  "edit": {
+    "link": "https://github.com/my1396/R-Notes/edit/main/1100-Stata.Rmd",
+    "text": "Edit"
+  },
+  "history": {
+    "link": null,
+    "text": null
+  },
+  "view": {
+    "link": null,
+    "text": null
+  },
+  "download": ["_main.pdf", "_main.epub", "https://github.com/my1396/R-Notes/raw/main/1100-Stata.Rmd"],
+  "search": {
+    "engine": "fuse",
+    "options": null
+  },
+  "toc": {
+    "collapse": "subsection"
+  },
+  "toc_depth": 3,
+  "toc_float": true,
+  "enableEmoji": true
 });
 });
 </script>

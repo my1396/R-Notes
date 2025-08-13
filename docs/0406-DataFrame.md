@@ -74,7 +74,7 @@ center_col <- function(data, cols){
 **Remove duplicate columns, regardless of column names:**
 
 
-```r
+``` r
 # remove duplicate columns, regardless column names
 df[!duplicated(lapply(df, summary))] 
 ```
