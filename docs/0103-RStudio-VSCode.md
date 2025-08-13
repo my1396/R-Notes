@@ -14,11 +14,11 @@ Command Palette, type "**R: Interrupt R**" to interrupt the current R session.
 
 #### Keyboard shortcuts
 
-|                    Shortcuts                     |      Function       |
-| :----------------------------------------------: | :-----------------: |
-|                  `cmd`   + `/`                   |       comment       |
-| `shift` + `cmd`  + `M`<br>`shift` + `ctrl` + `M` | user defined; `%>%` |
-|                  `opt`   + `-`                   | user defined; `<-`  |
+|                    Shortcuts                         |      Function       |
+|    :----------------------------------------------:  | :-----------------: |
+|                    `cmd` + `/`                       |       comment       |
+| `shift` + `cmd`  + `M` or <br>`shift` + `ctrl` + `M` | user defined; `%>%` |
+|                    `opt` + `-`                       | user defined; `<-`  |
 
 - For commonly used general keyboard shortcuts (not limited to R), see [HERE](https://my1396.github.io/Econ-Study/2024/08/12/Productivity-Tools.html#keyboard-shortcuts).
 
@@ -36,7 +36,7 @@ If you want to run an entire R file, open the file in the editor, and press <kbd
 
 --------------------------------------------------------------------------------
 
-Q: Why use VS Code for R programming instead of RStudio? \
+Q: Why using VS Code for R programming instead of RStudio? \
 A: Several reasons:
 
 - Better integration with Copilot, making it easier to write code with AI assistance. 
@@ -533,6 +533,11 @@ To view the static site in the `docs/` directory. I installed the VSCode extensi
   
   Using static files, you simply refresh the browser every time you rebuild the site.
 
+ref
+
+- [vscode-R Wiki: R Markdown](https://github.com/REditorSupport/vscode-R/wiki/R-Markdown)
+
+--------------------------------------------------------------------------------
 
 ### Extensions
 
@@ -540,12 +545,8 @@ To view the static site in the `docs/` directory. I installed the VSCode extensi
 
 Open the Command Palette and type '**R:**' to see list of available commands and shortcuts.
 
-ref
-
-- [vscode-R Wiki: R Markdown](https://github.com/REditorSupport/vscode-R/wiki/R-Markdown)
 
 --------------------------------------------------------------------------------
-
 
 **References**:
 
