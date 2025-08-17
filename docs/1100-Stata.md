@@ -552,6 +552,8 @@ ___
 
 ### Factor Variables
 
+`help fvvarlist` for documentation on factor variables.
+
 `i.varname` create **indicators** for each level of the variable
 
 ```stata
