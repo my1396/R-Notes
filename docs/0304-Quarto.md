@@ -93,7 +93,7 @@ book:
 
 ___
 
-**Syntax differences with R markdown:**
+**Syntax differences with R Markdown:**
 
 - Code chunks
 
@@ -265,17 +265,21 @@ Difference btw a standalone webpage from a component of a `qmd` project
 
 #### In terminal {-}
 
+
+This will provide live preview of the document in your web browser. Newest changes will be reflected while you edit the document. ✅
+
 - Render a Quarto document to HTML using the command line:
 
   ```bash
   $quarto render 0304-Quarto.Rmd --to html
   ```
 
-- Quarto Preview: display output in a web browser.
+- Quarto Preview: display output in the **external web browser**.
 
   ```bash
-  quarto preview 0304-Quarto.Rmd
-  ```
+  $ quarto preview 0304-Quarto.Rmd # all formats
+  $ quarto preview 0304-Quarto.Rmd --to html # specific format
+  ``` 
 
   Note that `quarto render` can be used to Rmd files too. 
 
@@ -285,7 +289,11 @@ Difference btw a standalone webpage from a component of a `qmd` project
   $quarto render --to html
   ```
 
+
+
 #### In VS Code {-}
+
+You have to refresh to see your updates when using VS Code command palette quarto preview.
 
 You can render a Quarto document in VS Code using the command palette:
 
@@ -293,10 +301,7 @@ You can render a Quarto document in VS Code using the command palette:
 - `Quarto: Render Project` to render the entire project.
 - `Quarto: Preview` to preview the default document in a web browser. If you want to preview a different format, use the `Quarto: Preview Format` command:
 
-```bash
-$ quarto preview 0304-Quarto.Rmd # all formats
-$ quarto preview 0304-Quarto.Rmd --to html # specific format
-``` 
+This will show a preview of the project in the internal browser.
 
 #### In R {-}
 

@@ -545,6 +545,36 @@ ref
 
 Open the Command Palette and type '**R:**' to see list of available commands and shortcuts.
 
+--------------------------------------------------------------------------------
+
+### Jupyter Notebooks
+
+1. Install [IRkernel](https://github.com/IRkernel/IRkernel)
+   ```r
+   install.packages("IRkernel")
+   IRkernel::installspec() 
+   ```
+2. Reload window. Open command palette and type "**Jupyter: Create New Blank Notebook**" to create a new Jupyter notebook.
+3. Click on the button right below ellipsis in upper right corner to choose kernel
+   - Select **Jupyter Kernels** > **R** to use the R kernel.
+     
+     It should look something like this:
+     <img src="https://www.practicaldatascience.org/_images/vscode_r_kernel.png" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
+
+
+
+`.ipynb` keyboard shortcuts:
+
+| Shortcut      | Function                                                     |
+| ------------- | ------------------------------------------------------------ |
+| `Ctrl+Enter`  | runs the currently selected cell.                            |
+| `Shift+Enter` | runs the currently selected cell and inserts a new cell immediately below <br />(focus moves to new cell). |
+| `Alt+Enter`   | runs the currently selected cell and inserts a new cell immediately below <br />(focus remains on current cell). |
+
+
+
+ref: [Jupyter Notebooks in VS Code](https://code.visualstudio.com/docs/datascience/jupyter-notebooks)
+
 
 --------------------------------------------------------------------------------
 

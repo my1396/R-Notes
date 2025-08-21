@@ -921,9 +921,10 @@ You can add more results to show using options:
 
 ```stata
 // show stars for sig. levels
-. estimate table, star
+. estimates table, star
+
 // show se, t, and p values
-.  estimate table, se t p
+.  estimates table, se t p
 ```
 
 All statistics are shown in order under the coefficients. If you have a long list of variables, the table can be very long.
@@ -943,7 +944,7 @@ You can use `keep(varlist)` to keep only the variables you want to show in the t
 Example of a long variable list
 
 ```stata
-estimate table, keep(L1.logd_gdp tmp tmp2 pre pre2 tmp_pre tmp2_pre tmp_pre2 tmp2_pre2) se t p 
+estimates table, keep(L1.logd_gdp tmp tmp2 pre pre2 tmp_pre tmp2_pre tmp_pre2 tmp2_pre2) se t p 
 ```
 
 

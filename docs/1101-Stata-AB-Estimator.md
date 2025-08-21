@@ -112,7 +112,7 @@ Model \@ref(eq:AB-model) can be implemented using `xtabond`.
 use https://www.stata-press.com/data/r19/abdata
 xtabond n l(0/1).w l(0/2).(k ys) yr1980-yr1984 year, lags(2) vce(robust) noconstant
 
-// Equivalent command using xtdpd
+// Equivalent command using xtdpd, need to specify exogenous variables in div()
 xtdpd L(0/2).n L(0/1).w L(0/2).(k ys) yr1980-yr1984 year, noconstant div(L(0/1).w L(0/2).(k ys) yr1980-yr1984 year) dgmmiv(n)
 ```
 

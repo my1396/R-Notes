@@ -39,6 +39,8 @@ If you run **`rmarkdown::render_site()`** (which is the function triggered by th
 
    Note that Markdown files beginning with `_` are not rendered (this is a convention to designate files that are to be included by top level Rmd documents as child documents).
 
+   If you want to exclude certain files/folders from being rendered, put an underscore (`_`) before the file or folder name (e.g., `_private.Rmd` or `_private_folder/`).
+
    - `index.Rmd` controls the content on your main page.
 
 2. The generated HTML files and any supporting files (e.g., CSS and JavaScript) are copied into an output directory (`_site` by default, on Github Pages the output folder is `docs`).
@@ -147,7 +149,7 @@ A full example of `index.Rmd`. You may use this when you want to write complex c
 ---
 title: "R Notes"
 author: "Menghan Yuan"
-date: "2025-08-17"
+date: "2025-08-21"
 site: rmarkdown::default_site
 documentclass: book
 bibliography: [book.bib, packages.bib]

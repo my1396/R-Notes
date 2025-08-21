@@ -114,7 +114,7 @@ This feature can be disabled by setting the `split_bib` YAML field to `false`, i
 ````yml
 ---
 author: Research Institute for Nature and Forest
-date: '2025-08-17'
+date: '2025-08-21'
 site: bookdown::bookdown_site
 output:
   bookdown::gitbook:
