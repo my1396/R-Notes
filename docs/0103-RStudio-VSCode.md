@@ -549,6 +549,9 @@ Open the Command Palette and type '**R:**' to see list of available commands and
 
 ### Jupyter Notebooks
 
+[Jupyter](https://jupyter-notebook.readthedocs.io/en/latest/) (formerly IPython Notebook) is an open-source project that lets you easily combine Markdown text and executable Python source code on one canvas called a **notebook**.
+
+
 1. Install [IRkernel](https://github.com/IRkernel/IRkernel)
    ```r
    install.packages("IRkernel")
@@ -563,13 +566,64 @@ Open the Command Palette and type '**R:**' to see list of available commands and
 
 
 
-`.ipynb` keyboard shortcuts:
+#### Code cell modes
 
+Three code modes in Jupyter notebooks:
+
+- **Unselected**: When no bar is visible, the cell is unselected.
+  <img src="https://code.visualstudio.com/assets/docs/datascience/jupyter/native-code-unselected-02.png" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
+- selected: When a cell is selected, it can be in command mode or in edit mode.
+  
+  - **Command mode**: solid vertical bar on the left side of the cell.
+    <img src="https://code.visualstudio.com/assets/docs/datascience/jupyter/native-code-cells-02.png" alt="command mode" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
+    The cell can be operated on and accepts keyboard commands.
+
+    Hit Enter to enter edit mode, or click on the cell to enter edit mode.
+  - **Edit mode**: a solid vertical bar is joined by a border around the cell editor.
+    <img src="https://code.visualstudio.com/assets/docs/datascience/jupyter/native-code-cells-04.png" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
+    Press Escape to return to command mode, or click outside the cell to return to command mode.
+
+
+--------------------------------------------------------------------------------
+
+#### `.ipynb` keyboard shortcuts:
+
+Command Palette, type "**Preferences: Open Keyboard Shortcuts**" to open the keyboard shortcuts editor. You can search for "jupyter" to find all Jupyter-related commands and their shortcuts.
+
+
+**Run code cells**
 | Shortcut      | Function                                                     |
 | ------------- | ------------------------------------------------------------ |
 | `Ctrl+Enter`  | runs the currently selected cell.                            |
 | `Shift+Enter` | runs the currently selected cell and inserts a new cell immediately below <br />(focus moves to new cell). |
-| `Alt+Enter`   | runs the currently selected cell and inserts a new cell immediately below <br />(focus remains on current cell). |
+| `Opt+Enter`   | runs the currently selected cell and inserts a new cell immediately below <br />(focus remains on current cell). |
+
+**Insert code cells**
+
+| Shortcut   | Function                                                     |
+| ---------- | ------------------------------------------------------------ |
+| `ctrl+; A` | Press `Ctrl+;`, release, then `A`.<br />Insert a new code cell **above** the current one. |
+| `ctrl+; B` | Add a new code cell **below** the selected one.              |
+
+**Change Cell to Code**
+
+| Shortcut   | Function                |
+| ---------- | ----------------------- |
+| `ctrl+; Y` | Change cell to code     |
+| `ctrl+; M` | Change cell to markdown |
+
+**Miscellaneous**
+
+| Shortcut           | Function                          |
+| ------------------ | --------------------------------- |
+| `ctrl+; X` or `dd` | Delete selected cells             |
+| `shift + ↑/↓`      | Select consecutive multiple cells |
+| `L`                | command mode; toggle line numbers |
+| `R`                | Undo last change                  |
+
+
+
+
 
 
 
