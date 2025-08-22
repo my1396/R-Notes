@@ -29,7 +29,7 @@ set in the _output.yml file.</p>" />
 <meta name="author" content="Menghan Yuan" />
 
 
-<meta name="date" content="2025-08-21" />
+<meta name="date" content="2025-08-22" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -772,10 +772,10 @@ div.csl-indent {
 <h2><span class="header-section-number">11.7</span> Common Correlated Effects Models<a href="11.7-common-correlated-effects-models.html#common-correlated-effects-models" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>This section provides an overview of how Stata’s <code>xtdcce2</code> package implements Common Correlated Effects (CCE) models, which are useful for panel data analysis with heterogeneous coefficients and common correlated effects.</p>
 <p><strong>Environment setup</strong></p>
-<div class="sourceCode" id="cb801"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb801-1"><a href="11.7-common-correlated-effects-models.html#cb801-1" tabindex="-1"></a><span class="kw">ssc</span> install xtdcce2</span>
-<span id="cb801-2"><a href="11.7-common-correlated-effects-models.html#cb801-2" tabindex="-1"></a><span class="co">// dependencies for xtdcce2</span></span>
-<span id="cb801-3"><a href="11.7-common-correlated-effects-models.html#cb801-3" tabindex="-1"></a><span class="kw">ssc</span> install moremata</span>
-<span id="cb801-4"><a href="11.7-common-correlated-effects-models.html#cb801-4" tabindex="-1"></a><span class="kw">ssc</span> install xtcd2</span></code></pre></div>
+<div class="sourceCode" id="cb802"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb802-1"><a href="11.7-common-correlated-effects-models.html#cb802-1" tabindex="-1"></a><span class="kw">ssc</span> install xtdcce2</span>
+<span id="cb802-2"><a href="11.7-common-correlated-effects-models.html#cb802-2" tabindex="-1"></a><span class="co">// dependencies for xtdcce2</span></span>
+<span id="cb802-3"><a href="11.7-common-correlated-effects-models.html#cb802-3" tabindex="-1"></a><span class="kw">ssc</span> install moremata</span>
+<span id="cb802-4"><a href="11.7-common-correlated-effects-models.html#cb802-4" tabindex="-1"></a><span class="kw">ssc</span> install xtcd2</span></code></pre></div>
 <ul>
 <li>Data has to be <code>xtset</code> before using <code>xtdcce2</code>.</li>
 </ul>
@@ -824,7 +824,7 @@ y(i,t) = b0(i) + b2(i)*x(i,t) + d(i)*z(i,t) + e(i,t). \tag{11.3}
 <li><p>Important to notice is, that <code>b1(i)</code> is set to zero.</p></li>
 </ul>
 <p><strong>Example</strong></p>
-<div class="sourceCode" id="cb802"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb802-1"><a href="11.7-common-correlated-effects-models.html#cb802-1" tabindex="-1"></a>xtdcce2 <span class="kw">d</span>.log_rgdpo log_hc log_ck log_ngd , <span class="kw">cr</span>(<span class="dt">_all</span>) reportc</span></code></pre></div>
+<div class="sourceCode" id="cb803"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb803-1"><a href="11.7-common-correlated-effects-models.html#cb803-1" tabindex="-1"></a>xtdcce2 <span class="kw">d</span>.log_rgdpo log_hc log_ck log_ngd , <span class="kw">cr</span>(<span class="dt">_all</span>) reportc</span></code></pre></div>
 <ul>
 <li><p><code>cr(_all)</code> means that all variables are included in the cross sectional means.</p>
 <p>It is equivalent to <code>crosssectional(log_rgdpo log_hc log_ck log_ngd)</code>.</p></li>
@@ -856,8 +856,8 @@ y(i,t) = b0(i) + b2(i)*x(i,t) + d(i)*z(i,t) + e(i,t). \tag{11.3}
 <li><code>z(i,s)</code> is the cross sectional average of the variables defined in <code>crosssectional()</code>.</li>
 </ul>
 <p><strong>Example</strong></p>
-<div class="sourceCode" id="cb803"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb803-1"><a href="11.7-common-correlated-effects-models.html#cb803-1" tabindex="-1"></a>xtdcce2 <span class="kw">d</span>.log_rgdpo L.log_rgdpo log_hc log_ck log_ngd , <span class="co">///</span></span>
-<span id="cb803-2"><a href="11.7-common-correlated-effects-models.html#cb803-2" tabindex="-1"></a>    reportc <span class="kw">cr</span>(log_rgdpo  log_hc log_ck log_ngd) cr_lags(3)</span></code></pre></div>
+<div class="sourceCode" id="cb804"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb804-1"><a href="11.7-common-correlated-effects-models.html#cb804-1" tabindex="-1"></a>xtdcce2 <span class="kw">d</span>.log_rgdpo L.log_rgdpo log_hc log_ck log_ngd , <span class="co">///</span></span>
+<span id="cb804-2"><a href="11.7-common-correlated-effects-models.html#cb804-2" tabindex="-1"></a>    reportc <span class="kw">cr</span>(log_rgdpo  log_hc log_ck log_ngd) cr_lags(3)</span></code></pre></div>
 <ul>
 <li><code>cr_lags(3)</code> the number of lags is set to 3.</li>
 </ul>
@@ -894,9 +894,9 @@ y(i,t) = b0 + b1*y(i,t-1) + b2*x(i,t) + \sum_{s=t}^{t-pT} [d(i)*z(i,s)] + e(i,t)
 The constant is pooled by using the option <code>pooledconstant</code>.</p>
 <p>In case of a pooled estimation, the standard errors are obtained from a mean group regression.</p>
 <p><strong>Example</strong></p>
-<div class="sourceCode" id="cb804"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb804-1"><a href="11.7-common-correlated-effects-models.html#cb804-1" tabindex="-1"></a>xtdcce2 <span class="kw">d</span>.log_rgdpo L.log_rgdpo log_hc log_ck log_ngd , <span class="co">///</span></span>
-<span id="cb804-2"><a href="11.7-common-correlated-effects-models.html#cb804-2" tabindex="-1"></a>    reportc <span class="kw">cr</span>(log_rgdpo  log_hc log_ck log_ngd) <span class="co">///</span></span>
-<span id="cb804-3"><a href="11.7-common-correlated-effects-models.html#cb804-3" tabindex="-1"></a>    pooled(L.log_rgdpo  log_hc log_ck log_ngd) cr_lags(3) pooledconstant</span></code></pre></div>
+<div class="sourceCode" id="cb805"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb805-1"><a href="11.7-common-correlated-effects-models.html#cb805-1" tabindex="-1"></a>xtdcce2 <span class="kw">d</span>.log_rgdpo L.log_rgdpo log_hc log_ck log_ngd , <span class="co">///</span></span>
+<span id="cb805-2"><a href="11.7-common-correlated-effects-models.html#cb805-2" tabindex="-1"></a>    reportc <span class="kw">cr</span>(log_rgdpo  log_hc log_ck log_ngd) <span class="co">///</span></span>
+<span id="cb805-3"><a href="11.7-common-correlated-effects-models.html#cb805-3" tabindex="-1"></a>    pooled(L.log_rgdpo  log_hc log_ck log_ngd) cr_lags(3) pooledconstant</span></code></pre></div>
 <ul>
 <li><code>pooled(L.log_rgdpo  log_hc log_ck log_ngd)</code> means all coefficients should be pooled.</li>
 <li><code>pooledconstant</code> means the constant is pooled.</li>
