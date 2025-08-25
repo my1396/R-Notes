@@ -32,6 +32,47 @@ li + li {
 ul ul {
   margin-bottom: 0.85em !important;
 }
+
+/* User defined numbered list prefixed with Step  */
+
+.step-list ol {
+  counter-reset: step;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Hanging indent: reserve space for the Step label so all following content (including code blocks) lines up */
+/* Step item: first line (title) flush; later blocks indented */
+.step-list ol>li {
+  list-style: none;
+  counter-increment: step;
+  position: relative;
+  margin: 0.4rem 0; /* vertical spacing */
+}
+
+/* Step label + hanging indent */
+:root { --step-label-width: 6ch; }
+/* Reserve label column using absolute positioned pseudo-element */
+.step-list ol>li {
+  padding-left: var(--step-label-width); /* content (including first line) starts after label */
+}
+.step-list ol>li:before {
+  content: 'Step ' counter(step) '. ';
+  font-weight: 600;
+  position: absolute;
+  left: 0;
+  top: 0; /* aligns with first line */
+  width: var(--step-label-width);
+  display: inline-block;
+}
+/* First paragraph normal block (no extra indent) */
+.step-list ol>li > p:first-child { margin-top: 0; }
+/* Subsequent blocks align with first text line automatically (inherit li padding); no extra left margin */
+.step-list ol>li > *:not(:first-child) { margin-left: 0; }
+/* Avoid nested lists double-indenting; they can add their own bullets with slight padding */
+.step-list ol>li > *:not(:first-child) ul,
+.step-list ol>li > *:not(:first-child) ol { margin-left: 1.2em; }
+
 /* Figure caption */
 p.caption {
   color: #777;

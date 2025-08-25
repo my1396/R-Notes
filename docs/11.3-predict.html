@@ -29,7 +29,7 @@ set in the _output.yml file.</p>" />
 <meta name="author" content="Menghan Yuan" />
 
 
-<meta name="date" content="2025-08-22" />
+<meta name="date" content="2025-08-25" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -312,29 +312,6 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
   
   div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 </style>
-<style type="text/css">
-/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
-div.csl-bib-body { }
-div.csl-entry {
-  clear: both;
-  margin-bottom: 0em;
-}
-.hanging div.csl-entry {
-  margin-left:2em;
-  text-indent:-2em;
-}
-div.csl-left-margin {
-  min-width:2em;
-  float:left;
-}
-div.csl-right-inline {
-  margin-left:2em;
-  padding-left:1em;
-}
-div.csl-indent {
-  margin-left: 2em;
-}
-</style>
 
 <link rel="stylesheet" href="style.css" type="text/css" />
 </head>
@@ -352,7 +329,7 @@ div.csl-indent {
 <li><a href="./">R Notes</a></li>
 
 <li class="divider"></li>
-<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> About</a>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> url: your book url like https://bookdown.org/yihui/bookdown</a>
 <ul>
 <li class="chapter" data-level="1.1" data-path="1.1-usage.html"><a href="1.1-usage.html"><i class="fa fa-check"></i><b>1.1</b> Usage</a></li>
 <li class="chapter" data-level="1.2" data-path="1.2-render-book.html"><a href="1.2-render-book.html"><i class="fa fa-check"></i><b>1.2</b> Render book</a></li>
@@ -678,6 +655,7 @@ div.csl-indent {
 <li class="chapter" data-level="11.3" data-path="11.3-predict.html"><a href="11.3-predict.html"><i class="fa fa-check"></i><b>11.3</b> Predict</a></li>
 <li class="chapter" data-level="11.4" data-path="11.4-forecast.html"><a href="11.4-forecast.html"><i class="fa fa-check"></i><b>11.4</b> Forecast</a>
 <ul>
+<li class="chapter" data-level="11.4.1" data-path="11.4-forecast.html"><a href="11.4-forecast.html#essential-procedure"><i class="fa fa-check"></i><b>11.4.1</b> Essential Procedure</a></li>
 <li class="chapter" data-level="" data-path="11.4-forecast.html"><a href="11.4-forecast.html#add-equationsidentifies"><i class="fa fa-check"></i>Add equations/identifies</a></li>
 <li class="chapter" data-level="" data-path="11.4-forecast.html"><a href="11.4-forecast.html#solve-the-foreceast"><i class="fa fa-check"></i>Solve the foreceast</a></li>
 <li class="chapter" data-level="" data-path="11.4-forecast.html"><a href="11.4-forecast.html#use-example-forecast-a-panel"><i class="fa fa-check"></i>Use example: forecast a panel</a></li>
@@ -770,23 +748,27 @@ div.csl-indent {
 </head>
 <div id="predict" class="section level2 hasAnchor" number="11.3">
 <h2><span class="header-section-number">11.3</span> Predict<a href="11.3-predict.html#predict" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Refer to [U] 20.11 Obtaining predicted values.</p>
 <p><code>predict</code> calculates predictions, residuals, influence statistics, and the like after estimation. Exactly what <code>predict</code> can do is determined by the previous estimation command; command-specific options are documented with each estimation command. Regardless of command-specific options, the actions of <code>predict</code> share certain similarities across estimation commands:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb1-1"><a href="11.3-predict.html#cb1-1" tabindex="-1"></a><span class="kw">predict</span> [<span class="dv">type</span>] newvar [<span class="kw">if</span>] [<span class="kw">in</span>] [, single_options]</span></code></pre></div>
 <ul>
 <li><p><code>predict newvar1</code> create <code>newvar1</code> containing “predicted values”, i.e., <span class="math inline">\(\hat{y}_i = \E(y_i\mid \bx_i)\)</span></p>
 <ul>
-<li>For linear regression models, <span class="math inline">\(\hat{y}_i = \bx_i&#39;\hat{\bbeta.}\)</span></li>
-<li>For probit/logit models, <span class="math inline">\(\hat{y}_i = F(\bx_i&#39;\hat{\bbeta}),\)</span> where <span class="math inline">\(F(.)\)</span> is the logistic or normal cumulative distribution function.</li>
+<li>For <strong>linear regression</strong> models, <span class="math inline">\(\hat{y}_i = \bx_i&#39;\hat{\bbeta.}\)</span></li>
+<li>For <strong>probit/logit</strong> models, <span class="math inline">\(\hat{y}_i = F(\bx_i&#39;\hat{\bbeta}),\)</span> where <span class="math inline">\(F(.)\)</span> is the logistic or normal cumulative distribution function.</li>
 </ul></li>
 <li><p><code>predict newvar2, xb</code> create <code>newvar2</code> containing the linear prediction</p>
-<p>Option <code>xb</code> means caculating the linear prediction, <span class="math inline">\(\bx_i&#39;\hat{\bbeta},\)</span> from the fitted model.</p></li>
+<p>Option <code>xb</code> means calculating the linear prediction, <span class="math inline">\(\bx_i&#39;\hat{\bbeta},\)</span> from the fitted model.</p>
+<p>Note that in case of a linear regression model, <code>predict fitted</code> and <code>predict fitted, xb</code> will give you the same result.</p>
+<p>The difference is that for probit/logit models, <code>predict fitted</code> gives you the predicted probability, while <code>predict fitted, xb</code> gives you the logit or probit index.</p></li>
 <li><p><code>predict newvar2 if e(sample), xb</code> Same as above, but only for observations used to fit the model in the previous estimation, i.e., <strong>in-sample predictions</strong>.</p>
 <p><code>e(sample)</code>: return <span class="math inline">\(1\)</span> if the observation is in the estimation sample and <span class="math inline">\(0\)</span> otherwise.</p></li>
-<li><p><code>predict</code> can be used in <strong>out-of-sample predictions</strong>, which extende beyond the estimation sample.</p>
+<li><p><code>predict</code> can be used in <strong>out-of-sample predictions</strong>, which extends beyond the estimation sample.</p>
 <p>You can load a new dataset and type <code>predict</code> to obtain results for that sample.</p>
-<div class="sourceCode" id="cb751"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb751-1"><a href="11.3-predict.html#cb751-1" tabindex="-1"></a><span class="kw">use</span> dataset1      <span class="co">/* estimation dataset */</span></span>
-<span id="cb751-2"><a href="11.3-predict.html#cb751-2" tabindex="-1"></a>(<span class="kw">fit</span> a <span class="kw">model</span>)</span>
-<span id="cb751-3"><a href="11.3-predict.html#cb751-3" tabindex="-1"></a><span class="kw">use</span> dataset2      <span class="co">/* forecast dataset */</span></span>
-<span id="cb751-4"><a href="11.3-predict.html#cb751-4" tabindex="-1"></a><span class="kw">predict</span> yhat    <span class="co">/* fill in the predictions */</span></span></code></pre></div></li>
+<div class="sourceCode" id="cb2"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb2-1"><a href="11.3-predict.html#cb2-1" tabindex="-1"></a><span class="kw">use</span> dataset1      <span class="co">/* estimation dataset */</span></span>
+<span id="cb2-2"><a href="11.3-predict.html#cb2-2" tabindex="-1"></a>(<span class="kw">fit</span> a <span class="kw">model</span>)</span>
+<span id="cb2-3"><a href="11.3-predict.html#cb2-3" tabindex="-1"></a><span class="kw">use</span> dataset2      <span class="co">/* forecast dataset */</span></span>
+<span id="cb2-4"><a href="11.3-predict.html#cb2-4" tabindex="-1"></a><span class="kw">predict</span> yhat    <span class="co">/* fill in the predictions */</span></span></code></pre></div></li>
 <li><p><code>predict e, residuals</code> will generate a variable <code>e</code> containing the residuals of the estimation</p>
 <p><span class="math display">\[
 e_i = y_i - \hat{y}_i
@@ -845,7 +827,7 @@ gitbook.start({
     "size": 3
   },
   "edit": {
-    "link": "https://github.com/my1396/R-Notes/edit/main/1100-Stata.Rmd",
+    "link": "https://github.com/my1396/R-Notes/edit/main/1101-Stata-Predict_Forecast.Rmd",
     "text": "Edit"
   },
   "history": {
@@ -856,7 +838,7 @@ gitbook.start({
     "link": null,
     "text": null
   },
-  "download": ["_main.pdf", "_main.epub", "https://github.com/my1396/R-Notes/raw/main/1100-Stata.Rmd"],
+  "download": ["_main.pdf", "_main.epub", "https://github.com/my1396/R-Notes/raw/main/1101-Stata-Predict_Forecast.Rmd"],
   "search": {
     "engine": "fuse",
     "options": null

@@ -695,11 +695,12 @@ There is one function that can do the processes mentioned above: [`rmarkdown::re
 
 `rmarkdown::render(input, output_format = NULL, output_file = NULL, output_dir = NULL, output_options = NULL, output_yaml = NULL)`
 
-| Arguments        | Definition                                                                                                                                                                                                                                                                                                                                                                                                     |
-| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `output_format`  | - `"all"` will render all formats define within the file<br />- Name of a format, e.g., `html_document`, will render to that single format<br />- An output format object, e.g., `html_document(toc = TRUE, toc_depth = 2, includes = includes(before_body = "header.htm"))`, where you can pass on the argument                                                                                               |
+| Arguments        | Definition                                                   |
+| ---------------- | ------------------------------------------------------------ |
+| `output_format`  | - `"all"` will render all formats define within the file<br />- Name of a format, e.g., `html_document`, will render to that single format<br />- An output format object, e.g., `html_document(toc = TRUE, toc_depth = 2, includes = includes(before_body = "header.htm"))`, where you can pass on the argument |
+| `output_dir`     | Defaults to the directory of the input `.Rmd` file.          |
 | `output_options` | - **List** of output options that can override the options specified in metadata (e.g could be used to force `self_contained` or `mathjax = "local"`). <br />- Note that this is <span class="env-green">only valid when the output format is read from **metadata**</span> (i.e. not a custom format object passed to output_format).<br />- `output_options` cannot work together with `xxx_document()`. |
-| `output_yaml`    | Paths to YAML files specifying output formats and their configurations. The first existing one is used. If none are found, then the function searches YAML files specified to the `output_yaml` top-level parameter in the YAML front matter, `_output.yml` or `_output.yaml`, and then uses the first existing one.                                                                                           |
+| `output_yaml`    | Paths to YAML files specifying output formats and their configurations. The first existing one is used. If none are found, then the function searches YAML files specified to the `output_yaml` top-level parameter in the YAML front matter, `_output.yml` or `_output.yaml`, and then uses the first existing one. |
 
 Use examples of `render`, using **output format objects**
 

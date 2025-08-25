@@ -643,7 +643,7 @@ Issue: Copilot suddenly suggests new edit, and cannot close Diff Editor.
 <img src="https://drive.google.com/thumbnail?id=1exl58UEukckBlhqcnMdf7L_uJzNLWmQ0&sz=w1000" alt="vs code jupyter" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
 
 
-You can customize your active Visual Studio Code [color theme](https://code.visualstudio.com/docs/getstarted/themes) with the [<span class="codicon codicon-settings-gear dynamic-setting-icon" title="Open 'github.copilot.enable' in Settings Editor"></span>`workbench.colorCustomizations`](vscode://settings/workbench.colorCustomizations) and [<span class="codicon codicon-settings-gear dynamic-setting-icon" title="Open 'github.copilot.enable' in Settings Editor"></span> `editor.tokenColorCustomizations`](vscode://settings/editor.tokenColorCustomizations) user [setting](https://code.visualstudio.com/docs/configure/settings). E.g.,
+You can customize your active Visual Studio Code [color theme](https://code.visualstudio.com/docs/getstarted/themes) with the [<span class="codicon codicon-settings-gear dynamic-setting-icon"></span>`workbench.colorCustomizations`](https://code.visualstudio.com/api/extension-guides/color-theme) and [<span class="codicon codicon-settings-gear dynamic-setting-icon"></span> `editor.tokenColorCustomizations`](https://code.visualstudio.com/api/language-extensions/syntax-highlight-guide) user [setting](https://code.visualstudio.com/docs/configure/settings). E.g.,
 
 ```json
 "workbench.colorCustomizations": {
@@ -651,14 +651,22 @@ You can customize your active Visual Studio Code [color theme](https://code.vis
 },
 ```
 
-`workbench.colorCustomizations` allows you to set the colors of VS Code UI elements such as list & trees (File Explorer, suggestions widget), diff editor, Activity Bar, notifications, scroll bar, split view, buttons, and more.
+`workbench.colorCustomizations` allows you to set the colors of **VS Code UI elements** such as list & trees (File Explorer, suggestions widget), diff editor, Activity Bar, notifications, scroll bar, split view, buttons, and more.
 
 - For a list of all customizable colors, see the [Theme Color Reference](https://code.visualstudio.com/api/references/theme-color).
 
-`editor.tokenColorCustomizations` allows you to set the colors of syntax highlighting in the editor, such as text, comments, keywords, strings, numbers, and more.
+`editor.tokenColorCustomizations` allows you to set the colors of **syntax highlighting** in the source code editor, such as text, comments, keywords, strings, numbers, and more.
 
-ref: [Jupyter Notebooks in VS Code](https://code.visualstudio.com/docs/datascience/jupyter-notebooks)
+- Use the [scope inspector](https://code.visualstudio.com/api/language-extensions/syntax-highlight-guide#scope-inspector) tool to investigate what tokens are present in a source file.
+- [Syntax Highlight Guide](https://code.visualstudio.com/api/language-extensions/syntax-highlight-guide) for more information on how to customize syntax highlighting.
 
+
+**Developer Tools**
+
+Command Palette → type "**Developer: Toggle Developer Tools**", this will open the Developer Tools window. It is useful for 
+
+- styling the VS Code UI, such as changing the colors of the text and background in the editor, or customizing the colors of the Jupyter notebook cells.
+- debugging issues with VS Code, such as checking for errors in the console
 
 --------------------------------------------------------------------------------
 
@@ -671,3 +679,4 @@ ref: [Jupyter Notebooks in VS Code](https://code.visualstudio.com/docs/datascien
   - [VS Code for R on macOS](https://jimgar.github.io/posts/vs-code-macos-r/post.html#extensions)
 - Getting started with `httpgd`: <https://nx10.github.io/httpgd/articles/getting-started.html>
 - Bookdown in VS code: <https://www.bendirt.com/bookdown/>
+- [Jupyter Notebooks in VS Code](https://code.visualstudio.com/docs/datascience/jupyter-notebooks)

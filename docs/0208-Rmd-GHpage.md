@@ -149,7 +149,7 @@ A full example of `index.Rmd`. You may use this when you want to write complex c
 ---
 title: "R Notes"
 author: "Menghan Yuan"
-date: "2025-08-22"
+date: "2025-08-25"
 site: rmarkdown::default_site
 documentclass: book
 bibliography: [book.bib, packages.bib]
@@ -248,7 +248,7 @@ To render <span style='color:#00CC66'>**all of the pages**</span> in the website
 As you work on the <span style='color:#00CC66'>**individual pages**</span> of your website, you can render them just as you do with conventional standalone R Markdown documents. This is useful when you want to preview a specific page without rendering the whole site, which can be time-consuming.
 
 
-Two options to render individual pages:
+**Options to render individual pages:**
 
 - Using the `Knit` button just as you do with conventional standalone R Markdown documents.
 
@@ -263,8 +263,9 @@ Two options to render individual pages:
 
 - Or using the command line `rmarkdown::render("0100-RStudio.Rmd")`. 
 
-    - It will generate the **html output** `RStudio.html` in the current working directory. You can see it in the Output pane > `Files` tab. Click the file and choose `View in Web Browser`.
+    - It will generate the **html output** `RStudio.html` in the current working directory where `RStudio.html` is located. You can see it in the Output pane > `Files` tab. Click the file and choose `View in Web Browser`.
 
+- Note that if using `rmarkdown::render_site("0100-RStudio.Rmd")`, it will render `"0100-RStudio.Rmd"` and generate the html output in the `docs/` directory as specified in `_site.yml`.
 
 ```r
 # render the entire site

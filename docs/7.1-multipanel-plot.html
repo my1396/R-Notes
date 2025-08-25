@@ -29,7 +29,7 @@ set in the _output.yml file.</p>" />
 <meta name="author" content="Menghan Yuan" />
 
 
-<meta name="date" content="2025-08-22" />
+<meta name="date" content="2025-08-25" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -780,53 +780,53 @@ div.csl-indent {
 <li>Can use <code>grconvertX</code> to convert <code>x</code>-axis aboslute postions to relative positions.</li>
 <li>Can use <code>grconvertY</code> to convert <code>y</code>-axis aboslute postions to relative positions.</li>
 </ul>
-<div class="sourceCode" id="cb516"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb516-1"><a href="7.1-multipanel-plot.html#cb516-1" tabindex="-1"></a><span class="co"># add labels to multi-panel figures</span></span>
-<span id="cb516-2"><a href="7.1-multipanel-plot.html#cb516-2" tabindex="-1"></a>put.fig.letter <span class="ot">&lt;-</span> <span class="cf">function</span>(label, <span class="at">location=</span><span class="st">&quot;topleft&quot;</span>, <span class="at">x=</span><span class="cn">NULL</span>, <span class="at">y=</span><span class="cn">NULL</span>, </span>
-<span id="cb516-3"><a href="7.1-multipanel-plot.html#cb516-3" tabindex="-1"></a>                           <span class="at">offset=</span><span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>), ...) {</span>
-<span id="cb516-4"><a href="7.1-multipanel-plot.html#cb516-4" tabindex="-1"></a>    <span class="co"># offset[1]: x-axis buffer, negative to move to the left; positive to move to the right</span></span>
-<span id="cb516-5"><a href="7.1-multipanel-plot.html#cb516-5" tabindex="-1"></a>    <span class="co"># offset[2]: y-axis buffer, negative to move downward; positive to move upward</span></span>
-<span id="cb516-6"><a href="7.1-multipanel-plot.html#cb516-6" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">length</span>(label) <span class="sc">&gt;</span> <span class="dv">1</span>) {</span>
-<span id="cb516-7"><a href="7.1-multipanel-plot.html#cb516-7" tabindex="-1"></a>        <span class="fu">warning</span>(<span class="st">&quot;length(label) &gt; 1, using label[1]&quot;</span>)</span>
-<span id="cb516-8"><a href="7.1-multipanel-plot.html#cb516-8" tabindex="-1"></a>    }</span>
-<span id="cb516-9"><a href="7.1-multipanel-plot.html#cb516-9" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">is.null</span>(x) <span class="sc">|</span> <span class="fu">is.null</span>(y)) {</span>
-<span id="cb516-10"><a href="7.1-multipanel-plot.html#cb516-10" tabindex="-1"></a>        coords <span class="ot">&lt;-</span> <span class="cf">switch</span>(location,</span>
-<span id="cb516-11"><a href="7.1-multipanel-plot.html#cb516-11" tabindex="-1"></a>                         <span class="at">topleft =</span> <span class="fu">c</span>(<span class="fl">0.015</span>,<span class="fl">0.98</span>),</span>
-<span id="cb516-12"><a href="7.1-multipanel-plot.html#cb516-12" tabindex="-1"></a>                         <span class="at">topcenter =</span> <span class="fu">c</span>(<span class="fl">0.5525</span>,<span class="fl">0.98</span>),</span>
-<span id="cb516-13"><a href="7.1-multipanel-plot.html#cb516-13" tabindex="-1"></a>                         <span class="at">topright =</span> <span class="fu">c</span>(<span class="fl">0.985</span>, <span class="fl">0.98</span>),</span>
-<span id="cb516-14"><a href="7.1-multipanel-plot.html#cb516-14" tabindex="-1"></a>                         <span class="at">bottomleft =</span> <span class="fu">c</span>(<span class="fl">0.015</span>, <span class="fl">0.02</span>), </span>
-<span id="cb516-15"><a href="7.1-multipanel-plot.html#cb516-15" tabindex="-1"></a>                         <span class="at">bottomcenter =</span> <span class="fu">c</span>(<span class="fl">0.5525</span>, <span class="fl">0.02</span>), </span>
-<span id="cb516-16"><a href="7.1-multipanel-plot.html#cb516-16" tabindex="-1"></a>                         <span class="at">bottomright =</span> <span class="fu">c</span>(<span class="fl">0.985</span>, <span class="fl">0.02</span>),</span>
-<span id="cb516-17"><a href="7.1-multipanel-plot.html#cb516-17" tabindex="-1"></a>                         <span class="fu">c</span>(<span class="fl">0.015</span>, <span class="fl">0.98</span>) )</span>
-<span id="cb516-18"><a href="7.1-multipanel-plot.html#cb516-18" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
-<span id="cb516-19"><a href="7.1-multipanel-plot.html#cb516-19" tabindex="-1"></a>        coords <span class="ot">&lt;-</span> <span class="fu">c</span>(x,y)</span>
-<span id="cb516-20"><a href="7.1-multipanel-plot.html#cb516-20" tabindex="-1"></a>    }</span>
-<span id="cb516-21"><a href="7.1-multipanel-plot.html#cb516-21" tabindex="-1"></a>    this.x <span class="ot">&lt;-</span> <span class="fu">grconvertX</span>(coords[<span class="dv">1</span>] <span class="sc">+</span> offset[<span class="dv">1</span>], <span class="at">from=</span><span class="st">&quot;nfc&quot;</span>, <span class="at">to=</span><span class="st">&quot;user&quot;</span>)</span>
-<span id="cb516-22"><a href="7.1-multipanel-plot.html#cb516-22" tabindex="-1"></a>    this.y <span class="ot">&lt;-</span> <span class="fu">grconvertY</span>(coords[<span class="dv">2</span>] <span class="sc">+</span> offset[<span class="dv">2</span>], <span class="at">from=</span><span class="st">&quot;nfc&quot;</span>, <span class="at">to=</span><span class="st">&quot;user&quot;</span>)</span>
-<span id="cb516-23"><a href="7.1-multipanel-plot.html#cb516-23" tabindex="-1"></a>    <span class="fu">text</span>(<span class="at">labels=</span>label[<span class="dv">1</span>], <span class="at">x=</span>this.x, <span class="at">y=</span>this.y, <span class="at">xpd=</span>T, ...)</span>
-<span id="cb516-24"><a href="7.1-multipanel-plot.html#cb516-24" tabindex="-1"></a>}</span>
-<span id="cb516-25"><a href="7.1-multipanel-plot.html#cb516-25" tabindex="-1"></a>my.locations <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="st">&quot;topleft&quot;</span>, <span class="dv">2</span>)</span>
-<span id="cb516-26"><a href="7.1-multipanel-plot.html#cb516-26" tabindex="-1"></a></span>
-<span id="cb516-27"><a href="7.1-multipanel-plot.html#cb516-27" tabindex="-1"></a>f_name <span class="ot">&lt;-</span> <span class="st">&quot;~/Library/CloudStorage/OneDrive-Norduniversitet/FIN5005 2024Fall/OLS lab/images/diagnostic_plot3.png&quot;</span></span>
-<span id="cb516-28"><a href="7.1-multipanel-plot.html#cb516-28" tabindex="-1"></a><span class="co"># ggsave(f_name)</span></span>
-<span id="cb516-29"><a href="7.1-multipanel-plot.html#cb516-29" tabindex="-1"></a>f_name</span>
-<span id="cb516-30"><a href="7.1-multipanel-plot.html#cb516-30" tabindex="-1"></a><span class="fu">png</span>(f_name, <span class="at">width=</span><span class="fl">8.91</span><span class="sc">*</span>ppi, <span class="at">height=</span><span class="fl">4.85</span><span class="sc">*</span>ppi, <span class="at">res=</span>ppi)</span>
-<span id="cb516-31"><a href="7.1-multipanel-plot.html#cb516-31" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>))</span>
-<span id="cb516-32"><a href="7.1-multipanel-plot.html#cb516-32" tabindex="-1"></a><span class="fu">plot</span>(fit.auto2, <span class="dv">1</span>)</span>
-<span id="cb516-33"><a href="7.1-multipanel-plot.html#cb516-33" tabindex="-1"></a><span class="fu">put.fig.letter</span>(<span class="at">label=</span><span class="st">&quot;(a)&quot;</span>, <span class="at">location=</span>my.locations[<span class="dv">1</span>], <span class="at">font=</span><span class="dv">2</span>, <span class="at">offset =</span> <span class="fu">c</span>(<span class="fl">0.1</span>, <span class="sc">-</span><span class="fl">0.1</span>))</span>
-<span id="cb516-34"><a href="7.1-multipanel-plot.html#cb516-34" tabindex="-1"></a><span class="fu">plot</span>(fit.auto2, <span class="dv">2</span>)</span>
-<span id="cb516-35"><a href="7.1-multipanel-plot.html#cb516-35" tabindex="-1"></a><span class="fu">put.fig.letter</span>(<span class="at">label=</span><span class="st">&quot;(b)&quot;</span>, <span class="at">location=</span>my.locations[<span class="dv">2</span>], <span class="at">font=</span><span class="dv">2</span>, <span class="at">offset =</span> <span class="fu">c</span>(<span class="fl">0.1</span>, <span class="sc">-</span><span class="fl">0.1</span>))</span>
-<span id="cb516-36"><a href="7.1-multipanel-plot.html#cb516-36" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb517"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb517-1"><a href="7.1-multipanel-plot.html#cb517-1" tabindex="-1"></a><span class="co"># add labels to multi-panel figures</span></span>
+<span id="cb517-2"><a href="7.1-multipanel-plot.html#cb517-2" tabindex="-1"></a>put.fig.letter <span class="ot">&lt;-</span> <span class="cf">function</span>(label, <span class="at">location=</span><span class="st">&quot;topleft&quot;</span>, <span class="at">x=</span><span class="cn">NULL</span>, <span class="at">y=</span><span class="cn">NULL</span>, </span>
+<span id="cb517-3"><a href="7.1-multipanel-plot.html#cb517-3" tabindex="-1"></a>                           <span class="at">offset=</span><span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>), ...) {</span>
+<span id="cb517-4"><a href="7.1-multipanel-plot.html#cb517-4" tabindex="-1"></a>    <span class="co"># offset[1]: x-axis buffer, negative to move to the left; positive to move to the right</span></span>
+<span id="cb517-5"><a href="7.1-multipanel-plot.html#cb517-5" tabindex="-1"></a>    <span class="co"># offset[2]: y-axis buffer, negative to move downward; positive to move upward</span></span>
+<span id="cb517-6"><a href="7.1-multipanel-plot.html#cb517-6" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">length</span>(label) <span class="sc">&gt;</span> <span class="dv">1</span>) {</span>
+<span id="cb517-7"><a href="7.1-multipanel-plot.html#cb517-7" tabindex="-1"></a>        <span class="fu">warning</span>(<span class="st">&quot;length(label) &gt; 1, using label[1]&quot;</span>)</span>
+<span id="cb517-8"><a href="7.1-multipanel-plot.html#cb517-8" tabindex="-1"></a>    }</span>
+<span id="cb517-9"><a href="7.1-multipanel-plot.html#cb517-9" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">is.null</span>(x) <span class="sc">|</span> <span class="fu">is.null</span>(y)) {</span>
+<span id="cb517-10"><a href="7.1-multipanel-plot.html#cb517-10" tabindex="-1"></a>        coords <span class="ot">&lt;-</span> <span class="cf">switch</span>(location,</span>
+<span id="cb517-11"><a href="7.1-multipanel-plot.html#cb517-11" tabindex="-1"></a>                         <span class="at">topleft =</span> <span class="fu">c</span>(<span class="fl">0.015</span>,<span class="fl">0.98</span>),</span>
+<span id="cb517-12"><a href="7.1-multipanel-plot.html#cb517-12" tabindex="-1"></a>                         <span class="at">topcenter =</span> <span class="fu">c</span>(<span class="fl">0.5525</span>,<span class="fl">0.98</span>),</span>
+<span id="cb517-13"><a href="7.1-multipanel-plot.html#cb517-13" tabindex="-1"></a>                         <span class="at">topright =</span> <span class="fu">c</span>(<span class="fl">0.985</span>, <span class="fl">0.98</span>),</span>
+<span id="cb517-14"><a href="7.1-multipanel-plot.html#cb517-14" tabindex="-1"></a>                         <span class="at">bottomleft =</span> <span class="fu">c</span>(<span class="fl">0.015</span>, <span class="fl">0.02</span>), </span>
+<span id="cb517-15"><a href="7.1-multipanel-plot.html#cb517-15" tabindex="-1"></a>                         <span class="at">bottomcenter =</span> <span class="fu">c</span>(<span class="fl">0.5525</span>, <span class="fl">0.02</span>), </span>
+<span id="cb517-16"><a href="7.1-multipanel-plot.html#cb517-16" tabindex="-1"></a>                         <span class="at">bottomright =</span> <span class="fu">c</span>(<span class="fl">0.985</span>, <span class="fl">0.02</span>),</span>
+<span id="cb517-17"><a href="7.1-multipanel-plot.html#cb517-17" tabindex="-1"></a>                         <span class="fu">c</span>(<span class="fl">0.015</span>, <span class="fl">0.98</span>) )</span>
+<span id="cb517-18"><a href="7.1-multipanel-plot.html#cb517-18" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb517-19"><a href="7.1-multipanel-plot.html#cb517-19" tabindex="-1"></a>        coords <span class="ot">&lt;-</span> <span class="fu">c</span>(x,y)</span>
+<span id="cb517-20"><a href="7.1-multipanel-plot.html#cb517-20" tabindex="-1"></a>    }</span>
+<span id="cb517-21"><a href="7.1-multipanel-plot.html#cb517-21" tabindex="-1"></a>    this.x <span class="ot">&lt;-</span> <span class="fu">grconvertX</span>(coords[<span class="dv">1</span>] <span class="sc">+</span> offset[<span class="dv">1</span>], <span class="at">from=</span><span class="st">&quot;nfc&quot;</span>, <span class="at">to=</span><span class="st">&quot;user&quot;</span>)</span>
+<span id="cb517-22"><a href="7.1-multipanel-plot.html#cb517-22" tabindex="-1"></a>    this.y <span class="ot">&lt;-</span> <span class="fu">grconvertY</span>(coords[<span class="dv">2</span>] <span class="sc">+</span> offset[<span class="dv">2</span>], <span class="at">from=</span><span class="st">&quot;nfc&quot;</span>, <span class="at">to=</span><span class="st">&quot;user&quot;</span>)</span>
+<span id="cb517-23"><a href="7.1-multipanel-plot.html#cb517-23" tabindex="-1"></a>    <span class="fu">text</span>(<span class="at">labels=</span>label[<span class="dv">1</span>], <span class="at">x=</span>this.x, <span class="at">y=</span>this.y, <span class="at">xpd=</span>T, ...)</span>
+<span id="cb517-24"><a href="7.1-multipanel-plot.html#cb517-24" tabindex="-1"></a>}</span>
+<span id="cb517-25"><a href="7.1-multipanel-plot.html#cb517-25" tabindex="-1"></a>my.locations <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="st">&quot;topleft&quot;</span>, <span class="dv">2</span>)</span>
+<span id="cb517-26"><a href="7.1-multipanel-plot.html#cb517-26" tabindex="-1"></a></span>
+<span id="cb517-27"><a href="7.1-multipanel-plot.html#cb517-27" tabindex="-1"></a>f_name <span class="ot">&lt;-</span> <span class="st">&quot;~/Library/CloudStorage/OneDrive-Norduniversitet/FIN5005 2024Fall/OLS lab/images/diagnostic_plot3.png&quot;</span></span>
+<span id="cb517-28"><a href="7.1-multipanel-plot.html#cb517-28" tabindex="-1"></a><span class="co"># ggsave(f_name)</span></span>
+<span id="cb517-29"><a href="7.1-multipanel-plot.html#cb517-29" tabindex="-1"></a>f_name</span>
+<span id="cb517-30"><a href="7.1-multipanel-plot.html#cb517-30" tabindex="-1"></a><span class="fu">png</span>(f_name, <span class="at">width=</span><span class="fl">8.91</span><span class="sc">*</span>ppi, <span class="at">height=</span><span class="fl">4.85</span><span class="sc">*</span>ppi, <span class="at">res=</span>ppi)</span>
+<span id="cb517-31"><a href="7.1-multipanel-plot.html#cb517-31" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>))</span>
+<span id="cb517-32"><a href="7.1-multipanel-plot.html#cb517-32" tabindex="-1"></a><span class="fu">plot</span>(fit.auto2, <span class="dv">1</span>)</span>
+<span id="cb517-33"><a href="7.1-multipanel-plot.html#cb517-33" tabindex="-1"></a><span class="fu">put.fig.letter</span>(<span class="at">label=</span><span class="st">&quot;(a)&quot;</span>, <span class="at">location=</span>my.locations[<span class="dv">1</span>], <span class="at">font=</span><span class="dv">2</span>, <span class="at">offset =</span> <span class="fu">c</span>(<span class="fl">0.1</span>, <span class="sc">-</span><span class="fl">0.1</span>))</span>
+<span id="cb517-34"><a href="7.1-multipanel-plot.html#cb517-34" tabindex="-1"></a><span class="fu">plot</span>(fit.auto2, <span class="dv">2</span>)</span>
+<span id="cb517-35"><a href="7.1-multipanel-plot.html#cb517-35" tabindex="-1"></a><span class="fu">put.fig.letter</span>(<span class="at">label=</span><span class="st">&quot;(b)&quot;</span>, <span class="at">location=</span>my.locations[<span class="dv">2</span>], <span class="at">font=</span><span class="dv">2</span>, <span class="at">offset =</span> <span class="fu">c</span>(<span class="fl">0.1</span>, <span class="sc">-</span><span class="fl">0.1</span>))</span>
+<span id="cb517-36"><a href="7.1-multipanel-plot.html#cb517-36" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code></pre></div>
 <p><strong>plots alignment</strong></p>
 <p><code>grid::grid.draw(x)</code> draw a grid grob</p>
 <ul>
 <li><code>x</code> An object of class <code>"grob"</code> or NULL.</li>
 </ul>
-<div class="sourceCode" id="cb517"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb517-1"><a href="7.1-multipanel-plot.html#cb517-1" tabindex="-1"></a>grid<span class="sc">::</span><span class="fu">grid.draw</span>(<span class="fu">rbind</span>(<span class="fu">ggplotGrob</span>(CI_plot_converted), </span>
-<span id="cb517-2"><a href="7.1-multipanel-plot.html#cb517-2" tabindex="-1"></a>                      <span class="fu">ggplotGrob</span>(CI_plot_simple), </span>
-<span id="cb517-3"><a href="7.1-multipanel-plot.html#cb517-3" tabindex="-1"></a>                <span class="at">size =</span> <span class="st">&quot;last&quot;</span>)) <span class="co"># same width, same height</span></span>
-<span id="cb517-4"><a href="7.1-multipanel-plot.html#cb517-4" tabindex="-1"></a></span>
-<span id="cb517-5"><a href="7.1-multipanel-plot.html#cb517-5" tabindex="-1"></a><span class="co"># or</span></span>
-<span id="cb517-6"><a href="7.1-multipanel-plot.html#cb517-6" tabindex="-1"></a>gridExtra<span class="sc">::</span><span class="fu">grid.arrange</span>(CI_plot_converted, CI_plot_simple, <span class="at">ncol=</span><span class="dv">1</span>, <span class="at">heights =</span> <span class="fu">c</span>(<span class="fl">0.8</span>, <span class="dv">1</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb518"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb518-1"><a href="7.1-multipanel-plot.html#cb518-1" tabindex="-1"></a>grid<span class="sc">::</span><span class="fu">grid.draw</span>(<span class="fu">rbind</span>(<span class="fu">ggplotGrob</span>(CI_plot_converted), </span>
+<span id="cb518-2"><a href="7.1-multipanel-plot.html#cb518-2" tabindex="-1"></a>                      <span class="fu">ggplotGrob</span>(CI_plot_simple), </span>
+<span id="cb518-3"><a href="7.1-multipanel-plot.html#cb518-3" tabindex="-1"></a>                <span class="at">size =</span> <span class="st">&quot;last&quot;</span>)) <span class="co"># same width, same height</span></span>
+<span id="cb518-4"><a href="7.1-multipanel-plot.html#cb518-4" tabindex="-1"></a></span>
+<span id="cb518-5"><a href="7.1-multipanel-plot.html#cb518-5" tabindex="-1"></a><span class="co"># or</span></span>
+<span id="cb518-6"><a href="7.1-multipanel-plot.html#cb518-6" tabindex="-1"></a>gridExtra<span class="sc">::</span><span class="fu">grid.arrange</span>(CI_plot_converted, CI_plot_simple, <span class="at">ncol=</span><span class="dv">1</span>, <span class="at">heights =</span> <span class="fu">c</span>(<span class="fl">0.8</span>, <span class="dv">1</span>))</span></code></pre></div>
 </div>
 <div id="with-cowplot-package" class="section level3 hasAnchor" number="7.1.2">
 <h3><span class="header-section-number">7.1.2</span> With <code>cowplot</code> package<a href="7.1-multipanel-plot.html#with-cowplot-package" class="anchor-section" aria-label="Anchor link to header"></a></h3>
@@ -835,10 +835,10 @@ div.csl-indent {
 <ul>
 <li><p><code>...</code> Plots to be arranged into the grid, separated by comma, e.g., <code>plot_grid(p1, p2, ...)</code>.</p></li>
 <li><p><code>plotlist</code> A <code>list</code> of plots to display. Alternatively, the plots can be provided individually as the first n arguments of the function <code>plot_grid</code>.</p>
-<div class="sourceCode" id="cb518"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb518-1"><a href="7.1-multipanel-plot.html#cb518-1" tabindex="-1"></a>p_list <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
-<span id="cb518-2"><a href="7.1-multipanel-plot.html#cb518-2" tabindex="-1"></a>p_list[[<span class="dv">1</span>]] <span class="ot">&lt;-</span> p1</span>
-<span id="cb518-3"><a href="7.1-multipanel-plot.html#cb518-3" tabindex="-1"></a>p_list[[<span class="dv">2</span>]] <span class="ot">&lt;-</span> p2</span>
-<span id="cb518-4"><a href="7.1-multipanel-plot.html#cb518-4" tabindex="-1"></a><span class="fu">plot_grid</span>(<span class="at">plotlist =</span> p_list)</span></code></pre></div></li>
+<div class="sourceCode" id="cb519"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb519-1"><a href="7.1-multipanel-plot.html#cb519-1" tabindex="-1"></a>p_list <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb519-2"><a href="7.1-multipanel-plot.html#cb519-2" tabindex="-1"></a>p_list[[<span class="dv">1</span>]] <span class="ot">&lt;-</span> p1</span>
+<span id="cb519-3"><a href="7.1-multipanel-plot.html#cb519-3" tabindex="-1"></a>p_list[[<span class="dv">2</span>]] <span class="ot">&lt;-</span> p2</span>
+<span id="cb519-4"><a href="7.1-multipanel-plot.html#cb519-4" tabindex="-1"></a><span class="fu">plot_grid</span>(<span class="at">plotlist =</span> p_list)</span></code></pre></div></li>
 <li><p><code>align</code> how graphs in the grids should be aligned.</p>
 <ul>
 <li><code>h</code> horizontally</li>
@@ -856,53 +856,53 @@ div.csl-indent {
 <li><p><code>vjust</code> down: positive, up: negative;</p>
 <p>​</p></li>
 </ul>
-<div class="sourceCode" id="cb519"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb519-1"><a href="7.1-multipanel-plot.html#cb519-1" tabindex="-1"></a><span class="co"># load cowplot</span></span>
-<span id="cb519-2"><a href="7.1-multipanel-plot.html#cb519-2" tabindex="-1"></a><span class="fu">library</span>(cowplot)</span>
-<span id="cb519-3"><a href="7.1-multipanel-plot.html#cb519-3" tabindex="-1"></a></span>
-<span id="cb519-4"><a href="7.1-multipanel-plot.html#cb519-4" tabindex="-1"></a><span class="co"># down-sampled diamonds data set</span></span>
-<span id="cb519-5"><a href="7.1-multipanel-plot.html#cb519-5" tabindex="-1"></a>dsamp <span class="ot">&lt;-</span> diamonds[<span class="fu">sample</span>(<span class="fu">nrow</span>(diamonds), <span class="dv">1000</span>), ]</span>
-<span id="cb519-6"><a href="7.1-multipanel-plot.html#cb519-6" tabindex="-1"></a></span>
-<span id="cb519-7"><a href="7.1-multipanel-plot.html#cb519-7" tabindex="-1"></a><span class="co"># Make three plots.</span></span>
-<span id="cb519-8"><a href="7.1-multipanel-plot.html#cb519-8" tabindex="-1"></a><span class="co"># We set left and right margins to 0 to remove unnecessary spacing in the</span></span>
-<span id="cb519-9"><a href="7.1-multipanel-plot.html#cb519-9" tabindex="-1"></a><span class="co"># final plot arrangement.</span></span>
-<span id="cb519-10"><a href="7.1-multipanel-plot.html#cb519-10" tabindex="-1"></a><span class="co"># plot.margin = unit(c(top, right, bottom, left), &quot;pt&quot;) for outer margins of plotting area</span></span>
-<span id="cb519-11"><a href="7.1-multipanel-plot.html#cb519-11" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">qplot</span>(carat, price, <span class="at">data=</span>dsamp, <span class="at">colour=</span>clarity) <span class="sc">+</span></span>
-<span id="cb519-12"><a href="7.1-multipanel-plot.html#cb519-12" tabindex="-1"></a>   <span class="fu">theme</span>(<span class="at">plot.margin =</span> <span class="fu">unit</span>(<span class="fu">c</span>(<span class="dv">6</span>,<span class="dv">0</span>,<span class="dv">6</span>,<span class="dv">0</span>), <span class="st">&quot;pt&quot;</span>))</span>
-<span id="cb519-13"><a href="7.1-multipanel-plot.html#cb519-13" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">qplot</span>(depth, price, <span class="at">data=</span>dsamp, <span class="at">colour=</span>clarity) <span class="sc">+</span></span>
-<span id="cb519-14"><a href="7.1-multipanel-plot.html#cb519-14" tabindex="-1"></a>   <span class="fu">theme</span>(<span class="at">plot.margin =</span> <span class="fu">unit</span>(<span class="fu">c</span>(<span class="dv">6</span>,<span class="dv">0</span>,<span class="dv">6</span>,<span class="dv">0</span>), <span class="st">&quot;pt&quot;</span>)) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">&quot;&quot;</span>)</span>
-<span id="cb519-15"><a href="7.1-multipanel-plot.html#cb519-15" tabindex="-1"></a>p3 <span class="ot">&lt;-</span> <span class="fu">qplot</span>(color, price, <span class="at">data=</span>dsamp, <span class="at">colour=</span>clarity) <span class="sc">+</span></span>
-<span id="cb519-16"><a href="7.1-multipanel-plot.html#cb519-16" tabindex="-1"></a>   <span class="fu">theme</span>(<span class="at">plot.margin =</span> <span class="fu">unit</span>(<span class="fu">c</span>(<span class="dv">6</span>,<span class="dv">0</span>,<span class="dv">6</span>,<span class="dv">0</span>), <span class="st">&quot;pt&quot;</span>)) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">&quot;&quot;</span>)</span>
-<span id="cb519-17"><a href="7.1-multipanel-plot.html#cb519-17" tabindex="-1"></a></span>
-<span id="cb519-18"><a href="7.1-multipanel-plot.html#cb519-18" tabindex="-1"></a><span class="co"># arrange the three plots in a single row</span></span>
-<span id="cb519-19"><a href="7.1-multipanel-plot.html#cb519-19" tabindex="-1"></a>prow <span class="ot">&lt;-</span> <span class="fu">plot_grid</span>( p1 <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">&quot;none&quot;</span>),</span>
-<span id="cb519-20"><a href="7.1-multipanel-plot.html#cb519-20" tabindex="-1"></a>           p2 <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">&quot;none&quot;</span>),</span>
-<span id="cb519-21"><a href="7.1-multipanel-plot.html#cb519-21" tabindex="-1"></a>           p3 <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">&quot;none&quot;</span>),</span>
-<span id="cb519-22"><a href="7.1-multipanel-plot.html#cb519-22" tabindex="-1"></a>           <span class="at">align =</span> <span class="st">&#39;vh&#39;</span>,</span>
-<span id="cb519-23"><a href="7.1-multipanel-plot.html#cb519-23" tabindex="-1"></a>           <span class="at">labels =</span> <span class="fu">sprintf</span>(<span class="st">&quot;(%s)&quot;</span>, letters[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>]), <span class="co"># auto lower case letter for labels</span></span>
-<span id="cb519-24"><a href="7.1-multipanel-plot.html#cb519-24" tabindex="-1"></a>           <span class="at">label_size =</span> <span class="dv">14</span>, <span class="co"># label font size</span></span>
-<span id="cb519-25"><a href="7.1-multipanel-plot.html#cb519-25" tabindex="-1"></a>           <span class="at">hjust=</span><span class="dv">0</span>,  <span class="co"># left: positive, right: negative (adjust label position)</span></span>
-<span id="cb519-26"><a href="7.1-multipanel-plot.html#cb519-26" tabindex="-1"></a>           <span class="at">vjust=</span><span class="sc">-</span><span class="dv">1</span>, <span class="co"># down:positive, up:negative</span></span>
-<span id="cb519-27"><a href="7.1-multipanel-plot.html#cb519-27" tabindex="-1"></a>           <span class="at">nrow =</span> <span class="dv">1</span></span>
-<span id="cb519-28"><a href="7.1-multipanel-plot.html#cb519-28" tabindex="-1"></a>           )</span>
-<span id="cb519-29"><a href="7.1-multipanel-plot.html#cb519-29" tabindex="-1"></a></span>
-<span id="cb519-30"><a href="7.1-multipanel-plot.html#cb519-30" tabindex="-1"></a><span class="co"># extract the legend from one of the plots</span></span>
-<span id="cb519-31"><a href="7.1-multipanel-plot.html#cb519-31" tabindex="-1"></a><span class="co"># (clearly the whole thing only makes sense if all plots</span></span>
-<span id="cb519-32"><a href="7.1-multipanel-plot.html#cb519-32" tabindex="-1"></a><span class="co"># have the same legend, so we can arbitrarily pick one.)</span></span>
-<span id="cb519-33"><a href="7.1-multipanel-plot.html#cb519-33" tabindex="-1"></a>legend_b <span class="ot">&lt;-</span> <span class="fu">get_legend</span>(p1 <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">&quot;bottom&quot;</span>))</span>
-<span id="cb519-34"><a href="7.1-multipanel-plot.html#cb519-34" tabindex="-1"></a></span>
-<span id="cb519-35"><a href="7.1-multipanel-plot.html#cb519-35" tabindex="-1"></a><span class="co"># add the legend underneath the row we made earlier. Give it 10% of the height</span></span>
-<span id="cb519-36"><a href="7.1-multipanel-plot.html#cb519-36" tabindex="-1"></a><span class="co"># of one plot (via rel_heights).</span></span>
-<span id="cb519-37"><a href="7.1-multipanel-plot.html#cb519-37" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">plot_grid</span>( prow, legend_b, <span class="at">ncol =</span> <span class="dv">1</span>, <span class="at">rel_heights =</span> <span class="fu">c</span>(<span class="dv">1</span>, .<span class="dv">1</span>))</span>
-<span id="cb519-38"><a href="7.1-multipanel-plot.html#cb519-38" tabindex="-1"></a>p</span></code></pre></div>
+<div class="sourceCode" id="cb520"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb520-1"><a href="7.1-multipanel-plot.html#cb520-1" tabindex="-1"></a><span class="co"># load cowplot</span></span>
+<span id="cb520-2"><a href="7.1-multipanel-plot.html#cb520-2" tabindex="-1"></a><span class="fu">library</span>(cowplot)</span>
+<span id="cb520-3"><a href="7.1-multipanel-plot.html#cb520-3" tabindex="-1"></a></span>
+<span id="cb520-4"><a href="7.1-multipanel-plot.html#cb520-4" tabindex="-1"></a><span class="co"># down-sampled diamonds data set</span></span>
+<span id="cb520-5"><a href="7.1-multipanel-plot.html#cb520-5" tabindex="-1"></a>dsamp <span class="ot">&lt;-</span> diamonds[<span class="fu">sample</span>(<span class="fu">nrow</span>(diamonds), <span class="dv">1000</span>), ]</span>
+<span id="cb520-6"><a href="7.1-multipanel-plot.html#cb520-6" tabindex="-1"></a></span>
+<span id="cb520-7"><a href="7.1-multipanel-plot.html#cb520-7" tabindex="-1"></a><span class="co"># Make three plots.</span></span>
+<span id="cb520-8"><a href="7.1-multipanel-plot.html#cb520-8" tabindex="-1"></a><span class="co"># We set left and right margins to 0 to remove unnecessary spacing in the</span></span>
+<span id="cb520-9"><a href="7.1-multipanel-plot.html#cb520-9" tabindex="-1"></a><span class="co"># final plot arrangement.</span></span>
+<span id="cb520-10"><a href="7.1-multipanel-plot.html#cb520-10" tabindex="-1"></a><span class="co"># plot.margin = unit(c(top, right, bottom, left), &quot;pt&quot;) for outer margins of plotting area</span></span>
+<span id="cb520-11"><a href="7.1-multipanel-plot.html#cb520-11" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">qplot</span>(carat, price, <span class="at">data=</span>dsamp, <span class="at">colour=</span>clarity) <span class="sc">+</span></span>
+<span id="cb520-12"><a href="7.1-multipanel-plot.html#cb520-12" tabindex="-1"></a>   <span class="fu">theme</span>(<span class="at">plot.margin =</span> <span class="fu">unit</span>(<span class="fu">c</span>(<span class="dv">6</span>,<span class="dv">0</span>,<span class="dv">6</span>,<span class="dv">0</span>), <span class="st">&quot;pt&quot;</span>))</span>
+<span id="cb520-13"><a href="7.1-multipanel-plot.html#cb520-13" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">qplot</span>(depth, price, <span class="at">data=</span>dsamp, <span class="at">colour=</span>clarity) <span class="sc">+</span></span>
+<span id="cb520-14"><a href="7.1-multipanel-plot.html#cb520-14" tabindex="-1"></a>   <span class="fu">theme</span>(<span class="at">plot.margin =</span> <span class="fu">unit</span>(<span class="fu">c</span>(<span class="dv">6</span>,<span class="dv">0</span>,<span class="dv">6</span>,<span class="dv">0</span>), <span class="st">&quot;pt&quot;</span>)) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">&quot;&quot;</span>)</span>
+<span id="cb520-15"><a href="7.1-multipanel-plot.html#cb520-15" tabindex="-1"></a>p3 <span class="ot">&lt;-</span> <span class="fu">qplot</span>(color, price, <span class="at">data=</span>dsamp, <span class="at">colour=</span>clarity) <span class="sc">+</span></span>
+<span id="cb520-16"><a href="7.1-multipanel-plot.html#cb520-16" tabindex="-1"></a>   <span class="fu">theme</span>(<span class="at">plot.margin =</span> <span class="fu">unit</span>(<span class="fu">c</span>(<span class="dv">6</span>,<span class="dv">0</span>,<span class="dv">6</span>,<span class="dv">0</span>), <span class="st">&quot;pt&quot;</span>)) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">&quot;&quot;</span>)</span>
+<span id="cb520-17"><a href="7.1-multipanel-plot.html#cb520-17" tabindex="-1"></a></span>
+<span id="cb520-18"><a href="7.1-multipanel-plot.html#cb520-18" tabindex="-1"></a><span class="co"># arrange the three plots in a single row</span></span>
+<span id="cb520-19"><a href="7.1-multipanel-plot.html#cb520-19" tabindex="-1"></a>prow <span class="ot">&lt;-</span> <span class="fu">plot_grid</span>( p1 <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">&quot;none&quot;</span>),</span>
+<span id="cb520-20"><a href="7.1-multipanel-plot.html#cb520-20" tabindex="-1"></a>           p2 <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">&quot;none&quot;</span>),</span>
+<span id="cb520-21"><a href="7.1-multipanel-plot.html#cb520-21" tabindex="-1"></a>           p3 <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">&quot;none&quot;</span>),</span>
+<span id="cb520-22"><a href="7.1-multipanel-plot.html#cb520-22" tabindex="-1"></a>           <span class="at">align =</span> <span class="st">&#39;vh&#39;</span>,</span>
+<span id="cb520-23"><a href="7.1-multipanel-plot.html#cb520-23" tabindex="-1"></a>           <span class="at">labels =</span> <span class="fu">sprintf</span>(<span class="st">&quot;(%s)&quot;</span>, letters[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>]), <span class="co"># auto lower case letter for labels</span></span>
+<span id="cb520-24"><a href="7.1-multipanel-plot.html#cb520-24" tabindex="-1"></a>           <span class="at">label_size =</span> <span class="dv">14</span>, <span class="co"># label font size</span></span>
+<span id="cb520-25"><a href="7.1-multipanel-plot.html#cb520-25" tabindex="-1"></a>           <span class="at">hjust=</span><span class="dv">0</span>,  <span class="co"># left: positive, right: negative (adjust label position)</span></span>
+<span id="cb520-26"><a href="7.1-multipanel-plot.html#cb520-26" tabindex="-1"></a>           <span class="at">vjust=</span><span class="sc">-</span><span class="dv">1</span>, <span class="co"># down:positive, up:negative</span></span>
+<span id="cb520-27"><a href="7.1-multipanel-plot.html#cb520-27" tabindex="-1"></a>           <span class="at">nrow =</span> <span class="dv">1</span></span>
+<span id="cb520-28"><a href="7.1-multipanel-plot.html#cb520-28" tabindex="-1"></a>           )</span>
+<span id="cb520-29"><a href="7.1-multipanel-plot.html#cb520-29" tabindex="-1"></a></span>
+<span id="cb520-30"><a href="7.1-multipanel-plot.html#cb520-30" tabindex="-1"></a><span class="co"># extract the legend from one of the plots</span></span>
+<span id="cb520-31"><a href="7.1-multipanel-plot.html#cb520-31" tabindex="-1"></a><span class="co"># (clearly the whole thing only makes sense if all plots</span></span>
+<span id="cb520-32"><a href="7.1-multipanel-plot.html#cb520-32" tabindex="-1"></a><span class="co"># have the same legend, so we can arbitrarily pick one.)</span></span>
+<span id="cb520-33"><a href="7.1-multipanel-plot.html#cb520-33" tabindex="-1"></a>legend_b <span class="ot">&lt;-</span> <span class="fu">get_legend</span>(p1 <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">&quot;bottom&quot;</span>))</span>
+<span id="cb520-34"><a href="7.1-multipanel-plot.html#cb520-34" tabindex="-1"></a></span>
+<span id="cb520-35"><a href="7.1-multipanel-plot.html#cb520-35" tabindex="-1"></a><span class="co"># add the legend underneath the row we made earlier. Give it 10% of the height</span></span>
+<span id="cb520-36"><a href="7.1-multipanel-plot.html#cb520-36" tabindex="-1"></a><span class="co"># of one plot (via rel_heights).</span></span>
+<span id="cb520-37"><a href="7.1-multipanel-plot.html#cb520-37" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">plot_grid</span>( prow, legend_b, <span class="at">ncol =</span> <span class="dv">1</span>, <span class="at">rel_heights =</span> <span class="fu">c</span>(<span class="dv">1</span>, .<span class="dv">1</span>))</span>
+<span id="cb520-38"><a href="7.1-multipanel-plot.html#cb520-38" tabindex="-1"></a>p</span></code></pre></div>
 <p>Iregular girds can be created using nested <code>plot_grid</code></p>
 <p>For instance, the first plot is narrower than the second plot, you can create a buffer for the first plot.</p>
-<div class="sourceCode" id="cb520"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb520-1"><a href="7.1-multipanel-plot.html#cb520-1" tabindex="-1"></a><span class="co"># the first figure is half the width of the second figure</span></span>
-<span id="cb520-2"><a href="7.1-multipanel-plot.html#cb520-2" tabindex="-1"></a><span class="fu">plot_grid</span>(<span class="fu">plot_grid</span>(p_hist, <span class="cn">NULL</span>, <span class="at">nrow=</span><span class="dv">1</span>, <span class="at">rel_widths =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>)),</span>
-<span id="cb520-3"><a href="7.1-multipanel-plot.html#cb520-3" tabindex="-1"></a>          p_map_diff <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">plot.margin =</span> <span class="fu">margin</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>)),</span>
-<span id="cb520-4"><a href="7.1-multipanel-plot.html#cb520-4" tabindex="-1"></a>          <span class="at">nrow=</span><span class="dv">2</span>,</span>
-<span id="cb520-5"><a href="7.1-multipanel-plot.html#cb520-5" tabindex="-1"></a>          <span class="at">rel_heights =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="fl">1.2</span>),</span>
-<span id="cb520-6"><a href="7.1-multipanel-plot.html#cb520-6" tabindex="-1"></a>          <span class="at">labels=</span><span class="fu">sprintf</span>(<span class="st">&quot;(%s)&quot;</span>, letters[<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>]), </span>
-<span id="cb520-7"><a href="7.1-multipanel-plot.html#cb520-7" tabindex="-1"></a>          <span class="at">label_size=</span><span class="dv">12</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb521"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb521-1"><a href="7.1-multipanel-plot.html#cb521-1" tabindex="-1"></a><span class="co"># the first figure is half the width of the second figure</span></span>
+<span id="cb521-2"><a href="7.1-multipanel-plot.html#cb521-2" tabindex="-1"></a><span class="fu">plot_grid</span>(<span class="fu">plot_grid</span>(p_hist, <span class="cn">NULL</span>, <span class="at">nrow=</span><span class="dv">1</span>, <span class="at">rel_widths =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>)),</span>
+<span id="cb521-3"><a href="7.1-multipanel-plot.html#cb521-3" tabindex="-1"></a>          p_map_diff <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">plot.margin =</span> <span class="fu">margin</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>)),</span>
+<span id="cb521-4"><a href="7.1-multipanel-plot.html#cb521-4" tabindex="-1"></a>          <span class="at">nrow=</span><span class="dv">2</span>,</span>
+<span id="cb521-5"><a href="7.1-multipanel-plot.html#cb521-5" tabindex="-1"></a>          <span class="at">rel_heights =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="fl">1.2</span>),</span>
+<span id="cb521-6"><a href="7.1-multipanel-plot.html#cb521-6" tabindex="-1"></a>          <span class="at">labels=</span><span class="fu">sprintf</span>(<span class="st">&quot;(%s)&quot;</span>, letters[<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>]), </span>
+<span id="cb521-7"><a href="7.1-multipanel-plot.html#cb521-7" tabindex="-1"></a>          <span class="at">label_size=</span><span class="dv">12</span>)</span></code></pre></div>
 <p><img src="https://drive.google.com/thumbnail?id=1VflWZmC0mH8bbZSMR8Yt18gAev1uGRFN&sz=w1000" alt="Iregular grid" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" /></p>
 
 </div>
