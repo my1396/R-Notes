@@ -29,7 +29,7 @@ set in the _output.yml file.</p>" />
 <meta name="author" content="Menghan Yuan" />
 
 
-<meta name="date" content="2025-08-25" />
+<meta name="date" content="2025-08-26" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -312,6 +312,29 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
   
   div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 </style>
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
 
 <link rel="stylesheet" href="style.css" type="text/css" />
 </head>
@@ -329,7 +352,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <li><a href="./">R Notes</a></li>
 
 <li class="divider"></li>
-<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> url: your book url like https://bookdown.org/yihui/bookdown</a>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> About</a>
 <ul>
 <li class="chapter" data-level="1.1" data-path="1.1-usage.html"><a href="1.1-usage.html"><i class="fa fa-check"></i><b>1.1</b> Usage</a></li>
 <li class="chapter" data-level="1.2" data-path="1.2-render-book.html"><a href="1.2-render-book.html"><i class="fa fa-check"></i><b>1.2</b> Render book</a></li>
@@ -701,56 +724,19 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 
             <section class="normal" id="section-">
 <head>
-    <script> 
+    <script>
+        // Simple toggle utility retained; search uses default bookdown initialization
         function myFunction(id) {
-          var x = document.getElementById(id); 
-          if (x.style.display === "none") {
-            x.style.display = "block";
-          } else {
-            x.style.display = "none";
-          }
+          var x = document.getElementById(id);
+          x.style.display = (x.style.display === 'none') ? 'block' : 'none';
         }
-        
-        // Fix search functionality for GitHub Pages
-        $(document).ready(function() {
-          // Ensure search index loads with correct protocol
-          if (typeof gitbook !== 'undefined' && gitbook.search) {
-            // Force search to use current protocol (http/https)
-            var searchIndex = 'search_index.json';
-            if (window.location.protocol === 'https:') {
-              searchIndex = searchIndex.replace('http:', 'https:');
-            }
-          }
-          
-          // Add small delay to ensure search is initialized - increased for GitHub Pages
-          setTimeout(function() {
-            if (window.gitbook && window.gitbook.search) {
-              window.gitbook.search.init();
-            }
-            
-            // Additional fix: manually trigger search setup if not working
-            var searchInput = document.querySelector('.book-search input');
-            if (searchInput && !searchInput.hasAttribute('data-search-ready')) {
-              searchInput.setAttribute('data-search-ready', 'true');
-              // Force re-initialization of search
-              if (window.lunr && window.gitbook && window.gitbook.search) {
-                try {
-                  window.gitbook.search.setIndex(null);
-                  window.gitbook.search.init();
-                } catch(e) {
-                  console.log('Search reinitialization attempted');
-                }
-              }
-            }
-          }, 2000); // Increased delay for GitHub Pages
-        });
     </script>
 </head>
 <div id="predict" class="section level2 hasAnchor" number="11.3">
 <h2><span class="header-section-number">11.3</span> Predict<a href="11.3-predict.html#predict" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Refer to [U] 20.11 Obtaining predicted values.</p>
 <p><code>predict</code> calculates predictions, residuals, influence statistics, and the like after estimation. Exactly what <code>predict</code> can do is determined by the previous estimation command; command-specific options are documented with each estimation command. Regardless of command-specific options, the actions of <code>predict</code> share certain similarities across estimation commands:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb1-1"><a href="11.3-predict.html#cb1-1" tabindex="-1"></a><span class="kw">predict</span> [<span class="dv">type</span>] newvar [<span class="kw">if</span>] [<span class="kw">in</span>] [, single_options]</span></code></pre></div>
+<div class="sourceCode" id="cb754"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb754-1"><a href="11.3-predict.html#cb754-1" tabindex="-1"></a><span class="kw">predict</span> [<span class="dv">type</span>] newvar [<span class="kw">if</span>] [<span class="kw">in</span>] [, single_options]</span></code></pre></div>
 <ul>
 <li><p><code>predict newvar1</code> create <code>newvar1</code> containing “predicted values”, i.e., <span class="math inline">\(\hat{y}_i = \E(y_i\mid \bx_i)\)</span></p>
 <ul>
@@ -765,10 +751,10 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <p><code>e(sample)</code>: return <span class="math inline">\(1\)</span> if the observation is in the estimation sample and <span class="math inline">\(0\)</span> otherwise.</p></li>
 <li><p><code>predict</code> can be used in <strong>out-of-sample predictions</strong>, which extends beyond the estimation sample.</p>
 <p>You can load a new dataset and type <code>predict</code> to obtain results for that sample.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb2-1"><a href="11.3-predict.html#cb2-1" tabindex="-1"></a><span class="kw">use</span> dataset1      <span class="co">/* estimation dataset */</span></span>
-<span id="cb2-2"><a href="11.3-predict.html#cb2-2" tabindex="-1"></a>(<span class="kw">fit</span> a <span class="kw">model</span>)</span>
-<span id="cb2-3"><a href="11.3-predict.html#cb2-3" tabindex="-1"></a><span class="kw">use</span> dataset2      <span class="co">/* forecast dataset */</span></span>
-<span id="cb2-4"><a href="11.3-predict.html#cb2-4" tabindex="-1"></a><span class="kw">predict</span> yhat    <span class="co">/* fill in the predictions */</span></span></code></pre></div></li>
+<div class="sourceCode" id="cb755"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb755-1"><a href="11.3-predict.html#cb755-1" tabindex="-1"></a><span class="kw">use</span> dataset1      <span class="co">/* estimation dataset */</span></span>
+<span id="cb755-2"><a href="11.3-predict.html#cb755-2" tabindex="-1"></a>(<span class="kw">fit</span> a <span class="kw">model</span>)</span>
+<span id="cb755-3"><a href="11.3-predict.html#cb755-3" tabindex="-1"></a><span class="kw">use</span> dataset2      <span class="co">/* forecast dataset */</span></span>
+<span id="cb755-4"><a href="11.3-predict.html#cb755-4" tabindex="-1"></a><span class="kw">predict</span> yhat    <span class="co">/* fill in the predictions */</span></span></code></pre></div></li>
 <li><p><code>predict e, residuals</code> will generate a variable <code>e</code> containing the residuals of the estimation</p>
 <p><span class="math display">\[
 e_i = y_i - \hat{y}_i

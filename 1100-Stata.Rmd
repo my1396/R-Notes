@@ -13,7 +13,7 @@
 
 Overview of [Documentation](https://www.stata.com/features/documentation/):
 
-- User's Guide (U): is divided into three sections: Stata basics, Elements of Stata, and Advice.
+- [U] User's Guide: is divided into three sections: Stata basics, Elements of Stata, and Advice.
   
   Recommended to read.
 

@@ -29,7 +29,7 @@ set in the _output.yml file.</p>" />
 <meta name="author" content="Menghan Yuan" />
 
 
-<meta name="date" content="2025-08-25" />
+<meta name="date" content="2025-08-26" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -658,7 +658,6 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="11" data-path="11-stata.html"><a href="11-stata.html"><i class="fa fa-check"></i><b>11</b> Stata</a>
 <ul>
-<li class="chapter" data-level="11.0.1" data-path="11-stata.html"><a href="11-stata.html#comments"><i class="fa fa-check"></i><b>11.0.1</b> Comments</a></li>
 <li class="chapter" data-level="11.1" data-path="11.1-basic-syntax.html"><a href="11.1-basic-syntax.html"><i class="fa fa-check"></i><b>11.1</b> Basic syntax</a>
 <ul>
 <li class="chapter" data-level="11.1.1" data-path="11.1-basic-syntax.html"><a href="11.1-basic-syntax.html#package-management"><i class="fa fa-check"></i><b>11.1.1</b> Package management</a></li>
@@ -678,9 +677,11 @@ div.csl-indent {
 <li class="chapter" data-level="11.3" data-path="11.3-predict.html"><a href="11.3-predict.html"><i class="fa fa-check"></i><b>11.3</b> Predict</a></li>
 <li class="chapter" data-level="11.4" data-path="11.4-forecast.html"><a href="11.4-forecast.html"><i class="fa fa-check"></i><b>11.4</b> Forecast</a>
 <ul>
-<li class="chapter" data-level="" data-path="11.4-forecast.html"><a href="11.4-forecast.html#add-equationsidentifies"><i class="fa fa-check"></i>Add equations/identifies</a></li>
-<li class="chapter" data-level="" data-path="11.4-forecast.html"><a href="11.4-forecast.html#solve-the-foreceast"><i class="fa fa-check"></i>Solve the foreceast</a></li>
-<li class="chapter" data-level="" data-path="11.4-forecast.html"><a href="11.4-forecast.html#use-example-forecast-a-panel"><i class="fa fa-check"></i>Use example: forecast a panel</a></li>
+<li class="chapter" data-level="11.4.1" data-path="11.4-forecast.html"><a href="11.4-forecast.html#essential-procedure"><i class="fa fa-check"></i><b>11.4.1</b> Essential Procedure</a></li>
+<li class="chapter" data-level="11.4.2" data-path="11.4-forecast.html"><a href="11.4-forecast.html#creates-a-new-forecast-model"><i class="fa fa-check"></i><b>11.4.2</b> Creates a new forecast model</a></li>
+<li class="chapter" data-level="11.4.3" data-path="11.4-forecast.html"><a href="11.4-forecast.html#add-equationsidentifies"><i class="fa fa-check"></i><b>11.4.3</b> Add equations/identifies</a></li>
+<li class="chapter" data-level="11.4.4" data-path="11.4-forecast.html"><a href="11.4-forecast.html#solve-the-foreceast"><i class="fa fa-check"></i><b>11.4.4</b> Solve the foreceast</a></li>
+<li class="chapter" data-level="11.4.5" data-path="11.4-forecast.html"><a href="11.4-forecast.html#use-example-forecast-a-panel"><i class="fa fa-check"></i><b>11.4.5</b> Use example: forecast a panel</a></li>
 </ul></li>
 <li class="chapter" data-level="11.5" data-path="11.5-panel-1.html"><a href="11.5-panel-1.html"><i class="fa fa-check"></i><b>11.5</b> Panel</a></li>
 <li class="chapter" data-level="11.6" data-path="11.6-arellano-bond-estimator.html"><a href="11.6-arellano-bond-estimator.html"><i class="fa fa-check"></i><b>11.6</b> Arellano-Bond Estimator</a>
@@ -723,49 +724,12 @@ div.csl-indent {
 
             <section class="normal" id="section-">
 <head>
-    <script> 
+    <script>
+        // Simple toggle utility retained; search uses default bookdown initialization
         function myFunction(id) {
-          var x = document.getElementById(id); 
-          if (x.style.display === "none") {
-            x.style.display = "block";
-          } else {
-            x.style.display = "none";
-          }
+          var x = document.getElementById(id);
+          x.style.display = (x.style.display === 'none') ? 'block' : 'none';
         }
-        
-        // Fix search functionality for GitHub Pages
-        $(document).ready(function() {
-          // Ensure search index loads with correct protocol
-          if (typeof gitbook !== 'undefined' && gitbook.search) {
-            // Force search to use current protocol (http/https)
-            var searchIndex = 'search_index.json';
-            if (window.location.protocol === 'https:') {
-              searchIndex = searchIndex.replace('http:', 'https:');
-            }
-          }
-          
-          // Add small delay to ensure search is initialized - increased for GitHub Pages
-          setTimeout(function() {
-            if (window.gitbook && window.gitbook.search) {
-              window.gitbook.search.init();
-            }
-            
-            // Additional fix: manually trigger search setup if not working
-            var searchInput = document.querySelector('.book-search input');
-            if (searchInput && !searchInput.hasAttribute('data-search-ready')) {
-              searchInput.setAttribute('data-search-ready', 'true');
-              // Force re-initialization of search
-              if (window.lunr && window.gitbook && window.gitbook.search) {
-                try {
-                  window.gitbook.search.setIndex(null);
-                  window.gitbook.search.init();
-                } catch(e) {
-                  console.log('Search reinitialization attempted');
-                }
-              }
-            }
-          }, 2000); // Increased delay for GitHub Pages
-        });
     </script>
 </head>
 <div id="control-graphics-devices" class="section level2 hasAnchor" number="7.4">
@@ -782,21 +746,21 @@ div.csl-indent {
 <p><code>dev.off(which = dev.cur())</code> shuts down the specified (by default the current) device.</p>
 <p><strong><code>graphics.off()</code></strong> shuts down all open graphics devices.</p>
 <p><strong>Save the current graphic object</strong></p>
-<div class="sourceCode" id="cb549"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb549-1"><a href="7.4-control-graphics-devices.html#cb549-1" tabindex="-1"></a><span class="fu">library</span>(grid)</span>
-<span id="cb549-2"><a href="7.4-control-graphics-devices.html#cb549-2" tabindex="-1"></a>grab <span class="ot">&lt;-</span> <span class="fu">grid.grab</span>()</span>
-<span id="cb549-3"><a href="7.4-control-graphics-devices.html#cb549-3" tabindex="-1"></a><span class="fu">ggsave</span>(grab, <span class="at">filename =</span> f_name, <span class="at">width=</span><span class="fl">10.9</span>, <span class="at">height=</span><span class="fl">5.82</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb550"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb550-1"><a href="7.4-control-graphics-devices.html#cb550-1" tabindex="-1"></a><span class="fu">library</span>(grid)</span>
+<span id="cb550-2"><a href="7.4-control-graphics-devices.html#cb550-2" tabindex="-1"></a>grab <span class="ot">&lt;-</span> <span class="fu">grid.grab</span>()</span>
+<span id="cb550-3"><a href="7.4-control-graphics-devices.html#cb550-3" tabindex="-1"></a><span class="fu">ggsave</span>(grab, <span class="at">filename =</span> f_name, <span class="at">width=</span><span class="fl">10.9</span>, <span class="at">height=</span><span class="fl">5.82</span>)</span></code></pre></div>
 <ul>
 <li><code>pdf</code> device uses inches to specify width and height.</li>
 <li><code>png</code> and <code>jpeg</code> use pixels to specify dimensions.</li>
 </ul>
 <div id="save-png" class="section level3 hasAnchor" number="7.4.1">
 <h3><span class="header-section-number">7.4.1</span> Save PNG<a href="7.4-control-graphics-devices.html#save-png" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<div class="sourceCode" id="cb550"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb550-1"><a href="7.4-control-graphics-devices.html#cb550-1" tabindex="-1"></a>plot_png <span class="ot">&lt;-</span> <span class="cf">function</span>(p, f_name, width, height, <span class="at">ppi=</span><span class="dv">300</span>){</span>
-<span id="cb550-2"><a href="7.4-control-graphics-devices.html#cb550-2" tabindex="-1"></a>    <span class="co"># a plot wrapper</span></span>
-<span id="cb550-3"><a href="7.4-control-graphics-devices.html#cb550-3" tabindex="-1"></a>    <span class="fu">png</span>(f_name, <span class="at">width=</span>width<span class="sc">*</span>ppi, <span class="at">height=</span>height<span class="sc">*</span>ppi, <span class="at">res=</span>ppi)</span>
-<span id="cb550-4"><a href="7.4-control-graphics-devices.html#cb550-4" tabindex="-1"></a>    <span class="fu">print</span> (p)</span>
-<span id="cb550-5"><a href="7.4-control-graphics-devices.html#cb550-5" tabindex="-1"></a>    <span class="fu">dev.off</span>()</span>
-<span id="cb550-6"><a href="7.4-control-graphics-devices.html#cb550-6" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb551"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb551-1"><a href="7.4-control-graphics-devices.html#cb551-1" tabindex="-1"></a>plot_png <span class="ot">&lt;-</span> <span class="cf">function</span>(p, f_name, width, height, <span class="at">ppi=</span><span class="dv">300</span>){</span>
+<span id="cb551-2"><a href="7.4-control-graphics-devices.html#cb551-2" tabindex="-1"></a>    <span class="co"># a plot wrapper</span></span>
+<span id="cb551-3"><a href="7.4-control-graphics-devices.html#cb551-3" tabindex="-1"></a>    <span class="fu">png</span>(f_name, <span class="at">width=</span>width<span class="sc">*</span>ppi, <span class="at">height=</span>height<span class="sc">*</span>ppi, <span class="at">res=</span>ppi)</span>
+<span id="cb551-4"><a href="7.4-control-graphics-devices.html#cb551-4" tabindex="-1"></a>    <span class="fu">print</span> (p)</span>
+<span id="cb551-5"><a href="7.4-control-graphics-devices.html#cb551-5" tabindex="-1"></a>    <span class="fu">dev.off</span>()</span>
+<span id="cb551-6"><a href="7.4-control-graphics-devices.html#cb551-6" tabindex="-1"></a>}</span></code></pre></div>
 <ul>
 <li>Sometimes the title got cut off. You can change <code>oma</code> to add more top margin.
 <ul>
@@ -837,15 +801,15 @@ div.csl-indent {
 <p><a href="https://apple.stackexchange.com/questions/175215/how-do-i-assign-a-keyboard-shortcut-to-an-applescript-i-wrote" class="uri">https://apple.stackexchange.com/questions/175215/how-do-i-assign-a-keyboard-shortcut-to-an-applescript-i-wrote</a></p>
 <p><img src="https://drive.google.com/thumbnail?id=1GOLLujeuJt858G2pqv1kkfMwdwJ50kvl&sz=w1000" alt="image-20221115084137151" style="zoom:100%;" /></p>
 <p>For the Quartz device, you can use <code>quartzFonts()</code> to see what the default font for each of these keywords is</p>
-<div class="sourceCode" id="cb551"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb551-1"><a href="7.4-control-graphics-devices.html#cb551-1" tabindex="-1"></a><span class="fu">quartzFonts</span>()</span>
-<span id="cb551-2"><a href="7.4-control-graphics-devices.html#cb551-2" tabindex="-1"></a><span class="co"># $serif</span></span>
-<span id="cb551-3"><a href="7.4-control-graphics-devices.html#cb551-3" tabindex="-1"></a><span class="co"># [1] &quot;Times-Roman&quot;      &quot;Times-Bold&quot;       &quot;Times-Italic&quot;     &quot;Times-BoldItalic&quot;</span></span>
-<span id="cb551-4"><a href="7.4-control-graphics-devices.html#cb551-4" tabindex="-1"></a><span class="co"># </span></span>
-<span id="cb551-5"><a href="7.4-control-graphics-devices.html#cb551-5" tabindex="-1"></a><span class="co"># $sans</span></span>
-<span id="cb551-6"><a href="7.4-control-graphics-devices.html#cb551-6" tabindex="-1"></a><span class="co"># [1] &quot;Helvetica&quot;             &quot;Helvetica-Bold&quot;        &quot;Helvetica-Oblique&quot;     &quot;Helvetica-BoldOblique&quot;</span></span>
-<span id="cb551-7"><a href="7.4-control-graphics-devices.html#cb551-7" tabindex="-1"></a><span class="co"># </span></span>
-<span id="cb551-8"><a href="7.4-control-graphics-devices.html#cb551-8" tabindex="-1"></a><span class="co"># $mono</span></span>
-<span id="cb551-9"><a href="7.4-control-graphics-devices.html#cb551-9" tabindex="-1"></a><span class="co"># [1] &quot;Courier&quot;             &quot;Courier-Bold&quot;        &quot;Courier-Oblique&quot;     &quot;Courier-BoldOblique&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb552"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb552-1"><a href="7.4-control-graphics-devices.html#cb552-1" tabindex="-1"></a><span class="fu">quartzFonts</span>()</span>
+<span id="cb552-2"><a href="7.4-control-graphics-devices.html#cb552-2" tabindex="-1"></a><span class="co"># $serif</span></span>
+<span id="cb552-3"><a href="7.4-control-graphics-devices.html#cb552-3" tabindex="-1"></a><span class="co"># [1] &quot;Times-Roman&quot;      &quot;Times-Bold&quot;       &quot;Times-Italic&quot;     &quot;Times-BoldItalic&quot;</span></span>
+<span id="cb552-4"><a href="7.4-control-graphics-devices.html#cb552-4" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb552-5"><a href="7.4-control-graphics-devices.html#cb552-5" tabindex="-1"></a><span class="co"># $sans</span></span>
+<span id="cb552-6"><a href="7.4-control-graphics-devices.html#cb552-6" tabindex="-1"></a><span class="co"># [1] &quot;Helvetica&quot;             &quot;Helvetica-Bold&quot;        &quot;Helvetica-Oblique&quot;     &quot;Helvetica-BoldOblique&quot;</span></span>
+<span id="cb552-7"><a href="7.4-control-graphics-devices.html#cb552-7" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb552-8"><a href="7.4-control-graphics-devices.html#cb552-8" tabindex="-1"></a><span class="co"># $mono</span></span>
+<span id="cb552-9"><a href="7.4-control-graphics-devices.html#cb552-9" tabindex="-1"></a><span class="co"># [1] &quot;Courier&quot;             &quot;Courier-Bold&quot;        &quot;Courier-Oblique&quot;     &quot;Courier-BoldOblique&quot;</span></span></code></pre></div>
 <p><strong>Table of font</strong></p>
 <p><a href="http://www.cookbook-r.com/Graphs/Fonts/" class="uri">http://www.cookbook-r.com/Graphs/Fonts/</a></p>
 <p>Font support in R is generally not very good. It varies between systems, and between output formats.</p>

@@ -81,7 +81,7 @@ forecast works with time-series and panel datasets, and you can obtain either dy
 
 - **Static forecasts** use **previous periods’ actual values** wherever lags appear in the model’s equations, so if you use lags, you cannot make predictions much beyond the end of the time horizon in your dataset. However, static forecasts are useful during model development.
 
-> Note: Dynamic vs Static forecasts do not indicate whether the model itself is dynamic or static. It refers to how lagged values are treated when making forecasts.
+> Note: Dynamic vs Static forecasts do not indicate whether the model itself is dynamic or static. It refers to how lagged values are treated when making forecasts.  
 > Quick takeaway: Using **dynamic forecasts** to make predictions multiple periods into the future where you do not have observations for the lagged dependent variable.
 
 

@@ -29,7 +29,7 @@ set in the _output.yml file.</p>" />
 <meta name="author" content="Menghan Yuan" />
 
 
-<meta name="date" content="2025-08-25" />
+<meta name="date" content="2025-08-26" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -658,7 +658,6 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="11" data-path="11-stata.html"><a href="11-stata.html"><i class="fa fa-check"></i><b>11</b> Stata</a>
 <ul>
-<li class="chapter" data-level="11.0.1" data-path="11-stata.html"><a href="11-stata.html#comments"><i class="fa fa-check"></i><b>11.0.1</b> Comments</a></li>
 <li class="chapter" data-level="11.1" data-path="11.1-basic-syntax.html"><a href="11.1-basic-syntax.html"><i class="fa fa-check"></i><b>11.1</b> Basic syntax</a>
 <ul>
 <li class="chapter" data-level="11.1.1" data-path="11.1-basic-syntax.html"><a href="11.1-basic-syntax.html#package-management"><i class="fa fa-check"></i><b>11.1.1</b> Package management</a></li>
@@ -678,9 +677,11 @@ div.csl-indent {
 <li class="chapter" data-level="11.3" data-path="11.3-predict.html"><a href="11.3-predict.html"><i class="fa fa-check"></i><b>11.3</b> Predict</a></li>
 <li class="chapter" data-level="11.4" data-path="11.4-forecast.html"><a href="11.4-forecast.html"><i class="fa fa-check"></i><b>11.4</b> Forecast</a>
 <ul>
-<li class="chapter" data-level="" data-path="11.4-forecast.html"><a href="11.4-forecast.html#add-equationsidentifies"><i class="fa fa-check"></i>Add equations/identifies</a></li>
-<li class="chapter" data-level="" data-path="11.4-forecast.html"><a href="11.4-forecast.html#solve-the-foreceast"><i class="fa fa-check"></i>Solve the foreceast</a></li>
-<li class="chapter" data-level="" data-path="11.4-forecast.html"><a href="11.4-forecast.html#use-example-forecast-a-panel"><i class="fa fa-check"></i>Use example: forecast a panel</a></li>
+<li class="chapter" data-level="11.4.1" data-path="11.4-forecast.html"><a href="11.4-forecast.html#essential-procedure"><i class="fa fa-check"></i><b>11.4.1</b> Essential Procedure</a></li>
+<li class="chapter" data-level="11.4.2" data-path="11.4-forecast.html"><a href="11.4-forecast.html#creates-a-new-forecast-model"><i class="fa fa-check"></i><b>11.4.2</b> Creates a new forecast model</a></li>
+<li class="chapter" data-level="11.4.3" data-path="11.4-forecast.html"><a href="11.4-forecast.html#add-equationsidentifies"><i class="fa fa-check"></i><b>11.4.3</b> Add equations/identifies</a></li>
+<li class="chapter" data-level="11.4.4" data-path="11.4-forecast.html"><a href="11.4-forecast.html#solve-the-foreceast"><i class="fa fa-check"></i><b>11.4.4</b> Solve the foreceast</a></li>
+<li class="chapter" data-level="11.4.5" data-path="11.4-forecast.html"><a href="11.4-forecast.html#use-example-forecast-a-panel"><i class="fa fa-check"></i><b>11.4.5</b> Use example: forecast a panel</a></li>
 </ul></li>
 <li class="chapter" data-level="11.5" data-path="11.5-panel-1.html"><a href="11.5-panel-1.html"><i class="fa fa-check"></i><b>11.5</b> Panel</a></li>
 <li class="chapter" data-level="11.6" data-path="11.6-arellano-bond-estimator.html"><a href="11.6-arellano-bond-estimator.html"><i class="fa fa-check"></i><b>11.6</b> Arellano-Bond Estimator</a>
@@ -723,59 +724,22 @@ div.csl-indent {
 
             <section class="normal" id="section-">
 <head>
-    <script> 
+    <script>
+        // Simple toggle utility retained; search uses default bookdown initialization
         function myFunction(id) {
-          var x = document.getElementById(id); 
-          if (x.style.display === "none") {
-            x.style.display = "block";
-          } else {
-            x.style.display = "none";
-          }
+          var x = document.getElementById(id);
+          x.style.display = (x.style.display === 'none') ? 'block' : 'none';
         }
-        
-        // Fix search functionality for GitHub Pages
-        $(document).ready(function() {
-          // Ensure search index loads with correct protocol
-          if (typeof gitbook !== 'undefined' && gitbook.search) {
-            // Force search to use current protocol (http/https)
-            var searchIndex = 'search_index.json';
-            if (window.location.protocol === 'https:') {
-              searchIndex = searchIndex.replace('http:', 'https:');
-            }
-          }
-          
-          // Add small delay to ensure search is initialized - increased for GitHub Pages
-          setTimeout(function() {
-            if (window.gitbook && window.gitbook.search) {
-              window.gitbook.search.init();
-            }
-            
-            // Additional fix: manually trigger search setup if not working
-            var searchInput = document.querySelector('.book-search input');
-            if (searchInput && !searchInput.hasAttribute('data-search-ready')) {
-              searchInput.setAttribute('data-search-ready', 'true');
-              // Force re-initialization of search
-              if (window.lunr && window.gitbook && window.gitbook.search) {
-                try {
-                  window.gitbook.search.setIndex(null);
-                  window.gitbook.search.init();
-                } catch(e) {
-                  console.log('Search reinitialization attempted');
-                }
-              }
-            }
-          }, 2000); // Increased delay for GitHub Pages
-        });
     </script>
 </head>
 <div id="common-correlated-effects-models" class="section level2 hasAnchor" number="11.7">
 <h2><span class="header-section-number">11.7</span> Common Correlated Effects Models<a href="11.7-common-correlated-effects-models.html#common-correlated-effects-models" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>This section provides an overview of how Stata’s <code>xtdcce2</code> package implements Common Correlated Effects (CCE) models, which are useful for panel data analysis with heterogeneous coefficients and common correlated effects.</p>
 <p><strong>Environment setup</strong></p>
-<div class="sourceCode" id="cb804"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb804-1"><a href="11.7-common-correlated-effects-models.html#cb804-1" tabindex="-1"></a><span class="kw">ssc</span> install xtdcce2</span>
-<span id="cb804-2"><a href="11.7-common-correlated-effects-models.html#cb804-2" tabindex="-1"></a><span class="co">// dependencies for xtdcce2</span></span>
-<span id="cb804-3"><a href="11.7-common-correlated-effects-models.html#cb804-3" tabindex="-1"></a><span class="kw">ssc</span> install moremata</span>
-<span id="cb804-4"><a href="11.7-common-correlated-effects-models.html#cb804-4" tabindex="-1"></a><span class="kw">ssc</span> install xtcd2</span></code></pre></div>
+<div class="sourceCode" id="cb808"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb808-1"><a href="11.7-common-correlated-effects-models.html#cb808-1" tabindex="-1"></a><span class="kw">ssc</span> install xtdcce2</span>
+<span id="cb808-2"><a href="11.7-common-correlated-effects-models.html#cb808-2" tabindex="-1"></a><span class="co">// dependencies for xtdcce2</span></span>
+<span id="cb808-3"><a href="11.7-common-correlated-effects-models.html#cb808-3" tabindex="-1"></a><span class="kw">ssc</span> install moremata</span>
+<span id="cb808-4"><a href="11.7-common-correlated-effects-models.html#cb808-4" tabindex="-1"></a><span class="kw">ssc</span> install xtcd2</span></code></pre></div>
 <ul>
 <li>Data has to be <code>xtset</code> before using <code>xtdcce2</code>.</li>
 </ul>
@@ -824,7 +788,7 @@ y(i,t) = b0(i) + b2(i)*x(i,t) + d(i)*z(i,t) + e(i,t). \tag{11.3}
 <li><p>Important to notice is, that <code>b1(i)</code> is set to zero.</p></li>
 </ul>
 <p><strong>Example</strong></p>
-<div class="sourceCode" id="cb805"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb805-1"><a href="11.7-common-correlated-effects-models.html#cb805-1" tabindex="-1"></a>xtdcce2 <span class="kw">d</span>.log_rgdpo log_hc log_ck log_ngd , <span class="kw">cr</span>(<span class="dt">_all</span>) reportc</span></code></pre></div>
+<div class="sourceCode" id="cb809"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb809-1"><a href="11.7-common-correlated-effects-models.html#cb809-1" tabindex="-1"></a>xtdcce2 <span class="kw">d</span>.log_rgdpo log_hc log_ck log_ngd , <span class="kw">cr</span>(<span class="dt">_all</span>) reportc</span></code></pre></div>
 <ul>
 <li><p><code>cr(_all)</code> means that all variables are included in the cross sectional means.</p>
 <p>It is equivalent to <code>crosssectional(log_rgdpo log_hc log_ck log_ngd)</code>.</p></li>
@@ -856,8 +820,8 @@ y(i,t) = b0(i) + b2(i)*x(i,t) + d(i)*z(i,t) + e(i,t). \tag{11.3}
 <li><code>z(i,s)</code> is the cross sectional average of the variables defined in <code>crosssectional()</code>.</li>
 </ul>
 <p><strong>Example</strong></p>
-<div class="sourceCode" id="cb806"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb806-1"><a href="11.7-common-correlated-effects-models.html#cb806-1" tabindex="-1"></a>xtdcce2 <span class="kw">d</span>.log_rgdpo L.log_rgdpo log_hc log_ck log_ngd , <span class="co">///</span></span>
-<span id="cb806-2"><a href="11.7-common-correlated-effects-models.html#cb806-2" tabindex="-1"></a>    reportc <span class="kw">cr</span>(log_rgdpo  log_hc log_ck log_ngd) cr_lags(3)</span></code></pre></div>
+<div class="sourceCode" id="cb810"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb810-1"><a href="11.7-common-correlated-effects-models.html#cb810-1" tabindex="-1"></a>xtdcce2 <span class="kw">d</span>.log_rgdpo L.log_rgdpo log_hc log_ck log_ngd , <span class="co">///</span></span>
+<span id="cb810-2"><a href="11.7-common-correlated-effects-models.html#cb810-2" tabindex="-1"></a>    reportc <span class="kw">cr</span>(log_rgdpo  log_hc log_ck log_ngd) cr_lags(3)</span></code></pre></div>
 <ul>
 <li><code>cr_lags(3)</code> the number of lags is set to 3.</li>
 </ul>
@@ -894,9 +858,9 @@ y(i,t) = b0 + b1*y(i,t-1) + b2*x(i,t) + \sum_{s=t}^{t-pT} [d(i)*z(i,s)] + e(i,t)
 The constant is pooled by using the option <code>pooledconstant</code>.</p>
 <p>In case of a pooled estimation, the standard errors are obtained from a mean group regression.</p>
 <p><strong>Example</strong></p>
-<div class="sourceCode" id="cb807"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb807-1"><a href="11.7-common-correlated-effects-models.html#cb807-1" tabindex="-1"></a>xtdcce2 <span class="kw">d</span>.log_rgdpo L.log_rgdpo log_hc log_ck log_ngd , <span class="co">///</span></span>
-<span id="cb807-2"><a href="11.7-common-correlated-effects-models.html#cb807-2" tabindex="-1"></a>    reportc <span class="kw">cr</span>(log_rgdpo  log_hc log_ck log_ngd) <span class="co">///</span></span>
-<span id="cb807-3"><a href="11.7-common-correlated-effects-models.html#cb807-3" tabindex="-1"></a>    pooled(L.log_rgdpo  log_hc log_ck log_ngd) cr_lags(3) pooledconstant</span></code></pre></div>
+<div class="sourceCode" id="cb811"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb811-1"><a href="11.7-common-correlated-effects-models.html#cb811-1" tabindex="-1"></a>xtdcce2 <span class="kw">d</span>.log_rgdpo L.log_rgdpo log_hc log_ck log_ngd , <span class="co">///</span></span>
+<span id="cb811-2"><a href="11.7-common-correlated-effects-models.html#cb811-2" tabindex="-1"></a>    reportc <span class="kw">cr</span>(log_rgdpo  log_hc log_ck log_ngd) <span class="co">///</span></span>
+<span id="cb811-3"><a href="11.7-common-correlated-effects-models.html#cb811-3" tabindex="-1"></a>    pooled(L.log_rgdpo  log_hc log_ck log_ngd) cr_lags(3) pooledconstant</span></code></pre></div>
 <ul>
 <li><code>pooled(L.log_rgdpo  log_hc log_ck log_ngd)</code> means all coefficients should be pooled.</li>
 <li><code>pooledconstant</code> means the constant is pooled.</li>
