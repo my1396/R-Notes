@@ -196,7 +196,7 @@ Add estimation results stored in `myestimates` to the forecast model currently i
 
 ___
 
-**Add an Identity to a `forecast` Model** 
+#### Add an Identity to a `forecast` Model
 
 
 ```stata
@@ -229,7 +229,7 @@ The generate option of forecast identity is useful when you wish to use a transf
 
 ___
 
-**Add equations that you obtained elsewhere to your model**
+#### Add equations that you obtained elsewhere to your model
 
 Up untill now, we have been using model output from Stata to add equations to a forecast model, i.e., using `forecast estimates`. 
 
@@ -241,7 +241,7 @@ Common use scenarios of `forecast coefvector`:
 
 - User-written estimators that do not implement a `predict` command can also be included in forecast models via `forecast coefvector`. 
 
-- `forecast coefvector` can also be useful insituations where you want to simulate time-series data.
+- `forecast coefvector` can also be useful in situations where you want to simulate time-series data.
 
 ```stata
 forecast coefvector cname [, options ]
@@ -259,7 +259,7 @@ forecast coefvector cname [, options ]
 
   This option only has an effect if you specify the `simulate()` option when calling `forecast solve` and request `sim_technique`’s `betas` or `residuals`.
 
-- `names(namelist[ , replace ])`: instructs forecast coefvector to use namelist as the names of the left-hand-side variables in the coefficient vector being added. By default, forecast coefvector uses the equation names on the column stripe of cname. 
+- `names(namelist[ , replace ])`: instructs `forecast coefvector` to use namelist as the names of the left-hand-side variables in the coefficient vector being added. By default, `forecast coefvector` uses the equation names on the column stripe of cname. 
 
   You must use this option if any of the equation names stored with `cname` contains **time-series operators**.
 
@@ -303,10 +303,35 @@ forecast coefvector y
 ```
 
 
+--------------------------------------------------------------------------------
+
+#### Declare exogenous variables
+
+```stata
+forecast exogenous varlist
+```
+
+Declaring exogenous variables with forecast exogenous is not explicitly necessary, but we nevertheless <span class="env-green">**strongly encourage doing so**</span>. 
+
+Stata can check the exogenous variables **before** solving the model and issue an appropriate error message if missing values are found, whereas troubleshooting models for which forecasting failed is more difficult after the fact.
+
+**Undeclared exogenous variables** that contain missing values within the forecast horizon will cause `forecast solve` to exit with a less-informative error message and require the user to do more work to pinpoint the problem.
+
+
+Summary:
+
+Endogenous variables are added to the forecast model via `forecast estimates`, `forecast identity`, and `forecast coefvector`. 
+
+- Equations added via `forecast estimates` are always stochastic, 
+- while equations added via `forecast identity` are always nonstochastic. 
+- Equations added via `forecast coefvector` are treated as stochastic if options `variance()` or `errorvariance()` (or both) are specified and nonstochastic if neither is specified.
 
 
 
 --------------------------------------------------------------------------------
+
+#### forecast adjust
+
 
 `forecast adjust` adjusts a variable by add factoring, replacing, etc.
 
@@ -367,26 +392,35 @@ forecast solve [, { prefix(string) | suffix(string) } options ]
   - `detail`: a detailed iteration log including the current values of the convergence criteria for each period in each panel (in the case of panel data) for which the model is being solved.
   - `brief`: produces an iteration log showing the current panel being solved but does not show which period within the current panel is being solved.
 
-- `simulate(sim_technique, sim_statistic sim_options)` allows you to simulate your model to obtain measures of uncertainty surrounding the point forecasts produced by the model. Simulating a model involves repeatedly solving the model, each time accounting for the uncertainty associated with the error terms and the estimated coefficient vectors.
+- `simulate(sim_technique, sim_statistic sim_options)` allows you to simulate your model to obtain <span class="env-green">**measures of uncertainty surrounding the point forecasts**</span> produced by the model. 
+  
+  Simulating a model involves repeatedly solving the model, each time accounting for the uncertainty associated with the error terms and the estimated coefficient vectors.
 
   - `sim_technique` can be `betas`, `errors`, or `residuals`.
 
-    - `betas`: draw multivariate-normal parameter vectors
-    - `errors`: draw additive errors from multivariate normal distribution
-    - `residuals`: draw additive residuals based on static forecast errors
+    - `betas`: draw multivariate-normal parameter vectors ← sampling error from the estimated coefficients
+    - `errors`: draw additive errors from multivariate normal distribution ← uncertainty from the stochastic error terms; errors drawn from a normal distribution with mean zero and variance equal to the estimated variance of the error terms
+    - `residuals`: draw additive residuals based on static forecast errors; errors drawn from the pool of static-forecast residuals
 
-  - `sim_statistic` specifies a summary statistic to summarize the forecasts over all the simulations.
+  - `sim_statistic` specifies a **summary statistic to summarize the forecasts** over all the simulations.
 
-  ```stata
-  statistic(statistic, { prefix(string) | suffix(string) })
-  ```
+    ```stata
+    statistic(statistic, { prefix(string) | suffix(string) })
+    ```
 
-  `statistic` can be `mean`, `variance`, or `stddev`. You may specify either the prefix or the suffix that will be used to name the variables that will contain the requested `statistic`.
+    `statistic` can be `mean`, `variance`, or `stddev`. You may specify either the prefix or the suffix that will be used to name the variables that will contain the requested `statistic`.
+
+    ```stata
+    statistic(stddev, prefix(sd_))
+    ```
+
+    This will store the standard deviations of our forecasts in variables prefixed with `sd_`.
 
   - `sim_options` includes
+    - <span class="env-green">`reps(#)`</span> request that `forecast solve` perform `#` replications; default is `reps(50)`
     - `saving(filename, …)` save results to file
     - `nodots` suppress replication dots.  By default, one dot character is displayed for each successful replication. If during a replication convergence is not achieved, forecast solve exits with an error message.
-    - `reps(#)` request that `forecast solve` perform `#` replications; default is `reps(50)`
+    
 
 
 

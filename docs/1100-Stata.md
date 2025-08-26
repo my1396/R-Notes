@@ -4,7 +4,9 @@
 
 - User Guide: <https://www.stata.com/manuals/u.pdf>
 - Tutorial: <https://grodri.github.io/stata/>
-- Quick start: <https://lanekenworthy.net/stata-quick-guide/>
+- Quick start: 
+  - <https://lanekenworthy.net/stata-quick-guide/>
+  - [[GSM] Getting Started with Stata for Mac](https://www.stata.com/manuals/gsm1.pdf) 
 
 
 `help <cmd_name>`: Get help for a command in Stata console.
@@ -45,7 +47,22 @@ Actually not of much use.
 
 **User interface**
 
-Within the Stata interface window, there are five windows: Command, Results, History, Properties, and Variables
+Within the Stata interface window, there are five windows: Command, Results, History, Properties, and Variables.
+
+<img src="https://drive.google.com/thumbnail?id=1VDcZ6w7Ie8lqYKJxF7zJlUiXqH4WxDaw&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
+
+
+Output appears in the Results window. E.g.,
+
+```stata
+. sysuse auto, clear
+(1978 Automobile Data)
+```
+
+The dot (`.`) indicates that the current line is a Stata command.
+
+`>` indicates that the command is not yet complete. You will see this when you have a command that spans multiple lines.
+
 
 While Stata can be command-driven by typing code in the Command window, it can also be used in a **point-and-click** manner using the menu bar.
 
@@ -129,7 +146,7 @@ Our suggestion is that you keep your do files short enough that when you're work
 
 --------------------------------------------------------------------------------
 
-### Comments
+### Comments {.unlisted .unnumbered}
 
 - `//` for single line comment; rest-of-line comment;
 - `/* */` for multiple line comment; enclosed comment;
