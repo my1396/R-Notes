@@ -20,9 +20,9 @@ world7 = world %>%
   slice(1:5)
 ```
 
-- Use the dot for secondary purposes, i.e. you want to use the <span style='color:#008B45'>attributes of `x`</span> rather than `x` itself. `iris %>% subset(1:nrow(.) %% 2 == 0)` is equivalent to `iris %>% subset(., 1:nrow(.) %% 2 == 0)`
+- Use the dot for secondary purposes, i.e. you want to use the <span class="env-green">attributes of `x`</span> rather than `x` itself. `iris %>% subset(1:nrow(.) %% 2 == 0)` is equivalent to `iris %>% subset(., 1:nrow(.) %% 2 == 0)`
 
-- In order to avoid plugiging in as the first argument and to call the parameter <span style='color:#008B45'>**several times**</span>, surround the `rhs` call with brace brackets `{...}`.
+- In order to avoid plugiging in as the first argument and to call the parameter <span class="env-green">**several times**</span>, surround the `rhs` call with brace brackets `{...}`.
 
   `1:10 %>% {c(min(.), max(.))}` is equivalent to `c(min(1:10), max(1:10))`
 
@@ -52,7 +52,7 @@ matrix(c(1,0,0,1), nrow = 2) * (5 %>% as.data.frame())
 # 2  0  5
 ```
 
-- `%>%` can work together with <span style='color:#008B45'>backticks</span> for arithmetic operators
+- `%>%` can work together with <span class="env-green">backticks</span> for arithmetic operators
 
 ```r
 x <- 2

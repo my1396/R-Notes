@@ -188,7 +188,7 @@ ddply(BData[,c("iso","gdp")], .(iso), function(x) sum(is.na(x[,-1])))
 
 
 
-<span style='color:#008B45'>**`by(data, INDICES, FUN, …, simplify = TRUE)`**  </span> an object-oriented wrapper for `tapply` applied to **data frames**. Apply a function to a data frame split by factors.
+<span class="env-green">**`by(data, INDICES, FUN, …, simplify = TRUE)`**  </span> an object-oriented wrapper for `tapply` applied to **data frames**. Apply a function to a data frame split by factors.
 
 - `data` 	     a data frame, matrix
 - `INDICES`    a factor or a list of factors, each of length `nrow(data)`

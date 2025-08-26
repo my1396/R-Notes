@@ -165,7 +165,7 @@ df <- do.call('rbind', result)
 
 
 
-### <span style='color:#008B45'>Parallel</span> version of `apply` function
+### <span class="env-green">Parallel</span> version of `apply` function
 
 `parallel::parLapply` Performs the calculations in parallel, possibly on several nodes
 

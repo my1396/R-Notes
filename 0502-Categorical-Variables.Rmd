@@ -16,7 +16,7 @@ world_separate = world_unite %>%
   separate(con_reg, c("continent", "region_un"), sep = ":")
 ```
 
-`unite()`  <span style='color:#008B45'>pastes</span> together existing string columns.
+`unite()`  <span class="env-green">pastes</span> together existing string columns.
 
 ```r
 world_unite = world %>%

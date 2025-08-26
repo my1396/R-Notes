@@ -40,7 +40,7 @@
 
 ### Column/Row-wise Operations {-}
 
-`sweep(data, MARGIN, STATS, FUN='-')` 	Return an array obtained from an input array by sweeping out a summary statistic; useful in <span style='color:#008B45'>**standardizing data**</span>, eg., center or scale columns.
+`sweep(data, MARGIN, STATS, FUN='-')` 	Return an array obtained from an input array by sweeping out a summary statistic; useful in <span class="env-green">**standardizing data**</span>, eg., center or scale columns.
 
 * data: matrix/dataframe
 
@@ -83,7 +83,7 @@ df[!duplicated(lapply(df, summary))]
 --------------------------------------------------------------------------------
 
 
-### <span style='color:#008B45'>**Process `NA` values**</span>
+### <span class="env-green">**Process `NA` values**</span>
 
 `NaN` not a number.  0/0 is an example of a calculation that will produce a `NaN`. `NaN`s print as `NaN`, but generally act like `NA`s. Use `is.nan` to check if `NaN`.
 

@@ -5,6 +5,7 @@
 
 - CRAN: <https://cran.r-project.org>
 - Rdocumentation powered by datacamp, it has interactive interface with good examples, the typesetting also looks better, <https://www.rdocumentation.org>
+- Posit Cheatsheets: <https://posit.co/resources/cheatsheets/>
 
 
 R is case-sensitive; comments start with `#`.

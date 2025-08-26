@@ -18,7 +18,7 @@
  
 **HSC** (Hue-Saturation-Value) is a simple transformation of the RGB (red-green-blue) space. However, HSV colors capture the perceptual properties hue, colorfulness / saturation / chroma, and lightness / brightness / luminance/ value only <span style='color:#FF4C4C; font-style:italic;'>poorly</span> and consequently the corresponding palettes are typically <span style='color:#FF4C4C; font-style:italic;'>not</span> a good choice for statistical graphics and data visualization. [EndRainbow](http://colorspace.r-forge.r-project.org/articles/endrainbow.html).
 
-**HCL** (Hue-Chroma-Luminance) color space is believed to accords with human perception of color. HCL are <span style='color:#008B45'>*much more suitable*</span> for capturing human color perception. ✅
+**HCL** (Hue-Chroma-Luminance) color space is believed to accords with human perception of color. HCL are <span class="env-green">*much more suitable*</span> for capturing human color perception. ✅
 
 
 --------------------------------------------------------------------------------
@@ -211,7 +211,7 @@ palette("default")      # reset back to the default
 
 \#9900FF - 153, 0, 255 - <span style='color:#9900FF'>PurpleViolet</span>
 \#0099FF - 0, 153, 255 - <span style='color:#0099FF'>BlueCyan</span>
-\#008B45 - 0, 204, 102 - <span style='color:#008B45'>BlueGreen</span>
+\#008B45 - 0, 204, 102 - <span class="env-green">BlueGreen</span>
 
 \#008B45FF  <span style='color:#008B45FF'>DarkGreen</span> Good on light, not good on dark theme
 
@@ -336,14 +336,14 @@ plot(1:n, pch = 16, cex = 2, col = colVec)
 
 ### RColorBrewer
 
-- <span style='color:#008B45'>*Sequential*</span> palettes names are `Blues` `BuGn` `BuPu` `GnBu` `Greens` `Greys` `Oranges` `OrRd` `PuBu` `PuBuGn` `PuRd` `Purples` `RdPu` `Reds` `YlGn` `YlGnBu` `YlOrBr` `YlOrRd`. All the sequential palettes are available in variations from 3 different values up to 9 different values. 
+- <span class="env-green">*Sequential*</span> palettes names are `Blues` `BuGn` `BuPu` `GnBu` `Greens` `Greys` `Oranges` `OrRd` `PuBu` `PuBuGn` `PuRd` `Purples` `RdPu` `Reds` `YlGn` `YlGnBu` `YlOrBr` `YlOrRd`. All the sequential palettes are available in variations from 3 different values up to 9 different values. 
 
-- <span style='color:#008B45'>*Diverging*</span> palettes are `BrBG` `PiYG` `PRGn` `PuOr` `RdBu` `RdGy` `RdYlBu` `RdYlGn` `Spectral`. All the diverging palettes are available in variations from 3 different values up to 11 different values. Suited to centered data with extremes in either direction.
+- <span class="env-green">*Diverging*</span> palettes are `BrBG` `PiYG` `PRGn` `PuOr` `RdBu` `RdGy` `RdYlBu` `RdYlGn` `Spectral`. All the diverging palettes are available in variations from 3 different values up to 11 different values. Suited to centered data with extremes in either direction.
 
   > For temperature and radiation data visualization, it's recommended to use diverging palettes from **blue to red**. 
 
 
-- <span style='color:#008B45'>*Qualitative*</span> palettes, the lowest number of distinct values available always is 3, but the largest number is different for different palettes. { Accent 8 Dark2 8 Paired 12 Pastel1 9 Pastel2 8 Set1 9 Set2 8 Set3 12 }
+- <span class="env-green">*Qualitative*</span> palettes, the lowest number of distinct values available always is 3, but the largest number is different for different palettes. { Accent 8 Dark2 8 Paired 12 Pastel1 9 Pastel2 8 Set1 9 Set2 8 Set3 12 }
 
 ```R
 library(RColorBrewer)
@@ -572,7 +572,7 @@ colors <- cl(n)
 
 `colorRampPalette(colors, bias = 1, space = c("rgb", "Lab"), interpolate = c("linear", "spline"), alpha = FALSE))`
 
-<span style='color:#008B45'>Color interpolation function</span>.  Interpolate a set of given colors to create new color palettes.
+<span class="env-green">Color interpolation function</span>.  Interpolate a set of given colors to create new color palettes.
 
 - `colors` 	 vector of any of the three kinds, i.e., either 
   - a color name (as listed by `colors()` ), 

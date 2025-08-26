@@ -44,8 +44,8 @@ tibble(
 
 `tbl_df %>% print(n = Inf)` print all rows. `print.tbl_df` is useful in terms of explicitly and setting arguments like `n` and `width`. 
 
-- `n` 	print the first `n` rows. When `n=Inf`, it means to <span style='color:#008B45'>print all rows</span>.
-- `width` Width of text output to generate. This defaults to `NULL`, which means use the `width` in [`options()`](https://pillar.r-lib.org/reference/pillar_options.html). When `width=Inf`, will <span style='color:#008B45'>print all columns</span>.
+- `n` 	print the first `n` rows. When `n=Inf`, it means to <span class="env-green">print all rows</span>.
+- `width` Width of text output to generate. This defaults to `NULL`, which means use the `width` in [`options()`](https://pillar.r-lib.org/reference/pillar_options.html). When `width=Inf`, will <span class="env-green">print all columns</span>.
 
  Use `?print.tbl_df` to show help page.
 
@@ -55,7 +55,7 @@ Alternatively, use, `tbl_df %>% data.frame()` to print the whole table. `data.fr
 
 
 
-<span style='color:#008B45'>`data.table`</span> package has nice table print settings. You can preview the head and tail at the same time. It doesn't give you column details, such as data type, but it gives you a feeling of the data structure without using `head` and `tail` functions twice.
+<span class="env-green">`data.table`</span> package has nice table print settings. You can preview the head and tail at the same time. It doesn't give you column details, such as data type, but it gives you a feeling of the data structure without using `head` and `tail` functions twice.
 
 The `data.table` R package is being used in different fields such as finance and genomics and is especially useful for those of you that are working with large data sets (for example, 1GB to 100GB in RAM).
 
@@ -178,8 +178,8 @@ deframe(tibble(a = as.list(1:3)))
 
 -   `.data` needs to be a data frame; strict with input data type;
 -   `var` 
-    -   in <span style='color:#008B45'>`rownames_to_column`</span>: new column name for original rownames in the data.frame, or 
-    -   in <span style='color:#008B45'>`column_to_rownames`</span>: convert tibble to data frame, and specify which column to use as rownames. 
+    -   in <span class="env-green">`rownames_to_column`</span>: new column name for original rownames in the data.frame, or 
+    -   in <span class="env-green">`column_to_rownames`</span>: convert tibble to data frame, and specify which column to use as rownames. 
 
 
 
@@ -213,7 +213,7 @@ data %>%
 ```
 
 
-<span style='color:#008B45'>`dplyr::setdiff(x, y)`</span>  element that is in `x` but not in `y`.
+<span class="env-green">`dplyr::setdiff(x, y)`</span>  element that is in `x` but not in `y`.
 
 -  `x` and `y` are supposed to have the same structure, i.e., same columns if for data frames.
 
@@ -319,7 +319,7 @@ agg_dummy %>%
 
   - A function, e.g. `mean`.
 
-  - <span style='color:#008B45'>A purrr-style lambda, e.g. `~ mean(.x, na.rm = TRUE)`</span>
+  - <span class="env-green">A purrr-style lambda, e.g. `~ mean(.x, na.rm = TRUE)`</span>
 
     ```r
     # divide each col by 100, except for the Date column.
@@ -356,7 +356,7 @@ df <- tibble(x = 1:3, y = 3:1)
 df %>% add_row(x = 4, y = 0)
 ```
 
-**`bind_rows(..., .id = NULL)`**  This is an efficient implementation of the common pattern of `do.call(rbind, dfs)`. Match by <span style='color:#008B45'>column names</span>.
+**`bind_rows(..., .id = NULL)`**  This is an efficient implementation of the common pattern of `do.call(rbind, dfs)`. Match by <span class="env-green">column names</span>.
 
 The output of `bind_rows()` will contain a column if that column appears in any of the inputs. `rbind` will throw errors if columns do not match.
 
@@ -364,7 +364,7 @@ The output of `bind_rows()` will contain a column if that column appears in any 
 
   - Each argument can either be a data frame, a list that could be a data frame, or a list of data frames.
 
-  - When row-binding, **columns are matched <span style='color:#008B45'>by name</span>**, and any **missing columns will be filled with NA**. So <u>no column is dropped, which is safe</u>.
+  - When row-binding, **columns are matched <span class="env-green">by name</span>**, and any **missing columns will be filled with NA**. So <u>no column is dropped, which is safe</u>.
 
   - When column-binding (**`bind_cols(df1, df2, ...)`**), rows are matched <span style='color:#FF9900'>**by position**</span>, so all data frames must have the <u>same number of rows</u>. To match by value, not position, see [mutate-joins](http://127.0.0.1:40078/help/library/dplyr/help/mutate-joins).
 
@@ -372,7 +372,7 @@ The output of `bind_rows()` will contain a column if that column appears in any 
 
     - `bind_cols` is equivalent to `cbind`: match by position. Recommend to use `left_join`, which is safer.
 
-    - <span style='color:#008B45'>`bind_rows` is safer than `rbind`</span>: `bind_rows` find matched col names
+    - <span class="env-green">`bind_rows` is safer than `rbind`</span>: `bind_rows` find matched col names
 
 - `.id`     Data frame identifier.
 
@@ -485,7 +485,7 @@ This flexibility is useful because it won't return an error if the variable is n
 
 **Selection with conditions**
 
-Functions work together with `select` to choose cols matching certain conditions: <span style='color:#008B45'>`starts_with()`</span>, <span style='color:#008B45'>`ends_with()`</span>, `contains()`. These are selection helpers which match variables according to a given pattern.
+Functions work together with `select` to choose cols matching certain conditions: <span class="env-green">`starts_with()`</span>, <span class="env-green">`ends_with()`</span>, `contains()`. These are selection helpers which match variables according to a given pattern.
 
 ```r
 > iris %>% select(starts_with("Sepal"))

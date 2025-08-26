@@ -63,14 +63,14 @@ https://www.rdocumentation.org/packages/grDevices/versions/3.6.2/topics/x11
 
 https://www.cgl.ucsf.edu/chimera/data/downloads/1.11.2/mac_x11.html
 
-When you are using a native Mac application (not X windows) and then click on a menu within the X window, <span style='color:#008B45'>the mouse click does not bring up the menu</span>. It just activates the X window and another mouse click is needed to show the menu. <u>To make this work with a single mouse click</u>, use the Mac X server `wm_click_through` preference by typing the following command in a Mac Terminal window:
+When you are using a native Mac application (not X windows) and then click on a menu within the X window, <span class="env-green">the mouse click does not bring up the menu</span>. It just activates the X window and another mouse click is needed to show the menu. <u>To make this work with a single mouse click</u>, use the Mac X server `wm_click_through` preference by typing the following command in a Mac Terminal window:
 
 `defaults write org.x.x11 wm_click_through -bool true`  Disables the default behavior of swallowing window-activating mouse events.
 
 -   Normally Mac OS X swallows window-activating mouse events. This preference causes a window-activating mouse click on an X window to also be processed by the application.
--   X11 must be <span style='color:#008B45'>restarted</span> after any of these settings are changed. The settings are saved in your `~/Library/Preferences/org.x.x11.plist` file, so they will apply to future sessions. Reissuing the commands with false instead of true will restore the default preference settings.
+-   X11 must be <span class="env-green">restarted</span> after any of these settings are changed. The settings are saved in your `~/Library/Preferences/org.x.x11.plist` file, so they will apply to future sessions. Reissuing the commands with false instead of true will restore the default preference settings.
 
->   An item that provides <span style='color:#008B45'>click-through</span> is one that a user can activate with one click, even though the item is in an inactive window. (To activate an item that does not support click-through, the user must first make the containing window active and then click the item.) Although click-through can make some user tasks easier, it can also confuse users if they click items unintentionally.
+>   An item that provides <span class="env-green">click-through</span> is one that a user can activate with one click, even though the item is in an inactive window. (To activate an item that does not support click-through, the user must first make the containing window active and then click the item.) Although click-through can make some user tasks easier, it can also confuse users if they click items unintentionally.
 
 **x11 preferences**
 

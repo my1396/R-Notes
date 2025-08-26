@@ -32,7 +32,7 @@ xtabond depvar [ indepvars ] [ if ] [ in ] [, options ]
 **Estimation Options**:
 
 - `noconstant`: suppress the constant term.
-- `lags(#)`: <span class="env-green">**#lags of dependent variable**</span> as covariates; default is <span style='color:#008B45'>`lags(1)`</span>
+- `lags(#)`: <span class="env-green">**#lags of dependent variable**</span> as covariates; default is <span class="env-green">`lags(1)`</span>
 - `maxldep(#)`: maximum lags of dependent variable for use as instruments. Defaults to $T_i-p-2,$ where $p$ is the number of lags of the dependent variable to be included in the model (i.e., `lags(#)`).
 - `maxlags(#)`: maximum lags of predetermined and endogenous variables for use as instruments
 - `twostep`: compute the two-step estimator instead of the one-step estimator
@@ -375,9 +375,9 @@ The results from `estat sargan` no longer reject the null hypothesis that the ov
 
 Sometimes we cannot assume strict exogeneity. Recall that a variable, $x_{it}$, is said to be strictly exogenous if $\E[𝑥_{it}\varepsilon_{is}] = 0$ for all $t$ and $s$. 
 
-If $\E[x_{it}\varepsilon_{is}] \ne 0$ for $s < t$ but $\E[x_{it}\varepsilon_{is}] = 0$ for all $s\ge t,$ the variable is said to be <span style='color:#008B45'>**predetermined**</span>. Intuitively, if the error term at time $t$ has some feedback on the subsequent realizations of $x_{it},$ $x_{it}$ is a predetermined variable. Because unforecastable errors today might affect future changes in the real wage and in the capital stock, we might suspect that the log of the real product wage and the log of the gross capital stock are predetermined instead of strictly exogenous.
+If $\E[x_{it}\varepsilon_{is}] \ne 0$ for $s < t$ but $\E[x_{it}\varepsilon_{is}] = 0$ for all $s\ge t,$ the variable is said to be <span class="env-green">**predetermined**</span>. Intuitively, if the error term at time $t$ has some feedback on the subsequent realizations of $x_{it},$ $x_{it}$ is a predetermined variable. Because unforecastable errors today might affect future changes in the real wage and in the capital stock, we might suspect that the log of the real product wage and the log of the gross capital stock are predetermined instead of strictly exogenous.
 
-We also call predetermined $x_{it}$ as <span style='color:#008B45'>**sequential exogenous**</span>.
+We also call predetermined $x_{it}$ as <span class="env-green">**sequential exogenous**</span>.
 
 Here we treat $w$ and $k$ as predetermined and use lagged levels as instruments.
 

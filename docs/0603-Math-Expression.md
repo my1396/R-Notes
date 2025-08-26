@@ -64,7 +64,7 @@ Using variables in `aes`
 
     -   A `name` 	(also known as a ‘symbol’) is a way to refer to R objects by name (rather than the value of the object, if any, bound to that name).
 
-    -   It will <span style='color:#008B45'>**escape special characters**</span> that are otherwise reserved or illegal; equivalent to `'target_v'`
+    -   It will <span class="env-green">**escape special characters**</span> that are otherwise reserved or illegal; equivalent to `'target_v'`
 
 ```R
 target_v <- "#Obs"

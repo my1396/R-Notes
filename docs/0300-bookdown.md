@@ -226,9 +226,9 @@ The output format `bookdown::gitbook` is built upon `rmarkdown::html_document`, 
     
         A chapter page may be too long if there are many sections within chapters.
         
-    - `section` splits the file by the <span style='color:#008B45'>second-level</span> headers.
+    - `section` splits the file by the <span class="env-green">second-level</span> headers.
     - `chapter+number` and `section+number`: the chapter/section numbers will be prepended to the HTML filenames. For example: if using `chapter` or `section`, the HTML file names will be `introduction.html`, `literature.html`, etc.; but with the numbering setting, the HTML file names will be `1-introduction.html`, `2-literature.html`, etc.
-    - I prefer <span style='color:#008B45'>`section+number`</span> as it *orders all html in the book's section order*. ✅
+    - I prefer <span class="env-green">`section+number`</span> as it *orders all html in the book's section order*. ✅
 
 - The [`includes` option](https://bookdown.org/yihui/bookdown/yaml-options.html) allows you to insert arbitrary custom content before and/or after the body of the output.
 
@@ -414,7 +414,7 @@ Note that you don't need to manually create the `docs` folder, bookdown will cre
 ### `index.Rmd` {.unnumbered}
 
 
-**`index.Rmd`** <span style='color:#008B45'>**homepage of your website**</span>. Contains the first chapter and the <span style='color:#008B45'>**YAML metadata**</span> which will be applied to all other Rmd pages. 
+**`index.Rmd`** <span class="env-green">**homepage of your website**</span>. Contains the first chapter and the <span class="env-green">**YAML metadata**</span> which will be applied to all other Rmd pages. 
 
 That is, `index.Rmd` sets the global YAML for the entire website. Moreover, `index.Rmd` is the **only** Rmd document that contains a **YAML frontmatter**. 
 
@@ -436,7 +436,7 @@ Common uses of `index.Rmd`'s YAML frontmatter:
     biblio-style: "apalike"
     ```
     
-    Add your user citation to <span style='color:#008B45'>**`book.bib`**</span> in stead.
+    Add your user citation to <span class="env-green">**`book.bib`**</span> in stead.
     
     Don't remove `packages.bib`; it is automatically generated and overwritten every time you rebuild the book.
 

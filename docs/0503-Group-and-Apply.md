@@ -25,7 +25,7 @@ by_cyl %>%
 
 `n()` gives the current group size. Only works inside `summarise()`.
 
-<span style='color:#008B45'>**Information about the "current" group or variable**</span>
+<span class="env-green">**Information about the "current" group or variable**</span>
 
 These functions return information about the "current" group or "current" variable, so only work inside specific contexts like `summarise()` and `mutate()`.
 
@@ -355,7 +355,7 @@ mtcars %>%
 
 ### `dplyr::group_modify()`
 
-`dplyr::group_modify()` and `dplyr::group_map()` are purrr-style functions that can be used to iterate on <span style='color:#008B45'><u>grouped tibbles</u></span>. 
+`dplyr::group_modify()` and `dplyr::group_map()` are purrr-style functions that can be used to iterate on <span class="env-green"><u>grouped tibbles</u></span>. 
 
 - Note that `purrr::map`, `map_dfr`, and  `map_dfc` does NOT work on groupped tibbles. You must do `group_split` to a list, then you can apply the purrr-style functions.
 
@@ -386,15 +386,15 @@ mtcars %>%
 
     In the formula, you can use
 
-  - <span style='color:#008B45'>**`.`**</span> or <span style='color:#008B45'>**`.x`**</span> to refer to the subset of rows of `.tbl` for <span style='color:#008B45'>**the given group**</span>
+  - <span class="env-green">**`.`**</span> or <span class="env-green">**`.x`**</span> to refer to the subset of rows of `.tbl` for <span class="env-green">**the given group**</span>
 
-    - <span style='color:#008B45'> **`.y`**</span> to refer to the <span style='color:#008B45'>**group key**</span>, a one row tibble with one column per grouping variable that identifies the group
+    - <span class="env-green"> **`.y`**</span> to refer to the <span class="env-green">**group key**</span>, a one row tibble with one column per grouping variable that identifies the group
 
 - `...`        Additional arguments passed on to `.f`
 
 - `.keep=FALSE`  whether the grouping variables are kept in `.x`. 
 
-  - Default to <span style='color:#008B45'>drop</span>> the grouping variable. Be mindful of this when you want to subset columns by position.
+  - Default to <span class="env-green">drop</span>> the grouping variable. Be mindful of this when you want to subset columns by position.
 
 
 ```R
@@ -415,7 +415,7 @@ cntry_stat <- cntry_group %>%
 
 When using a lambda function inside `group_modify`:
 
-- `.x` <u>can only be used once at the first function</u>; <span style='color:#008B45'>for later use, use `.`</span>
+- `.x` <u>can only be used once at the first function</u>; <span class="env-green">for later use, use `.`</span>
 
   `.x` and `.` are useful when the argument being assigned is NOT the first argument.
 
@@ -454,7 +454,7 @@ data_group %>%
 
 - `filter(cur_group_id() == 1)` select the 1st group to test run your function
 
-✅ Can also <span style='color:#008B45'>**define a function and pass to `group_modify`**</span> 
+✅ Can also <span class="env-green">**define a function and pass to `group_modify`**</span> 
 
 - This approach is easier to debug, whereas long sequence of lambda is hard to debug.
 
@@ -492,7 +492,7 @@ data_group %>%
 
 - Apply a regression
 
-  What I like most about `group_modify` is that it automatically <span style='color:#008B45'>adds the group key to the returned results</span>. You don't need to specify identifiers by yourself then.
+  What I like most about `group_modify` is that it automatically <span class="env-green">adds the group key to the returned results</span>. You don't need to specify identifiers by yourself then.
 
 - Calculate summary statistics
 
