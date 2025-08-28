@@ -14,15 +14,39 @@ Use code chunk label to cross reference, e.g., <span style='color:#00CC66'>`Fig.
 
 - `knitr::include_graphics` supports web url for html output, but NOT for latex output.
 
+
+Alternatively, use `fig.width` to fix the figure width, and `fig.asp` to fix the aspect ratio (height:width).
+
+~~~~markdown
+```{r car-plot2, fig.width=6, fig.asp=0.6, fig.cap="Caption here." }
+library(AER)
+data(CASchools)
+library(ggplot2)
+ggplot(CASchools, aes(x = expenditure)) +
+  geom_histogram(binwidth = 500, fill = "lightblue", color = "black") +
+  labs(title = "Histogram of Expenditure per Student",
+       x = "Expenditure per Student (USD)",
+       y = "Frequency") +
+  theme_minimal(base_size = 14)
+```
+~~~~
+
+
+<div class="figure">
+<img src="0206-Rmd-Figure_files/figure-html/histogram-1.png" alt="Historgram of Expenditure per Student. Fixed `fig.width` and `fig.asp`." width="576" />
+<p class="caption">(\#fig:histogram)Historgram of Expenditure per Student. Fixed `fig.width` and `fig.asp`.</p>
+</div>
+
 --------------------------------------------------------------------------------
+
+### Output directly to document
 
 
 - You can let the code output to document directly, i.e., not generating a file and reload. 
 
     But in this case, scale the figure will change the plot text too. The text might be scaled unexpectedly too small/large. Just be careful with it.
 
-
-**Output directly to document**
+Load data.
 
 
 ``` r
@@ -36,6 +60,9 @@ aapl <- getSymbols("AAPL",
 ```
 
 
+--------------------------------------------------------------------------------
+
+`out.width="50%"`
 
 ~~~~markdown
 ```{r out.width="50%", fig.asp = 0.62, fig.cap="`out.width=\"50%\"`, fig.asp set to 0.62."}
@@ -44,12 +71,35 @@ plot(aapl$AAPL.Close)
 ```
 ~~~~
 
+
 <div class="figure">
-<img src="0206-Rmd-Figure_files/figure-html/unnamed-chunk-2-1.png" alt="`out.width="50%"`, fig.asp set to 0.62. Note that text font scales too, hard to read." width="50%" />
-<p class="caption">(\#fig:unnamed-chunk-2)`out.width="50%"`, fig.asp set to 0.62. Note that text font scales too, hard to read.</p>
+<img src="0206-Rmd-Figure_files/figure-html/unnamed-chunk-2-1.png" alt="`out.width`=50%, fig.asp set to 0.62. Note that text font scales too, hard to read.test" width="50%" />
+<p class="caption">(\#fig:unnamed-chunk-2)`out.width`=50%, fig.asp set to 0.62. Note that text font scales too, hard to read.test</p>
+</div>
+
+
+
+--------------------------------------------------------------------------------
+
+
+`out.width="100%"`
+
+~~~~markdown
+```{r out.width="100%", fig.asp = 0.6, fig.cap="`out.width=\"100%\"`."}
+plot(aapl$AAPL.Close)
+```
+~~~~
+
+<div class="figure">
+<img src="0206-Rmd-Figure_files/figure-html/unnamed-chunk-3-1.png" alt="`out.width`=100%, fig.asp set to 0.6. Note that the plot text got zoomed too, can be too large." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-3)`out.width`=100%, fig.asp set to 0.6. Note that the plot text got zoomed too, can be too large.</p>
 </div>
 
 --------------------------------------------------------------------------------
+
+### Fixed `fig.width`
+
+- Text does NOT scale with figure size; visibility is good. ✅
 
 ~~~~markdown
 ```{r fig.width=6, fig.asp=0.6}
@@ -59,27 +109,15 @@ plot(aapl$AAPL.Close)
 ~~~~
 
 <div class="figure">
-<img src="0206-Rmd-Figure_files/figure-html/unnamed-chunk-3-1.png" alt="Set `fig.width`. Note that text font does NOT scale with figure, BUT the figure title got cropped." width="480" />
-<p class="caption">(\#fig:unnamed-chunk-3)Set `fig.width`. Note that text font does NOT scale with figure, BUT the figure title got cropped.</p>
+<img src="0206-Rmd-Figure_files/figure-html/unnamed-chunk-4-1.png" alt="Set `fig.width`. Note that text font does NOT scale with figure, BUT the figure title got cropped." width="480" />
+<p class="caption">(\#fig:unnamed-chunk-4)Set `fig.width`. Note that text font does NOT scale with figure, BUT the figure title got cropped.</p>
 </div>
+
+
 
 --------------------------------------------------------------------------------
 
-
-~~~~markdown
-```{r out.width="100%", fig.asp = 0.6, fig.cap="`out.width=\"100%\"`."}
-plot(aapl$AAPL.Close)
-```
-~~~~
-
-<div class="figure">
-<img src="0206-Rmd-Figure_files/figure-html/unnamed-chunk-4-1.png" alt="`out.width="100%"`, fig.asp set to 0.6. Note that the plot text got zoomed too, can be too large." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-4)`out.width="100%"`, fig.asp set to 0.6. Note that the plot text got zoomed too, can be too large.</p>
-</div>
-
---------------------------------------------------------------------------------
-
-**Save and reload**
+### Save and reload
 
 This approach preserves your preference better, maintains the relative size of your figure and the text. 
 
@@ -94,27 +132,27 @@ invisible(dev.off())
 ```
 
 ~~~~markdown
-```{r out.width="50%", fig.cap="include_graphics with `out.width=\"50%\"`." }
+```{r out.width="50%", fig.cap="include_graphics with `out.width`=50%."}
 knitr::include_graphics(f_name) 
 ```
 ~~~~
 
 <div class="figure">
-<img src="images/aapl.png" alt="include_graphics with `out.width="50%"`." width="50%" />
-<p class="caption">(\#fig:unnamed-chunk-6)include_graphics with `out.width="50%"`.</p>
+<img src="images/aapl.png" alt="include_graphics with `out.width`=50%." width="50%" />
+<p class="caption">(\#fig:unnamed-chunk-6)include_graphics with `out.width`=50%.</p>
 </div>
 
 --------------------------------------------------------------------------------
 
 ~~~~markdown
-```{r out.width="100%", fig.cap="include_graphics with `out.width=\"100%\"`." }
+```{r out.width="100%", fig.cap="include_graphics with `out.width`=100%." }
 knitr::include_graphics(f_name) 
 ```
 ~~~~
 
 <div class="figure">
-<img src="images/aapl.png" alt="include_graphics with `out.width="100%"`." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-7)include_graphics with `out.width="100%"`.</p>
+<img src="images/aapl.png" alt="include_graphics with `out.width`=100%." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-7)include_graphics with `out.width`=100%.</p>
 </div>
 
 
@@ -294,8 +332,8 @@ plot_A
 <br>
 
 <div class="figure">
-<img src="0206-Rmd-Figure_files/figure-html/firstplot-1.png" alt="Source Figure to be referenced. **Note that when specifying `out.width="60%"`, the text in the figure is scaled too small.**" width="60%" />
-<p class="caption">(\#fig:firstplot)Source Figure to be referenced. **Note that when specifying `out.width="60%"`, the text in the figure is scaled too small.**</p>
+<img src="0206-Rmd-Figure_files/figure-html/firstplot-1.png" alt="Source Figure to be referenced. **Note that when specifying `out.width=60%`, the text in the figure is scaled too small.**" width="60%" />
+<p class="caption">(\#fig:firstplot)Source Figure to be referenced. **Note that when specifying `out.width=60%`, the text in the figure is scaled too small.**</p>
 </div>
 
 Now a second plot with a reference to Fig.: \@ref(fig:firstplot).
@@ -309,8 +347,8 @@ plot_A + geom_line(alpha = .75,col = "red")
 <br>
 
 <div class="figure">
-<img src="0206-Rmd-Figure_files/figure-html/secondplot-1.png" alt="This is the same as Fig.: \@ref(fig:firstplot) but now with a red line and `out.width="100%"`." width="672" />
-<p class="caption">(\#fig:secondplot)This is the same as Fig.: \@ref(fig:firstplot) but now with a red line and `out.width="100%"`.</p>
+<img src="0206-Rmd-Figure_files/figure-html/secondplot-1.png" alt="This is the same as Fig.: \@ref(fig:firstplot) but now with a red line and `out.width=100%`." width="672" />
+<p class="caption">(\#fig:secondplot)This is the same as Fig.: \@ref(fig:firstplot) but now with a red line and `out.width=100%`.</p>
 </div>
 
 

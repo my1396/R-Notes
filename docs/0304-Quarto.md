@@ -4,6 +4,15 @@ Quarto Guide: <https://quarto.org/docs/guide/>
 
 Quarto Tutorial: <https://jmjung.quarto.pub/m02-advanced-literate-programming/#learning-outcomes>
 
+
+Run Cell
+
+| Quarto Command       | Keyboard Shortcut |
+| -------------------- | ----------------- |
+| Run Current Cell     | ⇧ + Enter         |
+| Run Selected Line(s) | ⌘ + Enter         |
+
+
 Host Quarto on [GitHub Pages](https://quarto.org/docs/publishing/github-pages.html).
 
 To get started, change your project configuration `_quarto.yml` to use `docs` as the `output-dir`.
@@ -200,6 +209,7 @@ Note that `documentclass: scrartcl` is the KOMA-Script article class.
 
 It has good looking default settings, and is highly customizable. 
 
+--------------------------------------------------------------------------------
 
 #### Title Margin
 
@@ -213,14 +223,14 @@ To reduce the margin above the title, add the following line to your `preamble.t
 \makeatletter
 \xpatchcmd{\@maketitle}{\vskip2em}{
     % Insert here the space you want between the top margin and the title.
-    \vspace{-3em} % Example of smaller margin. 
+    \vspace{-2em} % Example of smaller margin. 
 }{}{}
 \makeatother
 ```
 
 To reduce the margin below the title, in individual `qmd` file, add the following line **after** the YAML header:
 
-```
+```latex
 ::: {=latex}
 \vspace{-6em}
 :::

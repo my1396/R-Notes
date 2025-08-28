@@ -434,6 +434,9 @@ div.csl-indent {
 <li class="chapter" data-level="3.9" data-path="3.9-theorems-1.html"><a href="3.9-theorems-1.html"><i class="fa fa-check"></i><b>3.9</b> Theorems</a></li>
 <li class="chapter" data-level="3.10" data-path="3.10-figures-1.html"><a href="3.10-figures-1.html"><i class="fa fa-check"></i><b>3.10</b> Figures</a>
 <ul>
+<li class="chapter" data-level="3.10.1" data-path="3.10-figures-1.html"><a href="3.10-figures-1.html#output-directly-to-document"><i class="fa fa-check"></i><b>3.10.1</b> Output directly to document</a></li>
+<li class="chapter" data-level="3.10.2" data-path="3.10-figures-1.html"><a href="3.10-figures-1.html#fixed-fig.width"><i class="fa fa-check"></i><b>3.10.2</b> Fixed <code>fig.width</code></a></li>
+<li class="chapter" data-level="3.10.3" data-path="3.10-figures-1.html"><a href="3.10-figures-1.html#save-and-reload"><i class="fa fa-check"></i><b>3.10.3</b> Save and reload</a></li>
 <li class="chapter" data-level="" data-path="3.10-figures-1.html"><a href="3.10-figures-1.html#latex-symbols-in-fig.-caption"><i class="fa fa-check"></i>Latex symbols in Fig. caption</a></li>
 <li class="chapter" data-level="" data-path="3.10-figures-1.html"><a href="3.10-figures-1.html#refer-to-another-figure-in-figure-caption"><i class="fa fa-check"></i>Refer to another figure in figure caption</a></li>
 </ul></li>
@@ -752,26 +755,26 @@ div.csl-indent {
 <li><p><code>breaks</code> Actual breaks to use. Intervals are created as left open, right closed. But specifying inside <code>geom_histogram</code> might show weird breaks in y-axis labels.</p>
 <p><span class="env-green">Specifying breaks using <code>scale_x_continuous</code> </span> is a better practice.</p></li>
 </ul>
-<div class="sourceCode" id="cb616"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb616-1"><a href="7.7-histogram.html#cb616-1" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data=</span>data, <span class="fu">aes</span>(tmp) ) <span class="sc">+</span> </span>
-<span id="cb616-2"><a href="7.7-histogram.html#cb616-2" tabindex="-1"></a>    <span class="fu">geom_histogram</span>(<span class="at">fill=</span><span class="st">&quot;#BDBCBC&quot;</span>, <span class="at">color=</span><span class="st">&quot;black&quot;</span>, <span class="at">binwidth =</span> <span class="dv">2</span>, <span class="at">boundary=</span><span class="dv">0</span>) <span class="sc">+</span></span>
-<span id="cb616-3"><a href="7.7-histogram.html#cb616-3" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">x=</span><span class="st">&quot;Average temperature [ºC]&quot;</span>)</span>
-<span id="cb616-4"><a href="7.7-histogram.html#cb616-4" tabindex="-1"></a>p</span></code></pre></div>
+<div class="sourceCode" id="cb617"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb617-1"><a href="7.7-histogram.html#cb617-1" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data=</span>data, <span class="fu">aes</span>(tmp) ) <span class="sc">+</span> </span>
+<span id="cb617-2"><a href="7.7-histogram.html#cb617-2" tabindex="-1"></a>    <span class="fu">geom_histogram</span>(<span class="at">fill=</span><span class="st">&quot;#BDBCBC&quot;</span>, <span class="at">color=</span><span class="st">&quot;black&quot;</span>, <span class="at">binwidth =</span> <span class="dv">2</span>, <span class="at">boundary=</span><span class="dv">0</span>) <span class="sc">+</span></span>
+<span id="cb617-3"><a href="7.7-histogram.html#cb617-3" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">x=</span><span class="st">&quot;Average temperature [ºC]&quot;</span>)</span>
+<span id="cb617-4"><a href="7.7-histogram.html#cb617-4" tabindex="-1"></a>p</span></code></pre></div>
 <p><code>geom_histogram(aes(..density..))</code> surrounding the variable names with <code>..</code> means to call <code>after_stat</code> function. It delays the mapping until later in the rendering process when summary statistics have been calculated. The expression <code>..density..</code> is deprecated; use <code>after_stat()</code> in stead.</p>
 <p>Most <a href="https://ggplot2.tidyverse.org/reference/aes.html">aesthetics</a> are mapped directly from variables found in the data, called direct input (stage1). Sometimes, however, you want to delay the mapping until later stages of the data that you can map aesthetics from, and three functions to control at which stage aesthetics should be evaluated.</p>
 <p><code>after_stat(x)</code> and <code>after_scale(x)</code> can be used inside the <code>aes()</code> function, used as the <code>mapping</code> argument in layers.</p>
 <ul>
 <li><p><code>after_stat(x)</code> uses variables calculated after the transformation by the layer stat (stage 2);</p>
 <p>E.g., the height of bars in <code>geom_histogram()</code> can be density probability;</p>
-<div class="sourceCode" id="cb617"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb617-1"><a href="7.7-histogram.html#cb617-1" tabindex="-1"></a><span class="co"># this shows the count frequency</span></span>
-<span id="cb617-2"><a href="7.7-histogram.html#cb617-2" tabindex="-1"></a><span class="fu">ggplot</span>(faithful, <span class="fu">aes</span>(<span class="at">x =</span> waiting)) <span class="sc">+</span></span>
-<span id="cb617-3"><a href="7.7-histogram.html#cb617-3" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">fill=</span><span class="st">&quot;#BDBCBC&quot;</span>, <span class="at">color=</span><span class="st">&quot;black&quot;</span>) </span>
-<span id="cb617-4"><a href="7.7-histogram.html#cb617-4" tabindex="-1"></a></span>
-<span id="cb617-5"><a href="7.7-histogram.html#cb617-5" tabindex="-1"></a><span class="co"># this shows the density plot, can replace after_stat(density) with ..density..</span></span>
-<span id="cb617-6"><a href="7.7-histogram.html#cb617-6" tabindex="-1"></a><span class="co"># surrounding the variable name with two dots</span></span>
-<span id="cb617-7"><a href="7.7-histogram.html#cb617-7" tabindex="-1"></a><span class="fu">ggplot</span>(faithful, <span class="fu">aes</span>(<span class="at">x =</span> waiting)) <span class="sc">+</span></span>
-<span id="cb617-8"><a href="7.7-histogram.html#cb617-8" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">after_stat</span>(density)),</span>
-<span id="cb617-9"><a href="7.7-histogram.html#cb617-9" tabindex="-1"></a>                <span class="at">fill=</span><span class="st">&quot;#BDBCBC&quot;</span>, <span class="at">color=</span><span class="st">&quot;black&quot;</span>) <span class="sc">+</span></span>
-<span id="cb617-10"><a href="7.7-histogram.html#cb617-10" tabindex="-1"></a>  <span class="fu">geom_density</span>() <span class="co"># empirical density</span></span></code></pre></div>
+<div class="sourceCode" id="cb618"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb618-1"><a href="7.7-histogram.html#cb618-1" tabindex="-1"></a><span class="co"># this shows the count frequency</span></span>
+<span id="cb618-2"><a href="7.7-histogram.html#cb618-2" tabindex="-1"></a><span class="fu">ggplot</span>(faithful, <span class="fu">aes</span>(<span class="at">x =</span> waiting)) <span class="sc">+</span></span>
+<span id="cb618-3"><a href="7.7-histogram.html#cb618-3" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">fill=</span><span class="st">&quot;#BDBCBC&quot;</span>, <span class="at">color=</span><span class="st">&quot;black&quot;</span>) </span>
+<span id="cb618-4"><a href="7.7-histogram.html#cb618-4" tabindex="-1"></a></span>
+<span id="cb618-5"><a href="7.7-histogram.html#cb618-5" tabindex="-1"></a><span class="co"># this shows the density plot, can replace after_stat(density) with ..density..</span></span>
+<span id="cb618-6"><a href="7.7-histogram.html#cb618-6" tabindex="-1"></a><span class="co"># surrounding the variable name with two dots</span></span>
+<span id="cb618-7"><a href="7.7-histogram.html#cb618-7" tabindex="-1"></a><span class="fu">ggplot</span>(faithful, <span class="fu">aes</span>(<span class="at">x =</span> waiting)) <span class="sc">+</span></span>
+<span id="cb618-8"><a href="7.7-histogram.html#cb618-8" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">after_stat</span>(density)),</span>
+<span id="cb618-9"><a href="7.7-histogram.html#cb618-9" tabindex="-1"></a>                <span class="at">fill=</span><span class="st">&quot;#BDBCBC&quot;</span>, <span class="at">color=</span><span class="st">&quot;black&quot;</span>) <span class="sc">+</span></span>
+<span id="cb618-10"><a href="7.7-histogram.html#cb618-10" tabindex="-1"></a>  <span class="fu">geom_density</span>() <span class="co"># empirical density</span></span></code></pre></div>
 <ul>
 <li><p><code>after_stat(count)</code> show frequncy count; <span class="env-green"><code>after_stat(ncount)</code></span> count, scaled to a maximum of 1;</p></li>
 <li><p><code>after_stat(density)</code> show density; <code>after_stat(ndensity)</code> density, scaled to a maximum of 1;</p></li>
@@ -782,33 +785,33 @@ div.csl-indent {
 </ul></li>
 </ul>
 <p>Add fitted density from a distribution</p>
-<div class="sourceCode" id="cb618"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb618-1"><a href="7.7-histogram.html#cb618-1" tabindex="-1"></a><span class="co"># fit a lognormal distribution</span></span>
-<span id="cb618-2"><a href="7.7-histogram.html#cb618-2" tabindex="-1"></a><span class="fu">library</span>(MASS)</span>
-<span id="cb618-3"><a href="7.7-histogram.html#cb618-3" tabindex="-1"></a>fit_params <span class="ot">&lt;-</span> <span class="fu">fitdistr</span>(prices_monthly<span class="sc">$</span>AdjustedPrice,<span class="st">&quot;lognormal&quot;</span>)</span>
-<span id="cb618-4"><a href="7.7-histogram.html#cb618-4" tabindex="-1"></a>fit_params<span class="sc">$</span>estimate</span>
-<span id="cb618-5"><a href="7.7-histogram.html#cb618-5" tabindex="-1"></a></span>
-<span id="cb618-6"><a href="7.7-histogram.html#cb618-6" tabindex="-1"></a><span class="fu">ggplot</span>(prices_monthly, <span class="fu">aes</span>(<span class="at">x=</span>AdjustedPrice)) <span class="sc">+</span></span>
-<span id="cb618-7"><a href="7.7-histogram.html#cb618-7" tabindex="-1"></a>    <span class="fu">geom_histogram</span>(<span class="at">bins=</span><span class="dv">40</span>,</span>
-<span id="cb618-8"><a href="7.7-histogram.html#cb618-8" tabindex="-1"></a>                   <span class="fu">aes</span>(<span class="at">y=</span>..density..),</span>
-<span id="cb618-9"><a href="7.7-histogram.html#cb618-9" tabindex="-1"></a>                   <span class="at">fill=</span><span class="st">&quot;#BDBCBC&quot;</span>, <span class="at">color=</span><span class="st">&quot;black&quot;</span>) <span class="sc">+</span></span>
-<span id="cb618-10"><a href="7.7-histogram.html#cb618-10" tabindex="-1"></a>    <span class="fu">stat_function</span>(<span class="at">fun=</span>dlnorm, </span>
-<span id="cb618-11"><a href="7.7-histogram.html#cb618-11" tabindex="-1"></a>                  <span class="at">args=</span><span class="fu">list</span>(<span class="at">meanlog =</span> fit_params<span class="sc">$</span>estimate[<span class="st">&#39;meanlog&#39;</span>], </span>
-<span id="cb618-12"><a href="7.7-histogram.html#cb618-12" tabindex="-1"></a>                            <span class="at">sdlog =</span> fit_params<span class="sc">$</span>estimate[<span class="st">&#39;sdlog&#39;</span>]),</span>
-<span id="cb618-13"><a href="7.7-histogram.html#cb618-13" tabindex="-1"></a>                  <span class="at">colour =</span> <span class="st">&quot;red&quot;</span></span>
-<span id="cb618-14"><a href="7.7-histogram.html#cb618-14" tabindex="-1"></a>                  ) <span class="sc">+</span></span>
-<span id="cb618-15"><a href="7.7-histogram.html#cb618-15" tabindex="-1"></a>    <span class="fu">scale_x_continuous</span>(<span class="at">limits=</span><span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">170</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb619"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb619-1"><a href="7.7-histogram.html#cb619-1" tabindex="-1"></a><span class="co"># fit a lognormal distribution</span></span>
+<span id="cb619-2"><a href="7.7-histogram.html#cb619-2" tabindex="-1"></a><span class="fu">library</span>(MASS)</span>
+<span id="cb619-3"><a href="7.7-histogram.html#cb619-3" tabindex="-1"></a>fit_params <span class="ot">&lt;-</span> <span class="fu">fitdistr</span>(prices_monthly<span class="sc">$</span>AdjustedPrice,<span class="st">&quot;lognormal&quot;</span>)</span>
+<span id="cb619-4"><a href="7.7-histogram.html#cb619-4" tabindex="-1"></a>fit_params<span class="sc">$</span>estimate</span>
+<span id="cb619-5"><a href="7.7-histogram.html#cb619-5" tabindex="-1"></a></span>
+<span id="cb619-6"><a href="7.7-histogram.html#cb619-6" tabindex="-1"></a><span class="fu">ggplot</span>(prices_monthly, <span class="fu">aes</span>(<span class="at">x=</span>AdjustedPrice)) <span class="sc">+</span></span>
+<span id="cb619-7"><a href="7.7-histogram.html#cb619-7" tabindex="-1"></a>    <span class="fu">geom_histogram</span>(<span class="at">bins=</span><span class="dv">40</span>,</span>
+<span id="cb619-8"><a href="7.7-histogram.html#cb619-8" tabindex="-1"></a>                   <span class="fu">aes</span>(<span class="at">y=</span>..density..),</span>
+<span id="cb619-9"><a href="7.7-histogram.html#cb619-9" tabindex="-1"></a>                   <span class="at">fill=</span><span class="st">&quot;#BDBCBC&quot;</span>, <span class="at">color=</span><span class="st">&quot;black&quot;</span>) <span class="sc">+</span></span>
+<span id="cb619-10"><a href="7.7-histogram.html#cb619-10" tabindex="-1"></a>    <span class="fu">stat_function</span>(<span class="at">fun=</span>dlnorm, </span>
+<span id="cb619-11"><a href="7.7-histogram.html#cb619-11" tabindex="-1"></a>                  <span class="at">args=</span><span class="fu">list</span>(<span class="at">meanlog =</span> fit_params<span class="sc">$</span>estimate[<span class="st">&#39;meanlog&#39;</span>], </span>
+<span id="cb619-12"><a href="7.7-histogram.html#cb619-12" tabindex="-1"></a>                            <span class="at">sdlog =</span> fit_params<span class="sc">$</span>estimate[<span class="st">&#39;sdlog&#39;</span>]),</span>
+<span id="cb619-13"><a href="7.7-histogram.html#cb619-13" tabindex="-1"></a>                  <span class="at">colour =</span> <span class="st">&quot;red&quot;</span></span>
+<span id="cb619-14"><a href="7.7-histogram.html#cb619-14" tabindex="-1"></a>                  ) <span class="sc">+</span></span>
+<span id="cb619-15"><a href="7.7-histogram.html#cb619-15" tabindex="-1"></a>    <span class="fu">scale_x_continuous</span>(<span class="at">limits=</span><span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">170</span>))</span></code></pre></div>
 <p>Histogram of a vector</p>
-<div class="sourceCode" id="cb619"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb619-1"><a href="7.7-histogram.html#cb619-1" tabindex="-1"></a>dice_results <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">2</span>,<span class="dv">4</span>,<span class="dv">5</span>,<span class="dv">6</span>,<span class="dv">5</span>,<span class="dv">3</span>,<span class="dv">2</span>,<span class="dv">1</span>,<span class="dv">6</span>,<span class="dv">2</span>,<span class="dv">6</span>,<span class="dv">5</span>,<span class="dv">6</span>,<span class="dv">4</span>)</span>
-<span id="cb619-2"><a href="7.7-histogram.html#cb619-2" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>dice_results)) <span class="sc">+</span> <span class="fu">geom_bar</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb620"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb620-1"><a href="7.7-histogram.html#cb620-1" tabindex="-1"></a>dice_results <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">2</span>,<span class="dv">4</span>,<span class="dv">5</span>,<span class="dv">6</span>,<span class="dv">5</span>,<span class="dv">3</span>,<span class="dv">2</span>,<span class="dv">1</span>,<span class="dv">6</span>,<span class="dv">2</span>,<span class="dv">6</span>,<span class="dv">5</span>,<span class="dv">6</span>,<span class="dv">4</span>)</span>
+<span id="cb620-2"><a href="7.7-histogram.html#cb620-2" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>dice_results)) <span class="sc">+</span> <span class="fu">geom_bar</span>()</span></code></pre></div>
 <p>This returns an error: <code>data</code> must be a <code>data.frame</code>. If you don’t provide argument name explicitly, sequential rule is used – <code>data</code> arg is used for <code>aes(x=dice_results)</code>.</p>
 <p>To correct it – use arg name explicitly:</p>
-<div class="sourceCode" id="cb620"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb620-1"><a href="7.7-histogram.html#cb620-1" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x=</span>dice_results)) <span class="sc">+</span> <span class="fu">geom_bar</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb621"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb621-1"><a href="7.7-histogram.html#cb621-1" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x=</span>dice_results)) <span class="sc">+</span> <span class="fu">geom_bar</span>()</span></code></pre></div>
 <p>Alternatively, you may use it inside <code>geom_</code> functions familiy without explicit naming <code>mapping</code> argument since <code>mapping</code> is the first argument unlike in <code>ggplot</code> function case where <code>data</code> is the first function argument.</p>
-<div class="sourceCode" id="cb621"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb621-1"><a href="7.7-histogram.html#cb621-1" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span> <span class="fu">geom_bar</span>(<span class="fu">aes</span>(dice_results))</span>
-<span id="cb621-2"><a href="7.7-histogram.html#cb621-2" tabindex="-1"></a><span class="co"># or use the `aes` function</span></span>
-<span id="cb621-3"><a href="7.7-histogram.html#cb621-3" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span> </span>
-<span id="cb621-4"><a href="7.7-histogram.html#cb621-4" tabindex="-1"></a>        <span class="fu">aes</span>(dice_results) <span class="sc">+</span></span>
-<span id="cb621-5"><a href="7.7-histogram.html#cb621-5" tabindex="-1"></a>        <span class="fu">geom_bar</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb622"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb622-1"><a href="7.7-histogram.html#cb622-1" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span> <span class="fu">geom_bar</span>(<span class="fu">aes</span>(dice_results))</span>
+<span id="cb622-2"><a href="7.7-histogram.html#cb622-2" tabindex="-1"></a><span class="co"># or use the `aes` function</span></span>
+<span id="cb622-3"><a href="7.7-histogram.html#cb622-3" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span> </span>
+<span id="cb622-4"><a href="7.7-histogram.html#cb622-4" tabindex="-1"></a>        <span class="fu">aes</span>(dice_results) <span class="sc">+</span></span>
+<span id="cb622-5"><a href="7.7-histogram.html#cb622-5" tabindex="-1"></a>        <span class="fu">geom_bar</span>()</span></code></pre></div>
 <p><strong>Vertical histogram</strong></p>
 <p><a href="https://stackoverflow.com/a/13334294/10108921" class="uri">https://stackoverflow.com/a/13334294/10108921</a></p>
 <p><code>geom_bar</code> and <code>geom_col</code> plots bar charts.</p>

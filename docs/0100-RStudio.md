@@ -91,7 +91,9 @@ A: There are several options (only work for html output):
 
 ------------------------------------------------------------------------
 
-[**Set working directory**]{style="color:#008B45FF"}
+#### Set working directory
+
+`getwd()` to get the current working directory.
 
 ``` r
 # get the dir name of the current script

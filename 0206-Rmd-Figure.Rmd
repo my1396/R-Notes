@@ -14,15 +14,46 @@ Use code chunk label to cross reference, e.g., <span style='color:#00CC66'>`Fig.
 
 - `knitr::include_graphics` supports web url for html output, but NOT for latex output.
 
+
+Alternatively, use `fig.width` to fix the figure width, and `fig.asp` to fix the aspect ratio (height:width).
+
+~~~~markdown
+```{r car-plot2, fig.width=6, fig.asp=0.6, fig.cap="Caption here." }`r ''`
+library(AER)
+data(CASchools)
+library(ggplot2)
+ggplot(CASchools, aes(x = expenditure)) +
+  geom_histogram(binwidth = 500, fill = "lightblue", color = "black") +
+  labs(title = "Histogram of Expenditure per Student",
+       x = "Expenditure per Student (USD)",
+       y = "Frequency") +
+  theme_minimal(base_size = 14)
+```
+~~~~
+
+
+```{r histogram, fig.width=6, fig.asp=0.6, echo=FALSE, fig.cap="Historgram of Expenditure per Student. Fixed `fig.width` and `fig.asp`."}
+packages <- c("AER", "ggplot2")
+invisible(lapply(packages, function(pkg) suppressPackageStartupMessages(library(pkg, character.only = TRUE))))
+data(CASchools)
+ggplot(CASchools, aes(x = expenditure)) +
+  geom_histogram(binwidth = 500, fill = "lightblue", color = "black") +
+  labs(title = "Histogram of Expenditure per Student",
+       x = "Expenditure per Student (USD)",
+       y = "Frequency") +
+  theme_minimal(base_size = 14)
+```
+
 --------------------------------------------------------------------------------
+
+### Output directly to document
 
 
 - You can let the code output to document directly, i.e., not generating a file and reload. 
 
     But in this case, scale the figure will change the plot text too. The text might be scaled unexpectedly too small/large. Just be careful with it.
 
-
-**Output directly to document**
+Load data.
 
 ```{r message=FALSE}
 library(quantmod)
@@ -35,6 +66,9 @@ aapl <- getSymbols("AAPL",
 ```
 
 
+--------------------------------------------------------------------------------
+
+`out.width="50%"`
 
 ~~~~markdown
 ```{r out.width="50%", fig.asp = 0.62, fig.cap="`out.width=\"50%\"`, fig.asp set to 0.62."}`r ''`
@@ -43,11 +77,33 @@ plot(aapl$AAPL.Close)
 ```
 ~~~~
 
-```{r out.width="50%", fig.asp = 0.62, echo=FALSE, fig.cap="`out.width=\"50%\"`, fig.asp set to 0.62. Note that text font scales too, hard to read."}
+
+```{r out.width="50%", fig.asp = 0.62, echo=FALSE, fig.cap="`out.width`=50%, fig.asp set to 0.62. Note that text font scales too, hard to read.test"}
+plot(aapl$AAPL.Close)
+```
+
+
+
+--------------------------------------------------------------------------------
+
+
+`out.width="100%"`
+
+~~~~markdown
+```{r out.width="100%", fig.asp = 0.6, fig.cap="`out.width=\"100%\"`."}`r ''`
+plot(aapl$AAPL.Close)
+```
+~~~~
+
+```{r out.width="100%", fig.asp = 0.6, echo=FALSE, fig.cap="`out.width`=100%, fig.asp set to 0.6. Note that the plot text got zoomed too, can be too large."}
 plot(aapl$AAPL.Close)
 ```
 
 --------------------------------------------------------------------------------
+
+### Fixed `fig.width`
+
+- Text does NOT scale with figure size; visibility is good. ✅
 
 ~~~~markdown
 ```{r fig.width=6, fig.asp=0.6}`r ''`
@@ -60,22 +116,11 @@ plot(aapl$AAPL.Close)
 plot(aapl$AAPL.Close)
 ```
 
---------------------------------------------------------------------------------
 
-
-~~~~markdown
-```{r out.width="100%", fig.asp = 0.6, fig.cap="`out.width=\"100%\"`."}`r ''`
-plot(aapl$AAPL.Close)
-```
-~~~~
-
-```{r out.width="100%", fig.asp = 0.6, echo=FALSE, fig.cap="`out.width=\"100%\"`, fig.asp set to 0.6. Note that the plot text got zoomed too, can be too large."}
-plot(aapl$AAPL.Close)
-```
 
 --------------------------------------------------------------------------------
 
-**Save and reload**
+### Save and reload
 
 This approach preserves your preference better, maintains the relative size of your figure and the text. 
 
@@ -89,24 +134,24 @@ invisible(dev.off())
 ```
 
 ~~~~markdown
-```{r out.width="50%", fig.cap="include_graphics with `out.width=\"50%\"`." }`r ''`
+```{r out.width="50%", fig.cap="include_graphics with `out.width`=50%."}`r ''`
 knitr::include_graphics(f_name) 
 ```
 ~~~~
 
-```{r out.width="50%", echo=FALSE, fig.cap="include_graphics with `out.width=\"50%\"`." }
+```{r out.width="50%", echo=FALSE, fig.cap="include_graphics with `out.width`=50%." }
 knitr::include_graphics(f_name) 
 ```
 
 --------------------------------------------------------------------------------
 
 ~~~~markdown
-```{r out.width="100%", fig.cap="include_graphics with `out.width=\"100%\"`." }`r ''`
+```{r out.width="100%", fig.cap="include_graphics with `out.width`=100%." }`r ''`
 knitr::include_graphics(f_name) 
 ```
 ~~~~
 
-```{r out.width="100%", echo=FALSE, fig.cap="include_graphics with `out.width=\"100%\"`." }
+```{r out.width="100%", echo=FALSE, fig.cap="include_graphics with `out.width`=100%." }
 knitr::include_graphics(f_name) 
 ```
 
@@ -285,7 +330,7 @@ plot_A
 ````
 <br>
 
-```{r firstplot, out.width="60%", fig.cap="Source Figure to be referenced. **Note that when specifying `out.width=\"60%\"`, the text in the figure is scaled too small.**", echo=FALSE}
+```{r firstplot, out.width="60%", fig.cap="Source Figure to be referenced. **Note that when specifying `out.width=60%`, the text in the figure is scaled too small.**", echo=FALSE}
 library(ggplot2)
 p <- ggplot(mtcars, aes(wt, mpg))
 plot_A <- p + geom_point()
@@ -302,7 +347,7 @@ plot_A + geom_line(alpha = .75,col = "red")
 
 <br>
 
-```{r secondplot, fig.cap = "This is the same as Fig.: \\@ref(fig:firstplot) but now with a red line and `out.width=\"100%\"`.", echo=FALSE}
+```{r secondplot, fig.cap = "This is the same as Fig.: \\@ref(fig:firstplot) but now with a red line and `out.width=100%`.", echo=FALSE}
 plot_A + geom_line(alpha = .75,col = "red")
 ```
 
