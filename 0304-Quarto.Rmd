@@ -140,6 +140,95 @@ ___
     
 --------------------------------------------------------------------------------
 
+### PDF Options
+
+Use the `pdf` format to create PDF output. For example:
+
+```yaml
+---
+title: "Lab 1: Solutions"
+format: 
+  pdf:
+    include-in-header: ../latex/preamble.tex
+    fontsize: 12pt
+---
+```
+
+
+| PDF Options | Functions |
+| :--- |  :--- |
+| `title` | Document title |
+| `date` | Document date |
+| `author` | Author or authors of the document |
+| `abstract` | Summary of document |
+| <span class="env-green">**Includes**</span> |  |
+| `include-in-header` | Include contents at the **end** of the header.<br />Specify your pdf template here. |
+
+
+
+See [HERE](https://quarto.org/docs/reference/formats/pdf.html) for all available options.
+
+
+After rendering, the following info will appear in the console:
+
+```
+pandoc 
+  to: latex
+  output-file: lab1_solutions.tex
+  standalone: true
+  pdf-engine: xelatex
+  variables:
+    graphics: true
+    tables: true
+  default-image-extension: pdf
+  
+metadata
+  documentclass: scrartcl
+  classoption:
+    - DIV=11
+    - numbers=noendperiod
+  papersize: letter
+  header-includes:
+    - \KOMAoption{captions}{tableheading}
+  block-headings: true
+  title: 'Lab 1: Solutions'
+  fontsize: 12pt
+```
+
+
+Note that `documentclass: scrartcl` is the KOMA-Script article class.
+
+It has good looking default settings, and is highly customizable. 
+
+--------------------------------------------------------------------------------
+
+#### Title Margin
+
+One issue is it might have too wide margins around the title.
+
+To reduce the margin above the title, add the following line to your `preamble.tex` file:
+
+```latex
+% reduce title top margin
+\usepackage{xpatch}
+\makeatletter
+\xpatchcmd{\@maketitle}{\vskip2em}{
+    % Insert here the space you want between the top margin and the title.
+    \vspace{-2em} % Example of smaller margin. 
+}{}{}
+\makeatother
+```
+
+To reduce the margin below the title, in individual `qmd` file, add the following line **after** the YAML header:
+
+```latex
+::: {=latex}
+\vspace{-6em}
+:::
+```
+
+--------------------------------------------------------------------------------
+
 ### HTML Theming
 
 One simple theme
@@ -279,7 +368,7 @@ This will provide live preview of the document in your web browser. Newest chang
   ```bash
   $ quarto preview 0304-Quarto.Rmd # all formats
   $ quarto preview 0304-Quarto.Rmd --to html # specific format
-  ``` 
+  ```
 
   Note that `quarto render` can be used to Rmd files too. 
 

@@ -289,6 +289,35 @@ world %>%
   mutate(pop_dens = pop / area_km2)
 ```
 
+To calculate row means of multiple columns, 
+
+```r
+# common mistake: use mean() directly
+> X_demo %>% 
+    mutate(ptf_mean = mean(Asset_A, Asset_B))
+
+Error in `mutate()`:
+ℹ In argument: `ptf_mean = mean(Asset_A, Asset_B)`.
+Caused by error in `mean.default()`:
+! 'trim' must be numeric of length one
+Run `rlang::last_trace()` to see where the error occurred.
+```
+
+Note that the error happens because `mean(Asset_A, Asset_B)` is interpreted as `mean(c(Asset_A), trim = Asset_B)`, which is not what we want.
+
+Fixes:
+
+- Easiest way: Use `rowMeans(X_demo[c("Asset_A", "Asset_B")])` to calculate row means of selected columns.
+  
+  Returns a vector.
+- If want to use `mutate`; this creates a new column; looks better as ptf and assets returns are side by side;
+  ```r
+  X_demo %>% 
+    mutate(ptf_mean = rowMeans(select(., Asset_A, Asset_B)))
+  ```
+
+
+
 `mutate_at(.tbl, .vars, .funs)` applies a function to given columns:
 
 -   `.tbl` 	A tbl object;
@@ -298,19 +327,22 @@ world %>%
 ```{r eval=F}
 mtcars <- mtcars %>%
   mutate_at(c("hp_wt", "mpg_wt"), log) 
+
 # note that `across` use together with `mutate`
 mtcars <- mtcars %>%
   mutate(across(c("hp_wt", "mpg_wt"), log)) 
-## factor as numeric, except for `ISO_C3`
+
+# `mutate_at` is more concise, don't need to put everything in `across(.cols, .fnc)`
+# factor as numeric, except for `ISO_C3`
 agg_dummy %>% 
     mutate_at(vars(-ISO_C3), ~as.numeric(levels(.)[.]))
 ```
 
-`across(.cols, .fnc, .names=NULL)` apply the same transformation to multiple columns, allowing you to use `select()` semantics inside in "data-masking" functions like `summarise()` and `mutate()`. 
+<span class="env-green">`across(.cols, .fnc, .names=NULL)`</span> apply the same transformation to multiple <span class="env-green">**columns**</span>, allowing you to use `select()` semantics inside in "data-masking" functions like `summarise()` and `mutate()`. 
 
 - `.cols` 	Columns to transform. You can NOT select grouping columns because they are already automatically handled by the verb.
 
-  can specify start and end columns using `:`. 
+  Can specify start and end columns using `:`. 
 
 - `.fnc`       Functions to apply to each of the selected columns. Possible values are:
 

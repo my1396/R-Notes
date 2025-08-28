@@ -795,7 +795,7 @@ With `geom_text` or `annotate` in ggplot2, you can set a number of properties of
 
 ___
 
-### Subplots
+### Subplots / Faceting
 
 Note that the **group** must be called in the **`X` **argument of `ggplot(aes(x = group, fill = subgroup))`. 
 

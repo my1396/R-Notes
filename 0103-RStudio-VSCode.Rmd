@@ -322,6 +322,8 @@ The following tables shows the icons that you most commonly see in the OUTLINE v
 
 [`httpgd`](https://nx10.github.io/httpgd/): A graphics device for R that is accessible via network protocols. This package was created to make it easier to embed live R graphics in integrated development environments and other applications. `httpgd` is required by the interactive plot viewer of the R extension for VS Code.
 
+[Plot viewer project wiki](https://github.com/REditorSupport/vscode-R/wiki/Plot-viewer)
+
 Enable `r.plot.useHttpgd` in VS Code settings.
 
 ```json
