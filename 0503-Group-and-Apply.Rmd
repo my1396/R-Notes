@@ -309,7 +309,7 @@ data_desp %>%
 Here is a summary of the split-apply-combine approach:
 
 - `dplyr::group_map()`, `dplyr::group_modify()` ...
-- `split` → `purrr::map()`
+- `split` → `purrr::map()` / `purrr::map_dfr` / `purrr::map_dfc` 
 - `plyr::ddply()`
 - `data.table::setDT()`
 
@@ -330,7 +330,9 @@ setDT(df)[, trivial_func(.SD), type]
 plyr::ddply(df, .(type), trivial_func)
 ```
 
-Apply regression to each group with `purrr::map`
+--------------------------------------------------------------------------------
+
+Apply regression to each group with <span class="env-green">`purrr::map`</span>
 
 ```r
 # A more realistic example: split a data frame into pieces, fit a
@@ -357,22 +359,28 @@ mtcars %>%
 
 `dplyr::group_modify()` and `dplyr::group_map()` are purrr-style functions that can be used to iterate on <span class="env-green"><u>grouped tibbles</u></span>. 
 
-- Note that `purrr::map`, `map_dfr`, and  `map_dfc` does NOT work on groupped tibbles. You must do `group_split` to a list, then you can apply the purrr-style functions.
+- Note that `purrr::map`, `purrr::map_dfr`, and `purrr::map_dfc` does NOT work on groupped tibbles. You must do `group_split` to a list, then you can apply the purrr-style functions.
 
-  Convenient for multistep operations, easy to debug
+  - Convenient for multistep operations, **easy to debug**.
+  - `map` is the main mapping function and returns a list
+  - `map_dfr` stacks data frames by rows, `map_dfc` stacks data frames by columns.
+    
+    `map_dfr()` aligns the columns of the individual tibbles by name.
+
+    `map_dfc` aligns the rows of the individual tibbles by position. → Difficult to check if the data in each row is aligned correctly. → Prone to error. 
 
 - `group_modify` takes in a groupped tibble; returns a groupped tibble and `.f` must return a data frame.
 
-  - `group_map` takes in a groupped tibble and returns a list
-  - They takes in groupped tibbles, not good at multistep operations, hard to debug because you need to wrap up your whole calculation in one function.
+  - `group_map` takes in a groupped tibble and returns a <span class="env-green">list</span>.
+  - They takes in groupped tibbles, not good at multistep operations, **hard to debug** because you need to wrap up your whole calculation in one function.
 
 <span style='color:red'>`group_modify(.data, .f, ..., .keep = FALSE)` </span> returns a grouped **tibble**.
 
-- `.data` 	 A **grouped tibble**
+- `.data`  A **grouped tibble**
 
-- `.f`            A function, formula, or vector to apply to each group. It <span style='color:#FF9900'>**MUST return a data frame or a tibble**</span>! Matices do not work.
+- `.f`  A function, formula, or vector to apply to each group. It <span style='color:#FF9900'>**MUST return a data frame or a tibble**</span>! Matices do not work.
 
-  A workaround is to use `tibble::enframe` to 
+  A workaround is to use <span class="env-green">`tibble::enframe`</span> to convert named atomic vectors or lists to one- or two-column data frames.
 
   - If a **function**, it is used as is. It should have **at least 2 formal arguments**.
 
@@ -388,7 +396,7 @@ mtcars %>%
 
   - <span class="env-green">**`.`**</span> or <span class="env-green">**`.x`**</span> to refer to the subset of rows of `.tbl` for <span class="env-green">**the given group**</span>
 
-    - <span class="env-green"> **`.y`**</span> to refer to the <span class="env-green">**group key**</span>, a one row tibble with one column per grouping variable that identifies the group
+    - <span class="env-green"> **`.y`**</span> to refer to the <span class="env-green">**group key**</span>, a one row `tibble` with one column per grouping variable that identifies the group
 
 - `...`        Additional arguments passed on to `.f`
 
@@ -422,6 +430,33 @@ When using a lambda function inside `group_modify`:
   If you use `.x` instead of `.`, you will encounter the following error:
 
   > Error in xj[i] : invalid subscript type 'language'
+
+
+`enframe(x, name = "name", value = "value")` use examples:
+
+
+- Convert named atomic vectors to a tibble with one row per element.
+  ```r
+  > enframe(c(a = 5, b = 7))
+  # A tibble: 2 × 2
+    name  value
+    <chr> <dbl>
+  1 a         5
+  2 b         7
+  ```
+
+- Convert named list to a tibble with one row per element.
+  ```r
+  > enframe(list(one = 1, two = 2:3, three = 4:6))
+  # A tibble: 3 × 2
+    name  value    
+    <chr> <list>   
+  1 one   <dbl [1]>
+  2 two   <int [2]>
+  3 three <int [3]>
+  ```
+
+--------------------------------------------------------------------------------
 
 **Apply CAPM to each company**
 

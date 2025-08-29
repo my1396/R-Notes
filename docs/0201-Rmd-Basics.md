@@ -12,7 +12,15 @@ To name a chunk, add the name after `r`, it's not necessary to add `label='chunk
 
 --------------------------------------------------------------------------------
 
-**Unnumbered Sections**
+
+- Need to escape dolloar signs with double backslashes, e.g., `\\$` to display `$` in the output document.
+
+  `\\$3,926` will show \\$3,926.
+
+--------------------------------------------------------------------------------
+
+
+### Unnumbered Sections
 
 Add `{-}` at the end of the section title.
 
@@ -40,7 +48,7 @@ One exception is level 2 headings in Bookdown:
   <h2>YAML metadata</h2>
   ```
 
-<span style="color: #008B45;">**Add Section ID**</span>
+<span class="env-green">**Add Section ID**</span>
 
 To add a section ID, use `{#section-id}` at the end of the section title. This is useful for linking to specific sections within the document or from other documents.
 
@@ -76,7 +84,7 @@ A: There's **no built-in `@ref()`** syntax for referencing arbitrary inline text
 --------------------------------------------------------------------------------
 
 
-**Knitting in the global environment**
+### Knitting in the global environment
 
 ```r
 rmarkdown::render("/Users/menghan/Library/CloudStorage/OneDrive-Norduniversitet/EK369E/Seminars/w1.rmd", envir=.GlobalEnv)

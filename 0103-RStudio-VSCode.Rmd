@@ -214,10 +214,17 @@ options(
         list(key = "-", value = " <- "),
     ),
     radian.ctrl_key_map = list(
-        list(key = "right", value = " %>% ")
+        list(key = "p", value = " %>% ")
     )
 )
 ```
+
+- Insert pip operator `%>%` by pressing `Ctrl` + `P`
+  
+- Insert assignment operator `<-` by pressing `Esc` + `-`
+  
+  But this does not work when Vim is enabled as it interferes with Vim's normal mode.
+
 
 **VI support by `radian`:**
 
