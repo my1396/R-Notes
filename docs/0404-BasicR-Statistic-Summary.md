@@ -90,7 +90,15 @@ library(stargazer)
 stargazer(iris, type = "text", digits = 2, summary.stat = c("n", "mean", "median", "sd", "min", "p25", "p75", "max"))
 ```
 
+- Input data must be a data frame, does NOT support `tibble`.
+- Only works for <span class="env-green">**numeric variables**</span>.
 - Useful for exporting summary statistics to LaTeX, HTML, ASCII text, or RTF.
+
+```r
+v <- setdiff(names(cas), c("district", "school", "county", "grades")) # exclude non-numeric variables
+stargazer(as.data.frame(cas[v]), type="text", digits=2)
+```
+
 
 ### Box plot statistics
 

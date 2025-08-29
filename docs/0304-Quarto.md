@@ -32,6 +32,23 @@ touch .nojekyll
 - Note that `.nojekyll`'s location is different than that of `bookdown`, which is at `/docs` folder.
 
 
+Only re-render changed files
+
+You can add the following to your `_quarto.yml` file to only re-render changed files:
+
+```yaml
+execute: 
+  freeze: auto
+```
+
+When `freeze: auto` is enabled, Quarto checks for modifications in the source files of your computational documents. If no changes are detected, Quarto will utilize the cached results from previous computations, skipping the re-execution of code chunks. 
+
+This significantly speeds up rendering times, especially for large projects with many computational documents.
+
+
+--------------------------------------------------------------------------------
+
+
 Strengths of Quarto:
 
 - hoverable citations and cross-references, easy to read 
@@ -41,7 +58,13 @@ Strengths of Quarto:
 Weakness of Quarto:
 
 - slow compared to `Bookdown`
-- issues when you want to compile one single page within a package. Changes are not realized in time unless render the whole website. 
+  
+  Workaround: 
+  
+  - Use `quarto preview` in terminal to enable live preview
+  - Set `freeze: auto` in `_quarto.yml` to only re-render changed files.
+
+- Issues when you want to compile one single page within a package. Changes are not reflected in time unless you render the whole website. 
 
     Workaround: Need to exclude from project index, and need file header `yaml` to import mathjax settings and themes.
     
@@ -435,6 +458,7 @@ Alternatively, you can use the **Render** button in RStudio. The Render button w
 
    - **Code cell:** add option `label: prefix-LABEL`
    - **Markdown:** add attribute `#prefix-LABEL`
+   - Note that <span class="env-green">the prefix should be connected to the label with a hyphen `-`.</span>
 
 2. **Add references:** `@prefix-LABEL`, e.g.
 

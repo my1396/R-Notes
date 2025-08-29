@@ -649,8 +649,9 @@ div.csl-indent {
 <li class="chapter" data-level="9.1.1" data-path="9.1-ols.html"><a href="9.1-ols.html#get-the-coef-estimates"><i class="fa fa-check"></i><b>9.1.1</b> Get the coef estimates</a></li>
 <li class="chapter" data-level="9.1.2" data-path="9.1-ols.html"><a href="9.1-ols.html#covariance-matrix"><i class="fa fa-check"></i><b>9.1.2</b> Covariance Matrix</a></li>
 <li class="chapter" data-level="9.1.3" data-path="9.1-ols.html"><a href="9.1-ols.html#model-performance"><i class="fa fa-check"></i><b>9.1.3</b> Model performance</a></li>
-<li class="chapter" data-level="9.1.4" data-path="9.1-ols.html"><a href="9.1-ols.html#model-summary"><i class="fa fa-check"></i><b>9.1.4</b> Model Summary</a></li>
-<li class="chapter" data-level="9.1.5" data-path="9.1-ols.html"><a href="9.1-ols.html#dummy-variable"><i class="fa fa-check"></i><b>9.1.5</b> Dummy variable</a></li>
+<li class="chapter" data-level="9.1.4" data-path="9.1-ols.html"><a href="9.1-ols.html#diagnostic-plots"><i class="fa fa-check"></i><b>9.1.4</b> Diagnostic Plots</a></li>
+<li class="chapter" data-level="9.1.5" data-path="9.1-ols.html"><a href="9.1-ols.html#model-summary"><i class="fa fa-check"></i><b>9.1.5</b> Model Summary</a></li>
+<li class="chapter" data-level="9.1.6" data-path="9.1-ols.html"><a href="9.1-ols.html#dummy-variable"><i class="fa fa-check"></i><b>9.1.6</b> Dummy variable</a></li>
 </ul></li>
 <li class="chapter" data-level="9.2" data-path="9.2-panel.html"><a href="9.2-panel.html"><i class="fa fa-check"></i><b>9.2</b> Panel</a>
 <ul>
@@ -757,86 +758,86 @@ div.csl-indent {
 </ul>
 <p>For example, <code>y %&gt;% f(x, .)</code> is equivalent to <code>f(x, y)</code> and <code>z %&gt;% f(x, y, arg = .)</code> is equivalent to <code>f(x, y, arg = z)</code>.</p>
 <p>The output of a previous function becomes the <strong>first argument</strong> of the next function, enabling <em>chaining</em>. This is illustrated below, in which only countries from Asia are filtered from the <code>world</code> dataset, next the object is subset by columns (<code>name_long</code> and <code>continent</code>) and the first five rows (result not shown).</p>
-<div class="sourceCode" id="cb479"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb479-1"><a href="6.2-pipe-operator.html#cb479-1" tabindex="-1"></a>world7 <span class="ot">=</span> world <span class="sc">%&gt;%</span></span>
-<span id="cb479-2"><a href="6.2-pipe-operator.html#cb479-2" tabindex="-1"></a>  <span class="fu">filter</span>(continent <span class="sc">==</span> <span class="st">&quot;Asia&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb479-3"><a href="6.2-pipe-operator.html#cb479-3" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(name_long, continent) <span class="sc">%&gt;%</span></span>
-<span id="cb479-4"><a href="6.2-pipe-operator.html#cb479-4" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb481"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb481-1"><a href="6.2-pipe-operator.html#cb481-1" tabindex="-1"></a>world7 <span class="ot">=</span> world <span class="sc">%&gt;%</span></span>
+<span id="cb481-2"><a href="6.2-pipe-operator.html#cb481-2" tabindex="-1"></a>  <span class="fu">filter</span>(continent <span class="sc">==</span> <span class="st">&quot;Asia&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb481-3"><a href="6.2-pipe-operator.html#cb481-3" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(name_long, continent) <span class="sc">%&gt;%</span></span>
+<span id="cb481-4"><a href="6.2-pipe-operator.html#cb481-4" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>)</span></code></pre></div>
 <ul>
 <li><p>Use the dot for secondary purposes, i.e. you want to use the <span class="env-green">attributes of <code>x</code></span> rather than <code>x</code> itself. <code>iris %&gt;% subset(1:nrow(.) %% 2 == 0)</code> is equivalent to <code>iris %&gt;% subset(., 1:nrow(.) %% 2 == 0)</code></p></li>
 <li><p>In order to avoid plugiging in as the first argument and to call the parameter <span class="env-green"><strong>several times</strong></span>, surround the <code>rhs</code> call with brace brackets <code>{...}</code>.</p>
 <p><code>1:10 %&gt;% {c(min(.), max(.))}</code> is equivalent to <code>c(min(1:10), max(1:10))</code></p></li>
 </ul>
-<div class="sourceCode" id="cb480"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb480-1"><a href="6.2-pipe-operator.html#cb480-1" tabindex="-1"></a><span class="dv">10</span> <span class="sc">%&gt;%</span> { <span class="fu">seq</span>(<span class="at">from =</span> .<span class="sc">-</span><span class="dv">5</span>, <span class="at">to =</span> .<span class="sc">+</span><span class="dv">5</span>) }</span>
-<span id="cb480-2"><a href="6.2-pipe-operator.html#cb480-2" tabindex="-1"></a><span class="do">## [1]  5  6  7  8  9 10 11 12 13 14 15</span></span>
-<span id="cb480-3"><a href="6.2-pipe-operator.html#cb480-3" tabindex="-1"></a></span>
-<span id="cb480-4"><a href="6.2-pipe-operator.html#cb480-4" tabindex="-1"></a>all_df <span class="sc">%&gt;%</span> </span>
-<span id="cb480-5"><a href="6.2-pipe-operator.html#cb480-5" tabindex="-1"></a>    <span class="fu">group_by</span>(date) <span class="sc">%&gt;%</span> </span>
-<span id="cb480-6"><a href="6.2-pipe-operator.html#cb480-6" tabindex="-1"></a>    <span class="fu">group_map</span>(<span class="sc">~</span>{</span>
-<span id="cb480-7"><a href="6.2-pipe-operator.html#cb480-7" tabindex="-1"></a>        .x <span class="sc">%&gt;%</span> </span>
-<span id="cb480-8"><a href="6.2-pipe-operator.html#cb480-8" tabindex="-1"></a>            <span class="fu">drop_na</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb480-9"><a href="6.2-pipe-operator.html#cb480-9" tabindex="-1"></a>            {<span class="fu">crossprod</span>(.[,<span class="dv">1003</span>] <span class="sc">%&gt;%</span> <span class="fu">as.matrix</span>(), .[,<span class="dv">3</span><span class="sc">:</span><span class="dv">1002</span>] <span class="sc">%&gt;%</span> <span class="fu">as.matrix</span>())}</span>
-<span id="cb480-10"><a href="6.2-pipe-operator.html#cb480-10" tabindex="-1"></a>    }, <span class="at">.keep=</span><span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb482"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb482-1"><a href="6.2-pipe-operator.html#cb482-1" tabindex="-1"></a><span class="dv">10</span> <span class="sc">%&gt;%</span> { <span class="fu">seq</span>(<span class="at">from =</span> .<span class="sc">-</span><span class="dv">5</span>, <span class="at">to =</span> .<span class="sc">+</span><span class="dv">5</span>) }</span>
+<span id="cb482-2"><a href="6.2-pipe-operator.html#cb482-2" tabindex="-1"></a><span class="do">## [1]  5  6  7  8  9 10 11 12 13 14 15</span></span>
+<span id="cb482-3"><a href="6.2-pipe-operator.html#cb482-3" tabindex="-1"></a></span>
+<span id="cb482-4"><a href="6.2-pipe-operator.html#cb482-4" tabindex="-1"></a>all_df <span class="sc">%&gt;%</span> </span>
+<span id="cb482-5"><a href="6.2-pipe-operator.html#cb482-5" tabindex="-1"></a>    <span class="fu">group_by</span>(date) <span class="sc">%&gt;%</span> </span>
+<span id="cb482-6"><a href="6.2-pipe-operator.html#cb482-6" tabindex="-1"></a>    <span class="fu">group_map</span>(<span class="sc">~</span>{</span>
+<span id="cb482-7"><a href="6.2-pipe-operator.html#cb482-7" tabindex="-1"></a>        .x <span class="sc">%&gt;%</span> </span>
+<span id="cb482-8"><a href="6.2-pipe-operator.html#cb482-8" tabindex="-1"></a>            <span class="fu">drop_na</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb482-9"><a href="6.2-pipe-operator.html#cb482-9" tabindex="-1"></a>            {<span class="fu">crossprod</span>(.[,<span class="dv">1003</span>] <span class="sc">%&gt;%</span> <span class="fu">as.matrix</span>(), .[,<span class="dv">3</span><span class="sc">:</span><span class="dv">1002</span>] <span class="sc">%&gt;%</span> <span class="fu">as.matrix</span>())}</span>
+<span id="cb482-10"><a href="6.2-pipe-operator.html#cb482-10" tabindex="-1"></a>    }, <span class="at">.keep=</span><span class="cn">TRUE</span>)</span></code></pre></div>
 <ul>
 <li><code>%&gt;%</code> has higher precedence than arithmetic operations.</li>
 </ul>
-<div class="sourceCode" id="cb481"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb481-1"><a href="6.2-pipe-operator.html#cb481-1" tabindex="-1"></a><span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>), <span class="at">nrow =</span> <span class="dv">2</span>) <span class="sc">*</span> <span class="dv">5</span> <span class="sc">%&gt;%</span> <span class="fu">as.data.frame</span>()</span>
-<span id="cb481-2"><a href="6.2-pipe-operator.html#cb481-2" tabindex="-1"></a><span class="co"># same as </span></span>
-<span id="cb481-3"><a href="6.2-pipe-operator.html#cb481-3" tabindex="-1"></a><span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>), <span class="at">nrow =</span> <span class="dv">2</span>) <span class="sc">*</span> (<span class="dv">5</span> <span class="sc">%&gt;%</span> <span class="fu">as.data.frame</span>())</span>
-<span id="cb481-4"><a href="6.2-pipe-operator.html#cb481-4" tabindex="-1"></a><span class="co"># need to wrap the matrix multiplication before pipe</span></span>
-<span id="cb481-5"><a href="6.2-pipe-operator.html#cb481-5" tabindex="-1"></a>(<span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>), <span class="at">nrow =</span> <span class="dv">2</span>)<span class="sc">*</span><span class="dv">5</span> ) <span class="sc">%&gt;%</span> as.data.frame</span>
-<span id="cb481-6"><a href="6.2-pipe-operator.html#cb481-6" tabindex="-1"></a><span class="co"># V1 V2</span></span>
-<span id="cb481-7"><a href="6.2-pipe-operator.html#cb481-7" tabindex="-1"></a><span class="co"># 1  5  0</span></span>
-<span id="cb481-8"><a href="6.2-pipe-operator.html#cb481-8" tabindex="-1"></a><span class="co"># 2  0  5</span></span></code></pre></div>
+<div class="sourceCode" id="cb483"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb483-1"><a href="6.2-pipe-operator.html#cb483-1" tabindex="-1"></a><span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>), <span class="at">nrow =</span> <span class="dv">2</span>) <span class="sc">*</span> <span class="dv">5</span> <span class="sc">%&gt;%</span> <span class="fu">as.data.frame</span>()</span>
+<span id="cb483-2"><a href="6.2-pipe-operator.html#cb483-2" tabindex="-1"></a><span class="co"># same as </span></span>
+<span id="cb483-3"><a href="6.2-pipe-operator.html#cb483-3" tabindex="-1"></a><span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>), <span class="at">nrow =</span> <span class="dv">2</span>) <span class="sc">*</span> (<span class="dv">5</span> <span class="sc">%&gt;%</span> <span class="fu">as.data.frame</span>())</span>
+<span id="cb483-4"><a href="6.2-pipe-operator.html#cb483-4" tabindex="-1"></a><span class="co"># need to wrap the matrix multiplication before pipe</span></span>
+<span id="cb483-5"><a href="6.2-pipe-operator.html#cb483-5" tabindex="-1"></a>(<span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>), <span class="at">nrow =</span> <span class="dv">2</span>)<span class="sc">*</span><span class="dv">5</span> ) <span class="sc">%&gt;%</span> as.data.frame</span>
+<span id="cb483-6"><a href="6.2-pipe-operator.html#cb483-6" tabindex="-1"></a><span class="co"># V1 V2</span></span>
+<span id="cb483-7"><a href="6.2-pipe-operator.html#cb483-7" tabindex="-1"></a><span class="co"># 1  5  0</span></span>
+<span id="cb483-8"><a href="6.2-pipe-operator.html#cb483-8" tabindex="-1"></a><span class="co"># 2  0  5</span></span></code></pre></div>
 <ul>
 <li><code>%&gt;%</code> can work together with <span class="env-green">backticks</span> for arithmetic operators</li>
 </ul>
-<div class="sourceCode" id="cb482"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb482-1"><a href="6.2-pipe-operator.html#cb482-1" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="dv">2</span></span>
-<span id="cb482-2"><a href="6.2-pipe-operator.html#cb482-2" tabindex="-1"></a>x <span class="sc">%&gt;%</span> <span class="st">`</span><span class="at">+</span><span class="st">`</span>(<span class="dv">2</span>)</span>
-<span id="cb482-3"><a href="6.2-pipe-operator.html#cb482-3" tabindex="-1"></a><span class="co"># [1] 4</span></span></code></pre></div>
+<div class="sourceCode" id="cb484"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb484-1"><a href="6.2-pipe-operator.html#cb484-1" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb484-2"><a href="6.2-pipe-operator.html#cb484-2" tabindex="-1"></a>x <span class="sc">%&gt;%</span> <span class="st">`</span><span class="at">+</span><span class="st">`</span>(<span class="dv">2</span>)</span>
+<span id="cb484-3"><a href="6.2-pipe-operator.html#cb484-3" tabindex="-1"></a><span class="co"># [1] 4</span></span></code></pre></div>
 <ul>
 <li><code>%&gt;%</code> can use with <code>!</code> enclosed in backticks</li>
 </ul>
-<div class="sourceCode" id="cb483"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb483-1"><a href="6.2-pipe-operator.html#cb483-1" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">c</span>(<span class="cn">TRUE</span>, <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span> <span class="st">`</span><span class="at">!</span><span class="st">`</span></span>
-<span id="cb483-2"><a href="6.2-pipe-operator.html#cb483-2" tabindex="-1"></a>[<span class="dv">1</span>] <span class="cn">FALSE</span>  <span class="cn">TRUE</span></span>
-<span id="cb483-3"><a href="6.2-pipe-operator.html#cb483-3" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">c</span>(<span class="cn">TRUE</span>, <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span> magrittr<span class="sc">::</span><span class="fu">not</span>()</span>
-<span id="cb483-4"><a href="6.2-pipe-operator.html#cb483-4" tabindex="-1"></a>[<span class="dv">1</span>] <span class="cn">FALSE</span>  <span class="cn">TRUE</span></span>
-<span id="cb483-5"><a href="6.2-pipe-operator.html#cb483-5" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">c</span>(<span class="cn">NA</span>,<span class="dv">5</span>) <span class="sc">%&gt;%</span> <span class="fu">Negate</span>(is.na)()</span>
-<span id="cb483-6"><a href="6.2-pipe-operator.html#cb483-6" tabindex="-1"></a>[<span class="dv">1</span>] <span class="cn">FALSE</span>  <span class="cn">TRUE</span></span></code></pre></div>
+<div class="sourceCode" id="cb485"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb485-1"><a href="6.2-pipe-operator.html#cb485-1" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">c</span>(<span class="cn">TRUE</span>, <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span> <span class="st">`</span><span class="at">!</span><span class="st">`</span></span>
+<span id="cb485-2"><a href="6.2-pipe-operator.html#cb485-2" tabindex="-1"></a>[<span class="dv">1</span>] <span class="cn">FALSE</span>  <span class="cn">TRUE</span></span>
+<span id="cb485-3"><a href="6.2-pipe-operator.html#cb485-3" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">c</span>(<span class="cn">TRUE</span>, <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span> magrittr<span class="sc">::</span><span class="fu">not</span>()</span>
+<span id="cb485-4"><a href="6.2-pipe-operator.html#cb485-4" tabindex="-1"></a>[<span class="dv">1</span>] <span class="cn">FALSE</span>  <span class="cn">TRUE</span></span>
+<span id="cb485-5"><a href="6.2-pipe-operator.html#cb485-5" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">c</span>(<span class="cn">NA</span>,<span class="dv">5</span>) <span class="sc">%&gt;%</span> <span class="fu">Negate</span>(is.na)()</span>
+<span id="cb485-6"><a href="6.2-pipe-operator.html#cb485-6" tabindex="-1"></a>[<span class="dv">1</span>] <span class="cn">FALSE</span>  <span class="cn">TRUE</span></span></code></pre></div>
 <p>It is handy to use <code>Aliases</code> in <code>magrittr</code> package, e.g.:</p>
-<div class="sourceCode" id="cb484"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb484-1"><a href="6.2-pipe-operator.html#cb484-1" tabindex="-1"></a>extract <span class="st">`</span><span class="at">[</span><span class="st">`</span></span>
-<span id="cb484-2"><a href="6.2-pipe-operator.html#cb484-2" tabindex="-1"></a>extract2    <span class="st">`</span><span class="at">[[</span><span class="st">`</span></span>
-<span id="cb484-3"><a href="6.2-pipe-operator.html#cb484-3" tabindex="-1"></a>inset   <span class="st">`</span><span class="at">[&lt;-</span><span class="st">`</span></span>
-<span id="cb484-4"><a href="6.2-pipe-operator.html#cb484-4" tabindex="-1"></a>inset2  <span class="st">`</span><span class="at">[[&lt;-</span><span class="st">`</span></span>
-<span id="cb484-5"><a href="6.2-pipe-operator.html#cb484-5" tabindex="-1"></a>use_series  <span class="st">`</span><span class="at">$</span><span class="st">`</span></span>
-<span id="cb484-6"><a href="6.2-pipe-operator.html#cb484-6" tabindex="-1"></a>add <span class="st">`</span><span class="at">+</span><span class="st">`</span></span>
-<span id="cb484-7"><a href="6.2-pipe-operator.html#cb484-7" tabindex="-1"></a>subtract    <span class="st">`</span><span class="at">-</span><span class="st">`</span></span>
-<span id="cb484-8"><a href="6.2-pipe-operator.html#cb484-8" tabindex="-1"></a>multiply_by <span class="st">`</span><span class="at">*</span><span class="st">`</span></span>
-<span id="cb484-9"><a href="6.2-pipe-operator.html#cb484-9" tabindex="-1"></a>raise_to_power  <span class="st">`</span><span class="at">^</span><span class="st">`</span></span>
-<span id="cb484-10"><a href="6.2-pipe-operator.html#cb484-10" tabindex="-1"></a>multiply_by_matrix  <span class="st">`</span><span class="at">%*%</span><span class="st">`</span></span>
-<span id="cb484-11"><a href="6.2-pipe-operator.html#cb484-11" tabindex="-1"></a>divide_by   <span class="st">`</span><span class="at">/</span><span class="st">`</span></span>
-<span id="cb484-12"><a href="6.2-pipe-operator.html#cb484-12" tabindex="-1"></a>divide_by_int   <span class="st">`</span><span class="at">%/%</span><span class="st">`</span></span>
-<span id="cb484-13"><a href="6.2-pipe-operator.html#cb484-13" tabindex="-1"></a>mod <span class="st">`</span><span class="at">%%</span><span class="st">`</span></span>
-<span id="cb484-14"><a href="6.2-pipe-operator.html#cb484-14" tabindex="-1"></a>is_in   <span class="st">`</span><span class="at">%in%</span><span class="st">`</span></span>
-<span id="cb484-15"><a href="6.2-pipe-operator.html#cb484-15" tabindex="-1"></a>and <span class="st">`</span><span class="at">&amp;</span><span class="st">`</span></span>
-<span id="cb484-16"><a href="6.2-pipe-operator.html#cb484-16" tabindex="-1"></a>or  <span class="st">`</span><span class="at">|</span><span class="st">`</span></span>
-<span id="cb484-17"><a href="6.2-pipe-operator.html#cb484-17" tabindex="-1"></a>equals  <span class="st">`</span><span class="at">==</span><span class="st">`</span></span>
-<span id="cb484-18"><a href="6.2-pipe-operator.html#cb484-18" tabindex="-1"></a>is_greater_than <span class="st">`</span><span class="at">&gt;</span><span class="st">`</span></span>
-<span id="cb484-19"><a href="6.2-pipe-operator.html#cb484-19" tabindex="-1"></a>is_weakly_greater_than  <span class="st">`</span><span class="at">&gt;=</span><span class="st">`</span></span>
-<span id="cb484-20"><a href="6.2-pipe-operator.html#cb484-20" tabindex="-1"></a>is_less_than    <span class="st">`</span><span class="at">&lt;</span><span class="st">`</span></span>
-<span id="cb484-21"><a href="6.2-pipe-operator.html#cb484-21" tabindex="-1"></a>is_weakly_less_than <span class="st">`</span><span class="at">&lt;=</span><span class="st">`</span></span>
-<span id="cb484-22"><a href="6.2-pipe-operator.html#cb484-22" tabindex="-1"></a><span class="fu">not</span> (<span class="st">`</span><span class="at">n&#39;est pas</span><span class="st">`</span>)   <span class="st">`</span><span class="at">!</span><span class="st">`</span></span>
-<span id="cb484-23"><a href="6.2-pipe-operator.html#cb484-23" tabindex="-1"></a>set_colnames    <span class="st">`</span><span class="at">colnames&lt;-</span><span class="st">`</span></span>
-<span id="cb484-24"><a href="6.2-pipe-operator.html#cb484-24" tabindex="-1"></a>set_rownames    <span class="st">`</span><span class="at">rownames&lt;-</span><span class="st">`</span></span>
-<span id="cb484-25"><a href="6.2-pipe-operator.html#cb484-25" tabindex="-1"></a>set_names   <span class="st">`</span><span class="at">names&lt;-</span><span class="st">`</span></span>
-<span id="cb484-26"><a href="6.2-pipe-operator.html#cb484-26" tabindex="-1"></a>set_class   <span class="st">`</span><span class="at">class&lt;-</span><span class="st">`</span></span>
-<span id="cb484-27"><a href="6.2-pipe-operator.html#cb484-27" tabindex="-1"></a>set_attributes  <span class="st">`</span><span class="at">attributes&lt;-</span><span class="st">`</span></span>
-<span id="cb484-28"><a href="6.2-pipe-operator.html#cb484-28" tabindex="-1"></a>set_attr    <span class="st">`</span><span class="at">attr&lt;-</span><span class="st">`</span></span></code></pre></div>
+<div class="sourceCode" id="cb486"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb486-1"><a href="6.2-pipe-operator.html#cb486-1" tabindex="-1"></a>extract <span class="st">`</span><span class="at">[</span><span class="st">`</span></span>
+<span id="cb486-2"><a href="6.2-pipe-operator.html#cb486-2" tabindex="-1"></a>extract2    <span class="st">`</span><span class="at">[[</span><span class="st">`</span></span>
+<span id="cb486-3"><a href="6.2-pipe-operator.html#cb486-3" tabindex="-1"></a>inset   <span class="st">`</span><span class="at">[&lt;-</span><span class="st">`</span></span>
+<span id="cb486-4"><a href="6.2-pipe-operator.html#cb486-4" tabindex="-1"></a>inset2  <span class="st">`</span><span class="at">[[&lt;-</span><span class="st">`</span></span>
+<span id="cb486-5"><a href="6.2-pipe-operator.html#cb486-5" tabindex="-1"></a>use_series  <span class="st">`</span><span class="at">$</span><span class="st">`</span></span>
+<span id="cb486-6"><a href="6.2-pipe-operator.html#cb486-6" tabindex="-1"></a>add <span class="st">`</span><span class="at">+</span><span class="st">`</span></span>
+<span id="cb486-7"><a href="6.2-pipe-operator.html#cb486-7" tabindex="-1"></a>subtract    <span class="st">`</span><span class="at">-</span><span class="st">`</span></span>
+<span id="cb486-8"><a href="6.2-pipe-operator.html#cb486-8" tabindex="-1"></a>multiply_by <span class="st">`</span><span class="at">*</span><span class="st">`</span></span>
+<span id="cb486-9"><a href="6.2-pipe-operator.html#cb486-9" tabindex="-1"></a>raise_to_power  <span class="st">`</span><span class="at">^</span><span class="st">`</span></span>
+<span id="cb486-10"><a href="6.2-pipe-operator.html#cb486-10" tabindex="-1"></a>multiply_by_matrix  <span class="st">`</span><span class="at">%*%</span><span class="st">`</span></span>
+<span id="cb486-11"><a href="6.2-pipe-operator.html#cb486-11" tabindex="-1"></a>divide_by   <span class="st">`</span><span class="at">/</span><span class="st">`</span></span>
+<span id="cb486-12"><a href="6.2-pipe-operator.html#cb486-12" tabindex="-1"></a>divide_by_int   <span class="st">`</span><span class="at">%/%</span><span class="st">`</span></span>
+<span id="cb486-13"><a href="6.2-pipe-operator.html#cb486-13" tabindex="-1"></a>mod <span class="st">`</span><span class="at">%%</span><span class="st">`</span></span>
+<span id="cb486-14"><a href="6.2-pipe-operator.html#cb486-14" tabindex="-1"></a>is_in   <span class="st">`</span><span class="at">%in%</span><span class="st">`</span></span>
+<span id="cb486-15"><a href="6.2-pipe-operator.html#cb486-15" tabindex="-1"></a>and <span class="st">`</span><span class="at">&amp;</span><span class="st">`</span></span>
+<span id="cb486-16"><a href="6.2-pipe-operator.html#cb486-16" tabindex="-1"></a>or  <span class="st">`</span><span class="at">|</span><span class="st">`</span></span>
+<span id="cb486-17"><a href="6.2-pipe-operator.html#cb486-17" tabindex="-1"></a>equals  <span class="st">`</span><span class="at">==</span><span class="st">`</span></span>
+<span id="cb486-18"><a href="6.2-pipe-operator.html#cb486-18" tabindex="-1"></a>is_greater_than <span class="st">`</span><span class="at">&gt;</span><span class="st">`</span></span>
+<span id="cb486-19"><a href="6.2-pipe-operator.html#cb486-19" tabindex="-1"></a>is_weakly_greater_than  <span class="st">`</span><span class="at">&gt;=</span><span class="st">`</span></span>
+<span id="cb486-20"><a href="6.2-pipe-operator.html#cb486-20" tabindex="-1"></a>is_less_than    <span class="st">`</span><span class="at">&lt;</span><span class="st">`</span></span>
+<span id="cb486-21"><a href="6.2-pipe-operator.html#cb486-21" tabindex="-1"></a>is_weakly_less_than <span class="st">`</span><span class="at">&lt;=</span><span class="st">`</span></span>
+<span id="cb486-22"><a href="6.2-pipe-operator.html#cb486-22" tabindex="-1"></a><span class="fu">not</span> (<span class="st">`</span><span class="at">n&#39;est pas</span><span class="st">`</span>)   <span class="st">`</span><span class="at">!</span><span class="st">`</span></span>
+<span id="cb486-23"><a href="6.2-pipe-operator.html#cb486-23" tabindex="-1"></a>set_colnames    <span class="st">`</span><span class="at">colnames&lt;-</span><span class="st">`</span></span>
+<span id="cb486-24"><a href="6.2-pipe-operator.html#cb486-24" tabindex="-1"></a>set_rownames    <span class="st">`</span><span class="at">rownames&lt;-</span><span class="st">`</span></span>
+<span id="cb486-25"><a href="6.2-pipe-operator.html#cb486-25" tabindex="-1"></a>set_names   <span class="st">`</span><span class="at">names&lt;-</span><span class="st">`</span></span>
+<span id="cb486-26"><a href="6.2-pipe-operator.html#cb486-26" tabindex="-1"></a>set_class   <span class="st">`</span><span class="at">class&lt;-</span><span class="st">`</span></span>
+<span id="cb486-27"><a href="6.2-pipe-operator.html#cb486-27" tabindex="-1"></a>set_attributes  <span class="st">`</span><span class="at">attributes&lt;-</span><span class="st">`</span></span>
+<span id="cb486-28"><a href="6.2-pipe-operator.html#cb486-28" tabindex="-1"></a>set_attr    <span class="st">`</span><span class="at">attr&lt;-</span><span class="st">`</span></span></code></pre></div>
 <ul>
 <li>Use <code>{}</code> to specify the precedence, so that they are evaluated the way you want.</li>
 </ul>
-<div class="sourceCode" id="cb485"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb485-1"><a href="6.2-pipe-operator.html#cb485-1" tabindex="-1"></a><span class="co"># calculate the mean and sd for a vector</span></span>
-<span id="cb485-2"><a href="6.2-pipe-operator.html#cb485-2" tabindex="-1"></a><span class="fu">rnorm</span>(<span class="dv">100</span>) <span class="sc">%&gt;%</span> <span class="fu">c</span>(<span class="fu">mean</span>(.), <span class="fu">sd</span>(.)) <span class="co"># this does not work as the way you want</span></span>
-<span id="cb485-3"><a href="6.2-pipe-operator.html#cb485-3" tabindex="-1"></a><span class="fu">rnorm</span>(<span class="dv">100</span>) <span class="sc">%&gt;%</span> {<span class="fu">c</span>(<span class="fu">mean</span>(.), <span class="fu">sd</span>(.))} <span class="co"># this works well after enclosing the operation with {}</span></span></code></pre></div>
+<div class="sourceCode" id="cb487"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb487-1"><a href="6.2-pipe-operator.html#cb487-1" tabindex="-1"></a><span class="co"># calculate the mean and sd for a vector</span></span>
+<span id="cb487-2"><a href="6.2-pipe-operator.html#cb487-2" tabindex="-1"></a><span class="fu">rnorm</span>(<span class="dv">100</span>) <span class="sc">%&gt;%</span> <span class="fu">c</span>(<span class="fu">mean</span>(.), <span class="fu">sd</span>(.)) <span class="co"># this does not work as the way you want</span></span>
+<span id="cb487-3"><a href="6.2-pipe-operator.html#cb487-3" tabindex="-1"></a><span class="fu">rnorm</span>(<span class="dv">100</span>) <span class="sc">%&gt;%</span> {<span class="fu">c</span>(<span class="fu">mean</span>(.), <span class="fu">sd</span>(.))} <span class="co"># this works well after enclosing the operation with {}</span></span></code></pre></div>
 <div id="native-pipe" class="section level3 hasAnchor" number="6.2.1">
 <h3><span class="header-section-number">6.2.1</span> Native Pipe <code>|&gt;</code><a href="6.2-pipe-operator.html#native-pipe" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>The native pipe was introduced to R in 4.1.0.</p>
