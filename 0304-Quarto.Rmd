@@ -259,6 +259,19 @@ To reduce the margin below the title, in individual `qmd` file, add the followin
 :::
 ```
 
+
+#### Templates
+
+See [HERE](https://quarto.org/docs/journals/templates.html) for an overview of how to set template for `tex` files.
+
+- pakage setup
+- article typsetting
+
+[Starter template](https://quarto.org/docs/extensions/starter-templates.html) for `qmd` file.
+
+- yaml header
+- structure of your `qmd`
+
 --------------------------------------------------------------------------------
 
 ### HTML Theming
