@@ -14,11 +14,11 @@ Command Palette, type "**R: Interrupt R**" to interrupt the current R session.
 
 #### Keyboard shortcuts
 
-|                    Shortcuts                         |      Function       |
-|    :----------------------------------------------:  | :-----------------: |
-|                    `cmd` + `/`                       |       comment       |
+|                      Shortcuts                       |      Function       |
+| :--------------------------------------------------: | :-----------------: |
+|                     `cmd` + `/`                      |       comment       |
 | `shift` + `cmd`  + `M` or <br>`shift` + `ctrl` + `M` | user defined; `%>%` |
-|                    `opt` + `-`                       | user defined; `<-`  |
+|                     `opt` + `-`                      | user defined; `<-`  |
 
 - For commonly used general keyboard shortcuts (not limited to R), see [HERE](https://my1396.github.io/Econ-Study/2024/08/12/Productivity-Tools.html#keyboard-shortcuts).
 
@@ -257,6 +257,36 @@ A: OUTLINE view by default shows all variables in the current R script, making i
 ```
 
 > **Note** that some answers mention that you should use `"outline.showVariables": false`, but this does NOT work for me. Instead, I use `"outline.showFields": false` to hide most variables.
+
+To set outline appearance for a specific language, you can use the following settings:
+
+```json
+{
+  "[r]": {
+    "outline.showArrays": false,
+    "outline.showBooleans": false,
+    "outline.showClasses": true,
+    "outline.showConstants": false,
+    "outline.showFields": false
+  },
+  "[rmd]": {
+    "outline.showKeys": false,
+  }
+}
+```
+
+- Set `outline.showKeys` to false will prevent code chunks from being shown in the OUTLINE view of Rmd files.
+
+
+[**Multiple language specific editor settings**](https://code.visualstudio.com/updates/v1_63#_multiple-language-specific-editor-settings)
+
+You can now configure language specific editor settings for multiple languages at once. The following example shows how you can customize settings for javascript and typescript languages together in your settings.json file:
+
+```json
+"[javascript][typescript]": {
+  "editor.maxTokenizationLineLength": 2500
+}
+```
 
 See [HERE](https://code.visualstudio.com/docs/editing/intellisense#_types-of-completions) for a complete list of icons and their meanings in the OUTLINE view. 
 
@@ -601,19 +631,19 @@ Command Palette, type "**Preferences: Open Keyboard Shortcuts**" to open the key
 
 
 **Run code cells**
-| Shortcut        | Function                                                     |
-| --------------- | ------------------------------------------------------------ |
-| `Ctrl+Enter`    | runs the currently selected cell.                            |
-| `Shift+Enter`   | runs the currently selected cell and inserts a new cell immediately below <br />(focus moves to new cell). |
+| Shortcut        | Function                                                                                                         |
+| --------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `Ctrl+Enter`    | runs the currently selected cell.                                                                                |
+| `Shift+Enter`   | runs the currently selected cell and inserts a new cell immediately below <br />(focus moves to new cell).       |
 | `Opt+Enter`     | runs the currently selected cell and inserts a new cell immediately below <br />(focus remains on current cell). |
-| Run Cells Above | Command Pallette, type "**Notebook: Execute Above Cells**"   |
+| Run Cells Above | Command Pallette, type "**Notebook: Execute Above Cells**"                                                       |
 
 **Insert code cells**
 
-| Shortcut   | Function                                                     |
-| ---------- | ------------------------------------------------------------ |
+| Shortcut   | Function                                                                                  |
+| ---------- | ----------------------------------------------------------------------------------------- |
 | `ctrl+; A` | Press `Ctrl+;`, release, then `A`.<br />Insert a new code cell **above** the current one. |
-| `ctrl+; B` | Add a new code cell **below** the selected one.              |
+| `ctrl+; B` | Add a new code cell **below** the selected one.                                           |
 
 **Change Cell to Code**
 
