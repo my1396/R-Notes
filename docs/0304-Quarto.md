@@ -767,8 +767,9 @@ This is an example of a 'folded' caution callout that can be expanded by the use
 
 Here are what the various types look like in HTML output:
 
-
 <img src="https://drive.google.com/thumbnail?id=1WVMOAJyHE_09EYkH05KREhKE3A6r1vMj&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
+
+
 
 - Callout heading can be defined using 
   - `title = "Heading"` in the callout header, or

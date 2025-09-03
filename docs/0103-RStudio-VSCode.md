@@ -14,11 +14,12 @@ Command Palette, type "**R: Interrupt R**" to interrupt the current R session.
 
 #### Keyboard shortcuts
 
-|                      Shortcuts                       |      Function       |
-| :--------------------------------------------------: | :-----------------: |
-|                     `cmd` + `/`                      |       comment       |
-| `shift` + `cmd`  + `M` or <br>`shift` + `ctrl` + `M` | user defined; `%>%` |
-|                     `opt` + `-`                      | user defined; `<-`  |
+|                      Shortcuts                       |            Function            |
+| :--------------------------------------------------: | :----------------------------: |
+|                     `cmd` + `/`                      |            comment             |
+| `shift` + `cmd`  + `M` or <br>`shift` + `ctrl` + `M` |      user defined; `%>%`       |
+|                     `opt` + `-`                      |       user defined; `<-`       |
+|                   `ctrl` + `` ` ``                   | toggle btw editor and terminal |
 
 - For commonly used general keyboard shortcuts (not limited to R), see [HERE](https://my1396.github.io/Econ-Study/2024/08/12/Productivity-Tools.html#keyboard-shortcuts).
 
