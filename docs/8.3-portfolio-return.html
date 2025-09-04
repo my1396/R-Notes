@@ -746,15 +746,44 @@ div.csl-indent {
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<head>
-    <script>
-        // Simple toggle utility retained; search uses default bookdown initialization
-        function myFunction(id) {
-          var x = document.getElementById(id);
-          x.style.display = (x.style.display === 'none') ? 'block' : 'none';
-        }
-    </script>
-</head>
+<script>
+// Simple toggle utility retained
+function myFunction(id) {
+  var x = document.getElementById(id);
+  x.style.display = (x.style.display === 'none') ? 'block' : 'none';
+}
+
+// Auto-expand active top-level section so its level 2/3 items are visible
+document.addEventListener('DOMContentLoaded', function() {
+  try {
+    var summary = document.querySelector('.book-summary ul.summary');
+    if (!summary) return;
+
+    function applyAutoOpen() {
+      // Clear previous
+      summary.querySelectorAll('li.chapter.auto-open').forEach(function(li){ li.classList.remove('auto-open'); });
+      var active = summary.querySelector('li.chapter.active');
+      if (active) active.classList.add('auto-open');
+    }
+
+    applyAutoOpen();
+
+    // GitBook emits page.change on navigation
+    if (typeof gitbook !== 'undefined' && gitbook.events) {
+      gitbook.events.on('page.change', function(){
+        applyAutoOpen();
+      });
+    }
+  } catch(e) {
+    console.warn('TOC auto-open error', e);
+  }
+});
+</script>
+<style>
+/* Show nested UL of active chapter when collapse=section */
+.book-summary ul.summary li.chapter.auto-open ul { display: block !important; }
+.book-summary ul.summary li.chapter.auto-open > a { font-weight: 700; }
+</style>
 <div id="portfolio-return" class="section level2 hasAnchor" number="8.3">
 <h2><span class="header-section-number">8.3</span> Portfolio Return<a href="8.3-portfolio-return.html#portfolio-return" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <div class="sourceCode" id="cb688"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb688-1"><a href="8.3-portfolio-return.html#cb688-1" tabindex="-1"></a>w <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.25</span>, <span class="fl">0.25</span>, <span class="fl">0.20</span>, <span class="fl">0.20</span>, <span class="fl">0.10</span>)</span>
@@ -866,7 +895,8 @@ gitbook.start({
     "options": null
   },
   "toc": {
-    "collapse": "section"
+    "collapse": "section",
+    "scroll_highlight": true
   },
   "toc_depth": 3,
   "toc_float": true,

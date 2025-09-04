@@ -746,15 +746,44 @@ div.csl-indent {
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<head>
-    <script>
-        // Simple toggle utility retained; search uses default bookdown initialization
-        function myFunction(id) {
-          var x = document.getElementById(id);
-          x.style.display = (x.style.display === 'none') ? 'block' : 'none';
-        }
-    </script>
-</head>
+<script>
+// Simple toggle utility retained
+function myFunction(id) {
+  var x = document.getElementById(id);
+  x.style.display = (x.style.display === 'none') ? 'block' : 'none';
+}
+
+// Auto-expand active top-level section so its level 2/3 items are visible
+document.addEventListener('DOMContentLoaded', function() {
+  try {
+    var summary = document.querySelector('.book-summary ul.summary');
+    if (!summary) return;
+
+    function applyAutoOpen() {
+      // Clear previous
+      summary.querySelectorAll('li.chapter.auto-open').forEach(function(li){ li.classList.remove('auto-open'); });
+      var active = summary.querySelector('li.chapter.active');
+      if (active) active.classList.add('auto-open');
+    }
+
+    applyAutoOpen();
+
+    // GitBook emits page.change on navigation
+    if (typeof gitbook !== 'undefined' && gitbook.events) {
+      gitbook.events.on('page.change', function(){
+        applyAutoOpen();
+      });
+    }
+  } catch(e) {
+    console.warn('TOC auto-open error', e);
+  }
+});
+</script>
+<style>
+/* Show nested UL of active chapter when collapse=section */
+.book-summary ul.summary li.chapter.auto-open ul { display: block !important; }
+.book-summary ul.summary li.chapter.auto-open > a { font-weight: 700; }
+</style>
 <div id="bookdown-project-structure" class="section level2 hasAnchor" number="4.1">
 <h2><span class="header-section-number">4.1</span> bookdown project structure<a href="4.1-bookdown-project-structure.html#bookdown-project-structure" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Below shows the basic <a href="https://bookdown.org/yihui/rmarkdown/bookdown-project.html">structure of a default <code>bookdown</code> project</a>:</p>
@@ -837,6 +866,8 @@ div.csl-indent {
 <span id="cb273-30"><a href="4.1-bookdown-project-structure.html#cb273-30" tabindex="-1"></a></span>
 <span id="cb273-31"><a href="4.1-bookdown-project-structure.html#cb273-31" tabindex="-1"></a><span class="at">bookdown:</span><span class="fu">:epub_book</span><span class="kw">:</span><span class="at"> default</span></span></code></pre></div>
 <p>You do NOT need the three dashes <code>---</code> in <code>_output.yml</code>. In this case, all formats should be at the top level, instead of under an <code>output</code> field in individual Rmds.</p>
+<div id="gitbook-format" class="section level4 hasAnchor" number="4.1.0.1">
+<h4><span class="header-section-number">4.1.0.1</span> gitbook format<a href="4.1-bookdown-project-structure.html#gitbook-format" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>The output format <code>bookdown::gitbook</code> is built upon <code>rmarkdown::html_document</code>, which was explained in Section <a href="https://bookdown.org/yihui/rmarkdown/html-document.html#html-document">3.1</a> in R Markdown: The Definitive Guide. The main difference between rendering in R Markdown and <strong>bookdown</strong> is that a book will generate multiple HTML pages by default.</p>
 <p><a href="https://bookdown.org/yihui/bookdown/html.html#gitbook-style"><code>bookdown::gitbook</code> settings:</a></p>
 <ul>
@@ -978,6 +1009,7 @@ If some of your custom CSS settings are not applied, it is likely due to conflic
 </ul>
 <hr />
 <p><a id="bookdown-config"></a></p>
+</div>
 </div>
 <div id="bookdown.yml" class="section level3 unnumbered hasAnchor">
 <h3><code>_bookdown.yml</code><a href="4.1-bookdown-project-structure.html#bookdown.yml" class="anchor-section" aria-label="Anchor link to header"></a></h3>
@@ -1133,7 +1165,8 @@ gitbook.start({
     "options": null
   },
   "toc": {
-    "collapse": "section"
+    "collapse": "section",
+    "scroll_highlight": true
   },
   "toc_depth": 3,
   "toc_float": true,

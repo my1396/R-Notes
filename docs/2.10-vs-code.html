@@ -746,15 +746,44 @@ div.csl-indent {
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<head>
-    <script>
-        // Simple toggle utility retained; search uses default bookdown initialization
-        function myFunction(id) {
-          var x = document.getElementById(id);
-          x.style.display = (x.style.display === 'none') ? 'block' : 'none';
-        }
-    </script>
-</head>
+<script>
+// Simple toggle utility retained
+function myFunction(id) {
+  var x = document.getElementById(id);
+  x.style.display = (x.style.display === 'none') ? 'block' : 'none';
+}
+
+// Auto-expand active top-level section so its level 2/3 items are visible
+document.addEventListener('DOMContentLoaded', function() {
+  try {
+    var summary = document.querySelector('.book-summary ul.summary');
+    if (!summary) return;
+
+    function applyAutoOpen() {
+      // Clear previous
+      summary.querySelectorAll('li.chapter.auto-open').forEach(function(li){ li.classList.remove('auto-open'); });
+      var active = summary.querySelector('li.chapter.active');
+      if (active) active.classList.add('auto-open');
+    }
+
+    applyAutoOpen();
+
+    // GitBook emits page.change on navigation
+    if (typeof gitbook !== 'undefined' && gitbook.events) {
+      gitbook.events.on('page.change', function(){
+        applyAutoOpen();
+      });
+    }
+  } catch(e) {
+    console.warn('TOC auto-open error', e);
+  }
+});
+</script>
+<style>
+/* Show nested UL of active chapter when collapse=section */
+.book-summary ul.summary li.chapter.auto-open ul { display: block !important; }
+.book-summary ul.summary li.chapter.auto-open > a { font-weight: 700; }
+</style>
 <div id="vs-code" class="section level2 hasAnchor" number="2.10">
 <h2><span class="header-section-number">2.10</span> VS Code<a href="2.10-vs-code.html#vs-code" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p><a href="https://github.com/REditorSupport/vscode-R/wiki"><code>vscode-R</code></a> is the R Extension for Visual Studio Code. The extension is mainly focused on providing language service based on static code analysis and user interactivity between VS Code and R sessions.</p>
@@ -1160,6 +1189,10 @@ A: Run <code>hgd()</code> in R and get the url to the viewer. Use the command pa
 <p><img src="https://drive.google.com/thumbnail?id=1cbH_p8_u9isUHGjgLo5OQRm3yMmdy5Yg&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" /></p>
 <div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb68-1"><a href="2.10-vs-code.html#cb68-1" tabindex="-1"></a><span class="co"># Stop the browser server with:</span></span>
 <span id="cb68-2"><a href="2.10-vs-code.html#cb68-2" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code></pre></div></li>
+<li><p><span class="env-green"><code>hgd_close()</code></span> will clear all plots.</p>
+<p>Note that this won’t close the viewer automatically for you. You can close the viewer manually by clicking the “x” button on the top right corner of the viewer window.</p>
+<p>But the next time you call <code>plot</code>, you will see all historical plots are gone.</p>
+<p>Otherwise, if you click the “x” button directly, the viewer will be closed, but all historical plots are still there. You can call <code>plot</code> again to see the previous plots.</p></li>
 <li><p>Keyboard shortcut in the WebView</p>
 <ul>
 <li><p>←/→/↑/↓: navigate through the plot history</p></li>
@@ -1169,10 +1202,6 @@ A: Run <code>hgd()</code> in R and get the url to the viewer. Use the command pa
 <p>Not recommended to save as PNG as the resolution is low.</p>
 <p>Use <code>ggsave("plot.png", dpi = 300)</code> instead to save high-resolution plots.</p></li>
 </ul></li>
-<li><p><code>hgd_close()</code> will clear all plots.</p>
-<p>Note that this won’t close the viewer automatically for you. You can close the viewer manually by clicking the “x” button on the top right corner of the viewer window.</p>
-<p>But the next time you call <code>plot</code>, you will see all historical plots are gone.</p>
-<p>Otherwise, if you click the “x” button directly, the viewer will be closed, but all historical plots are still there. You can call <code>plot</code> again to see the previous plots.</p></li>
 </ul>
 <hr />
 <p>Universal graphics device (<code>unigd</code>) is a package that provides a set of functions to manage the plot viewer, such as:</p>
@@ -1551,7 +1580,8 @@ gitbook.start({
     "options": null
   },
   "toc": {
-    "collapse": "section"
+    "collapse": "section",
+    "scroll_highlight": true
   },
   "toc_depth": 3,
   "toc_float": true,

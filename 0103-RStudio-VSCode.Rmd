@@ -423,6 +423,15 @@ A: Run `hgd()` in R and get the url to the viewer. Use the command palette to ru
   # Stop the browser server with:
   dev.off()
   ```
+
+- <span class="env-green">`hgd_close()`</span> will clear all plots.
+  
+  Note that this won't close the viewer automatically for you. You can close the viewer manually by clicking the "x" button on the top right corner of the viewer window.
+
+  But the next time you call `plot`, you will see all historical plots are gone.
+
+  Otherwise, if you click the "x" button directly, the viewer will be closed, but all historical plots are still there. You can call `plot` again to see the previous plots.
+
 - Keyboard shortcut in the WebView
   - ←/→/↑/↓: navigate through the plot history
   - `+`/`-`: zoom in/out
@@ -432,15 +441,6 @@ A: Run `hgd()` in R and get the url to the viewer. Use the command palette to ru
      Not recommended to save as PNG as the resolution is low.
 
      Use `ggsave("plot.png", dpi = 300)` instead to save high-resolution plots.
-
-- `hgd_close()` will clear all plots.
-  
-  Note that this won't close the viewer automatically for you. You can close the viewer manually by clicking the "x" button on the top right corner of the viewer window.
-
-  But the next time you call `plot`, you will see all historical plots are gone.
-
-  Otherwise, if you click the "x" button directly, the viewer will be closed, but all historical plots are still there. You can call `plot` again to see the previous plots.
-
 
 --------------------------------------------------------------------------------
 

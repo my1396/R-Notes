@@ -190,6 +190,9 @@ bookdown::epub_book: default
 
 You do NOT need the three dashes `---` in `_output.yml`. In this case, all formats should be at the top level, instead of under an `output` field in individual Rmds. 
 
+
+#### gitbook format
+
 The output format `bookdown::gitbook` is built upon `rmarkdown::html_document`, which was explained in Section [3.1](https://bookdown.org/yihui/rmarkdown/html-document.html#html-document) in R Markdown: The Definitive Guide. The main difference between rendering in R Markdown and **bookdown** is that a book will generate multiple HTML pages by default. 
 
 [`bookdown::gitbook` settings:](https://bookdown.org/yihui/bookdown/html.html#gitbook-style)
