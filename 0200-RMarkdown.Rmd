@@ -5,8 +5,8 @@
 Nice documentations 
 
 - **`rmarkdown`** package CRAN
-    - [Package CRAN page](https://cran.r-project.org/web/packages/rmarkdown/index.html)
-    - [Reference manual](https://cran.r-project.org/web/packages/rmarkdown/rmarkdown.pdf)
+    - [Package CRAN html page](https://cran.r-project.org/web/packages/rmarkdown/index.html)
+    - [Reference manual pdf](https://cran.r-project.org/web/packages/rmarkdown/rmarkdown.pdf)
 - **`bookdown`** package CRAN
     - [Package CRAN page](https://cran.r-project.org/web/packages/bookdown/index.html)
     - [Reference manual](https://cran.r-project.org/web/packages/bookdown/bookdown.pdf)
@@ -199,11 +199,12 @@ Book formats:
 
 - In PDFs, you can use code, typesetting commands (e.g., `\vspace{12pt}`), and specific packages from LaTeX. 
 
-  1. The `header-includes` option loads LaTeX packages.
+  1. The [`header-includes`](https://pandoc.org/MANUAL.html#variables-set-automatically) option 
 
-      Note that `header-includes` is a top-level option that align with `output`.
+      - Note that `header-includes` is a top-level option that align with `output`.
+      - Contents specified by pandoc argument `--include-in-header=FILE|URL`.
+      - Can be used to load LaTeX packages.
 
-       
 
     ```yaml
     ---
@@ -232,6 +233,11 @@ Book formats:
       - \usepackage{ctex}
     ---
     ````
+
+    [Related pandoc render options:](https://pandoc.org/MANUAL.html#reader-options)
+
+    - `include-before`: contents specified by `--include-before-body=FILE|URL`
+    - `include-after`: contents specified by `--include-after-body=FILE|URL`
 
 
   2. Alternatively, use `extra_dependencies` to  list a character vector of LaTeX packages. This is useful if you need to load multiple packages:
@@ -461,6 +467,10 @@ The advantage of using the `extra_dependencies` argument over the `includes` arg
 ### Includes {.unlisted .unnumbered}
 
 #### HTML Output {.unnumbered}
+
+`html_document` converts R Markdown documents to HTML using Pandoc.
+
+See [HERE](https://cran.r-project.org/web/packages/rmarkdown/refman/rmarkdown.html#topic+html_document) for all possible configurations.
 
 You can do more advanced customization of output by including additional HTML content or by replacing the core Pandoc template entirely. To include content in the document header or before/after the document body, you use the `includes` option as follows:
 

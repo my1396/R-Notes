@@ -738,11 +738,11 @@ crossref:
 
 There are five different types of callouts available.
 
-- note
-- warning
-- important
-- tip
-- caution
+- note (blue)
+- tip (green)
+- important (red)
+- warning (amber 比 caution 更亮眼 vivid )
+- caution (orange)
 
 The color and icon will be different depending upon the type that you select. 
 
@@ -787,6 +787,18 @@ Here are what the various types look like in HTML output:
     `appearance="minimal"` is equivalent to `appearance = "simple" icon = false` in the callout header.
 
 
+You can style callouts using CSS. For example, the change font size and alignment of text, you can use the following CSS:
+
+````markdown
+::: {.callout-important appearance="minimal"}
+## Research Question
+
+<center style="font-size: 1.5em; font-weight: bold;">
+Does expenditure per student affect student performance \
+in elementary school education?
+</center>
+:::
+````
 
 --------------------------------------------------------------------------------
 

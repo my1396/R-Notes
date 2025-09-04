@@ -360,7 +360,7 @@ The following tables shows the icons that you most commonly see in the OUTLINE v
 
 [`httpgd`](https://nx10.github.io/httpgd/): A graphics device for R that is accessible via network protocols. This package was created to make it easier to embed live R graphics in integrated development environments and other applications. `httpgd` is required by the interactive plot viewer of the R extension for VS Code.
 
-[Plot viewer project wiki](https://github.com/REditorSupport/vscode-R/wiki/Plot-viewer)
+[Plot viewer project Wiki](https://github.com/REditorSupport/vscode-R/wiki/Plot-viewer)
 
 Enable `r.plot.useHttpgd` in VS Code settings.
 
@@ -373,7 +373,12 @@ Enable `r.plot.useHttpgd` in VS Code settings.
 
 This will allow you to view plots in a separate window or in the browser, which is useful for interactive visualizations.
 
-The `httpgd` plot viewer supports auto-resizing, light/dark theme mode, plot history, hiding and zooming.
+The `httpgd` plot viewer supports 
+
+- auto-resizing, 
+- light/dark theme mode,
+- plot history, 
+- hiding and zooming.
 
 <img src="https://drive.google.com/thumbnail?id=1vMoXU2U1SCsjgpK750ri_TPUMvWJjoM8&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
 
@@ -390,9 +395,6 @@ hgd_browse()
 # Create a figure
 x = seq(0, 3 * pi, by = 0.1)
 plot(x, sin(x), type = "l")
-
-# Close the graphics device
-dev.off()
 ```
 
 Q: Plot viewer is missing. \
@@ -400,12 +402,55 @@ A: Run `hgd()` in R and get the url to the viewer. Use the command palette to ru
 
 
 - `hgd` Initialize device and start server.
-- `hgd_browse` Open the plot viewer in your browser.
+- `hgd_browse` Open the plot viewer in your browser, can be internal or external.
+
+  ```r
+  > hgd_browse()
+  Browsing http://127.0.0.1:58118/live?token=Ka9j9ziG
+  ```
+  
+  When you call `hgd_browse()`, it will open the graphic device in a new tab in your default web browser. You wil see the path to the viewer in the R console. 
+  
+  You may copy and paste the url to your external browser.
+
+  <img src="https://drive.google.com/thumbnail?id=1yu1XGUUaCcqfmtiszAuc3W2aSVke-5h1&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
+  
+  There is an url in the tab header to indicate it is a web browser. When you hover over the image, the menu bar will show up. You can choose to download, copy, clear all plots, etc.
+
+  <img src="https://drive.google.com/thumbnail?id=1cbH_p8_u9isUHGjgLo5OQRm3yMmdy5Yg&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
+
+  ```r
+  # Stop the browser server with:
+  dev.off()
+  ```
+- Keyboard shortcut in the WebView
+  - ←/→/↑/↓: navigate through the plot history
+  - `+`/`-`: zoom in/out
+  - `0`: reset zoom
+  - `s`/`p`: save the current plot as SVG/PNG
+     
+     Not recommended to save as PNG as the resolution is low.
+
+     Use `ggsave("plot.png", dpi = 300)` instead to save high-resolution plots.
+
+- `hgd_close()` will clear all plots.
+  
+  Note that this won't close the viewer automatically for you. You can close the viewer manually by clicking the "x" button on the top right corner of the viewer window.
+
+  But the next time you call `plot`, you will see all historical plots are gone.
+
+  Otherwise, if you click the "x" button directly, the viewer will be closed, but all historical plots are still there. You can call `plot` again to see the previous plots.
+
+
+--------------------------------------------------------------------------------
 
 Universal graphics device (`unigd`) is a package that provides a set of functions to manage the plot viewer, such as:
 
-- `unigd::ugd_clear()` Clear all pages in the plot viewer.
-- `unigd::ugd_remove(page = 2)` Remove the second page
+- <span class="env-green">`unigd::ugd_clear()`</span> Clear all pages in the plot viewer. 
+  
+  Same effects as `hgd_close()`.
+
+- `unigd::ugd_remove(page = 2)` Remove the second page.
 
 Ref:
 
@@ -666,7 +711,7 @@ Command Palette, type "**Preferences: Open Keyboard Shortcuts**" to open the key
 
 
 
-#### Issues
+### Issues
 
 **Copilot Bug**
 
@@ -707,6 +752,23 @@ Command Palette → type "**Developer: Toggle Developer Tools**", this will open
 
 - styling the VS Code UI, such as changing the colors of the text and background in the editor, or customizing the colors of the Jupyter notebook cells.
 - debugging issues with VS Code, such as checking for errors in the console
+
+
+--------------------------------------------------------------------------------
+
+### FAQ
+
+Q: How can I set a specific CRAN mirror permanently in R, so it won't ask me again which mirror to choose? \
+A: Add the following line to your `~/.Rprofile` file:
+
+```r
+# add this line to ~/.Rprofile, restart your R session so it takes effect
+options(repos = c(CRAN = "https://mirror.accum.se/mirror/CRAN/"))
+```
+
+
+You can find a list of CRAN mirrors [here](https://cran.r-project.org/mirrors.html). The principle is to choose a location close to you. 
+
 
 --------------------------------------------------------------------------------
 

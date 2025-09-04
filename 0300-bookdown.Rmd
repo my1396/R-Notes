@@ -165,7 +165,7 @@ bookdown::gitbook:
     fontsettings:
       theme: sky
     toc:
-      collapse: section+number
+      collapse: section
       before: |
         <li><a href="./">R Notes</a></li>
       after: |
@@ -216,19 +216,30 @@ The output format `bookdown::gitbook` is built upon `rmarkdown::html_document`, 
       - Font size is measured on a scale of 0-4; the initial value can be set to 1, 2 (default), 3, or 4. 
       - `theme: white | sepia | night`. Default to `white`.
    
-  - `download: ["pdf", "epub", "rmd"]` specifies which formats to allow users to download the book in. 
-   
-    When `download: null` (by default), `gitbook()` will look for PDF, EPUB, and MOBI files in the book output directory, and automatically add them to the download option. If you just want to suppress the download button, use `download: false`. 
+   - `toc` option controls the behavior of the table of contents (TOC). 
+      
+      You can collapse some items initially when a page is loaded via the `collapse` option. Its possible values are `subsection` (default), `section`, `none` (or `null`).
+
+      <span class="env-green">`collapse: section`</span> collapses the TOC at the level 1 headings, which keeps the appearance concise. This is useful when there are many chapters in the book.
+      
+      However, a side effect is that level 3 headings will never be expanded when navigating to a specific level 2 heading. 
+        - You need to click the level 2 heading in the TOC to expand it and see level 3 headings.
+
+   - `download: ["pdf", "epub", "rmd"]` specifies which formats to allow users to download the book in. 
+    
+     When `download: null` (by default), `gitbook()` will look for PDF, EPUB, and MOBI files in the book output directory, and automatically add them to the download option. If you just want to suppress the download button, use `download: false`. 
    
 - `split_by= c("chapter", "chapter+number", "section", "section+number", "rmd", "none")` defaults to `chapter`, which splits the file by the first-level headers. 
 
-    - `chapter` splits the file by the first-level headers; 
+    - `split_by: chapter` splits the file by the first-level headers; 
     
         A chapter page may be too long if there are many sections within chapters.
         
-    - `section` splits the file by the <span class="env-green">second-level</span> headers.
-    - `chapter+number` and `section+number`: the chapter/section numbers will be prepended to the HTML filenames. For example: if using `chapter` or `section`, the HTML file names will be `introduction.html`, `literature.html`, etc.; but with the numbering setting, the HTML file names will be `1-introduction.html`, `2-literature.html`, etc.
-    - I prefer <span class="env-green">`section+number`</span> as it *orders all html in the book's section order*. ✅
+    - `split_by: section` splits the file by the <span class="env-green">second-level</span> headers.
+      - I prefer <span class="env-green">`split_by: section+number`</span> as it *orders all html in the book's section order*. ✅
+    
+    - `split_by: chapter+number` and `section+number`: the chapter/section numbers will be prepended to the HTML filenames. For example: if using `chapter` or `section`, the HTML file names will be `introduction.html`, `literature.html`, etc.; but with the numbering setting, the HTML file names will be `1-introduction.html`, `2-literature.html`, etc.
+    
 
 - The [`includes` option](https://bookdown.org/yihui/bookdown/yaml-options.html) allows you to insert arbitrary custom content before and/or after the body of the output.
 

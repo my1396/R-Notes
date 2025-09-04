@@ -1,5 +1,12 @@
 ## xaringan Presentation
 
+- Get Start: <https://slides.yihui.org/xaringan/#1>
+- `xaringan` package 
+  - cran: <https://cran.r-project.org/web/packages/xaringan/refman/xaringan.html#moon_reader>
+  - rdrr.io: <https://rdrr.io/cran/xaringan/api/>
+- GitHub repo (refer to Wiki page for detailed documentation): <https://github.com/yihui/xaringan>
+
+
 It is a slide template based on an HTML5 presentation framework `remark.js`.
 
 You write slides in R Markdown, and then use the `xaringan` package to render the slides.
@@ -15,7 +22,59 @@ Features:
 
 When you decide to use `xaringan`, read tutorials [HERE](https://bookdown.org/yihui/rmarkdown/xaringan.html).
 
+
+To create a new xaringan presentation, you simply create a new R Markdown document and use the following YAML header:
+
+```yaml
+---
+title: "Presentation Ninja"
+subtitle: "with xaringan"
+author: "Yihui Xie"
+date: "2016/12/12"
+output:
+  xaringan::moon_reader:
+    css: ["xaringan-themer.css", "custom.css"]
+    lib_dir: libs
+    include:
+      in_header: libs/mathjax.html
+    nature:
+      highlightStyle: github
+      highlightLines: yes
+      countIncrementalSlides: false
+      ratio: '16:9'
+---
+
+One slide.
+
+---
+
+Another slide.
+```
+
+`xaringan::moon_reader` is the main R Markdown output format in the `xaringan` package.
+
+See the R help page `?xaringan::moon_reader` for all possible configurations.
+
+
+**Configurations:**
+
+- `lib_dir`: The directory to save the dependencies (e.g. jquery, bootstrap, etc.) of the slides. 
+  
+  This is an argument passed to [`rmarkdown::html_document`](https://cran.r-project.org/web/packages/rmarkdown/refman/rmarkdown.html#html_document). See the help page `?rmarkdown::html_document` for additional configurations provided by `html_document`.
+  - By default this will be the name of the document with `_files` appended to it.
+  - Here I set it to be `libs`.
+
+- `includes`: Named list of additional content to include within the document (typically created using the `[includes](https://cran.r-project.org/web/packages/rmarkdown/refman/rmarkdown.html#topic+includes)` function).
+
+- `nature`: (Nature transformation) A list of configurations to be passed to `remark.create()`, e.g. `list(ratio = '16:9', navigation = list(click = TRUE))`.
+  
+  See [Wiki page of `remark.js`](https://github.com/gnab/remark/wiki/Configuration) for all possible configurations.
+
+--------------------------------------------------------------------------------
+
 ### Render Slides
+
+There are two steps to render slides to pdf:
 
 1. Render `Rmd` to `html` with `rmarkdown::render`
 2. Print `html` to `pdf` with `pagedown::chrome_print`
@@ -24,6 +83,8 @@ When you decide to use `xaringan`, read tutorials [HERE](https://bookdown.org/yi
 rmarkdown::render('equity_valuation.Rmd')
 pagedown::chrome_print('equity_valuation.html')
 ```
+
+**Two-in-one option:**
 
 ✅ use `renderthis` package to render slides and print to pdf in one function.
 
@@ -154,11 +215,13 @@ The format `xaringan::moon_reader` has a `css` option, to which you can pass
 ---
 output:
   xaringan::moon_reader:
-    css:["default","extra.css"]
+    css:["default", "extra.css"]
 ---
 ```
 
 - The file path should contain the extension `.css`. If a path does not contain a filename extension, it is assumed to be a built-in CSS file in the `xaringan` package.
+- Make sure to insert the relative path to the file if it is not placed in the same directory as your `.Rmd` file.
+- When you specify multiple CSS files, the one that comes later will take priority and  override the previous ones if there are conflicting CSS rules.
 - To see all built-in CSS files, call `xaringan:::list_css()` in R.
   ```r
   xaringan:::list_css() # print path of built-in CSS files
