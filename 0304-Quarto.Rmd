@@ -800,6 +800,27 @@ in elementary school education?
 :::
 ````
 
+
+#### Nested Callouts
+
+You can nest callouts within other callouts. For example:
+
+````markdown
+::: {.callout-warning}
+## Warning with Nested Callout
+This is an example of a warning callout that contains a nested note callout.
+
+::: {.callout-note}
+This is a nested note callout.
+:::
+
+:::
+````
+
+Note that you need to put a <span class="env-green">blank line before and after</span> the nested callout to ensure proper rendering.
+
+<img src="https://drive.google.com/thumbnail?id=1edismznA-TVkDcwK8TeLatGmMOMI7Ci_&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
+
 --------------------------------------------------------------------------------
 
 **References**:
