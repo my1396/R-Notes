@@ -533,9 +533,12 @@ ___
 
 ### Equations
 
+
+#### Indivisual `qmd` file
+
 **Load MathJax Config**
 
-Load `mathjax.html` in YAML
+For individual `qmd` files, load `mathjax.html` in YAML
 
 ```yaml
 ---
@@ -552,7 +555,7 @@ format:
 ---
 ```
 
-In `mathjax.html`
+In `mathjax.html`, define the MathJax configuration, e.g., user-defined macros.
 
 ```html
 <script>
@@ -570,6 +573,42 @@ MathJax = {
 
 `tags: 'ams'`  allows equation numbering
 
+___
+
+#### Quarto project
+
+In `_quarto.yml`,
+
+```yaml
+format:
+  html:
+    include-in-header: 
+      - file: themes/mathjax.html       # MathJax for LaTeX custom macro support
+      - file: themes/common-header.html # load js scripts and external css (e.g., font-awesome) for all pages
+    from: markdown+tex_math_single_backslash
+```
+
+Note that `from` is under `html`, rather than at the top level of YAML.
+
+___
+
+Equations need to be labeled to be numbered and cross-referenced. 
+
+- Note that labels must begin with `#eq-xxx`. Don't forget the hyphen `-` between `eq` and `xxx`.
+- Put the label after the `$$` and inside curly braces `{}`.
+- References to equations are made using `@eq-xxx`.
+
+
+```latex
+Quarto way to label an equation:
+$$
+y_i = \beta_{i}'x + u_i.
+$$ {#eq-cross_sectional_hetero}
+``` 
+
+- Difference with `bookdown`.
+  
+  `bookdown`, on the other hand, use `(\#eq:label)` (must use colon) after the equation but inside the `$$`.
 
 
 ___
@@ -820,6 +859,66 @@ This is a nested note callout.
 Note that you need to put a <span class="env-green">blank line before and after</span> the nested callout to ensure proper rendering.
 
 <img src="https://drive.google.com/thumbnail?id=1edismznA-TVkDcwK8TeLatGmMOMI7Ci_&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
+
+--------------------------------------------------------------------------------
+
+### Conditional Content
+
+In some cases you may want to create content that only displays for a given output format (or only displays when *not* rendering to a format). You can accomplish this by creating divs, spans and code blocks with the `.content-visible` and `.content-hidden` classes.
+
+E.g., you have a home assignment file and you want to have two versions of it: one for questions only, and the other for questions and solutions.
+
+You can set a metadata variable in yaml, e.g., `solutions: true` or `solutions: false`.
+
+Then, in the body of your document, you can use the following syntax to conditionally include or exclude content based on the value of the `solutions` variable.
+
+```markdown
+::: {.content-visible when-meta="solutions"}
+This content will only be visible if `solutions` is set to `true`.
+:::
+```
+
+Expected behavior:
+
+- If `solutions: true`, the content will be displayed.
+- If `solutions: false`, the content will be hidden.
+
+#### Set up multiple profiles
+
+You can also set up multiple profiles in `_quarto.yml`, so you can just run `quarto render --profile with-solutions` / `--profile no-solutions` in terminal to render the document with or without solutions.
+
+```yaml
+project:
+  type: book
+  output-dir: docs
+
+profiles:
+  with-solutions:
+    metadata:
+      solutions: true
+  
+  no-solutions:
+    metadata:
+      solutions: false
+```
+
+You can then render the document with solutions using `--profile` argument:
+
+```bash
+quarto render --profile with-solutions
+```
+
+**Default profile**
+
+To define a default profile, add a `default` option to the `profile` key. For example, to make the `with-solutions` profile the default, you can use the following configuration:
+
+```yaml
+profile:
+  default: with-solutions
+```
+
+Then, you can simply run `quarto render` without specifying a profile, and it will use the `with-solutions` profile by default.
+
 
 --------------------------------------------------------------------------------
 

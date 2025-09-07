@@ -144,8 +144,8 @@ This will apply class to the paragraph only.
 
 Display math enclosed in double dollar signs, but note that
 
-- the environment should not appear <span class="env-green">on separate lines</span>
-- <span class="env-orange">No space</span> between `$$` and the math content
+- the environment should <span class="env-orange">**not** appear on separate lines</span>
+- <span class="env-orange">**No space**</span> between `$$` and the math content
 
 ```markdown
 

@@ -29,7 +29,7 @@ set in the _output.yml file.</p>" />
 <meta name="author" content="Menghan Yuan" />
 
 
-<meta name="date" content="2025-09-04" />
+<meta name="date" content="2025-09-07" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -490,6 +490,7 @@ div.csl-indent {
 <li class="chapter" data-level="4.4.7" data-path="4.4-quarto.html"><a href="4.4-quarto.html#divs-and-spans"><i class="fa fa-check"></i><b>4.4.7</b> Divs and Spans</a></li>
 <li class="chapter" data-level="4.4.8" data-path="4.4-quarto.html"><a href="4.4-quarto.html#theorems-2"><i class="fa fa-check"></i><b>4.4.8</b> Theorems</a></li>
 <li class="chapter" data-level="4.4.9" data-path="4.4-quarto.html"><a href="4.4-quarto.html#callouts"><i class="fa fa-check"></i><b>4.4.9</b> Callouts</a></li>
+<li class="chapter" data-level="4.4.10" data-path="4.4-quarto.html"><a href="4.4-quarto.html#conditional-content"><i class="fa fa-check"></i><b>4.4.10</b> Conditional Content</a></li>
 </ul></li>
 <li class="chapter" data-level="4.5" data-path="4.5-xaringan-presentation.html"><a href="4.5-xaringan-presentation.html"><i class="fa fa-check"></i><b>4.5</b> xaringan Presentation</a>
 <ul>
@@ -790,38 +791,38 @@ document.addEventListener('DOMContentLoaded', function() {
 <p>The main function used to estimate our model is the <code>dynlm(formula, data)</code> function. Within this function, <code>d()</code> can be used to specify the <strong>difference</strong> in a variable and <code>L()</code> can be <em>used</em> to compute the desired <strong>lag</strong> of the variable.</p>
 <p><code>d(u, 1)</code> means to calculate the first difference in <code>u</code>; <code>L(g, 0:2)</code> denotes <code>g</code> of the current period and the past two periods, <span class="math inline">\(g\)</span>, <span class="math inline">\(g_{-1}\)</span>, and <span class="math inline">\(g_{-2}\)</span>.</p>
 <p>Note that <code>data</code> must be either a data frame or <code>zoo</code> object. <code>xts</code> returns an error.</p>
-<div class="sourceCode" id="cb700"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb700-1"><a href="8.5-time-series-regression.html#cb700-1" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">library</span>(dynlm)</span>
-<span id="cb700-2"><a href="8.5-time-series-regression.html#cb700-2" tabindex="-1"></a><span class="co"># Finite Distributed Lag Models</span></span>
-<span id="cb700-3"><a href="8.5-time-series-regression.html#cb700-3" tabindex="-1"></a><span class="sc">&gt;</span> okun.lag2 <span class="ot">&lt;-</span> <span class="fu">dynlm</span>(<span class="fu">d</span>(unemp, <span class="dv">1</span>) <span class="sc">~</span> <span class="fu">L</span>(gGDP, <span class="dv">0</span><span class="sc">:</span><span class="dv">2</span>), <span class="at">data =</span> okun2.zoo)  <span class="co"># lag 2</span></span>
-<span id="cb700-4"><a href="8.5-time-series-regression.html#cb700-4" tabindex="-1"></a><span class="sc">&gt;</span> okun.lag3 <span class="ot">&lt;-</span> <span class="fu">dynlm</span>(<span class="fu">d</span>(unemp, <span class="dv">1</span>) <span class="sc">~</span> <span class="fu">L</span>(gGDP, <span class="dv">0</span><span class="sc">:</span><span class="dv">3</span>), <span class="at">data =</span> okun2.zoo)  <span class="co"># lag 3</span></span>
-<span id="cb700-5"><a href="8.5-time-series-regression.html#cb700-5" tabindex="-1"></a><span class="co"># ARDL(1, 1)</span></span>
-<span id="cb700-6"><a href="8.5-time-series-regression.html#cb700-6" tabindex="-1"></a><span class="sc">&gt;</span> okun.ardl <span class="ot">&lt;-</span> <span class="fu">dynlm</span>(<span class="fu">d</span>(unemp, <span class="dv">1</span>) <span class="sc">~</span> <span class="fu">L</span>(<span class="fu">d</span>(unemp, <span class="dv">1</span>), <span class="dv">1</span>) <span class="sc">+</span> <span class="fu">L</span>(gGDP, <span class="dv">0</span><span class="sc">:</span><span class="dv">1</span>), <span class="at">data =</span> okun2.zoo)</span>
-<span id="cb700-7"><a href="8.5-time-series-regression.html#cb700-7" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">summary</span>(okun.ardl)</span>
-<span id="cb700-8"><a href="8.5-time-series-regression.html#cb700-8" tabindex="-1"></a></span>
-<span id="cb700-9"><a href="8.5-time-series-regression.html#cb700-9" tabindex="-1"></a>Time series regression with <span class="st">&quot;zoo&quot;</span> data<span class="sc">:</span></span>
-<span id="cb700-10"><a href="8.5-time-series-regression.html#cb700-10" tabindex="-1"></a>Start <span class="ot">=</span> <span class="dv">1948</span> Q3, End <span class="ot">=</span> <span class="dv">2025</span> Q1</span>
-<span id="cb700-11"><a href="8.5-time-series-regression.html#cb700-11" tabindex="-1"></a></span>
-<span id="cb700-12"><a href="8.5-time-series-regression.html#cb700-12" tabindex="-1"></a>Call<span class="sc">:</span></span>
-<span id="cb700-13"><a href="8.5-time-series-regression.html#cb700-13" tabindex="-1"></a><span class="fu">dynlm</span>(<span class="at">formula =</span> <span class="fu">d</span>(unemp, <span class="dv">1</span>) <span class="sc">~</span> <span class="fu">L</span>(<span class="fu">d</span>(unemp, <span class="dv">1</span>), <span class="dv">1</span>) <span class="sc">+</span> <span class="fu">L</span>(gGDP, <span class="dv">0</span><span class="sc">:</span><span class="dv">1</span>), </span>
-<span id="cb700-14"><a href="8.5-time-series-regression.html#cb700-14" tabindex="-1"></a>    <span class="at">data =</span> okun2.zoo)</span>
-<span id="cb700-15"><a href="8.5-time-series-regression.html#cb700-15" tabindex="-1"></a></span>
-<span id="cb700-16"><a href="8.5-time-series-regression.html#cb700-16" tabindex="-1"></a>Residuals<span class="sc">:</span></span>
-<span id="cb700-17"><a href="8.5-time-series-regression.html#cb700-17" tabindex="-1"></a>    Min      <span class="dv">1</span>Q  Median      <span class="dv">3</span>Q     Max </span>
-<span id="cb700-18"><a href="8.5-time-series-regression.html#cb700-18" tabindex="-1"></a><span class="sc">-</span><span class="fl">1.4662</span> <span class="sc">-</span><span class="fl">0.2198</span> <span class="sc">-</span><span class="fl">0.0218</span>  <span class="fl">0.1686</span>  <span class="fl">4.9875</span> </span>
-<span id="cb700-19"><a href="8.5-time-series-regression.html#cb700-19" tabindex="-1"></a></span>
-<span id="cb700-20"><a href="8.5-time-series-regression.html#cb700-20" tabindex="-1"></a>Coefficients<span class="sc">:</span></span>
-<span id="cb700-21"><a href="8.5-time-series-regression.html#cb700-21" tabindex="-1"></a>                  Estimate Std. Error t value <span class="fu">Pr</span>(<span class="sc">&gt;</span><span class="er">|</span>t<span class="sc">|</span>)    </span>
-<span id="cb700-22"><a href="8.5-time-series-regression.html#cb700-22" tabindex="-1"></a>(Intercept)        <span class="fl">0.42871</span>    <span class="fl">0.03769</span>  <span class="fl">11.374</span>  <span class="sc">&lt;</span> <span class="fl">2e-16</span> <span class="sc">**</span><span class="er">*</span></span>
-<span id="cb700-23"><a href="8.5-time-series-regression.html#cb700-23" tabindex="-1"></a><span class="fu">L</span>(<span class="fu">d</span>(unemp, <span class="dv">1</span>), <span class="dv">1</span>) <span class="sc">-</span><span class="fl">0.05640</span>    <span class="fl">0.05874</span>  <span class="sc">-</span><span class="fl">0.960</span> <span class="fl">0.337736</span>    </span>
-<span id="cb700-24"><a href="8.5-time-series-regression.html#cb700-24" tabindex="-1"></a><span class="fu">L</span>(gGDP, <span class="dv">0</span><span class="sc">:</span><span class="dv">1</span>)<span class="dv">1</span>     <span class="sc">-</span><span class="fl">0.43423</span>    <span class="fl">0.02390</span> <span class="sc">-</span><span class="fl">18.165</span>  <span class="sc">&lt;</span> <span class="fl">2e-16</span> <span class="sc">**</span><span class="er">*</span></span>
-<span id="cb700-25"><a href="8.5-time-series-regression.html#cb700-25" tabindex="-1"></a><span class="fu">L</span>(gGDP, <span class="dv">0</span><span class="sc">:</span><span class="dv">1</span>)<span class="dv">2</span>     <span class="sc">-</span><span class="fl">0.11951</span>    <span class="fl">0.03575</span>  <span class="sc">-</span><span class="fl">3.343</span> <span class="fl">0.000932</span> <span class="sc">**</span><span class="er">*</span></span>
-<span id="cb700-26"><a href="8.5-time-series-regression.html#cb700-26" tabindex="-1"></a><span class="sc">---</span></span>
-<span id="cb700-27"><a href="8.5-time-series-regression.html#cb700-27" tabindex="-1"></a>Signif. codes<span class="sc">:</span>  <span class="dv">0</span> ‘<span class="sc">**</span><span class="er">*</span>’ <span class="fl">0.001</span> ‘<span class="sc">**</span>’ <span class="fl">0.01</span> ‘<span class="sc">*</span>’ <span class="fl">0.05</span> ‘.’ <span class="fl">0.1</span> ‘ ’ <span class="dv">1</span></span>
-<span id="cb700-28"><a href="8.5-time-series-regression.html#cb700-28" tabindex="-1"></a></span>
-<span id="cb700-29"><a href="8.5-time-series-regression.html#cb700-29" tabindex="-1"></a>Residual standard error<span class="sc">:</span> <span class="fl">0.4416</span> on <span class="dv">303</span> degrees of freedom</span>
-<span id="cb700-30"><a href="8.5-time-series-regression.html#cb700-30" tabindex="-1"></a>  (<span class="dv">0</span> observations deleted due to missingness)</span>
-<span id="cb700-31"><a href="8.5-time-series-regression.html#cb700-31" tabindex="-1"></a>Multiple R<span class="sc">-</span>squared<span class="sc">:</span>  <span class="fl">0.5825</span>,    Adjusted R<span class="sc">-</span>squared<span class="sc">:</span>  <span class="fl">0.5784</span> </span>
-<span id="cb700-32"><a href="8.5-time-series-regression.html#cb700-32" tabindex="-1"></a>F<span class="sc">-</span>statistic<span class="sc">:</span> <span class="fl">140.9</span> on <span class="dv">3</span> and <span class="dv">303</span> DF,  p<span class="sc">-</span>value<span class="sc">:</span> <span class="er">&lt;</span> <span class="fl">2.2e-16</span></span></code></pre></div>
+<div class="sourceCode" id="cb706"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb706-1"><a href="8.5-time-series-regression.html#cb706-1" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">library</span>(dynlm)</span>
+<span id="cb706-2"><a href="8.5-time-series-regression.html#cb706-2" tabindex="-1"></a><span class="co"># Finite Distributed Lag Models</span></span>
+<span id="cb706-3"><a href="8.5-time-series-regression.html#cb706-3" tabindex="-1"></a><span class="sc">&gt;</span> okun.lag2 <span class="ot">&lt;-</span> <span class="fu">dynlm</span>(<span class="fu">d</span>(unemp, <span class="dv">1</span>) <span class="sc">~</span> <span class="fu">L</span>(gGDP, <span class="dv">0</span><span class="sc">:</span><span class="dv">2</span>), <span class="at">data =</span> okun2.zoo)  <span class="co"># lag 2</span></span>
+<span id="cb706-4"><a href="8.5-time-series-regression.html#cb706-4" tabindex="-1"></a><span class="sc">&gt;</span> okun.lag3 <span class="ot">&lt;-</span> <span class="fu">dynlm</span>(<span class="fu">d</span>(unemp, <span class="dv">1</span>) <span class="sc">~</span> <span class="fu">L</span>(gGDP, <span class="dv">0</span><span class="sc">:</span><span class="dv">3</span>), <span class="at">data =</span> okun2.zoo)  <span class="co"># lag 3</span></span>
+<span id="cb706-5"><a href="8.5-time-series-regression.html#cb706-5" tabindex="-1"></a><span class="co"># ARDL(1, 1)</span></span>
+<span id="cb706-6"><a href="8.5-time-series-regression.html#cb706-6" tabindex="-1"></a><span class="sc">&gt;</span> okun.ardl <span class="ot">&lt;-</span> <span class="fu">dynlm</span>(<span class="fu">d</span>(unemp, <span class="dv">1</span>) <span class="sc">~</span> <span class="fu">L</span>(<span class="fu">d</span>(unemp, <span class="dv">1</span>), <span class="dv">1</span>) <span class="sc">+</span> <span class="fu">L</span>(gGDP, <span class="dv">0</span><span class="sc">:</span><span class="dv">1</span>), <span class="at">data =</span> okun2.zoo)</span>
+<span id="cb706-7"><a href="8.5-time-series-regression.html#cb706-7" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">summary</span>(okun.ardl)</span>
+<span id="cb706-8"><a href="8.5-time-series-regression.html#cb706-8" tabindex="-1"></a></span>
+<span id="cb706-9"><a href="8.5-time-series-regression.html#cb706-9" tabindex="-1"></a>Time series regression with <span class="st">&quot;zoo&quot;</span> data<span class="sc">:</span></span>
+<span id="cb706-10"><a href="8.5-time-series-regression.html#cb706-10" tabindex="-1"></a>Start <span class="ot">=</span> <span class="dv">1948</span> Q3, End <span class="ot">=</span> <span class="dv">2025</span> Q1</span>
+<span id="cb706-11"><a href="8.5-time-series-regression.html#cb706-11" tabindex="-1"></a></span>
+<span id="cb706-12"><a href="8.5-time-series-regression.html#cb706-12" tabindex="-1"></a>Call<span class="sc">:</span></span>
+<span id="cb706-13"><a href="8.5-time-series-regression.html#cb706-13" tabindex="-1"></a><span class="fu">dynlm</span>(<span class="at">formula =</span> <span class="fu">d</span>(unemp, <span class="dv">1</span>) <span class="sc">~</span> <span class="fu">L</span>(<span class="fu">d</span>(unemp, <span class="dv">1</span>), <span class="dv">1</span>) <span class="sc">+</span> <span class="fu">L</span>(gGDP, <span class="dv">0</span><span class="sc">:</span><span class="dv">1</span>), </span>
+<span id="cb706-14"><a href="8.5-time-series-regression.html#cb706-14" tabindex="-1"></a>    <span class="at">data =</span> okun2.zoo)</span>
+<span id="cb706-15"><a href="8.5-time-series-regression.html#cb706-15" tabindex="-1"></a></span>
+<span id="cb706-16"><a href="8.5-time-series-regression.html#cb706-16" tabindex="-1"></a>Residuals<span class="sc">:</span></span>
+<span id="cb706-17"><a href="8.5-time-series-regression.html#cb706-17" tabindex="-1"></a>    Min      <span class="dv">1</span>Q  Median      <span class="dv">3</span>Q     Max </span>
+<span id="cb706-18"><a href="8.5-time-series-regression.html#cb706-18" tabindex="-1"></a><span class="sc">-</span><span class="fl">1.4662</span> <span class="sc">-</span><span class="fl">0.2198</span> <span class="sc">-</span><span class="fl">0.0218</span>  <span class="fl">0.1686</span>  <span class="fl">4.9875</span> </span>
+<span id="cb706-19"><a href="8.5-time-series-regression.html#cb706-19" tabindex="-1"></a></span>
+<span id="cb706-20"><a href="8.5-time-series-regression.html#cb706-20" tabindex="-1"></a>Coefficients<span class="sc">:</span></span>
+<span id="cb706-21"><a href="8.5-time-series-regression.html#cb706-21" tabindex="-1"></a>                  Estimate Std. Error t value <span class="fu">Pr</span>(<span class="sc">&gt;</span><span class="er">|</span>t<span class="sc">|</span>)    </span>
+<span id="cb706-22"><a href="8.5-time-series-regression.html#cb706-22" tabindex="-1"></a>(Intercept)        <span class="fl">0.42871</span>    <span class="fl">0.03769</span>  <span class="fl">11.374</span>  <span class="sc">&lt;</span> <span class="fl">2e-16</span> <span class="sc">**</span><span class="er">*</span></span>
+<span id="cb706-23"><a href="8.5-time-series-regression.html#cb706-23" tabindex="-1"></a><span class="fu">L</span>(<span class="fu">d</span>(unemp, <span class="dv">1</span>), <span class="dv">1</span>) <span class="sc">-</span><span class="fl">0.05640</span>    <span class="fl">0.05874</span>  <span class="sc">-</span><span class="fl">0.960</span> <span class="fl">0.337736</span>    </span>
+<span id="cb706-24"><a href="8.5-time-series-regression.html#cb706-24" tabindex="-1"></a><span class="fu">L</span>(gGDP, <span class="dv">0</span><span class="sc">:</span><span class="dv">1</span>)<span class="dv">1</span>     <span class="sc">-</span><span class="fl">0.43423</span>    <span class="fl">0.02390</span> <span class="sc">-</span><span class="fl">18.165</span>  <span class="sc">&lt;</span> <span class="fl">2e-16</span> <span class="sc">**</span><span class="er">*</span></span>
+<span id="cb706-25"><a href="8.5-time-series-regression.html#cb706-25" tabindex="-1"></a><span class="fu">L</span>(gGDP, <span class="dv">0</span><span class="sc">:</span><span class="dv">1</span>)<span class="dv">2</span>     <span class="sc">-</span><span class="fl">0.11951</span>    <span class="fl">0.03575</span>  <span class="sc">-</span><span class="fl">3.343</span> <span class="fl">0.000932</span> <span class="sc">**</span><span class="er">*</span></span>
+<span id="cb706-26"><a href="8.5-time-series-regression.html#cb706-26" tabindex="-1"></a><span class="sc">---</span></span>
+<span id="cb706-27"><a href="8.5-time-series-regression.html#cb706-27" tabindex="-1"></a>Signif. codes<span class="sc">:</span>  <span class="dv">0</span> ‘<span class="sc">**</span><span class="er">*</span>’ <span class="fl">0.001</span> ‘<span class="sc">**</span>’ <span class="fl">0.01</span> ‘<span class="sc">*</span>’ <span class="fl">0.05</span> ‘.’ <span class="fl">0.1</span> ‘ ’ <span class="dv">1</span></span>
+<span id="cb706-28"><a href="8.5-time-series-regression.html#cb706-28" tabindex="-1"></a></span>
+<span id="cb706-29"><a href="8.5-time-series-regression.html#cb706-29" tabindex="-1"></a>Residual standard error<span class="sc">:</span> <span class="fl">0.4416</span> on <span class="dv">303</span> degrees of freedom</span>
+<span id="cb706-30"><a href="8.5-time-series-regression.html#cb706-30" tabindex="-1"></a>  (<span class="dv">0</span> observations deleted due to missingness)</span>
+<span id="cb706-31"><a href="8.5-time-series-regression.html#cb706-31" tabindex="-1"></a>Multiple R<span class="sc">-</span>squared<span class="sc">:</span>  <span class="fl">0.5825</span>,    Adjusted R<span class="sc">-</span>squared<span class="sc">:</span>  <span class="fl">0.5784</span> </span>
+<span id="cb706-32"><a href="8.5-time-series-regression.html#cb706-32" tabindex="-1"></a>F<span class="sc">-</span>statistic<span class="sc">:</span> <span class="fl">140.9</span> on <span class="dv">3</span> and <span class="dv">303</span> DF,  p<span class="sc">-</span>value<span class="sc">:</span> <span class="er">&lt;</span> <span class="fl">2.2e-16</span></span></code></pre></div>
 <div id="lag-polynomial" class="section level3 hasAnchor" number="8.5.1">
 <h3><span class="header-section-number">8.5.1</span> Lag Polynomial<a href="8.5-time-series-regression.html#lag-polynomial" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Let <span class="math inline">\(\rho(L)=1-\rho_1L\)</span> and <span class="math inline">\(\beta(L)=\beta_0+\beta_1L.\)</span>
@@ -830,26 +831,26 @@ Now we have <span class="math inline">\(\psi(L)\)</span> such at</p>
 \rho(L)\psi(L)=\beta(L) .
 \]</span></p>
 <p>We want to find <span class="math inline">\(\psi(L)=\rho(L)^{-1}\beta(L).\)</span></p>
-<div class="sourceCode" id="cb701"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb701-1"><a href="8.5-time-series-regression.html#cb701-1" tabindex="-1"></a><span class="co"># Compute psi(L) = rho(L)^(-1) * beta(L)</span></span>
-<span id="cb701-2"><a href="8.5-time-series-regression.html#cb701-2" tabindex="-1"></a>lag_poly_solution <span class="ot">&lt;-</span> <span class="cf">function</span>(rho1, beta0, beta1, <span class="at">n_terms =</span> <span class="dv">5</span>) {</span>
-<span id="cb701-3"><a href="8.5-time-series-regression.html#cb701-3" tabindex="-1"></a>  <span class="co"># Expand (1 - rho1*L)^(-1) as a power series up to n_terms</span></span>
-<span id="cb701-4"><a href="8.5-time-series-regression.html#cb701-4" tabindex="-1"></a>  <span class="co"># (1 - rho1*L)^(-1) = 1 + rho1*L + rho1^2*L^2 + ... + rho1^n*L^n</span></span>
-<span id="cb701-5"><a href="8.5-time-series-regression.html#cb701-5" tabindex="-1"></a>  rho_inv <span class="ot">&lt;-</span> <span class="fu">sapply</span>(<span class="dv">0</span><span class="sc">:</span>n_terms, <span class="cf">function</span>(k) rho1<span class="sc">^</span>k)</span>
-<span id="cb701-6"><a href="8.5-time-series-regression.html#cb701-6" tabindex="-1"></a>  </span>
-<span id="cb701-7"><a href="8.5-time-series-regression.html#cb701-7" tabindex="-1"></a>  <span class="co"># beta(L) = beta0 + beta1*L</span></span>
-<span id="cb701-8"><a href="8.5-time-series-regression.html#cb701-8" tabindex="-1"></a>  <span class="co"># psi(L) = (1 + rho1*L + rho1^2*L^2 + ...)*(beta0 + beta1*L)</span></span>
-<span id="cb701-9"><a href="8.5-time-series-regression.html#cb701-9" tabindex="-1"></a>  <span class="co">#         = beta0*(1 + rho1*L + ...) + beta1*L*(1 + rho1*L + ...)</span></span>
-<span id="cb701-10"><a href="8.5-time-series-regression.html#cb701-10" tabindex="-1"></a>  <span class="co">#         = beta0*rho_inv + beta1*c(0, rho_inv[1:n_terms])</span></span>
-<span id="cb701-11"><a href="8.5-time-series-regression.html#cb701-11" tabindex="-1"></a>  psi <span class="ot">&lt;-</span> beta0 <span class="sc">*</span> rho_inv</span>
-<span id="cb701-12"><a href="8.5-time-series-regression.html#cb701-12" tabindex="-1"></a>  psi <span class="ot">&lt;-</span> psi <span class="sc">+</span> beta1 <span class="sc">*</span> <span class="fu">c</span>(<span class="dv">0</span>, rho_inv[<span class="dv">1</span><span class="sc">:</span>n_terms])</span>
-<span id="cb701-13"><a href="8.5-time-series-regression.html#cb701-13" tabindex="-1"></a>  </span>
-<span id="cb701-14"><a href="8.5-time-series-regression.html#cb701-14" tabindex="-1"></a>  <span class="co"># Return coefficients: psi0 + psi1*L + psi2*L^2 + ...</span></span>
-<span id="cb701-15"><a href="8.5-time-series-regression.html#cb701-15" tabindex="-1"></a>  <span class="fu">names</span>(psi) <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">&quot;L^&quot;</span>, <span class="dv">0</span><span class="sc">:</span>n_terms)</span>
-<span id="cb701-16"><a href="8.5-time-series-regression.html#cb701-16" tabindex="-1"></a>  <span class="fu">return</span>(psi)</span>
-<span id="cb701-17"><a href="8.5-time-series-regression.html#cb701-17" tabindex="-1"></a>}</span></code></pre></div>
-<div class="sourceCode" id="cb702"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb702-1"><a href="8.5-time-series-regression.html#cb702-1" tabindex="-1"></a><span class="co"># Example usage:</span></span>
-<span id="cb702-2"><a href="8.5-time-series-regression.html#cb702-2" tabindex="-1"></a>psi_coef <span class="ot">&lt;-</span> <span class="fu">lag_poly_solution</span>(<span class="at">rho1 =</span> <span class="fl">0.5</span>, <span class="at">beta0 =</span> <span class="dv">1</span>, <span class="at">beta1 =</span> <span class="dv">2</span>, <span class="at">n_terms =</span> <span class="dv">20</span>)</span>
-<span id="cb702-3"><a href="8.5-time-series-regression.html#cb702-3" tabindex="-1"></a>psi_coef</span></code></pre></div>
+<div class="sourceCode" id="cb707"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb707-1"><a href="8.5-time-series-regression.html#cb707-1" tabindex="-1"></a><span class="co"># Compute psi(L) = rho(L)^(-1) * beta(L)</span></span>
+<span id="cb707-2"><a href="8.5-time-series-regression.html#cb707-2" tabindex="-1"></a>lag_poly_solution <span class="ot">&lt;-</span> <span class="cf">function</span>(rho1, beta0, beta1, <span class="at">n_terms =</span> <span class="dv">5</span>) {</span>
+<span id="cb707-3"><a href="8.5-time-series-regression.html#cb707-3" tabindex="-1"></a>  <span class="co"># Expand (1 - rho1*L)^(-1) as a power series up to n_terms</span></span>
+<span id="cb707-4"><a href="8.5-time-series-regression.html#cb707-4" tabindex="-1"></a>  <span class="co"># (1 - rho1*L)^(-1) = 1 + rho1*L + rho1^2*L^2 + ... + rho1^n*L^n</span></span>
+<span id="cb707-5"><a href="8.5-time-series-regression.html#cb707-5" tabindex="-1"></a>  rho_inv <span class="ot">&lt;-</span> <span class="fu">sapply</span>(<span class="dv">0</span><span class="sc">:</span>n_terms, <span class="cf">function</span>(k) rho1<span class="sc">^</span>k)</span>
+<span id="cb707-6"><a href="8.5-time-series-regression.html#cb707-6" tabindex="-1"></a>  </span>
+<span id="cb707-7"><a href="8.5-time-series-regression.html#cb707-7" tabindex="-1"></a>  <span class="co"># beta(L) = beta0 + beta1*L</span></span>
+<span id="cb707-8"><a href="8.5-time-series-regression.html#cb707-8" tabindex="-1"></a>  <span class="co"># psi(L) = (1 + rho1*L + rho1^2*L^2 + ...)*(beta0 + beta1*L)</span></span>
+<span id="cb707-9"><a href="8.5-time-series-regression.html#cb707-9" tabindex="-1"></a>  <span class="co">#         = beta0*(1 + rho1*L + ...) + beta1*L*(1 + rho1*L + ...)</span></span>
+<span id="cb707-10"><a href="8.5-time-series-regression.html#cb707-10" tabindex="-1"></a>  <span class="co">#         = beta0*rho_inv + beta1*c(0, rho_inv[1:n_terms])</span></span>
+<span id="cb707-11"><a href="8.5-time-series-regression.html#cb707-11" tabindex="-1"></a>  psi <span class="ot">&lt;-</span> beta0 <span class="sc">*</span> rho_inv</span>
+<span id="cb707-12"><a href="8.5-time-series-regression.html#cb707-12" tabindex="-1"></a>  psi <span class="ot">&lt;-</span> psi <span class="sc">+</span> beta1 <span class="sc">*</span> <span class="fu">c</span>(<span class="dv">0</span>, rho_inv[<span class="dv">1</span><span class="sc">:</span>n_terms])</span>
+<span id="cb707-13"><a href="8.5-time-series-regression.html#cb707-13" tabindex="-1"></a>  </span>
+<span id="cb707-14"><a href="8.5-time-series-regression.html#cb707-14" tabindex="-1"></a>  <span class="co"># Return coefficients: psi0 + psi1*L + psi2*L^2 + ...</span></span>
+<span id="cb707-15"><a href="8.5-time-series-regression.html#cb707-15" tabindex="-1"></a>  <span class="fu">names</span>(psi) <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">&quot;L^&quot;</span>, <span class="dv">0</span><span class="sc">:</span>n_terms)</span>
+<span id="cb707-16"><a href="8.5-time-series-regression.html#cb707-16" tabindex="-1"></a>  <span class="fu">return</span>(psi)</span>
+<span id="cb707-17"><a href="8.5-time-series-regression.html#cb707-17" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb708"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb708-1"><a href="8.5-time-series-regression.html#cb708-1" tabindex="-1"></a><span class="co"># Example usage:</span></span>
+<span id="cb708-2"><a href="8.5-time-series-regression.html#cb708-2" tabindex="-1"></a>psi_coef <span class="ot">&lt;-</span> <span class="fu">lag_poly_solution</span>(<span class="at">rho1 =</span> <span class="fl">0.5</span>, <span class="at">beta0 =</span> <span class="dv">1</span>, <span class="at">beta1 =</span> <span class="dv">2</span>, <span class="at">n_terms =</span> <span class="dv">20</span>)</span>
+<span id="cb708-3"><a href="8.5-time-series-regression.html#cb708-3" tabindex="-1"></a>psi_coef</span></code></pre></div>
 <pre><code>##          L^0          L^1          L^2          L^3          L^4          L^5 
 ## 1.000000e+00 2.500000e+00 1.250000e+00 6.250000e-01 3.125000e-01 1.562500e-01 
 ##          L^6          L^7          L^8          L^9         L^10         L^11 
@@ -859,17 +860,17 @@ Now we have <span class="math inline">\(\psi(L)\)</span> such at</p>
 ##         L^18         L^19         L^20 
 ## 1.907349e-05 9.536743e-06 4.768372e-06</code></pre>
 <p>Plot the lag polynomial coefficients:</p>
-<div class="sourceCode" id="cb704"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb704-1"><a href="8.5-time-series-regression.html#cb704-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb704-2"><a href="8.5-time-series-regression.html#cb704-2" tabindex="-1"></a>psi_df <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb704-3"><a href="8.5-time-series-regression.html#cb704-3" tabindex="-1"></a>  <span class="at">lag =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">21</span>,</span>
-<span id="cb704-4"><a href="8.5-time-series-regression.html#cb704-4" tabindex="-1"></a>  <span class="at">coef =</span> psi_coef</span>
-<span id="cb704-5"><a href="8.5-time-series-regression.html#cb704-5" tabindex="-1"></a>)</span>
-<span id="cb704-6"><a href="8.5-time-series-regression.html#cb704-6" tabindex="-1"></a></span>
-<span id="cb704-7"><a href="8.5-time-series-regression.html#cb704-7" tabindex="-1"></a><span class="co"># Bar plot</span></span>
-<span id="cb704-8"><a href="8.5-time-series-regression.html#cb704-8" tabindex="-1"></a><span class="fu">ggplot</span>(psi_df, <span class="fu">aes</span>(<span class="at">x =</span> lag, <span class="at">y =</span> coef)) <span class="sc">+</span></span>
-<span id="cb704-9"><a href="8.5-time-series-regression.html#cb704-9" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">&quot;identity&quot;</span>, <span class="at">fill =</span> <span class="st">&quot;steelblue&quot;</span>) <span class="sc">+</span></span>
-<span id="cb704-10"><a href="8.5-time-series-regression.html#cb704-10" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Lag&quot;</span>, <span class="at">y =</span> <span class="fu">expression</span>(psi[L]), <span class="at">title =</span> <span class="st">&quot;Lag Polynomial Coefficients&quot;</span>) <span class="sc">+</span></span>
-<span id="cb704-11"><a href="8.5-time-series-regression.html#cb704-11" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb710"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb710-1"><a href="8.5-time-series-regression.html#cb710-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb710-2"><a href="8.5-time-series-regression.html#cb710-2" tabindex="-1"></a>psi_df <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb710-3"><a href="8.5-time-series-regression.html#cb710-3" tabindex="-1"></a>  <span class="at">lag =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">21</span>,</span>
+<span id="cb710-4"><a href="8.5-time-series-regression.html#cb710-4" tabindex="-1"></a>  <span class="at">coef =</span> psi_coef</span>
+<span id="cb710-5"><a href="8.5-time-series-regression.html#cb710-5" tabindex="-1"></a>)</span>
+<span id="cb710-6"><a href="8.5-time-series-regression.html#cb710-6" tabindex="-1"></a></span>
+<span id="cb710-7"><a href="8.5-time-series-regression.html#cb710-7" tabindex="-1"></a><span class="co"># Bar plot</span></span>
+<span id="cb710-8"><a href="8.5-time-series-regression.html#cb710-8" tabindex="-1"></a><span class="fu">ggplot</span>(psi_df, <span class="fu">aes</span>(<span class="at">x =</span> lag, <span class="at">y =</span> coef)) <span class="sc">+</span></span>
+<span id="cb710-9"><a href="8.5-time-series-regression.html#cb710-9" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">&quot;identity&quot;</span>, <span class="at">fill =</span> <span class="st">&quot;steelblue&quot;</span>) <span class="sc">+</span></span>
+<span id="cb710-10"><a href="8.5-time-series-regression.html#cb710-10" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Lag&quot;</span>, <span class="at">y =</span> <span class="fu">expression</span>(psi[L]), <span class="at">title =</span> <span class="st">&quot;Lag Polynomial Coefficients&quot;</span>) <span class="sc">+</span></span>
+<span id="cb710-11"><a href="8.5-time-series-regression.html#cb710-11" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
 <p><img src="0701-TS-Regression_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
 
 </div>
