@@ -414,7 +414,7 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="3.3" data-path="3.3-chunk-options.html"><a href="3.3-chunk-options.html"><i class="fa fa-check"></i><b>3.3</b> Chunk Options</a>
 <ul>
-<li class="chapter" data-level="3.3.1" data-path="3.3-chunk-options.html"><a href="3.3-chunk-options.html#global-knitr-options"><i class="fa fa-check"></i><b>3.3.1</b> Global <code>knitr</code> Options</a></li>
+<li class="chapter" data-level="3.3.1" data-path="3.3-chunk-options.html"><a href="3.3-chunk-options.html#put-global-knitr-options-in-a-separate-file"><i class="fa fa-check"></i><b>3.3.1</b> Put Global <code>knitr</code> Options in a Separate File</a></li>
 <li class="chapter" data-level="3.3.2" data-path="3.3-chunk-options.html"><a href="3.3-chunk-options.html#hooks"><i class="fa fa-check"></i><b>3.3.2</b> Hooks</a></li>
 </ul></li>
 <li class="chapter" data-level="3.4" data-path="3.4-print-verbatim-r-code-chunks.html"><a href="3.4-print-verbatim-r-code-chunks.html"><i class="fa fa-check"></i><b>3.4</b> Print Verbatim R code chunks</a></li>
@@ -791,7 +791,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <h3>Graphic Parameters<a href="7-graphics.html#graphic-parameters" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p><code>par()</code> permanently set global graphic parameters in the current session. Doesn’t apply to external graphic devices, e.g., x11.</p>
 <p><span class="env-green"><strong>One nice looking setting</strong></span>:</p>
-<div class="sourceCode" id="cb543"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb543-1"><a href="7-graphics.html#cb543-1" tabindex="-1"></a><span class="fu">par</span>(<span class="at">oma=</span><span class="fu">c</span>(<span class="fl">0.5</span>,<span class="fl">0.5</span>,<span class="dv">0</span>,<span class="dv">2</span>), <span class="at">mar=</span><span class="fu">c</span>(<span class="fl">3.5</span>, <span class="fl">3.5</span>, <span class="dv">2</span>, <span class="dv">1</span>), <span class="at">mgp=</span><span class="fu">c</span>(<span class="fl">2.4</span>,<span class="fl">0.8</span>,<span class="dv">0</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb544"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb544-1"><a href="7-graphics.html#cb544-1" tabindex="-1"></a><span class="fu">par</span>(<span class="at">oma=</span><span class="fu">c</span>(<span class="fl">0.5</span>,<span class="fl">0.5</span>,<span class="dv">0</span>,<span class="dv">2</span>), <span class="at">mar=</span><span class="fu">c</span>(<span class="fl">3.5</span>, <span class="fl">3.5</span>, <span class="dv">2</span>, <span class="dv">1</span>), <span class="at">mgp=</span><span class="fu">c</span>(<span class="fl">2.4</span>,<span class="fl">0.8</span>,<span class="dv">0</span>))</span></code></pre></div>
 <ul>
 <li><p><code>mar</code> inner margins inside the plot area. Use this to set spacing between <span class="env-green">subplots</span>. 内边距</p></li>
 <li><p><code>oma</code> outer margins outside the plot area. If it is a multi-panel figure, use this to set spaing for the <span class="env-green">whole figure</span>. 外边距</p>
@@ -812,49 +812,49 @@ A: 每个图开始之前设置<code>par</code>.</p>
 A: use <code>text</code> to add text in the graph area.</p>
 <p>Q: add text to the whole figure, such as shared y-axis title and figure title.<br />
 A: use <code>mtext(text, side)</code>. 1-bottom, 2-left, 3-right, 4-top.</p>
-<div class="sourceCode" id="cb544"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb544-1"><a href="7-graphics.html#cb544-1" tabindex="-1"></a><span class="co"># multipanel example</span></span>
-<span id="cb544-2"><a href="7-graphics.html#cb544-2" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">2</span>), <span class="at">tcl=</span><span class="sc">-</span><span class="fl">0.5</span>, <span class="at">family=</span><span class="st">&quot;serif&quot;</span>)</span>
-<span id="cb544-3"><a href="7-graphics.html#cb544-3" tabindex="-1"></a></span>
-<span id="cb544-4"><a href="7-graphics.html#cb544-4" tabindex="-1"></a><span class="co"># Top left panel</span></span>
-<span id="cb544-5"><a href="7-graphics.html#cb544-5" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mai=</span><span class="fu">c</span>(<span class="fl">0.2</span>,<span class="fl">0.4</span>,<span class="fl">0.2</span>,<span class="dv">0</span>))</span>
-<span id="cb544-6"><a href="7-graphics.html#cb544-6" tabindex="-1"></a><span class="fu">plot</span>(Sepal.Length<span class="sc">~</span>Sepal.Width, <span class="at">data=</span>iris, <span class="at">subset=</span>(Species<span class="sc">==</span><span class="st">&quot;virginica&quot;</span>), </span>
-<span id="cb544-7"><a href="7-graphics.html#cb544-7" tabindex="-1"></a>     <span class="at">xlab=</span><span class="st">&quot; &quot;</span>, <span class="at">ylab=</span><span class="st">&quot; &quot;</span>, <span class="at">xlim=</span><span class="fu">c</span>(min.width,max.width), <span class="at">ylim=</span><span class="fu">c</span>(min.length,max.length), <span class="at">xaxt=</span><span class="st">&quot;n&quot;</span>)</span>
-<span id="cb544-8"><a href="7-graphics.html#cb544-8" tabindex="-1"></a><span class="fu">axis</span>(<span class="dv">1</span>, <span class="at">labels=</span><span class="cn">FALSE</span>) <span class="co"># drop the numbers in the x-axis</span></span>
-<span id="cb544-9"><a href="7-graphics.html#cb544-9" tabindex="-1"></a><span class="co"># add title to subplot</span></span>
-<span id="cb544-10"><a href="7-graphics.html#cb544-10" tabindex="-1"></a><span class="fu">text</span>((max.width<span class="sc">-</span>min.width)<span class="sc">/</span><span class="dv">2</span> <span class="sc">+</span> min.width, max.length<span class="fl">+0.15</span>, <span class="fu">expression</span>(<span class="fu">italic</span>(<span class="st">&quot;Iris virginica&quot;</span>)))</span>
-<span id="cb544-11"><a href="7-graphics.html#cb544-11" tabindex="-1"></a></span>
-<span id="cb544-12"><a href="7-graphics.html#cb544-12" tabindex="-1"></a><span class="co"># Top right panel</span></span>
-<span id="cb544-13"><a href="7-graphics.html#cb544-13" tabindex="-1"></a><span class="fu">plot.new</span>()</span>
-<span id="cb544-14"><a href="7-graphics.html#cb544-14" tabindex="-1"></a></span>
-<span id="cb544-15"><a href="7-graphics.html#cb544-15" tabindex="-1"></a><span class="co"># Bottom left panel</span></span>
-<span id="cb544-16"><a href="7-graphics.html#cb544-16" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mai=</span><span class="fu">c</span>(<span class="fl">0.4</span>,<span class="fl">0.4</span>,<span class="dv">0</span>,<span class="dv">0</span>))</span>
-<span id="cb544-17"><a href="7-graphics.html#cb544-17" tabindex="-1"></a><span class="fu">plot</span>(Sepal.Length<span class="sc">~</span>Sepal.Width, <span class="at">data=</span>iris, <span class="at">subset=</span>(Species<span class="sc">==</span><span class="st">&quot;versicolor&quot;</span>), <span class="at">xlab=</span><span class="st">&quot; &quot;</span>, <span class="at">ylab=</span><span class="st">&quot; &quot;</span>,</span>
-<span id="cb544-18"><a href="7-graphics.html#cb544-18" tabindex="-1"></a>     <span class="at">xlim=</span><span class="fu">c</span>(min.width,max.width), <span class="at">ylim=</span><span class="fu">c</span>(min.length,max.length))</span>
-<span id="cb544-19"><a href="7-graphics.html#cb544-19" tabindex="-1"></a><span class="fu">text</span>((max.width<span class="sc">-</span>min.width)<span class="sc">/</span><span class="dv">2</span> <span class="sc">+</span> min.width, max.length<span class="fl">+0.15</span>, <span class="fu">expression</span>(<span class="fu">italic</span>(<span class="st">&quot;Iris versicolor&quot;</span>)))</span>
-<span id="cb544-20"><a href="7-graphics.html#cb544-20" tabindex="-1"></a></span>
-<span id="cb544-21"><a href="7-graphics.html#cb544-21" tabindex="-1"></a><span class="co"># Bottom right panel</span></span>
-<span id="cb544-22"><a href="7-graphics.html#cb544-22" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mai=</span><span class="fu">c</span>(<span class="fl">0.4</span>,<span class="fl">0.2</span>,<span class="dv">0</span>,<span class="fl">0.2</span>))</span>
-<span id="cb544-23"><a href="7-graphics.html#cb544-23" tabindex="-1"></a><span class="fu">plot</span>(Sepal.Length<span class="sc">~</span>Sepal.Width, <span class="at">data=</span>iris, <span class="at">subset=</span>(Species<span class="sc">==</span><span class="st">&quot;setosa&quot;</span>), <span class="at">xlab=</span><span class="st">&quot; &quot;</span>, <span class="at">ylab=</span><span class="st">&quot; &quot;</span>,</span>
-<span id="cb544-24"><a href="7-graphics.html#cb544-24" tabindex="-1"></a>     <span class="at">xlim=</span><span class="fu">c</span>(min.width,max.width), <span class="at">ylim=</span><span class="fu">c</span>(min.length,max.length), <span class="at">yaxt=</span><span class="st">&quot;n&quot;</span>)</span>
-<span id="cb544-25"><a href="7-graphics.html#cb544-25" tabindex="-1"></a><span class="fu">axis</span>(<span class="dv">2</span>, <span class="at">labels=</span><span class="cn">FALSE</span>) <span class="co"># drop the number in the y-axis</span></span>
-<span id="cb544-26"><a href="7-graphics.html#cb544-26" tabindex="-1"></a><span class="fu">text</span>((max.width<span class="sc">-</span>min.width)<span class="sc">/</span><span class="dv">2</span> <span class="sc">+</span> min.width, max.length<span class="fl">+0.15</span>, <span class="fu">expression</span>(<span class="fu">italic</span>(<span class="st">&quot;Iris setosa&quot;</span>)))</span>
-<span id="cb544-27"><a href="7-graphics.html#cb544-27" tabindex="-1"></a></span>
-<span id="cb544-28"><a href="7-graphics.html#cb544-28" tabindex="-1"></a><span class="co"># Shared titles for the whole figure</span></span>
-<span id="cb544-29"><a href="7-graphics.html#cb544-29" tabindex="-1"></a><span class="fu">mtext</span>(<span class="st">&quot;Sepal Width&quot;</span>, <span class="at">side=</span><span class="dv">1</span>, <span class="at">outer=</span>T, <span class="at">at=</span><span class="fl">0.5</span>)</span>
-<span id="cb544-30"><a href="7-graphics.html#cb544-30" tabindex="-1"></a><span class="fu">mtext</span>(<span class="st">&quot;Sepal Length&quot;</span>, <span class="at">side=</span><span class="dv">2</span>, <span class="at">outer=</span>T, <span class="at">at=</span><span class="fl">0.5</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb545"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb545-1"><a href="7-graphics.html#cb545-1" tabindex="-1"></a><span class="co"># multipanel example</span></span>
+<span id="cb545-2"><a href="7-graphics.html#cb545-2" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">2</span>), <span class="at">tcl=</span><span class="sc">-</span><span class="fl">0.5</span>, <span class="at">family=</span><span class="st">&quot;serif&quot;</span>)</span>
+<span id="cb545-3"><a href="7-graphics.html#cb545-3" tabindex="-1"></a></span>
+<span id="cb545-4"><a href="7-graphics.html#cb545-4" tabindex="-1"></a><span class="co"># Top left panel</span></span>
+<span id="cb545-5"><a href="7-graphics.html#cb545-5" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mai=</span><span class="fu">c</span>(<span class="fl">0.2</span>,<span class="fl">0.4</span>,<span class="fl">0.2</span>,<span class="dv">0</span>))</span>
+<span id="cb545-6"><a href="7-graphics.html#cb545-6" tabindex="-1"></a><span class="fu">plot</span>(Sepal.Length<span class="sc">~</span>Sepal.Width, <span class="at">data=</span>iris, <span class="at">subset=</span>(Species<span class="sc">==</span><span class="st">&quot;virginica&quot;</span>), </span>
+<span id="cb545-7"><a href="7-graphics.html#cb545-7" tabindex="-1"></a>     <span class="at">xlab=</span><span class="st">&quot; &quot;</span>, <span class="at">ylab=</span><span class="st">&quot; &quot;</span>, <span class="at">xlim=</span><span class="fu">c</span>(min.width,max.width), <span class="at">ylim=</span><span class="fu">c</span>(min.length,max.length), <span class="at">xaxt=</span><span class="st">&quot;n&quot;</span>)</span>
+<span id="cb545-8"><a href="7-graphics.html#cb545-8" tabindex="-1"></a><span class="fu">axis</span>(<span class="dv">1</span>, <span class="at">labels=</span><span class="cn">FALSE</span>) <span class="co"># drop the numbers in the x-axis</span></span>
+<span id="cb545-9"><a href="7-graphics.html#cb545-9" tabindex="-1"></a><span class="co"># add title to subplot</span></span>
+<span id="cb545-10"><a href="7-graphics.html#cb545-10" tabindex="-1"></a><span class="fu">text</span>((max.width<span class="sc">-</span>min.width)<span class="sc">/</span><span class="dv">2</span> <span class="sc">+</span> min.width, max.length<span class="fl">+0.15</span>, <span class="fu">expression</span>(<span class="fu">italic</span>(<span class="st">&quot;Iris virginica&quot;</span>)))</span>
+<span id="cb545-11"><a href="7-graphics.html#cb545-11" tabindex="-1"></a></span>
+<span id="cb545-12"><a href="7-graphics.html#cb545-12" tabindex="-1"></a><span class="co"># Top right panel</span></span>
+<span id="cb545-13"><a href="7-graphics.html#cb545-13" tabindex="-1"></a><span class="fu">plot.new</span>()</span>
+<span id="cb545-14"><a href="7-graphics.html#cb545-14" tabindex="-1"></a></span>
+<span id="cb545-15"><a href="7-graphics.html#cb545-15" tabindex="-1"></a><span class="co"># Bottom left panel</span></span>
+<span id="cb545-16"><a href="7-graphics.html#cb545-16" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mai=</span><span class="fu">c</span>(<span class="fl">0.4</span>,<span class="fl">0.4</span>,<span class="dv">0</span>,<span class="dv">0</span>))</span>
+<span id="cb545-17"><a href="7-graphics.html#cb545-17" tabindex="-1"></a><span class="fu">plot</span>(Sepal.Length<span class="sc">~</span>Sepal.Width, <span class="at">data=</span>iris, <span class="at">subset=</span>(Species<span class="sc">==</span><span class="st">&quot;versicolor&quot;</span>), <span class="at">xlab=</span><span class="st">&quot; &quot;</span>, <span class="at">ylab=</span><span class="st">&quot; &quot;</span>,</span>
+<span id="cb545-18"><a href="7-graphics.html#cb545-18" tabindex="-1"></a>     <span class="at">xlim=</span><span class="fu">c</span>(min.width,max.width), <span class="at">ylim=</span><span class="fu">c</span>(min.length,max.length))</span>
+<span id="cb545-19"><a href="7-graphics.html#cb545-19" tabindex="-1"></a><span class="fu">text</span>((max.width<span class="sc">-</span>min.width)<span class="sc">/</span><span class="dv">2</span> <span class="sc">+</span> min.width, max.length<span class="fl">+0.15</span>, <span class="fu">expression</span>(<span class="fu">italic</span>(<span class="st">&quot;Iris versicolor&quot;</span>)))</span>
+<span id="cb545-20"><a href="7-graphics.html#cb545-20" tabindex="-1"></a></span>
+<span id="cb545-21"><a href="7-graphics.html#cb545-21" tabindex="-1"></a><span class="co"># Bottom right panel</span></span>
+<span id="cb545-22"><a href="7-graphics.html#cb545-22" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mai=</span><span class="fu">c</span>(<span class="fl">0.4</span>,<span class="fl">0.2</span>,<span class="dv">0</span>,<span class="fl">0.2</span>))</span>
+<span id="cb545-23"><a href="7-graphics.html#cb545-23" tabindex="-1"></a><span class="fu">plot</span>(Sepal.Length<span class="sc">~</span>Sepal.Width, <span class="at">data=</span>iris, <span class="at">subset=</span>(Species<span class="sc">==</span><span class="st">&quot;setosa&quot;</span>), <span class="at">xlab=</span><span class="st">&quot; &quot;</span>, <span class="at">ylab=</span><span class="st">&quot; &quot;</span>,</span>
+<span id="cb545-24"><a href="7-graphics.html#cb545-24" tabindex="-1"></a>     <span class="at">xlim=</span><span class="fu">c</span>(min.width,max.width), <span class="at">ylim=</span><span class="fu">c</span>(min.length,max.length), <span class="at">yaxt=</span><span class="st">&quot;n&quot;</span>)</span>
+<span id="cb545-25"><a href="7-graphics.html#cb545-25" tabindex="-1"></a><span class="fu">axis</span>(<span class="dv">2</span>, <span class="at">labels=</span><span class="cn">FALSE</span>) <span class="co"># drop the number in the y-axis</span></span>
+<span id="cb545-26"><a href="7-graphics.html#cb545-26" tabindex="-1"></a><span class="fu">text</span>((max.width<span class="sc">-</span>min.width)<span class="sc">/</span><span class="dv">2</span> <span class="sc">+</span> min.width, max.length<span class="fl">+0.15</span>, <span class="fu">expression</span>(<span class="fu">italic</span>(<span class="st">&quot;Iris setosa&quot;</span>)))</span>
+<span id="cb545-27"><a href="7-graphics.html#cb545-27" tabindex="-1"></a></span>
+<span id="cb545-28"><a href="7-graphics.html#cb545-28" tabindex="-1"></a><span class="co"># Shared titles for the whole figure</span></span>
+<span id="cb545-29"><a href="7-graphics.html#cb545-29" tabindex="-1"></a><span class="fu">mtext</span>(<span class="st">&quot;Sepal Width&quot;</span>, <span class="at">side=</span><span class="dv">1</span>, <span class="at">outer=</span>T, <span class="at">at=</span><span class="fl">0.5</span>)</span>
+<span id="cb545-30"><a href="7-graphics.html#cb545-30" tabindex="-1"></a><span class="fu">mtext</span>(<span class="st">&quot;Sepal Length&quot;</span>, <span class="at">side=</span><span class="dv">2</span>, <span class="at">outer=</span>T, <span class="at">at=</span><span class="fl">0.5</span>)</span></code></pre></div>
 <p><img src="https://drive.google.com/thumbnail?id=1pvaO5eeoqVjd-uOvRjk1-wf_0FwVBiUd&sz=w1000" alt="Multipanel" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" /></p>
 <p>A 3x3 multiplot figure</p>
 <p>Sometimes <code>for</code> loop works strangely, so use <code>repeat ... break</code> loop.</p>
-<div class="sourceCode" id="cb545"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb545-1"><a href="7-graphics.html#cb545-1" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">3</span>))</span>
-<span id="cb545-2"><a href="7-graphics.html#cb545-2" tabindex="-1"></a>i <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb545-3"><a href="7-graphics.html#cb545-3" tabindex="-1"></a><span class="cf">repeat</span> {</span>
-<span id="cb545-4"><a href="7-graphics.html#cb545-4" tabindex="-1"></a>    plot_data <span class="ot">&lt;-</span> confusion_ftable[,,i]</span>
-<span id="cb545-5"><a href="7-graphics.html#cb545-5" tabindex="-1"></a>    <span class="fu">mosaicplot</span>(<span class="fu">t</span>(plot_data),</span>
-<span id="cb545-6"><a href="7-graphics.html#cb545-6" tabindex="-1"></a>               <span class="at">xlab=</span><span class="st">&quot;Observation&quot;</span>, <span class="at">ylab=</span><span class="st">&quot;Prediction&quot;</span>,</span>
-<span id="cb545-7"><a href="7-graphics.html#cb545-7" tabindex="-1"></a>               <span class="at">main=</span><span class="fu">sprintf</span>(<span class="st">&quot;Group %s&quot;</span>, i), <span class="at">cex.axis =</span> <span class="fl">1.2</span> )</span>
-<span id="cb545-8"><a href="7-graphics.html#cb545-8" tabindex="-1"></a>    i <span class="ot">&lt;-</span> i<span class="sc">+</span><span class="dv">1</span></span>
-<span id="cb545-9"><a href="7-graphics.html#cb545-9" tabindex="-1"></a>    <span class="cf">if</span> (i<span class="sc">==</span><span class="dv">10</span>) <span class="cf">break</span></span>
-<span id="cb545-10"><a href="7-graphics.html#cb545-10" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb546"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb546-1"><a href="7-graphics.html#cb546-1" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">3</span>))</span>
+<span id="cb546-2"><a href="7-graphics.html#cb546-2" tabindex="-1"></a>i <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb546-3"><a href="7-graphics.html#cb546-3" tabindex="-1"></a><span class="cf">repeat</span> {</span>
+<span id="cb546-4"><a href="7-graphics.html#cb546-4" tabindex="-1"></a>    plot_data <span class="ot">&lt;-</span> confusion_ftable[,,i]</span>
+<span id="cb546-5"><a href="7-graphics.html#cb546-5" tabindex="-1"></a>    <span class="fu">mosaicplot</span>(<span class="fu">t</span>(plot_data),</span>
+<span id="cb546-6"><a href="7-graphics.html#cb546-6" tabindex="-1"></a>               <span class="at">xlab=</span><span class="st">&quot;Observation&quot;</span>, <span class="at">ylab=</span><span class="st">&quot;Prediction&quot;</span>,</span>
+<span id="cb546-7"><a href="7-graphics.html#cb546-7" tabindex="-1"></a>               <span class="at">main=</span><span class="fu">sprintf</span>(<span class="st">&quot;Group %s&quot;</span>, i), <span class="at">cex.axis =</span> <span class="fl">1.2</span> )</span>
+<span id="cb546-8"><a href="7-graphics.html#cb546-8" tabindex="-1"></a>    i <span class="ot">&lt;-</span> i<span class="sc">+</span><span class="dv">1</span></span>
+<span id="cb546-9"><a href="7-graphics.html#cb546-9" tabindex="-1"></a>    <span class="cf">if</span> (i<span class="sc">==</span><span class="dv">10</span>) <span class="cf">break</span></span>
+<span id="cb546-10"><a href="7-graphics.html#cb546-10" tabindex="-1"></a>}</span></code></pre></div>
 <p><strong>Graphical Parameters <code>par()</code></strong></p>
 <p><a href="https://www.rdocumentation.org/packages/graphics/versions/3.6.2/topics/par" class="uri">https://www.rdocumentation.org/packages/graphics/versions/3.6.2/topics/par</a></p>
 <p><code>?par</code> to get help page in R.</p>
@@ -954,9 +954,9 @@ A: use <code>mtext(text, side)</code>. 1-bottom, 2-left, 3-right, 4-top.</p>
 </table>
 <p><img src="images/par_mar.png" width="50%" style="display: block; margin: auto;" /></p>
 <p>Every time you change <code>par</code>, first save the orginal one so that could be easily reset, if needed.</p>
-<div class="sourceCode" id="cb546"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb546-1"><a href="7-graphics.html#cb546-1" tabindex="-1"></a>op <span class="ot">&lt;-</span> <span class="fu">par</span>() <span class="co"># save unchanged original defualt one</span></span>
-<span id="cb546-2"><a href="7-graphics.html#cb546-2" tabindex="-1"></a><span class="fu">par</span>(newsettings) <span class="co"># change to the way you need, newsettings can be tag=value or a list of tagged values</span></span>
-<span id="cb546-3"><a href="7-graphics.html#cb546-3" tabindex="-1"></a><span class="fu">par</span>(op) <span class="co"># reset to the default</span></span></code></pre></div>
+<div class="sourceCode" id="cb547"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb547-1"><a href="7-graphics.html#cb547-1" tabindex="-1"></a>op <span class="ot">&lt;-</span> <span class="fu">par</span>() <span class="co"># save unchanged original defualt one</span></span>
+<span id="cb547-2"><a href="7-graphics.html#cb547-2" tabindex="-1"></a><span class="fu">par</span>(newsettings) <span class="co"># change to the way you need, newsettings can be tag=value or a list of tagged values</span></span>
+<span id="cb547-3"><a href="7-graphics.html#cb547-3" tabindex="-1"></a><span class="fu">par</span>(op) <span class="co"># reset to the default</span></span></code></pre></div>
 <p><code>par()</code> gets <em>reset</em> every time a new device is opened. So use <code>dev.new()</code> and <code>dev.off()</code> to create a new device and close.</p>
 <p><code>par()</code> with no arguments is used to get <em>all</em> the graphical parameters as a named list.</p>
 <p>Several parameters can only be set by a call to <code>par()</code>, others can be set as arguments to <code>plot</code> functions. See <code>?par</code> for which par can only be changed through <code>par()</code>.</p>
@@ -964,36 +964,36 @@ A: use <code>mtext(text, side)</code>. 1-bottom, 2-left, 3-right, 4-top.</p>
 <p>For instance, <code>cex.lab</code> doesn’t work in <code>mosaicplot</code>, you just change the font size through <code>par(cex.lab=1.5)</code> and put it before <code>mosaicplot</code>.</p>
 <p>Q: How to <em>query</em> values of graphical parameters?<br />
 A: Two options: <code>par("cex")</code> or <code>par()$cex</code>.</p>
-<div class="sourceCode" id="cb547"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb547-1"><a href="7-graphics.html#cb547-1" tabindex="-1"></a><span class="co"># query one parameter</span></span>
-<span id="cb547-2"><a href="7-graphics.html#cb547-2" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">par</span>(<span class="st">&quot;cex&quot;</span>)</span>
-<span id="cb547-3"><a href="7-graphics.html#cb547-3" tabindex="-1"></a>[<span class="dv">1</span>] <span class="fl">0.66</span></span>
-<span id="cb547-4"><a href="7-graphics.html#cb547-4" tabindex="-1"></a></span>
-<span id="cb547-5"><a href="7-graphics.html#cb547-5" tabindex="-1"></a><span class="co"># query multiple parameters</span></span>
-<span id="cb547-6"><a href="7-graphics.html#cb547-6" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">par</span>(<span class="fu">c</span>(<span class="st">&quot;cex&quot;</span>, <span class="st">&quot;omi&quot;</span>))</span>
-<span id="cb547-7"><a href="7-graphics.html#cb547-7" tabindex="-1"></a><span class="sc">$</span>cex</span>
-<span id="cb547-8"><a href="7-graphics.html#cb547-8" tabindex="-1"></a>[<span class="dv">1</span>] <span class="fl">0.66</span></span>
-<span id="cb547-9"><a href="7-graphics.html#cb547-9" tabindex="-1"></a></span>
-<span id="cb547-10"><a href="7-graphics.html#cb547-10" tabindex="-1"></a><span class="sc">$</span>omi</span>
-<span id="cb547-11"><a href="7-graphics.html#cb547-11" tabindex="-1"></a>[<span class="dv">1</span>] <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span></span></code></pre></div>
+<div class="sourceCode" id="cb548"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb548-1"><a href="7-graphics.html#cb548-1" tabindex="-1"></a><span class="co"># query one parameter</span></span>
+<span id="cb548-2"><a href="7-graphics.html#cb548-2" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">par</span>(<span class="st">&quot;cex&quot;</span>)</span>
+<span id="cb548-3"><a href="7-graphics.html#cb548-3" tabindex="-1"></a>[<span class="dv">1</span>] <span class="fl">0.66</span></span>
+<span id="cb548-4"><a href="7-graphics.html#cb548-4" tabindex="-1"></a></span>
+<span id="cb548-5"><a href="7-graphics.html#cb548-5" tabindex="-1"></a><span class="co"># query multiple parameters</span></span>
+<span id="cb548-6"><a href="7-graphics.html#cb548-6" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">par</span>(<span class="fu">c</span>(<span class="st">&quot;cex&quot;</span>, <span class="st">&quot;omi&quot;</span>))</span>
+<span id="cb548-7"><a href="7-graphics.html#cb548-7" tabindex="-1"></a><span class="sc">$</span>cex</span>
+<span id="cb548-8"><a href="7-graphics.html#cb548-8" tabindex="-1"></a>[<span class="dv">1</span>] <span class="fl">0.66</span></span>
+<span id="cb548-9"><a href="7-graphics.html#cb548-9" tabindex="-1"></a></span>
+<span id="cb548-10"><a href="7-graphics.html#cb548-10" tabindex="-1"></a><span class="sc">$</span>omi</span>
+<span id="cb548-11"><a href="7-graphics.html#cb548-11" tabindex="-1"></a>[<span class="dv">1</span>] <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span></span></code></pre></div>
 <p><code>par(cex.lab=1.2)</code> set <code>cex.lab</code> to 1.2. This will enlarge font size for the plot. Defaults to 1.</p>
 <hr />
 </div>
 <div id="plot-example" class="section level3 unnumbered unlisted hasAnchor">
 <h3>Plot example<a href="7-graphics.html#plot-example" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p><a href="https://r-charts.com/base-r/axes/?utm_content=cmp-true" class="uri">https://r-charts.com/base-r/axes/?utm_content=cmp-true</a></p>
-<div class="sourceCode" id="cb548"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb548-1"><a href="7-graphics.html#cb548-1" tabindex="-1"></a>x<span class="ot">&lt;-</span><span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>; y<span class="ot">&lt;-</span>x<span class="sc">*</span>x</span>
-<span id="cb548-2"><a href="7-graphics.html#cb548-2" tabindex="-1"></a><span class="co"># Suppress the axis</span></span>
-<span id="cb548-3"><a href="7-graphics.html#cb548-3" tabindex="-1"></a><span class="fu">plot</span>(x, y, <span class="at">xaxt=</span><span class="st">&quot;n&quot;</span>, <span class="at">yaxt=</span><span class="st">&quot;n&quot;</span>)</span>
-<span id="cb548-4"><a href="7-graphics.html#cb548-4" tabindex="-1"></a><span class="co"># Changing x axis</span></span>
-<span id="cb548-5"><a href="7-graphics.html#cb548-5" tabindex="-1"></a>xtick<span class="ot">&lt;-</span><span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">10</span>, <span class="at">by=</span><span class="dv">5</span>)</span>
-<span id="cb548-6"><a href="7-graphics.html#cb548-6" tabindex="-1"></a><span class="fu">axis</span>(<span class="at">side=</span><span class="dv">1</span>, <span class="at">at=</span>xtick, <span class="at">labels =</span> <span class="cn">FALSE</span>) <span class="co"># Add tick marks</span></span>
-<span id="cb548-7"><a href="7-graphics.html#cb548-7" tabindex="-1"></a><span class="fu">text</span>(<span class="at">x=</span>xtick,  <span class="fu">par</span>(<span class="st">&quot;usr&quot;</span>)[<span class="dv">3</span>], </span>
-<span id="cb548-8"><a href="7-graphics.html#cb548-8" tabindex="-1"></a>     <span class="at">labels =</span> xtick, <span class="at">srt =</span> <span class="dv">45</span>, <span class="at">pos =</span> <span class="dv">1</span>, <span class="at">xpd =</span> <span class="cn">TRUE</span>) <span class="co"># Add tick mark labels</span></span>
-<span id="cb548-9"><a href="7-graphics.html#cb548-9" tabindex="-1"></a><span class="co"># Changing y axis</span></span>
-<span id="cb548-10"><a href="7-graphics.html#cb548-10" tabindex="-1"></a>ytick<span class="ot">&lt;-</span><span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">100</span>, <span class="at">by=</span><span class="dv">50</span>)</span>
-<span id="cb548-11"><a href="7-graphics.html#cb548-11" tabindex="-1"></a><span class="fu">axis</span>(<span class="at">side=</span><span class="dv">2</span>, <span class="at">at=</span>ytick, <span class="at">labels =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb548-12"><a href="7-graphics.html#cb548-12" tabindex="-1"></a><span class="fu">text</span>(<span class="fu">par</span>(<span class="st">&quot;usr&quot;</span>)[<span class="dv">1</span>], ytick,  </span>
-<span id="cb548-13"><a href="7-graphics.html#cb548-13" tabindex="-1"></a>     <span class="at">labels =</span> ytick, <span class="at">srt =</span> <span class="dv">45</span>, <span class="at">pos =</span> <span class="dv">2</span>, <span class="at">xpd =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb549"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb549-1"><a href="7-graphics.html#cb549-1" tabindex="-1"></a>x<span class="ot">&lt;-</span><span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>; y<span class="ot">&lt;-</span>x<span class="sc">*</span>x</span>
+<span id="cb549-2"><a href="7-graphics.html#cb549-2" tabindex="-1"></a><span class="co"># Suppress the axis</span></span>
+<span id="cb549-3"><a href="7-graphics.html#cb549-3" tabindex="-1"></a><span class="fu">plot</span>(x, y, <span class="at">xaxt=</span><span class="st">&quot;n&quot;</span>, <span class="at">yaxt=</span><span class="st">&quot;n&quot;</span>)</span>
+<span id="cb549-4"><a href="7-graphics.html#cb549-4" tabindex="-1"></a><span class="co"># Changing x axis</span></span>
+<span id="cb549-5"><a href="7-graphics.html#cb549-5" tabindex="-1"></a>xtick<span class="ot">&lt;-</span><span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">10</span>, <span class="at">by=</span><span class="dv">5</span>)</span>
+<span id="cb549-6"><a href="7-graphics.html#cb549-6" tabindex="-1"></a><span class="fu">axis</span>(<span class="at">side=</span><span class="dv">1</span>, <span class="at">at=</span>xtick, <span class="at">labels =</span> <span class="cn">FALSE</span>) <span class="co"># Add tick marks</span></span>
+<span id="cb549-7"><a href="7-graphics.html#cb549-7" tabindex="-1"></a><span class="fu">text</span>(<span class="at">x=</span>xtick,  <span class="fu">par</span>(<span class="st">&quot;usr&quot;</span>)[<span class="dv">3</span>], </span>
+<span id="cb549-8"><a href="7-graphics.html#cb549-8" tabindex="-1"></a>     <span class="at">labels =</span> xtick, <span class="at">srt =</span> <span class="dv">45</span>, <span class="at">pos =</span> <span class="dv">1</span>, <span class="at">xpd =</span> <span class="cn">TRUE</span>) <span class="co"># Add tick mark labels</span></span>
+<span id="cb549-9"><a href="7-graphics.html#cb549-9" tabindex="-1"></a><span class="co"># Changing y axis</span></span>
+<span id="cb549-10"><a href="7-graphics.html#cb549-10" tabindex="-1"></a>ytick<span class="ot">&lt;-</span><span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">100</span>, <span class="at">by=</span><span class="dv">50</span>)</span>
+<span id="cb549-11"><a href="7-graphics.html#cb549-11" tabindex="-1"></a><span class="fu">axis</span>(<span class="at">side=</span><span class="dv">2</span>, <span class="at">at=</span>ytick, <span class="at">labels =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb549-12"><a href="7-graphics.html#cb549-12" tabindex="-1"></a><span class="fu">text</span>(<span class="fu">par</span>(<span class="st">&quot;usr&quot;</span>)[<span class="dv">1</span>], ytick,  </span>
+<span id="cb549-13"><a href="7-graphics.html#cb549-13" tabindex="-1"></a>     <span class="at">labels =</span> ytick, <span class="at">srt =</span> <span class="dv">45</span>, <span class="at">pos =</span> <span class="dv">2</span>, <span class="at">xpd =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 <p><code>plot()</code> function accepts <a href="https://www.rdocumentation.org/packages/graphics/versions/3.6.2/topics/par">graphical parameters</a> in <code>par</code> to set aesthetics, such as font size, margins. The difference is that settings in <code>plot()</code> apply to current figure, while settings in <code>par</code> apply globally.</p>
 <table>
 <colgroup>
@@ -1045,39 +1045,39 @@ A: Two options: <code>par("cex")</code> or <code>par()$cex</code>.</p>
 <p><strong>line type</strong></p>
 <p><img src="https://drive.google.com/thumbnail?id=1v9fZATEfWEFgULLcQ18nGZqpxbIgtohW&sz=w1000" alt="line type" style="display: block; margin-right: auto; margin-left: auto; zoom:100%;" /></p>
 <p>The <strong>lattice</strong> graphics is useful for conditioning types of plots. Make separate plots for each group.</p>
-<div class="sourceCode" id="cb549"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb549-1"><a href="7-graphics.html#cb549-1" tabindex="-1"></a>lattice<span class="sc">::</span><span class="fu">xyplot</span>(drinks <span class="sc">~</span> partyHr <span class="sc">|</span> gender, <span class="at">data=</span>survey, <span class="at">ylab=</span><span class="st">&quot;Drinks/week&quot;</span>, </span>
-<span id="cb549-2"><a href="7-graphics.html#cb549-2" tabindex="-1"></a>       <span class="at">xlab=</span><span class="st">&quot;Party hours/week&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb550"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb550-1"><a href="7-graphics.html#cb550-1" tabindex="-1"></a>lattice<span class="sc">::</span><span class="fu">xyplot</span>(drinks <span class="sc">~</span> partyHr <span class="sc">|</span> gender, <span class="at">data=</span>survey, <span class="at">ylab=</span><span class="st">&quot;Drinks/week&quot;</span>, </span>
+<span id="cb550-2"><a href="7-graphics.html#cb550-2" tabindex="-1"></a>       <span class="at">xlab=</span><span class="st">&quot;Party hours/week&quot;</span>)</span></code></pre></div>
 <ul>
 <li><code>xyplot()</code> function in the lattice graphics is analogous to as the <code>plot()</code> function in the base graphics.</li>
 <li>The <code>histogram()</code> function is a lattice graphics function that is analogous to the <code>hist()</code> function in the base graphics.</li>
 </ul>
 <p>The <code>labels</code> argument of the <code>axis</code> function allows customizing the tick mark labels.</p>
-<div class="sourceCode" id="cb550"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb550-1"><a href="7-graphics.html#cb550-1" tabindex="-1"></a><span class="co"># Change X-axis tick labels</span></span>
-<span id="cb550-2"><a href="7-graphics.html#cb550-2" tabindex="-1"></a><span class="fu">plot</span>(x, y, <span class="at">pch =</span> <span class="dv">19</span>, <span class="at">xaxt =</span> <span class="st">&quot;n&quot;</span>)</span>
-<span id="cb550-3"><a href="7-graphics.html#cb550-3" tabindex="-1"></a><span class="fu">axis</span>(<span class="dv">1</span>, <span class="at">at =</span> <span class="fu">seq</span>(<span class="fu">round</span>(<span class="fu">min</span>(x)),</span>
-<span id="cb550-4"><a href="7-graphics.html#cb550-4" tabindex="-1"></a>                 <span class="fu">round</span>(<span class="fu">max</span>(x)), <span class="at">by =</span> <span class="dv">1</span>),</span>
-<span id="cb550-5"><a href="7-graphics.html#cb550-5" tabindex="-1"></a>     <span class="at">labels =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">11</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb551"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb551-1"><a href="7-graphics.html#cb551-1" tabindex="-1"></a><span class="co"># Change X-axis tick labels</span></span>
+<span id="cb551-2"><a href="7-graphics.html#cb551-2" tabindex="-1"></a><span class="fu">plot</span>(x, y, <span class="at">pch =</span> <span class="dv">19</span>, <span class="at">xaxt =</span> <span class="st">&quot;n&quot;</span>)</span>
+<span id="cb551-3"><a href="7-graphics.html#cb551-3" tabindex="-1"></a><span class="fu">axis</span>(<span class="dv">1</span>, <span class="at">at =</span> <span class="fu">seq</span>(<span class="fu">round</span>(<span class="fu">min</span>(x)),</span>
+<span id="cb551-4"><a href="7-graphics.html#cb551-4" tabindex="-1"></a>                 <span class="fu">round</span>(<span class="fu">max</span>(x)), <span class="at">by =</span> <span class="dv">1</span>),</span>
+<span id="cb551-5"><a href="7-graphics.html#cb551-5" tabindex="-1"></a>     <span class="at">labels =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">11</span>)</span></code></pre></div>
 <p>You can join together two plots with different Y-axis scale increasing the margins of the plot, using <code>par(new = TRUE)</code>, creating a new plot without axis or labels and setting a new axis with the <code>axis</code> function.</p>
-<div class="sourceCode" id="cb551"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb551-1"><a href="7-graphics.html#cb551-1" tabindex="-1"></a><span class="co"># Increase the plot margins</span></span>
-<span id="cb551-2"><a href="7-graphics.html#cb551-2" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">4</span>, <span class="dv">4</span>, <span class="dv">4</span>) <span class="sc">+</span> <span class="fl">0.25</span>)</span>
-<span id="cb551-3"><a href="7-graphics.html#cb551-3" tabindex="-1"></a></span>
-<span id="cb551-4"><a href="7-graphics.html#cb551-4" tabindex="-1"></a><span class="co"># Data</span></span>
-<span id="cb551-5"><a href="7-graphics.html#cb551-5" tabindex="-1"></a><span class="fu">plot</span>(x, y, <span class="at">pch =</span> <span class="dv">19</span>, <span class="at">ylab =</span> <span class="st">&quot;Var 1&quot;</span>)</span>
-<span id="cb551-6"><a href="7-graphics.html#cb551-6" tabindex="-1"></a></span>
-<span id="cb551-7"><a href="7-graphics.html#cb551-7" tabindex="-1"></a><span class="co"># Needed to merge the plots</span></span>
-<span id="cb551-8"><a href="7-graphics.html#cb551-8" tabindex="-1"></a><span class="fu">par</span>(<span class="at">new =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb551-9"><a href="7-graphics.html#cb551-9" tabindex="-1"></a></span>
-<span id="cb551-10"><a href="7-graphics.html#cb551-10" tabindex="-1"></a><span class="co"># More data</span></span>
-<span id="cb551-11"><a href="7-graphics.html#cb551-11" tabindex="-1"></a><span class="fu">plot</span>(x <span class="sc">^</span> <span class="dv">2</span>, y <span class="sc">^</span> <span class="dv">2</span>,</span>
-<span id="cb551-12"><a href="7-graphics.html#cb551-12" tabindex="-1"></a>     <span class="at">col =</span> <span class="dv">4</span>, <span class="at">pch =</span> <span class="dv">19</span>,</span>
-<span id="cb551-13"><a href="7-graphics.html#cb551-13" tabindex="-1"></a>     <span class="at">axes =</span> <span class="cn">FALSE</span>, <span class="co"># No axes</span></span>
-<span id="cb551-14"><a href="7-graphics.html#cb551-14" tabindex="-1"></a>     <span class="at">bty =</span> <span class="st">&quot;n&quot;</span>,    <span class="co"># No box</span></span>
-<span id="cb551-15"><a href="7-graphics.html#cb551-15" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">&quot;&quot;</span>, <span class="at">ylab =</span> <span class="st">&quot;&quot;</span>) <span class="co"># No axis labels</span></span>
-<span id="cb551-16"><a href="7-graphics.html#cb551-16" tabindex="-1"></a></span>
-<span id="cb551-17"><a href="7-graphics.html#cb551-17" tabindex="-1"></a><span class="co"># New axis</span></span>
-<span id="cb551-18"><a href="7-graphics.html#cb551-18" tabindex="-1"></a><span class="fu">axis</span>(<span class="dv">4</span>)</span>
-<span id="cb551-19"><a href="7-graphics.html#cb551-19" tabindex="-1"></a><span class="co"># Axis label</span></span>
-<span id="cb551-20"><a href="7-graphics.html#cb551-20" tabindex="-1"></a><span class="fu">mtext</span>(<span class="st">&quot;Var 2&quot;</span>, <span class="at">side =</span> <span class="dv">4</span>, <span class="at">line =</span> <span class="dv">3</span>, <span class="at">col =</span> <span class="dv">4</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb552"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb552-1"><a href="7-graphics.html#cb552-1" tabindex="-1"></a><span class="co"># Increase the plot margins</span></span>
+<span id="cb552-2"><a href="7-graphics.html#cb552-2" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">4</span>, <span class="dv">4</span>, <span class="dv">4</span>) <span class="sc">+</span> <span class="fl">0.25</span>)</span>
+<span id="cb552-3"><a href="7-graphics.html#cb552-3" tabindex="-1"></a></span>
+<span id="cb552-4"><a href="7-graphics.html#cb552-4" tabindex="-1"></a><span class="co"># Data</span></span>
+<span id="cb552-5"><a href="7-graphics.html#cb552-5" tabindex="-1"></a><span class="fu">plot</span>(x, y, <span class="at">pch =</span> <span class="dv">19</span>, <span class="at">ylab =</span> <span class="st">&quot;Var 1&quot;</span>)</span>
+<span id="cb552-6"><a href="7-graphics.html#cb552-6" tabindex="-1"></a></span>
+<span id="cb552-7"><a href="7-graphics.html#cb552-7" tabindex="-1"></a><span class="co"># Needed to merge the plots</span></span>
+<span id="cb552-8"><a href="7-graphics.html#cb552-8" tabindex="-1"></a><span class="fu">par</span>(<span class="at">new =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb552-9"><a href="7-graphics.html#cb552-9" tabindex="-1"></a></span>
+<span id="cb552-10"><a href="7-graphics.html#cb552-10" tabindex="-1"></a><span class="co"># More data</span></span>
+<span id="cb552-11"><a href="7-graphics.html#cb552-11" tabindex="-1"></a><span class="fu">plot</span>(x <span class="sc">^</span> <span class="dv">2</span>, y <span class="sc">^</span> <span class="dv">2</span>,</span>
+<span id="cb552-12"><a href="7-graphics.html#cb552-12" tabindex="-1"></a>     <span class="at">col =</span> <span class="dv">4</span>, <span class="at">pch =</span> <span class="dv">19</span>,</span>
+<span id="cb552-13"><a href="7-graphics.html#cb552-13" tabindex="-1"></a>     <span class="at">axes =</span> <span class="cn">FALSE</span>, <span class="co"># No axes</span></span>
+<span id="cb552-14"><a href="7-graphics.html#cb552-14" tabindex="-1"></a>     <span class="at">bty =</span> <span class="st">&quot;n&quot;</span>,    <span class="co"># No box</span></span>
+<span id="cb552-15"><a href="7-graphics.html#cb552-15" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">&quot;&quot;</span>, <span class="at">ylab =</span> <span class="st">&quot;&quot;</span>) <span class="co"># No axis labels</span></span>
+<span id="cb552-16"><a href="7-graphics.html#cb552-16" tabindex="-1"></a></span>
+<span id="cb552-17"><a href="7-graphics.html#cb552-17" tabindex="-1"></a><span class="co"># New axis</span></span>
+<span id="cb552-18"><a href="7-graphics.html#cb552-18" tabindex="-1"></a><span class="fu">axis</span>(<span class="dv">4</span>)</span>
+<span id="cb552-19"><a href="7-graphics.html#cb552-19" tabindex="-1"></a><span class="co"># Axis label</span></span>
+<span id="cb552-20"><a href="7-graphics.html#cb552-20" tabindex="-1"></a><span class="fu">mtext</span>(<span class="st">&quot;Var 2&quot;</span>, <span class="at">side =</span> <span class="dv">4</span>, <span class="at">line =</span> <span class="dv">3</span>, <span class="at">col =</span> <span class="dv">4</span>)</span></code></pre></div>
 <p><code>mtext(text, side, line, adj, at)</code> write text into the margins of a plot.</p>
 <ul>
 <li><code>side</code> on which side of the plot (1=bottom, 2=left, 3=top, 4=right).</li>
@@ -1092,7 +1092,7 @@ A: Two options: <code>par("cex")</code> or <code>par()$cex</code>.</p>
 <p><strong><code>pch</code> plot symbol</strong></p>
 <p><strong><code>20</code></strong> small solid circle.</p>
 <p><code>21</code> circle with border and filling. You can colour the inside and outside separately.</p>
-<div class="sourceCode" id="cb552"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb552-1"><a href="7-graphics.html#cb552-1" tabindex="-1"></a><span class="fu">geom_point</span>(<span class="at">shape=</span><span class="dv">21</span>, <span class="at">fill=</span><span class="st">&quot;#008BFF&quot;</span>, <span class="at">color=</span><span class="st">&quot;#008BFF&quot;</span>, <span class="at">alpha=</span><span class="fl">0.8</span>, <span class="at">size=</span><span class="cn">NULL</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb553"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb553-1"><a href="7-graphics.html#cb553-1" tabindex="-1"></a><span class="fu">geom_point</span>(<span class="at">shape=</span><span class="dv">21</span>, <span class="at">fill=</span><span class="st">&quot;#008BFF&quot;</span>, <span class="at">color=</span><span class="st">&quot;#008BFF&quot;</span>, <span class="at">alpha=</span><span class="fl">0.8</span>, <span class="at">size=</span><span class="cn">NULL</span>)</span></code></pre></div>
 <p><a href="https://blog.albertkuo.me/post/point-shape-options-in-ggplot/" class="uri">https://blog.albertkuo.me/post/point-shape-options-in-ggplot/</a></p>
 <p>1 2 空心圆, 三角形</p>
 <p>16 17 实心圆, 三角形</p>
@@ -1113,18 +1113,18 @@ A: Two options: <code>par("cex")</code> or <code>par()$cex</code>.</p>
 <p>Default res of 72 dpi is too fuzzy. To remove the graininess, use <code>res=300</code> for a fine-resolution figure.</p></li>
 </ul>
 <p>For the same figure size, the higher the resolution, the larger the zoom of the figure</p>
-<div class="sourceCode" id="cb553"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb553-1"><a href="7-graphics.html#cb553-1" tabindex="-1"></a><span class="fu">png</span>(<span class="at">file=</span><span class="st">&quot;example1.png&quot;</span>, <span class="at">res=</span><span class="dv">100</span>)</span>
-<span id="cb553-2"><a href="7-graphics.html#cb553-2" tabindex="-1"></a><span class="fu">plot</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>)</span>
-<span id="cb553-3"><a href="7-graphics.html#cb553-3" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb554"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb554-1"><a href="7-graphics.html#cb554-1" tabindex="-1"></a><span class="fu">png</span>(<span class="at">file=</span><span class="st">&quot;example1.png&quot;</span>, <span class="at">res=</span><span class="dv">100</span>)</span>
+<span id="cb554-2"><a href="7-graphics.html#cb554-2" tabindex="-1"></a><span class="fu">plot</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>)</span>
+<span id="cb554-3"><a href="7-graphics.html#cb554-3" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code></pre></div>
 <figure style="text-align: center;">
 <img src="https://drive.google.com/thumbnail?id=1rRSjgf6n9B8T0V-L9zOx7Okxo8Pfzb3j&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
 <figcaption>
 Resolution 100 ppi.
 </figcaption>
 </figure>
-<div class="sourceCode" id="cb554"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb554-1"><a href="7-graphics.html#cb554-1" tabindex="-1"></a><span class="fu">png</span>(<span class="at">file=</span><span class="st">&quot;example1.png&quot;</span>, <span class="at">res=</span><span class="dv">200</span>)</span>
-<span id="cb554-2"><a href="7-graphics.html#cb554-2" tabindex="-1"></a><span class="fu">plot</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>)</span>
-<span id="cb554-3"><a href="7-graphics.html#cb554-3" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb555"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb555-1"><a href="7-graphics.html#cb555-1" tabindex="-1"></a><span class="fu">png</span>(<span class="at">file=</span><span class="st">&quot;example1.png&quot;</span>, <span class="at">res=</span><span class="dv">200</span>)</span>
+<span id="cb555-2"><a href="7-graphics.html#cb555-2" tabindex="-1"></a><span class="fu">plot</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>)</span>
+<span id="cb555-3"><a href="7-graphics.html#cb555-3" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code></pre></div>
 <figure style="text-align: center;">
 <img src="https://drive.google.com/thumbnail?id=1TbskPzzgiD86IdtXenXH58LwpU3WgNus&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
 <figcaption>

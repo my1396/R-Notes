@@ -32,7 +32,7 @@ touch .nojekyll
 - Note that `.nojekyll`'s location is different than that of `bookdown`, which is at `/docs` folder.
 
 
-Only re-render changed files
+#### Only re-render changed files
 
 You can add the following to your `_quarto.yml` file to only re-render changed files:
 
@@ -43,7 +43,7 @@ execute:
 
 When `freeze: auto` is enabled, Quarto checks for modifications in the source files of your computational documents. If no changes are detected, Quarto will utilize the cached results from previous computations, skipping the re-execution of code chunks. 
 
-This significantly speeds up rendering times, especially for large projects with many computational documents.
+This <span class="env-green">significantly speeds up rendering times</span>, especially for large projects with many computational documents. ✅
 
 
 --------------------------------------------------------------------------------

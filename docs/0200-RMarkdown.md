@@ -1135,7 +1135,9 @@ You may use `knitr::opts_chunk$set()` to change the default values of chunk opti
 
 --------------------------------------------------------------------------------
 
-### Global `knitr` Options
+### Put Global `knitr` Options in a Separate File
+
+If you have many R Markdown documents in a project, you may want to put common `knitr` options in a separate file and load this file in each document. This way, you can maintain the options in one place and ensure consistency across documents.
 
 First check your configuration (`_bookdown.yml`)
 
@@ -1146,7 +1148,7 @@ First check your configuration (`_bookdown.yml`)
   You can create a file with the common R code and load this file in each document.
 
 
-**Read external scripts into a chunk**
+#### Read external R scripts into a chunk
 
 Two options if you want to read external scripts:
 
@@ -1178,23 +1180,37 @@ Two options if you want to read external scripts:
 
   You can even read scripts of other languages.
 
-  ````markcown
+  ````markdown
   ```{python, file='script.py'}
   ```
   ````
 
 
 
-**`.Rmd` files**
+#### Load external `.Rmd` files
 
-If we have R Markdown documents that we want to share across several pages in the website, we can include them in the parent `.Rmd` document using the `child` chunk option. 
+If we have R Markdown documents that we want to share across several pages in the website, we can include them in the parent `.Rmd` document using the <span class="env-green">`child` chunk option</span>. 
 
 Note that the child `.Rmd` files need to be named with a leading `_` so they are not compiled as standalone documents during the site rendering.
 
+
+In the parent `.Rmd` file, we can include a child document like this:
+
 ````markdown
-```{r, child = "_setup.Rmd", include=FALSE}
+```{r setup, child = "_setup.Rmd", include=FALSE}
 ```
 ````
+
+The child document `_setup.Rmd` can contain any valid R Markdown content, including text, code chunks, and inline R code. When the parent document is rendered, the content of the child document will be included at the location of the chunk. E.g.,
+
+````markdown
+```{r, label="chunk-opt", include=FALSE}
+# set default chunk options
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, fig.align="center", fig.pos = "H")
+opts <- options(knitr.kable.NA = "")
+```
+````
+
 
 
 **In summary**

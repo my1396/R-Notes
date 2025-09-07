@@ -32,7 +32,7 @@ touch .nojekyll
 - Note that `.nojekyll`'s location is different than that of `bookdown`, which is at `/docs` folder.
 
 
-Only re-render changed files
+#### Only re-render changed files
 
 You can add the following to your `_quarto.yml` file to only re-render changed files:
 
@@ -43,7 +43,7 @@ execute:
 
 When `freeze: auto` is enabled, Quarto checks for modifications in the source files of your computational documents. If no changes are detected, Quarto will utilize the cached results from previous computations, skipping the re-execution of code chunks. 
 
-This significantly speeds up rendering times, especially for large projects with many computational documents.
+This <span class="env-green">significantly speeds up rendering times</span>, especially for large projects with many computational documents. ✅
 
 
 --------------------------------------------------------------------------------
@@ -672,6 +672,23 @@ format:
 
 You can add classes, attributes, and other identifiers to regions of content using Divs and Spans.
 
+- classes: `.class`
+- identifiers: `#id`
+- key-value attributes: `key="value"`
+
+Note 
+
+- They are separated by spaces, do NOT use commas.
+  
+  This is different from `bookdown`, which uses commas.
+
+- Order: identifiers, classes, and then key-value attributes.
+- Logical attributes: `true/false`, `yes/no`, and `on/off` are all equivalent to `TRUE/FALSE` in R.
+  
+  It is optional to enclose in quotes.
+
+
+
 Div example
 
 ```markdown
@@ -688,7 +705,7 @@ Once rendered to HTML, Quarto will translate the markdown into:
 </div>
 ```
 
-A bracketed sequence of inlines, as one would use to begin a link, will be treated as a Span with attributes if it is followed immediately by attributes:
+A bracketed sequence of inlines, as one would use to begin a link, will be treated as a `<span>` with attributes if it is followed immediately by attributes:
 
 ```markdown
 [This is *some text*]{.class key="val"}
@@ -775,7 +792,7 @@ crossref:
 
 ### Callouts
 
-There are five different types of callouts available.
+There are five different types of [callouts](https://quarto.org/docs/authoring/callouts.html) available.
 
 - note (blue)
 - tip (green)
@@ -859,6 +876,39 @@ This is a nested note callout.
 Note that you need to put a <span class="env-green">blank line before and after</span> the nested callout to ensure proper rendering.
 
 <img src="https://drive.google.com/thumbnail?id=1edismznA-TVkDcwK8TeLatGmMOMI7Ci_&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
+
+
+#### Cross-reference Callouts
+
+
+To cross-reference a callout, add an ID attribute that starts with the appropriate callout prefix (see [Table blow](https://quarto.org/docs/authoring/callouts.html#tbl-callout-prefixes)). You can then reference the callout using the usual `@` syntax. For example, here we add the ID `#tip-example` to the callout, and then refer back to it:
+
+```markdown
+::: {#tip-example .callout-tip}
+## Cross-Referencing a Tip
+Add an ID starting with `#tip-` to reference a tip.
+:::
+See @tip-example...
+```
+
+- Note that the ID attribute must come first, before the class attribute. 
+  
+  This follows the general rule for Divs and Spans that IDs must come before classes.
+
+The prefixes for each type of callout are:
+
+Prefixes for callout cross-references
+
+| Callout Type | Prefix |
+| --- |  --- |
+| `note` | `#nte-` |
+| --- |  --- |
+| `tip` | `#tip-` |
+| `warning` | `#wrn-` |
+| `important` | `#imp-` |
+| `caution` | `#cau-` |
+
+Cross-referencing callouts is currently only supported for HTML, PDF and MS Word.
 
 --------------------------------------------------------------------------------
 
