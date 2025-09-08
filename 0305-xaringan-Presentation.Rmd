@@ -5,6 +5,7 @@
   - cran: <https://cran.r-project.org/web/packages/xaringan/refman/xaringan.html#moon_reader>
   - rdrr.io: <https://rdrr.io/cran/xaringan/api/>
 - GitHub repo (refer to Wiki page for detailed documentation): <https://github.com/yihui/xaringan>
+- [remark.js Wiki page](https://github.com/gnab/remark/wiki/Markdown?utm_source=chatgpt.com#slide-properties)
 
 
 It is a slide template based on an HTML5 presentation framework `remark.js`.
@@ -98,6 +99,7 @@ This will call `rmarkdown::render` and then `pagedown::chrome_print` automatical
 ### Basic
 
 - Every new slide is created under three dashes (`---`).
+- Two dashes (`--`) create a new fragment (incremental reveal) within the same slide.
 - The content of the slide can be arbitrary, e.g., it does not have to have a slide title, and if it does, the title can be of any level you prefer (`#`, `##`, or `###`).
 - A slide can have a few properties, including `class` and `background-image`, etc. 
   
@@ -140,11 +142,13 @@ This will apply class to the paragraph only.
   .red { color: red; }
   ```
 
+--------------------------------------------------------------------------------
+
 ### Math Environments
 
-Display math enclosed in double dollar signs, but note that
+Display math enclosed in double dollar signs (`$$...$$`), but note that
 
-- the environment should <span class="env-orange">**not** appear on separate lines</span>
+- the dollar signs (`$$`) should <span class="env-orange">**not** appear on separate lines</span>
 - <span class="env-orange">**No space**</span> between `$$` and the math content
 
 ```markdown
@@ -158,8 +162,35 @@ This will work:
 $$E = mc^2$$
 ```
 
+--------------------------------------------------------------------------------
 
-#### Presenter Notes
+### Bullet list
+
+Third level lists need an extra tab. [↩︎](https://github.com/yihui/xaringan/issues/282)
+
+Q: I think you need four spaces (or a true tab instead of two spaces) to indicate a new level. The <span class="env-green">syntax of remark.js's Markdown is different with Pandoc's Markdown</span>. This works fine:
+
+```markdown
+# Hello World
+
+- Here are some bullet points using markdown syntax
+    - Here's the next level
+        - And this should be a lower level, but it isn't
+            - Whereas this is:
+
+- To summarise:
+    - To get third level bullets:
+        - You have to use an extra tab on the third level.
+
+1. No tabs
+    1. One tab
+        1. Two tabs
+            1. Three tabs
+```
+
+--------------------------------------------------------------------------------
+
+### Presenter Notes
 
 Q: Why using presenter notes? 
 
@@ -207,7 +238,7 @@ The figure below shows the **Displays** settings on macOS for extended display m
 
 Ref: [R Markdown: The Definitive Guide, Section 7.3.5](https://bookdown.org/yihui/rmarkdown/xaringan-format.html#xaringan-notes)
 
-#### CSS and themes
+### CSS and themes
 
 The format `xaringan::moon_reader` has a `css` option, to which you can pass a vector of CSS file paths, e.g.,
 
@@ -234,7 +265,7 @@ output:
 Read [R Markdown: The Definitive Guide, Section 7.5](https://bookdown.org/yihui/rmarkdown/css-and-themes.html) for more details about CSS and themes.
 
 
-#### Working offline
+### Working offline
 
 Making the slides work offline can be tricky, since you may have other dependencies. For example, if you used Google web fonts in slides (the default theme uses *Yanone Kaffeesatz*, *Droid Serif*, and *Source Code Pro*), they will not work offline unless you download or install them locally.
 
@@ -243,7 +274,7 @@ To make slides work offline, you need to download a copy of remark.js in advance
 Refer to [R Markdown: The Definitive Guide, Section 7.6.4](https://bookdown.org/yihui/rmarkdown/some-tips.html#working-offline) for details.
 
 
-#### Parser
+### Parser
 
 -   **Remark default parser** (default in xaringan):
 
@@ -266,6 +297,52 @@ Refer to [R Markdown: The Definitive Guide, Section 7.6.4](https://bookdown.org/
         -   Incremental slides (`--`) still work, but spacing quirks can appear
 
         -   Raw HTML might be handled slightly differently
+
+
+--------------------------------------------------------------------------------
+
+### xaringanExtra
+
+The [`xaringanExtra` package](https://pkg.garrickadenbuie.com/xaringanExtra/#/?id=xaringanextra) provides additional functionalities and themes for `xaringan` presentations.
+
+Highlight features:
+
+- Add a search box to search through your slides with [search](https://pkg.garrickadenbuie.com/xaringanExtra/#/search)
+
+````markdown
+```{r xaringanExtra-search, echo=FALSE}`r ''`
+# add search box
+xaringanExtra::use_search(show_icon = TRUE, position = "bottom-left")
+```
+````
+
+In your slides, press `Control` + `F` to start searching, or click on the search icon 🔍 if you set `show_icon = TRUE`. Press `Enter` to jump to the next match.
+
+
+- Tile view
+
+````markdown
+```{r xaringan-tile-view, echo=FALSE}`r ''`
+xaringanExtra::use_tile_view()
+```
+````
+Tile view gives you a way to quickly jump between slides. Just press `O` (the letter **O** for **O**verview) at any point in your slideshow and the tile view appears. 
+
+Click on a slide to jump to the slide, or press `O` to *exit* tile view.
+
+- Add a progress bar at the bottom of your slides with progress bar
+  
+  Might not be necessary if you page numbers already.
+
+````markdown
+```{r xaringanExtra-progressbar, echo=FALSE}`r ''`
+# add progress bar
+xaringanExtra::use_progress_bar(color="red", location="top", height="0.25em")
+```
+````
+
+
+[GitHub repo](https://github.com/gadenbuie/xaringanExtra/)
 
 
 --------------------------------------------------------------------------------

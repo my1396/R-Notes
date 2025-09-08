@@ -253,12 +253,30 @@ To reduce the margin above the title, add the following line to your `preamble.t
 
 To reduce the margin below the title, in individual `qmd` file, add the following line **after** the YAML header:
 
-```latex
-::: {=latex}
-\vspace{-6em}
-:::
-```
+- fenced divs
 
+  ```latex
+  ::: {=latex}
+  \vspace{-6em}
+  :::
+  ```
+
+- code chunks
+
+  ````latex
+  ```{=latex} 
+  \vspace{-6em}
+  ```
+  ````
+
+For pdf output, it is possible to **write LaTeX code directly** in Markdown document using fenced divs or code chunks with `{=latex}`.
+
+- Don't forget the equal sign before `latex`.
+
+ref: [R Markdown Cookbook: Section 6.11 Write raw LaTeX code](https://bookdown.org/yihui/rmarkdown-cookbook/raw-latex.html#raw-latex)
+
+
+--------------------------------------------------------------------------------
 
 #### Templates
 
