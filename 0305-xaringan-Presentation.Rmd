@@ -100,6 +100,9 @@ This will call `rmarkdown::render` and then `pagedown::chrome_print` automatical
 
 - Every new slide is created under three dashes (`---`).
 - Two dashes (`--`) create a new fragment (incremental reveal) within the same slide.
+  
+  - Blank lines before and after the two and three dashes are required.
+  - No whitespace after the dashes.
 - The content of the slide can be arbitrary, e.g., it does not have to have a slide title, and if it does, the title can be of any level you prefer (`#`, `##`, or `###`).
 - A slide can have a few properties, including `class` and `background-image`, etc. 
   
