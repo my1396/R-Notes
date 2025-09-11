@@ -677,6 +677,7 @@ Command Palette, type "**Preferences: Open Keyboard Shortcuts**" to open the key
 
 
 **Run code cells**
+
 | Shortcut        | Function                                                                                                         |
 | --------------- | ---------------------------------------------------------------------------------------------------------------- |
 | `Ctrl+Enter`    | runs the currently selected cell.                                                                                |

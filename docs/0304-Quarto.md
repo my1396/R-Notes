@@ -45,6 +45,10 @@ When `freeze: auto` is enabled, Quarto checks for modifications in the source fi
 
 This <span class="env-green">significantly speeds up rendering times</span>, especially for large projects with many computational documents. ✅
 
+There are drawbacks: some files may not be updated in time. 
+
+- Use `freeze: false` to force re-rendering of all files when you are able to submit your changes.
+- Use `freeze: auto` when you are editing actively and want to see your changes in time.
 
 --------------------------------------------------------------------------------
 
