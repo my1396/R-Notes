@@ -509,6 +509,22 @@ Alternatively, you can use the **Render** button in RStudio. The Render button w
 | Section  | `#sec-xxx` | `@sec-xxx`  |
 
 
+Cross-reference to a figure:
+
+````markdown
+```{r #fig-scatter, fig.cap="Scatter plots example"} 
+  # scatter plots, lunch vs calworks
+  plot(1:10)
+```
+````
+
+<div class="figure">
+<img src="0304-Quarto_files/figure-html/fig-scatter-1.png" alt="Scatter plots example" width="50%" />
+<p class="caption">(\#fig:fig-scatter)Scatter plots example</p>
+</div>
+
+See Figure \@ref(fig:fig-scatter) (`@fig-scatter`) for the scatter plots.
+
 --------------------------------------------------------------------------------
 
 #### Equations {.unnumbered}
