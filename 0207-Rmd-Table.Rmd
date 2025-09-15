@@ -212,9 +212,11 @@ Do not forget the equal sign before `latex`, i.e., it is `=latex` instead of `la
 
 - `stargaer` does NOT work with `anova` table, use `pander::pander` instead.
 
-#### Text table {-}
+--------------------------------------------------------------------------------
 
-Specify `stargazer(type = "text")`
+#### Text table
+
+Specify `stargazer(model, type = "text")`
 
 ````markdown
 ```{r descrptive-analysis-text, comment = ''}`r ''`
@@ -245,11 +247,15 @@ F Statistic             0.517 (df = 1; 201)
 Note:               *p<0.1; **p<0.05; ***p<0.01
 ```
 
-By default, `stargazer` uses `***`, `**`, and `*` to denote statistical significance at the one, five, and ten percent levels (`* p<0.1; ** p<0.05; *** p<0.01`). In contrast, `summary.lm` uses `* p<0.05, ** p<0.01, *** p< 0.001`.
+Significance codes are shown in the footnote.
 
-You can change the cutoffs for significance using `star.cutoffs = c(0.05, 0.01, 0.001)`.
+- By default, `stargazer` uses `***`, `**`, and `*` to denote statistical significance at the one, five, and ten percent levels (`* p<0.1; ** p<0.05; *** p<0.01`). 
 
-There is one empty line after each coefficient, to remove the empty lines, specify `no.space = TRUE`. 
+- In contrast, `summary.lm` uses `* p<0.05, ** p<0.01, *** p< 0.001`.
+
+- You can change the cutoffs for significance using `star.cutoffs = c(0.05, 0.01, 0.001)`.
+
+There is **one empty line** after each coefficient, to remove the empty lines, specify `no.space = TRUE`. 
 
 The regression table with all empty lines removed:
 
@@ -273,42 +279,56 @@ F Statistic             0.517 (df = 1; 201)
 Note:               *p<0.1; **p<0.05; ***p<0.01
 ```
 
+--------------------------------------------------------------------------------
 
-#### HTML table {-}
+#### HTML table
 
-Note that you need to specify `results="asis"` in the chunk options.  This option tells `knitr` to treat verbatim code blocks "as is." Otherwise, instead of your table, you will see the raw html or latex code.
 
-- Note that `*`'s do not show properly in html output, see Fig. \@ref(fig:stargazer1), need to specify in the footnote (`notes`) manually.
+HTML table can be obtained by specifying `stargazer(model, type = "html")`.
+ 
+Note that you need to specify <span class="env-green">`results="asis"`</span> in the code chunk options. This option tells `knitr` to treat verbatim code blocks "as is." Otherwise, instead of your table, you will see the raw html or latex code.
 
-```{r stargazer1, echo=FALSE, fig.cap="Failed to show significance codes."}
+- Note that <span class="env-orange">`*`'s do not show properly in html output</span>, see Fig. \@ref(fig:stargazer1), need to specify in the footnote (`notes`) manually.
+
+```{r stargazer1, echo=FALSE, fig.cap="Failed to show significance codes in HTML output.", out.width='60%'}
 knitr::include_graphics("images/stargazer1.png")
 ```
 
-Use the following code to display the correct significance symbols. See Fig. \@ref(fig:stargazer2) for the expected output.
+Use the following code to display the correct significance symbols.
 
 ````markdown
 ```{r descrptive-analysis-html, results="asis"}`r ''`
+# the following code fixes the significance codes in html output
 apply(data[,-1], 2, get_stat) %>% 
-    stargazer(type = "html", digits = 2, 
-              notes = "<span>&#42;</span>: p<0.1; <span>&#42;&#42;</span>: <strong>p<0.05</strong>; <span>&#42;&#42;&#42;</span>: p<0.01 <br> Standard errors in parentheses.",
-              notes.append = F)
+    stargazer(
+      type = "html", digits = 2, 
+      notes = "<span>&#42;</span>: p<0.1; <span>&#42;&#42;</span>: <strong>p<0.05</strong>; <span>&#42;&#42;&#42;</span>: p<0.01 <br> Standard errors in parentheses.",
+      notes.append = F
+      )
 ```
 ````
 
+- `&#42;` is the HTML entity code for `*`.
+- Stargazer by default using `*` for 10% significance, `**` for 5% significance, and `***` for 1% significance.
 
-```{r stargazer2, echo=FALSE, fig.cap="Correct significance codes."}
-knitr::include_graphics("images/stargazer1.png")
+After correcting the significance codes, the output looks like Fig. \@ref(fig:stargazer2).
+
+```{r stargazer2, echo=FALSE, fig.cap="Correct significance codes.", out.width='60%'}
+knitr::include_graphics("images/stargazer2.png")
 ```
 
 
+--------------------------------------------------------------------------------
 
-#### Common arguments:
+#### Common arguments
 
-<span class="env-green">**Table formatting options:**</span>
+<span class="env-green">**Table general formatting options:**</span>
 
 - `type = "latex" | "html" | "text"` specify output table format.
 
-- `digits = 3` an integer that indicates how many decimal places should be used. A value of `NULL` indicates that no rounding should be done at all, and that all available decimal places should be reported. Defaults to 3 digits.
+- `digits = 3` an integer that indicates how many decimal places should be used. Defaults to 3 digits.
+  
+  A value of `NULL` indicates that no rounding should be done at all, and that all available decimal places should be reported. 
 
 - `notes` a character vector containing notes to be included below the table.
 
@@ -334,9 +354,11 @@ ___
 
 <span class="env-green">**Make your model names more informative:**</span>
 
-- `column.separate`   a numeric vector that specifies how `column.labels` should be laid out across regression table columns. A value of `c(2, 1, 3)`, for instance, will apply the first label to the two first columns, the second label to the third column, and the third label will apply to the following three columns (i.e., columns number four, five and six).
+- `column.separate` a numeric vector that specifies how `column.labels` should be laid out (grouped) across regression table columns. 
+  
+  A value of `c(2, 1, 3)`, for instance, will apply the first label to the two first columns, the second label to the third column, and the third label will apply to the following three columns (i.e., columns number four, five and six).
 
-- `dep.var.labels` labels for dependent variables
+- `dep.var.labels` labels for dependent variables.
 
 - <span style='color:#00CC66'>`covariate.labels`</span>  labels for covariates in the regression tables.
 
@@ -349,7 +371,7 @@ ___
                   "\\textit{k}", "logLik", "AICc", "\\Delta AICc"))
     ```
 
-- `add.lines` add a row(s), such as reporting fixed effects.
+- `add.lines` add a row(s) for additional info, such as reporting fixed effects.
 
     ```r
     stargazer(output, output2, type = "html",
@@ -366,13 +388,15 @@ ___
 
 - `single.row = TRUE` to put coefficients and standard errors on same line
 
-- <span style='color:#00CC66'>`no.space = TRUE`</span>  to remove the spaces after each line of coefficients
+- <span style='color:#00CC66'>`no.space = TRUE`</span> to remove the spaces after each line of coefficients
 
 - `font.size = "small"`  to make font size smaller
 
 - <span style='color:#00CC66'>`column.labels`</span> a character vector of labels for columns in regression tables.
     
     This is useful to denote different regressions, informing the name/nature of the model, instead of using numbers to identify them.
+
+    When you add custom column labels, you may want to use ::<span style="color: #00CC66;">`model.numbers = FALSE`</span> to suppress the default model numbers (1) (2)...
 
 
 **Tip:** Add a blank line under the `stargazer` table: `&nbsp;` with a blank line above and below.
@@ -413,7 +437,7 @@ ___
   - `align = FALSE` 	a logical value indicating whether numeric values in the same column should be aligned at the decimal mark in LaTeX output.
   
 
-- **In html output**, cross references to stargazer tables are not so straightforward.
+- **In html output**, cross references to stargazer tables are <span class="env-orange">NOT</span> so straightforward.
 
   `label` option in `stargazer` does not work. Cannot use chunk labels either.
 
@@ -485,7 +509,7 @@ ___
 
   
 
- **Alignment of Stargazer Tables**
+**Alignment of Stargazer Tables**
 
 - In PDF, the tables will be in the center by default. 
 
@@ -527,9 +551,9 @@ The **kableExtra** package is designed to extend the basic functionality of tabl
 - `bootstrap_options` 	A character vector for bootstrap table options. Please see package vignette or visit the w3schools' [Bootstrap Page](https://www.w3schools.com/bootstrap/bootstrap_tables.asp) for more information. Possible options include `basic`, `striped`, `bordered`, `hover`, `condensed`, `responsive` and `none`.
 
   - `striped`   alternating row colors
-  - `hover`       Use the `:hover` selector on `tr` (table row) to <span style='color:#00CC66'>highlight table rows</span> on mouse over.
+  - `hover` Use the `:hover` selector on `tr` (table row) to <span style='color:#00CC66'>highlight table rows</span> on mouse over.
 
-- `full_width`              A `TRUE` or `FALSE` variable controlling whether the HTML table should have 100% the preferable format for `full_width`. If not specified, 
+- `full_width`  A `TRUE` or `FALSE` variable controlling whether the HTML table should have 100% the preferable format for `full_width`. If not specified, 
 
   - `TRUE` for a HTML table , will have full width by default but 
   - this option will be set to `FALSE` for a LaTeX table.

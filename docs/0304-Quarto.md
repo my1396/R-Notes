@@ -489,11 +489,13 @@ Alternatively, you can use the **Render** button in RStudio. The Render button w
 
 ### Cross References
 
-1. **Add labels:**
-
+1. **Add labels**
+   
+   Two options:
    - **Code cell:** add option `label: prefix-LABEL`
    - **Markdown:** add attribute `#prefix-LABEL`
-   - Note that <span class="env-green">the prefix should be connected to the label with a hyphen `-`.</span>
+     - Note that <span class="env-green">the prefix should be connected to the label with a hyphen `-`.</span>
+     - Note that the hash sign `#` is required.
 
 2. **Add references:** `@prefix-LABEL`, e.g.
 
@@ -513,7 +515,7 @@ Cross-reference to a figure:
 
 ````markdown
 ```{r #fig-scatter, fig.cap="Scatter plots example"} 
-  # scatter plots, lunch vs calworks
+  # scatter plot example
   plot(1:10)
 ```
 ````

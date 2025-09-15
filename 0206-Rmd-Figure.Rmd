@@ -3,16 +3,20 @@
 The idea is to generate the figure, output to local, then reload using the following code. 
 
 ~~~~markdown
-```{r car-plot, eval=TRUE, fig.asp = 0.62, echo=FALSE, out.width="80%", fig.cap="Caption here." }`r ''`
+```{r car-plot, eval=TRUE, echo=FALSE, out.width="80%", fig.cap="Caption here." }`r ''`
 knitr::include_graphics(img1_path) 
 ```
 ~~~~
 
 Use code chunk label to cross reference, e.g., <span style='color:#00CC66'>`Fig. \@ref(fig:car-plot)`</span>. 
 
-- Note that you must specify `fig.cap` to enable labeling and cross references. Otherwise, the cross reference will show `Fig. ??`.
-
+- Note that you must specify <span class="env-green">`fig.cap`</span> to enable labeling and cross references. Otherwise, the cross reference will show `Fig. ??`.
+- In you cross reference, note that there is <span class="env-orange">no space</span> between `fig:` and `car-plot`.
 - `knitr::include_graphics` supports web url for html output, but NOT for latex output.
+- `knitr::include_graphics` seems to <span class="env-orange">reduce the figure quality a bit</span>. The figure looks a bit blurry than the original figure.
+  - If you want to keep the original quality, use html tag `<img>` instead.
+  - With `<img>`, a caveat is that you need to manually add figure caption and numbering, and the numbering will be messed up if you change the order of figures in your document.
+
 
 
 Alternatively, use `fig.width` to fix the figure width, and `fig.asp` to fix the aspect ratio (height:width).
@@ -174,41 +178,60 @@ whatever <- dev.off()    # opt2
 
 --------------------------------------------------------------------------------
 
-Specify code chunk options `fig.width` and `fig.height` for R-generated figures only.
+### Control figure size
 
-- Default is `fig.width = 7` and `fig.height = 5` (**in inches**, though actual width will depend on screen resolution). Remember that these settings will default to `rmarkdown` values, not `knitr` values.
+Specify code chunk options `fig.width` and `fig.height` for <span class="env-green">R-generated figures only</span>.
+
+- Default is `fig.width = 7` and `fig.height = 5` (<span class="env-green">**in inches**</span>, though actual width will depend on screen resolution). Remember that these settings will default to `rmarkdown` values, not `knitr` values.
 - If don't know what size is suitable, can right-click the Plots Viewer and choose "Copy Image Address". Scale by `/100` (in inches) and fill the values to chunk options.
 
 --------------------------------------------------------------------------------
 
-`out.width` and `out.height` apply to both existing images and R-generated figures.
+### Control output size
 
-- note that the percentage need to be put in quotes.
-- `fig.width` do not scale font, it shows the original font size.
-- `out.width` scales the whole figure. Better to use this one. If you want to fix aspect ratio, use `fig.asp=0.6` to set height:width = 6:10.
+`out.width` and `out.height` apply to both <span class="env-green">existing images and R-generated figures</span>.
+
+- Note that the percentage need to be put in **quotes**.
+
+- <span class="env-green">`fig.width` do NOT scale font</span>, it shows the original font size. Suggest to use this one. ✅
+
+- <span class="env-orange">`out.width` scales the whole figure.</span> If you want to fix aspect ratio, setting `fig.asp=0.6` will set height:width = 6:10.
     
     - `out.width` keeps the original aspect ratio of the figure and scale the text in the figure too.
     
-        But what most people want is to scale the figure but not the text. For instance, you want to scale your figure to 70\% width of page, but you want to keep the original size of text so it is readable.
+        But what most people want is to scale the figure but NOT the text. For instance, you want to scale your figure to 70\% width of page, but you want to keep the original size of text so it is readable.
         
-    - A caveat with `out.width`is that the <span style='color:#00CC66'>axis labels and ticks will be so small</span> and hard to read.
+    - A caveat with `out.width`is that the <span class="env-orange">axis labels and ticks will be so small</span> and hard to read.
+
+
+**Difference between figure size and output size**
+
+We are allowed to specify the figure size, and secondly the size of the figure as to appear in the output. For example, if you set the size of a `ggplot` figure to large, then fonts etc. will appear tiny. Better do *not* scale up `fig.height`, but set `out.width` accordingly, eg., like this `out.width = "70%"`.
 
 --------------------------------------------------------------------------------
 
 Other chunk options related to figures:
 
-`fig.cap=NULL`  specify figure captions. Must provide `fig.cap` if you need to cross reference the figure.
+`fig.cap = NULL` specify figure captions. 
 
-See <span style='color:#00CC66'>`Fig. \@ref(fig:car-plot)`</span>  use code chunk label to cross reference. The chunk label (`car-plot`) provides the identifier for referencing the figure generated by the chunk.
+- <span class="env-green">Must provide `fig.cap` if you need to cross reference the figure.</span>
 
-- `Fig.&nbsp;\@ref(fig:logit-regression)` use `&nbsp;` to insert a <span style='color:#00CC66'>non-breaking space</span>.
+Use code chunk label to cross reference, e.g., see <span style='color:#00CC66'>`Fig. \@ref(fig:car-plot)`</span>. 
 
-<span style='color:#00CC66'>`fig.align="center"`</span> to set figure alignment.
+- The chunk label (`car-plot`) provides the identifier for referencing the figure generated by the chunk.
 
-`fig.pos="H"` fix placement.
+- Tip: `Fig.&nbsp;\@ref(fig:logit-regression)` use `&nbsp;` to insert a <span style='color:#00CC66'>non-breaking space</span> to avoid line breaking between `Fig.` and numbering.
 
-<span style='color:#00CC66'>`fig.asp=0.6`</span> aspect ratio height:width=6:10.
+<span style='color:#00CC66'>`fig.align = "center"`</span> to set figure alignment. 
 
+- Possible values are `default`, `left`, `right`, and `center`. The default is not to make any alignment adjustments.
+- For bookdown, the default is to left align figures.
+
+`fig.pos = "H"` fix placement.
+
+<span style='color:#00CC66'>`fig.asp = 0.6`</span> aspect ratio height:width=6:10.
+
+See [HERE](https://yihui.org/knitr/options/#plots) for a full list of chunk options related to figures.
 
 --------------------------------------------------------------------------------
 
