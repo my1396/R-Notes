@@ -13,6 +13,10 @@ Use code chunk label to cross reference, e.g., <span style='color:#00CC66'>`Fig.
 - Note that you must specify <span class="env-green">`fig.cap`</span> to enable labeling and cross references. Otherwise, the cross reference will show `Fig. ??`.
 - In you cross reference, note that there is <span class="env-orange">no space</span> between `fig:` and `car-plot`.
 - `knitr::include_graphics` supports web url for html output, but NOT for latex output.
+- `knitr::include_graphics` seems to <span class="env-orange">reduce the figure quality a bit</span>. The figure looks a bit blurry than the original figure.
+  - If you want to keep the original quality, use html tag `<img>` instead.
+  - With `<img>`, a caveat is that you need to manually add figure caption and numbering, and the numbering will be messed up if you change the order of figures in your document.
+
 
 
 Alternatively, use `fig.width` to fix the figure width, and `fig.asp` to fix the aspect ratio (height:width).

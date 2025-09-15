@@ -1043,7 +1043,7 @@ After binding:
 <span id="cb85-6"><a href="3.1-yaml-metadata.html#cb85-6" tabindex="-1"></a><span class="at">  </span><span class="fu">start_date</span><span class="kw">:</span><span class="at"> </span><span class="st">&#39;2020-01-01&#39;</span></span>
 <span id="cb85-7"><a href="3.1-yaml-metadata.html#cb85-7" tabindex="-1"></a><span class="at">  </span><span class="fu">end_date</span><span class="kw">:</span><span class="at"> </span><span class="st">&#39;2020-06-01&#39;</span></span>
 <span id="cb85-8"><a href="3.1-yaml-metadata.html#cb85-8" tabindex="-1"></a><span class="pp">---</span></span></code></pre></div>
-<p>To access a parameter in our R code, call <code>params$&lt;parameter name&gt;</code>, e.g., <code>params$start_date</code> and <code>params$end_date</code>.</p>
+<p><strong>Declaring Parameters</strong></p>
 <p>Should I use quotes to surround the values?</p>
 <ul>
 <li>Whenever applicable use the unquoted style since it is the most readable.</li>
@@ -1058,10 +1058,30 @@ After binding:
 <span id="cb86-7"><a href="3.1-yaml-metadata.html#cb86-7" tabindex="-1"></a><span class="co"># values need not quotes</span></span>
 <span id="cb86-8"><a href="3.1-yaml-metadata.html#cb86-8" tabindex="-1"></a>foo<span class="sc">:</span> bar1baz234</span>
 <span id="cb86-9"><a href="3.1-yaml-metadata.html#cb86-9" tabindex="-1"></a>bar<span class="sc">:</span> <span class="dv">123</span>baz</span></code></pre></div>
-<p>Ref:</p>
+<hr />
+<p><span class="env-green"><strong>Using Parameters in R Code</strong></span></p>
+<p><span class="env-green">To access a parameter in our R code</span>, call <code>params$&lt;parameter name&gt;</code>, e.g., <code>params$start_date</code> and <code>params$end_date</code>.</p>
+<hr />
+<p><strong>Knitting with Parameters</strong></p>
+<p>Add a <code>params</code> argument to <code>render</code> to create a report that uses a new set of parameter values.</p>
+<div class="sourceCode" id="cb87"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb87-1"><a href="3.1-yaml-metadata.html#cb87-1" tabindex="-1"></a><span class="fu">render</span>(<span class="st">&quot;5-parameters.Rmd&quot;</span>, <span class="at">params =</span> <span class="fu">list</span>(<span class="at">data =</span> <span class="st">&quot;aleutians&quot;</span>))</span></code></pre></div>
+<p><img src="https://d33wubrfki0l68.cloudfront.net/9dd79a102a5b0113977b47849c971bec845b71e0/fc209/lesson-images/params-2-aleutians.png" alt="Set Parameter Values" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" /></p>
+<hr />
+<p><strong>Use Parameters to Control the Behavior of knitr</strong></p>
+<p>For example, the <strong>knitr</strong> chunk option <code>echo</code> controls whether to display the program code, and we can set this option globally in a document via a parameter:</p>
+<div class="sourceCode" id="cb88"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb88-1"><a href="3.1-yaml-metadata.html#cb88-1" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb88-2"><a href="3.1-yaml-metadata.html#cb88-2" tabindex="-1"></a><span class="an">params:</span></span>
+<span id="cb88-3"><a href="3.1-yaml-metadata.html#cb88-3" tabindex="-1"></a><span class="co">  printcode: false  # or set it to true</span></span>
+<span id="cb88-4"><a href="3.1-yaml-metadata.html#cb88-4" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb88-5"><a href="3.1-yaml-metadata.html#cb88-5" tabindex="-1"></a><span class="in">```{r, setup, include=FALSE} </span></span>
+<span id="cb88-6"><a href="3.1-yaml-metadata.html#cb88-6" tabindex="-1"></a><span class="in"># set this option in the first code chunk in the document</span></span>
+<span id="cb88-7"><a href="3.1-yaml-metadata.html#cb88-7" tabindex="-1"></a><span class="in">knitr::opts_chunk$set(echo = params$printcode)</span></span>
+<span id="cb88-8"><a href="3.1-yaml-metadata.html#cb88-8" tabindex="-1"></a><span class="in">```</span></span></code></pre></div>
+<p><strong>Ref:</strong></p>
 <ul>
+<li><a href="https://rmarkdown.rstudio.com/lesson-6.html">R Markdown from RStudio: Parameters</a></li>
 <li><a href="https://bookdown.org/yihui/rmarkdown-cookbook/rmarkdown-anatomy.html#:~:text=In%20short%2C%20we%20can%20include%20variables%20and%20R%20expressions%20in%20this%20header%20that%20can%20be%20referenced%20throughout%20our%20R%20Markdown%20document.">R Markdown anatomy, R Markdown Cookbook</a></li>
-<li><a href="https://rmarkdown.rstudio.com/lesson-6.html" class="uri">https://rmarkdown.rstudio.com/lesson-6.html</a></li>
+<li><a href="https://bookdown.org/yihui/rmarkdown/parameterized-reports.html">Parameterized reports, R Markdown: The Definitive Guide</a></li>
 </ul>
 <hr />
 </div>
@@ -1074,11 +1094,11 @@ After binding:
 <li>Whether to use the visual mode markdown writer when saving markdown from source mode (to ensure consistency between documents saved from either mode).</li>
 </ul>
 <p>Global and project options that affect the way markdown is written can also be customized on a per-file basis. These <em>file specific options</em> can be set using YAML. For instance, you want to set lines wrapping after 72 characters:</p>
-<div class="sourceCode" id="cb87"><pre class="sourceCode yml"><code class="sourceCode yaml"><span id="cb87-1"><a href="3.1-yaml-metadata.html#cb87-1" tabindex="-1"></a><span class="pp">---</span></span>
-<span id="cb87-2"><a href="3.1-yaml-metadata.html#cb87-2" tabindex="-1"></a><span class="fu">editor_options</span><span class="kw">:</span></span>
-<span id="cb87-3"><a href="3.1-yaml-metadata.html#cb87-3" tabindex="-1"></a><span class="at">  </span><span class="fu">markdown</span><span class="kw">:</span></span>
-<span id="cb87-4"><a href="3.1-yaml-metadata.html#cb87-4" tabindex="-1"></a><span class="at">    </span><span class="fu">wrap</span><span class="kw">:</span><span class="at"> </span><span class="dv">72</span></span>
-<span id="cb87-5"><a href="3.1-yaml-metadata.html#cb87-5" tabindex="-1"></a><span class="pp">---</span></span></code></pre></div>
+<div class="sourceCode" id="cb89"><pre class="sourceCode yml"><code class="sourceCode yaml"><span id="cb89-1"><a href="3.1-yaml-metadata.html#cb89-1" tabindex="-1"></a><span class="pp">---</span></span>
+<span id="cb89-2"><a href="3.1-yaml-metadata.html#cb89-2" tabindex="-1"></a><span class="fu">editor_options</span><span class="kw">:</span></span>
+<span id="cb89-3"><a href="3.1-yaml-metadata.html#cb89-3" tabindex="-1"></a><span class="at">  </span><span class="fu">markdown</span><span class="kw">:</span></span>
+<span id="cb89-4"><a href="3.1-yaml-metadata.html#cb89-4" tabindex="-1"></a><span class="at">    </span><span class="fu">wrap</span><span class="kw">:</span><span class="at"> </span><span class="dv">72</span></span>
+<span id="cb89-5"><a href="3.1-yaml-metadata.html#cb89-5" tabindex="-1"></a><span class="pp">---</span></span></code></pre></div>
 <p>Ref: <a href="https://rstudio.github.io/visual-markdown-editing/options.html#file-options" class="uri">https://rstudio.github.io/visual-markdown-editing/options.html#file-options</a></p>
 <hr />
 </div>
@@ -1093,27 +1113,27 @@ After binding:
 <li>Specify <code>null</code> to exclude MathJax entirely.</li>
 </ul>
 <p>For example, to use a local copy of MathJax:</p>
-<div class="sourceCode" id="cb88"><pre class="sourceCode yml"><code class="sourceCode yaml"><span id="cb88-1"><a href="3.1-yaml-metadata.html#cb88-1" tabindex="-1"></a><span class="pp">---</span></span>
-<span id="cb88-2"><a href="3.1-yaml-metadata.html#cb88-2" tabindex="-1"></a><span class="fu">title</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Habits&quot;</span></span>
-<span id="cb88-3"><a href="3.1-yaml-metadata.html#cb88-3" tabindex="-1"></a><span class="fu">output</span><span class="kw">:</span></span>
-<span id="cb88-4"><a href="3.1-yaml-metadata.html#cb88-4" tabindex="-1"></a><span class="at">  </span><span class="fu">html_document</span><span class="kw">:</span></span>
-<span id="cb88-5"><a href="3.1-yaml-metadata.html#cb88-5" tabindex="-1"></a><span class="at">    </span><span class="fu">mathjax</span><span class="kw">:</span><span class="at"> local</span></span>
-<span id="cb88-6"><a href="3.1-yaml-metadata.html#cb88-6" tabindex="-1"></a><span class="at">    </span><span class="fu">self_contained</span><span class="kw">:</span><span class="at"> </span><span class="ch">false</span></span>
-<span id="cb88-7"><a href="3.1-yaml-metadata.html#cb88-7" tabindex="-1"></a><span class="pp">---</span></span></code></pre></div>
-<p>To use a self-hosted copy of MathJax:</p>
-<div class="sourceCode" id="cb89"><pre class="sourceCode yml"><code class="sourceCode yaml"><span id="cb89-1"><a href="3.1-yaml-metadata.html#cb89-1" tabindex="-1"></a><span class="pp">---</span></span>
-<span id="cb89-2"><a href="3.1-yaml-metadata.html#cb89-2" tabindex="-1"></a><span class="fu">title</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Habits&quot;</span></span>
-<span id="cb89-3"><a href="3.1-yaml-metadata.html#cb89-3" tabindex="-1"></a><span class="fu">output</span><span class="kw">:</span></span>
-<span id="cb89-4"><a href="3.1-yaml-metadata.html#cb89-4" tabindex="-1"></a><span class="at">  </span><span class="fu">html_document</span><span class="kw">:</span></span>
-<span id="cb89-5"><a href="3.1-yaml-metadata.html#cb89-5" tabindex="-1"></a><span class="at">    </span><span class="fu">mathjax</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;http://example.com/MathJax.js&quot;</span></span>
-<span id="cb89-6"><a href="3.1-yaml-metadata.html#cb89-6" tabindex="-1"></a><span class="pp">---</span></span></code></pre></div>
-<p>To exclude MathJax entirely:</p>
 <div class="sourceCode" id="cb90"><pre class="sourceCode yml"><code class="sourceCode yaml"><span id="cb90-1"><a href="3.1-yaml-metadata.html#cb90-1" tabindex="-1"></a><span class="pp">---</span></span>
 <span id="cb90-2"><a href="3.1-yaml-metadata.html#cb90-2" tabindex="-1"></a><span class="fu">title</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Habits&quot;</span></span>
 <span id="cb90-3"><a href="3.1-yaml-metadata.html#cb90-3" tabindex="-1"></a><span class="fu">output</span><span class="kw">:</span></span>
 <span id="cb90-4"><a href="3.1-yaml-metadata.html#cb90-4" tabindex="-1"></a><span class="at">  </span><span class="fu">html_document</span><span class="kw">:</span></span>
-<span id="cb90-5"><a href="3.1-yaml-metadata.html#cb90-5" tabindex="-1"></a><span class="at">    </span><span class="fu">mathjax</span><span class="kw">:</span><span class="at"> </span><span class="ch">null</span></span>
-<span id="cb90-6"><a href="3.1-yaml-metadata.html#cb90-6" tabindex="-1"></a><span class="pp">---</span></span></code></pre></div>
+<span id="cb90-5"><a href="3.1-yaml-metadata.html#cb90-5" tabindex="-1"></a><span class="at">    </span><span class="fu">mathjax</span><span class="kw">:</span><span class="at"> local</span></span>
+<span id="cb90-6"><a href="3.1-yaml-metadata.html#cb90-6" tabindex="-1"></a><span class="at">    </span><span class="fu">self_contained</span><span class="kw">:</span><span class="at"> </span><span class="ch">false</span></span>
+<span id="cb90-7"><a href="3.1-yaml-metadata.html#cb90-7" tabindex="-1"></a><span class="pp">---</span></span></code></pre></div>
+<p>To use a self-hosted copy of MathJax:</p>
+<div class="sourceCode" id="cb91"><pre class="sourceCode yml"><code class="sourceCode yaml"><span id="cb91-1"><a href="3.1-yaml-metadata.html#cb91-1" tabindex="-1"></a><span class="pp">---</span></span>
+<span id="cb91-2"><a href="3.1-yaml-metadata.html#cb91-2" tabindex="-1"></a><span class="fu">title</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Habits&quot;</span></span>
+<span id="cb91-3"><a href="3.1-yaml-metadata.html#cb91-3" tabindex="-1"></a><span class="fu">output</span><span class="kw">:</span></span>
+<span id="cb91-4"><a href="3.1-yaml-metadata.html#cb91-4" tabindex="-1"></a><span class="at">  </span><span class="fu">html_document</span><span class="kw">:</span></span>
+<span id="cb91-5"><a href="3.1-yaml-metadata.html#cb91-5" tabindex="-1"></a><span class="at">    </span><span class="fu">mathjax</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;http://example.com/MathJax.js&quot;</span></span>
+<span id="cb91-6"><a href="3.1-yaml-metadata.html#cb91-6" tabindex="-1"></a><span class="pp">---</span></span></code></pre></div>
+<p>To exclude MathJax entirely:</p>
+<div class="sourceCode" id="cb92"><pre class="sourceCode yml"><code class="sourceCode yaml"><span id="cb92-1"><a href="3.1-yaml-metadata.html#cb92-1" tabindex="-1"></a><span class="pp">---</span></span>
+<span id="cb92-2"><a href="3.1-yaml-metadata.html#cb92-2" tabindex="-1"></a><span class="fu">title</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Habits&quot;</span></span>
+<span id="cb92-3"><a href="3.1-yaml-metadata.html#cb92-3" tabindex="-1"></a><span class="fu">output</span><span class="kw">:</span></span>
+<span id="cb92-4"><a href="3.1-yaml-metadata.html#cb92-4" tabindex="-1"></a><span class="at">  </span><span class="fu">html_document</span><span class="kw">:</span></span>
+<span id="cb92-5"><a href="3.1-yaml-metadata.html#cb92-5" tabindex="-1"></a><span class="at">    </span><span class="fu">mathjax</span><span class="kw">:</span><span class="at"> </span><span class="ch">null</span></span>
+<span id="cb92-6"><a href="3.1-yaml-metadata.html#cb92-6" tabindex="-1"></a><span class="pp">---</span></span></code></pre></div>
 <p>Ref: <a href="https://bookdown.dongzhuoer.com/rstudio/rmarkdown-book/html-document#mathjax-equations" class="uri">https://bookdown.dongzhuoer.com/rstudio/rmarkdown-book/html-document#mathjax-equations</a></p>
 <hr />
 </div>
@@ -1122,36 +1142,36 @@ After binding:
 <p>By default, R Markdown produces standalone HTML files with no external dependencies, using <code>data:</code>URIs to incorporate the contents of linked scripts, stylesheets, images, and videos. This means you can share or publish the file just like you share Office documents or PDFs. If you would rather keep dependencies in external files, you can specify <code>self_contained: false</code>.</p>
 <p>Note that even for self-contained documents, MathJax is still loaded externally (this is necessary because of its big size). If you want to serve MathJax locally, you should specify <code>mathjax: local</code> and <code>self_contained: false</code>.</p>
 <p>One common reason to keep dependencies external is for serving R Markdown documents from a website (external dependencies can be cached separately by browsers, leading to faster page load times). In the case of serving multiple R Markdown documents you may also want to consolidate dependent library files (e.g. Bootstrap, and MathJax, etc.) into a single directory shared by multiple documents. You can use the <code>lib_dir</code> option to do this. For example:</p>
-<div class="sourceCode" id="cb91"><pre class="sourceCode yml"><code class="sourceCode yaml"><span id="cb91-1"><a href="3.1-yaml-metadata.html#cb91-1" tabindex="-1"></a><span class="pp">---</span></span>
-<span id="cb91-2"><a href="3.1-yaml-metadata.html#cb91-2" tabindex="-1"></a><span class="fu">title</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Habits&quot;</span></span>
-<span id="cb91-3"><a href="3.1-yaml-metadata.html#cb91-3" tabindex="-1"></a><span class="fu">output</span><span class="kw">:</span></span>
-<span id="cb91-4"><a href="3.1-yaml-metadata.html#cb91-4" tabindex="-1"></a><span class="at">  </span><span class="fu">html_document</span><span class="kw">:</span></span>
-<span id="cb91-5"><a href="3.1-yaml-metadata.html#cb91-5" tabindex="-1"></a><span class="at">    </span><span class="fu">self_contained</span><span class="kw">:</span><span class="at"> </span><span class="ch">false</span></span>
-<span id="cb91-6"><a href="3.1-yaml-metadata.html#cb91-6" tabindex="-1"></a><span class="at">    </span><span class="fu">lib_dir</span><span class="kw">:</span><span class="at"> libs</span></span>
-<span id="cb91-7"><a href="3.1-yaml-metadata.html#cb91-7" tabindex="-1"></a><span class="pp">---</span></span></code></pre></div>
+<div class="sourceCode" id="cb93"><pre class="sourceCode yml"><code class="sourceCode yaml"><span id="cb93-1"><a href="3.1-yaml-metadata.html#cb93-1" tabindex="-1"></a><span class="pp">---</span></span>
+<span id="cb93-2"><a href="3.1-yaml-metadata.html#cb93-2" tabindex="-1"></a><span class="fu">title</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Habits&quot;</span></span>
+<span id="cb93-3"><a href="3.1-yaml-metadata.html#cb93-3" tabindex="-1"></a><span class="fu">output</span><span class="kw">:</span></span>
+<span id="cb93-4"><a href="3.1-yaml-metadata.html#cb93-4" tabindex="-1"></a><span class="at">  </span><span class="fu">html_document</span><span class="kw">:</span></span>
+<span id="cb93-5"><a href="3.1-yaml-metadata.html#cb93-5" tabindex="-1"></a><span class="at">    </span><span class="fu">self_contained</span><span class="kw">:</span><span class="at"> </span><span class="ch">false</span></span>
+<span id="cb93-6"><a href="3.1-yaml-metadata.html#cb93-6" tabindex="-1"></a><span class="at">    </span><span class="fu">lib_dir</span><span class="kw">:</span><span class="at"> libs</span></span>
+<span id="cb93-7"><a href="3.1-yaml-metadata.html#cb93-7" tabindex="-1"></a><span class="pp">---</span></span></code></pre></div>
 <hr />
 </div>
 <div id="loading-latex-packages" class="section level3 unlisted unnumbered hasAnchor">
 <h3>Loading LaTeX packages<a href="3.1-yaml-metadata.html#loading-latex-packages" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>We can load additional LaTeX packages using the <a href="https://bookdown.org/yihui/rmarkdown-cookbook/latex-extra.html"><code>extra_dependencies</code></a> option <span class="env-green"><strong>within</strong> the <code>pdf_document</code></span> YAML settings.</p>
 <p>This allows us to provide a list of LaTeX packages to be loaded in the intermediate LaTeX output document, e.g.,</p>
-<div class="sourceCode" id="cb92"><pre class="sourceCode yml"><code class="sourceCode yaml"><span id="cb92-1"><a href="3.1-yaml-metadata.html#cb92-1" tabindex="-1"></a><span class="pp">---</span></span>
-<span id="cb92-2"><a href="3.1-yaml-metadata.html#cb92-2" tabindex="-1"></a><span class="fu">title</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Using more LaTeX packages&quot;</span></span>
-<span id="cb92-3"><a href="3.1-yaml-metadata.html#cb92-3" tabindex="-1"></a><span class="fu">output</span><span class="kw">:</span><span class="at"> </span></span>
-<span id="cb92-4"><a href="3.1-yaml-metadata.html#cb92-4" tabindex="-1"></a><span class="at">  </span><span class="fu">pdf_document</span><span class="kw">:</span></span>
-<span id="cb92-5"><a href="3.1-yaml-metadata.html#cb92-5" tabindex="-1"></a><span class="at">    </span><span class="fu">extra_dependencies</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="st">&quot;bbm&quot;</span><span class="kw">,</span><span class="at"> </span><span class="st">&quot;threeparttable&quot;</span><span class="kw">]</span></span>
-<span id="cb92-6"><a href="3.1-yaml-metadata.html#cb92-6" tabindex="-1"></a><span class="pp">---</span></span></code></pre></div>
+<div class="sourceCode" id="cb94"><pre class="sourceCode yml"><code class="sourceCode yaml"><span id="cb94-1"><a href="3.1-yaml-metadata.html#cb94-1" tabindex="-1"></a><span class="pp">---</span></span>
+<span id="cb94-2"><a href="3.1-yaml-metadata.html#cb94-2" tabindex="-1"></a><span class="fu">title</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Using more LaTeX packages&quot;</span></span>
+<span id="cb94-3"><a href="3.1-yaml-metadata.html#cb94-3" tabindex="-1"></a><span class="fu">output</span><span class="kw">:</span><span class="at"> </span></span>
+<span id="cb94-4"><a href="3.1-yaml-metadata.html#cb94-4" tabindex="-1"></a><span class="at">  </span><span class="fu">pdf_document</span><span class="kw">:</span></span>
+<span id="cb94-5"><a href="3.1-yaml-metadata.html#cb94-5" tabindex="-1"></a><span class="at">    </span><span class="fu">extra_dependencies</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="st">&quot;bbm&quot;</span><span class="kw">,</span><span class="at"> </span><span class="st">&quot;threeparttable&quot;</span><span class="kw">]</span></span>
+<span id="cb94-6"><a href="3.1-yaml-metadata.html#cb94-6" tabindex="-1"></a><span class="pp">---</span></span></code></pre></div>
 <p>If you need to <strong>specify options</strong> when loading the package, you can add a sub-level to the list and provide the options as a list, e.g.,</p>
-<div class="sourceCode" id="cb93"><pre class="sourceCode yml"><code class="sourceCode yaml"><span id="cb93-1"><a href="3.1-yaml-metadata.html#cb93-1" tabindex="-1"></a><span class="fu">output</span><span class="kw">:</span><span class="at"> </span></span>
-<span id="cb93-2"><a href="3.1-yaml-metadata.html#cb93-2" tabindex="-1"></a><span class="at">  </span><span class="fu">pdf_document</span><span class="kw">:</span></span>
-<span id="cb93-3"><a href="3.1-yaml-metadata.html#cb93-3" tabindex="-1"></a><span class="at">    </span><span class="fu">extra_dependencies</span><span class="kw">:</span></span>
-<span id="cb93-4"><a href="3.1-yaml-metadata.html#cb93-4" tabindex="-1"></a><span class="at">      </span><span class="fu">caption</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="st">&quot;labelfont={bf}&quot;</span><span class="kw">]</span></span>
-<span id="cb93-5"><a href="3.1-yaml-metadata.html#cb93-5" tabindex="-1"></a><span class="at">      </span><span class="fu">hyperref</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="st">&quot;unicode=true&quot;</span><span class="kw">,</span><span class="at"> </span><span class="st">&quot;breaklinks=true&quot;</span><span class="kw">]</span></span>
-<span id="cb93-6"><a href="3.1-yaml-metadata.html#cb93-6" tabindex="-1"></a><span class="at">      </span><span class="fu">lmodern</span><span class="kw">:</span><span class="at"> </span><span class="ch">null</span></span></code></pre></div>
+<div class="sourceCode" id="cb95"><pre class="sourceCode yml"><code class="sourceCode yaml"><span id="cb95-1"><a href="3.1-yaml-metadata.html#cb95-1" tabindex="-1"></a><span class="fu">output</span><span class="kw">:</span><span class="at"> </span></span>
+<span id="cb95-2"><a href="3.1-yaml-metadata.html#cb95-2" tabindex="-1"></a><span class="at">  </span><span class="fu">pdf_document</span><span class="kw">:</span></span>
+<span id="cb95-3"><a href="3.1-yaml-metadata.html#cb95-3" tabindex="-1"></a><span class="at">    </span><span class="fu">extra_dependencies</span><span class="kw">:</span></span>
+<span id="cb95-4"><a href="3.1-yaml-metadata.html#cb95-4" tabindex="-1"></a><span class="at">      </span><span class="fu">caption</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="st">&quot;labelfont={bf}&quot;</span><span class="kw">]</span></span>
+<span id="cb95-5"><a href="3.1-yaml-metadata.html#cb95-5" tabindex="-1"></a><span class="at">      </span><span class="fu">hyperref</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="st">&quot;unicode=true&quot;</span><span class="kw">,</span><span class="at"> </span><span class="st">&quot;breaklinks=true&quot;</span><span class="kw">]</span></span>
+<span id="cb95-6"><a href="3.1-yaml-metadata.html#cb95-6" tabindex="-1"></a><span class="at">      </span><span class="fu">lmodern</span><span class="kw">:</span><span class="at"> </span><span class="ch">null</span></span></code></pre></div>
 <p>For those familiar with LaTeX, this is equivalent to the following LaTeX code:</p>
-<div class="sourceCode" id="cb94"><pre class="sourceCode latex"><code class="sourceCode latex"><span id="cb94-1"><a href="3.1-yaml-metadata.html#cb94-1" tabindex="-1"></a><span class="bu">\usepackage</span>[labelfont={bf}]{<span class="ex">caption</span>} </span>
-<span id="cb94-2"><a href="3.1-yaml-metadata.html#cb94-2" tabindex="-1"></a><span class="bu">\usepackage</span>[unicode=true, breaklinks=true]{<span class="ex">hyperref</span>}</span>
-<span id="cb94-3"><a href="3.1-yaml-metadata.html#cb94-3" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">lmodern</span>}</span></code></pre></div>
+<div class="sourceCode" id="cb96"><pre class="sourceCode latex"><code class="sourceCode latex"><span id="cb96-1"><a href="3.1-yaml-metadata.html#cb96-1" tabindex="-1"></a><span class="bu">\usepackage</span>[labelfont={bf}]{<span class="ex">caption</span>} </span>
+<span id="cb96-2"><a href="3.1-yaml-metadata.html#cb96-2" tabindex="-1"></a><span class="bu">\usepackage</span>[unicode=true, breaklinks=true]{<span class="ex">hyperref</span>}</span>
+<span id="cb96-3"><a href="3.1-yaml-metadata.html#cb96-3" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">lmodern</span>}</span></code></pre></div>
 <p>The advantage of using the <code>extra_dependencies</code> argument over the <code>includes</code> argument introduced in Section <a href="https://bookdown.org/yihui/rmarkdown-cookbook/latex-preamble.html#latex-preamble">6.1</a> is that you do not need to include an external file, so your Rmd document can be <strong>self-contained</strong>.</p>
 <hr />
 </div>
@@ -1162,23 +1182,23 @@ After binding:
 <p><code>html_document</code> converts R Markdown documents to HTML using Pandoc.</p>
 <p>See <a href="https://cran.r-project.org/web/packages/rmarkdown/refman/rmarkdown.html#topic+html_document">HERE</a> for all possible configurations.</p>
 <p>You can do more advanced customization of output by including additional HTML content or by replacing the core Pandoc template entirely. To include content in the document header or before/after the document body, you use the <code>includes</code> option as follows:</p>
-<div class="sourceCode" id="cb95"><pre class="sourceCode yml"><code class="sourceCode yaml"><span id="cb95-1"><a href="3.1-yaml-metadata.html#cb95-1" tabindex="-1"></a><span class="pp">---</span></span>
-<span id="cb95-2"><a href="3.1-yaml-metadata.html#cb95-2" tabindex="-1"></a><span class="fu">title</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Habits&quot;</span></span>
-<span id="cb95-3"><a href="3.1-yaml-metadata.html#cb95-3" tabindex="-1"></a><span class="fu">output</span><span class="kw">:</span></span>
-<span id="cb95-4"><a href="3.1-yaml-metadata.html#cb95-4" tabindex="-1"></a><span class="at">  </span><span class="fu">html_document</span><span class="kw">:</span></span>
-<span id="cb95-5"><a href="3.1-yaml-metadata.html#cb95-5" tabindex="-1"></a><span class="at">    </span><span class="fu">includes</span><span class="kw">:</span></span>
-<span id="cb95-6"><a href="3.1-yaml-metadata.html#cb95-6" tabindex="-1"></a><span class="at">      </span><span class="fu">in_header</span><span class="kw">:</span><span class="at"> header.html</span><span class="co">   # inject CSS and JavaScript code into the &lt;head&gt; tag</span></span>
-<span id="cb95-7"><a href="3.1-yaml-metadata.html#cb95-7" tabindex="-1"></a><span class="at">      </span><span class="fu">before_body</span><span class="kw">:</span><span class="at"> doc_prefix.html</span><span class="co">  # include a header that shows a banner or logo.</span></span>
-<span id="cb95-8"><a href="3.1-yaml-metadata.html#cb95-8" tabindex="-1"></a><span class="at">      </span><span class="fu">after_body</span><span class="kw">:</span><span class="at"> doc_suffix.html</span><span class="co">  # include a footer</span></span>
-<span id="cb95-9"><a href="3.1-yaml-metadata.html#cb95-9" tabindex="-1"></a><span class="at">  </span><span class="fu">template</span><span class="kw">:</span><span class="at"> template.html</span><span class="co">  # custom templates</span></span>
-<span id="cb95-10"><a href="3.1-yaml-metadata.html#cb95-10" tabindex="-1"></a><span class="pp">---</span></span></code></pre></div>
+<div class="sourceCode" id="cb97"><pre class="sourceCode yml"><code class="sourceCode yaml"><span id="cb97-1"><a href="3.1-yaml-metadata.html#cb97-1" tabindex="-1"></a><span class="pp">---</span></span>
+<span id="cb97-2"><a href="3.1-yaml-metadata.html#cb97-2" tabindex="-1"></a><span class="fu">title</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Habits&quot;</span></span>
+<span id="cb97-3"><a href="3.1-yaml-metadata.html#cb97-3" tabindex="-1"></a><span class="fu">output</span><span class="kw">:</span></span>
+<span id="cb97-4"><a href="3.1-yaml-metadata.html#cb97-4" tabindex="-1"></a><span class="at">  </span><span class="fu">html_document</span><span class="kw">:</span></span>
+<span id="cb97-5"><a href="3.1-yaml-metadata.html#cb97-5" tabindex="-1"></a><span class="at">    </span><span class="fu">includes</span><span class="kw">:</span></span>
+<span id="cb97-6"><a href="3.1-yaml-metadata.html#cb97-6" tabindex="-1"></a><span class="at">      </span><span class="fu">in_header</span><span class="kw">:</span><span class="at"> header.html</span><span class="co">   # inject CSS and JavaScript code into the &lt;head&gt; tag</span></span>
+<span id="cb97-7"><a href="3.1-yaml-metadata.html#cb97-7" tabindex="-1"></a><span class="at">      </span><span class="fu">before_body</span><span class="kw">:</span><span class="at"> doc_prefix.html</span><span class="co">  # include a header that shows a banner or logo.</span></span>
+<span id="cb97-8"><a href="3.1-yaml-metadata.html#cb97-8" tabindex="-1"></a><span class="at">      </span><span class="fu">after_body</span><span class="kw">:</span><span class="at"> doc_suffix.html</span><span class="co">  # include a footer</span></span>
+<span id="cb97-9"><a href="3.1-yaml-metadata.html#cb97-9" tabindex="-1"></a><span class="at">  </span><span class="fu">template</span><span class="kw">:</span><span class="at"> template.html</span><span class="co">  # custom templates</span></span>
+<span id="cb97-10"><a href="3.1-yaml-metadata.html#cb97-10" tabindex="-1"></a><span class="pp">---</span></span></code></pre></div>
 <p>An example <code>header.html</code> to load a MathJax extension <code>textmacros</code>.</p>
-<div class="sourceCode" id="cb96"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb96-1"><a href="3.1-yaml-metadata.html#cb96-1" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">script</span><span class="ot"> type=</span><span class="st">&quot;text/x-mathjax-config&quot;</span><span class="dt">&gt;</span></span>
-<span id="cb96-2"><a href="3.1-yaml-metadata.html#cb96-2" tabindex="-1"></a>  MathJax<span class="op">.</span><span class="at">Hub</span><span class="op">.</span><span class="fu">Config</span>({ </span>
-<span id="cb96-3"><a href="3.1-yaml-metadata.html#cb96-3" tabindex="-1"></a>    <span class="dt">loader</span><span class="op">:</span> {<span class="dt">load</span><span class="op">:</span> [<span class="st">&#39;[tex]/textmacros&#39;</span>]}<span class="op">,</span></span>
-<span id="cb96-4"><a href="3.1-yaml-metadata.html#cb96-4" tabindex="-1"></a>    <span class="dt">tex</span><span class="op">:</span> {<span class="dt">packages</span><span class="op">:</span> {<span class="st">&#39;[+]&#39;</span><span class="op">:</span> [<span class="st">&#39;textmacros&#39;</span>]}}</span>
-<span id="cb96-5"><a href="3.1-yaml-metadata.html#cb96-5" tabindex="-1"></a>  })<span class="op">;</span></span>
-<span id="cb96-6"><a href="3.1-yaml-metadata.html#cb96-6" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">script</span><span class="dt">&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb98"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb98-1"><a href="3.1-yaml-metadata.html#cb98-1" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">script</span><span class="ot"> type=</span><span class="st">&quot;text/x-mathjax-config&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb98-2"><a href="3.1-yaml-metadata.html#cb98-2" tabindex="-1"></a>  MathJax<span class="op">.</span><span class="at">Hub</span><span class="op">.</span><span class="fu">Config</span>({ </span>
+<span id="cb98-3"><a href="3.1-yaml-metadata.html#cb98-3" tabindex="-1"></a>    <span class="dt">loader</span><span class="op">:</span> {<span class="dt">load</span><span class="op">:</span> [<span class="st">&#39;[tex]/textmacros&#39;</span>]}<span class="op">,</span></span>
+<span id="cb98-4"><a href="3.1-yaml-metadata.html#cb98-4" tabindex="-1"></a>    <span class="dt">tex</span><span class="op">:</span> {<span class="dt">packages</span><span class="op">:</span> {<span class="st">&#39;[+]&#39;</span><span class="op">:</span> [<span class="st">&#39;textmacros&#39;</span>]}}</span>
+<span id="cb98-5"><a href="3.1-yaml-metadata.html#cb98-5" tabindex="-1"></a>  })<span class="op">;</span></span>
+<span id="cb98-6"><a href="3.1-yaml-metadata.html#cb98-6" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">script</span><span class="dt">&gt;</span></span></code></pre></div>
 <hr />
 </div>
 <div id="pdf-output" class="section level4 unnumbered hasAnchor">
@@ -1186,14 +1206,14 @@ After binding:
 <p>For example, to support Chinese characters.</p>
 <p>You can use <code>includes</code> and <code>preamble.tex</code> (can be any name, contains any pre-loaded latex code you want to run before your main text code, for setting up environment, loading pkgs, define new commands … Very flexible.)</p>
 <p>In the main Rmd:</p>
-<div class="sourceCode" id="cb97"><pre class="sourceCode yml"><code class="sourceCode yaml"><span id="cb97-1"><a href="3.1-yaml-metadata.html#cb97-1" tabindex="-1"></a><span class="pp">---</span></span>
-<span id="cb97-2"><a href="3.1-yaml-metadata.html#cb97-2" tabindex="-1"></a><span class="fu">output</span><span class="kw">:</span></span>
-<span id="cb97-3"><a href="3.1-yaml-metadata.html#cb97-3" tabindex="-1"></a><span class="at">  </span><span class="fu">pdf_document</span><span class="kw">:</span></span>
-<span id="cb97-4"><a href="3.1-yaml-metadata.html#cb97-4" tabindex="-1"></a><span class="at">    </span><span class="fu">includes</span><span class="kw">:</span></span>
-<span id="cb97-5"><a href="3.1-yaml-metadata.html#cb97-5" tabindex="-1"></a><span class="at">      </span><span class="fu">in_header</span><span class="kw">:</span><span class="at"> latex/preamble.tex</span></span>
-<span id="cb97-6"><a href="3.1-yaml-metadata.html#cb97-6" tabindex="-1"></a><span class="at">      </span><span class="fu">before_body</span><span class="kw">:</span><span class="at"> latex/before_body.tex</span></span>
-<span id="cb97-7"><a href="3.1-yaml-metadata.html#cb97-7" tabindex="-1"></a><span class="at">      </span><span class="fu">after_body</span><span class="kw">:</span><span class="at"> latex/after_body.tex</span></span>
-<span id="cb97-8"><a href="3.1-yaml-metadata.html#cb97-8" tabindex="-1"></a><span class="pp">---</span></span></code></pre></div>
+<div class="sourceCode" id="cb99"><pre class="sourceCode yml"><code class="sourceCode yaml"><span id="cb99-1"><a href="3.1-yaml-metadata.html#cb99-1" tabindex="-1"></a><span class="pp">---</span></span>
+<span id="cb99-2"><a href="3.1-yaml-metadata.html#cb99-2" tabindex="-1"></a><span class="fu">output</span><span class="kw">:</span></span>
+<span id="cb99-3"><a href="3.1-yaml-metadata.html#cb99-3" tabindex="-1"></a><span class="at">  </span><span class="fu">pdf_document</span><span class="kw">:</span></span>
+<span id="cb99-4"><a href="3.1-yaml-metadata.html#cb99-4" tabindex="-1"></a><span class="at">    </span><span class="fu">includes</span><span class="kw">:</span></span>
+<span id="cb99-5"><a href="3.1-yaml-metadata.html#cb99-5" tabindex="-1"></a><span class="at">      </span><span class="fu">in_header</span><span class="kw">:</span><span class="at"> latex/preamble.tex</span></span>
+<span id="cb99-6"><a href="3.1-yaml-metadata.html#cb99-6" tabindex="-1"></a><span class="at">      </span><span class="fu">before_body</span><span class="kw">:</span><span class="at"> latex/before_body.tex</span></span>
+<span id="cb99-7"><a href="3.1-yaml-metadata.html#cb99-7" tabindex="-1"></a><span class="at">      </span><span class="fu">after_body</span><span class="kw">:</span><span class="at"> latex/after_body.tex</span></span>
+<span id="cb99-8"><a href="3.1-yaml-metadata.html#cb99-8" tabindex="-1"></a><span class="pp">---</span></span></code></pre></div>
 <p>If you want to add anything to the preamble, you have to use the <code>includes</code> option of <code>pdf_document</code>. This option has three sub-options:</p>
 <ul>
 <li><p><code>in_header</code>: loading necessary packages</p></li>
@@ -1203,43 +1223,43 @@ After binding:
 <li>Dedication page like “The books is dedicated to …” (此书献给…)</li>
 </ul>
 <p>An example of <code>before_body.tex</code>:</p>
-<div class="sourceCode" id="cb98"><pre class="sourceCode latex"><code class="sourceCode latex"><span id="cb98-1"><a href="3.1-yaml-metadata.html#cb98-1" tabindex="-1"></a><span class="co">% Styling that has the highest priority</span></span>
-<span id="cb98-2"><a href="3.1-yaml-metadata.html#cb98-2" tabindex="-1"></a><span class="fu">\let\tightlist\relax</span> <span class="co">% disable `\tightlist`</span></span>
-<span id="cb98-3"><a href="3.1-yaml-metadata.html#cb98-3" tabindex="-1"></a><span class="fu">\setlength</span>{<span class="fu">\abovedisplayskip</span>}{-5pt}</span>
-<span id="cb98-4"><a href="3.1-yaml-metadata.html#cb98-4" tabindex="-1"></a><span class="fu">\setlength</span>{<span class="fu">\abovedisplayshortskip</span>}{-5pt}</span>
-<span id="cb98-5"><a href="3.1-yaml-metadata.html#cb98-5" tabindex="-1"></a></span>
-<span id="cb98-6"><a href="3.1-yaml-metadata.html#cb98-6" tabindex="-1"></a><span class="co">% book dedication page</span></span>
-<span id="cb98-7"><a href="3.1-yaml-metadata.html#cb98-7" tabindex="-1"></a><span class="fu">\thispagestyle</span>{empty}</span>
-<span id="cb98-8"><a href="3.1-yaml-metadata.html#cb98-8" tabindex="-1"></a></span>
-<span id="cb98-9"><a href="3.1-yaml-metadata.html#cb98-9" tabindex="-1"></a><span class="kw">\begin</span>{<span class="ex">center</span>}</span>
-<span id="cb98-10"><a href="3.1-yaml-metadata.html#cb98-10" tabindex="-1"></a>献给……</span>
-<span id="cb98-11"><a href="3.1-yaml-metadata.html#cb98-11" tabindex="-1"></a></span>
-<span id="cb98-12"><a href="3.1-yaml-metadata.html#cb98-12" tabindex="-1"></a>呃，爱谁谁吧</span>
-<span id="cb98-13"><a href="3.1-yaml-metadata.html#cb98-13" tabindex="-1"></a><span class="kw">\end</span>{<span class="ex">center</span>}</span></code></pre></div>
+<div class="sourceCode" id="cb100"><pre class="sourceCode latex"><code class="sourceCode latex"><span id="cb100-1"><a href="3.1-yaml-metadata.html#cb100-1" tabindex="-1"></a><span class="co">% Styling that has the highest priority</span></span>
+<span id="cb100-2"><a href="3.1-yaml-metadata.html#cb100-2" tabindex="-1"></a><span class="fu">\let\tightlist\relax</span> <span class="co">% disable `\tightlist`</span></span>
+<span id="cb100-3"><a href="3.1-yaml-metadata.html#cb100-3" tabindex="-1"></a><span class="fu">\setlength</span>{<span class="fu">\abovedisplayskip</span>}{-5pt}</span>
+<span id="cb100-4"><a href="3.1-yaml-metadata.html#cb100-4" tabindex="-1"></a><span class="fu">\setlength</span>{<span class="fu">\abovedisplayshortskip</span>}{-5pt}</span>
+<span id="cb100-5"><a href="3.1-yaml-metadata.html#cb100-5" tabindex="-1"></a></span>
+<span id="cb100-6"><a href="3.1-yaml-metadata.html#cb100-6" tabindex="-1"></a><span class="co">% book dedication page</span></span>
+<span id="cb100-7"><a href="3.1-yaml-metadata.html#cb100-7" tabindex="-1"></a><span class="fu">\thispagestyle</span>{empty}</span>
+<span id="cb100-8"><a href="3.1-yaml-metadata.html#cb100-8" tabindex="-1"></a></span>
+<span id="cb100-9"><a href="3.1-yaml-metadata.html#cb100-9" tabindex="-1"></a><span class="kw">\begin</span>{<span class="ex">center</span>}</span>
+<span id="cb100-10"><a href="3.1-yaml-metadata.html#cb100-10" tabindex="-1"></a>献给……</span>
+<span id="cb100-11"><a href="3.1-yaml-metadata.html#cb100-11" tabindex="-1"></a></span>
+<span id="cb100-12"><a href="3.1-yaml-metadata.html#cb100-12" tabindex="-1"></a>呃，爱谁谁吧</span>
+<span id="cb100-13"><a href="3.1-yaml-metadata.html#cb100-13" tabindex="-1"></a><span class="kw">\end</span>{<span class="ex">center</span>}</span></code></pre></div>
 <p>The default bookdown uses <span style="color:#FF9900"><strong><code>\tightlist</code></strong></span> for all bullet lists, setting <code>itemsep=0pt</code> and <code>parskip=0pt</code>, aim for “compact lists.” See the following definition:</p>
-<div class="sourceCode" id="cb99"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb99-1"><a href="3.1-yaml-metadata.html#cb99-1" tabindex="-1"></a>\providecommand{\tightlist}{%</span>
-<span id="cb99-2"><a href="3.1-yaml-metadata.html#cb99-2" tabindex="-1"></a>\setlength{\itemsep}{<span class="dv">0</span>pt}\setlength{\parskip}{<span class="dv">0</span>pt}}</span></code></pre></div>
+<div class="sourceCode" id="cb101"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb101-1"><a href="3.1-yaml-metadata.html#cb101-1" tabindex="-1"></a>\providecommand{\tightlist}{%</span>
+<span id="cb101-2"><a href="3.1-yaml-metadata.html#cb101-2" tabindex="-1"></a>\setlength{\itemsep}{<span class="dv">0</span>pt}\setlength{\parskip}{<span class="dv">0</span>pt}}</span></code></pre></div>
 <p>I personally don’t like the compact list setting, so I disable it with <code>\let\tightlist\relax</code>. To prevent it from being overridden, I put it in <code>before_body.tex</code> instead of <code>preamble.tex</code>.</p></li>
 <li><p><code>after_body</code>.</p></li>
 </ul>
 <p>Each of them takes one or multiple file paths. The file(s) specified in <code>in_header</code> will be added to the preamble. The files specified in <code>before_body</code> and <code>after_body</code> are added before and after the document body, respectively.</p>
-<div class="sourceCode" id="cb100"><pre class="sourceCode latex"><code class="sourceCode latex"><span id="cb100-1"><a href="3.1-yaml-metadata.html#cb100-1" tabindex="-1"></a><span class="bu">\documentclass</span>{<span class="ex">article</span>}</span>
-<span id="cb100-2"><a href="3.1-yaml-metadata.html#cb100-2" tabindex="-1"></a><span class="co">% preamble</span></span>
-<span id="cb100-3"><a href="3.1-yaml-metadata.html#cb100-3" tabindex="-1"></a><span class="kw">\begin</span>{<span class="ex">document</span>}</span>
-<span id="cb100-4"><a href="3.1-yaml-metadata.html#cb100-4" tabindex="-1"></a><span class="co">% before_body</span></span>
-<span id="cb100-5"><a href="3.1-yaml-metadata.html#cb100-5" tabindex="-1"></a><span class="co">% body</span></span>
-<span id="cb100-6"><a href="3.1-yaml-metadata.html#cb100-6" tabindex="-1"></a><span class="co">% after_body</span></span>
-<span id="cb100-7"><a href="3.1-yaml-metadata.html#cb100-7" tabindex="-1"></a><span class="kw">\end</span>{<span class="ex">document</span>}</span></code></pre></div>
+<div class="sourceCode" id="cb102"><pre class="sourceCode latex"><code class="sourceCode latex"><span id="cb102-1"><a href="3.1-yaml-metadata.html#cb102-1" tabindex="-1"></a><span class="bu">\documentclass</span>{<span class="ex">article</span>}</span>
+<span id="cb102-2"><a href="3.1-yaml-metadata.html#cb102-2" tabindex="-1"></a><span class="co">% preamble</span></span>
+<span id="cb102-3"><a href="3.1-yaml-metadata.html#cb102-3" tabindex="-1"></a><span class="kw">\begin</span>{<span class="ex">document</span>}</span>
+<span id="cb102-4"><a href="3.1-yaml-metadata.html#cb102-4" tabindex="-1"></a><span class="co">% before_body</span></span>
+<span id="cb102-5"><a href="3.1-yaml-metadata.html#cb102-5" tabindex="-1"></a><span class="co">% body</span></span>
+<span id="cb102-6"><a href="3.1-yaml-metadata.html#cb102-6" tabindex="-1"></a><span class="co">% after_body</span></span>
+<span id="cb102-7"><a href="3.1-yaml-metadata.html#cb102-7" tabindex="-1"></a><span class="kw">\end</span>{<span class="ex">document</span>}</span></code></pre></div>
 <p><img src="images/preamble.png" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:40%;" /></p>
 <p>In <code>preamble.tex</code>:</p>
-<div class="sourceCode" id="cb101"><pre class="sourceCode latex"><code class="sourceCode latex"><span id="cb101-1"><a href="3.1-yaml-metadata.html#cb101-1" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">xeCJK</span>}  </span>
-<span id="cb101-2"><a href="3.1-yaml-metadata.html#cb101-2" tabindex="-1"></a><span class="fu">\setCJKmainfont</span>{Noto Sans CJK SC}</span></code></pre></div>
+<div class="sourceCode" id="cb103"><pre class="sourceCode latex"><code class="sourceCode latex"><span id="cb103-1"><a href="3.1-yaml-metadata.html#cb103-1" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">xeCJK</span>}  </span>
+<span id="cb103-2"><a href="3.1-yaml-metadata.html#cb103-2" tabindex="-1"></a><span class="fu">\setCJKmainfont</span>{Noto Sans CJK SC}</span></code></pre></div>
 <p><strong>Alternatively</strong>, you can use <code>header-includes</code> but with less flexibility to change options:</p>
-<div class="sourceCode" id="cb102"><pre class="sourceCode yml"><code class="sourceCode yaml"><span id="cb102-1"><a href="3.1-yaml-metadata.html#cb102-1" tabindex="-1"></a><span class="pp">---</span></span>
-<span id="cb102-2"><a href="3.1-yaml-metadata.html#cb102-2" tabindex="-1"></a><span class="fu">output</span><span class="kw">:</span><span class="at"> pdf_document</span></span>
-<span id="cb102-3"><a href="3.1-yaml-metadata.html#cb102-3" tabindex="-1"></a><span class="fu">header-includes</span><span class="kw">:</span></span>
-<span id="cb102-4"><a href="3.1-yaml-metadata.html#cb102-4" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> \usepackage{ctex}</span></span>
-<span id="cb102-5"><a href="3.1-yaml-metadata.html#cb102-5" tabindex="-1"></a><span class="pp">---</span></span></code></pre></div>
+<div class="sourceCode" id="cb104"><pre class="sourceCode yml"><code class="sourceCode yaml"><span id="cb104-1"><a href="3.1-yaml-metadata.html#cb104-1" tabindex="-1"></a><span class="pp">---</span></span>
+<span id="cb104-2"><a href="3.1-yaml-metadata.html#cb104-2" tabindex="-1"></a><span class="fu">output</span><span class="kw">:</span><span class="at"> pdf_document</span></span>
+<span id="cb104-3"><a href="3.1-yaml-metadata.html#cb104-3" tabindex="-1"></a><span class="fu">header-includes</span><span class="kw">:</span></span>
+<span id="cb104-4"><a href="3.1-yaml-metadata.html#cb104-4" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> \usepackage{ctex}</span></span>
+<span id="cb104-5"><a href="3.1-yaml-metadata.html#cb104-5" tabindex="-1"></a><span class="pp">---</span></span></code></pre></div>
 <p>Q: <code>includes</code> vs. <code>header-includes</code>, which one is better to use for loading LaTeX packages?</p>
 <p>A: Another way to add code to the preamble is to pass it directly to the <code>header-includes</code> field in the YAML frontmatter. The advantage of using <code>header-includes</code>is that you can keep everything in one R Markdown document.</p>
 <p>However, if your report is to be generated in <em>multiple output formats</em>, we still recommend that you <strong>use the <code>includes</code> method</strong>, because the <code>header-includes</code> field is unconditional, and will be included in non-LaTeX output documents, too. By comparison, the <code>includes</code> option is only applied to the <code>pdf_document</code> format.</p>
@@ -1252,49 +1272,49 @@ After binding:
 <h4><code>header-includes</code><a href="3.1-yaml-metadata.html#header-includes" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>Tex style and package loading can also put in <code>header-includes</code>.</p>
 <p>Ex.1</p>
-<div class="sourceCode" id="cb103"><pre class="sourceCode yml"><code class="sourceCode yaml"><span id="cb103-1"><a href="3.1-yaml-metadata.html#cb103-1" tabindex="-1"></a><span class="pp">---</span></span>
-<span id="cb103-2"><a href="3.1-yaml-metadata.html#cb103-2" tabindex="-1"></a><span class="fu">output</span><span class="kw">:</span><span class="at"> pdf_document</span></span>
-<span id="cb103-3"><a href="3.1-yaml-metadata.html#cb103-3" tabindex="-1"></a><span class="fu">header-includes</span><span class="kw">:</span></span>
-<span id="cb103-4"><a href="3.1-yaml-metadata.html#cb103-4" tabindex="-1"></a><span class="at"> </span><span class="kw">-</span><span class="at"> \usepackage{fancyhdr}</span></span>
-<span id="cb103-5"><a href="3.1-yaml-metadata.html#cb103-5" tabindex="-1"></a><span class="at"> </span><span class="kw">-</span><span class="at"> \pagestyle{fancy}</span></span>
-<span id="cb103-6"><a href="3.1-yaml-metadata.html#cb103-6" tabindex="-1"></a><span class="at"> </span><span class="kw">-</span><span class="at"> \usepackage{ctex}</span><span class="co"> #TeX package for  Chinese</span></span>
-<span id="cb103-7"><a href="3.1-yaml-metadata.html#cb103-7" tabindex="-1"></a><span class="at"> </span><span class="kw">-</span><span class="at"> \fancyhead[L]{MANUSCRIPT AUTHORS}</span></span>
-<span id="cb103-8"><a href="3.1-yaml-metadata.html#cb103-8" tabindex="-1"></a><span class="at"> </span><span class="kw">-</span><span class="at"> \fancyhead[R]{MANUSCRIPT SHORT TITLE}</span></span>
-<span id="cb103-9"><a href="3.1-yaml-metadata.html#cb103-9" tabindex="-1"></a><span class="at"> </span><span class="kw">-</span><span class="at"> \usepackage{lineno}</span><span class="co"> # TeX package for line numbers</span></span>
-<span id="cb103-10"><a href="3.1-yaml-metadata.html#cb103-10" tabindex="-1"></a><span class="at"> </span><span class="kw">-</span><span class="at"> \linenumbers</span></span>
-<span id="cb103-11"><a href="3.1-yaml-metadata.html#cb103-11" tabindex="-1"></a><span class="pp">---</span></span></code></pre></div>
+<div class="sourceCode" id="cb105"><pre class="sourceCode yml"><code class="sourceCode yaml"><span id="cb105-1"><a href="3.1-yaml-metadata.html#cb105-1" tabindex="-1"></a><span class="pp">---</span></span>
+<span id="cb105-2"><a href="3.1-yaml-metadata.html#cb105-2" tabindex="-1"></a><span class="fu">output</span><span class="kw">:</span><span class="at"> pdf_document</span></span>
+<span id="cb105-3"><a href="3.1-yaml-metadata.html#cb105-3" tabindex="-1"></a><span class="fu">header-includes</span><span class="kw">:</span></span>
+<span id="cb105-4"><a href="3.1-yaml-metadata.html#cb105-4" tabindex="-1"></a><span class="at"> </span><span class="kw">-</span><span class="at"> \usepackage{fancyhdr}</span></span>
+<span id="cb105-5"><a href="3.1-yaml-metadata.html#cb105-5" tabindex="-1"></a><span class="at"> </span><span class="kw">-</span><span class="at"> \pagestyle{fancy}</span></span>
+<span id="cb105-6"><a href="3.1-yaml-metadata.html#cb105-6" tabindex="-1"></a><span class="at"> </span><span class="kw">-</span><span class="at"> \usepackage{ctex}</span><span class="co"> #TeX package for  Chinese</span></span>
+<span id="cb105-7"><a href="3.1-yaml-metadata.html#cb105-7" tabindex="-1"></a><span class="at"> </span><span class="kw">-</span><span class="at"> \fancyhead[L]{MANUSCRIPT AUTHORS}</span></span>
+<span id="cb105-8"><a href="3.1-yaml-metadata.html#cb105-8" tabindex="-1"></a><span class="at"> </span><span class="kw">-</span><span class="at"> \fancyhead[R]{MANUSCRIPT SHORT TITLE}</span></span>
+<span id="cb105-9"><a href="3.1-yaml-metadata.html#cb105-9" tabindex="-1"></a><span class="at"> </span><span class="kw">-</span><span class="at"> \usepackage{lineno}</span><span class="co"> # TeX package for line numbers</span></span>
+<span id="cb105-10"><a href="3.1-yaml-metadata.html#cb105-10" tabindex="-1"></a><span class="at"> </span><span class="kw">-</span><span class="at"> \linenumbers</span></span>
+<span id="cb105-11"><a href="3.1-yaml-metadata.html#cb105-11" tabindex="-1"></a><span class="pp">---</span></span></code></pre></div>
 <p>Ex.2</p>
-<div class="sourceCode" id="cb104"><pre class="sourceCode yml"><code class="sourceCode yaml"><span id="cb104-1"><a href="3.1-yaml-metadata.html#cb104-1" tabindex="-1"></a><span class="pp">---</span></span>
-<span id="cb104-2"><a href="3.1-yaml-metadata.html#cb104-2" tabindex="-1"></a><span class="fu">title</span><span class="kw">:</span><span class="at"> Adding a Logo to LaTeX Title</span></span>
-<span id="cb104-3"><a href="3.1-yaml-metadata.html#cb104-3" tabindex="-1"></a><span class="fu">author</span><span class="kw">:</span><span class="at"> Michael Harper</span></span>
-<span id="cb104-4"><a href="3.1-yaml-metadata.html#cb104-4" tabindex="-1"></a><span class="fu">date</span><span class="kw">:</span><span class="at"> December 7th, 2018</span></span>
-<span id="cb104-5"><a href="3.1-yaml-metadata.html#cb104-5" tabindex="-1"></a><span class="fu">output</span><span class="kw">:</span><span class="at"> pdf_document</span></span>
-<span id="cb104-6"><a href="3.1-yaml-metadata.html#cb104-6" tabindex="-1"></a><span class="fu">header-includes</span><span class="kw">:</span></span>
-<span id="cb104-7"><a href="3.1-yaml-metadata.html#cb104-7" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> \usepackage{titling}</span></span>
-<span id="cb104-8"><a href="3.1-yaml-metadata.html#cb104-8" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> \pretitle{\begin{center}</span></span>
-<span id="cb104-9"><a href="3.1-yaml-metadata.html#cb104-9" tabindex="-1"></a><span class="at">    \includegraphics[width=2in,height=2in]{logo.jpg}\LARGE\\}</span></span>
-<span id="cb104-10"><a href="3.1-yaml-metadata.html#cb104-10" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> \posttitle{\end{center}}</span></span>
-<span id="cb104-11"><a href="3.1-yaml-metadata.html#cb104-11" tabindex="-1"></a><span class="pp">---</span></span></code></pre></div>
+<div class="sourceCode" id="cb106"><pre class="sourceCode yml"><code class="sourceCode yaml"><span id="cb106-1"><a href="3.1-yaml-metadata.html#cb106-1" tabindex="-1"></a><span class="pp">---</span></span>
+<span id="cb106-2"><a href="3.1-yaml-metadata.html#cb106-2" tabindex="-1"></a><span class="fu">title</span><span class="kw">:</span><span class="at"> Adding a Logo to LaTeX Title</span></span>
+<span id="cb106-3"><a href="3.1-yaml-metadata.html#cb106-3" tabindex="-1"></a><span class="fu">author</span><span class="kw">:</span><span class="at"> Michael Harper</span></span>
+<span id="cb106-4"><a href="3.1-yaml-metadata.html#cb106-4" tabindex="-1"></a><span class="fu">date</span><span class="kw">:</span><span class="at"> December 7th, 2018</span></span>
+<span id="cb106-5"><a href="3.1-yaml-metadata.html#cb106-5" tabindex="-1"></a><span class="fu">output</span><span class="kw">:</span><span class="at"> pdf_document</span></span>
+<span id="cb106-6"><a href="3.1-yaml-metadata.html#cb106-6" tabindex="-1"></a><span class="fu">header-includes</span><span class="kw">:</span></span>
+<span id="cb106-7"><a href="3.1-yaml-metadata.html#cb106-7" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> \usepackage{titling}</span></span>
+<span id="cb106-8"><a href="3.1-yaml-metadata.html#cb106-8" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> \pretitle{\begin{center}</span></span>
+<span id="cb106-9"><a href="3.1-yaml-metadata.html#cb106-9" tabindex="-1"></a><span class="at">    \includegraphics[width=2in,height=2in]{logo.jpg}\LARGE\\}</span></span>
+<span id="cb106-10"><a href="3.1-yaml-metadata.html#cb106-10" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> \posttitle{\end{center}}</span></span>
+<span id="cb106-11"><a href="3.1-yaml-metadata.html#cb106-11" tabindex="-1"></a><span class="pp">---</span></span></code></pre></div>
 <p>Ex.3</p>
 <p>To override or extend some CSS for just one document, include for example:</p>
-<div class="sourceCode" id="cb105"><pre class="sourceCode yml"><code class="sourceCode yaml"><span id="cb105-1"><a href="3.1-yaml-metadata.html#cb105-1" tabindex="-1"></a><span class="pp">---</span></span>
-<span id="cb105-2"><a href="3.1-yaml-metadata.html#cb105-2" tabindex="-1"></a><span class="fu">output</span><span class="kw">:</span><span class="at"> html_document</span></span>
-<span id="cb105-3"><a href="3.1-yaml-metadata.html#cb105-3" tabindex="-1"></a><span class="fu">header-includes</span><span class="kw">: </span><span class="ch">|</span></span>
-<span id="cb105-4"><a href="3.1-yaml-metadata.html#cb105-4" tabindex="-1"></a>  &lt;style&gt;</span>
-<span id="cb105-5"><a href="3.1-yaml-metadata.html#cb105-5" tabindex="-1"></a>  blockquote {</span>
-<span id="cb105-6"><a href="3.1-yaml-metadata.html#cb105-6" tabindex="-1"></a>    font-style: italic;</span>
-<span id="cb105-7"><a href="3.1-yaml-metadata.html#cb105-7" tabindex="-1"></a>  }</span>
-<span id="cb105-8"><a href="3.1-yaml-metadata.html#cb105-8" tabindex="-1"></a>  tr.even {</span>
-<span id="cb105-9"><a href="3.1-yaml-metadata.html#cb105-9" tabindex="-1"></a>    background-color: #f0f0f0;</span>
-<span id="cb105-10"><a href="3.1-yaml-metadata.html#cb105-10" tabindex="-1"></a>  }</span>
-<span id="cb105-11"><a href="3.1-yaml-metadata.html#cb105-11" tabindex="-1"></a>  td, th {</span>
-<span id="cb105-12"><a href="3.1-yaml-metadata.html#cb105-12" tabindex="-1"></a>    padding: 0.5em 2em 0.5em 0.5em;</span>
-<span id="cb105-13"><a href="3.1-yaml-metadata.html#cb105-13" tabindex="-1"></a>  }</span>
-<span id="cb105-14"><a href="3.1-yaml-metadata.html#cb105-14" tabindex="-1"></a>  tbody {</span>
-<span id="cb105-15"><a href="3.1-yaml-metadata.html#cb105-15" tabindex="-1"></a>    border-bottom: none;</span>
-<span id="cb105-16"><a href="3.1-yaml-metadata.html#cb105-16" tabindex="-1"></a>  }</span>
-<span id="cb105-17"><a href="3.1-yaml-metadata.html#cb105-17" tabindex="-1"></a>  &lt;/style&gt;</span>
-<span id="cb105-18"><a href="3.1-yaml-metadata.html#cb105-18" tabindex="-1"></a><span class="pp">---</span></span></code></pre></div>
+<div class="sourceCode" id="cb107"><pre class="sourceCode yml"><code class="sourceCode yaml"><span id="cb107-1"><a href="3.1-yaml-metadata.html#cb107-1" tabindex="-1"></a><span class="pp">---</span></span>
+<span id="cb107-2"><a href="3.1-yaml-metadata.html#cb107-2" tabindex="-1"></a><span class="fu">output</span><span class="kw">:</span><span class="at"> html_document</span></span>
+<span id="cb107-3"><a href="3.1-yaml-metadata.html#cb107-3" tabindex="-1"></a><span class="fu">header-includes</span><span class="kw">: </span><span class="ch">|</span></span>
+<span id="cb107-4"><a href="3.1-yaml-metadata.html#cb107-4" tabindex="-1"></a>  &lt;style&gt;</span>
+<span id="cb107-5"><a href="3.1-yaml-metadata.html#cb107-5" tabindex="-1"></a>  blockquote {</span>
+<span id="cb107-6"><a href="3.1-yaml-metadata.html#cb107-6" tabindex="-1"></a>    font-style: italic;</span>
+<span id="cb107-7"><a href="3.1-yaml-metadata.html#cb107-7" tabindex="-1"></a>  }</span>
+<span id="cb107-8"><a href="3.1-yaml-metadata.html#cb107-8" tabindex="-1"></a>  tr.even {</span>
+<span id="cb107-9"><a href="3.1-yaml-metadata.html#cb107-9" tabindex="-1"></a>    background-color: #f0f0f0;</span>
+<span id="cb107-10"><a href="3.1-yaml-metadata.html#cb107-10" tabindex="-1"></a>  }</span>
+<span id="cb107-11"><a href="3.1-yaml-metadata.html#cb107-11" tabindex="-1"></a>  td, th {</span>
+<span id="cb107-12"><a href="3.1-yaml-metadata.html#cb107-12" tabindex="-1"></a>    padding: 0.5em 2em 0.5em 0.5em;</span>
+<span id="cb107-13"><a href="3.1-yaml-metadata.html#cb107-13" tabindex="-1"></a>  }</span>
+<span id="cb107-14"><a href="3.1-yaml-metadata.html#cb107-14" tabindex="-1"></a>  tbody {</span>
+<span id="cb107-15"><a href="3.1-yaml-metadata.html#cb107-15" tabindex="-1"></a>    border-bottom: none;</span>
+<span id="cb107-16"><a href="3.1-yaml-metadata.html#cb107-16" tabindex="-1"></a>  }</span>
+<span id="cb107-17"><a href="3.1-yaml-metadata.html#cb107-17" tabindex="-1"></a>  &lt;/style&gt;</span>
+<span id="cb107-18"><a href="3.1-yaml-metadata.html#cb107-18" tabindex="-1"></a><span class="pp">---</span></span></code></pre></div>
 <hr />
 </div>
 </div>
@@ -1302,8 +1322,8 @@ After binding:
 <h3>Change Font<a href="3.1-yaml-metadata.html#change-font" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>The default font is <code>\usepackage{lmodern}</code> in bookdown.</p>
 <p>Can specify alternative fonts in <code>preamble.tex</code> as follows:</p>
-<div class="sourceCode" id="cb106"><pre class="sourceCode latex"><code class="sourceCode latex"><span id="cb106-1"><a href="3.1-yaml-metadata.html#cb106-1" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">fontspec</span>}</span>
-<span id="cb106-2"><a href="3.1-yaml-metadata.html#cb106-2" tabindex="-1"></a><span class="fu">\setmainfont</span>{Charter}</span></code></pre></div>
+<div class="sourceCode" id="cb108"><pre class="sourceCode latex"><code class="sourceCode latex"><span id="cb108-1"><a href="3.1-yaml-metadata.html#cb108-1" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">fontspec</span>}</span>
+<span id="cb108-2"><a href="3.1-yaml-metadata.html#cb108-2" tabindex="-1"></a><span class="fu">\setmainfont</span>{Charter}</span></code></pre></div>
 <p>Fonts known to LuaTeX or XeTEX may be loaded by their standard names as you’d speak them out loud, such as Times New Roman or Adobe Garamond. ‘Known to’ in this case generally means ‘exists in a standard fonts location’ such as <code>~/Library/Fonts</code> on macOS, or <code>C:\Windows\Fonts</code> on Windows. In LuaTEX, fonts found in the TEXMF tree can also be loaded by name. In XeTEX, fonts found in the TEXMF tree can be loaded in Windows and Linux, but not on macOS.</p>
 <hr />
 </div>

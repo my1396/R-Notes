@@ -304,7 +304,8 @@ params:
 ---
 ````
 
-To access a parameter in our R code, call `params$<parameter name>`, e.g., `params$start_date` and `params$end_date`.
+
+**Declaring Parameters**
 
 Should I use quotes to surround the values?
 
@@ -323,10 +324,47 @@ foo: bar1baz234
 bar: 123baz
 ```
 
-Ref: 
+--------------------------------------------------------------------------------
 
+<span class="env-green">**Using Parameters in R Code**</span>
+
+<span class="env-green">To access a parameter in our R code</span>, call `params$<parameter name>`, e.g., `params$start_date` and `params$end_date`.
+
+--------------------------------------------------------------------------------
+
+**Knitting with Parameters**
+
+Add a `params` argument to `render` to create a report that uses a new set of parameter values.
+
+```r
+render("5-parameters.Rmd", params = list(data = "aleutians"))
+```
+
+<img src="https://d33wubrfki0l68.cloudfront.net/9dd79a102a5b0113977b47849c971bec845b71e0/fc209/lesson-images/params-2-aleutians.png" alt="Set Parameter Values" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
+
+
+--------------------------------------------------------------------------------
+
+**Use Parameters to Control the Behavior of knitr**
+
+For example, the **knitr** chunk option `echo` controls whether to display the program code, and we can set this option globally in a document via a parameter:
+
+````markdown
+---
+params:
+  printcode: false  # or set it to true
+---
+```{r, setup, include=FALSE} 
+# set this option in the first code chunk in the document
+knitr::opts_chunk$set(echo = params$printcode)
+```
+````
+
+**Ref:**
+
+- [R Markdown from RStudio: Parameters](https://rmarkdown.rstudio.com/lesson-6.html)
 - [R Markdown anatomy, R Markdown Cookbook](https://bookdown.org/yihui/rmarkdown-cookbook/rmarkdown-anatomy.html#:~:text=In%20short%2C%20we%20can%20include%20variables%20and%20R%20expressions%20in%20this%20header%20that%20can%20be%20referenced%20throughout%20our%20R%20Markdown%20document.)
-- <https://rmarkdown.rstudio.com/lesson-6.html>
+- [Parameterized reports, R Markdown: The Definitive Guide](https://bookdown.org/yihui/rmarkdown/parameterized-reports.html)
 
 
 --------------------------------------------------------------------------------
@@ -1115,7 +1153,9 @@ You may use `knitr::opts_chunk$set()` to change the default values of chunk opti
 
   - specify `results="asis"` in code chunks.
 
-- `results='hold'`: Hold all pieces of text output in a chunk and flush them to the end of the chunk.
+- <span style="color: #00CC66;">`results='hold'`</span>: Hold all pieces of text output in a chunk and flush them to the end of the chunk.
+  
+  This is useful when you want to group all text output together, rather than interspersed with the source code.
 
 - `results='hide'` (or `results='FALSE'`): Hide text output.
 

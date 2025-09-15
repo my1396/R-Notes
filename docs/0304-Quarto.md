@@ -960,11 +960,26 @@ E.g., you have a home assignment file and you want to have two versions of it: o
 
 You can set a metadata variable in yaml, e.g., `solutions: true` or `solutions: false`.
 
+```yaml
+---
+title: "Quiz: Linear Regression and Hypothesis Testing (p1)"
+from: markdown+tex_math_single_backslash
+solution: false
+# solution: true
+format:
+  pdf:
+    include-in-header: ../latex/preamble.tex
+    fontsize: 12pt
+---
+```
+
 Then, in the body of your document, you can use the following syntax to conditionally include or exclude content based on the value of the `solutions` variable.
 
 ```markdown
 ::: {.content-visible when-meta="solutions"}
 This content will only be visible if `solutions` is set to `true`.
+
+Put your solutions here.
 :::
 ```
 
@@ -972,6 +987,29 @@ Expected behavior:
 
 - If `solutions: true`, the content will be displayed.
 - If `solutions: false`, the content will be hidden.
+
+
+You can use multiple levels of metadata keys separated by periods. For example, 
+
+````markdown
+::: {.content-hidden unless-meta="path.to.metadata"}
+
+This content will be hidden unless there exists a metadata entry like such:
+
+```yml
+path:
+  to:
+    metadata: true
+```
+
+:::
+````
+
+You need to use `unless-meta="path.to.metadata"` to refer to your 
+user defined metadata key.
+
+--------------------------------------------------------------------------------
+
 
 #### Set up multiple profiles
 
@@ -1009,6 +1047,79 @@ profile:
 
 Then, you can simply run `quarto render` without specifying a profile, and it will use the `with-solutions` profile by default.
 
+--------------------------------------------------------------------------------
+
+#### Conditional Code Blocks
+
+Q: Conditional contents NOT working for code blocks.  
+
+A: It’s because `.content-visible` runs after code execution. knitr executes the chunk and emits output even if the wrapper later hides the surrounding Markdown. Control the chunk itself with the meta flag.
+
+
+<span class="env-green">Solution: Use params in rmarkdown.</span>
+
+1. In the YAML header, define a parameter `solution` with a default value of `false`.
+
+   ```yaml
+   ---
+   title: "Home Assignment"
+   from: markdown+tex_math_single_backslash
+   params:
+     solution: false
+     # solution: true
+   ---
+   ```
+
+   - `solution: false` means do not show solutions by default.
+   - `solution: true` means show solutions.
+
+
+2. Using a code chunk to get the value of the parameter. Put it at the beginning of the document as part of a global setup.
+
+   ````markdown
+   ```{r echo=FALSE} 
+   .solution <- params$solution
+   ```
+   ````
+3. For following <span class="env-green">**code chunks**</span>, you can use `eval=.solution, include=.solution` to control whether to evaluate and include the chunk based on the value of `.solution`.
+
+   ````markdown
+   ```{r eval=.solution, include=.solution} 
+   # R code for solution
+   summary(cars)
+   ```
+   ````
+
+   - When `.solution` is `TRUE`, the chunk will be evaluated and included in the output.
+     - If you still want to evaluate but not include in the output, use <span class="env-green">`include=.solution`</span> only
+   - when `.solution` is `FALSE`, the chunk will not be evaluated or included in the output.
+
+4. For <span class="env-green">**regular text**</span>, use fenced divs with `.content-visible` and `when-meta="solution"` to conditionally include or exclude content based on the value of the `solution` parameter.
+
+   ```markdown
+   ::: {.content-visible when-meta="params.solution"}
+   This content will only be visible if `solution` is set to `true`.
+
+   Put your solutions here.
+   :::
+   ```
+
+   - Use the attributes `unless-meta` and `when-meta`, and use periods `.` to separate metadata keys.
+   - `solution` is a second-level key under `params`, so you need to use `params.solution` to refer to it.
+
+
+**Use scenarios:**
+
+- When preparing the assignment, you can set `solution: true` to see the solutions while editing.
+- After you finish editing, set `solution: false` to hide the solutions before submission.
+
+
+When you want to render the document with solutions, you can set the parameter `solution` to `true` in the YAML header or use **command line arguments**.
+
+ref:
+
+- <https://jadeyryan.quarto.pub/cascadia-quarto/4-conditionals/>
+- meta variables: <https://quarto.org/docs/authoring/variables.html>
 
 --------------------------------------------------------------------------------
 

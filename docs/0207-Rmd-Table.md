@@ -366,7 +366,7 @@ ___
   
   A value of `c(2, 1, 3)`, for instance, will apply the first label to the two first columns, the second label to the third column, and the third label will apply to the following three columns (i.e., columns number four, five and six).
 
-- `dep.var.labels` labels for dependent variables
+- `dep.var.labels` labels for dependent variables.
 
 - <span style='color:#00CC66'>`covariate.labels`</span>  labels for covariates in the regression tables.
 
@@ -379,7 +379,7 @@ ___
                   "\\textit{k}", "logLik", "AICc", "\\Delta AICc"))
     ```
 
-- `add.lines` add a row(s), such as reporting fixed effects.
+- `add.lines` add a row(s) for additional info, such as reporting fixed effects.
 
     ```r
     stargazer(output, output2, type = "html",
@@ -404,7 +404,7 @@ ___
     
     This is useful to denote different regressions, informing the name/nature of the model, instead of using numbers to identify them.
 
-    When you add custom column labels, you may want to use `model.numbers = FALSE` to suppress the default model numbers (1) (2)...
+    When you add custom column labels, you may want to use ::<span style="color: #00CC66;">`model.numbers = FALSE`</span> to suppress the default model numbers (1) (2)...
 
 
 **Tip:** Add a blank line under the `stargazer` table: `&nbsp;` with a blank line above and below.
