@@ -165,6 +165,10 @@ This will work:
 $$E = mc^2$$
 ```
 
+In html tags, math should be enclosed in `\( ... \)` for inline math and `\[ ... \]` for display math.
+
+- If using `$...$`, there are backticks surrounding the math after rendering...
+
 --------------------------------------------------------------------------------
 
 ### Bullet list

@@ -54,10 +54,45 @@ Alternatively, use, `tbl_df %>% data.frame()` to print the whole table. `data.fr
 `print(as_tibble(mtcars), n = 3)` first convert to `tibble`, then specify the rows to print.
 
 
+--------------------------------------------------------------------------------
 
-<span class="env-green">`data.table`</span> package has nice table print settings. You can preview the head and tail at the same time. It doesn't give you column details, such as data type, but it gives you a feeling of the data structure without using `head` and `tail` functions twice.
+<span class="env-green">`data.table`</span> package has nice table print settings. You can preview the head and tail at the same time. 
 
-The `data.table` R package is being used in different fields such as finance and genomics and is especially useful for those of you that are working with large data sets (for example, 1GB to 100GB in RAM).
+- Regular `print.tbl` will print the head (first 6 rows) of the table only.
+- `print.data.table` gives you a feeling of the data structure without using `head` and `tail` functions twice. See below.
+- `?print.data.table` for help page. See printing options for a data.table.
+
+```r
+library(data.table)
+DT <- tibble(a = rnorm(1000), b = rnorm(1000)) %>% as.data.table()
+DT %>% 
+  print(topn = 4)
+
+                a            b
+            <num>        <num>
+   1:  1.32712276 -0.778009241
+   2:  1.71029980  1.507805184
+   3: -0.41397245  0.816250538
+   4:  0.51490112  0.499563882
+  ---                         
+ 997: -0.06823802  0.541311448
+ 998: -1.48304667 -2.293768686
+ 999:  0.94170427  1.363411322
+1000: -0.45273759 -0.006411937
+```
+
+`print.data.table(x, topn = 5)`
+
+| Options            | Function                                                     |
+| ------------------ | ------------------------------------------------------------ |
+| `topn = 5`         | Default to 5. <br />The number of rows to be printed from the beginning and end of tables. |
+| `nrows = 100`      | Max number of rows that will ever be printed. <br />Set a upper boundary, rarely used in practice.<br />Equivalent to `print.tbl(n = 100)` |
+| `class = TRUE`     | Whether to print column types. Recommend set to `TRUE`.      |
+| `row.names = TRUE` | Whether to print row names.                                  |
+
+
+
+The `data.table` R package is being used in different fields such as finance and genomics and is especially useful for those of you that are working with **large data sets** (for example, 1GB to 100GB in RAM).
 
 `data.table` Cheatsheet: <https://www.datacamp.com/cheat-sheet/the-datatable-r-package-cheat-sheet>
 
@@ -248,12 +283,57 @@ world %>%
 
 #### Create New Columns {.unnumbered .unlisted}
 
-`add_column(df, ..., .after=NULL, .before=NULL)` add new column after the last column.
+`add_column(df, ..., .after=NULL, .before=NULL)` add new column at specified position.
+
+Note that <span class="env-orange">`add_column()` does NOT support data-masking</span>, so you cannot refer to other columns when creating new columns. 
+
+→ Use `mutate()` instead.
 
 - `df`: Data frame to append to;
 - `...`:  Name-value pairs to insert;
-- `.before, .after`:  One-based column **index** or column **name** where to add the new columns, default: after last column
+- `.before, .after`: One-based column **index** or column **name** where to add the new columns, default: after last column
 
+
+Q: What is data-masking? 
+
+A: [Data-masking](https://rlang.r-lib.org/reference/topic-data-mask.html) is a technique that allows you to refer to variables in a data frame directly by their names without using the `$` operator or quoting the variable names. See examples below.
+
+```r
+# Unmasked programming
+mean(mtcars$cyl + mtcars$am)
+#> [1] 6.59375
+
+# Referring to columns is an error - Where is the data?
+mean(cyl + am)
+#> Error:
+#> ! object 'cyl' not found
+
+# Data-masking
+with(mtcars, mean(cyl + am))
+#> [1] 6.59375
+```
+
+Q: Which functions support data-masking?
+
+A: `dplyr` verbs, such as `filter()`, `mutate()`, `summarise()`, `arrange()`, and `select()` support data-masking.
+
+```r
+library(tidyverse)
+DT <- tibble(a = rnorm(1000), b = rnorm(1000))
+
+DT %>% mutate(id = row_number())
+DT %>% add_column(id = row_number())
+Error in `n()`:
+! Must only be used inside data-masking verbs like `mutate()`, `filter()`, and `group_by()`.
+Run `rlang::last_trace()` to see where the error occurred.
+
+DT %>% mutate(diff = b - a)
+DT %>% add_column(diff = b - a)
+Error: object 'b' not found
+```
+
+
+--------------------------------------------------------------------------------
 
 
 `data %>% mutate(column = .[[2]] - .[[1]])` subset by column positions.
@@ -503,7 +583,7 @@ the_country %>% select(any_of(c("isoa2", "countryCode")) )
 # remove columns may or may not exist
 the_country %>% select(-any_of(c("isoa2", "countryCode")) )
 ```
- 
+
 This flexibility is useful because it won't return an error if the variable is not found.
 
 
@@ -753,7 +833,6 @@ starwars %>%
 - `all = FALSE`  defaults to `FALSE`, it performs an <u>inner join</u>, retaining only the rows with matching keys.
 
   If `TRUE`, it performs a full <u>outer join</u>, retaining all rows from both `x` and `y`. 
-
 
 
 

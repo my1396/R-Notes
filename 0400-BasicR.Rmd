@@ -432,10 +432,31 @@ Every operation in R is a function call, whether or not it looks like one. This 
 - For a data frame, the output will show the names of the columns, the class of each column, and the first few rows of data. 
 - For a list, the output will show the names of the elements in the list, the class of each element, and the value of each element.
 
+--------------------------------------------------------------------------------
+
 <span style='color:#00CC66'>**`class(x)`** </span>	returns a `class` attribute, a character vector giving the names of the classes from which the object *inherits*.  变量的类型, eg., dataframe, tibble, vector.
 
-- If the object does not have a class attribute, it has an implicit class, notably `"matrix"`, `"array"`, `"function"` or `"numeric"` or the result of `typeof(x)` 
+- If the object does not have a class attribute, it has an implicit class, notably `"matrix"`, `"array"`, `"function"` or `"numeric"` or the result of `typeof(x)`.
 - A **property** (属性) assigned to an object that determines how generic functions operate with it. It is not a mutually exclusive classification. If an object has no specific class assigned to it, such as a simple numeric vector, it's class is usually the same as its mode, by convention.
+
+```r
+library(tibble)
+DT <- tibble(a = rnorm(1000), b = rnorm(1000))
+
+DT %>% class() 
+[1] "tbl_df"     "tbl"        "data.frame"
+
+DT %>% str() 
+tibble [1,000 × 2] (S3: tbl_df/tbl/data.frame)
+ $ a: num [1:1000] 1.327 1.71 -0.414 0.515 -0.117 ...
+ $ b: num [1:1000] -0.778 1.508 0.816 0.5 -1.874 ...
+```
+
+- `str()` is more informative than `class()`. 
+  
+  `str()` <span class="env-green">includes the class information</span>, but also provides additional details about the structure of the object, such as the number of rows and columns (for data frames), the types of each column, and a preview of the data contained within the object.
+
+--------------------------------------------------------------------------------
 
 `typeof` determines the (R internal) **type or storage** mode of any object.  变量里面存储数据的类型, eg., string, numeric, integer.
 
@@ -443,8 +464,12 @@ Every operation in R is a function call, whether or not it looks like one. This 
 - `mode(x)` is similar to `typeof(x)`
 - mutually exclusive. One object has one `typeof` and `mode`.
 
+
+--------------------------------------------------------------------------------
+
 `methods(class="zoo")` get a list of functions that have zoo-methods.
 
+--------------------------------------------------------------------------------
 
 `attributes(x)` returns the object's attributes/metadata as a list. Some of the most common attributes are: row names and column names, dimensions, and class. 
 
@@ -515,8 +540,7 @@ print(typeof(int_val))
 ```
 
 
-
-
+--------------------------------------------------------------------------------
 
 ### Type of Variables
 

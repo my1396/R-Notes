@@ -45,34 +45,87 @@ knitr::kable(mtcars[1:5, 1:5], format = "pipe")
 
 ### `knitr::kable`
 
-`knitr::kable(x, digits, caption=NULL, escape=TRUE)` Create tables in LaTeX, HTML, Markdown and reStructuredText. 
+[`knitr::kable(x, digits, caption=NULL, escape=TRUE)`](https://bookdown.org/yihui/rmarkdown-cookbook/kable.html) Create tables in LaTeX, HTML, Markdown and reStructuredText.
+
+It **adjusts column widths automatically** based on content.
 
 - `caption` 	The table caption. In order to number the table, mut specify the `caption` argument.
 
-- `format`            Possible values are `latex`, `html`, `pipe` (Pandoc's pipe tables), `simple` (Pandoc's simple tables), `rst`, and `jira`. 
+- `format`  Possible values are `latex`, `html`, `pipe` (Pandoc's pipe tables), `simple` (Pandoc's simple tables), `rst`, and `jira`. 
 
   The value of this argument will be <span style='color:#00CC66'>automatically determined</span> if the function is called within a **knitr** document. 
 
-- `digits`           Maximum number of digits for numeric columns, passed to `round()`. 
+- `digits`  Maximum number of digits for numeric columns, passed to `round()`. 
 
-- `col.names`     Rename columns.
+- `col.names` Rename columns.
 
-- `escape=TRUE` 	Whether to escape special characters when producing HTML or LaTeX tables. Default is `TRUE`, special characters will either be escaped or substituted.  For example, `$` is escaped as `\$`, `_` is escaped as `\_`, and `\` is substituted with `\textbackslash{}`
+- <span class="env-orange">`escape = TRUE`</span>  Whether to escape special characters when producing HTML or LaTeX tables. 
+  
+  Default is `TRUE`, will treat characters literally; special characters will either be escaped or substituted; no special characters will be interpreted.
+  
+  For example, `$` is escaped as `\$`, `_` is escaped as `\_`, and `\` is substituted with `\textbackslash{}`
+  
+  - <span class="env-green">Set `escape = FALSE` when you have math symbols in the table</span>. 
+    
+    It makes sure that the math symbols will be rendered.
+    
+    Note that you need to escape certain special characters in LaTeX math mode though, e.g., use `\\sigma` for printing $\sigma$ in `kable`.
 
+    - Don't need to escape `$`, `^` and `_` in math mode.
+  
   - When set to `FALSE`, you have to make sure **yourself** that special characters will not trigger syntax errors in LaTeX or HTML.
-  - Common special LaTeX characters include `#`, `%`, `&`, `{`, and `}`. Common special HTML characters include `&`, `<`, `>`, and `"`. You need to be cautious when generating tables with `escape = FALSE`, and make sure you are using the special characters in the right way. It is a very common mistake to use `escape = FALSE` and include `%` or `_` in column names or the caption of a LaTeX table without realizing that they are special.
+  
+  - Common special LaTeX characters include `#`, `%`, `&`, `{`, and `}`. Common special HTML characters include `&`, `<`, `>`, and `"`. These can easily lead to errors or unexpected effects when you render your file.
 
-- `align`      Column alignment: a character **vector** consisting of `'l'` (left), `'c'` (center) and/or `'r'` (right). 
+  ---
+
+  **Examples of escaping special characters:**
+
+  ```{r}
+  library(knitr)
+  
+  df <- data.frame(
+    Variable = c("Return", "Variance", "Literal symbols"),
+    Formula = c("$r_t = \\frac{P_t}{P_{t-1}} - 1$", 
+                "$\\sigma^2 = Var(r_t)$",
+                "\\$, \\%, \\_, \\#")
+  )
+  
+  kable(df, escape = FALSE, booktabs = TRUE)
+  ```
+
+
+  **Expected behaviors:**
+
+  - `Return` row → LaTeX math `$r_t ...$` renders properly.
+  - `Variance` row → works with superscripts and variance notation.
+  - `Literal symbols` row → shows `$ % _ #` as text in the PDF.
+
+---
+
+- `align` Column alignment: a character **vector** consisting of `'l'` (left), `'c'` (center) and/or `'r'` (right). 
 
   - By default or if `align = NULL`, <span style='color:#00CC66'>numeric columns are right-aligned</span>, and <span style='color:#00CC66'>other columns are left-aligned</span>.
   - If only one character is provided, that will apply to all columns.
   - If a vector is provided, will map to each individual column specifically.
 
-- Missing values (`NA`) in the table are displayed as `NA` by default. If you want to display them with other characters, you can set the option `knitr.kable.NA`, e.g. <span style='color:#00CC66'>`options(knitr.kable.NA = '')`</span> in the YAML to hide `NA` values.
+- Missing values (`NA`) in the table are displayed as `NA` by default. 
+  
+  If you want to display them with other characters, you can set the option `knitr.kable.NA`, e.g. <span style='color:#00CC66'>`options(knitr.kable.NA = '')`</span> in the YAML to hide `NA` values.
 
-- <span style='color:#00CC66'>`booktabs = TRUE`</span>   use the booktabs package
+- <span style='color:#00CC66'>`booktabs = TRUE`</span>   use the booktabs package. Default to `FALSE`.
+  
+  | `booktabs`       | `True`                                                       | `FALSE`                                        |
+  | ---------------- | ------------------------------------------------------------ | ---------------------------------------------- |
+  | Column separator | No vertical lines in the table, you can add via `vline` option | Table columns are separated by vertical lines. |
+  | Horizontal lines | Only has horizontal lines for the table header and the bottom row. <br />- Use `\toprule`, `\midrule`, and `\bottomrule` | Use `\hline`                                   |
+  | Row behavior     | A line space is added to every five rows by default.<br />Disable it with `linesep = ""`. |                                                |
+  
+  
+  
+- `linesep = ""` remove the extra space after every five rows in kable output (with `booktabs` option)
 
-  - `linesep = ""`      remove the extra space after every five rows in kable output (with `booktabs` option)
+  `linesep = c("", "", "", "", "\\addlinespace")` default value; empty line space every 5 rows.
 
 ```r
 # For Markdown tables, use `pipe` format
@@ -285,7 +338,7 @@ Note:               *p<0.1; **p<0.05; ***p<0.01
 
 
 HTML table can be obtained by specifying `stargazer(model, type = "html")`.
- 
+
 Note that you need to specify <span class="env-green">`results="asis"`</span> in the code chunk options. This option tells `knitr` to treat verbatim code blocks "as is." Otherwise, instead of your table, you will see the raw html or latex code.
 
 - Note that <span class="env-orange">`*`'s do not show properly in html output</span>, see Fig. \@ref(fig:stargazer1), need to specify in the footnote (`notes`) manually.
@@ -393,7 +446,7 @@ ___
 - `font.size = "small"`  to make font size smaller
 
 - <span style='color:#00CC66'>`column.labels`</span> a character vector of labels for columns in regression tables.
-    
+  
     This is useful to denote different regressions, informing the name/nature of the model, instead of using numbers to identify them.
 
     When you add custom column labels, you may want to use ::<span style="color: #00CC66;">`model.numbers = FALSE`</span> to suppress the default model numbers (1) (2)...
@@ -436,7 +489,6 @@ ___
 
   - `align = FALSE` 	a logical value indicating whether numeric values in the same column should be aligned at the decimal mark in LaTeX output.
   
-
 - **In html output**, cross references to stargazer tables are <span class="env-orange">NOT</span> so straightforward.
 
   `label` option in `stargazer` does not work. Cannot use chunk labels either.
@@ -544,7 +596,17 @@ References:
 
 ### `kableExtra`
 
-The **kableExtra** package is designed to extend the basic functionality of tables produced using `knitr::kable()`.
+The [**kableExtra**](https://bookdown.org/yihui/rmarkdown-cookbook/kableextra.html) package is designed to extend the basic functionality of tables produced using `knitr::kable()`.
+
+`kableExtra::kbl()` extends `knitr::kable()`, with some additional features.
+
+```r
+# pipe kabe output to the styling function of kableExtra
+kable(iris) %>%
+  kable_styling(latex_options = "striped")
+```
+
+
 
 `kableExtra::kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)`
 
@@ -558,7 +620,7 @@ The **kableExtra** package is designed to extend the basic functionality of tabl
   - `TRUE` for a HTML table , will have full width by default but 
   - this option will be set to `FALSE` for a LaTeX table.
 
-- `latex_options` 	A character vector for **LaTeX** table options, i.e., won't have effecs on html tables. 
+- `latex_options` 	A character vector for **LaTeX** table options, i.e., won't have effect on html tables. 
 
   Possible options:
 
@@ -570,7 +632,7 @@ The **kableExtra** package is designed to extend the basic functionality of tabl
   | `hold_position` | "hold" the floating table to the exact position. It is useful when the `LaTeX` table is contained in a `table` environment after you specified captions in `kable()`. It will force the table to stay in the position where it was created in the document. |
   | `HOLD_position` | A stronger version of `hold_position`. Requires the float package and specifies ⁠[H]⁠. |
 
-  
+
 
 Rows and columns can be grouped via the functions `pack_rows()` and `add_header_above()`, respectively. 
 
@@ -606,7 +668,7 @@ result %>%
 
 
 
-**tables in pdf output**
+#### tables in pdf output
 
 ```r
 reg_data %>% 
@@ -643,9 +705,24 @@ reg_data %>%
 --------------------------------------------------------------------------------
 
 
-**Customize the looks for columns/rows**
+#### Customize the looks for columns/rows
 
-`kableExtra::column_spec(kable_input)` this function allows users to select a column and then specify its look.
+`kableExtra::column_spec(kable_input, column)` this function allows users to select a column and then specify its look.
+
+```r
+# specify the width of the first two columns to be 5cm
+table %>%
+  knitr::kable() %>%
+  column_spec(1:2, width = "5cm") 
+```
+
+- `kable_input`: Output of `knitr::kable()`
+
+- `column`: A numeric value or vector indicating which column(s) to be selected.
+
+  E.g., to format the 1st and 3rd columns: `column_spec(c(1, 3), width = "5cm") `.
+
+
 
 `row_spec()` works similar with `column_spec()` but defines specifications for rows. 
 
@@ -654,9 +731,11 @@ reg_data %>%
 
 --------------------------------------------------------------------------------
 
-**Add header rows to group columns**
+#### Add header rows to group columns
 
-`add_header_above()`. The header variable is supposed to be a named character with the names as new column names and values as column span. For your convenience, if column span equals to 1, you can ignore the `=1` part so the function below can be written as `add_header_above(c("", "Group 1" = 2, "Group 2" = 2, "Group 3" = 2))`.
+`add_header_above()`: The header variable is supposed to be a named character with the names as new column names and values as column span. 
+
+For your convenience, if column span equals to 1, you can ignore the `=1` part so the function below can be written as `add_header_above(c("", "Group 1" = 2, "Group 2" = 2, "Group 3" = 2))`.
 
 ```r
 kbl(dt) %>%
@@ -670,18 +749,19 @@ You can add another row of header on top.
 
 --------------------------------------------------------------------------------
 
-**Group rows**
+#### Group rows
 
 `collapse_rows` will put <u>repeating cells in columns</u> into multi-row cells. The vertical alignment of the cell is controlled by `valign` with default as “top”.
 
-Not working for html output.
+- Not working for html output.
 
 ```r
 collapse_rows_dt <- data.frame(C1 = c(rep("a", 10), rep("b", 5)),
                  C2 = c(rep("c", 7), rep("d", 3), rep("c", 2), rep("d", 3)),
                  C3 = 1:15,
                  C4 = sample(c(0,1), 15, replace = TRUE))
-kbl(collapse_rows_dt, align = "c") %>%
+
+kableExtra::kbl(collapse_rows_dt, align = "c") %>%
   kable_paper(full_width = F) %>%
   column_spec(1, bold = T) %>%
   collapse_rows(columns = 1:2, valign = "top")
@@ -702,7 +782,9 @@ setNames(df, "")
 attr(df, "names") <- c("")
 ```
 
-`footnote()` add footnotes to tables. There are four notation systems in `footnote`, namely `general` (no prefix for footnotes), `number`, `alphabet` and `symbol`. 
+`footnote()` add footnotes to tables. 
+
+- There are four notation systems in `footnote`, namely `general` (no prefix for footnotes), `number`, `alphabet` and `symbol`. 
 
 --------------------------------------------------------------------------------
 
@@ -739,7 +821,6 @@ It is possible to edit Latex table directly in `Rmd`.
 
 - Don't enclose in `$$`.
 - Use `\begin{table}` and start your table data.
-
 
 
 

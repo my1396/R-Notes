@@ -14,12 +14,13 @@ Command Palette, type "**R: Interrupt R**" to interrupt the current R session.
 
 #### Keyboard shortcuts
 
-|                      Shortcuts                       |            Function            |
-| :--------------------------------------------------: | :----------------------------: |
-|                     `cmd` + `/`                      |            comment             |
-| `shift` + `cmd`  + `M` or <br>`shift` + `ctrl` + `M` |      user defined; `%>%`       |
-|                     `opt` + `-`                      |       user defined; `<-`       |
-|                   `ctrl` + `` ` ``                   | toggle btw editor and terminal |
+|                      Shortcuts                       |               Function                |
+| :-------------------------------------------------- | :----------------------------------- |
+|                     `cmd` + `/`                      |                comment                |
+| `shift` + `cmd`  + `M` or <br>`shift` + `ctrl` + `M` | In script editor: user defined; `%>%` |
+|   <span style='color:#00CC66'>`ctrl` + `P`</span>    |    In Radian: user defined; `%>%`     |
+|                     `opt` + `-`                      |          user defined; `<-`           |
+|                   `ctrl` + `` ` ``                   |    toggle btw editor and terminal     |
 
 - For commonly used general keyboard shortcuts (not limited to R), see [HERE](https://my1396.github.io/Econ-Study/2024/08/12/Productivity-Tools.html#keyboard-shortcuts).
 
@@ -220,7 +221,7 @@ options(
 )
 ```
 
-- Insert pip operator `%>%` by pressing `Ctrl` + `P`
+- Insert pipe operator `%>%` by pressing `Ctrl` + `P`
   
 - Insert assignment operator `<-` by pressing `Esc` + `-`
   
@@ -437,7 +438,7 @@ A: Run `hgd()` in R and get the url to the viewer. Use the command palette to ru
   - `+`/`-`: zoom in/out
   - `0`: reset zoom
   - `s`/`p`: save the current plot as SVG/PNG
-     
+    
      Not recommended to save as PNG as the resolution is low.
 
      Use `ggsave("plot.png", dpi = 300)` instead to save high-resolution plots.

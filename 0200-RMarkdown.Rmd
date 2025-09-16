@@ -1017,7 +1017,7 @@ The **chunk label** for each chunk is assumed to be unique within the document. 
 
 You may use `knitr::opts_chunk$set()` to change the default values of chunk options in a document. 
 
-<span id="common-chunk-options">**Commonly used chunk options**</span>
+### <span id="common-chunk-options">**Commonly used chunk options**</span>
 
 - Complete list [here](https://yihui.org/knitr/options/). Or `?opts_chunk` to get the help page.
 
@@ -1175,7 +1175,9 @@ You may use `knitr::opts_chunk$set()` to change the default values of chunk opti
 
 --------------------------------------------------------------------------------
 
-### Put Global `knitr` Options in a Separate File
+### External Config Files
+
+Put flobal `knitr` options in a separate file, or load external R scripts or `.Rmd` files into a chunk.
 
 If you have many R Markdown documents in a project, you may want to put common `knitr` options in a separate file and load this file in each document. This way, you can maintain the options in one place and ensure consistency across documents.
 
@@ -1187,6 +1189,7 @@ First check your configuration (`_bookdown.yml`)
   
   You can create a file with the common R code and load this file in each document.
 
+--------------------------------------------------------------------------------
 
 #### Read external R scripts into a chunk
 
@@ -1225,7 +1228,7 @@ Two options if you want to read external scripts:
   ```
   ````
 
-
+--------------------------------------------------------------------------------
 
 #### Load external `.Rmd` files
 
