@@ -4,7 +4,7 @@
 source("setup.R")
 ```
 
-<span style='color:#00CC66'>**Cross reference tables**</span>
+<span class="env-green">**Cross reference tables**</span>
 
 Using `bookdown` cmd: `\@ref(tab:chunk-label)`.
 
@@ -33,6 +33,7 @@ kat = function(x, ...) {
 }
 ```
 
+--------------------------------------------------------------------------------
 
 `knitr::kable(x, format="pipe")` is useful when you want to copy-and-paste R output from console to other document, e.g., markdown.
 
@@ -53,17 +54,19 @@ It **adjusts column widths automatically** based on content.
 
 - `format`  Possible values are `latex`, `html`, `pipe` (Pandoc's pipe tables), `simple` (Pandoc's simple tables), `rst`, and `jira`. 
 
-  The value of this argument will be <span style='color:#00CC66'>automatically determined</span> if the function is called within a **knitr** document. 
+  The value of this argument will be <span class="env-green">automatically determined</span> if the function is called within a **knitr** document. 
 
 - `digits`  Maximum number of digits for numeric columns, passed to `round()`. 
 
 - `col.names` Rename columns.
 
-- <span class="env-orange">`escape = TRUE`</span>  Whether to escape special characters when producing HTML or LaTeX tables. 
+- <span class="env-orange">`escape = TRUE`</span>  Whether to escape special characters when producing HTML or LaTeX tables. <a name="escape"></a>
   
   Default is `TRUE`, will treat characters literally; special characters will either be escaped or substituted; no special characters will be interpreted.
   
   For example, `$` is escaped as `\$`, `_` is escaped as `\_`, and `\` is substituted with `\textbackslash{}`
+
+  See [**Math in rmd tables**](#escape-example) for examples of using math symbols in rmd tables.
   
   - <span class="env-green">Set `escape = FALSE` when you have math symbols in the table</span>. 
     
@@ -77,43 +80,20 @@ It **adjusts column widths automatically** based on content.
   
   - Common special LaTeX characters include `#`, `%`, `&`, `{`, and `}`. Common special HTML characters include `&`, `<`, `>`, and `"`. These can easily lead to errors or unexpected effects when you render your file.
 
-  ---
-
-  **Examples of escaping special characters:**
-
-  ```{r}
-  library(knitr)
-  
-  df <- data.frame(
-    Variable = c("Return", "Variance", "Literal symbols"),
-    Formula = c("$r_t = \\frac{P_t}{P_{t-1}} - 1$", 
-                "$\\sigma^2 = Var(r_t)$",
-                "\\$, \\%, \\_, \\#")
-  )
-  
-  kable(df, escape = FALSE, booktabs = TRUE)
-  ```
-
-
-  **Expected behaviors:**
-
-  - `Return` row → LaTeX math `$r_t ...$` renders properly.
-  - `Variance` row → works with superscripts and variance notation.
-  - `Literal symbols` row → shows `$ % _ #` as text in the PDF.
-
----
 
 - `align` Column alignment: a character **vector** consisting of `'l'` (left), `'c'` (center) and/or `'r'` (right). 
 
-  - By default or if `align = NULL`, <span style='color:#00CC66'>numeric columns are right-aligned</span>, and <span style='color:#00CC66'>other columns are left-aligned</span>.
+  - By default or if `align = NULL`, <span class="env-green">numeric columns are right-aligned</span>, and <span class="env-green">other columns are left-aligned</span>.
+    
+    文字列左对齐，数字列右对齐。
   - If only one character is provided, that will apply to all columns.
   - If a vector is provided, will map to each individual column specifically.
 
 - Missing values (`NA`) in the table are displayed as `NA` by default. 
   
-  If you want to display them with other characters, you can set the option `knitr.kable.NA`, e.g. <span style='color:#00CC66'>`options(knitr.kable.NA = '')`</span> in the YAML to hide `NA` values.
+  If you want to display them with other characters, you can set the option `knitr.kable.NA`, e.g. <span class="env-green">`options(knitr.kable.NA = '')`</span> in the YAML to hide `NA` values.
 
-- <span style='color:#00CC66'>`booktabs = TRUE`</span>   use the booktabs package. Default to `FALSE`.
+- <span class="env-green">`booktabs = TRUE`</span>   use the booktabs package. Default to `FALSE`.
   
   | `booktabs`       | `True`                                                       | `FALSE`                                        |
   | ---------------- | ------------------------------------------------------------ | ---------------------------------------------- |
@@ -153,18 +133,91 @@ Valiant              18.1     6    225   105
 
 --------------------------------------------------------------------------------
 
+#### Math in rmd tables
+
+`knitr::kable(x, escape=TRUE)` 
+
+- `escape=TRUE` 	whether to escape special characters when producing HTML or LaTeX tables. Refer to [`kable` arguments](#escape) for more details.
+  - Defaults to `TRUE`.
+  - When `escape = FALSE`, you have to make sure that special characters will not trigger syntax errors in LaTeX or HTML. E.g., if you don't escape `\`, it will cause an error.
+
+
+You need to escape backslashes (`\`) passed into the table data.
+
+--------------------------------------------------------------------------------
+
+<a name="escape-example"></a>
+**Example 1 of escaping special characters:** 
+
+
+````markdown
+```{r, echo=FALSE}`r ''`
+library(knitr)
+
+mathy.df <- data.frame(site = c("A", "B"), 
+                       b0 = c(3, 4), 
+                       BA = c(1, 2))
+
+colnames(mathy.df) <- c("Site", "$\\beta_0$", "$\\beta_A$")
+
+kable(mathy.df, escape=FALSE)
+```
+````
+
+<img src="https://drive.google.com/thumbnail?id=1dD-dt1UDgHAOGtiQ7BHyf86N19Tq9HhA&sz=w1000" alt="rmd table" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
+
+
+
+If your target output is pdf, it is possible to edit Latex table directly in `Rmd`.
+
+- Don't enclose in `$$`.
+- Use `\begin{table}` and start your table data.
+
+--------------------------------------------------------------------------------
+
+
+**Example 2 of escaping special characters:**
+
+```{r}
+library(knitr)
+
+df <- data.frame(
+  Variable = c("Return", "Variance", "Literal symbols"),
+  Formula = c("$r_t = \\frac{P_t}{P_{t-1}} - 1$", 
+              "$\\sigma^2 = Var(r_t)$",
+              "\\$, \\%, \\_, \\#")
+)
+
+kable(df, escape = FALSE, booktabs = TRUE)
+```
+
+
+**Expected behaviors:**
+
+- `Return` row → LaTeX math `$r_t ...$` renders properly.
+- `Variance` row → works with superscripts and variance notation.
+- `Literal symbols` row → shows `$ % _ #` as text in the PDF.
+
+
+
+
+
+
+
+--------------------------------------------------------------------------------
+
 ### Data frame printing
 
 To show the `tibble` information (number of row/columns, and group information) along with paged output, we can write a custom function by modifying the [`print.paged_df`](https://github.com/rstudio/rmarkdown/blob/main/R/html_paged.R#L241-L248) function (which is used internally by rmarkdown for the `df_print` feature) and use CSS to nicely format the output.
 
 <https://stackoverflow.com/a/76014674/10108921>
 
-<span style='color:#00CC66'>**Paged df**</span>
+<span class="env-green">**Paged df**</span>
 
 - <https://bookdown.org/yihui/rmarkdown/html-document.html#tab:paged>
 - <https://github.com/rstudio/rmarkdown/issues/1403>
 
-```markdown
+```yaml
 ---
 title: "Use caption with df_print set to page"
 date: "`r Sys.Date()`"
@@ -183,7 +236,7 @@ The possible values of the `df_print` option for the `html_document` format.
 | `default`                                  | Call the `print.data.frame` generic method; console output prefixed by `##`; |
 | `kable`                                    | Use the `knitr::kable` function; looks nice but with no navigation for rows and columns, neither column types. |
 | `tibble`                                   | Use the `tibble::print.tbl_df` function, this provides groups and counts of rows and columns info as if printing a `tibble`. |
-| <span style='color:#00CC66'>`paged`</span> | Use `rmarkdown::paged_table` to create a pageable table; `paged` looks best but slows down compilation significantly; |
+| <span class="env-green">`paged`</span> | Use `rmarkdown::paged_table` to create a pageable table; `paged` looks best but slows down compilation significantly; |
 | A custom function                          | Use the function to create the table                         |
 
 The possible values of the `df_print` option for the `pdf_document` format: `default`, `kable`, `tibble`, `paged`, or a custom function.
@@ -256,9 +309,9 @@ Do not forget the equal sign before `latex`, i.e., it is `=latex` instead of `la
 
 [`stargazer`](https://www.rdocumentation.org/packages/stargazer/versions/5.2.3/topics/stargazer) print nice tables in `Rmd` documents and `R` scripts:
 
-- Passing a data frame to stargazer package creates a <span style='color:#00CC66'>**summary statistic table**</span>. 
+- Passing a data frame to stargazer package creates a <span class="env-green">**summary statistic table**</span>. 
 
-- Passing a regression object creates a nice <span style='color:#00CC66'>**regression table**</span>.  
+- Passing a regression object creates a nice <span class="env-green">**regression table**</span>.  
 
 - Support tables output in multiple formats: `text`, `latex`, and `html`.
     - In `R` scripts, use `type = "text"` for a quick view of results. 
@@ -341,7 +394,7 @@ HTML table can be obtained by specifying `stargazer(model, type = "html")`.
 
 Note that you need to specify <span class="env-green">`results="asis"`</span> in the code chunk options. This option tells `knitr` to treat verbatim code blocks "as is." Otherwise, instead of your table, you will see the raw html or latex code.
 
-- Note that <span class="env-orange">`*`'s do not show properly in html output</span>, see Fig. \@ref(fig:stargazer1), need to specify in the footnote (`notes`) manually.
+- Note that <span class="env-orange">`*`'s do **NOT** show properly in html output</span>, see Fig. \@ref(fig:stargazer1), need to specify in the footnote (`notes`) manually.
 
 ```{r stargazer1, echo=FALSE, fig.cap="Failed to show significance codes in HTML output.", out.width='60%'}
 knitr::include_graphics("images/stargazer1.png")
@@ -413,7 +466,7 @@ ___
 
 - `dep.var.labels` labels for dependent variables.
 
-- <span style='color:#00CC66'>`covariate.labels`</span>  labels for covariates in the regression tables.
+- <span class="env-green">`covariate.labels`</span>  labels for covariates in the regression tables.
 
     Can provide latex symbols in the labels, need to escape special symbols though.
 
@@ -441,11 +494,11 @@ ___
 
 - `single.row = TRUE` to put coefficients and standard errors on same line
 
-- <span style='color:#00CC66'>`no.space = TRUE`</span> to remove the spaces after each line of coefficients
+- <span class="env-green">`no.space = TRUE`</span> to remove the spaces after each line of coefficients
 
 - `font.size = "small"`  to make font size smaller
 
-- <span style='color:#00CC66'>`column.labels`</span> a character vector of labels for columns in regression tables.
+- <span class="env-green">`column.labels`</span> a character vector of labels for columns in regression tables.
   
     This is useful to denote different regressions, informing the name/nature of the model, instead of using numbers to identify them.
 
@@ -457,7 +510,7 @@ ___
 
 --------------------------------------------------------------------------------
 
-**Cross reference `stargazer` tables.**
+#### Cross reference `stargazer` tables
 
 - **In pdf output**, use `Table \@ref(tab:reg-table)` or `Table \ref{tab:reg-table}`.
 
@@ -472,11 +525,11 @@ ___
   ```
   ````
 
-  - <span style='color:#00CC66'>`header=FALSE`</span> is to suppress the `% Table created by stargazer` header. This applies to only `latex` tables.
+  - <span class="env-green">`header=FALSE`</span> is to suppress the `% Table created by stargazer` header. This applies to only `latex` tables.
 
   - `label="tab:reg-table"` is to specify the cross reference label for the table.
 
-  - <span style='color:#00CC66'>`table.placement = "H"`</span>  set float to `H` to fix positions.  Places the float at *precisely* the location in the code. This requires the <span style='color:#00CC66'>`float`</span> LaTeX package. Remember to load it in the YAML.
+  - <span class="env-green">`table.placement = "H"`</span>  set float to `H` to fix positions.  Places the float at *precisely* the location in the code. This requires the <span class="env-green">`float`</span> LaTeX package. Remember to load it in the YAML.
 
     - Defaults to `"!htbp"`. 
 
@@ -498,12 +551,9 @@ ___
   # Use title caption from fig.cap
   tit <- knitr::opts_current$get("fig.cap")
   # Adding caption for html output
-  tit_html <- paste0('<span id="tab:',
-                     knitr::opts_current$get("label"),
-                     '">(#tab:',
-                     knitr::opts_current$get("label"),
-                     ')</span>',
-                     tit)
+  tit_html <- paste0(
+    '<span id="tab:', knitr::opts_current$get("label"),'">(#tab:',
+          knitr::opts_current$get("label"), ')</span>', tit)
   stargazer::stargazer(fit.age,
             label = paste0("tab:", knitr::opts_current$get("label")),
             title = ifelse(knitr::is_latex_output(), tit, tit_html),
@@ -548,12 +598,13 @@ ___
                      ')</span>',
                      tit)
   
-  stargazer::stargazer(fit.age,
-                       label = paste0("tab:", knitr::opts_current$get("label")),
-                       title = ifelse(knitr::is_latex_output(), tit, tit_html),
-                       type = ifelse(knitr::is_latex_output(),"latex","html"),
-                       header = F
-                       )
+  stargazer::stargazer(
+    fit.age,
+    label = paste0("tab:", knitr::opts_current$get("label")),
+    title = ifelse(knitr::is_latex_output(), tit, tit_html),
+    type = ifelse(knitr::is_latex_output(),"latex","html"),
+    header = F
+    )
   ```
   
   Here is a reference to stargazer Table \@ref(tab:mytable).
@@ -576,9 +627,21 @@ References:
 
 ### `xtable`
 
-`print(xtable(tableResults, caption = NULL, digits = NULL), include.rownames=FALSE)`  Convert an **R** object to an `xtable` object, which can then be printed as a LaTeX or HTML table.
+Two steps:
 
--   `align` 	Character vector of length equal to the number of columns of the resulting table, indicating the alignment of the corresponding columns. Also, `"|"` may be used to produce vertical lines between columns in LaTeX tables, but these are effectively ignored when considering the required length of the supplied vector. 
+1. convert to `xtable` object
+2. print to LaTeX or html code
+
+```r
+xtab <- xtable(tableResults, caption = NULL, digits = NULL)
+print(xtab, include.rownames=FALSE)
+```
+
+`xtable` converts an **R** object to an `xtable` object, which can then be printed as a LaTeX or HTML table.
+
+**`xtable()` arguments**
+
+-  `align` 	Character vector of length <span class="env-green">equal to the number of columns</span> of the resulting table, indicating the alignment of the corresponding columns. Also, `"|"` may be used to produce vertical lines between columns in LaTeX tables, but these are effectively ignored when considering the required length of the supplied vector. 
     -   If a character vector of length one is supplied, it is split as `strsplit(align, "")[[1]]` before processing. Since the row names are printed in the first column, the length of `align` is one greater than `ncol(x)` if `x` is a `data.frame`. 
     -   Use `"l"`, `"r"`, and `"c"` to denote left, right, and center alignment, respectively. 
     -   Use `"p{3cm}"` etc. for a LaTeX column of the specified width. For HTML output the `"p"` alignment is interpreted as `"l"`, ignoring the width request. Default depends on the class of `x`.
@@ -587,9 +650,38 @@ References:
 -   `digits`     Numeric vector of length equal to one (in which case it will be replicated as necessary) or to the number of columns of the resulting table **or** matrix of the same size as the resulting table, indicating the number of digits to display in the corresponding columns. 
 
 
+`print.xtable()` arguments
 
+- `include.rownames`   A logical value indicating whether the row names of `x` should be printed. Default is `TRUE`.
+- `type`  Possible values are `"latex"` and `"html"`. Default is `"latex"`.
 
+**Print a data frame**
 
+```{r results='asis'}
+library(xtable)
+
+df <- data.frame(
+  Asset = c("A", "B"),
+  Mu = c(0.175, 0.055),
+  Sigma = c(0.258, 0.115)
+)
+
+# Convert to xtable
+xtab <- xtable(df, caption = "Asset Parameters", digits = 3)
+
+# Print html code
+print(xtab, type = "html", include.rownames = TRUE)
+```
+
+**Print a regression table**
+
+```{r results='asis'}
+model <- lm(mpg ~ hp + wt, data = mtcars)
+xtab_model <- xtable(model, caption = "Regression of mpg on hp and wt")
+
+# Print as html
+print(xtab_model, type = "html", digits = 3)
+```
 
 
 --------------------------------------------------------------------------------
@@ -613,7 +705,7 @@ kable(iris) %>%
 - `bootstrap_options` 	A character vector for bootstrap table options. Please see package vignette or visit the w3schools' [Bootstrap Page](https://www.w3schools.com/bootstrap/bootstrap_tables.asp) for more information. Possible options include `basic`, `striped`, `bordered`, `hover`, `condensed`, `responsive` and `none`.
 
   - `striped`   alternating row colors
-  - `hover` Use the `:hover` selector on `tr` (table row) to <span style='color:#00CC66'>highlight table rows</span> on mouse over.
+  - `hover` Use the `:hover` selector on `tr` (table row) to <span class="env-green">highlight table rows</span> on mouse over.
 
 - `full_width`  A `TRUE` or `FALSE` variable controlling whether the HTML table should have 100% the preferable format for `full_width`. If not specified, 
 
@@ -627,7 +719,7 @@ kable(iris) %>%
   | Arguments       | Meanings                                                     |
   | --------------- | ------------------------------------------------------------ |
   | `striped`       | Add alternative row colors to the table. It will imports `LaTeX` package `xcolor` if enabled. |
-  | `scale_down`    | useful for super **wide** table. It will automatically adjust the table to <span style='color:#00CC66'>fit the page width</span>. |
+  | `scale_down`    | useful for super **wide** table. It will automatically adjust the table to <span class="env-green">fit the page width</span>. |
   | `repeat_header` | only meaningful in a **long** table environment. It will let the header row repeat on every page in that long table. |
   | `hold_position` | "hold" the floating table to the exact position. It is useful when the `LaTeX` table is contained in a `table` environment after you specified captions in `kable()`. It will force the table to stay in the position where it was created in the document. |
   | `HOLD_position` | A stronger version of `hold_position`. Requires the float package and specifies ⁠[H]⁠. |
@@ -788,43 +880,132 @@ attr(df, "names") <- c("")
 
 --------------------------------------------------------------------------------
 
-**Math in rmd tables**
+### huxtable
 
-`knitr::kable(x, escape=TRUE)` 
+`huxtable` supports export to LaTeX, HTML, Microsoft Word, Microsoft Excel, Microsoft Powerpoint, RTF and Markdown.
 
-- `escape=TRUE` 	whether to escape special characters when producing HTML or LaTeX tables. 
-  - Defaults to `TRUE`.
-  - When `escape = FALSE`, you have to make sure that special characters will not trigger syntax errors in LaTeX or HTML.
+- [Changing layout](https://hughjonesd.github.io/huxtable/articles/huxtable.html#changing-the-layout)
+
+```{r results='asis'}
+library(tidyverse)
+library(huxtable)
+df <- data.frame(
+  Parameter = c("\\( \\mu \\)", "\\( \\sigma^2 \\)"),
+  Boeing = c(0.149, 0.069),
+  Microsoft = c(0.331, 0.136)
+)
+ht <- as_hux(df)
+ht <- ht %>% 
+  insert_row("\\( \\rho \\)(Boeing, Microsoft)", -0.008, "", after=3) %>% 
+  merge_cells(4, 2:3) %>% 
+  set_align(4, 2:3, "center") %>%
+  set_bold(1, everywhere, TRUE) %>%
+  set_width(0.6)
+
+# print_latex(ht) # uncomment this line if printing as LaTeX table
+print_html(ht) # print as HTML table
+```
+
+- `as_hux()` convert a data frame to a `huxtable` object.
+
+- `insert_row(..., after)` insert a new row after the specified row number.
+  
+  Need to <span class="env-green">provide values for all columns</span>. Empty values can be filled with `""`.
+
+- <span class="env-green">Table header as row 1</span> 
+  - insert a new row 3 would be `after = 3`.
+  - insert as the first row would be `after = 0`.
+
+- <span class="env-green">`merge_cells(row, col)`</span> merge cells in the specified rows and columns.
+
+- `set_align(row, col, value)` set alignment for the specified rows and columns.
+
+- `set_width(value)` set the width of the table. Default html tables are 100% width.
+  
+  A numeric width is treated as a proportion of f the surrounding block width (HTML) or text width (LaTeX). 
+
+- `col_width(ht, value)` set relative widths for each column.
+  
+  ```r
+  col_width(jams) <- c(.2, .8)
+  ```
+
+- **Math symbols** works fine for bookdown, but not for xaringan presentations.
+  
+  - By default, huxtable will escape special characters in your cells. 
+    - To display special characters such as LaTeX maths, set the `escape_contents` property to `FALSE`.
+    - Alternatively, manually escape special characters. 
+      
+      <span class="env-green">Use `\\( \\mu \\)`</span>, <span class="env-orange">`\\$` does not work.</span>
+  - For xaringan, use unicode symbols instead, e.g., `μ` for `\mu`, `σ` for `\sigma`, and `ρ` for `\rho`.
 
 
-You need to escape `\` passed into R code.
+--------------------------------------------------------------------------------
+
+**Example with math symbols in `huxtable`:**
+
+- `set_escape_contents(FALSE)` to turn off escaping special characters.
+- Set code chunk option  `results='asis'` to print the table as is.
+- Escape backslash `\` with another backslash `\\`.
+
+
+```{r results='asis'}
+# set escape_contents to FALSE
+df <- data.frame(
+  Parameter = c("$\\mu$", "$\\sigma^2$"),
+  Boeing = c(0.149, 0.069),
+  Microsoft = c(0.331, 0.136)
+)
+ht <- as_hux(df) %>% 
+  set_escape_contents(FALSE) %>%    # turn off escaping special characters
+  set_align("center") %>%           # center align all cells
+  set_bold(1, everywhere, TRUE) %>% # bold header row
+  set_width(0.6)                    # set table width
+print_html(ht)
+```
+
+--------------------------------------------------------------------------------
+
+**In xaringan presentations, use unicode symbols instead of LaTeX math symbols.**
+
+- In xaringan, table width is automatically adjusted to fit contents.
+- In html, table width is 100% by default.
 
 ````markdown
-```{r, echo=FALSE}`r ''`
-library(knitr)
+```{r results='asis'} `r ''`
+# Create huxtable and use special characters that will be converted to math
+df <- data.frame(
+  Parameter = c("μ", "σ²"),
+  Boeing = c(0.149, 0.069),
+  Microsoft = c(0.331, 0.136)
+)
+ht <- as_hux(df)
+ht <- ht %>% 
+  insert_row("ρ(Boeing, Microsoft)", -0.008, "", after=3) %>% 
+  merge_cells(4, 2:3) %>% 
+  set_width(0.6) %>%
+  set_bold(1, everywhere, TRUE) %>%
+  set_align(everywhere, everywhere, "center")
 
-mathy.df <- data.frame(site = c("A", "B"), 
-                       b0 = c(3, 4), 
-                       BA = c(1, 2))
-
-colnames(mathy.df) <- c("Site", "$\\beta_0$", "$\\beta_A$")
-
-kable(mathy.df, escape=FALSE)
+print_html(ht)
 ```
 ````
 
-<img src="https://drive.google.com/thumbnail?id=1dD-dt1UDgHAOGtiQ7BHyf86N19Tq9HhA&sz=w1000" alt="rmd table" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
+will be render as:
 
+```{r echo=FALSE, results='asis'}
+df <- data.frame(
+  Parameter = c("μ", "σ²"),
+  Boeing = c(0.149, 0.069),
+  Microsoft = c(0.331, 0.136)
+)
+ht <- as_hux(df)
+ht <- ht %>% 
+  insert_row("ρ(Boeing, Microsoft)", -0.008, "", after=3) %>% 
+  merge_cells(4, 2:3) %>% 
+  set_width(0.6) %>% 
+  set_bold(1, everywhere, TRUE) %>%
+  set_align(everywhere, everywhere, "center")
 
-
-It is possible to edit Latex table directly in `Rmd`.
-
-- Don't enclose in `$$`.
-- Use `\begin{table}` and start your table data.
-
-
-
-
-
-
-
+print_html(ht)
+```
