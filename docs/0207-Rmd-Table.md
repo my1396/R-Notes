@@ -235,7 +235,7 @@ To show the `tibble` information (number of row/columns, and group information) 
 ```yaml
 ---
 title: "Use caption with df_print set to page"
-date: "2025-09-16"
+date: "2025-09-17"
 output:
   bookdown::html_document2:
     df_print: paged
@@ -483,6 +483,12 @@ ___
 
 - `dep.var.labels` labels for dependent variables.
 
+- <span class="env-green">`column.labels`</span> a character vector of labels for columns in regression tables.
+  
+    This is useful to denote different regressions, informing the name/nature of the model, instead of using numbers to identify them.
+
+    When you add custom column labels, you may want to use: <span class="env-green">`model.numbers = FALSE`</span> to suppress the default model numbers (1) (2)...
+
 - <span class="env-green">`covariate.labels`</span>  labels for covariates in the regression tables.
 
     Can provide latex symbols in the labels, need to escape special symbols though.
@@ -515,11 +521,6 @@ ___
 
 - `font.size = "small"`  to make font size smaller
 
-- <span class="env-green">`column.labels`</span> a character vector of labels for columns in regression tables.
-  
-    This is useful to denote different regressions, informing the name/nature of the model, instead of using numbers to identify them.
-
-    When you add custom column labels, you may want to use ::<span style="color: #00CC66;">`model.numbers = FALSE`</span> to suppress the default model numbers (1) (2)...
 
 
 **Tip:** Add a blank line under the `stargazer` table: `&nbsp;` with a blank line above and below.
@@ -692,7 +693,7 @@ print(xtab, type = "html", include.rownames = TRUE)
 ```
 
 <!-- html table generated in R 4.5.1 by xtable 1.8-4 package -->
-<!-- Tue Sep 16 15:40:21 2025 -->
+<!-- Wed Sep 17 11:39:48 2025 -->
 <table border=1>
 <caption align="bottom"> Asset Parameters </caption>
 <tr> <th>  </th> <th> Asset </th> <th> Mu </th> <th> Sigma </th>  </tr>
@@ -712,7 +713,7 @@ print(xtab_model, type = "html", digits = 3)
 ```
 
 <!-- html table generated in R 4.5.1 by xtable 1.8-4 package -->
-<!-- Tue Sep 16 15:40:21 2025 -->
+<!-- Wed Sep 17 11:39:48 2025 -->
 <table border=1>
 <caption align="bottom"> Regression of mpg on hp and wt </caption>
 <tr> <th>  </th> <th> Estimate </th> <th> Std. Error </th> <th> t value </th> <th> Pr(&gt;|t|) </th>  </tr>
@@ -1076,6 +1077,9 @@ print_html(ht)
 
 **In xaringan presentations, use unicode symbols instead of LaTeX math symbols.**
 
+- In xaringan, table width is automatically adjusted to fit contents.
+- In html, table width is 100% by default.
+
 ````markdown
 ```{r results='asis'} 
 # Create huxtable and use special characters that will be converted to math
@@ -1088,9 +1092,7 @@ ht <- as_hux(df)
 ht <- ht %>% 
   insert_row("ρ(Boeing, Microsoft)", -0.008, "", after=3) %>% 
   merge_cells(4, 2:3) %>% 
-  set_align(4, 2:3, "center") %>% 
-  set_width(0.6) %>% 
-  set_escape_contents(FALSE) %>%
+  set_width(0.6) %>%
   set_bold(1, everywhere, TRUE) %>%
   set_align(everywhere, everywhere, "center")
 
