@@ -693,7 +693,7 @@ print(xtab, type = "html", include.rownames = TRUE)
 ```
 
 <!-- html table generated in R 4.5.1 by xtable 1.8-4 package -->
-<!-- Wed Sep 17 11:39:48 2025 -->
+<!-- Wed Sep 17 12:03:53 2025 -->
 <table border=1>
 <caption align="bottom"> Asset Parameters </caption>
 <tr> <th>  </th> <th> Asset </th> <th> Mu </th> <th> Sigma </th>  </tr>
@@ -713,7 +713,7 @@ print(xtab_model, type = "html", digits = 3)
 ```
 
 <!-- html table generated in R 4.5.1 by xtable 1.8-4 package -->
-<!-- Wed Sep 17 11:39:48 2025 -->
+<!-- Wed Sep 17 12:03:53 2025 -->
 <table border=1>
 <caption align="bottom"> Regression of mpg on hp and wt </caption>
 <tr> <th>  </th> <th> Estimate </th> <th> Std. Error </th> <th> t value </th> <th> Pr(&gt;|t|) </th>  </tr>
@@ -994,6 +994,7 @@ print_html(ht) # print as HTML table
 - <span class="env-green">`merge_cells(row, col)`</span> merge cells in the specified rows and columns.
 
 - `set_align(row, col, value)` set alignment for the specified rows and columns.
+  - `set_align("center")` set all cells to be center aligned.
 
 - `set_width(value)` set the width of the table. Default html tables are 100% width.
   
@@ -1075,10 +1076,10 @@ print_html(ht)
 
 --------------------------------------------------------------------------------
 
-**In xaringan presentations, use unicode symbols instead of LaTeX math symbols.**
+**In <span class="env-green">xaringan presentations</span>, use <u>unicode symbols</u> instead of LaTeX math symbols.**
 
-- In xaringan, table width is automatically adjusted to fit contents.
-- In html, table width is 100% by default.
+- In xaringan presentations, table width is automatically adjusted to fit contents.
+- In html output, table width is 100% by default.
 
 ````markdown
 ```{r results='asis'} 
