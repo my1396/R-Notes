@@ -4,6 +4,7 @@ Quarto Guide: <https://quarto.org/docs/guide/>
 
 Quarto Tutorial: <https://jmjung.quarto.pub/m02-advanced-literate-programming/#learning-outcomes>
 
+Run Quarto in VS Code: <https://quarto.org/docs/tools/vscode/index.html>
 
 Run Cell
 
@@ -73,6 +74,16 @@ Weakness of Quarto:
     Workaround: Need to exclude from project index, and need file header `yaml` to import mathjax settings and themes.
     
     `Bookdown` is reliable. Don't need `yaml` in single `Rmd`, website theme will apply automatically. 
+
+- Not support `rstudioapi` functions. E.g., the following is often used to set working directory to the folder where the current script is located. 
+
+  <span class="env-orange">But it does **NOT** work in Quarto.</span>
+  
+  ```r
+  # set working dir, return error in Quarto
+  dir_folder <- dirname(rstudioapi::getSourceEditorContext()$path)
+  setwd(dir_folder)
+  ```
 
 --------------------------------------------------------------------------------
 
@@ -190,6 +201,8 @@ format:
 ---
 ```
 
+**Title & Author**
+
 
 | PDF Options | Functions |
 | :--- |  :--- |
@@ -197,12 +210,35 @@ format:
 | `date` | Document date |
 | `author` | Author or authors of the document |
 | `abstract` | Summary of document |
-| <span class="env-green">**Includes**</span> |  |
+
+<span class="env-green">**Includes**</span>
+
+| PDF Options         | Functions                                                    |
+| :------------------ | :----------------------------------------------------------- |
 | `include-in-header` | Include contents at the **end** of the header.<br />Specify your pdf template here. |
+
+**Format & Typesettings**
+
+| PDF Options       | Functions                                                    |
+| :---------------- | :----------------------------------------------------------- |
+| `toc-depth`       | Specify the number of section levels to include in the table of contents. The default is 3 |
+| `number-sections` | Number section headings rendered output. <br />By default, sections are not numbered. |
+| `number-depth`    | By default, all headings in your document create a numbered section. |
+
+[**Tables**](https://quarto.org/docs/reference/formats/pdf.html#tables)
+
+| PDF Options | Functions                                                    |
+| :---------- | :----------------------------------------------------------- |
+| `df-print`  | Method used to print tables in Knitr engine documents.<br />- `default`: Use the default S3 method for the data frame. <br />- <span class="env-green">`kable`</span>: Default method. Markdown table using the `knitr::kable()` function. <br />- `tibble`: Plain text table using the `tibble` package. <br />- `paged`: HTML table with paging for row and column overflow. |
+
+
 
 
 
 See [HERE](https://quarto.org/docs/reference/formats/pdf.html) for all available options.
+
+Q: How to print dollar sign in pdf output?  
+A: `qmd` supports `$` directly. No need to escape. 
 
 
 After rendering, the following info will appear in the console:
@@ -449,6 +485,9 @@ This will provide live preview of the document in your web browser. Newest chang
 
 #### In VS Code {-}
 
+
+By default Quarto does not automatically render `.qmd` or `.ipynb` files when you save them. This is because rendering might be very time consuming (e.g. it could include long running computations) and it's good to have the option to save periodically without doing a full render.
+
 You have to refresh to see your updates when using VS Code command palette quarto preview.
 
 You can render a Quarto document in VS Code using the command palette:
@@ -458,6 +497,27 @@ You can render a Quarto document in VS Code using the command palette:
 - `Quarto: Preview` to preview the default document in a web browser. If you want to preview a different format, use the `Quarto: Preview Format` command:
 
 This will show a preview of the project in the internal browser.
+
+However, you can configure the Quarto extension to automatically render whenever you save. In settings, set [`quarto.renderOnSave`](https://quarto.org/docs/tools/vscode/index.html#render-on-save) to `true`.
+
+You might also want to control this behavior on a per-document or per-project basis. If you include the `editor: render-on-save` option in your document or project YAML it will supersede whatever your VS Code setting is. For example:
+
+```yaml
+---
+editor:
+  render-on-save:true  
+---
+```
+
+Q: Quarto Preview pane not refreshing and updating changes.  
+A: The issue seems to come from the `--no-watch-inputs` option to the preview command, preventing the live update. [↩︎](https://github.com/quarto-dev/quarto-cli/discussions/10745#discussioncomment-10990779)
+
+Use the following command in terminal to enable live preview:
+
+```bash
+quarto preview "path-to-file/file-name.qmd" --no-browser
+```
+Copy and paste the url to the internal browser in VS Code. The command supports live preview. When you make changes to your `qmd` file and save, the preview will be updated in time.
 
 #### In R {-}
 
@@ -644,7 +704,7 @@ Quarto way to label an equation:
 $$
 y_i = \beta_{i}'x + u_i.
 $$ {#eq-cross_sectional_hetero}
-``` 
+```
 
 - Difference with `bookdown`.
   
@@ -1051,7 +1111,7 @@ Then, you can simply run `quarto render` without specifying a profile, and it wi
 
 #### Conditional Code Blocks
 
-Q: Conditional contents NOT working for code blocks.  
+Q: <span class="env-orange">Conditional contents **NOT** working for code blocks.</span>
 
 A: It’s because `.content-visible` runs after code execution. knitr executes the chunk and emits output even if the wrapper later hides the surrounding Markdown. Control the chunk itself with the meta flag.
 
@@ -1099,7 +1159,7 @@ A: It’s because `.content-visible` runs after code execution. knitr executes t
    ```markdown
    ::: {.content-visible when-meta="params.solution"}
    This content will only be visible if `solution` is set to `true`.
-
+   
    Put your solutions here.
    :::
    ```

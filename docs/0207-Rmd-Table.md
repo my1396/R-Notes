@@ -235,7 +235,7 @@ To show the `tibble` information (number of row/columns, and group information) 
 ```yaml
 ---
 title: "Use caption with df_print set to page"
-date: "2025-09-17"
+date: "2025-09-19"
 output:
   bookdown::html_document2:
     df_print: paged
@@ -246,13 +246,13 @@ When the `df_print` option is set to `paged`, tables are printed as HTML tables 
 
 The possible values of the `df_print` option for the `html_document` format.
 
-| Option                                     | Description                                                  |
-| ------------------------------------------ | ------------------------------------------------------------ |
-| `default`                                  | Call the `print.data.frame` generic method; console output prefixed by `##`; |
-| `kable`                                    | Use the `knitr::kable` function; looks nice but with no navigation for rows and columns, neither column types. |
-| `tibble`                                   | Use the `tibble::print.tbl_df` function, this provides groups and counts of rows and columns info as if printing a `tibble`. |
+| Option                                 | Description                                                  |
+| -------------------------------------- | ------------------------------------------------------------ |
+| `default`                              | Call the `print.data.frame` generic method; console output prefixed by `##`; |
+| <span class="env-green">`kable`</span> | Use the `knitr::kable` function; looks nice but with no navigation for rows and columns, neither column types.<br /><span class="env-green">Suggested for pdf output.</span> |
+| `tibble`                               | Use the `tibble::print.tbl_df` function, this provides groups and counts of rows and columns info as if printing a `tibble`. |
 | <span class="env-green">`paged`</span> | Use `rmarkdown::paged_table` to create a pageable table; `paged` looks best but slows down compilation significantly; |
-| A custom function                          | Use the function to create the table                         |
+| A custom function                      | Use the function to create the table                         |
 
 The possible values of the `df_print` option for the `pdf_document` format: `default`, `kable`, `tibble`, `paged`, or a custom function.
 
@@ -693,7 +693,7 @@ print(xtab, type = "html", include.rownames = TRUE)
 ```
 
 <!-- html table generated in R 4.5.1 by xtable 1.8-4 package -->
-<!-- Wed Sep 17 12:03:53 2025 -->
+<!-- Fri Sep 19 11:44:46 2025 -->
 <table border=1>
 <caption align="bottom"> Asset Parameters </caption>
 <tr> <th>  </th> <th> Asset </th> <th> Mu </th> <th> Sigma </th>  </tr>
@@ -713,7 +713,7 @@ print(xtab_model, type = "html", digits = 3)
 ```
 
 <!-- html table generated in R 4.5.1 by xtable 1.8-4 package -->
-<!-- Wed Sep 17 12:03:53 2025 -->
+<!-- Fri Sep 19 11:44:46 2025 -->
 <table border=1>
 <caption align="bottom"> Regression of mpg on hp and wt </caption>
 <tr> <th>  </th> <th> Estimate </th> <th> Std. Error </th> <th> t value </th> <th> Pr(&gt;|t|) </th>  </tr>
