@@ -201,8 +201,9 @@ format:
 ---
 ```
 
-**Title & Author**
+See [HERE](https://quarto.org/docs/reference/formats/pdf.html) for all available options.
 
+**Title & Author**
 
 | PDF Options | Functions |
 | :--- |  :--- |
@@ -232,14 +233,12 @@ format:
 | `df-print`  | Method used to print tables in Knitr engine documents.<br />- `default`: Use the default S3 method for the data frame. <br />- <span class="env-green">`kable`</span>: Default method. Markdown table using the `knitr::kable()` function. <br />- `tibble`: Plain text table using the `tibble` package. <br />- `paged`: HTML table with paging for row and column overflow. |
 
 
-
-
-
-See [HERE](https://quarto.org/docs/reference/formats/pdf.html) for all available options.
+--------------------------------------------------------------------------------
 
 Q: How to print dollar sign in pdf output?  
 A: `qmd` supports `$` directly. No need to escape. 
 
+--------------------------------------------------------------------------------
 
 After rendering, the following info will appear in the console:
 
@@ -357,7 +356,8 @@ format:
       light: [cosmo, themes/cosmo-light.scss]
 ```
 
-
+- See [HTML basic yaml](https://quarto.org/docs/output-formats/html-basics.html) for basic option settings.
+- See [HTML format reference](https://quarto.org/docs/reference/formats/html.html) for a complete list of all available options.
 
 --------------------------------------------------------------------------------
 
@@ -482,6 +482,7 @@ This will provide live preview of the document in your web browser. Newest chang
   ```
 
 
+--------------------------------------------------------------------------------
 
 #### In VS Code {-}
 
@@ -515,9 +516,12 @@ A: The issue seems to come from the `--no-watch-inputs` option to the preview co
 Use the following command in terminal to enable live preview:
 
 ```bash
-quarto preview "path-to-file/file-name.qmd" --no-browser
+quarto preview "path-to-file/file-name.qmd"
 ```
+
 Copy and paste the url to the internal browser in VS Code. The command supports live preview. When you make changes to your `qmd` file and save, the preview will be updated in time.
+
+--------------------------------------------------------------------------------
 
 #### In R {-}
 
@@ -587,9 +591,18 @@ Cross-reference to a figure:
 
 See Figure \@ref(fig:fig-scatter) (`@fig-scatter`) for the scatter plots.
 
+You can customize the prefix of the reference (Figure x) using `crossref/*-prefix` options in YAML.
+
+```yaml
+---
+crossref:
+  fig-prefix: "Fig"   # (default is "Figure")
+---
+```
+
 --------------------------------------------------------------------------------
 
-#### Equations {.unnumbered}
+#### Cross-references to Equations {.unnumbered}
 
 ```latex
 $$
@@ -597,8 +610,13 @@ y_i = \beta_{i}'x + u_i.
 $$ {#eq-cross_sectional_hetero}
 ```
 
-- `@eq-cross_sectional_hetero` gives `Equation (1)` 
-- `[-@eq-cross_sectional_hetero]` gives only the tag `(1)`
+- `@eq-cross_sectional_hetero` gives `Equation 1`. There are <span class="env-orange">no parentheses around the number</span>. 
+  
+  With the `Equation` prefx, but no parentheses around labels.
+
+- `([-@eq-cross_sectional_hetero])` gives only the tag `(1)`, note that you need to <span class="env-green">add the parentheses yourself</span>.
+
+- An alternative way is to use <span class="env-green">`\eqref{eq-cross_sectional_hetero}`</span> from `amsmath` package, which gives `(1)` with parentheses automatically. You need to add the prefix Eq. yourself. [↩︎](https://github.com/quarto-dev/quarto-cli/issues/2439#issuecomment-1246720040)
 
 
 
@@ -634,7 +652,7 @@ ___
 ### Equations
 
 
-#### Indivisual `qmd` file
+#### Individual `qmd` file
 
 **Load MathJax Config**
 
@@ -645,15 +663,26 @@ For individual `qmd` files, load `mathjax.html` in YAML
 title: "Model specifications"
 author: "GDP and climate"
 date: "2025-05-13"
-from: markdown+tex_math_single_backslash
 format: 
   html:
     toc: true
     self-contained: true
     html-math-method: mathjax
     include-in-header: mathjax.html
+    from: markdown+tex_math_single_backslash
 ---
 ```
+
+- `from` can be a top-level option (same level as `title`) or a third-level option under `format/html` in YAML.
+  
+  - It specifies formats to read from. 
+  - **Extensions** can be individually enabled or disabled by appending `+EXTENSION` or `-EXTENSION` to the format name (e.g. markdown+emoji).
+  - See [Quarto Extensions](https://quarto.org/docs/extensions/) for available extensions.
+
+- `from: markdown+tex_math_single_backslash` tells Quarto/Pandoc to read the input as Pandoc Markdown with the `tex_math_single_backslash` extension enabled.
+  - [`from`](https://quarto.org/docs/reference/formats/html.html#rendering)
+  - [`tex_math_single_backslash`](https://pandoc.org/MANUAL.html#extension-tex_math_single_backslash) supports `\(` and `\[` as math delimiters.
+  - See [Pandoc: Math Input](https://pandoc.org/MANUAL.html#math-input) for available math extensions.
 
 In `mathjax.html`, define the MathJax configuration, e.g., user-defined macros.
 
@@ -671,7 +700,7 @@ MathJax = {
 </script>
 ```
 
-`tags: 'ams'`  allows equation numbering
+`tags: 'ams'`  allows equation numbering.
 
 ___
 
@@ -765,6 +794,62 @@ format:
     self-contained: true
 ```
 
+
+--------------------------------------------------------------------------------
+
+### Extensions
+
+[Quarto Extensions](https://quarto.org/docs/extensions/)
+
+**Create a filter to apply blue text color to fenced div.**
+
+-   Created a minimal local color-text filter:
+    -   Added `_quiz/_extensions/color-text/color-text.lua`
+    -   It supports the `.blue` class for both blocks and inline spans:
+        -   HTML: adds style="color: blue;"
+        -   PDF: wraps with LaTeX xcolor; automatically injects `\usepackage{xcolor}`
+-   Updated the `qmd` file YAML to reference this local filter:
+    -   filters:
+        -   `_extensions/color-text/color-text.lua`
+-   Kept your Markdown intact; you can use fenced divs and inline spans with .blue.
+
+**Use example**
+
+1. In the yaml header of your `qmd` file, add the following line to reference the local filter:
+
+   ```yaml
+   ---
+   title: "Quiz: Linear Regression and Hypothesis Testing (p2)"
+   from: markdown+tex_math_single_backslash
+   params:
+     # solution: false
+     solution: true
+   filters:
+     - _extensions/color-text/color-text.lua
+   format:
+     pdf:
+       include-in-header: ../latex/preamble.tex
+       fontsize: 12pt
+   ---
+   ```
+
+2. Use the `.blue` class in your markdown content:
+
+   ```markdown
+   ::: {.content-visible when-meta="params.solution"}
+   ::: {.blue}
+   **Solutions**
+   (a) The 95% confidence interval for $\beta_1$ is given by
+     $$
+     \hat{\beta}_1 \pm t_{0.975, n-2} \cdot SE(\hat{\beta}_1)
+     $$
+     Degrees of freedom: $df = n-2 = 50-2 = 48$
+   (b)
+   :::
+   :::
+   ```
+
+- [Highlight-text Quarto Extension](https://m.canouil.dev/quarto-highlight-text/)
 
 --------------------------------------------------------------------------------
 

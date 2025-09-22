@@ -235,7 +235,7 @@ To show the `tibble` information (number of row/columns, and group information) 
 ```yaml
 ---
 title: "Use caption with df_print set to page"
-date: "2025-09-19"
+date: "2025-09-22"
 output:
   bookdown::html_document2:
     df_print: paged
@@ -543,7 +543,14 @@ ___
   ```
   ````
 
+  ❗️ Note that you need to specify <span class="env-green">`results="asis"`</span> in the code chunk options. Omitting this options will result in failing to compile tex.
+  
   - <span class="env-green">`header=FALSE`</span> is to suppress the `% Table created by stargazer` header. This applies to only `latex` tables.
+  
+    ```markdown
+    % Table created by stargazer v.5.2.3 by Marek Hlavac, Social Policy Institute. E-mail: marek.hlavac at gmail.com
+    % Date and time: Fri, Sep 19, 2025 - 15:16:36
+    ```
 
   - `label="tab:reg-table"` is to specify the cross reference label for the table.
 
@@ -693,7 +700,7 @@ print(xtab, type = "html", include.rownames = TRUE)
 ```
 
 <!-- html table generated in R 4.5.1 by xtable 1.8-4 package -->
-<!-- Fri Sep 19 11:44:46 2025 -->
+<!-- Mon Sep 22 10:25:28 2025 -->
 <table border=1>
 <caption align="bottom"> Asset Parameters </caption>
 <tr> <th>  </th> <th> Asset </th> <th> Mu </th> <th> Sigma </th>  </tr>
@@ -713,7 +720,7 @@ print(xtab_model, type = "html", digits = 3)
 ```
 
 <!-- html table generated in R 4.5.1 by xtable 1.8-4 package -->
-<!-- Fri Sep 19 11:44:46 2025 -->
+<!-- Mon Sep 22 10:25:29 2025 -->
 <table border=1>
 <caption align="bottom"> Regression of mpg on hp and wt </caption>
 <tr> <th>  </th> <th> Estimate </th> <th> Std. Error </th> <th> t value </th> <th> Pr(&gt;|t|) </th>  </tr>
