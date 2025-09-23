@@ -198,10 +198,17 @@ format:
   pdf:
     include-in-header: ../latex/preamble.tex
     fontsize: 12pt
+    pdf-engine: xelatex
 ---
 ```
 
 See [HERE](https://quarto.org/docs/reference/formats/pdf.html) for all available options.
+
+See [Metadata variables](https://pandoc.org/demo/example33/6.2-variables.html) for yaml options that Pandoc recognizes.
+
+
+
+--------------------------------------------------------------------------------
 
 **Title & Author**
 
@@ -212,11 +219,64 @@ See [HERE](https://quarto.org/docs/reference/formats/pdf.html) for all available
 | `author` | Author or authors of the document |
 | `abstract` | Summary of document |
 
-<span class="env-green">**Includes**</span>
+**Format Options**
+
+| PDF Options | Functions |
+| :---------- | :-------- |
+| `pdf-engine` | Specify the PDF engine to use. <br />Options include `pdflatex`, `xelatex`, and `lualatex`. The default is `xelatex`. |
+
+<span class="env-green">[**Includes**](https://quarto.org/docs/reference/formats/pdf.html#includes)</span>
 
 | PDF Options         | Functions                                                    |
 | :------------------ | :----------------------------------------------------------- |
 | `include-in-header` | Include contents at the **end** of the header.<br />Specify your pdf template here. |
+
+
+
+Subkeys for `include-in-header`
+
+- `file`: path to a file to include at the end of the header.
+- `text: |`: include raw latex content in the YAML header. 
+  
+  `|` indicates that the content is in multiple lines.
+- If you omit `file:` or `text:`, Quarto assumes `file:` by default.
+
+
+Use example
+
+```yaml
+format:
+  pdf:
+    include-in-header:
+      - text: |
+          \usepackage{eplain}
+          \usepackage{easy-todo}
+      - file: packages.tex
+      - macros.tex            # assume file by default
+```
+
+- Note that you need the dash `-` before `text:` and `file:` to indicate a list of items.
+
+Any packages specified using includes that you don’t already have installed locally will be installed by Quarto during the rendering of the document.
+
+
+`header-includes: |` is a pandoc variable for including raw LaTeX code in the document header.
+
+- [use example](https://quarto.org/docs/reference/formats/pdf.html) in quarto doc
+- pandoc doc for [`header-includes`](https://pandoc.org/demo/example33/8.10-metadata-blocks.html)
+
+```yaml
+header-includes: |
+  \RedeclareSectionCommand[
+    beforeskip=-10pt plus -2pt minus -1pt,
+    afterskip=1sp plus -1sp minus 1sp,
+    font=\normalfont\itshape]{paragraph}
+  \RedeclareSectionCommand[
+    beforeskip=-10pt plus -2pt minus -1pt,
+    afterskip=1sp plus -1sp minus 1sp,
+    font=\normalfont\scshape,
+    indent=0pt]{subparagraph}
+```
 
 **Format & Typesettings**
 
@@ -806,12 +866,12 @@ format:
 -   Created a minimal local color-text filter:
     -   Added `_quiz/_extensions/color-text/color-text.lua`
     -   It supports the `.blue` class for both blocks and inline spans:
-        -   HTML: adds style="color: blue;"
+        -   HTML: adds `style="color: blue;"`
         -   PDF: wraps with LaTeX xcolor; automatically injects `\usepackage{xcolor}`
 -   Updated the `qmd` file YAML to reference this local filter:
     -   filters:
         -   `_extensions/color-text/color-text.lua`
--   Kept your Markdown intact; you can use fenced divs and inline spans with .blue.
+-   You can use fenced divs and inline spans with `.blue`.
 
 **Use example**
 
@@ -850,6 +910,69 @@ format:
    ```
 
 - [Highlight-text Quarto Extension](https://m.canouil.dev/quarto-highlight-text/)
+
+
+#### Emoji
+
+In the yaml, add the `emoji` extension to the `from` option in document metadata.
+
+```yaml
+---
+title: "My Document"
+from: markdown+emoji
+---
+```
+
+For markdown formats that support text representations of emojis 😁 (e.g. `:grinning:`), the text version will be written. For other formats the literal emoji character will be written. Currently, the [gfm](https://quarto.org/docs/output-formats/gfm.html) and [hugo](https://quarto.org/docs/output-formats/hugo.html) (with `enableEmoji = true` in the site config) formats both support text representation of emojis.
+
+**twemoji**
+
+How to add more emoji later:
+
+1. Open [twemoji\_manifest.json](vscode-file://vscode-app/Applications/Visual%20Studio%20Code.app/Contents/Resources/app/out/vs/code/electron-browser/workbench/workbench.html) and append new code points to the emoji object
+   - Example: "1f44d": \["👍", ":thumbsup:"\]
+   ```bash
+   node -e 'const s=process.argv[1]; const codes=[...s].map(ch=>ch.codePointAt(0).toString(16)); console.log(codes.join("-"))' '⚠️'
+   # Prints: 26a0-fe0f  → Twemoji file: assets/72x72/26a0-fe0f.png (often 26a0.png also exists)
+   ```
+
+2. Run the fetcher again:
+   - [fetch\_twemoji.sh](vscode-file://vscode-app/Applications/Visual%20Studio%20Code.app/Contents/Resources/app/out/vs/code/electron-browser/workbench/workbench.html)
+   
+   Within the project directory:
+ 
+   ```bash
+   $./emoji/fetch_twemoji.sh
+   ```
+ 
+   From anywhere:
+   
+   ```bash
+   $'/Users/menghan/Documents/language/norsk/norskprøver/B2/exam notes/emoji/fetch_twemoji.sh'
+   Exists: 1f4a1.png
+   Exists: 1f4c8.png
+   Exists: 1f4dd.png
+   Exists: 1f539.png
+   Exists: 1f600.png
+   Exists: 1f604.png
+   Exists: 1f680.png
+   Exists: 26a0.png
+   Downloading: 2705.png
+   Done. Files saved in ~/Documents/language/norsk/norskprøver/B2/exam notes/emoji. Map to filter names as needed (already matching).
+   ```
+   
+   The script downloads only missing PNGs. If you add more codes to `twemoji_manifest.json`, just run it again.
+ 
+   To refresh files, delete specific PNGs (or all) in emoji and rerun.
+
+3. Optionally add a shortcode mapping in `emoji.lua`'s `emoji_map` to point to the same filename.
+
+
+ref: 
+
+- [Quarto Extensions: Emoji](https://quarto.org/docs/visual-editor/content.html#emojis)
+- [Add emoji in latex files](https://github.com/quarto-dev/quarto-cli/issues/4492#issuecomment-1548056401)
+- [twemoji](https://github.com/twitter/twemoji/tree/master)
 
 --------------------------------------------------------------------------------
 
