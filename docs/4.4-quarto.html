@@ -1575,6 +1575,8 @@ A: Use</p>
 <div id="extensions-1" class="section level3 hasAnchor" number="4.4.7">
 <h3><span class="header-section-number">4.4.7</span> Extensions<a href="4.4-quarto.html#extensions-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p><a href="https://quarto.org/docs/extensions/">Quarto Extensions</a></p>
+<div id="color-text" class="section level4 hasAnchor" number="4.4.7.1">
+<h4><span class="header-section-number">4.4.7.1</span> Color Text<a href="4.4-quarto.html#color-text" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p><strong>Create a filter to apply blue text color to fenced div.</strong></p>
 <ul>
 <li>Created a minimal local color-text filter:
@@ -1627,21 +1629,25 @@ A: Use</p>
 <ul>
 <li><a href="https://m.canouil.dev/quarto-highlight-text/">Highlight-text Quarto Extension</a></li>
 </ul>
-<div id="emoji" class="section level4 hasAnchor" number="4.4.7.1">
-<h4><span class="header-section-number">4.4.7.1</span> Emoji<a href="4.4-quarto.html#emoji" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+</div>
+<div id="emoji" class="section level4 hasAnchor" number="4.4.7.2">
+<h4><span class="header-section-number">4.4.7.2</span> Emoji<a href="4.4-quarto.html#emoji" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>In the yaml, add the <code>emoji</code> extension to the <code>from</code> option in document metadata.</p>
 <div class="sourceCode" id="cb351"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb351-1"><a href="4.4-quarto.html#cb351-1" tabindex="-1"></a><span class="pp">---</span></span>
 <span id="cb351-2"><a href="4.4-quarto.html#cb351-2" tabindex="-1"></a><span class="fu">title</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;My Document&quot;</span></span>
 <span id="cb351-3"><a href="4.4-quarto.html#cb351-3" tabindex="-1"></a><span class="fu">from</span><span class="kw">:</span><span class="at"> markdown+emoji</span></span>
 <span id="cb351-4"><a href="4.4-quarto.html#cb351-4" tabindex="-1"></a><span class="pp">---</span></span></code></pre></div>
 <p>For markdown formats that support text representations of emojis 😁 (e.g. <code>:grinning:</code>), the text version will be written. For other formats the literal emoji character will be written. Currently, the <a href="https://quarto.org/docs/output-formats/gfm.html">gfm</a> and <a href="https://quarto.org/docs/output-formats/hugo.html">hugo</a> (with <code>enableEmoji = true</code> in the site config) formats both support text representation of emojis.</p>
-<p><strong>twemoji</strong></p>
+<p>Note: This does <span class="env-orange"><strong>NOT</strong></span> work for quarto pdf. Use twemoji approach instead. See below.</p>
+<hr />
+<p><a href="https://github.com/twitter/twemoji/tree/master"><strong>twemoji</strong></a></p>
 <p>How to add more emoji later:</p>
 <ol style="list-style-type: decimal">
-<li><p>Open <a href="vscode-file://vscode-app/Applications/Visual%20Studio%20Code.app/Contents/Resources/app/out/vs/code/electron-browser/workbench/workbench.html">twemoji_manifest.json</a> and append new code points to the emoji object</p>
+<li><p>Open <code>twemoji_manifest.json</code> and append new code points to the emoji object</p>
 <ul>
-<li>Example: “1f44d”: <span class="math display">\[&quot;👍&quot;, &quot;:thumbsup:&quot;\]</span></li>
+<li>Example: <code>"1f44d": ["👍", ":thumbsup:"]</code></li>
 </ul>
+<p>How to find the code points of an emoji:</p>
 <div class="sourceCode" id="cb352"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb352-1"><a href="4.4-quarto.html#cb352-1" tabindex="-1"></a><span class="ex">node</span> <span class="at">-e</span> <span class="st">&#39;const s=process.argv[1]; const codes=[...s].map(ch=&gt;ch.codePointAt(0).toString(16)); console.log(codes.join(&quot;-&quot;))&#39;</span> <span class="st">&#39;⚠️&#39;</span></span>
 <span id="cb352-2"><a href="4.4-quarto.html#cb352-2" tabindex="-1"></a><span class="co"># Prints: 26a0-fe0f  → Twemoji file: assets/72x72/26a0-fe0f.png (often 26a0.png also exists)</span></span></code></pre></div></li>
 <li><p>Run the fetcher again:</p>
@@ -1664,13 +1670,31 @@ A: Use</p>
 <span id="cb354-11"><a href="4.4-quarto.html#cb354-11" tabindex="-1"></a><span class="ex">Done.</span> Files saved in ~/Documents/language/norsk/norskprøver/B2/exam notes/emoji. Map to filter names as needed <span class="er">(</span><span class="ex">already</span> matching<span class="kw">)</span><span class="bu">.</span></span></code></pre></div>
 <p>The script downloads only missing PNGs. If you add more codes to <code>twemoji_manifest.json</code>, just run it again.</p>
 <p>To refresh files, delete specific PNGs (or all) in emoji and rerun.</p></li>
-<li><p>Optionally add a shortcode mapping in <code>emoji.lua</code>’s <code>emoji_map</code> to point to the same filename.</p></li>
+<li><p>Add to <code>unicode_map</code> in <code>emoji.lua</code> to point to the same filename.</p>
+<ul>
+<li>Example: <code>["⚠️"] = "26a0.png",</code></li>
+</ul>
+<p>This ensures when you use the emoji directly, it maps to the correct image file.</p></li>
+<li><p>Optionally add a shortcode mapping in <code>emoji.lua</code>’s <code>emoji_map</code> to point to the same filename.</p>
+<ul>
+<li>Example: <code>[":warning:"] = "26a0.png",</code></li>
+</ul>
+<p>This allows you to use the shortcode <code>:warning:</code> in addition to the direct emoji.</p></li>
 </ol>
+<hr />
+<p>🎯 Usage Examples</p>
+<p>You can now use emojis in your QMD files in two ways:</p>
+<ul>
+<li>Direct Unicode: Great job! 👍 This is amazing! 🎉</li>
+<li>Shortcodes: Great job! <code>:thumbsup:</code> This is amazing! <code>:tada:</code></li>
+</ul>
+<hr />
 <p>ref:</p>
 <ul>
 <li><a href="https://quarto.org/docs/visual-editor/content.html#emojis">Quarto Extensions: Emoji</a></li>
 <li><a href="https://github.com/quarto-dev/quarto-cli/issues/4492#issuecomment-1548056401">Add emoji in latex files</a></li>
 <li><a href="https://github.com/twitter/twemoji/tree/master">twemoji</a></li>
+<li><a href="https://www.webfx.com/tools/emoji-cheat-sheet/">emoji shortcode</a></li>
 </ul>
 <hr />
 </div>

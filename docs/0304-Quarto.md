@@ -861,6 +861,8 @@ format:
 
 [Quarto Extensions](https://quarto.org/docs/extensions/)
 
+#### Color Text
+
 **Create a filter to apply blue text color to fenced div.**
 
 -   Created a minimal local color-text filter:
@@ -925,12 +927,21 @@ from: markdown+emoji
 
 For markdown formats that support text representations of emojis 😁 (e.g. `:grinning:`), the text version will be written. For other formats the literal emoji character will be written. Currently, the [gfm](https://quarto.org/docs/output-formats/gfm.html) and [hugo](https://quarto.org/docs/output-formats/hugo.html) (with `enableEmoji = true` in the site config) formats both support text representation of emojis.
 
-**twemoji**
+Note: This does <span class="env-orange">**NOT**</span> work for quarto pdf. Use twemoji approach instead. See below.
+
+--------------------------------------------------------------------------------
+
+
+[**twemoji**](https://github.com/twitter/twemoji/tree/master)
 
 How to add more emoji later:
 
-1. Open [twemoji\_manifest.json](vscode-file://vscode-app/Applications/Visual%20Studio%20Code.app/Contents/Resources/app/out/vs/code/electron-browser/workbench/workbench.html) and append new code points to the emoji object
-   - Example: "1f44d": \["👍", ":thumbsup:"\]
+1. Open `twemoji_manifest.json` and append new code points to the emoji object
+   
+   - Example: `"1f44d": ["👍", ":thumbsup:"]`
+   
+   How to find the code points of an emoji:
+
    ```bash
    node -e 'const s=process.argv[1]; const codes=[...s].map(ch=>ch.codePointAt(0).toString(16)); console.log(codes.join("-"))' '⚠️'
    # Prints: 26a0-fe0f  → Twemoji file: assets/72x72/26a0-fe0f.png (often 26a0.png also exists)
@@ -965,7 +976,26 @@ How to add more emoji later:
  
    To refresh files, delete specific PNGs (or all) in emoji and rerun.
 
-3. Optionally add a shortcode mapping in `emoji.lua`'s `emoji_map` to point to the same filename.
+3. Add to `unicode_map` in `emoji.lua` to point to the same filename.
+   - Example: `["⚠️"] = "26a0.png",` 
+   
+   This ensures when you use the emoji directly, it maps to the correct image file.
+
+4. Optionally add a shortcode mapping in `emoji.lua`'s `emoji_map` to point to the same filename.
+   - Example: `[":warning:"] = "26a0.png",`
+    
+   This allows you to use the shortcode `:warning:` in addition to the direct emoji.
+
+--------------------------------------------------------------------------------
+
+🎯 Usage Examples
+
+You can now use emojis in your QMD files in two ways:
+
+- Direct Unicode: Great job! 👍 This is amazing! 🎉
+- Shortcodes: Great job! `:thumbsup:` This is amazing! `:tada:`
+
+--------------------------------------------------------------------------------
 
 
 ref: 
@@ -973,6 +1003,7 @@ ref:
 - [Quarto Extensions: Emoji](https://quarto.org/docs/visual-editor/content.html#emojis)
 - [Add emoji in latex files](https://github.com/quarto-dev/quarto-cli/issues/4492#issuecomment-1548056401)
 - [twemoji](https://github.com/twitter/twemoji/tree/master)
+- [emoji shortcode](https://www.webfx.com/tools/emoji-cheat-sheet/)
 
 --------------------------------------------------------------------------------
 
