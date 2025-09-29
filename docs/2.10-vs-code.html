@@ -1372,11 +1372,42 @@ A: Run <code>hgd()</code> in R and get the url to the viewer. Use the command pa
 </div>
 <div id="jupyter-notebooks" class="section level3 hasAnchor" number="2.10.9">
 <h3><span class="header-section-number">2.10.9</span> Jupyter Notebooks<a href="2.10-vs-code.html#jupyter-notebooks" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p><a href="https://jupyter-notebook.readthedocs.io/en/latest/">Jupyter</a> (formerly IPython Notebook) is an open-source project that lets you easily combine Markdown text and executable Python source code on one canvas called a <strong>notebook</strong>.</p>
+<p><a href="https://jupyter-notebook.readthedocs.io/en/latest/">Jupyter</a> (formerly IPython Notebook) is an open-source project that lets you easily combine Markdown text and executable Python source code on one canvas called a <strong>notebook</strong>. It provides an interactive environment where you can write and execute code, visualize data, and document your analysis <strong>all in one place</strong>.</p>
+<p>It sounds like R Markdown.</p>
+<ul>
+<li><p>One distinction is that R Markdown runs code in R console, while Jupyter notebook runs code in its own kernel.</p></li>
+<li><p>Jupyter can provide individual environments for each notebook, making it easier to manage dependencies and avoid conflicts between different projects. → But probably, it’s easier just to use the <strong>system R kernel</strong> as you don’t need to install packages in each environment.</p>
+<ul>
+<li>You can use <code>conda install</code> to manage packages in each independent environment.</li>
+</ul></li>
+<li><p>Magic commands</p>
+<p>This can be used to run code in <strong>different languages</strong> within the same notebook. For example, you can use the <code>%%R</code> magic command to run R code in a Python notebook, or the <code>%%python</code> magic command to run Python code in an R notebook.</p>
+<p>There are many other magic commands available, such as <code>%%bash</code> to run shell commands, <code>%%time</code> to time the execution of a cell, and <code>%%cd</code> to change the current working directory.</p></li>
+<li><p>Online services</p>
+<p>You may have web-based access to Jupyter notebooks via services such as Google Colab, <a href="https://jupyter.org/try-jupyter/lab/">JupyterHub</a> and Open OnDemand.</p></li>
+<li><p>You can convert Jupyter notebooks to Quarto qmd format:</p>
+<div class="sourceCode" id="cb73"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb73-1"><a href="2.10-vs-code.html#cb73-1" tabindex="-1"></a><span class="ex">quarto</span> convert demo-python.ipynb</span></code></pre></div>
+<p>This is nice in part because qmd (like Rmd) is more easily handled by <strong>version control</strong> and with shell commands than the JSON format of <code>.ipynb</code> files.</p></li>
+</ul>
+<p><strong>Tutorial:</strong></p>
+<ul>
+<li><p><a href="https://irkernel.github.io/installation/">IRkernel Install</a></p></li>
+<li><p><a href="https://cran.r-project.org/web/packages/IRkernel/refman/IRkernel.html">IRkernel CRAN Documentation</a></p></li>
+<li><p><a href="https://www.datacamp.com/blog/jupyter-and-r-markdown-notebooks-with-r">Jupyter And R Markdown: Notebooks With R</a></p></li>
+<li><p><a href="https://colab.research.google.com/github/alvinntnu/python-notes/blob/master/python-basics/magic-r.ipynb">A simple example of Jupyter Notebook in R</a></p></li>
+<li><p><a href="https://jupyter-tutorial.readthedocs.io/en/24.1.0/kernels/r.html">Jupyter Tutorial</a></p></li>
+<li><p><a href="https://irkernel.github.io/docs/repr/0.6/repr-options.html">repr options</a></p>
+<p><a href="https://irkernel.github.io/docs/repr/0.9/"><code>repr</code></a> is a package that provides rich representations for R objects in Jupyter notebooks. It allows you to customize how R objects are displayed in the notebook, including options for controlling the size and format of plots, tables, and other output.</p>
+<p><a href="https://cran.r-project.org/web/packages/repr/index.html">repr CRAN Documentation</a></p></li>
+</ul>
 <ol style="list-style-type: decimal">
 <li><p>Install <a href="https://github.com/IRkernel/IRkernel">IRkernel</a></p>
-<div class="sourceCode" id="cb73"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb73-1"><a href="2.10-vs-code.html#cb73-1" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;IRkernel&quot;</span>)</span>
-<span id="cb73-2"><a href="2.10-vs-code.html#cb73-2" tabindex="-1"></a>IRkernel<span class="sc">::</span><span class="fu">installspec</span>() </span></code></pre></div></li>
+<div class="sourceCode" id="cb74"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb74-1"><a href="2.10-vs-code.html#cb74-1" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;IRkernel&quot;</span>)</span>
+<span id="cb74-2"><a href="2.10-vs-code.html#cb74-2" tabindex="-1"></a>IRkernel<span class="sc">::</span><span class="fu">installspec</span>() </span></code></pre></div>
+<ul>
+<li>Note this needs to be run in the R terminal or Radian (running in RStudio does not work).</li>
+<li><code>IRkernel::installspec()</code> makes the R kernel available to Jupyter. It lets Jupyter to use the default system R kernel instead of the R provided by Anaconda.</li>
+</ul></li>
 <li><p>Reload window. Open command palette and type “<strong>Jupyter: Create New Blank Notebook</strong>” to create a new Jupyter notebook.</p></li>
 <li><p>Click on the button right below ellipsis in upper right corner to choose kernel</p>
 <ul>
@@ -1391,15 +1422,16 @@ A: Run <code>hgd()</code> in R and get the url to the viewer. Use the command pa
 <ul>
 <li><p><strong>Unselected</strong>: When no bar is visible, the cell is unselected.
 <img src="https://code.visualstudio.com/assets/docs/datascience/jupyter/native-code-unselected-02.png" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" /></p></li>
-<li><p>selected: When a cell is selected, it can be in command mode or in edit mode.</p>
+<li><p><strong>Selected</strong>: When a cell is selected, it can be in command mode or in edit mode.</p>
+<p><a name="command-mode"></a></p>
 <ul>
 <li><p><strong>Command mode</strong>: solid vertical bar on the left side of the cell.
 <img src="https://code.visualstudio.com/assets/docs/datascience/jupyter/native-code-cells-02.png" alt="command mode" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
 The cell can be operated on and accepts keyboard commands.</p>
-<p>Hit Enter to enter edit mode, or click on the cell to enter edit mode.</p></li>
-<li><p><strong>Edit mode</strong>: a solid vertical bar is joined by a border around the cell editor.
+<p>Hit <strong>Enter</strong> to enter edit mode, or click on the cell to enter edit mode.</p></li>
+<li><p><strong>Edit mode</strong>: a solid vertical bar is joined by a <span class="env-green">blue border</span> around the cell input editor.
 <img src="https://code.visualstudio.com/assets/docs/datascience/jupyter/native-code-cells-04.png" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
-Press Escape to return to command mode, or click outside the cell to return to command mode.</p></li>
+Press <strong>Escape</strong> to return to command mode, or <strong>click outside</strong> the cell to return to command mode.</p></li>
 </ul></li>
 </ul>
 <hr />
@@ -1421,16 +1453,16 @@ Press Escape to return to command mode, or click outside the cell to return to c
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>Ctrl+Enter</code></td>
+<td><span class="env-green"><code>Ctrl+Enter</code></span></td>
 <td>runs the currently selected cell.</td>
 </tr>
 <tr class="even">
 <td><code>Shift+Enter</code></td>
-<td>runs the currently selected cell and inserts a new cell immediately below <br />(focus moves to new cell).</td>
+<td>runs the currently selected cell and inserts a new cell immediately below <br />(focus moves to <strong>new cell</strong>).</td>
 </tr>
 <tr class="odd">
 <td><code>Opt+Enter</code></td>
-<td>runs the currently selected cell and inserts a new cell immediately below <br />(focus remains on current cell).</td>
+<td>runs the currently selected cell and inserts a new cell immediately below <br />(focus remains on <strong>current cell</strong>).</td>
 </tr>
 <tr class="even">
 <td>Run Cells Above</td>
@@ -1439,6 +1471,7 @@ Press Escape to return to command mode, or click outside the cell to return to c
 </tbody>
 </table>
 <p><strong>Insert code cells</strong></p>
+<p>Under <a href="#command-mode"><strong>command mode</strong></a> (no blue border around the input cell):</p>
 <table>
 <colgroup>
 <col width="10%" />
@@ -1508,6 +1541,90 @@ Press Escape to return to command mode, or click outside the cell to return to c
 </tbody>
 </table>
 </div>
+<div id="insert-image" class="section level4 hasAnchor" number="2.10.9.3">
+<h4><span class="header-section-number">2.10.9.3</span> Insert Image<a href="2.10-vs-code.html#insert-image" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>The built-in image rendering in Jupyter notebooks is not very flexible. It renders images using the default width and height (about 50% of page width and almost square), which might be too large or too small for your needs, and very often, you want a specific aspect ratio.</p>
+<p>Use <code>IRdisplay</code> to control plot size in Jupyter notebooks:</p>
+<ol style="list-style-type: decimal">
+<li><p>generate the image and save it to a file, e.g., <code>temp-plot.png</code></p>
+<div class="sourceCode" id="cb75"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb75-1"><a href="2.10-vs-code.html#cb75-1" tabindex="-1"></a><span class="fu">ggsave</span>(f_name, p, <span class="at">width =</span> <span class="dv">6</span>, <span class="at">height =</span> <span class="dv">4</span>, <span class="at">dpi =</span> <span class="dv">300</span>, <span class="at">units =</span> <span class="st">&quot;in&quot;</span>)</span></code></pre></div></li>
+<li><p>insert a code cell and load the image using <code>IRdisplay::display_html()</code></p>
+<div class="sourceCode" id="cb76"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb76-1"><a href="2.10-vs-code.html#cb76-1" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb76-2"><a href="2.10-vs-code.html#cb76-2" tabindex="-1"></a><span class="co"># Display the image with controlled width using HTML</span></span>
+<span id="cb76-3"><a href="2.10-vs-code.html#cb76-3" tabindex="-1"></a><span class="fu">library</span>(IRdisplay)</span>
+<span id="cb76-4"><a href="2.10-vs-code.html#cb76-4" tabindex="-1"></a><span class="fu">display_html</span>(<span class="fu">paste0</span>(<span class="st">&#39;&lt;img src=&quot;&#39;</span>, f_name, <span class="st">&#39;&quot; style=&quot;width: 70%; height: auto;&quot;&gt;&#39;</span>))</span>
+<span id="cb76-5"><a href="2.10-vs-code.html#cb76-5" tabindex="-1"></a><span class="co"># center the image</span></span>
+<span id="cb76-6"><a href="2.10-vs-code.html#cb76-6" tabindex="-1"></a><span class="fu">display_html</span>(<span class="fu">paste0</span>(<span class="st">&#39;&lt;div style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;&#39;</span>, f_name, <span class="st">&#39;&quot; style=&quot;width: 70%; height: auto;&quot;&gt;&lt;/div&gt;&#39;</span>))</span></code></pre></div></li>
+</ol>
+<p>Alternatively, use markdown syntax</p>
+<div class="sourceCode" id="cb77"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb77-1"><a href="2.10-vs-code.html#cb77-1" tabindex="-1"></a><span class="al">![Alt text](temp-plot.png)</span>{width=70%}</span></code></pre></div>
+<ul>
+<li><a href="https://groups.google.com/g/jupyter/c/623EFF2_yQg?pli=1">Plot size with IRKernel</a></li>
+</ul>
+<hr />
+<p><strong><code>repr</code> options</strong></p>
+<p><code>repr</code> options are used to control the behavior of repr when not calling it directly. Use <a href="http://www.rdocumentation.org/packages/base/topics/options"><code>options</code></a><code>(repr.* = ...)</code>and <a href="http://www.rdocumentation.org/packages/base/topics/options"><code>getOption</code></a><code>('repr.*')</code> to set and get them, respectively.</p>
+<p>Once <code>repr</code> package is loaded, all options are set to defaults which weren’t set beforehand.</p>
+<p><code>repr.plot.*</code>: representations of recordedplot instances</p>
+<table>
+<colgroup>
+<col width="30%" />
+<col width="69%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Options</th>
+<th>Descriptions</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>repr.plot.width</code></td>
+<td>Plotting area width in inches (default: <code>7 in</code>)</td>
+</tr>
+<tr class="even">
+<td><code>repr.plot.height</code></td>
+<td>Plotting area height in inches (default: <code>7 in</code>)</td>
+</tr>
+<tr class="odd">
+<td><code>repr.plot.pointsize</code></td>
+<td>Text height in pt (default: 12)</td>
+</tr>
+<tr class="even">
+<td><code>repr.plot.res</code></td>
+<td>PPI for rasterization (default: 120)</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb78"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb78-1"><a href="2.10-vs-code.html#cb78-1" tabindex="-1"></a><span class="co"># set plot size to 4 x 3 inches</span></span>
+<span id="cb78-2"><a href="2.10-vs-code.html#cb78-2" tabindex="-1"></a><span class="fu">options</span>(<span class="at">repr.plot.width =</span> <span class="dv">4</span>, <span class="at">repr.plot.height =</span> <span class="dv">3</span>)</span></code></pre></div>
+<p>This works but is not ideal as the plot element is not adjusted proportionally. Text size is too large for the small plot and might be cropped.</p>
+<p>Other output representations</p>
+<table>
+<colgroup>
+<col width="26%" />
+<col width="73%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Options</th>
+<th>Descriptions</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>repr.matrix.max.rows</code></td>
+<td>How many rows to display at max. Will insert a row with vertical ellipses to show elision. (default: <strong>60 rows</strong>, first and last 30 rows)</td>
+</tr>
+<tr class="even">
+<td><code>repr.matrix.max.cols</code></td>
+<td>How many cols to display at max. Will insert a column with horizontal ellipses to show elision. (default: 20)</td>
+</tr>
+</tbody>
+</table>
+<p>See <a href="https://cran.r-project.org/web/packages/repr/refman/repr.html">repr CRAN</a> for all available options.</p>
+<hr />
+</div>
 </div>
 <div id="issues" class="section level3 hasAnchor" number="2.10.10">
 <h3><span class="header-section-number">2.10.10</span> Issues<a href="2.10-vs-code.html#issues" class="anchor-section" aria-label="Anchor link to header"></a></h3>
@@ -1521,9 +1638,9 @@ Press Escape to return to command mode, or click outside the cell to return to c
 </ul>
 <p><img src="https://drive.google.com/thumbnail?id=1exl58UEukckBlhqcnMdf7L_uJzNLWmQ0&sz=w1000" alt="vs code jupyter" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" /></p>
 <p>You can customize your active Visual Studio Code <a href="https://code.visualstudio.com/docs/getstarted/themes">color theme</a> with the <a href="https://code.visualstudio.com/api/extension-guides/color-theme"><span class="codicon codicon-settings-gear dynamic-setting-icon"></span><code>workbench.colorCustomizations</code></a> and <a href="https://code.visualstudio.com/api/language-extensions/syntax-highlight-guide"><span class="codicon codicon-settings-gear dynamic-setting-icon"></span> <code>editor.tokenColorCustomizations</code></a> user <a href="https://code.visualstudio.com/docs/configure/settings">setting</a>. E.g.,</p>
-<div class="sourceCode" id="cb74"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb74-1"><a href="2.10-vs-code.html#cb74-1" tabindex="-1"></a><span class="er">&quot;workbench.colorCustomizations&quot;:</span> <span class="fu">{</span></span>
-<span id="cb74-2"><a href="2.10-vs-code.html#cb74-2" tabindex="-1"></a>    <span class="dt">&quot;editor.foreground&quot;</span><span class="fu">:</span> <span class="st">&quot;#ffffff&quot;</span></span>
-<span id="cb74-3"><a href="2.10-vs-code.html#cb74-3" tabindex="-1"></a><span class="fu">}</span><span class="er">,</span></span></code></pre></div>
+<div class="sourceCode" id="cb79"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb79-1"><a href="2.10-vs-code.html#cb79-1" tabindex="-1"></a><span class="er">&quot;workbench.colorCustomizations&quot;:</span> <span class="fu">{</span></span>
+<span id="cb79-2"><a href="2.10-vs-code.html#cb79-2" tabindex="-1"></a>    <span class="dt">&quot;editor.foreground&quot;</span><span class="fu">:</span> <span class="st">&quot;#ffffff&quot;</span></span>
+<span id="cb79-3"><a href="2.10-vs-code.html#cb79-3" tabindex="-1"></a><span class="fu">}</span><span class="er">,</span></span></code></pre></div>
 <p><code>workbench.colorCustomizations</code> allows you to set the colors of <strong>VS Code UI elements</strong> such as list &amp; trees (File Explorer, suggestions widget), diff editor, Activity Bar, notifications, scroll bar, split view, buttons, and more.</p>
 <ul>
 <li>For a list of all customizable colors, see the <a href="https://code.visualstudio.com/api/references/theme-color">Theme Color Reference</a>.</li>
@@ -1545,13 +1662,13 @@ Press Escape to return to command mode, or click outside the cell to return to c
 <h3><span class="header-section-number">2.10.11</span> FAQ<a href="2.10-vs-code.html#faq-2" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Q: How can I set a specific CRAN mirror permanently in R, so it won’t ask me again which mirror to choose?<br />
 A: Add the following line to your <code>~/.Rprofile</code> file:</p>
-<div class="sourceCode" id="cb75"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb75-1"><a href="2.10-vs-code.html#cb75-1" tabindex="-1"></a><span class="co"># add this line to ~/.Rprofile, restart your R session so it takes effect</span></span>
-<span id="cb75-2"><a href="2.10-vs-code.html#cb75-2" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">options</span>(<span class="at">repos =</span> <span class="fu">c</span>(<span class="at">CRAN =</span> <span class="st">&quot;https://mirror.accum.se/mirror/CRAN/&quot;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb80"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb80-1"><a href="2.10-vs-code.html#cb80-1" tabindex="-1"></a><span class="co"># add this line to ~/.Rprofile, restart your R session so it takes effect</span></span>
+<span id="cb80-2"><a href="2.10-vs-code.html#cb80-2" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">options</span>(<span class="at">repos =</span> <span class="fu">c</span>(<span class="at">CRAN =</span> <span class="st">&quot;https://mirror.accum.se/mirror/CRAN/&quot;</span>))</span></code></pre></div>
 <p>Restart your R session so it takes effect.</p>
-<div class="sourceCode" id="cb76"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb76-1"><a href="2.10-vs-code.html#cb76-1" tabindex="-1"></a><span class="co"># to verify that CRAN mirror is set correctly</span></span>
-<span id="cb76-2"><a href="2.10-vs-code.html#cb76-2" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">getOption</span>(<span class="st">&quot;repos&quot;</span>)</span>
-<span id="cb76-3"><a href="2.10-vs-code.html#cb76-3" tabindex="-1"></a>                                  CRAN </span>
-<span id="cb76-4"><a href="2.10-vs-code.html#cb76-4" tabindex="-1"></a><span class="st">&quot;https://mirror.accum.se/mirror/CRAN/&quot;</span> </span></code></pre></div>
+<div class="sourceCode" id="cb81"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb81-1"><a href="2.10-vs-code.html#cb81-1" tabindex="-1"></a><span class="co"># to verify that CRAN mirror is set correctly</span></span>
+<span id="cb81-2"><a href="2.10-vs-code.html#cb81-2" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">getOption</span>(<span class="st">&quot;repos&quot;</span>)</span>
+<span id="cb81-3"><a href="2.10-vs-code.html#cb81-3" tabindex="-1"></a>                                  CRAN </span>
+<span id="cb81-4"><a href="2.10-vs-code.html#cb81-4" tabindex="-1"></a><span class="st">&quot;https://mirror.accum.se/mirror/CRAN/&quot;</span> </span></code></pre></div>
 <p>You can find a list of CRAN mirrors <a href="https://cran.r-project.org/mirrors.html">here</a>. The principle is to choose a location close to you.</p>
 <hr />
 <p><strong>References</strong>:</p>

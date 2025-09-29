@@ -1029,6 +1029,7 @@ You may use `knitr::opts_chunk$set()` to change the default values of chunk opti
 | `message=TRUE`       | Whether to preserve messages emitted by `message()`          |
 | `warning=TRUE`       | Whether to show warnings in the output produced by `warning()`. |
 | `results='markup'`   | Controls how to display the text results. <br />When `results='asis'` that is to write text output as-is, i.e., write the raw text results directly into the output document without any markups.<br />Useful when printing `stargazer` tables. |
+| `results='hide'`  | Hide all text **output**.                                        |
 | `comment='##'`       | The prefix to be added before each line of the text output. <br />Set `comment = ''` remove the default `##`. |
 | `collapse=FALSE`     | Whether to, if possible, collapse all the source and output blocks from one code chunk into a single block (by default, they are written to separate blocks). <br />This option only applies to Markdown documents. |
 | `fig.keep='high'`    | How plots in chunks should be kept. <br />`high`: Only keep high-level plots (merge low-level changes into high-level plots). <br />`none`: Discard all plots. <br />`all`: Keep all plots (low-level plot changes may produce new plots). <br />`first`: Only keep the first plot. <br />`last`: Only keep the last plot. <br />If set to a numeric vector, the values are indices of (low-level) plots to keep.<br />If you want to choose the second to the fourth plots, you could use `fig.keep = 2:4` (or remove the first plot via `fig.keep = -1`). |
@@ -1038,7 +1039,7 @@ You may use `knitr::opts_chunk$set()` to change the default values of chunk opti
 
 
 
-<span style='color:#32CD32'>`results='markup'`</span>  note plural form for result**s**.
+<span style='color: #00CC66'>`results='markup' | 'asis' | 'hold' | 'hide'`</span>  note plural form for result**s**.
 
 - `results='markup'`: Defaults to `` `markup` ``. Mark up text output with the appropriate environments depending on the output format. 
 

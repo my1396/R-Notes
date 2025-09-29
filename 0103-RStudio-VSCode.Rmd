@@ -635,7 +635,45 @@ Open the Command Palette and type '**R:**' to see list of available commands and
 
 ### Jupyter Notebooks
 
-[Jupyter](https://jupyter-notebook.readthedocs.io/en/latest/) (formerly IPython Notebook) is an open-source project that lets you easily combine Markdown text and executable Python source code on one canvas called a **notebook**.
+[Jupyter](https://jupyter-notebook.readthedocs.io/en/latest/) (formerly IPython Notebook) is an open-source project that lets you easily combine Markdown text and executable Python source code on one canvas called a **notebook**. It provides an interactive environment where you can write and execute code, visualize data, and document your analysis **all in one place**.
+
+It sounds like R Markdown. 
+
+- One distinction is that R Markdown runs code in R console, while Jupyter notebook runs code in its own kernel.
+
+- Jupyter can provide individual environments for each notebook, making it easier to manage dependencies and avoid conflicts between different projects. → But probably, it's easier just to use the **system R kernel** as you don't need to install packages in each environment.
+  - You can use `conda install` to manage packages in each independent environment.
+
+- Magic commands
+  
+  This can be used to run code in **different languages** within the same notebook. For example, you can use the `%%R` magic command to run R code in a Python notebook, or the `%%python` magic command to run Python code in an R notebook.
+
+  There are many other magic commands available, such as `%%bash` to run shell commands, `%%time` to time the execution of a cell, and `%%cd` to change the current working directory.
+
+- Online services
+  
+  You may have web-based access to Jupyter notebooks via services such as Google Colab, [JupyterHub](https://jupyter.org/try-jupyter/lab/) and Open OnDemand.
+
+- You can convert Jupyter notebooks to Quarto qmd format:
+
+  ```bash
+  quarto convert demo-python.ipynb
+  ```
+
+  This is nice in part because qmd (like Rmd) is more easily handled by **version control** and with shell commands than the JSON format of `.ipynb` files.
+
+**Tutorial:**
+
+- [IRkernel Install](https://irkernel.github.io/installation/)
+- [IRkernel CRAN Documentation](https://cran.r-project.org/web/packages/IRkernel/refman/IRkernel.html)
+- [Jupyter And R Markdown: Notebooks With R](https://www.datacamp.com/blog/jupyter-and-r-markdown-notebooks-with-r)
+- [A simple example of Jupyter Notebook in R](https://colab.research.google.com/github/alvinntnu/python-notes/blob/master/python-basics/magic-r.ipynb)
+- [Jupyter Tutorial](https://jupyter-tutorial.readthedocs.io/en/24.1.0/kernels/r.html)
+- [repr options](https://irkernel.github.io/docs/repr/0.6/repr-options.html)
+  
+  [`repr`](https://irkernel.github.io/docs/repr/0.9/) is a package that provides rich representations for R objects in Jupyter notebooks. It allows you to customize how R objects are displayed in the notebook, including options for controlling the size and format of plots, tables, and other output.
+
+  [repr CRAN Documentation](https://cran.r-project.org/web/packages/repr/index.html)
 
 
 1. Install [IRkernel](https://github.com/IRkernel/IRkernel)
@@ -643,6 +681,9 @@ Open the Command Palette and type '**R:**' to see list of available commands and
    install.packages("IRkernel")
    IRkernel::installspec() 
    ```
+   
+   - Note this needs to be run in the R terminal or Radian (running in RStudio does not work).
+   - `IRkernel::installspec()` makes the R kernel available to Jupyter. It lets Jupyter to use the default system R kernel instead of the R provided by Anaconda.
 2. Reload window. Open command palette and type "**Jupyter: Create New Blank Notebook**" to create a new Jupyter notebook.
 3. Click on the button right below ellipsis in upper right corner to choose kernel
    - Select **Jupyter Kernels** > **R** to use the R kernel.
@@ -658,16 +699,19 @@ Three code modes in Jupyter notebooks:
 
 - **Unselected**: When no bar is visible, the cell is unselected.
   <img src="https://code.visualstudio.com/assets/docs/datascience/jupyter/native-code-unselected-02.png" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
-- selected: When a cell is selected, it can be in command mode or in edit mode.
+
+- **Selected**: When a cell is selected, it can be in command mode or in edit mode.
   
+  <a name="command-mode"></a>
   - **Command mode**: solid vertical bar on the left side of the cell.
     <img src="https://code.visualstudio.com/assets/docs/datascience/jupyter/native-code-cells-02.png" alt="command mode" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
     The cell can be operated on and accepts keyboard commands.
 
-    Hit Enter to enter edit mode, or click on the cell to enter edit mode.
-  - **Edit mode**: a solid vertical bar is joined by a border around the cell editor.
+    Hit **Enter** to enter edit mode, or click on the cell to enter edit mode.
+  
+  - **Edit mode**: a solid vertical bar is joined by a <span class="env-green">blue border</span> around the cell input editor.
     <img src="https://code.visualstudio.com/assets/docs/datascience/jupyter/native-code-cells-04.png" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
-    Press Escape to return to command mode, or click outside the cell to return to command mode.
+    Press **Escape** to return to command mode, or **click outside** the cell to return to command mode.
 
 
 --------------------------------------------------------------------------------
@@ -681,12 +725,14 @@ Command Palette, type "**Preferences: Open Keyboard Shortcuts**" to open the key
 
 | Shortcut        | Function                                                                                                         |
 | --------------- | ---------------------------------------------------------------------------------------------------------------- |
-| `Ctrl+Enter`    | runs the currently selected cell.                                                                                |
-| `Shift+Enter`   | runs the currently selected cell and inserts a new cell immediately below <br />(focus moves to new cell).       |
-| `Opt+Enter`     | runs the currently selected cell and inserts a new cell immediately below <br />(focus remains on current cell). |
+| <span class="env-green">`Ctrl+Enter`</span>    | runs the currently selected cell.                                                                                |
+| `Shift+Enter`   | runs the currently selected cell and inserts a new cell immediately below <br />(focus moves to **new cell**).       |
+| `Opt+Enter`     | runs the currently selected cell and inserts a new cell immediately below <br />(focus remains on **current cell**). |
 | Run Cells Above | Command Pallette, type "**Notebook: Execute Above Cells**"                                                       |
 
 **Insert code cells**
+
+Under <a href="#command-mode">**command mode**</a> (no blue border around the input cell):
 
 | Shortcut   | Function                                                                                  |
 | ---------- | ----------------------------------------------------------------------------------------- |
@@ -710,7 +756,76 @@ Command Palette, type "**Preferences: Open Keyboard Shortcuts**" to open the key
 | `R`                | Undo last change                  |
 
 
+#### Insert Image
 
+The built-in image rendering in Jupyter notebooks is not very flexible. It renders images using the default width and height (about 50% of page width and almost square), which might be too large or too small for your needs, and very often, you want a specific aspect ratio.
+
+Use `IRdisplay` to control plot size in Jupyter notebooks: ✅
+
+1. generate the image and save it to a file, e.g., `temp-plot.png`
+   
+   ```r
+   ggsave(f_name, p, width = 6, height = 4, dpi = 300, units = "in")
+   ```
+2. insert a code cell and load the image using `IRdisplay::display_html()`
+
+   ```r
+   #| echo: false
+   # Display the image with controlled width using HTML
+   library(IRdisplay)
+   display_html(paste0('<img src="', f_name, '" style="width: 70%; height: auto;">'))
+   # center the image
+   display_html(paste0('<div style="text-align: center;"><img src="', f_name, '" style="width: 70%; height: auto;"></div>'))
+   ```
+
+Alternatively, use markdown syntax
+
+```markdown
+![Alt text](temp-plot.png){width=70%}
+```
+
+- [Plot size with IRKernel](https://groups.google.com/g/jupyter/c/623EFF2_yQg?pli=1)
+
+
+--------------------------------------------------------------------------------
+
+**`repr` options**
+
+`repr` options are used to control the behavior of repr when not calling it directly. Use [`options`](http://www.rdocumentation.org/packages/base/topics/options)`(repr.* = ...)`and [`getOption`](http://www.rdocumentation.org/packages/base/topics/options)`('repr.*')` to set and get them, respectively.
+
+Once `repr` package is loaded, all options are set to defaults which weren’t set beforehand.
+
+`repr.plot.*`:  representations of recordedplot instances
+
+| Options               | Descriptions                                     |
+| --------------------- | ------------------------------------------------ |
+| ``repr.plot.width``   | Plotting area width in inches (default: `7 in`)  |
+| `repr.plot.height`    | Plotting area height in inches (default: `7 in`) |
+| `repr.plot.pointsize` | Text height in pt (default: 12)                  |
+| `repr.plot.res`       | PPI for rasterization (default: 120)             |
+
+```r
+# set plot size to 4 x 3 inches
+options(repr.plot.width = 4, repr.plot.height = 3)
+```
+
+This works but is not ideal as the plot element is not adjusted proportionally. Text size is too large for the small plot and might be cropped. ❌
+
+
+
+Other output representations
+
+| Options                | Descriptions                                                 |
+| ---------------------- | ------------------------------------------------------------ |
+| `repr.matrix.max.rows` | How many rows to display at max. Will insert a row with vertical ellipses to show elision. (default: **60 rows**, first and last 30 rows) |
+| `repr.matrix.max.cols` | How many cols to display at max. Will insert a column with horizontal ellipses to show elision. (default: 20) |
+
+See [repr CRAN](https://cran.r-project.org/web/packages/repr/refman/repr.html) for all available options.
+
+
+
+
+--------------------------------------------------------------------------------
 
 
 ### Issues

@@ -26,7 +26,7 @@
     $digits
     [1] 7
     
-    > getOption("width", "digits")
+    > getOption("width")
     [1] 90
     ```
 
