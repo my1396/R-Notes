@@ -46,7 +46,7 @@
 
 * MARGIN: 1 row-wise, 2 column-wise..
 
-* STATS: a vector with the same length as row \[MARGIN=1\]/ column \[MARGIN=2\].
+* STATS: a vector with the same length as row [MARGIN=1] / column [MARGIN=2].
 
 * FUN: the function to be used to carry out the sweep.
 

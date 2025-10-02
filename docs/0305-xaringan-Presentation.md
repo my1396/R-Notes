@@ -95,6 +95,46 @@ renderthis::to_pdf('equity_valuation.Rmd')
 
 This will call `rmarkdown::render` and then `pagedown::chrome_print` automatically. Will generate `equity_valuation.html` and `equity_valuation.pdf` accordingly based on your output formats.
 
+--------------------------------------------------------------------------------
+
+Issue: Fonts are not embedded / applied in the pdf output.
+
+Fix: Set pdf output font specifically. 
+
+```css
+@media print {
+    body {
+        font-family: 'Noto Sans', -apple-system, BlinkMacSystemFont, system-ui, Arial, sans-serif !important;
+        font-weight: 400 !important;
+    }
+    strong, b {
+        font-weight: 700 !important;
+    }
+    /* MathJax font for print */
+    .mjx-chtml {
+        font-family: 'Georgia Pro', 'Libertinus Serif', serif !important;
+        font-weight: 700 !important;
+        color: red !important; /* for testing purpose, whether selector is correct */
+    }
+}
+```
+
+- Note that `.mjx-chtml` controls math typesetting. The tricky point is that MathJax CommonHTML math uses its own fonts for math rendering, and CSS font-family is <span class="env-orange">**NOT respected**</span>. 
+
+- Color and font-weight may work, but font-family is limited by MathJax's internal font stack. For true font control, you need to change MathJax's configuration, which is not easily done in xaringan.
+
+- html output and pdf output may use different fonts. 
+  
+  Issue: If keeping `@import` in CSS, I cannot get the font applied in pdf output.
+  
+  Fix: What I do, a compromise solution, is to
+  - use system font for html output, and
+  - specify local font for pdf output.
+
+
+
+
+--------------------------------------------------------------------------------
 
 ### Basic
 
@@ -171,6 +211,33 @@ $$E = mc^2$$
 
 --------------------------------------------------------------------------------
 
+#### Color equations
+
+1. In mathjax configuration file, define color macros, e.g., in `libs/mathjax.html`:
+   ```javascript
+   <!-- MathJax V2 Configuration -->
+   <script type="text/x-mathjax-config">
+   MathJax.Hub.Config({
+     TeX: {
+       extensions: ["color.js"], // load the color extension, support color names, RGB, and grey-scale color spaces
+       equationNumbers: { autoNumber: "AMS" }, // use ams rules to number equations
+       Macros: {
+         // define colors
+         red: ["{\\color[RGB]{185,64,71}{#1}}", 1],
+       }
+     }
+   });
+   </script>
+   ```
+2. In your slide, you can use the macros, e.g., `\red{...}`, `\blue{...}`, etc.
+   ```latex
+   $$\red{Y_t} \equiv I_tI_{t-1} + (1-I_t)(1-I_{t-1})$$
+   ```
+
+
+
+--------------------------------------------------------------------------------
+
 ### Bullet list
 
 Third level lists need an extra tab. [↩︎](https://github.com/yihui/xaringan/issues/282)
@@ -194,6 +261,20 @@ Q: I think you need four spaces (or a true tab instead of two spaces) to indicat
         1. Two tabs
             1. Three tabs
 ```
+
+--------------------------------------------------------------------------------
+
+### Images
+
+Issue: Image resolution too low.
+
+Fix: Add `fig.retina=3` to chunk options for html output. Use `dpi=300` for pdf output.
+
+--------------------------------------------------------------------------------
+
+Issue: No figure numbering.
+
+Explanation: `xaringan` uses `remark.js` to render slides, which does not support figure numbering. This is because referencing of figures across multiple slides is less common and potentially less effective for audience engagement. 😂
 
 --------------------------------------------------------------------------------
 
@@ -316,14 +397,22 @@ Highlight features:
 
 - Add a search box to search through your slides with [search](https://pkg.garrickadenbuie.com/xaringanExtra/#/search)
 
-````markdown
-```{r xaringanExtra-search, echo=FALSE}
-# add search box
-xaringanExtra::use_search(show_icon = TRUE, position = "bottom-left")
-```
-````
+  ````markdown
+  ```{r xaringanExtra-search, echo=FALSE}
+  # add search box
+  xaringanExtra::use_search(show_icon = TRUE, position = "bottom-left")
+  ```
+  ````
 
-In your slides, press `Control` + `F` to start searching, or click on the search icon 🔍 if you set `show_icon = TRUE`. Press `Enter` to jump to the next match.
+  In your slides, press `Control` + `F` to start searching, or click on the search icon 🔍 if you set `show_icon = TRUE`. 
+
+  - Press `Enter` to jump to the next match.
+    
+    On Mac, 
+    - use `ctrl + G` to go to next match, and `ctrl + shift + G` to go to previous match.
+    - use `esc` to exit search mode.
+  
+  - Defaults to case-**in**sensitive. Can be changed with `case_sensitive = TRUE`.
 
 
 - Tile view

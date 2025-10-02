@@ -4,12 +4,23 @@ Main idea: to use expression or convert latex to expression;
 
 Two options
 
-1.   `expression(CO[2])` show math equation style as $CO_2$.
-     https://www.dataanalytics.org.uk/axis-labels-in-r-plots-using-expression/#expression_comm
+1. `expression(CO[2])` show math equation style as $CO_2$.
+   
+   https://www.dataanalytics.org.uk/axis-labels-in-r-plots-using-expression/#expression_comm
 
-2.   `latex2exp::TeX("$\\alpha^\\beta$")`  show as $\alpha^{\beta}$;
+   ```r
+   plot(1,1, main=expression('title'^2))   # superscript
+   plot(1,1, main=expression('title'[2]))  # subscript
+   ```
 
-Trick: use `\\,` or `\\;` to show white space in math mode. `\\;` is a larger space than `\\,`.
+2. `latex2exp::TeX("$\\alpha^\\beta$")`  show as $\alpha^{\beta}$;
+
+<span class="env-green">**Trick:**</span> 
+
+- Print **whitespace** in math mode `$...$`:
+  - use `\\,` or `\\;` to show white space in math mode. `\\;` is a larger space than `\\,`.
+  - `~` to print a normal space
+  - `\phantom{x}` to print a space the width of the character `x`.
 
 
 ``` r

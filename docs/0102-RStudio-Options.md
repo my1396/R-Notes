@@ -154,9 +154,30 @@ What is `.Rprofile`?
 
 R will source only one `.Rprofile` file.  If there is a project-level `.Rprofile`, the user-level file will <span style='color:#FF9900'>NOT</span> be sourced, i.e., the project-level config file take priority.
 
-So if you have both a project-specific `.Rprofile` file and a user `.Rprofile` file that you want to use, you explicitly source the user-level `.Rprofile` at the top of your project-level `.Rprofile` with `source("~/.Rprofile")`.
+So if you have both a project-specific `.Rprofile` file and a user `.Rprofile` file that you want to use, you <span class="env-green">**explicitly source**</span> the user-level `.Rprofile` at the top of your project-level `.Rprofile` with `source("~/.Rprofile")`.
 
 `.Rprofile` files are sourced as <span class="env-green">**regular R code**</span>, so setting environment variables must be done inside a `Sys.setenv(key = "value")` call.
+
+
+Here is an example project-level `.Rprofile` file that 
+
+- sources the user-level `.Rprofile` file,
+- load some commonly used packages, and
+- optionally, sets some options and environment variables specific to the project.
+
+```r
+cat("This is the local user .Rprofile file\n")
+# Source the global user .Rprofile
+source("~/.Rprofile")
+
+# Add project-specific configurations below
+library(knitr)
+library(tidyverse)
+```
+
+This can be convenient for loading commonly used packages in some <span class="env-green">**documentation projects for yourself**</span>. 
+
+- Note that it is recommended to **load packages individually and explicitly** if you are working on a research project, where reproducibility is important and in case of collaboration.
 
 --------------------------------------------------------------------------------
 

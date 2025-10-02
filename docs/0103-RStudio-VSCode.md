@@ -691,7 +691,39 @@ It sounds like R Markdown.
      It should look something like this:
      <img src="https://www.practicaldatascience.org/_images/vscode_r_kernel.png" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
 
+### Render Jupyter notebook
 
+You can use `quarto` to convert Jupyter notebooks (`.ipynb`) to other formats such as HTML, PDF, or Markdown. It uses the document YAML to decide which format to convert to.
+
+```bash
+quarto render notebook.ipynb
+```
+
+Note that when rendering an `.ipynb` Quarto will **NOT** execute the cells within the notebook by default (the presumption being that you already executed them while editing the notebook). If you want to execute the cells you can pass the `--execute` flag to render:
+
+```bash
+quarto render notebook.ipynb --execute
+```
+
+Path error when rendering `.ipynb` file with `quarto --execute`:
+
+```
+quarto render 07_Lab-2_dummy-variable.ipynb --execute --log-level=DEBUG
+Quarto version: 1.7.31
+projectContext: Found Quarto project in /Users/menghan/Library/CloudStorage/OneDrive-Norduniversitet/FIN5005 2025Fall/course_web
+Loaded deno-dom-native
+[execProcess] python /Applications/quarto/share/capabilities/jupyter.py
+[execProcess] Success: true, code: 0
+
+Starting ir kernel...[execProcess] /Users/menghan/anaconda3/bin/python /Applications/quarto/share/jupyter/jupyter.py
+[execProcess] Success: true, code: 0
+ERROR: 
+
+path
+[NotebookContext]: Starting Cleanup
+```
+
+Not resolved...
 
 #### Code cell modes
 
@@ -743,8 +775,8 @@ Under <a href="#command-mode">**command mode**</a> (no blue border around the in
 
 | Shortcut   | Function                |
 | ---------- | ----------------------- |
-| `ctrl+; Y` | Change cell to code     |
-| `ctrl+; M` | Change cell to markdown |
+| cmd mode: `Y` | Change cell to code     |
+| cmd mode: `M` | Change cell to markdown |
 
 **Miscellaneous**
 
@@ -760,7 +792,7 @@ Under <a href="#command-mode">**command mode**</a> (no blue border around the in
 
 The built-in image rendering in Jupyter notebooks is not very flexible. It renders images using the default width and height (about 50% of page width and almost square), which might be too large or too small for your needs, and very often, you want a specific aspect ratio.
 
-Use `IRdisplay` to control plot size in Jupyter notebooks:
+Use `IRdisplay` to control plot size in Jupyter notebooks: ✅
 
 1. generate the image and save it to a file, e.g., `temp-plot.png`
    
@@ -809,7 +841,7 @@ Once `repr` package is loaded, all options are set to defaults which weren’t s
 options(repr.plot.width = 4, repr.plot.height = 3)
 ```
 
-This works but is not ideal as the plot element is not adjusted proportionally. Text size is too large for the small plot and might be cropped.
+This works but is not ideal as the plot element is not adjusted proportionally. Text size is too large for the small plot and might be cropped. ❌
 
 
 

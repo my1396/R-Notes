@@ -140,51 +140,94 @@ book:
 
 ___
 
-**Syntax differences with R Markdown:**
+### Code chunks
 
-- Code chunks
+Both R markdown and Quarto can use the following ways to specify chunk options:
 
-    Both R markdown and Quarto can use the following ways to specify chunk options:
-    
-    Use `tag=value` in the chunk header ```` ```{r} ````.
-    
-    ~~~~markdown
-    ```{r my-label, fig.cap = caption}`r ''`
-    
-    # R code
-    ```
-    ~~~~
-    
-    
-    Alternatively, you can write chunk options in the body of a code chunk after `#|`, e.g., 
-    
-    
-    ````markdown
-    ```{r}`r ''`
-    #| label: fig-my-label
-    #| fig-cap: caption 
-    
-    # R code
-    ```
-    ````
-    
-    `tag: value` is the YAML syntax. Logical values in YAML can be any of: `true/false`, `yes/no`, and `on/off`. They all equivalent to `TRUE/FALSE` (uppercase) in R.
-    
-    
-    Options format:
-    
-    - space after `#|` and colon `:`
-    - TRUE/FALSE need to be in uppercase
-    
-    Note that <span class="env-green">Quarto accepts Rmd's way of specifying chunk options</span>. The **difference** is that <span class="env-green">Quarto's label for figures</span> must start with `fig-`, while Rmd accepts any labels.
-    
-    ````markdown
-    ```{r label = "fig-my-label", fig.cap = caption}`r ''`
-    
-    # R code
-    ```
-    ````
-    
+Use `tag=value` in the chunk header ```` ```{r} ````.
+
+~~~~markdown
+```{r my-label, fig.cap = caption}`r ''`
+
+# R code
+```
+~~~~
+
+
+Alternatively, you can write chunk options in the body of a code chunk after <span class="env-green">`#|`</span>, e.g., 
+
+
+````markdown
+```{r}`r ''`
+#| label: fig-my-label
+#| fig-cap: caption 
+
+# R code
+```
+````
+
+`tag: value` is the YAML syntax. 
+
+
+**Options format:**
+
+- space after `#|` and colon `:`
+- Logical values in YAML can be any of: `true/false`, `yes/no`, and `on/off`. 
+  - They all equivalent to `TRUE/FALSE` (uppercase) in Rmd.
+  - Note that TRUE/FALSE need to be in uppercase in **Rmd**.
+
+Note that <span class="env-green">Quarto accepts Rmd's way of specifying chunk options</span>. The **difference** is that <span class="env-green">Quarto's label for figures</span> must start with `fig-`, while Rmd accepts any labels.
+
+````markdown
+```{r label = "fig-my-label", fig.cap = caption}`r ''`
+
+# R code
+```
+````
+
+❗️ Note that NOT all Rmd chunk options are supported in Quarto. See [Quarto Chunk Options](https://quarto.org/docs/computations/execution-options.html) for all available options.
+
+
+
+**Quarto chunk options available for customizing output include:**
+
+| Option       | Description                                                  |
+| ------------ | ------------------------------------------------------------ |
+| `eval`       | Evaluate the code chunk (if `false`, just echos the code into the output). |
+| `echo`       | Include the source code in output                            |
+| <span class="env-green">`output`</span>$^{[1]}$     | Include the results of executing the code in the output (`true`, `false`, or `asis` to indicate that the output is raw markdown and should not have any of Quarto’s standard enclosing markdown). |
+| `warning`    | Include warnings in the output.                              |
+| `error`      | Include errors in the output (note that this implies that errors executing code will not halt processing of the document). |
+| `include`    | Catch all for preventing any output (code or results) from being included (e.g. `include: false`suppresses all output from the code block). |
+| `renderings` | Specify rendering names for the plot or table outputs of the cell, e.g. `[light, dark]` |
+
+$^{[1]}$ `output` is similar to `results` in Rmd. You <span class="env-orange">**cannot**</span> use `results='hide'` in Quarto, use `output: false` instead.
+
+
+### Knitr Options
+
+
+If you are using the Knitr cell execution engine, you can specify default document-level [Knitr chunk options](https://yihui.org/knitr/options/) in YAML. For example:
+
+```yaml
+---
+title:"My Document"
+format: html
+knitr:
+opts_chunk:
+collapse:true
+comment:"#>"
+R.options:
+knitr.graphics.auto_pdf:true
+---
+```
+
+You can additionally specify global Knitr options using `opts_knit`.
+
+The `R.options` chunk option is a convenient way to define R options that are set temporarily via [`options()`](https://rdrr.io/r/base/options.html) before the code chunk execution, and immediately restored afterwards.
+
+In the example above, we establish default Knitr chunk options for a single document. You can also add shared `knitr`options to a project-wide `_quarto.yml` file or a project-directory scoped `_metadata.yml` file.
+
 --------------------------------------------------------------------------------
 
 ### PDF Options
@@ -291,6 +334,10 @@ header-includes: |
 | PDF Options | Functions                                                    |
 | :---------- | :----------------------------------------------------------- |
 | `df-print`  | Method used to print tables in Knitr engine documents.<br />- `default`: Use the default S3 method for the data frame. <br />- <span class="env-green">`kable`</span>: Default method. Markdown table using the `knitr::kable()` function. <br />- `tibble`: Plain text table using the `tibble` package. <br />- `paged`: HTML table with paging for row and column overflow. |
+
+
+[**Engine Binding**](https://quarto.org/docs/computations/execution-options.html#engine-binding)
+
 
 
 --------------------------------------------------------------------------------
@@ -950,11 +997,11 @@ How to add more emoji later:
    - [fetch\_twemoji.sh](vscode-file://vscode-app/Applications/Visual%20Studio%20Code.app/Contents/Resources/app/out/vs/code/electron-browser/workbench/workbench.html)
    
    Within the project directory:
- 
+
    ```bash
    $./emoji/fetch_twemoji.sh
    ```
- 
+
    From anywhere:
    
    ```bash
@@ -972,7 +1019,7 @@ How to add more emoji later:
    ```
    
    The script downloads only missing PNGs. If you add more codes to `twemoji_manifest.json`, just run it again.
- 
+
    To refresh files, delete specific PNGs (or all) in emoji and rerun.
 
 3. Add to `unicode_map` in `emoji.lua` to point to the same filename.
@@ -982,7 +1029,7 @@ How to add more emoji later:
 
 4. Optionally add a shortcode mapping in `emoji.lua`'s `emoji_map` to point to the same filename.
    - Example: `[":warning:"] = "26a0.png",`
-    
+   
    This allows you to use the shortcode `:warning:` in addition to the direct emoji.
 
 --------------------------------------------------------------------------------
