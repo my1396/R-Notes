@@ -1176,6 +1176,41 @@ crossref:
 
 --------------------------------------------------------------------------------
 
+### Tables in Latex
+
+Tables in raw LaTeX can be included in Quarto documents using fenced divs or <span class="env-green">**code chunks**</span> with `{=latex}`. 
+
+- Use <span class="env-green">**fenced div**</span> to add labels `#tbl-xxx` for cross-referencing. Note the `#` is mandatory. Without it, the table cross reference will show as `??` in the output.
+- Refer to the table using `@tbl-xxx`.
+
+````latex
+::: {#tbl-1}
+
+```{=latex} 
+% Or whatever actual you want, includegraphics, whatever. 
+% (_not_ \begin{table}, just the content of it)
+\begin{tabular}{l c r}
+\hline
+Header 1 & Header 2 & Header 3 \\
+\hline
+Row 1 Col 1 & Row 1 Col 2 & Row 1 Col 3 \\
+Row 2 Col 1 & Row 2 Col 2 & Row 2 Col 3 \\
+\hline
+\end{tabular}
+```
+
+This is a table caption.
+
+:::
+
+For cross-reference: See @tbl-1.
+````
+
+ref: <https://github.com/quarto-dev/quarto-cli/discussions/6734#discussioncomment-6919437>
+
+--------------------------------------------------------------------------------
+
+
 ### Callouts
 
 There are five different types of [callouts](https://quarto.org/docs/authoring/callouts.html) available.

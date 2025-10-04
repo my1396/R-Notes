@@ -725,6 +725,8 @@ path
 
 Not resolved...
 
+--------------------------------------------------------------------------------
+
 #### Code cell modes
 
 Three code modes in Jupyter notebooks:
