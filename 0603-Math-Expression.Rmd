@@ -2,25 +2,93 @@
 
 Main idea: to use expression or convert latex to expression;
 
-Two options
+**Two options:**
 
 1. `expression(CO[2])` show math equation style as $CO_2$.
    
    https://www.dataanalytics.org.uk/axis-labels-in-r-plots-using-expression/#expression_comm
 
-   ```r
-   plot(1,1, main=expression('title'^2))   # superscript
-   plot(1,1, main=expression('title'[2]))  # subscript
-   ```
+   **Basic syntax:**
+   
+   - `^` for <span class="env-green">**superscript**</span>
+      
+      Superscript is “started” by the caret `^` character. Anything after `^` is superscript. The superscript continues **until you use a `*` or `~` character**. 
+      
+      If you want more text as superscript, then enclose it in quotes. 
+
+      ```r
+      expression(Super^script~text)  # superscript ends at the space
+      ```
+      renders as $Super^{script} text$.
+
+      ```r
+      expression(Super^"script text") # superscript continues until the closing quote
+      ```
+      renders as $Super^{script text}$.
+    
+   - `[]` for <span class="env-green">**subscript**</span>
+   
+     ```r
+     plot(1,1, main=expression('title'^2))   # superscript
+     plot(1,1, main=expression('title'[2]))  # subscript
+     ```
+   
+   - Use `~` for spacing in math mode.
+     
+     When you type an `expression()` any spaces you type are ignored. 
+   
+   - Use `*` for tight concatenation (no space).
+
+   - Combine text + math: `expression("Mean of " * mu)` → "Mean of μ".
+     - Quotes are optional. The usual letters and numbers are not “interpreted”.
+     - Quotes are used to enclose items that would otherwise be treated as a special character (like `~`, `*`, `+`, `-`).
+    
+
+   - Font face: `plain()`, `bold()`, `italic()`, `underline()`, `bolditalic()`.
+   
+   **Commonly used expressions:**
+
+   | λ              | `expression(lambda)`                                         |
+   | -------------- | ------------------------------------------------------------ |
+   | y $\le$ 5      | `expression("y"<= "5")`                                      |
+   | y$_i$          | `expression(y[i])`                                           |
+   | x$^2$          | `expression(x^2)`                                            |
+   | x$^2$ + 5      | `expression(x^2~"+ 5"))` to add characters after a superscript, end the superscript with a `*` (no space) or `~` (space) |
+   | P(Y < y \|  ɸ) | `expression(paste("P(Y", \<, "y | ", phi,")"))` … expression(paste(“blah”, symbol, “blah”, symbol, “blah)) |
+   
+   ---
 
 2. `latex2exp::TeX("$\\alpha^\\beta$")`  show as $\alpha^{\beta}$;
+   
+   Basic syntax:
 
-<span class="env-green">**Trick:**</span> 
+   - **Escape special characters** 
+     
+     - Use `\` before special characters, e.g., greek letters and latex commands that start with `\`;
+     
+     - Alternatively, use `TeX(r"(\alpha)")` to specify raw R string.
+       
+       `r"( ... )"` → everything inside is taken **literally** (no escaping). It means “take everything literally, don’t treat `\` as escape characters.” `...` can contain any character sequence, including `\`.
 
-- Print **whitespace** in math mode `$...$`:
-  - use `\\,` or `\\;` to show white space in math mode. `\\;` is a larger space than `\\,`.
-  - `~` to print a normal space
-  - `\phantom{x}` to print a space the width of the character `x`.
+       See `?Quotes` for raw string literal syntax.
+     
+     ```r
+     library(latex2exp)
+
+     TeX(r"(\alpha)")       # raw string
+     TeX("\\alpha")         # same, but escaped
+     expression(alpha)      # equivalent
+     ```
+     All three produce the symbol α.
+   
+   - Put math needs to be rendered between `$...$` and regular text outside `$...$`.
+   
+   <span class="env-green">**Tricks:**</span> 
+
+   - Print **whitespace** in math mode `$...$`:
+     - use `\\,` or `\\;` to show white space in math mode. `\\;` is a larger space than `\\,`.
+     - `~` to print a normal space
+     - `\phantom{x}` to print a space the width of the character `x`.
 
 ```{r eval=F}
 # There is an R package called latex2exp which may be helpful. It has function TeX which accepts some LaTeX expressions enclosed with dollar sign $ as in this example:
@@ -34,10 +102,9 @@ qplot(1, "A")+
 ```
 
 
-
 <img src="https://drive.google.com/thumbnail?id=1R7I0KimEVf4i_JI1XW0oaxWAlSuqRLQC&sz=w1000" alt="Tex" style="zoom:75%;" />
 
-`TeX` 	only put the part that needs <u>latex interpretation</u> between \$...$ , and there are several escape characters that needs to be carefully treated.
+`TeX` 	only put the part that needs <u>latex interpretation</u> between `$...$`, and there are several escape characters that needs to be carefully treated.
 
 | Symbol | TeX  |
 | ------ | ---- |
@@ -48,6 +115,14 @@ qplot(1, "A")+
 Check out other **escaping** characters:
 
 https://stat.ethz.ch/R-manual/R-devel/library/grDevices/html/plotmath.html
+
+
+Ref:
+
+- [latex2exp: a package to render LaTeX in R graphics](https://www.stefanom.io/development/2022/02/09/latex2exp.html)
+
+--------------------------------------------------------------------------------
+
 
 `TeX` in <u>legend scales</u>, the use of `unname()` is necessary:
 
@@ -62,15 +137,16 @@ When using `TeX` inside `geom_text(aes(x, y, label=TeX("", output = "character")
 
 -   turning the `parse` argument in `geom_text()` to TRUE. 
 
+--------------------------------------------------------------------------------
 
 
-Using variables in `aes`
+<span class="env-green">**Using variables in `aes`**</span>
 
 `aes_string(x="TCS_reported", y=as.name(target_v))`
 
 -   `target_v` can be a variable which will be parsed in `aes`;
 
--   `as.name()` 	 first coerces its argument internally to a character vector; then takes the first element and returns a symbol of that name. 
+-   <span class="env-green">`as.name()`</span> 	 first coerces its argument internally to a character vector; then takes the first element and returns a symbol of that name. 
 
     -   A `name` 	(also known as a ‘symbol’) is a way to refer to R objects by name (rather than the value of the object, if any, bound to that name).
 

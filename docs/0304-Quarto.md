@@ -6,6 +6,10 @@ Quarto Tutorial: <https://jmjung.quarto.pub/m02-advanced-literate-programming/#l
 
 Run Quarto in VS Code: <https://quarto.org/docs/tools/vscode/index.html>
 
+
+Quarto is based on **Pandoc** and uses its variation of markdown as its underlying document syntax. See the full documentation of [Pandoc's Markdown](https://pandoc.org/MANUAL.html#pandocs-markdown) for more in-depth documentation.
+
+
 Run Cell
 
 | Quarto Command       | Keyboard Shortcut |
@@ -828,6 +832,8 @@ Note that `from` is under `html`, rather than at the top level of YAML.
 
 ___
 
+#### Cross-referencing Equations
+
 Equations need to be labeled to be numbered and cross-referenced. 
 
 - Note that labels must begin with `#eq-xxx`. Don't forget the hyphen `-` between `eq` and `xxx`.
@@ -849,7 +855,27 @@ $$ {#eq-cross_sectional_hetero}
 
 ___
 
-**Math delimiters**
+#### Math delimiters
+
+Use `$` delimiters for inline math and `$$` delimiters for display math.
+
+Note that for inline math, <span class="env-orange">**NO spaces** are allowed between the dollar signs and the math content.</span> Otherwise, it will <span class="env-orange">**NOT**</span> be recognized as math.
+
+
+Examples:
+
+- Inline math: `$E = mc^2$`
+- Block math:
+
+  ```latex
+  $$
+  a^2 + b^2 = c^2
+  $$
+
+  or you can put the dollar signs on the same line as the equation:
+  $$a^2 + b^2 = c^2$$
+  ```
+
 
 Issue: Cannot use `\(` and `\[` for math delimiters. \
 Fix: Add `from: markdown+tex_math_single_backslash` to YAML frontmatter. [Source](https://github.com/quarto-dev/quarto-cli/discussions/11753#discussioncomment-11696142)
@@ -880,7 +906,7 @@ Causes anything between `\(` and `\)` to be interpreted as inline TeX math, and 
 
 
 
-Refer to Docs of Quarto and Pandoc:
+**Refer to Docs of Quarto and Pandoc:**
 
 - [https://quarto.org/docs/reference/formats/html.html#rendering](https://quarto.org/docs/reference/formats/html.html#rendering)
 
@@ -1056,13 +1082,15 @@ ref:
 
 ### Divs and Spans
 
+[Quarito Guide: Divs and Spans](https://quarto.org/docs/authoring/markdown-basics.html#sec-divs-and-spans)
+
 You can add classes, attributes, and other identifiers to regions of content using Divs and Spans.
 
 - classes: `.class`
 - identifiers: `#id`
 - key-value attributes: `key="value"`
 
-Note 
+Note that:
 
 - They are separated by spaces, do NOT use commas.
   
@@ -1073,9 +1101,13 @@ Note
   
   It is optional to enclose in quotes.
 
+--------------------------------------------------------------------------------
 
+#### Block Attributes
 
-Div example
+Apply attributes to a block of content, such as a paragraph, list, or code block.
+
+**Div example:**
 
 ```markdown
 ::: {.border} 
@@ -1091,7 +1123,88 @@ Once rendered to HTML, Quarto will translate the markdown into:
 </div>
 ```
 
-A bracketed sequence of inlines, as one would use to begin a link, will be treated as a `<span>` with attributes if it is followed immediately by attributes:
+Note that:
+
+- The Div should be separated by blank lines from preceding and following blocks. 
+
+- Fenced divs can be nested. 
+
+  For example
+
+  ```markdown
+  ::::: {#special .sidebar}
+
+  ::: {.warning}
+  Here is a warning.
+  :::
+
+  More content.
+  :::::
+  ```
+
+  will be rendered to
+
+  ```html
+  <div id="special" class="sidebar">
+    <div class="warning">
+      <p>Here is a warning.</p>
+    </div>
+    <p>More content.</p>
+  </div>
+  ```
+
+**More examples**
+
+- **Headings with attributes**
+  
+  ```markdown
+  ## Data Analysis {.highlight #analysis}
+  ```
+  renders to:
+  
+  ```html
+  <h2 id="analysis" class="highlight">Data Analysis</h2>
+  ```
+
+- **List with attributes**
+  
+  ```markdown
+  - Item 1
+  - Item 2
+  {.fancy-list}
+  ```
+  
+  renders to:
+  ```html
+  <ul class="fancy-list">
+    <li>Item 1</li>
+    <li>Item 2</li>
+  </ul>
+  ```
+
+- **Paragrphs with attributes**
+  
+  ```markdown
+  This is a paragraph with a yellow background.
+  {.yellow-bg}
+  ```
+  
+  renders to:
+  
+  ```html
+  <p class="yellow-bg">This is a paragraph with a yellow background.</p>
+  ```
+
+--------------------------------------------------------------------------------
+
+#### Inline Attributes
+
+Apply attributes to inline text, such as selected words within a paragraph.
+
+A bracketed sequence of inlines `[text here]` (as one would use to begin a link) will be treated as a `<span>` with attributes if it is followed immediately by attributes `{attributes here}`.
+
+
+**Syntax for inline attributes:**
 
 ```markdown
 [This is *some text*]{.class key="val"}
@@ -1105,6 +1218,39 @@ Once rendered to HTML, Quarto will translate the markdown into
 </span>
 ```
 
+Note that:
+
+- No space between `]` and `{`.
+- Ordering of attributes matter.
+  
+  `#id` comes first then `.class` then `key="val"`.
+
+  Any of these can be omitted, but must follow that order if they are provided.
+
+  Valid example:
+
+  ```markdown
+  [This is good]{#id .class key1="val1" key2="val2"}
+  ```
+
+  Invalid example:
+
+  ```markdown
+  [This does *not* work!]{.class key="val" #id}
+  ```
+
+
+**Use example:**
+
+```markdown
+This is a [highlighted word]{.red} in the text.
+```
+
+renders to:
+
+```html
+This is a <span class="red">highlighted word</span> in the text.
+```
 
 
 
@@ -1181,6 +1327,7 @@ crossref:
 Tables in raw LaTeX can be included in Quarto documents using fenced divs or <span class="env-green">**code chunks**</span> with `{=latex}`. 
 
 - Use <span class="env-green">**fenced div**</span> to add labels `#tbl-xxx` for cross-referencing. Note the `#` is mandatory. Without it, the table cross reference will show as `??` in the output.
+  - You can ignore the fenced divs if you don't need cross-reference.
 - Refer to the table using `@tbl-xxx`.
 
 ````latex
@@ -1207,6 +1354,67 @@ For cross-reference: See @tbl-1.
 ````
 
 ref: <https://github.com/quarto-dev/quarto-cli/discussions/6734#discussioncomment-6919437>
+
+
+--------------------------------------------------------------------------------
+
+### Raw Content
+
+Raw content can be included directly without Quarto parsing it using [Pandoc's raw attribute](https://pandoc.org/MANUAL.html#extension-raw_attribute). A raw block starts with ````{=` followed by a format and closing `}`, e.g. here's a raw HTML block:
+
+````
+```{=html}
+<iframe src="https://quarto.org/" width="500" height="400"></iframe>
+```
+````
+
+For PDF output use a raw LaTeX block:
+
+````
+```{=latex}
+\renewcommand*{\labelitemi}{\textgreater}
+```
+````
+
+--------------------------------------------------------------------------------
+
+### Lists
+
+[Basic lists](https://quarto.org/docs/authoring/markdown-basics.html#lists)
+
+```markdown
+1. ordered list
+2. item 2
+   i) sub-item 1
+      A. sub-sub-item 1
+```
+
+Will be rendered as:
+
+> 1. ordered list
+> 2. item 2
+>    i) sub-item 1
+>       A. sub-sub-item 1
+
+
+Quarto uses Pandoc’s Markdown, which supports a variety of ordered list types, including:
+
+- **numbers:** 1. 2. 3.
+- **letters:** a. b. c. or A. B. C.
+- **roman numerals:** i. ii. iii. or I. II. III.
+
+These list markers / labels need to be followed by a period and a space. Optionally, list markers may be enclosed in parentheses or followed by a single right-parentheses or period. 
+
+Special list marker `@` can be used for sequentially numbered examples. The benefit of using `@` is that when the list is broken up by other content, the numbering will continue correctly.
+
+````markdown
+(@)  My first example will be numbered (1).
+(@)  My second example will be numbered (2).
+
+Explanation of examples. ← This breaks list structure.
+
+(@)  My third example will be numbered (3).
+````
 
 --------------------------------------------------------------------------------
 
