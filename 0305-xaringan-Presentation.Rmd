@@ -5,10 +5,14 @@
   - cran: <https://cran.r-project.org/web/packages/xaringan/refman/xaringan.html#moon_reader>
   - rdrr.io: <https://rdrr.io/cran/xaringan/api/>
 - GitHub repo (refer to Wiki page for detailed documentation): <https://github.com/yihui/xaringan>
-- [remark.js Wiki page](https://github.com/gnab/remark/wiki/Markdown?utm_source=chatgpt.com#slide-properties)
+- **remark.js**
+  - [homepage](https://remarkjs.com/#1)
+  - [remark.js Wiki page](https://github.com/gnab/remark/wiki)
 
 
 It is a slide template based on an HTML5 presentation framework `remark.js`.
+
+Basically `xaringan` injected R Markdown (<span class="env-orange">**minus Pandoc**</span>) into `remark.js`. The slides are rendered by remark.js in the web browser, and the Markdown source needed by remark.js is generated from R Markdown (**knitr**).
 
 You write slides in R Markdown, and then use the `xaringan` package to render the slides.
 
@@ -65,7 +69,33 @@ See the R help page `?xaringan::moon_reader` for all possible configurations.
   - By default this will be the name of the document with `_files` appended to it.
   - Here I set it to be `libs`.
 
-- `includes`: Named list of additional content to include within the document (typically created using the `[includes](https://cran.r-project.org/web/packages/rmarkdown/refman/rmarkdown.html#topic+includes)` function).
+- `includes`: Named list of additional content to include within the document (typically created using the [`includes`](https://cran.r-project.org/web/packages/rmarkdown/refman/rmarkdown.html#topic+includes) function).
+  - `in_header`: Vector of file paths to be included in the document header (inside the `<head>` tag). Note that paths should be in quotation marks.
+  - `before_body`: Vector of file paths to be included immediately after the opening `<body>` tag.
+  - `after_body`: Vector of file paths h to be included immediately before the closing `</body>` tag.
+  
+  Include multiple files by passing a vector of file paths.
+  
+  ```yaml
+  includes:
+    in_header: ["libs/mathjax.html", "libs/in_header.html"]
+    after_body: ["theme/example-numbering.html", "libs/after_body.html"]
+  ```
+
+  Alternatively, use YAML list indentation with `-` for each file:
+
+  ```yaml
+  includes:
+    in_header: 
+      - libs/mathjax.html
+      - libs/in_header.html
+    after_body: 
+      - theme/example-numbering.html
+      - libs/after_body.html
+  ```
+  Each list item is treated as a separate file path.
+  
+  ref: <https://stackoverflow.com/a/45261469>
 
 - `nature`: (Nature transformation) A list of configurations to be passed to `remark.create()`, e.g. `list(ratio = '16:9', navigation = list(click = TRUE))`.
   
@@ -132,18 +162,30 @@ Fix: Set pdf output font specifically.
   - specify local font for pdf output.
 
 
-
-
 --------------------------------------------------------------------------------
 
-### Basic
+### Remark Markdown Basics
+
+Remark.js uses its own flavor of Markdown, which is <span class="env-green">different from Pandoc's Markdown</span>! It is limited but should be sufficient for most use cases.
+
+Features that are provided in Pandoc but missing in remark.js's Markdown:
+
+- fancy lists (ordered lists with letters, e.g., a., b., c., etc.)
+
+#### Create a New Slide
 
 - Every new slide is created under three dashes (`---`).
 - Two dashes (`--`) create a new fragment (incremental reveal) within the same slide.
   
   - Blank lines before and after the two and three dashes are required.
   - No whitespace after the dashes.
+
 - The content of the slide can be arbitrary, e.g., it does not have to have a slide title, and if it does, the title can be of any level you prefer (`#`, `##`, or `###`).
+
+--------------------------------------------------------------------------------
+
+#### Slide Properties
+
 - A slide can have a few properties, including `class` and `background-image`, etc. 
   
   Properties are written in the beginning of a slide, e.g.,
@@ -159,31 +201,106 @@ Fix: Set pdf output font specifically.
   Content.
   ```
 
-  - The `class` property assigns class names to the HTML tag of the slide, so that you can use CSS to style specific slides.
-    
-    This will apply class to the whole slide.
-  - `background-image`: Sets a background image for the slide.
-  - `name`: Assigns a unique name to a slide, allowing for direct linking or referencing within the presentation (e.g., `slides.html#my-slide-name`).
+- The `class` property assigns class names to the HTML tag of the slide, so that you can use CSS to style specific slides.
+  
+  This will apply class to the whole slide.
 
+  ```markdown
+  class: center, middle
 
-#### Apply class inline
+  # Slide with content centered in both dimensions
+  ```
+  will be rendered as:
+  
+  ```html
+  <div class="remark-slideshow">
+    <div class="remark-slide">
+      <div class="remark-slide-content center middle">
+        <h1>Slide with content centered in both dimensions</h1>
+  ```
+  Built-in classes include: `left`, `center`, `right`, `top`, `middle` and `bottom`, which may be used to [align entire slides](https://github.com/gnab/remark/wiki/Formatting#whole-slide-text-alignment).
 
-If you want to apply a class to just a portion of a slide, you can use the special syntax `.className[ text block ]` to format the portion. For example,
+- `background-image`: Sets a background image for the slide.
+
+- `name`: Assigns a unique name to a slide, allowing for direct linking or referencing within the presentation (e.g., `slides.html#my-slide-name`).
+
+--------------------------------------------------------------------------------
+
+#### Add Attributes
+
+Follow `remark` syntax to add attributes to elements.
+
+**Inline Attributes:**
 
 ```markdown
-This is a normal paragraph.
-.center.inverse[ This paragraph is centered and has an inverse color scheme. ]
+.class[text to be styled]
 ```
 
-This will apply class to the paragraph only.
+will be rendered as:
 
-- The content inside `[ ]` can be anything, such as several paragraphs, or lists.
+```html
+<span class="class">text to be styled</span>
+```
 
-- You can design your own content classes if you know CSS, e.g., if you want to make text red via `.red[ ]`, you may define this in CSS:
+Nested inline attributes:
 
-  ```css
-  .red { color: red; }
-  ```
+```markdown
+.footnote[.red.bold[*] Important footnote]
+```
+
+will be rendered as:
+
+```html
+<span class="footnote">
+  <span class="red bold">*</span> Important footnote
+</span>
+```
+
+**Block Attributes:**
+
+If you wish to have `<div>` tags instead, <span class="env-green">separate your content on new lines.</span>
+
+```markdown
+.class[
+# Slide Title
+Content of the slide.
+]
+```
+will be rendered as:
+
+```html
+<div class="class">
+  <h1>Slide Title</h1>
+  <p>Content of the slide.</p>
+</div>
+```
+
+Another example:
+
+```markdown
+.footnote[.red.bold[*]
+Important footnote]
+
+.footnote[
+.red.bold[
+*]Important footnote]
+```
+
+will be rendered as:
+
+```html
+<div class="footnote">
+  <span class="red bold">*</span>
+  Important footnote
+</div>
+
+<div class="footnote">
+  <div class="red bold">*</div>
+  Important footnote
+</div>
+```
+
+[remark GitHub Wiki: Content Classes](https://github.com/gnab/remark/wiki/Markdown#content-classes)
 
 --------------------------------------------------------------------------------
 
@@ -421,17 +538,6 @@ Issue: No figure numbering.
 
 Explanation: `xaringan` uses `remark.js` to render slides, which does not support figure numbering. This is because referencing of figures across multiple slides is less common and potentially less effective for audience engagement. 😂
 
---------------------------------------------------------------------------------
-
-### Add Attrivutes
-
-Follow reveal.js syntax to add attributes to elements, e.g.,
-
-```markdown
-.class[text to be styled]
-```
-
-[reveal.js GitHub Wiki](https://github.com/gnab/remark/wiki)
 
 --------------------------------------------------------------------------------
 
@@ -509,6 +615,15 @@ output:
 
 Read [R Markdown: The Definitive Guide, Section 7.5](https://bookdown.org/yihui/rmarkdown/css-and-themes.html) for more details about CSS and themes.
 
+--------------------------------------------------------------------------------
+
+### Smart Punctuation
+
+`xaringan-smartify` provides a javascript hack to turn ugly quotes and dashes (`'  "  --  ---`) into their pretty versions (‘ ’ “ ” – —) in xaringan HTML slides.
+
+Follow instructions on [`xaringan-smartify` GitHub Repo](https://github.com/fnaufel/xaringan-smartify).
+
+--------------------------------------------------------------------------------
 
 ### Working offline
 
