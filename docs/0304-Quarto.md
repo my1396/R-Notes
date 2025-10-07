@@ -329,8 +329,8 @@ header-includes: |
 
 | PDF Options       | Functions                                                    |
 | :---------------- | :----------------------------------------------------------- |
-| `toc-depth`       | Specify the number of section levels to include in the table of contents. The default is 3 |
-| `number-sections` | Number section headings rendered output. <br />By default, sections are not numbered. |
+| `toc-depth: 3`       | Specify the number of section levels to include in the table of contents. The default is 3 |
+| <span class="env-green">`number-sections: false`</span> | Number section headings rendered output. <br />By default, sections are not numbered. |
 | `number-depth`    | By default, all headings in your document create a numbered section. |
 
 [**Tables**](https://quarto.org/docs/reference/formats/pdf.html#tables)
@@ -341,6 +341,12 @@ header-includes: |
 
 
 [**Engine Binding**](https://quarto.org/docs/computations/execution-options.html#engine-binding)
+
+| PDF Options       | Functions                                                    |
+| ----------------- | ------------------------------------------------------------ |
+| <span class="env-green">`keep-tex: false`</span> | Whether to keep the intermediate tex file used during render. Defaults to `false`.<br />Helpful when you want to debug or share tex files with others. |
+
+
 
 
 
@@ -871,7 +877,7 @@ Examples:
   $$
   a^2 + b^2 = c^2
   $$
-
+  
   or you can put the dollar signs on the same line as the equation:
   $$a^2 + b^2 = c^2$$
   ```
@@ -1133,11 +1139,11 @@ Note that:
 
   ```markdown
   ::::: {#special .sidebar}
-
+  
   ::: {.warning}
   Here is a warning.
   :::
-
+  
   More content.
   :::::
   ```

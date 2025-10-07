@@ -264,6 +264,151 @@ Q: I think you need four spaces (or a true tab instead of two spaces) to indicat
 
 --------------------------------------------------------------------------------
 
+#### Ordered list with letters
+
+Issue: <span class="env-orange">xaringan does not recognize letters as list markers</span> for ordered lists by default. 
+
+Explain: xaringan uses `remark.js` to render slides, which uses its own markdown parser that does not support letters as list markers for ordered lists. You cannot "load" `fancy_lists` directly in xaringan even if you add `pandoc_args: ["-f", "markdown+fancy_lists"]` to your YAML. It won’t have an effect — because `xaringan::moon_reader` doesn’t use Pandoc’s list rendering and therefore will ignore the args. The Markdown is passed to remark.js, which uses its own internal syntax rules.
+
+Fix: Use CSS to customize the list style or use html tags directly.
+
+1. Define a custom class in CSS, e.g., in `custom.css`:
+
+   ```css
+   /* Lettered lists */
+   .remark-slide-content .alpha-list ol {
+       list-style-type: lower-alpha; /* or upper-alpha for uppercase letters */
+   }
+   ```
+
+   Then you can apply this class to a list:
+
+   ```markdown
+   .alpha-list[
+   1. First item
+   2. Second item
+      1. Subitem
+      2. Subitem
+   3. Third item
+   ]
+   ```
+   will be rendered as:
+   
+   ```markdown
+   a. First item
+   b. Second item
+      i. Subitem
+      ii. Subitem
+   c. Third item
+   ```
+
+2. Use html tags directly:
+
+   ```html
+   <ol type="a">
+     <li>First item</li>
+     <li>Second item
+       <ol type="i">
+         <li>Subitem</li>
+         <li>Subitem</li>
+       </ol>
+     </li>
+     <li>Third item</li>
+   </ol>
+   ```
+   will generate the same output as above.
+
+--------------------------------------------------------------------------------
+
+### Tables
+
+Q: How to make the tables **more compact**, e.g, reduce the row height?
+
+A: You can use CSS to adjust the table styles. For example, add the following CSS rules to your custom CSS file (e.g., `custom.css`):
+
+```css
+/* Compact table styling */
+.compact-table table {
+    line-height: 1.2;
+    font-size: 0.9em;
+}
+
+.compact-table th,
+.compact-table td {
+    /* vertical padding: 2px; */
+    /* horizontal padding: 8px */
+    padding: 2px 8px !important; 
+}
+```
+
+Then, in your slide, wrap your markdown table with a div that has the `compact-table` class:
+
+````markdown
+.compact-table[
+| Header 1 | Header 2 | Header 3 |
+|----------|----------|----------|
+| Row 1    | Data     | More Data|
+| Row 2    | Data     | More Data|
+]
+````
+
+If your table is generated from R code, you can modify the HTML output to include the class:
+
+````markdown
+```{r echo=FALSE, results='asis'}`r ''`
+tbl_html <- knitr::kable(df, format = "html") %>%
+  as.character()
+tbl_html <- sub("<table", '<table class="compact-table"', tbl_html)
+cat(tbl_html)
+```
+````
+
+Note that:
+
+- `as.character()` converts the HTML table to a character string so that you can manipulate it as text.
+- `sub("<table", '<table class="compact-table"', tbl_html)` searches for the first occurrence of `<table` in the HTML string; replaces it with `<table class="compact-table"`. This adds the class `.compact-table` to the `<table>` tag, which allows you to style it using your CSS (like the `.compact-table` CSS you showed earlier).
+- `cat(tbl_html)` prints the modified HTML string to the slide. <span class="env-green">`cat` is required</span> here because you want to output the HTML directly, not as a character string.
+
+--------------------------------------------------------------------------------
+
+Q: I want to add **more horizontal spacing** in table cells, but keep narrow left spacing for the 1st column.
+
+A: Add the following CSS rules to your custom CSS file (e.g., `custom.css`):
+
+```css
+/* Add horizontal spacing in table cells, but keep narrow left spacing for the 1st column */
+.fit-comp-table td,
+.fit-comp-table th {
+    padding: 4px 18px !important; /* increase horizontal padding */
+}
+
+.fit-comp-table th:first-child,
+.fit-comp-table td:first-child {
+    padding-left: 4px !important; /* tight left spacing for 1st column */
+}
+```
+
+Then, in your slide, wrap your table with a div that has the `fit-comp-table` class:
+
+````markdown
+```{r echo=FALSE, results='asis'}`r ''`
+fit_comp <- tibble(
+  Metric = c("Residual Std. Error: CAPM", "Residual Std. Error: FF-3"),
+  AAPL = c("0.092", "0.089"),
+  SLAB = c("0.116", "0.107"),
+  KO = c("0.046", "0.044")
+)
+tbl_html <- fit_comp %>%
+  knitr::kable(format = "html", align = c("l", "c", "c", "c")) %>%
+  as.character()
+tbl_html <- sub("<table", '<table class="fit-comp-table"', tbl_html)
+cat(tbl_html)
+```
+````
+
+
+--------------------------------------------------------------------------------
+
 ### Images
 
 Issue: Image resolution too low.
@@ -275,6 +420,18 @@ Fix: Add `fig.retina=3` to chunk options for html output. Use `dpi=300` for pdf 
 Issue: No figure numbering.
 
 Explanation: `xaringan` uses `remark.js` to render slides, which does not support figure numbering. This is because referencing of figures across multiple slides is less common and potentially less effective for audience engagement. 😂
+
+--------------------------------------------------------------------------------
+
+### Add Attrivutes
+
+Follow reveal.js syntax to add attributes to elements, e.g.,
+
+```markdown
+.class[text to be styled]
+```
+
+[reveal.js GitHub Wiki](https://github.com/gnab/remark/wiki)
 
 --------------------------------------------------------------------------------
 
