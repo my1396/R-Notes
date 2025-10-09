@@ -1057,7 +1057,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </ul>
 <div class="sourceCode" id="cb245"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb245-1"><a href="3.11-tables-1.html#cb245-1" tabindex="-1"></a><span class="pp">---</span></span>
 <span id="cb245-2"><a href="3.11-tables-1.html#cb245-2" tabindex="-1"></a><span class="fu">title</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Use caption with df_print set to page&quot;</span></span>
-<span id="cb245-3"><a href="3.11-tables-1.html#cb245-3" tabindex="-1"></a><span class="fu">date</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;2025-10-07&quot;</span></span>
+<span id="cb245-3"><a href="3.11-tables-1.html#cb245-3" tabindex="-1"></a><span class="fu">date</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;2025-10-09&quot;</span></span>
 <span id="cb245-4"><a href="3.11-tables-1.html#cb245-4" tabindex="-1"></a><span class="fu">output</span><span class="kw">:</span></span>
 <span id="cb245-5"><a href="3.11-tables-1.html#cb245-5" tabindex="-1"></a><span class="at">  bookdown:</span><span class="fu">:html_document2</span><span class="kw">:</span></span>
 <span id="cb245-6"><a href="3.11-tables-1.html#cb245-6" tabindex="-1"></a><span class="at">    </span><span class="fu">df_print</span><span class="kw">:</span><span class="at"> paged</span></span>
@@ -1296,12 +1296,34 @@ Figure 3.11: Correct significance codes.
 <hr />
 <p><span class="env-green"><strong>Control structure of regression tables</strong></span></p>
 <ul>
-<li><p><code>intercept.bottom = TRUE</code> place the intercept at the bottom of the table.</p></li>
+<li><p><code>intercept.bottom = TRUE</code> place the intercept at the bottom of the table. Defaults to <code>TRUE</code>.</p></li>
 <li><p><code>keep.stat = NULL</code>: control which model statistics should be kept in the table. Possible values include <code>"n"</code>, <code>"rsq"</code>, <code>"adj.rsq"</code>, <code>"f"</code>, <code>"ser"</code>, <code>"ll"</code>, <code>"aic"</code>, <code>"bic"</code>, and <code>"logLik"</code>.</p>
 <ul>
 <li>The default is <code>NULL</code>, which means that all available statistics will be included in the table.</li>
 <li>To exclude all statistics, set <code>keep.stat = c()</code>.</li>
 <li>To include only the number of observations and the adjusted R-squared, set <code>keep.stat = c("n", "adj.rsq")</code>.</li>
+</ul></li>
+<li><p><span class="env-green"><code>order = NULL</code></span>: a vector of <strong>regular expressions</strong> (or of <strong>numerical indexes</strong>) that indicates the order in which variables will appear in the output.</p>
+<p>This options is useful when you want to rearrange the order of variables in the regression table.</p>
+<p>The order of variables when you include <span class="env-green">interaction terms</span> might not be what you expect. In my case, the interaction term appears in between the main effects, while I want it to appear after all main effects.</p>
+<p>You can use <code>stargazer(model)</code> to examine the default order and names of variables. Then you can specify the order you want. By default, intercept is at the bottom.</p>
+<p><strong>Two ways to specify the order:</strong></p>
+<ul>
+<li><p>Regular expression to match variable names.</p>
+<p>In order to exactly match the variable names, you can use</p>
+<div class="sourceCode" id="cb253"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb253-1"><a href="3.11-tables-1.html#cb253-1" tabindex="-1"></a>vars.order <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;x1&quot;</span>, <span class="st">&quot;x2&quot;</span>, <span class="st">&quot;x3&quot;</span>, <span class="st">&quot;x3:x1&quot;</span>)</span>
+<span id="cb253-2"><a href="3.11-tables-1.html#cb253-2" tabindex="-1"></a><span class="fu">stargazer</span>(fit1, fit2, fit3, <span class="at">align =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb253-3"><a href="3.11-tables-1.html#cb253-3" tabindex="-1"></a>  <span class="at">table.placement =</span> <span class="st">&quot;H&quot;</span>, <span class="at">omit.stat =</span> <span class="fu">c</span>(<span class="st">&quot;f&quot;</span>, <span class="st">&quot;ser&quot;</span>), </span>
+<span id="cb253-4"><a href="3.11-tables-1.html#cb253-4" tabindex="-1"></a>  <span class="at">order =</span> <span class="fu">paste0</span>(<span class="st">&quot;^&quot;</span>, vars.order , <span class="st">&quot;$&quot;</span>)</span>
+<span id="cb253-5"><a href="3.11-tables-1.html#cb253-5" tabindex="-1"></a>  )</span></code></pre></div>
+<p>Note that <code>^</code> and <code>$</code> are used to exact match the whole variable name. A character vector of all variable names won’t work, as <code>order</code> expects regular expressions.</p>
+<p>A <span class="env-orange">caveat</span> is that you might have some issues if the variable names include special characters, e.g.: “.” or “*“.</p></li>
+<li><p>Numerical indexes of the variables in the model summary.</p>
+<div class="sourceCode" id="cb254"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb254-1"><a href="3.11-tables-1.html#cb254-1" tabindex="-1"></a><span class="fu">stargazer</span>(fit1, fit2, fit3, <span class="at">align =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb254-2"><a href="3.11-tables-1.html#cb254-2" tabindex="-1"></a>  <span class="at">table.placement =</span> <span class="st">&quot;H&quot;</span>, <span class="at">omit.stat =</span> <span class="fu">c</span>(<span class="st">&quot;f&quot;</span>, <span class="st">&quot;ser&quot;</span>), </span>
+<span id="cb254-3"><a href="3.11-tables-1.html#cb254-3" tabindex="-1"></a>  <span class="at">order =</span> <span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">1</span>,<span class="dv">4</span>,<span class="dv">5</span>)</span>
+<span id="cb254-4"><a href="3.11-tables-1.html#cb254-4" tabindex="-1"></a>  )</span></code></pre></div>
+<p>This approach is symbol, but less readable.</p></li>
 </ul></li>
 </ul>
 <hr />
@@ -1315,17 +1337,17 @@ Figure 3.11: Correct significance codes.
 <p>When you add custom column labels, you may want to use: <span class="env-green"><code>model.numbers = FALSE</code></span> to suppress the default model numbers (1) (2)…</p></li>
 <li><p><span class="env-green"><code>covariate.labels</code></span> labels for covariates in the regression tables.</p>
 <p>Can provide latex symbols in the labels, need to escape special symbols though.</p>
-<div class="sourceCode" id="cb253"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb253-1"><a href="3.11-tables-1.html#cb253-1" tabindex="-1"></a><span class="fu">stargazer</span>(mod_sel_lm_mtcars, </span>
-<span id="cb253-2"><a href="3.11-tables-1.html#cb253-2" tabindex="-1"></a>          <span class="at">covariate.labels =</span> </span>
-<span id="cb253-3"><a href="3.11-tables-1.html#cb253-3" tabindex="-1"></a>            <span class="fu">c</span>(<span class="st">&quot;(Intercept)&quot;</span>, <span class="st">&quot;drat&quot;</span>, <span class="st">&quot;hp&quot;</span>, <span class="st">&quot;$w_{i}$&quot;</span>,</span>
-<span id="cb253-4"><a href="3.11-tables-1.html#cb253-4" tabindex="-1"></a>              <span class="st">&quot;</span><span class="sc">\\</span><span class="st">textit{k}&quot;</span>, <span class="st">&quot;logLik&quot;</span>, <span class="st">&quot;AICc&quot;</span>, <span class="st">&quot;</span><span class="sc">\\</span><span class="st">Delta AICc&quot;</span>))</span></code></pre></div></li>
+<div class="sourceCode" id="cb255"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb255-1"><a href="3.11-tables-1.html#cb255-1" tabindex="-1"></a><span class="fu">stargazer</span>(mod_sel_lm_mtcars, </span>
+<span id="cb255-2"><a href="3.11-tables-1.html#cb255-2" tabindex="-1"></a>          <span class="at">covariate.labels =</span> </span>
+<span id="cb255-3"><a href="3.11-tables-1.html#cb255-3" tabindex="-1"></a>            <span class="fu">c</span>(<span class="st">&quot;(Intercept)&quot;</span>, <span class="st">&quot;drat&quot;</span>, <span class="st">&quot;hp&quot;</span>, <span class="st">&quot;$w_{i}$&quot;</span>,</span>
+<span id="cb255-4"><a href="3.11-tables-1.html#cb255-4" tabindex="-1"></a>              <span class="st">&quot;</span><span class="sc">\\</span><span class="st">textit{k}&quot;</span>, <span class="st">&quot;logLik&quot;</span>, <span class="st">&quot;AICc&quot;</span>, <span class="st">&quot;</span><span class="sc">\\</span><span class="st">Delta AICc&quot;</span>))</span></code></pre></div></li>
 <li><p><code>add.lines</code> add a row(s) for additional info, such as reporting fixed effects.</p>
-<div class="sourceCode" id="cb254"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb254-1"><a href="3.11-tables-1.html#cb254-1" tabindex="-1"></a><span class="fu">stargazer</span>(output, output2, <span class="at">type =</span> <span class="st">&quot;html&quot;</span>,</span>
-<span id="cb254-2"><a href="3.11-tables-1.html#cb254-2" tabindex="-1"></a>          <span class="at">add.lines =</span> <span class="fu">list</span>(</span>
-<span id="cb254-3"><a href="3.11-tables-1.html#cb254-3" tabindex="-1"></a>            <span class="fu">c</span>(<span class="st">&quot;Fixed effects?&quot;</span>, <span class="st">&quot;No&quot;</span>, <span class="st">&quot;No&quot;</span>),</span>
-<span id="cb254-4"><a href="3.11-tables-1.html#cb254-4" tabindex="-1"></a>            <span class="fu">c</span>(<span class="st">&quot;Results believable?&quot;</span>, <span class="st">&quot;Maybe&quot;</span>, <span class="st">&quot;Try again later&quot;</span>)</span>
-<span id="cb254-5"><a href="3.11-tables-1.html#cb254-5" tabindex="-1"></a>            )</span>
-<span id="cb254-6"><a href="3.11-tables-1.html#cb254-6" tabindex="-1"></a>          )</span></code></pre></div></li>
+<div class="sourceCode" id="cb256"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb256-1"><a href="3.11-tables-1.html#cb256-1" tabindex="-1"></a><span class="fu">stargazer</span>(output, output2, <span class="at">type =</span> <span class="st">&quot;html&quot;</span>,</span>
+<span id="cb256-2"><a href="3.11-tables-1.html#cb256-2" tabindex="-1"></a>          <span class="at">add.lines =</span> <span class="fu">list</span>(</span>
+<span id="cb256-3"><a href="3.11-tables-1.html#cb256-3" tabindex="-1"></a>            <span class="fu">c</span>(<span class="st">&quot;Fixed effects?&quot;</span>, <span class="st">&quot;No&quot;</span>, <span class="st">&quot;No&quot;</span>),</span>
+<span id="cb256-4"><a href="3.11-tables-1.html#cb256-4" tabindex="-1"></a>            <span class="fu">c</span>(<span class="st">&quot;Results believable?&quot;</span>, <span class="st">&quot;Maybe&quot;</span>, <span class="st">&quot;Try again later&quot;</span>)</span>
+<span id="cb256-5"><a href="3.11-tables-1.html#cb256-5" tabindex="-1"></a>            )</span>
+<span id="cb256-6"><a href="3.11-tables-1.html#cb256-6" tabindex="-1"></a>          )</span></code></pre></div></li>
 </ul>
 <hr />
 <p><span class="env-green"><strong>Make your table more compact:</strong></span></p>
@@ -1341,19 +1363,19 @@ Figure 3.11: Correct significance codes.
 <h4><span class="header-section-number">3.11.3.4</span> Cross reference <code>stargazer</code> tables<a href="3.11-tables-1.html#cross-reference-stargazer-tables" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <ul>
 <li><p><strong>In pdf output</strong>, use <code>Table \@ref(tab:reg-table)</code> or <code>Table \ref{tab:reg-table}</code>.</p>
-<div class="sourceCode" id="cb255"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb255-1"><a href="3.11-tables-1.html#cb255-1" tabindex="-1"></a>Table \@ref(tab:reg-table) summarize the regression results in a table.</span>
-<span id="cb255-2"><a href="3.11-tables-1.html#cb255-2" tabindex="-1"></a></span>
-<span id="cb255-3"><a href="3.11-tables-1.html#cb255-3" tabindex="-1"></a><span class="in">```{r, include=TRUE, results=&#39;asis&#39;}</span></span>
-<span id="cb255-4"><a href="3.11-tables-1.html#cb255-4" tabindex="-1"></a><span class="in">stargazer(capm_ml, FF_ml, type=&#39;latex&#39;, header=FALSE,</span></span>
-<span id="cb255-5"><a href="3.11-tables-1.html#cb255-5" tabindex="-1"></a><span class="in">          digits=4, no.space = TRUE,</span></span>
-<span id="cb255-6"><a href="3.11-tables-1.html#cb255-6" tabindex="-1"></a><span class="in">          title=&quot;Regression Results for META&quot;,</span></span>
-<span id="cb255-7"><a href="3.11-tables-1.html#cb255-7" tabindex="-1"></a><span class="in">          label = &quot;tab:reg-table&quot;)</span></span>
-<span id="cb255-8"><a href="3.11-tables-1.html#cb255-8" tabindex="-1"></a><span class="in">```</span></span></code></pre></div>
+<div class="sourceCode" id="cb257"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb257-1"><a href="3.11-tables-1.html#cb257-1" tabindex="-1"></a>Table \@ref(tab:reg-table) summarize the regression results in a table.</span>
+<span id="cb257-2"><a href="3.11-tables-1.html#cb257-2" tabindex="-1"></a></span>
+<span id="cb257-3"><a href="3.11-tables-1.html#cb257-3" tabindex="-1"></a><span class="in">```{r, include=TRUE, results=&#39;asis&#39;}</span></span>
+<span id="cb257-4"><a href="3.11-tables-1.html#cb257-4" tabindex="-1"></a><span class="in">stargazer(capm_ml, FF_ml, type=&#39;latex&#39;, header=FALSE,</span></span>
+<span id="cb257-5"><a href="3.11-tables-1.html#cb257-5" tabindex="-1"></a><span class="in">          digits=4, no.space = TRUE,</span></span>
+<span id="cb257-6"><a href="3.11-tables-1.html#cb257-6" tabindex="-1"></a><span class="in">          title=&quot;Regression Results for META&quot;,</span></span>
+<span id="cb257-7"><a href="3.11-tables-1.html#cb257-7" tabindex="-1"></a><span class="in">          label = &quot;tab:reg-table&quot;)</span></span>
+<span id="cb257-8"><a href="3.11-tables-1.html#cb257-8" tabindex="-1"></a><span class="in">```</span></span></code></pre></div>
 <p>❗️ Note that you need to specify <span class="env-green"><code>results="asis"</code></span> in the code chunk options. Omitting this options will result in failing to compile tex.</p>
 <ul>
 <li><p><span class="env-green"><code>header=FALSE</code></span> is to suppress the <code>% Table created by stargazer</code> header. This applies to only <code>latex</code> tables.</p>
-<div class="sourceCode" id="cb256"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb256-1"><a href="3.11-tables-1.html#cb256-1" tabindex="-1"></a>% Table created by stargazer v.5.2.3 by Marek Hlavac, Social Policy Institute. E-mail: marek.hlavac at gmail.com</span>
-<span id="cb256-2"><a href="3.11-tables-1.html#cb256-2" tabindex="-1"></a>% Date and time: Fri, Sep 19, 2025 - 15<span class="sc">:16:</span>36</span></code></pre></div></li>
+<div class="sourceCode" id="cb258"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb258-1"><a href="3.11-tables-1.html#cb258-1" tabindex="-1"></a>% Table created by stargazer v.5.2.3 by Marek Hlavac, Social Policy Institute. E-mail: marek.hlavac at gmail.com</span>
+<span id="cb258-2"><a href="3.11-tables-1.html#cb258-2" tabindex="-1"></a>% Date and time: Fri, Sep 19, 2025 - 15<span class="sc">:16:</span>36</span></code></pre></div></li>
 <li><p><code>label="tab:reg-table"</code> is to specify the cross reference label for the table.</p></li>
 <li><p><span class="env-green"><code>table.placement = "H"</code></span> set float to <code>H</code> to fix positions. Places the float at <em>precisely</em> the location in the code. This requires the <span class="env-green"><code>float</code></span> LaTeX package. Remember to load it in the YAML.</p>
 <ul>
@@ -1369,58 +1391,58 @@ Figure 3.11: Correct significance codes.
 </ul></li>
 <li><p><strong>In html output</strong>, cross references to stargazer tables are <span class="env-orange">NOT</span> so straightforward.</p>
 <p><code>label</code> option in <code>stargazer</code> does not work. Cannot use chunk labels either.</p>
-<div class="sourceCode" id="cb257"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb257-1"><a href="3.11-tables-1.html#cb257-1" tabindex="-1"></a><span class="in">```{r fit-age, echo=FALSE, results=&#39;asis&#39;, fig.cap=&quot;Logistic regression of CHD on age.&quot;}</span></span>
-<span id="cb257-2"><a href="3.11-tables-1.html#cb257-2" tabindex="-1"></a><span class="in"># Use title caption from fig.cap</span></span>
-<span id="cb257-3"><a href="3.11-tables-1.html#cb257-3" tabindex="-1"></a><span class="in">tit &lt;- knitr::opts_current$get(&quot;fig.cap&quot;)</span></span>
-<span id="cb257-4"><a href="3.11-tables-1.html#cb257-4" tabindex="-1"></a><span class="in"># Adding caption for html output</span></span>
-<span id="cb257-5"><a href="3.11-tables-1.html#cb257-5" tabindex="-1"></a><span class="in">tit_html &lt;- paste0(</span></span>
-<span id="cb257-6"><a href="3.11-tables-1.html#cb257-6" tabindex="-1"></a><span class="in">  &#39;&lt;span id=&quot;tab:&#39;, knitr::opts_current$get(&quot;label&quot;),&#39;&quot;&gt;(#tab:&#39;,</span></span>
-<span id="cb257-7"><a href="3.11-tables-1.html#cb257-7" tabindex="-1"></a><span class="in">        knitr::opts_current$get(&quot;label&quot;), &#39;)&lt;/span&gt;&#39;, tit)</span></span>
-<span id="cb257-8"><a href="3.11-tables-1.html#cb257-8" tabindex="-1"></a><span class="in">stargazer::stargazer(fit.age,</span></span>
-<span id="cb257-9"><a href="3.11-tables-1.html#cb257-9" tabindex="-1"></a><span class="in">          label = paste0(&quot;tab:&quot;, knitr::opts_current$get(&quot;label&quot;)),</span></span>
-<span id="cb257-10"><a href="3.11-tables-1.html#cb257-10" tabindex="-1"></a><span class="in">          title = ifelse(knitr::is_latex_output(), tit, tit_html),</span></span>
-<span id="cb257-11"><a href="3.11-tables-1.html#cb257-11" tabindex="-1"></a><span class="in">          type = ifelse(knitr::is_latex_output(),&quot;latex&quot;,&quot;html&quot;),</span></span>
-<span id="cb257-12"><a href="3.11-tables-1.html#cb257-12" tabindex="-1"></a><span class="in">          notes = &quot;&lt;span&gt;&amp;#42;&lt;/span&gt;: p&lt;0.1; &lt;span&gt;&amp;#42;&amp;#42;&lt;/span&gt;: &lt;strong&gt;p&lt;0.05&lt;/strong&gt;; &lt;span&gt;&amp;#42;&amp;#42;&amp;#42;&lt;/span&gt;: p&lt;0.01 &lt;br&gt; Standard errors in parentheses.&quot;,</span></span>
-<span id="cb257-13"><a href="3.11-tables-1.html#cb257-13" tabindex="-1"></a><span class="in">          notes.append = F,</span></span>
-<span id="cb257-14"><a href="3.11-tables-1.html#cb257-14" tabindex="-1"></a><span class="in">          header = F</span></span>
-<span id="cb257-15"><a href="3.11-tables-1.html#cb257-15" tabindex="-1"></a><span class="in">          )</span></span>
-<span id="cb257-16"><a href="3.11-tables-1.html#cb257-16" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb257-17"><a href="3.11-tables-1.html#cb257-17" tabindex="-1"></a></span>
-<span id="cb257-18"><a href="3.11-tables-1.html#cb257-18" tabindex="-1"></a>Here is another reference to stargazer Table \@ref(tab:fit-age).</span></code></pre></div>
+<div class="sourceCode" id="cb259"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb259-1"><a href="3.11-tables-1.html#cb259-1" tabindex="-1"></a><span class="in">```{r fit-age, echo=FALSE, results=&#39;asis&#39;, fig.cap=&quot;Logistic regression of CHD on age.&quot;}</span></span>
+<span id="cb259-2"><a href="3.11-tables-1.html#cb259-2" tabindex="-1"></a><span class="in"># Use title caption from fig.cap</span></span>
+<span id="cb259-3"><a href="3.11-tables-1.html#cb259-3" tabindex="-1"></a><span class="in">tit &lt;- knitr::opts_current$get(&quot;fig.cap&quot;)</span></span>
+<span id="cb259-4"><a href="3.11-tables-1.html#cb259-4" tabindex="-1"></a><span class="in"># Adding caption for html output</span></span>
+<span id="cb259-5"><a href="3.11-tables-1.html#cb259-5" tabindex="-1"></a><span class="in">tit_html &lt;- paste0(</span></span>
+<span id="cb259-6"><a href="3.11-tables-1.html#cb259-6" tabindex="-1"></a><span class="in">  &#39;&lt;span id=&quot;tab:&#39;, knitr::opts_current$get(&quot;label&quot;),&#39;&quot;&gt;(#tab:&#39;,</span></span>
+<span id="cb259-7"><a href="3.11-tables-1.html#cb259-7" tabindex="-1"></a><span class="in">        knitr::opts_current$get(&quot;label&quot;), &#39;)&lt;/span&gt;&#39;, tit)</span></span>
+<span id="cb259-8"><a href="3.11-tables-1.html#cb259-8" tabindex="-1"></a><span class="in">stargazer::stargazer(fit.age,</span></span>
+<span id="cb259-9"><a href="3.11-tables-1.html#cb259-9" tabindex="-1"></a><span class="in">          label = paste0(&quot;tab:&quot;, knitr::opts_current$get(&quot;label&quot;)),</span></span>
+<span id="cb259-10"><a href="3.11-tables-1.html#cb259-10" tabindex="-1"></a><span class="in">          title = ifelse(knitr::is_latex_output(), tit, tit_html),</span></span>
+<span id="cb259-11"><a href="3.11-tables-1.html#cb259-11" tabindex="-1"></a><span class="in">          type = ifelse(knitr::is_latex_output(),&quot;latex&quot;,&quot;html&quot;),</span></span>
+<span id="cb259-12"><a href="3.11-tables-1.html#cb259-12" tabindex="-1"></a><span class="in">          notes = &quot;&lt;span&gt;&amp;#42;&lt;/span&gt;: p&lt;0.1; &lt;span&gt;&amp;#42;&amp;#42;&lt;/span&gt;: &lt;strong&gt;p&lt;0.05&lt;/strong&gt;; &lt;span&gt;&amp;#42;&amp;#42;&amp;#42;&lt;/span&gt;: p&lt;0.01 &lt;br&gt; Standard errors in parentheses.&quot;,</span></span>
+<span id="cb259-13"><a href="3.11-tables-1.html#cb259-13" tabindex="-1"></a><span class="in">          notes.append = F,</span></span>
+<span id="cb259-14"><a href="3.11-tables-1.html#cb259-14" tabindex="-1"></a><span class="in">          header = F</span></span>
+<span id="cb259-15"><a href="3.11-tables-1.html#cb259-15" tabindex="-1"></a><span class="in">          )</span></span>
+<span id="cb259-16"><a href="3.11-tables-1.html#cb259-16" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb259-17"><a href="3.11-tables-1.html#cb259-17" tabindex="-1"></a></span>
+<span id="cb259-18"><a href="3.11-tables-1.html#cb259-18" tabindex="-1"></a>Here is another reference to stargazer Table \@ref(tab:fit-age).</span></code></pre></div>
 <p>Don’t change things unless it is absolutely necessary. Run the code chunk before compiling the whole website. It gets slowly as the website gets larger.</p>
 <p><code>stargazer::stargazer()</code> the <code>::</code> is necessary, and <code>header=F</code> is necessary and should be place at the end, otherwise will have errors as follows.</p>
-<div class="sourceCode" id="cb258"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb258-1"><a href="3.11-tables-1.html#cb258-1" tabindex="-1"></a>Error <span class="cf">in</span> <span class="st">`</span><span class="at">.stargazer.wrap()</span><span class="st">`</span><span class="sc">:</span></span>
-<span id="cb258-2"><a href="3.11-tables-1.html#cb258-2" tabindex="-1"></a><span class="sc">!</span> argument is missing, with no default</span>
-<span id="cb258-3"><a href="3.11-tables-1.html#cb258-3" tabindex="-1"></a>Backtrace<span class="sc">:</span></span>
-<span id="cb258-4"><a href="3.11-tables-1.html#cb258-4" tabindex="-1"></a> <span class="fl">1.</span> stargazer<span class="sc">::</span><span class="fu">stargazer</span>(...)</span>
-<span id="cb258-5"><a href="3.11-tables-1.html#cb258-5" tabindex="-1"></a> <span class="fl">2.</span> stargazer<span class="sc">:::</span><span class="fu">.stargazer.wrap</span>(...)</span>
-<span id="cb258-6"><a href="3.11-tables-1.html#cb258-6" tabindex="-1"></a>Execution halted</span>
-<span id="cb258-7"><a href="3.11-tables-1.html#cb258-7" tabindex="-1"></a></span>
-<span id="cb258-8"><a href="3.11-tables-1.html#cb258-8" tabindex="-1"></a>Exited with status <span class="fl">1.</span></span></code></pre></div>
+<div class="sourceCode" id="cb260"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb260-1"><a href="3.11-tables-1.html#cb260-1" tabindex="-1"></a>Error <span class="cf">in</span> <span class="st">`</span><span class="at">.stargazer.wrap()</span><span class="st">`</span><span class="sc">:</span></span>
+<span id="cb260-2"><a href="3.11-tables-1.html#cb260-2" tabindex="-1"></a><span class="sc">!</span> argument is missing, with no default</span>
+<span id="cb260-3"><a href="3.11-tables-1.html#cb260-3" tabindex="-1"></a>Backtrace<span class="sc">:</span></span>
+<span id="cb260-4"><a href="3.11-tables-1.html#cb260-4" tabindex="-1"></a> <span class="fl">1.</span> stargazer<span class="sc">::</span><span class="fu">stargazer</span>(...)</span>
+<span id="cb260-5"><a href="3.11-tables-1.html#cb260-5" tabindex="-1"></a> <span class="fl">2.</span> stargazer<span class="sc">:::</span><span class="fu">.stargazer.wrap</span>(...)</span>
+<span id="cb260-6"><a href="3.11-tables-1.html#cb260-6" tabindex="-1"></a>Execution halted</span>
+<span id="cb260-7"><a href="3.11-tables-1.html#cb260-7" tabindex="-1"></a></span>
+<span id="cb260-8"><a href="3.11-tables-1.html#cb260-8" tabindex="-1"></a>Exited with status <span class="fl">1.</span></span></code></pre></div>
 <p>Another example if you don’t need to add footnotes.</p>
-<div class="sourceCode" id="cb259"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb259-1"><a href="3.11-tables-1.html#cb259-1" tabindex="-1"></a><span class="in">```{r mytable, results=&#39;asis&#39;, fig.cap=&quot;This is my table.&quot;}</span></span>
-<span id="cb259-2"><a href="3.11-tables-1.html#cb259-2" tabindex="-1"></a></span>
-<span id="cb259-3"><a href="3.11-tables-1.html#cb259-3" tabindex="-1"></a><span class="in"># Use title caption from fig.cap</span></span>
-<span id="cb259-4"><a href="3.11-tables-1.html#cb259-4" tabindex="-1"></a><span class="in">tit &lt;- knitr::opts_current$get(&quot;fig.cap&quot;)</span></span>
-<span id="cb259-5"><a href="3.11-tables-1.html#cb259-5" tabindex="-1"></a></span>
-<span id="cb259-6"><a href="3.11-tables-1.html#cb259-6" tabindex="-1"></a><span class="in"># Adding caption for html output</span></span>
-<span id="cb259-7"><a href="3.11-tables-1.html#cb259-7" tabindex="-1"></a><span class="in">tit_html &lt;- paste0(&#39;&lt;span id=&quot;tab:&#39;,</span></span>
-<span id="cb259-8"><a href="3.11-tables-1.html#cb259-8" tabindex="-1"></a><span class="in">                   knitr::opts_current$get(&quot;label&quot;),</span></span>
-<span id="cb259-9"><a href="3.11-tables-1.html#cb259-9" tabindex="-1"></a><span class="in">                   &#39;&quot;&gt;(#tab:&#39;,</span></span>
-<span id="cb259-10"><a href="3.11-tables-1.html#cb259-10" tabindex="-1"></a><span class="in">                   knitr::opts_current$get(&quot;label&quot;),</span></span>
-<span id="cb259-11"><a href="3.11-tables-1.html#cb259-11" tabindex="-1"></a><span class="in">                   &#39;)&lt;/span&gt;&#39;,</span></span>
-<span id="cb259-12"><a href="3.11-tables-1.html#cb259-12" tabindex="-1"></a><span class="in">                   tit)</span></span>
-<span id="cb259-13"><a href="3.11-tables-1.html#cb259-13" tabindex="-1"></a></span>
-<span id="cb259-14"><a href="3.11-tables-1.html#cb259-14" tabindex="-1"></a><span class="in">stargazer::stargazer(</span></span>
-<span id="cb259-15"><a href="3.11-tables-1.html#cb259-15" tabindex="-1"></a><span class="in">  fit.age,</span></span>
-<span id="cb259-16"><a href="3.11-tables-1.html#cb259-16" tabindex="-1"></a><span class="in">  label = paste0(&quot;tab:&quot;, knitr::opts_current$get(&quot;label&quot;)),</span></span>
-<span id="cb259-17"><a href="3.11-tables-1.html#cb259-17" tabindex="-1"></a><span class="in">  title = ifelse(knitr::is_latex_output(), tit, tit_html),</span></span>
-<span id="cb259-18"><a href="3.11-tables-1.html#cb259-18" tabindex="-1"></a><span class="in">  type = ifelse(knitr::is_latex_output(),&quot;latex&quot;,&quot;html&quot;),</span></span>
-<span id="cb259-19"><a href="3.11-tables-1.html#cb259-19" tabindex="-1"></a><span class="in">  header = F</span></span>
-<span id="cb259-20"><a href="3.11-tables-1.html#cb259-20" tabindex="-1"></a><span class="in">  )</span></span>
-<span id="cb259-21"><a href="3.11-tables-1.html#cb259-21" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb259-22"><a href="3.11-tables-1.html#cb259-22" tabindex="-1"></a></span>
-<span id="cb259-23"><a href="3.11-tables-1.html#cb259-23" tabindex="-1"></a>Here is a reference to stargazer Table \@ref(tab:mytable).</span></code></pre></div></li>
+<div class="sourceCode" id="cb261"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb261-1"><a href="3.11-tables-1.html#cb261-1" tabindex="-1"></a><span class="in">```{r mytable, results=&#39;asis&#39;, fig.cap=&quot;This is my table.&quot;}</span></span>
+<span id="cb261-2"><a href="3.11-tables-1.html#cb261-2" tabindex="-1"></a></span>
+<span id="cb261-3"><a href="3.11-tables-1.html#cb261-3" tabindex="-1"></a><span class="in"># Use title caption from fig.cap</span></span>
+<span id="cb261-4"><a href="3.11-tables-1.html#cb261-4" tabindex="-1"></a><span class="in">tit &lt;- knitr::opts_current$get(&quot;fig.cap&quot;)</span></span>
+<span id="cb261-5"><a href="3.11-tables-1.html#cb261-5" tabindex="-1"></a></span>
+<span id="cb261-6"><a href="3.11-tables-1.html#cb261-6" tabindex="-1"></a><span class="in"># Adding caption for html output</span></span>
+<span id="cb261-7"><a href="3.11-tables-1.html#cb261-7" tabindex="-1"></a><span class="in">tit_html &lt;- paste0(&#39;&lt;span id=&quot;tab:&#39;,</span></span>
+<span id="cb261-8"><a href="3.11-tables-1.html#cb261-8" tabindex="-1"></a><span class="in">                   knitr::opts_current$get(&quot;label&quot;),</span></span>
+<span id="cb261-9"><a href="3.11-tables-1.html#cb261-9" tabindex="-1"></a><span class="in">                   &#39;&quot;&gt;(#tab:&#39;,</span></span>
+<span id="cb261-10"><a href="3.11-tables-1.html#cb261-10" tabindex="-1"></a><span class="in">                   knitr::opts_current$get(&quot;label&quot;),</span></span>
+<span id="cb261-11"><a href="3.11-tables-1.html#cb261-11" tabindex="-1"></a><span class="in">                   &#39;)&lt;/span&gt;&#39;,</span></span>
+<span id="cb261-12"><a href="3.11-tables-1.html#cb261-12" tabindex="-1"></a><span class="in">                   tit)</span></span>
+<span id="cb261-13"><a href="3.11-tables-1.html#cb261-13" tabindex="-1"></a></span>
+<span id="cb261-14"><a href="3.11-tables-1.html#cb261-14" tabindex="-1"></a><span class="in">stargazer::stargazer(</span></span>
+<span id="cb261-15"><a href="3.11-tables-1.html#cb261-15" tabindex="-1"></a><span class="in">  fit.age,</span></span>
+<span id="cb261-16"><a href="3.11-tables-1.html#cb261-16" tabindex="-1"></a><span class="in">  label = paste0(&quot;tab:&quot;, knitr::opts_current$get(&quot;label&quot;)),</span></span>
+<span id="cb261-17"><a href="3.11-tables-1.html#cb261-17" tabindex="-1"></a><span class="in">  title = ifelse(knitr::is_latex_output(), tit, tit_html),</span></span>
+<span id="cb261-18"><a href="3.11-tables-1.html#cb261-18" tabindex="-1"></a><span class="in">  type = ifelse(knitr::is_latex_output(),&quot;latex&quot;,&quot;html&quot;),</span></span>
+<span id="cb261-19"><a href="3.11-tables-1.html#cb261-19" tabindex="-1"></a><span class="in">  header = F</span></span>
+<span id="cb261-20"><a href="3.11-tables-1.html#cb261-20" tabindex="-1"></a><span class="in">  )</span></span>
+<span id="cb261-21"><a href="3.11-tables-1.html#cb261-21" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb261-22"><a href="3.11-tables-1.html#cb261-22" tabindex="-1"></a></span>
+<span id="cb261-23"><a href="3.11-tables-1.html#cb261-23" tabindex="-1"></a>Here is a reference to stargazer Table \@ref(tab:mytable).</span></code></pre></div></li>
 </ul>
 <p><strong>Alignment of Stargazer Tables</strong></p>
 <ul>
@@ -1441,8 +1463,8 @@ Figure 3.11: Correct significance codes.
 <li>convert to <code>xtable</code> object</li>
 <li>print to LaTeX or html code</li>
 </ol>
-<div class="sourceCode" id="cb260"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb260-1"><a href="3.11-tables-1.html#cb260-1" tabindex="-1"></a>xtab <span class="ot">&lt;-</span> <span class="fu">xtable</span>(tableResults, <span class="at">caption =</span> <span class="cn">NULL</span>, <span class="at">digits =</span> <span class="cn">NULL</span>)</span>
-<span id="cb260-2"><a href="3.11-tables-1.html#cb260-2" tabindex="-1"></a><span class="fu">print</span>(xtab, <span class="at">include.rownames=</span><span class="cn">FALSE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb262"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb262-1"><a href="3.11-tables-1.html#cb262-1" tabindex="-1"></a>xtab <span class="ot">&lt;-</span> <span class="fu">xtable</span>(tableResults, <span class="at">caption =</span> <span class="cn">NULL</span>, <span class="at">digits =</span> <span class="cn">NULL</span>)</span>
+<span id="cb262-2"><a href="3.11-tables-1.html#cb262-2" tabindex="-1"></a><span class="fu">print</span>(xtab, <span class="at">include.rownames=</span><span class="cn">FALSE</span>)</span></code></pre></div>
 <p><code>xtable</code> converts an <strong>R</strong> object to an <code>xtable</code> object, which can then be printed as a LaTeX or HTML table.</p>
 <p><strong><code>xtable()</code> arguments</strong></p>
 <ul>
@@ -1461,21 +1483,21 @@ Figure 3.11: Correct significance codes.
 <li><code>type</code> Possible values are <code>"latex"</code> and <code>"html"</code>. Default is <code>"latex"</code>.</li>
 </ul>
 <p><strong>Print a data frame</strong></p>
-<div class="sourceCode" id="cb261"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb261-1"><a href="3.11-tables-1.html#cb261-1" tabindex="-1"></a><span class="fu">library</span>(xtable)</span>
-<span id="cb261-2"><a href="3.11-tables-1.html#cb261-2" tabindex="-1"></a></span>
-<span id="cb261-3"><a href="3.11-tables-1.html#cb261-3" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb261-4"><a href="3.11-tables-1.html#cb261-4" tabindex="-1"></a>  <span class="at">Asset =</span> <span class="fu">c</span>(<span class="st">&quot;A&quot;</span>, <span class="st">&quot;B&quot;</span>),</span>
-<span id="cb261-5"><a href="3.11-tables-1.html#cb261-5" tabindex="-1"></a>  <span class="at">Mu =</span> <span class="fu">c</span>(<span class="fl">0.175</span>, <span class="fl">0.055</span>),</span>
-<span id="cb261-6"><a href="3.11-tables-1.html#cb261-6" tabindex="-1"></a>  <span class="at">Sigma =</span> <span class="fu">c</span>(<span class="fl">0.258</span>, <span class="fl">0.115</span>)</span>
-<span id="cb261-7"><a href="3.11-tables-1.html#cb261-7" tabindex="-1"></a>)</span>
-<span id="cb261-8"><a href="3.11-tables-1.html#cb261-8" tabindex="-1"></a></span>
-<span id="cb261-9"><a href="3.11-tables-1.html#cb261-9" tabindex="-1"></a><span class="co"># Convert to xtable</span></span>
-<span id="cb261-10"><a href="3.11-tables-1.html#cb261-10" tabindex="-1"></a>xtab <span class="ot">&lt;-</span> <span class="fu">xtable</span>(df, <span class="at">caption =</span> <span class="st">&quot;Asset Parameters&quot;</span>, <span class="at">digits =</span> <span class="dv">3</span>)</span>
-<span id="cb261-11"><a href="3.11-tables-1.html#cb261-11" tabindex="-1"></a></span>
-<span id="cb261-12"><a href="3.11-tables-1.html#cb261-12" tabindex="-1"></a><span class="co"># Print html code</span></span>
-<span id="cb261-13"><a href="3.11-tables-1.html#cb261-13" tabindex="-1"></a><span class="fu">print</span>(xtab, <span class="at">type =</span> <span class="st">&quot;html&quot;</span>, <span class="at">include.rownames =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb263"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb263-1"><a href="3.11-tables-1.html#cb263-1" tabindex="-1"></a><span class="fu">library</span>(xtable)</span>
+<span id="cb263-2"><a href="3.11-tables-1.html#cb263-2" tabindex="-1"></a></span>
+<span id="cb263-3"><a href="3.11-tables-1.html#cb263-3" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb263-4"><a href="3.11-tables-1.html#cb263-4" tabindex="-1"></a>  <span class="at">Asset =</span> <span class="fu">c</span>(<span class="st">&quot;A&quot;</span>, <span class="st">&quot;B&quot;</span>),</span>
+<span id="cb263-5"><a href="3.11-tables-1.html#cb263-5" tabindex="-1"></a>  <span class="at">Mu =</span> <span class="fu">c</span>(<span class="fl">0.175</span>, <span class="fl">0.055</span>),</span>
+<span id="cb263-6"><a href="3.11-tables-1.html#cb263-6" tabindex="-1"></a>  <span class="at">Sigma =</span> <span class="fu">c</span>(<span class="fl">0.258</span>, <span class="fl">0.115</span>)</span>
+<span id="cb263-7"><a href="3.11-tables-1.html#cb263-7" tabindex="-1"></a>)</span>
+<span id="cb263-8"><a href="3.11-tables-1.html#cb263-8" tabindex="-1"></a></span>
+<span id="cb263-9"><a href="3.11-tables-1.html#cb263-9" tabindex="-1"></a><span class="co"># Convert to xtable</span></span>
+<span id="cb263-10"><a href="3.11-tables-1.html#cb263-10" tabindex="-1"></a>xtab <span class="ot">&lt;-</span> <span class="fu">xtable</span>(df, <span class="at">caption =</span> <span class="st">&quot;Asset Parameters&quot;</span>, <span class="at">digits =</span> <span class="dv">3</span>)</span>
+<span id="cb263-11"><a href="3.11-tables-1.html#cb263-11" tabindex="-1"></a></span>
+<span id="cb263-12"><a href="3.11-tables-1.html#cb263-12" tabindex="-1"></a><span class="co"># Print html code</span></span>
+<span id="cb263-13"><a href="3.11-tables-1.html#cb263-13" tabindex="-1"></a><span class="fu">print</span>(xtab, <span class="at">type =</span> <span class="st">&quot;html&quot;</span>, <span class="at">include.rownames =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 <!-- html table generated in R 4.5.1 by xtable 1.8-4 package -->
-<!-- Tue Oct  7 16:16:19 2025 -->
+<!-- Thu Oct  9 09:06:16 2025 -->
 <table border="1">
 <caption align="bottom">
 Asset Parameters
@@ -1523,13 +1545,13 @@ B
 </tr>
 </table>
 <p><strong>Print a regression table</strong></p>
-<div class="sourceCode" id="cb262"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb262-1"><a href="3.11-tables-1.html#cb262-1" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">lm</span>(mpg <span class="sc">~</span> hp <span class="sc">+</span> wt, <span class="at">data =</span> mtcars)</span>
-<span id="cb262-2"><a href="3.11-tables-1.html#cb262-2" tabindex="-1"></a>xtab_model <span class="ot">&lt;-</span> <span class="fu">xtable</span>(model, <span class="at">caption =</span> <span class="st">&quot;Regression of mpg on hp and wt&quot;</span>)</span>
-<span id="cb262-3"><a href="3.11-tables-1.html#cb262-3" tabindex="-1"></a></span>
-<span id="cb262-4"><a href="3.11-tables-1.html#cb262-4" tabindex="-1"></a><span class="co"># Print as html</span></span>
-<span id="cb262-5"><a href="3.11-tables-1.html#cb262-5" tabindex="-1"></a><span class="fu">print</span>(xtab_model, <span class="at">type =</span> <span class="st">&quot;html&quot;</span>, <span class="at">digits =</span> <span class="dv">3</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb264"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb264-1"><a href="3.11-tables-1.html#cb264-1" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">lm</span>(mpg <span class="sc">~</span> hp <span class="sc">+</span> wt, <span class="at">data =</span> mtcars)</span>
+<span id="cb264-2"><a href="3.11-tables-1.html#cb264-2" tabindex="-1"></a>xtab_model <span class="ot">&lt;-</span> <span class="fu">xtable</span>(model, <span class="at">caption =</span> <span class="st">&quot;Regression of mpg on hp and wt&quot;</span>)</span>
+<span id="cb264-3"><a href="3.11-tables-1.html#cb264-3" tabindex="-1"></a></span>
+<span id="cb264-4"><a href="3.11-tables-1.html#cb264-4" tabindex="-1"></a><span class="co"># Print as html</span></span>
+<span id="cb264-5"><a href="3.11-tables-1.html#cb264-5" tabindex="-1"></a><span class="fu">print</span>(xtab_model, <span class="at">type =</span> <span class="st">&quot;html&quot;</span>, <span class="at">digits =</span> <span class="dv">3</span>)</span></code></pre></div>
 <!-- html table generated in R 4.5.1 by xtable 1.8-4 package -->
-<!-- Tue Oct  7 16:16:19 2025 -->
+<!-- Thu Oct  9 09:06:16 2025 -->
 <table border="1">
 <caption align="bottom">
 Regression of mpg on hp and wt
@@ -1608,9 +1630,9 @@ wt
 <h3><span class="header-section-number">3.11.5</span> <code>kableExtra</code><a href="3.11-tables-1.html#kableextra" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>The <a href="https://bookdown.org/yihui/rmarkdown-cookbook/kableextra.html"><strong>kableExtra</strong></a> package is designed to extend the basic functionality of tables produced using <code>knitr::kable()</code>.</p>
 <p><code>kableExtra::kbl()</code> extends <code>knitr::kable()</code>, with some additional features.</p>
-<div class="sourceCode" id="cb263"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb263-1"><a href="3.11-tables-1.html#cb263-1" tabindex="-1"></a><span class="co"># pipe kabe output to the styling function of kableExtra</span></span>
-<span id="cb263-2"><a href="3.11-tables-1.html#cb263-2" tabindex="-1"></a><span class="fu">kable</span>(iris) <span class="sc">%&gt;%</span></span>
-<span id="cb263-3"><a href="3.11-tables-1.html#cb263-3" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">latex_options =</span> <span class="st">&quot;striped&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb265"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb265-1"><a href="3.11-tables-1.html#cb265-1" tabindex="-1"></a><span class="co"># pipe kabe output to the styling function of kableExtra</span></span>
+<span id="cb265-2"><a href="3.11-tables-1.html#cb265-2" tabindex="-1"></a><span class="fu">kable</span>(iris) <span class="sc">%&gt;%</span></span>
+<span id="cb265-3"><a href="3.11-tables-1.html#cb265-3" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">latex_options =</span> <span class="st">&quot;striped&quot;</span>)</span></code></pre></div>
 <p><code>kableExtra::kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)</code></p>
 <ul>
 <li><p><code>bootstrap_options</code> A character vector for bootstrap table options. Please see package vignette or visit the w3schools’ <a href="https://www.w3schools.com/bootstrap/bootstrap_tables.asp">Bootstrap Page</a> for more information. Possible options include <code>basic</code>, <code>striped</code>, <code>bordered</code>, <code>hover</code>, <code>condensed</code>, <code>responsive</code> and <code>none</code>.</p>
@@ -1662,30 +1684,30 @@ wt
 </ul>
 <p>Rows and columns can be grouped via the functions <code>pack_rows()</code> and <code>add_header_above()</code>, respectively.</p>
 <p><code>scroll_box(width = "100%", height = "500px")</code> let you create a fixed height table while <strong>making it scrollable</strong>. This function only works for html long tables.</p>
-<div class="sourceCode" id="cb264"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb264-1"><a href="3.11-tables-1.html#cb264-1" tabindex="-1"></a><span class="co"># commonly used settings </span></span>
-<span id="cb264-2"><a href="3.11-tables-1.html#cb264-2" tabindex="-1"></a>table <span class="sc">%&gt;%</span> </span>
-<span id="cb264-3"><a href="3.11-tables-1.html#cb264-3" tabindex="-1"></a>    knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">5</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb264-4"><a href="3.11-tables-1.html#cb264-4" tabindex="-1"></a>    <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">&quot;striped&quot;</span>, <span class="st">&quot;hover&quot;</span>), <span class="at">full_width =</span> <span class="cn">FALSE</span>, <span class="at">latex_options=</span><span class="st">&quot;scale_down&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb264-5"><a href="3.11-tables-1.html#cb264-5" tabindex="-1"></a>    <span class="fu">scroll_box</span>(<span class="at">width =</span> <span class="st">&quot;100%&quot;</span>, <span class="at">height =</span> <span class="st">&quot;500px&quot;</span>)</span></code></pre></div>
-<div class="sourceCode" id="cb265"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb265-1"><a href="3.11-tables-1.html#cb265-1" tabindex="-1"></a><span class="co"># escape=TRUE, this makes your life easier, will output the table exactly as it is</span></span>
-<span id="cb265-2"><a href="3.11-tables-1.html#cb265-2" tabindex="-1"></a>result <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;~/Documents/GDP/data/reg_result/IFE_result.csv&quot;</span>)</span>
-<span id="cb265-3"><a href="3.11-tables-1.html#cb265-3" tabindex="-1"></a>result <span class="sc">%&gt;%</span></span>
-<span id="cb265-4"><a href="3.11-tables-1.html#cb265-4" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">5</span>, <span class="at">escape=</span>T) <span class="sc">%&gt;%</span></span>
-<span id="cb265-5"><a href="3.11-tables-1.html#cb265-5" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">&quot;striped&quot;</span>, <span class="st">&quot;hover&quot;</span>), <span class="at">full_width =</span> <span class="cn">FALSE</span>, <span class="at">latex_options=</span><span class="st">&quot;scale_down&quot;</span>)</span></code></pre></div>
-<div class="sourceCode" id="cb266"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb266-1"><a href="3.11-tables-1.html#cb266-1" tabindex="-1"></a><span class="co"># escape=FALSE, have to specify escape by replace `*` to `\\\\*`</span></span>
-<span id="cb266-2"><a href="3.11-tables-1.html#cb266-2" tabindex="-1"></a>result <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;~/Documents/GDP/data/reg_result/IFE_result.csv&quot;</span>)</span>
-<span id="cb266-3"><a href="3.11-tables-1.html#cb266-3" tabindex="-1"></a>result <span class="ot">&lt;-</span> result <span class="sc">%&gt;%</span> </span>
-<span id="cb266-4"><a href="3.11-tables-1.html#cb266-4" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">pval.symbol =</span> <span class="fu">gsub</span>(<span class="st">&quot;[*]&quot;</span>, <span class="st">&quot;</span><span class="sc">\\\\</span><span class="st">*&quot;</span>, pval.symbol) )</span>
-<span id="cb266-5"><a href="3.11-tables-1.html#cb266-5" tabindex="-1"></a>result <span class="sc">%&gt;%</span></span>
-<span id="cb266-6"><a href="3.11-tables-1.html#cb266-6" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">5</span>, <span class="at">escape=</span><span class="cn">FALSE</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb266-7"><a href="3.11-tables-1.html#cb266-7" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">&quot;striped&quot;</span>, <span class="st">&quot;hover&quot;</span>), <span class="at">full_width =</span> <span class="cn">FALSE</span>, <span class="at">latex_options=</span><span class="st">&quot;scale_down&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb266"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb266-1"><a href="3.11-tables-1.html#cb266-1" tabindex="-1"></a><span class="co"># commonly used settings </span></span>
+<span id="cb266-2"><a href="3.11-tables-1.html#cb266-2" tabindex="-1"></a>table <span class="sc">%&gt;%</span> </span>
+<span id="cb266-3"><a href="3.11-tables-1.html#cb266-3" tabindex="-1"></a>    knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">5</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb266-4"><a href="3.11-tables-1.html#cb266-4" tabindex="-1"></a>    <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">&quot;striped&quot;</span>, <span class="st">&quot;hover&quot;</span>), <span class="at">full_width =</span> <span class="cn">FALSE</span>, <span class="at">latex_options=</span><span class="st">&quot;scale_down&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb266-5"><a href="3.11-tables-1.html#cb266-5" tabindex="-1"></a>    <span class="fu">scroll_box</span>(<span class="at">width =</span> <span class="st">&quot;100%&quot;</span>, <span class="at">height =</span> <span class="st">&quot;500px&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb267"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb267-1"><a href="3.11-tables-1.html#cb267-1" tabindex="-1"></a><span class="co"># escape=TRUE, this makes your life easier, will output the table exactly as it is</span></span>
+<span id="cb267-2"><a href="3.11-tables-1.html#cb267-2" tabindex="-1"></a>result <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;~/Documents/GDP/data/reg_result/IFE_result.csv&quot;</span>)</span>
+<span id="cb267-3"><a href="3.11-tables-1.html#cb267-3" tabindex="-1"></a>result <span class="sc">%&gt;%</span></span>
+<span id="cb267-4"><a href="3.11-tables-1.html#cb267-4" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">5</span>, <span class="at">escape=</span>T) <span class="sc">%&gt;%</span></span>
+<span id="cb267-5"><a href="3.11-tables-1.html#cb267-5" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">&quot;striped&quot;</span>, <span class="st">&quot;hover&quot;</span>), <span class="at">full_width =</span> <span class="cn">FALSE</span>, <span class="at">latex_options=</span><span class="st">&quot;scale_down&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb268"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb268-1"><a href="3.11-tables-1.html#cb268-1" tabindex="-1"></a><span class="co"># escape=FALSE, have to specify escape by replace `*` to `\\\\*`</span></span>
+<span id="cb268-2"><a href="3.11-tables-1.html#cb268-2" tabindex="-1"></a>result <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;~/Documents/GDP/data/reg_result/IFE_result.csv&quot;</span>)</span>
+<span id="cb268-3"><a href="3.11-tables-1.html#cb268-3" tabindex="-1"></a>result <span class="ot">&lt;-</span> result <span class="sc">%&gt;%</span> </span>
+<span id="cb268-4"><a href="3.11-tables-1.html#cb268-4" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">pval.symbol =</span> <span class="fu">gsub</span>(<span class="st">&quot;[*]&quot;</span>, <span class="st">&quot;</span><span class="sc">\\\\</span><span class="st">*&quot;</span>, pval.symbol) )</span>
+<span id="cb268-5"><a href="3.11-tables-1.html#cb268-5" tabindex="-1"></a>result <span class="sc">%&gt;%</span></span>
+<span id="cb268-6"><a href="3.11-tables-1.html#cb268-6" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">5</span>, <span class="at">escape=</span><span class="cn">FALSE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb268-7"><a href="3.11-tables-1.html#cb268-7" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">&quot;striped&quot;</span>, <span class="st">&quot;hover&quot;</span>), <span class="at">full_width =</span> <span class="cn">FALSE</span>, <span class="at">latex_options=</span><span class="st">&quot;scale_down&quot;</span>)</span></code></pre></div>
 <div id="tables-in-pdf-output" class="section level4 hasAnchor" number="3.11.5.1">
 <h4><span class="header-section-number">3.11.5.1</span> tables in pdf output<a href="3.11-tables-1.html#tables-in-pdf-output" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<div class="sourceCode" id="cb267"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb267-1"><a href="3.11-tables-1.html#cb267-1" tabindex="-1"></a>reg_data <span class="sc">%&gt;%</span> </span>
-<span id="cb267-2"><a href="3.11-tables-1.html#cb267-2" tabindex="-1"></a>    <span class="fu">select</span>(Date, adjusted, eRi, rmrf) <span class="sc">%&gt;%</span></span>
-<span id="cb267-3"><a href="3.11-tables-1.html#cb267-3" tabindex="-1"></a>    <span class="fu">head</span>(<span class="dv">10</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb267-4"><a href="3.11-tables-1.html#cb267-4" tabindex="-1"></a>    knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="at">digits =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">2</span>,<span class="dv">4</span>,<span class="dv">4</span>), <span class="at">escape=</span>T, <span class="at">format =</span> <span class="st">&quot;latex&quot;</span>, <span class="at">booktabs =</span> <span class="cn">TRUE</span>, <span class="at">linesep =</span> <span class="st">&quot;&quot;</span> ) <span class="sc">%&gt;%</span></span>
-<span id="cb267-5"><a href="3.11-tables-1.html#cb267-5" tabindex="-1"></a>    <span class="fu">kable_styling</span>(<span class="at">latex_options =</span> <span class="fu">c</span>(<span class="st">&quot;striped&quot;</span>), <span class="at">full_width =</span> <span class="cn">FALSE</span>, <span class="at">stripe_color =</span> <span class="st">&quot;gray!15&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb269"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb269-1"><a href="3.11-tables-1.html#cb269-1" tabindex="-1"></a>reg_data <span class="sc">%&gt;%</span> </span>
+<span id="cb269-2"><a href="3.11-tables-1.html#cb269-2" tabindex="-1"></a>    <span class="fu">select</span>(Date, adjusted, eRi, rmrf) <span class="sc">%&gt;%</span></span>
+<span id="cb269-3"><a href="3.11-tables-1.html#cb269-3" tabindex="-1"></a>    <span class="fu">head</span>(<span class="dv">10</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb269-4"><a href="3.11-tables-1.html#cb269-4" tabindex="-1"></a>    knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="at">digits =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">2</span>,<span class="dv">4</span>,<span class="dv">4</span>), <span class="at">escape=</span>T, <span class="at">format =</span> <span class="st">&quot;latex&quot;</span>, <span class="at">booktabs =</span> <span class="cn">TRUE</span>, <span class="at">linesep =</span> <span class="st">&quot;&quot;</span> ) <span class="sc">%&gt;%</span></span>
+<span id="cb269-5"><a href="3.11-tables-1.html#cb269-5" tabindex="-1"></a>    <span class="fu">kable_styling</span>(<span class="at">latex_options =</span> <span class="fu">c</span>(<span class="st">&quot;striped&quot;</span>), <span class="at">full_width =</span> <span class="cn">FALSE</span>, <span class="at">stripe_color =</span> <span class="st">&quot;gray!15&quot;</span>)</span></code></pre></div>
 <p><code>knitr::kable()</code> arguments</p>
 <ul>
 <li><p><code>format = "latex"</code> specifies the output format.</p></li>
@@ -1710,10 +1732,10 @@ wt
 <div id="customize-the-looks-for-columnsrows" class="section level4 hasAnchor" number="3.11.5.2">
 <h4><span class="header-section-number">3.11.5.2</span> Customize the looks for columns/rows<a href="3.11-tables-1.html#customize-the-looks-for-columnsrows" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p><code>kableExtra::column_spec(kable_input, column)</code> this function allows users to select a column and then specify its look.</p>
-<div class="sourceCode" id="cb268"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb268-1"><a href="3.11-tables-1.html#cb268-1" tabindex="-1"></a><span class="co"># specify the width of the first two columns to be 5cm</span></span>
-<span id="cb268-2"><a href="3.11-tables-1.html#cb268-2" tabindex="-1"></a>table <span class="sc">%&gt;%</span></span>
-<span id="cb268-3"><a href="3.11-tables-1.html#cb268-3" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb268-4"><a href="3.11-tables-1.html#cb268-4" tabindex="-1"></a>  <span class="fu">column_spec</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="at">width =</span> <span class="st">&quot;5cm&quot;</span>) </span></code></pre></div>
+<div class="sourceCode" id="cb270"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb270-1"><a href="3.11-tables-1.html#cb270-1" tabindex="-1"></a><span class="co"># specify the width of the first two columns to be 5cm</span></span>
+<span id="cb270-2"><a href="3.11-tables-1.html#cb270-2" tabindex="-1"></a>table <span class="sc">%&gt;%</span></span>
+<span id="cb270-3"><a href="3.11-tables-1.html#cb270-3" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb270-4"><a href="3.11-tables-1.html#cb270-4" tabindex="-1"></a>  <span class="fu">column_spec</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="at">width =</span> <span class="st">&quot;5cm&quot;</span>) </span></code></pre></div>
 <ul>
 <li><p><code>kable_input</code>: Output of <code>knitr::kable()</code></p></li>
 <li><p><code>column</code>: A numeric value or vector indicating which column(s) to be selected.</p>
@@ -1730,9 +1752,9 @@ wt
 <h4><span class="header-section-number">3.11.5.3</span> Add header rows to group columns<a href="3.11-tables-1.html#add-header-rows-to-group-columns" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p><code>add_header_above()</code>: The header variable is supposed to be a named character with the names as new column names and values as column span.</p>
 <p>For your convenience, if column span equals to 1, you can ignore the <code>=1</code> part so the function below can be written as <code>add_header_above(c("", "Group 1" = 2, "Group 2" = 2, "Group 3" = 2))</code>.</p>
-<div class="sourceCode" id="cb269"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb269-1"><a href="3.11-tables-1.html#cb269-1" tabindex="-1"></a><span class="fu">kbl</span>(dt) <span class="sc">%&gt;%</span></span>
-<span id="cb269-2"><a href="3.11-tables-1.html#cb269-2" tabindex="-1"></a>  <span class="fu">kable_classic</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb269-3"><a href="3.11-tables-1.html#cb269-3" tabindex="-1"></a>  <span class="fu">add_header_above</span>(<span class="fu">c</span>(<span class="st">&quot; &quot;</span> <span class="ot">=</span> <span class="dv">1</span>, <span class="st">&quot;Group 1&quot;</span> <span class="ot">=</span> <span class="dv">2</span>, <span class="st">&quot;Group 2&quot;</span> <span class="ot">=</span> <span class="dv">2</span>, <span class="st">&quot;Group 3&quot;</span> <span class="ot">=</span> <span class="dv">2</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb271"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb271-1"><a href="3.11-tables-1.html#cb271-1" tabindex="-1"></a><span class="fu">kbl</span>(dt) <span class="sc">%&gt;%</span></span>
+<span id="cb271-2"><a href="3.11-tables-1.html#cb271-2" tabindex="-1"></a>  <span class="fu">kable_classic</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb271-3"><a href="3.11-tables-1.html#cb271-3" tabindex="-1"></a>  <span class="fu">add_header_above</span>(<span class="fu">c</span>(<span class="st">&quot; &quot;</span> <span class="ot">=</span> <span class="dv">1</span>, <span class="st">&quot;Group 1&quot;</span> <span class="ot">=</span> <span class="dv">2</span>, <span class="st">&quot;Group 2&quot;</span> <span class="ot">=</span> <span class="dv">2</span>, <span class="st">&quot;Group 3&quot;</span> <span class="ot">=</span> <span class="dv">2</span>))</span></code></pre></div>
 <p><img src="https://drive.google.com/thumbnail?id=1YGxysn1yorC6RzJq7m2KAvA6SWhdpZKx&sz=w1000" alt="group columns1" style="zoom:100%;" /></p>
 <p>You can add another row of header on top.</p>
 <hr />
@@ -1743,25 +1765,25 @@ wt
 <ul>
 <li>Not working for html output.</li>
 </ul>
-<div class="sourceCode" id="cb270"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb270-1"><a href="3.11-tables-1.html#cb270-1" tabindex="-1"></a>collapse_rows_dt <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">C1 =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="st">&quot;a&quot;</span>, <span class="dv">10</span>), <span class="fu">rep</span>(<span class="st">&quot;b&quot;</span>, <span class="dv">5</span>)),</span>
-<span id="cb270-2"><a href="3.11-tables-1.html#cb270-2" tabindex="-1"></a>                 <span class="at">C2 =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="st">&quot;c&quot;</span>, <span class="dv">7</span>), <span class="fu">rep</span>(<span class="st">&quot;d&quot;</span>, <span class="dv">3</span>), <span class="fu">rep</span>(<span class="st">&quot;c&quot;</span>, <span class="dv">2</span>), <span class="fu">rep</span>(<span class="st">&quot;d&quot;</span>, <span class="dv">3</span>)),</span>
-<span id="cb270-3"><a href="3.11-tables-1.html#cb270-3" tabindex="-1"></a>                 <span class="at">C3 =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">15</span>,</span>
-<span id="cb270-4"><a href="3.11-tables-1.html#cb270-4" tabindex="-1"></a>                 <span class="at">C4 =</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>), <span class="dv">15</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>))</span>
-<span id="cb270-5"><a href="3.11-tables-1.html#cb270-5" tabindex="-1"></a></span>
-<span id="cb270-6"><a href="3.11-tables-1.html#cb270-6" tabindex="-1"></a>kableExtra<span class="sc">::</span><span class="fu">kbl</span>(collapse_rows_dt, <span class="at">align =</span> <span class="st">&quot;c&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb270-7"><a href="3.11-tables-1.html#cb270-7" tabindex="-1"></a>  <span class="fu">kable_paper</span>(<span class="at">full_width =</span> F) <span class="sc">%&gt;%</span></span>
-<span id="cb270-8"><a href="3.11-tables-1.html#cb270-8" tabindex="-1"></a>  <span class="fu">column_spec</span>(<span class="dv">1</span>, <span class="at">bold =</span> T) <span class="sc">%&gt;%</span></span>
-<span id="cb270-9"><a href="3.11-tables-1.html#cb270-9" tabindex="-1"></a>  <span class="fu">collapse_rows</span>(<span class="at">columns =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="at">valign =</span> <span class="st">&quot;top&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb272"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb272-1"><a href="3.11-tables-1.html#cb272-1" tabindex="-1"></a>collapse_rows_dt <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">C1 =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="st">&quot;a&quot;</span>, <span class="dv">10</span>), <span class="fu">rep</span>(<span class="st">&quot;b&quot;</span>, <span class="dv">5</span>)),</span>
+<span id="cb272-2"><a href="3.11-tables-1.html#cb272-2" tabindex="-1"></a>                 <span class="at">C2 =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="st">&quot;c&quot;</span>, <span class="dv">7</span>), <span class="fu">rep</span>(<span class="st">&quot;d&quot;</span>, <span class="dv">3</span>), <span class="fu">rep</span>(<span class="st">&quot;c&quot;</span>, <span class="dv">2</span>), <span class="fu">rep</span>(<span class="st">&quot;d&quot;</span>, <span class="dv">3</span>)),</span>
+<span id="cb272-3"><a href="3.11-tables-1.html#cb272-3" tabindex="-1"></a>                 <span class="at">C3 =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">15</span>,</span>
+<span id="cb272-4"><a href="3.11-tables-1.html#cb272-4" tabindex="-1"></a>                 <span class="at">C4 =</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>), <span class="dv">15</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb272-5"><a href="3.11-tables-1.html#cb272-5" tabindex="-1"></a></span>
+<span id="cb272-6"><a href="3.11-tables-1.html#cb272-6" tabindex="-1"></a>kableExtra<span class="sc">::</span><span class="fu">kbl</span>(collapse_rows_dt, <span class="at">align =</span> <span class="st">&quot;c&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb272-7"><a href="3.11-tables-1.html#cb272-7" tabindex="-1"></a>  <span class="fu">kable_paper</span>(<span class="at">full_width =</span> F) <span class="sc">%&gt;%</span></span>
+<span id="cb272-8"><a href="3.11-tables-1.html#cb272-8" tabindex="-1"></a>  <span class="fu">column_spec</span>(<span class="dv">1</span>, <span class="at">bold =</span> T) <span class="sc">%&gt;%</span></span>
+<span id="cb272-9"><a href="3.11-tables-1.html#cb272-9" tabindex="-1"></a>  <span class="fu">collapse_rows</span>(<span class="at">columns =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="at">valign =</span> <span class="st">&quot;top&quot;</span>)</span></code></pre></div>
 <p><img src="https://drive.google.com/thumbnail?id=12STz3rDkTL-d2bDW5etwX5o-g6_zhcnj&sz=w1000" alt="group columns2" style="zoom:100%;" /></p>
 <p>Empty string as column name in <code>tibble</code>: use <code>setNames</code> or <code>attr</code></p>
-<div class="sourceCode" id="cb271"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb271-1"><a href="3.11-tables-1.html#cb271-1" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="st">&quot; &quot;</span><span class="ot">=</span><span class="dv">1</span>)</span>
-<span id="cb271-2"><a href="3.11-tables-1.html#cb271-2" tabindex="-1"></a><span class="fu">setNames</span>(df, <span class="st">&quot;&quot;</span>)</span>
-<span id="cb271-3"><a href="3.11-tables-1.html#cb271-3" tabindex="-1"></a><span class="co"># # A tibble: 1 x 1</span></span>
-<span id="cb271-4"><a href="3.11-tables-1.html#cb271-4" tabindex="-1"></a><span class="co">#      ``</span></span>
-<span id="cb271-5"><a href="3.11-tables-1.html#cb271-5" tabindex="-1"></a><span class="co">#   &lt;dbl&gt;</span></span>
-<span id="cb271-6"><a href="3.11-tables-1.html#cb271-6" tabindex="-1"></a><span class="co"># 1     1</span></span>
-<span id="cb271-7"><a href="3.11-tables-1.html#cb271-7" tabindex="-1"></a></span>
-<span id="cb271-8"><a href="3.11-tables-1.html#cb271-8" tabindex="-1"></a><span class="fu">attr</span>(df, <span class="st">&quot;names&quot;</span>) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb273"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb273-1"><a href="3.11-tables-1.html#cb273-1" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="st">&quot; &quot;</span><span class="ot">=</span><span class="dv">1</span>)</span>
+<span id="cb273-2"><a href="3.11-tables-1.html#cb273-2" tabindex="-1"></a><span class="fu">setNames</span>(df, <span class="st">&quot;&quot;</span>)</span>
+<span id="cb273-3"><a href="3.11-tables-1.html#cb273-3" tabindex="-1"></a><span class="co"># # A tibble: 1 x 1</span></span>
+<span id="cb273-4"><a href="3.11-tables-1.html#cb273-4" tabindex="-1"></a><span class="co">#      ``</span></span>
+<span id="cb273-5"><a href="3.11-tables-1.html#cb273-5" tabindex="-1"></a><span class="co">#   &lt;dbl&gt;</span></span>
+<span id="cb273-6"><a href="3.11-tables-1.html#cb273-6" tabindex="-1"></a><span class="co"># 1     1</span></span>
+<span id="cb273-7"><a href="3.11-tables-1.html#cb273-7" tabindex="-1"></a></span>
+<span id="cb273-8"><a href="3.11-tables-1.html#cb273-8" tabindex="-1"></a><span class="fu">attr</span>(df, <span class="st">&quot;names&quot;</span>) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;&quot;</span>)</span></code></pre></div>
 <p><code>footnote()</code> add footnotes to tables.</p>
 <ul>
 <li>There are four notation systems in <code>footnote</code>, namely <code>general</code> (no prefix for footnotes), <code>number</code>, <code>alphabet</code> and <code>symbol</code>.</li>
@@ -1775,23 +1797,23 @@ wt
 <ul>
 <li><a href="https://hughjonesd.github.io/huxtable/articles/huxtable.html#changing-the-layout">Changing layout</a></li>
 </ul>
-<div class="sourceCode" id="cb272"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb272-1"><a href="3.11-tables-1.html#cb272-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb272-2"><a href="3.11-tables-1.html#cb272-2" tabindex="-1"></a><span class="fu">library</span>(huxtable)</span>
-<span id="cb272-3"><a href="3.11-tables-1.html#cb272-3" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb272-4"><a href="3.11-tables-1.html#cb272-4" tabindex="-1"></a>  <span class="at">Parameter =</span> <span class="fu">c</span>(<span class="st">&quot;</span><span class="sc">\\</span><span class="st">( </span><span class="sc">\\</span><span class="st">mu </span><span class="sc">\\</span><span class="st">)&quot;</span>, <span class="st">&quot;</span><span class="sc">\\</span><span class="st">( </span><span class="sc">\\</span><span class="st">sigma^2 </span><span class="sc">\\</span><span class="st">)&quot;</span>),</span>
-<span id="cb272-5"><a href="3.11-tables-1.html#cb272-5" tabindex="-1"></a>  <span class="at">Boeing =</span> <span class="fu">c</span>(<span class="fl">0.149</span>, <span class="fl">0.069</span>),</span>
-<span id="cb272-6"><a href="3.11-tables-1.html#cb272-6" tabindex="-1"></a>  <span class="at">Microsoft =</span> <span class="fu">c</span>(<span class="fl">0.331</span>, <span class="fl">0.136</span>)</span>
-<span id="cb272-7"><a href="3.11-tables-1.html#cb272-7" tabindex="-1"></a>)</span>
-<span id="cb272-8"><a href="3.11-tables-1.html#cb272-8" tabindex="-1"></a>ht <span class="ot">&lt;-</span> <span class="fu">as_hux</span>(df)</span>
-<span id="cb272-9"><a href="3.11-tables-1.html#cb272-9" tabindex="-1"></a>ht <span class="ot">&lt;-</span> ht <span class="sc">%&gt;%</span> </span>
-<span id="cb272-10"><a href="3.11-tables-1.html#cb272-10" tabindex="-1"></a>  <span class="fu">insert_row</span>(<span class="st">&quot;</span><span class="sc">\\</span><span class="st">( </span><span class="sc">\\</span><span class="st">rho </span><span class="sc">\\</span><span class="st">)(Boeing, Microsoft)&quot;</span>, <span class="sc">-</span><span class="fl">0.008</span>, <span class="st">&quot;&quot;</span>, <span class="at">after=</span><span class="dv">3</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb272-11"><a href="3.11-tables-1.html#cb272-11" tabindex="-1"></a>  <span class="fu">merge_cells</span>(<span class="dv">4</span>, <span class="dv">2</span><span class="sc">:</span><span class="dv">3</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb272-12"><a href="3.11-tables-1.html#cb272-12" tabindex="-1"></a>  <span class="fu">set_align</span>(<span class="dv">4</span>, <span class="dv">2</span><span class="sc">:</span><span class="dv">3</span>, <span class="st">&quot;center&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb272-13"><a href="3.11-tables-1.html#cb272-13" tabindex="-1"></a>  <span class="fu">set_bold</span>(<span class="dv">1</span>, everywhere, <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb272-14"><a href="3.11-tables-1.html#cb272-14" tabindex="-1"></a>  <span class="fu">set_width</span>(<span class="fl">0.6</span>)</span>
-<span id="cb272-15"><a href="3.11-tables-1.html#cb272-15" tabindex="-1"></a></span>
-<span id="cb272-16"><a href="3.11-tables-1.html#cb272-16" tabindex="-1"></a><span class="co"># print_latex(ht) # uncomment this line if printing as LaTeX table</span></span>
-<span id="cb272-17"><a href="3.11-tables-1.html#cb272-17" tabindex="-1"></a><span class="fu">print_html</span>(ht) <span class="co"># print as HTML table</span></span></code></pre></div>
+<div class="sourceCode" id="cb274"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb274-1"><a href="3.11-tables-1.html#cb274-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb274-2"><a href="3.11-tables-1.html#cb274-2" tabindex="-1"></a><span class="fu">library</span>(huxtable)</span>
+<span id="cb274-3"><a href="3.11-tables-1.html#cb274-3" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb274-4"><a href="3.11-tables-1.html#cb274-4" tabindex="-1"></a>  <span class="at">Parameter =</span> <span class="fu">c</span>(<span class="st">&quot;</span><span class="sc">\\</span><span class="st">( </span><span class="sc">\\</span><span class="st">mu </span><span class="sc">\\</span><span class="st">)&quot;</span>, <span class="st">&quot;</span><span class="sc">\\</span><span class="st">( </span><span class="sc">\\</span><span class="st">sigma^2 </span><span class="sc">\\</span><span class="st">)&quot;</span>),</span>
+<span id="cb274-5"><a href="3.11-tables-1.html#cb274-5" tabindex="-1"></a>  <span class="at">Boeing =</span> <span class="fu">c</span>(<span class="fl">0.149</span>, <span class="fl">0.069</span>),</span>
+<span id="cb274-6"><a href="3.11-tables-1.html#cb274-6" tabindex="-1"></a>  <span class="at">Microsoft =</span> <span class="fu">c</span>(<span class="fl">0.331</span>, <span class="fl">0.136</span>)</span>
+<span id="cb274-7"><a href="3.11-tables-1.html#cb274-7" tabindex="-1"></a>)</span>
+<span id="cb274-8"><a href="3.11-tables-1.html#cb274-8" tabindex="-1"></a>ht <span class="ot">&lt;-</span> <span class="fu">as_hux</span>(df)</span>
+<span id="cb274-9"><a href="3.11-tables-1.html#cb274-9" tabindex="-1"></a>ht <span class="ot">&lt;-</span> ht <span class="sc">%&gt;%</span> </span>
+<span id="cb274-10"><a href="3.11-tables-1.html#cb274-10" tabindex="-1"></a>  <span class="fu">insert_row</span>(<span class="st">&quot;</span><span class="sc">\\</span><span class="st">( </span><span class="sc">\\</span><span class="st">rho </span><span class="sc">\\</span><span class="st">)(Boeing, Microsoft)&quot;</span>, <span class="sc">-</span><span class="fl">0.008</span>, <span class="st">&quot;&quot;</span>, <span class="at">after=</span><span class="dv">3</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb274-11"><a href="3.11-tables-1.html#cb274-11" tabindex="-1"></a>  <span class="fu">merge_cells</span>(<span class="dv">4</span>, <span class="dv">2</span><span class="sc">:</span><span class="dv">3</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb274-12"><a href="3.11-tables-1.html#cb274-12" tabindex="-1"></a>  <span class="fu">set_align</span>(<span class="dv">4</span>, <span class="dv">2</span><span class="sc">:</span><span class="dv">3</span>, <span class="st">&quot;center&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb274-13"><a href="3.11-tables-1.html#cb274-13" tabindex="-1"></a>  <span class="fu">set_bold</span>(<span class="dv">1</span>, everywhere, <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb274-14"><a href="3.11-tables-1.html#cb274-14" tabindex="-1"></a>  <span class="fu">set_width</span>(<span class="fl">0.6</span>)</span>
+<span id="cb274-15"><a href="3.11-tables-1.html#cb274-15" tabindex="-1"></a></span>
+<span id="cb274-16"><a href="3.11-tables-1.html#cb274-16" tabindex="-1"></a><span class="co"># print_latex(ht) # uncomment this line if printing as LaTeX table</span></span>
+<span id="cb274-17"><a href="3.11-tables-1.html#cb274-17" tabindex="-1"></a><span class="fu">print_html</span>(ht) <span class="co"># print as HTML table</span></span></code></pre></div>
 <style>
 .huxtable {
   border-collapse: collapse;
@@ -1879,7 +1901,7 @@ Microsoft
 <li><p><code>set_width(value)</code> set the width of the table. Default html tables are 100% width.</p>
 <p>A numeric width is treated as a proportion of f the surrounding block width (HTML) or text width (LaTeX).</p></li>
 <li><p><code>col_width(ht, value)</code> set relative widths for each column.</p>
-<div class="sourceCode" id="cb273"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb273-1"><a href="3.11-tables-1.html#cb273-1" tabindex="-1"></a><span class="fu">col_width</span>(jams) <span class="ot">&lt;-</span> <span class="fu">c</span>(.<span class="dv">2</span>, .<span class="dv">8</span>)</span></code></pre></div></li>
+<div class="sourceCode" id="cb275"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb275-1"><a href="3.11-tables-1.html#cb275-1" tabindex="-1"></a><span class="fu">col_width</span>(jams) <span class="ot">&lt;-</span> <span class="fu">c</span>(.<span class="dv">2</span>, .<span class="dv">8</span>)</span></code></pre></div></li>
 <li><p><strong>Math symbols</strong> works fine for bookdown, but not for xaringan presentations.</p>
 <ul>
 <li>By default, huxtable will escape special characters in your cells.
@@ -1898,18 +1920,18 @@ Microsoft
 <li>Set code chunk option <code>results='asis'</code> to print the table as is.</li>
 <li>Escape backslash <code>\</code> with another backslash <code>\\</code>.</li>
 </ul>
-<div class="sourceCode" id="cb274"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb274-1"><a href="3.11-tables-1.html#cb274-1" tabindex="-1"></a><span class="co"># set escape_contents to FALSE</span></span>
-<span id="cb274-2"><a href="3.11-tables-1.html#cb274-2" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb274-3"><a href="3.11-tables-1.html#cb274-3" tabindex="-1"></a>  <span class="at">Parameter =</span> <span class="fu">c</span>(<span class="st">&quot;$</span><span class="sc">\\</span><span class="st">mu$&quot;</span>, <span class="st">&quot;$</span><span class="sc">\\</span><span class="st">sigma^2$&quot;</span>),</span>
-<span id="cb274-4"><a href="3.11-tables-1.html#cb274-4" tabindex="-1"></a>  <span class="at">Boeing =</span> <span class="fu">c</span>(<span class="fl">0.149</span>, <span class="fl">0.069</span>),</span>
-<span id="cb274-5"><a href="3.11-tables-1.html#cb274-5" tabindex="-1"></a>  <span class="at">Microsoft =</span> <span class="fu">c</span>(<span class="fl">0.331</span>, <span class="fl">0.136</span>)</span>
-<span id="cb274-6"><a href="3.11-tables-1.html#cb274-6" tabindex="-1"></a>)</span>
-<span id="cb274-7"><a href="3.11-tables-1.html#cb274-7" tabindex="-1"></a>ht <span class="ot">&lt;-</span> <span class="fu">as_hux</span>(df) <span class="sc">%&gt;%</span> </span>
-<span id="cb274-8"><a href="3.11-tables-1.html#cb274-8" tabindex="-1"></a>  <span class="fu">set_escape_contents</span>(<span class="cn">FALSE</span>) <span class="sc">%&gt;%</span>    <span class="co"># turn off escaping special characters</span></span>
-<span id="cb274-9"><a href="3.11-tables-1.html#cb274-9" tabindex="-1"></a>  <span class="fu">set_align</span>(<span class="st">&quot;center&quot;</span>) <span class="sc">%&gt;%</span>           <span class="co"># center align all cells</span></span>
-<span id="cb274-10"><a href="3.11-tables-1.html#cb274-10" tabindex="-1"></a>  <span class="fu">set_bold</span>(<span class="dv">1</span>, everywhere, <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span> <span class="co"># bold header row</span></span>
-<span id="cb274-11"><a href="3.11-tables-1.html#cb274-11" tabindex="-1"></a>  <span class="fu">set_width</span>(<span class="fl">0.6</span>)                    <span class="co"># set table width</span></span>
-<span id="cb274-12"><a href="3.11-tables-1.html#cb274-12" tabindex="-1"></a><span class="fu">print_html</span>(ht)</span></code></pre></div>
+<div class="sourceCode" id="cb276"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb276-1"><a href="3.11-tables-1.html#cb276-1" tabindex="-1"></a><span class="co"># set escape_contents to FALSE</span></span>
+<span id="cb276-2"><a href="3.11-tables-1.html#cb276-2" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb276-3"><a href="3.11-tables-1.html#cb276-3" tabindex="-1"></a>  <span class="at">Parameter =</span> <span class="fu">c</span>(<span class="st">&quot;$</span><span class="sc">\\</span><span class="st">mu$&quot;</span>, <span class="st">&quot;$</span><span class="sc">\\</span><span class="st">sigma^2$&quot;</span>),</span>
+<span id="cb276-4"><a href="3.11-tables-1.html#cb276-4" tabindex="-1"></a>  <span class="at">Boeing =</span> <span class="fu">c</span>(<span class="fl">0.149</span>, <span class="fl">0.069</span>),</span>
+<span id="cb276-5"><a href="3.11-tables-1.html#cb276-5" tabindex="-1"></a>  <span class="at">Microsoft =</span> <span class="fu">c</span>(<span class="fl">0.331</span>, <span class="fl">0.136</span>)</span>
+<span id="cb276-6"><a href="3.11-tables-1.html#cb276-6" tabindex="-1"></a>)</span>
+<span id="cb276-7"><a href="3.11-tables-1.html#cb276-7" tabindex="-1"></a>ht <span class="ot">&lt;-</span> <span class="fu">as_hux</span>(df) <span class="sc">%&gt;%</span> </span>
+<span id="cb276-8"><a href="3.11-tables-1.html#cb276-8" tabindex="-1"></a>  <span class="fu">set_escape_contents</span>(<span class="cn">FALSE</span>) <span class="sc">%&gt;%</span>    <span class="co"># turn off escaping special characters</span></span>
+<span id="cb276-9"><a href="3.11-tables-1.html#cb276-9" tabindex="-1"></a>  <span class="fu">set_align</span>(<span class="st">&quot;center&quot;</span>) <span class="sc">%&gt;%</span>           <span class="co"># center align all cells</span></span>
+<span id="cb276-10"><a href="3.11-tables-1.html#cb276-10" tabindex="-1"></a>  <span class="fu">set_bold</span>(<span class="dv">1</span>, everywhere, <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span> <span class="co"># bold header row</span></span>
+<span id="cb276-11"><a href="3.11-tables-1.html#cb276-11" tabindex="-1"></a>  <span class="fu">set_width</span>(<span class="fl">0.6</span>)                    <span class="co"># set table width</span></span>
+<span id="cb276-12"><a href="3.11-tables-1.html#cb276-12" tabindex="-1"></a><span class="fu">print_html</span>(ht)</span></code></pre></div>
 <style>
 .huxtable {
   border-collapse: collapse;
@@ -1978,23 +2000,23 @@ Microsoft
 <li>In xaringan presentations, table width is automatically adjusted to fit contents.</li>
 <li>In html output, table width is 100% by default.</li>
 </ul>
-<div class="sourceCode" id="cb275"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb275-1"><a href="3.11-tables-1.html#cb275-1" tabindex="-1"></a><span class="in">```{r results=&#39;asis&#39;} </span></span>
-<span id="cb275-2"><a href="3.11-tables-1.html#cb275-2" tabindex="-1"></a><span class="in"># Create huxtable and use special characters that will be converted to math</span></span>
-<span id="cb275-3"><a href="3.11-tables-1.html#cb275-3" tabindex="-1"></a><span class="in">df &lt;- data.frame(</span></span>
-<span id="cb275-4"><a href="3.11-tables-1.html#cb275-4" tabindex="-1"></a><span class="in">  Parameter = c(&quot;μ&quot;, &quot;σ²&quot;),</span></span>
-<span id="cb275-5"><a href="3.11-tables-1.html#cb275-5" tabindex="-1"></a><span class="in">  Boeing = c(0.149, 0.069),</span></span>
-<span id="cb275-6"><a href="3.11-tables-1.html#cb275-6" tabindex="-1"></a><span class="in">  Microsoft = c(0.331, 0.136)</span></span>
-<span id="cb275-7"><a href="3.11-tables-1.html#cb275-7" tabindex="-1"></a><span class="in">)</span></span>
-<span id="cb275-8"><a href="3.11-tables-1.html#cb275-8" tabindex="-1"></a><span class="in">ht &lt;- as_hux(df)</span></span>
-<span id="cb275-9"><a href="3.11-tables-1.html#cb275-9" tabindex="-1"></a><span class="in">ht &lt;- ht %&gt;% </span></span>
-<span id="cb275-10"><a href="3.11-tables-1.html#cb275-10" tabindex="-1"></a><span class="in">  insert_row(&quot;ρ(Boeing, Microsoft)&quot;, -0.008, &quot;&quot;, after=3) %&gt;% </span></span>
-<span id="cb275-11"><a href="3.11-tables-1.html#cb275-11" tabindex="-1"></a><span class="in">  merge_cells(4, 2:3) %&gt;% </span></span>
-<span id="cb275-12"><a href="3.11-tables-1.html#cb275-12" tabindex="-1"></a><span class="in">  set_width(0.6) %&gt;%</span></span>
-<span id="cb275-13"><a href="3.11-tables-1.html#cb275-13" tabindex="-1"></a><span class="in">  set_bold(1, everywhere, TRUE) %&gt;%</span></span>
-<span id="cb275-14"><a href="3.11-tables-1.html#cb275-14" tabindex="-1"></a><span class="in">  set_align(everywhere, everywhere, &quot;center&quot;)</span></span>
-<span id="cb275-15"><a href="3.11-tables-1.html#cb275-15" tabindex="-1"></a></span>
-<span id="cb275-16"><a href="3.11-tables-1.html#cb275-16" tabindex="-1"></a><span class="in">print_html(ht)</span></span>
-<span id="cb275-17"><a href="3.11-tables-1.html#cb275-17" tabindex="-1"></a><span class="in">```</span></span></code></pre></div>
+<div class="sourceCode" id="cb277"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb277-1"><a href="3.11-tables-1.html#cb277-1" tabindex="-1"></a><span class="in">```{r results=&#39;asis&#39;} </span></span>
+<span id="cb277-2"><a href="3.11-tables-1.html#cb277-2" tabindex="-1"></a><span class="in"># Create huxtable and use special characters that will be converted to math</span></span>
+<span id="cb277-3"><a href="3.11-tables-1.html#cb277-3" tabindex="-1"></a><span class="in">df &lt;- data.frame(</span></span>
+<span id="cb277-4"><a href="3.11-tables-1.html#cb277-4" tabindex="-1"></a><span class="in">  Parameter = c(&quot;μ&quot;, &quot;σ²&quot;),</span></span>
+<span id="cb277-5"><a href="3.11-tables-1.html#cb277-5" tabindex="-1"></a><span class="in">  Boeing = c(0.149, 0.069),</span></span>
+<span id="cb277-6"><a href="3.11-tables-1.html#cb277-6" tabindex="-1"></a><span class="in">  Microsoft = c(0.331, 0.136)</span></span>
+<span id="cb277-7"><a href="3.11-tables-1.html#cb277-7" tabindex="-1"></a><span class="in">)</span></span>
+<span id="cb277-8"><a href="3.11-tables-1.html#cb277-8" tabindex="-1"></a><span class="in">ht &lt;- as_hux(df)</span></span>
+<span id="cb277-9"><a href="3.11-tables-1.html#cb277-9" tabindex="-1"></a><span class="in">ht &lt;- ht %&gt;% </span></span>
+<span id="cb277-10"><a href="3.11-tables-1.html#cb277-10" tabindex="-1"></a><span class="in">  insert_row(&quot;ρ(Boeing, Microsoft)&quot;, -0.008, &quot;&quot;, after=3) %&gt;% </span></span>
+<span id="cb277-11"><a href="3.11-tables-1.html#cb277-11" tabindex="-1"></a><span class="in">  merge_cells(4, 2:3) %&gt;% </span></span>
+<span id="cb277-12"><a href="3.11-tables-1.html#cb277-12" tabindex="-1"></a><span class="in">  set_width(0.6) %&gt;%</span></span>
+<span id="cb277-13"><a href="3.11-tables-1.html#cb277-13" tabindex="-1"></a><span class="in">  set_bold(1, everywhere, TRUE) %&gt;%</span></span>
+<span id="cb277-14"><a href="3.11-tables-1.html#cb277-14" tabindex="-1"></a><span class="in">  set_align(everywhere, everywhere, &quot;center&quot;)</span></span>
+<span id="cb277-15"><a href="3.11-tables-1.html#cb277-15" tabindex="-1"></a></span>
+<span id="cb277-16"><a href="3.11-tables-1.html#cb277-16" tabindex="-1"></a><span class="in">print_html(ht)</span></span>
+<span id="cb277-17"><a href="3.11-tables-1.html#cb277-17" tabindex="-1"></a><span class="in">```</span></span></code></pre></div>
 <p>will be render as:</p>
 <style>
 .huxtable {

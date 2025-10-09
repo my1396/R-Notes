@@ -235,7 +235,7 @@ To show the `tibble` information (number of row/columns, and group information) 
 ```yaml
 ---
 title: "Use caption with df_print set to page"
-date: "2025-10-07"
+date: "2025-10-09"
 output:
   bookdown::html_document2:
     df_print: paged
@@ -465,13 +465,50 @@ ___
 
 <span class="env-green">**Control structure of regression tables**</span>
 
-- `intercept.bottom = TRUE` place the intercept at the bottom of the table.
+- `intercept.bottom = TRUE` place the intercept at the bottom of the table. Defaults to `TRUE`.
 
 - `keep.stat = NULL`: control which model statistics should be kept in the table. Possible values include `"n"`, `"rsq"`, `"adj.rsq"`, `"f"`, `"ser"`, `"ll"`, `"aic"`, `"bic"`, and `"logLik"`. 
 
   - The default is `NULL`, which means that all available statistics will be included in the table.
   - To exclude all statistics, set `keep.stat = c()`.
   - To include only the number of observations and the adjusted R-squared, set `keep.stat = c("n", "adj.rsq")`.
+
+- <span class="env-green">`order = NULL`</span>: a vector of **regular expressions** (or of **numerical indexes**) that indicates the order in which variables will appear in the output.
+  
+  This options is useful when you want to rearrange the order of variables in the regression table. 
+  
+  The order of variables when you include <span class="env-green">interaction terms</span> might not be what you expect. In my case, the interaction term appears in between the main effects, while I want it to appear after all main effects.
+
+  You can use `stargazer(model)` to examine the default order and names of variables. Then you can specify the order you want. By default, intercept is at the bottom.
+
+  **Two ways to specify the order:**
+
+  - Regular expression to match variable names.
+    
+    In order to exactly match the variable names, you can use
+
+    ```r
+    vars.order <- c("x1", "x2", "x3", "x3:x1")
+    stargazer(fit1, fit2, fit3, align = TRUE,
+      table.placement = "H", omit.stat = c("f", "ser"), 
+      order = paste0("^", vars.order , "$")
+      )
+    ```
+    
+    Note that `^` and `$` are used to exact match the whole variable name. A character vector of all variable names won't work, as `order` expects regular expressions.
+
+    A <span class="env-orange">caveat</span> is that you might have some issues if the variable names include special characters, e.g.: "." or "*".
+  
+  - Numerical indexes of the variables in the model summary.
+    
+    ```r
+    stargazer(fit1, fit2, fit3, align = TRUE,
+      table.placement = "H", omit.stat = c("f", "ser"), 
+      order = c(2,3,1,4,5)
+      )
+    ```
+    
+    This approach is symbol, but less readable.
 
 ___
 
@@ -700,7 +737,7 @@ print(xtab, type = "html", include.rownames = TRUE)
 ```
 
 <!-- html table generated in R 4.5.1 by xtable 1.8-4 package -->
-<!-- Tue Oct  7 16:16:19 2025 -->
+<!-- Thu Oct  9 09:06:16 2025 -->
 <table border=1>
 <caption align="bottom"> Asset Parameters </caption>
 <tr> <th>  </th> <th> Asset </th> <th> Mu </th> <th> Sigma </th>  </tr>
@@ -720,7 +757,7 @@ print(xtab_model, type = "html", digits = 3)
 ```
 
 <!-- html table generated in R 4.5.1 by xtable 1.8-4 package -->
-<!-- Tue Oct  7 16:16:19 2025 -->
+<!-- Thu Oct  9 09:06:16 2025 -->
 <table border=1>
 <caption align="bottom"> Regression of mpg on hp and wt </caption>
 <tr> <th>  </th> <th> Estimate </th> <th> Std. Error </th> <th> t value </th> <th> Pr(&gt;|t|) </th>  </tr>

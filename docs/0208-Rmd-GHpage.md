@@ -149,7 +149,7 @@ A full example of `index.Rmd`. You may use this when you want to write complex c
 ---
 title: "R Notes"
 author: "Menghan Yuan"
-date: "2025-10-07"
+date: "2025-10-09"
 site: rmarkdown::default_site
 documentclass: book
 bibliography: [book.bib, packages.bib]

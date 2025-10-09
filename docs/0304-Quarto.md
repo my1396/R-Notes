@@ -9,13 +9,16 @@ Run Quarto in VS Code: <https://quarto.org/docs/tools/vscode/index.html>
 
 Quarto is based on **Pandoc** and uses its variation of markdown as its underlying document syntax. See the full documentation of [Pandoc's Markdown](https://pandoc.org/MANUAL.html#pandocs-markdown) for more in-depth documentation.
 
+[**Cell Execution**](https://quarto.org/docs/get-started/computations/vscode.html#cell-execution)
 
-Run Cell
+| Quarto Command                         | Keyboard Shortcut |
+| -------------------------------------- | ----------------- |
+| <span class="env-green">Run Current Cell</span>        | ⇧ + ⌘ + Enter     |
+| Run Current Cell and Jump to Next Cell | ⇧ + Enter         |
+| Run Selected Line(s)                   | ⌘ + Enter         |
+| Run All Cells                          | ⌥ + ⌘ + R         |
 
-| Quarto Command       | Keyboard Shortcut |
-| -------------------- | ----------------- |
-| Run Current Cell     | ⇧ + Enter         |
-| Run Selected Line(s) | ⌘ + Enter         |
+--------------------------------------------------------------------------------
 
 
 Host Quarto on [GitHub Pages](https://quarto.org/docs/publishing/github-pages.html).
@@ -36,6 +39,7 @@ touch .nojekyll
 
 - Note that `.nojekyll`'s location is different than that of `bookdown`, which is at `/docs` folder.
 
+--------------------------------------------------------------------------------
 
 #### Only re-render changed files
 
@@ -60,15 +64,15 @@ There are drawbacks: some files may not be updated in time.
 
 Strengths of Quarto:
 
-- hoverable citations and cross-references, easy to read 
+- hoverable citations and cross-references, easy to read
 - [easy subplots](https://quarto.org/docs/authoring/cross-references.html#subfigures)
 
 
-Weakness of Quarto:
+Weaknesses of Quarto:
 
 - slow compared to `Bookdown`
   
-  Workaround: 
+  <span class="env-green">**Workaround:**</span>
   
   - Use `quarto preview` in terminal to enable live preview
   - Set `freeze: auto` in `_quarto.yml` to only re-render changed files.
@@ -218,11 +222,11 @@ If you are using the Knitr cell execution engine, you can specify default docume
 title:"My Document"
 format: html
 knitr:
-opts_chunk:
-collapse:true
-comment:"#>"
-R.options:
-knitr.graphics.auto_pdf:true
+  opts_chunk:
+    collapse: true
+    comment: "#>"
+    R.options:
+      knitr.graphics.auto_pdf:true
 ---
 ```
 
@@ -230,7 +234,9 @@ You can additionally specify global Knitr options using `opts_knit`.
 
 The `R.options` chunk option is a convenient way to define R options that are set temporarily via [`options()`](https://rdrr.io/r/base/options.html) before the code chunk execution, and immediately restored afterwards.
 
-In the example above, we establish default Knitr chunk options for a single document. You can also add shared `knitr`options to a project-wide `_quarto.yml` file or a project-directory scoped `_metadata.yml` file.
+In the example above, we establish default Knitr chunk options for a single document. You can also add shared `knitr` options to a project-wide `_quarto.yml` file or a project-directory scoped `_metadata.yml` file.
+
+ref: <https://quarto.org/docs/computations/execution-options.html#knitr-options>
 
 --------------------------------------------------------------------------------
 
