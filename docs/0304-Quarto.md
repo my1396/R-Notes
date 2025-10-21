@@ -13,10 +13,10 @@ Quarto is based on **Pandoc** and uses its variation of markdown as its underlyi
 
 | Quarto Command                         | Keyboard Shortcut |
 | -------------------------------------- | ----------------- |
-| <span class="env-green">Run Current Cell</span>        | ⇧ + ⌘ + Enter     |
+| <span class="env-green">Run Current Cell</span>    | ⇧ + ⌘ + Enter     |
 | Run Current Cell and Jump to Next Cell | ⇧ + Enter         |
 | Run Selected Line(s)                   | ⌘ + Enter         |
-| Run All Cells                          | ⌥ + ⌘ + R         |
+| <span class="env-green">Run All Cells</span>       | ⌥ + ⌘ + R         |
 
 --------------------------------------------------------------------------------
 
