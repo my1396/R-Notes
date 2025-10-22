@@ -427,7 +427,7 @@ A: Run `hgd()` in R and get the url to the viewer. Use the command palette to ru
 
 - <span class="env-green">`hgd_close()`</span> will clear all plots.
   
-  Note that this won't close the viewer automatically for you. You can close the viewer manually by clicking the "x" button on the top right corner of the viewer window.
+  Note that this will <span class="env-orange">**NOT**</span> close the viewer automatically for you. You can close the viewer manually by clicking the "x" button on the top right corner of the viewer window.
 
   But the next time you call `plot`, you will see all historical plots are gone.
 
