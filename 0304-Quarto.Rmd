@@ -359,7 +359,7 @@ header-includes: |
 --------------------------------------------------------------------------------
 
 Q: How to print dollar sign in pdf output?  
-A: `qmd` supports `$` directly. No need to escape. 
+A: `qmd` supports `$` directly. No need to escape. If it fails, try `\$` or `\\$`.
 
 --------------------------------------------------------------------------------
 
