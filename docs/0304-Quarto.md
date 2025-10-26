@@ -1417,7 +1417,7 @@ Quarto uses Pandoc’s Markdown, which supports a variety of ordered list types,
 
 These list markers / labels need to be followed by a period and a space. Optionally, list markers may be enclosed in parentheses or followed by a single right-parentheses or period. 
 
-Special list marker `@` can be used for sequentially numbered examples. The benefit of using `@` is that when the list is broken up by other content, the numbering will continue correctly.
+<span class="env-green">Special list marker `@`</span> can be used for sequentially numbered examples. The benefit of using `@` is that when the list is broken up by other content, the numbering will continue correctly.
 
 ````markdown
 (@)  My first example will be numbered (1).
@@ -1427,6 +1427,37 @@ Explanation of examples. ← This breaks list structure.
 
 (@)  My third example will be numbered (3).
 ````
+
+--------------------------------------------------------------------------------
+
+Q: How to **start numbering at a number other than 1**?  
+A: Simply <span class="env-green">explicitly restart the list at the number you want</span>.
+
+```markdown
+1. item 1
+1. item 2
+
+```
+Code block
+```
+
+3. item 3
+1. item 4
+```
+
+will be rendered as:
+
+ > 1. item 1
+ > 1. item 2
+ > 
+ > ```
+ > Code block
+ > ```
+ > 
+ > 3. item 3
+ > 1. item 4
+
+ref: <https://stackoverflow.com/a/78497776>
 
 --------------------------------------------------------------------------------
 
