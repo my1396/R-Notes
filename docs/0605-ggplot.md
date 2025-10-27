@@ -472,19 +472,28 @@ We
 
 
 
-**Continuous scales for data (customize x & y axis)** 
+### Continuous scales for data
 
-Define your own axis preferences, breaks, limits, labels, ...
+**Customize x & y axis:** Define your own axis preferences, breaks, limits, labels, ...
 
 `scale_x_continuous()` and `scale_y_continuous()` are the default scales for continuous x and y aesthetics. There are three variants that set the `trans` argument for commonly used transformations:  `scale_*_log10()`, `scale_*_sqrt()` and `scale_*_reverse()`.
 
-`scale_x_continuous(name = waiver(),breaks = waiver(),
-  minor_breaks = waiver(),n.breaks = NULL,labels = waiver(),
-  limits = NULL,expand = waiver(),oob = censor,
-  na.value = NA_real_, trans = "identity",
-  guide = waiver(),position = "bottom",
-  sec.axis = waiver()
-)`
+
+<code style="white-space: pre; display: inline;">scale_x_continuous(name = waiver(),
+&nbsp;&nbsp;&nbsp;&nbsp;breaks = waiver(),
+&nbsp;&nbsp;&nbsp;&nbsp;minor_breaks = waiver(),
+&nbsp;&nbsp;&nbsp;&nbsp;n.breaks = NULL,
+&nbsp;&nbsp;&nbsp;&nbsp;labels = waiver(),
+&nbsp;&nbsp;&nbsp;&nbsp;limits = NULL,
+&nbsp;&nbsp;&nbsp;&nbsp;expand = waiver(),
+&nbsp;&nbsp;&nbsp;&nbsp;oob = censor,
+&nbsp;&nbsp;&nbsp;&nbsp;na.value = NA_real_,
+&nbsp;&nbsp;&nbsp;&nbsp;trans = "identity",
+&nbsp;&nbsp;&nbsp;&nbsp;guide = waiver(),
+&nbsp;&nbsp;&nbsp;&nbsp;position = "bottom",
+&nbsp;&nbsp;&nbsp;&nbsp;sec.axis = waiver()
+)</code>
+
 
 -   <span class="env-green">**`limits` **</span>
     -   `NULL` to use the default scale range.
@@ -497,7 +506,9 @@ Define your own axis preferences, breaks, limits, labels, ...
     -   `waiver()` for the default breaks computed by the [transformation object](https://scales.r-lib.org/reference/trans_new.html)
     -   A numeric vector of positions. Note that the vector will be cut off if the range exceeds the data coverage.
     -   A function that takes the limits as input and returns breaks as output (e.g., a function returned by `scales::extended_breaks()`). Also accepts rlang [lambda](https://rlang.r-lib.org/reference/as_function.html) function notation.
-
+- <span class="env-green">`expand`</span> add some padding around the data to ensure that they are placed some distance away from the axes.
+  
+  `expand = expansion(mult = c(0.1, 0.1))` adds 10% padding on both sides of the axis. The defaults are to expand the scale by 5% on each side for continuous variables, and by 0.6 units on each side for discrete variables.
 
 
 Other position scales: `scale_x_binned()`, `scale_x_date()`, `scale_x_discrete()`.
