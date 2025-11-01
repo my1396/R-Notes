@@ -37,7 +37,7 @@ If you run **`rmarkdown::render_site()`** (which is the function triggered by th
 
 1. All of the `*.Rmd` and `*.md` files in the root website directory will be rendered into HTML. 
 
-   Note that Markdown files beginning with `_` are not rendered (this is a convention to designate files that are to be included by top level Rmd documents as child documents).
+   Note that <span class="env-green">Markdown <span style="font-weight: bold;">files/folders</span> beginning with `_` are not rendered</span> (this is a convention to designate files that are to be included by top level Rmd documents as child documents).
 
    If you want to exclude certain files/folders from being rendered, put an underscore (`_`) before the file or folder name (e.g., `_private.Rmd` or `_private_folder/`).
 
@@ -56,6 +56,8 @@ rmarkdown::render_site()
 # render a single file only
 rmarkdown::render_site("about.Rmd")
 ```
+
+ref: [rmarkdown's site generator, R Markdown: The Definitive Guide](https://bookdown.org/yihui/rmarkdown/rmarkdown-site.html#rmarkdown-site)
 
 --------------------------------------------------------------------------------
 
@@ -149,7 +151,7 @@ A full example of `index.Rmd`. You may use this when you want to write complex c
 ---
 title: "R Notes"
 author: "Menghan Yuan"
-date: "2025-10-26"
+date: "2025-10-31"
 site: rmarkdown::default_site
 documentclass: book
 bibliography: [book.bib, packages.bib]

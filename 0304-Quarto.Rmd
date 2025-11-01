@@ -454,6 +454,30 @@ See [HERE](https://quarto.org/docs/journals/templates.html) for an overview of h
 
 --------------------------------------------------------------------------------
 
+#### Add Appendices
+
+```tex
+\newpage
+
+# Appendices {.unnumbered}
+
+\appendix
+\renewcommand{\thesubsection}{\Alph{subsection}}
+\setcounter{table}{0}
+\renewcommand{\thetable}{\thesection\arabic{table}}
+\setcounter{figure}{0}
+\renewcommand{\thefigure}{\thesection\arabic{figure}}
+
+## Optimal Portfolio R Code
+```
+
+- `# Appendices {.unnumbered}` creates a title for the appendices section without a section number.
+- Use `\appendix` to reset the section counter to 0 and `\renewcommand{\thesubsection}{\Alph{subsection}}` to change the section numbering to letters (A, B, C, ...).
+- Similarly, reset the table and figure counters and change their numbering to include the section letter "A", "B", ... as a prefix.
+- Finally, use `## Optimal Portfolio R Code` to create an appendix section for your first appendix. The `# Appendices` will be level one heading, and `## Optimal Portfolio R Code` will be level two heading under the appendices section.
+
+--------------------------------------------------------------------------------
+
 ### HTML Theming
 
 One simple theme
@@ -589,14 +613,15 @@ This will provide live preview of the document in your web browser. Newest chang
   $quarto render 0304-Quarto.Rmd --to html
   ```
 
-- Quarto Preview: display output in the **external web browser**.
+- <span class="env-green">Quarto Preview</span>: display output in the **external web browser**.
 
   ```bash
   $ quarto preview 0304-Quarto.Rmd # all formats
   $ quarto preview 0304-Quarto.Rmd --to html # specific format
   ```
 
-  Note that `quarto render` can be used to Rmd files too. 
+  - Note that `quarto render` can be used to Rmd files too.
+  - Run `quarto preview help` to see its complete syntax.
 
 - You can also render a Quarto project using:
 
@@ -604,6 +629,30 @@ This will provide live preview of the document in your web browser. Newest chang
   $quarto render --to html
   ```
 
+`quarto preview [file] [args]` first provide file name, then additional arguments.
+
+Supported arguments:
+
+- `--port` Suggested port to listen on (defaults to random value between 3000 and 8000).
+- `--host` Hostname to bind to (defaults to 127.0.0.1)
+- `--no-browser` Use <span class="env-green">internal viewer</span>, do not open external browser.
+- `--no-watch-inputs` flag specifically prevents Quarto from automatically re-rendering the output when changes are detected in your input source files (e.g., `.qmd` files). This means that if you edit and save your `.qmd` file, the preview in your browser will not automatically update.
+  
+  To see changes in the preview when using this flag, you would need to manually stop the `quarto preview` process and restart it, or explicitly trigger a re-render using `quarto render`.
+
+  Even when using this flag, Quarto will still print the message "Watching file for changes." This means that Quarto is still watching CSS files and `_quarto.yml` for changes, but not the main input files.
+
+`quarto preview [file] --port 7200` Previewing website using a specific port. This is useful when your want to preview multiple documents simultaneously.
+
+The default "internal" viewer in VS Code opens only one document at a time. Can use [Simple Browser Multi Extension](https://marketplace.visualstudio.com/items?itemName=fermelone.simple-browser-multi) to open multiple internal browsers in VS Code.
+
+**Steps:**
+
+1. Install Simple Browser Multi Extension.
+2. Use command `quarto preview 0304-Quarto.Rmd --port 7200` in terminal to start live preivew. This will open the preview in your <span class="env-green">external web browser</span>.
+   
+   If you don't want automatic re-rendering when you save the file, add `--no-watch-inputs` flag.
+3. In VS Code, use command palette `Simple Browser Multi: Show` and enter the url in Step 2 to open the preview in the internal browser.
 
 --------------------------------------------------------------------------------
 
@@ -1333,7 +1382,9 @@ crossref:
 
 --------------------------------------------------------------------------------
 
-### Tables in Latex
+### Tables
+
+**Tables in Latex**
 
 Tables in raw LaTeX can be included in Quarto documents using fenced divs or <span class="env-green">**code chunks**</span> with `{=latex}`. 
 
@@ -1364,8 +1415,84 @@ This is a table caption.
 For cross-reference: See @tbl-1.
 ````
 
+Alternatively, use LaTeX syntax entirely as follows.
+
+````latex
+The regression results are summarized in Table \ref{tbl-regression-results}.
+
+```{=latex} `r ''`
+\begin{table}
+\centering
+\caption{Regression Results: CAPM vs. Fama-French 3-Factor Model}
+\label{tbl-regression-results}
+\begin{tabular}{l c r}
+\hline
+Header 1 & Header 2 & Header 3 \\
+\hline
+Row 1 Col 1 & Row 1 Col 2 & Row 1 Col 3 \\
+Row 2 Col 1 & Row 2 Col 2 & Row 2 Col 3 \\
+\hline
+\end{tabular}
+\end{table}
+```
+````
+
+Q: How to use `[H]` to force table placement in qmd?  
+A: Add the following to the preamble file:
+
+```latex
+\usepackage{float} % for [H] placement specifier
+
+% Make all tables use [H] placement by default
+\makeatletter
+\renewenvironment{table}[1][H]{%
+  \@float{table}[#1]%
+}{%
+  \end@float
+}
+\makeatother
+```
+
+
+
 ref: <https://github.com/quarto-dev/quarto-cli/discussions/6734#discussioncomment-6919437>
 
+--------------------------------------------------------------------------------
+
+**Tables in Markdown**
+
+You can create tables using standard Markdown syntax.
+
+```markdown
+| Col1 | Col2 | Col3 |
+| ---- | ---- | ---- |
+| A    | B    | C    |
+| E    | F    | G    |
+| A    | G    | G    |
+
+: My Caption {#tbl-letters .striped .hover}
+
+See @tbl-letters for the table.
+```
+
+- Captions are added using [Pandoc table syntax](https://pandoc.org/demo/example33/8.9-tables.html): `:␣Caption text`.
+- Table labels and attributes can be added within curly braces `{}` after the caption.
+  
+  If your table does not have a caption, you can still add attributes by placing them directly after `:␣`
+- You can also explicitly specify columns widths using the `tbl-colwidths` attribute or document-level option.
+  If you have a table with two columns, and want to set 1st col to 25% and 2nd col to 75% of the table width, you can do:
+
+  ```markdown
+  | fruit  | price  |
+  |--------|--------|
+  | apple  | 2.05   |
+  | pear   | 1.37   |
+  | orange | 3.09   |
+
+  : Fruit prices {tbl-colwidths="[25, 75]"}
+  ```
+
+ref: <https://quarto.org/docs/authoring/tables.html#markdown-tables>
 
 --------------------------------------------------------------------------------
 
