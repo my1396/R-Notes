@@ -9,7 +9,7 @@
   - [[GSM] Getting Started with Stata for Mac](https://www.stata.com/manuals/gsm1.pdf) 
 
 
-`help <cmd_name>`: Get help for a command in Stata console.
+<span class="env-green">`help <cmd_name>`</span>: Get help for a command in Stata console.
 
 Overview of [Documentation](https://www.stata.com/features/documentation/):
 
@@ -148,7 +148,10 @@ Our suggestion is that you keep your do files short enough that when you're work
 
 ### Comments {.unlisted .unnumbered}
 
-- `//` for single line comment; rest-of-line comment;
+- `//` for single line comment; rest-of-line comment; it can be put at any place. 
+  
+  Commonly used after a command to denote comments on that line.
+- `*` for single line comments; the comment line must begin with `*`;
 - `/* */` for multiple line comment; enclosed comment;
 - `//#` or `**#` add a bookmark
 - `///` line-join indicator
@@ -292,7 +295,7 @@ The last semicolon in the above example is unnecessary but allowed.
 
 --------------------------------------------------------------------------------
 
-#### Types and Declarations 
+### Types and Declarations 
 
 A variable's type can be described in two perspectives:
 
@@ -321,17 +324,21 @@ A variable's type can be described in two perspectives:
 
 where square brackets distinguish optional qualifiers and options from required ones. In this diagram, 
 
-- `varlist` denotes a list of variable names, 
+- `varlist` denotes a *list* of variable names.
   
-    If no `varlist` appears, most commands assumes `_all`, which indicate all the variables in the dataset.
-    
+  Variables are separated by spaces.
+
+  Use `help varlist` for more details on how to specify `varlist`.
+
+  If no `varlist` appears, most commands assumes `_all`, which indicate all the variables in the dataset.
+  
 - `command` denotes a Stata command, 
 - `exp` denotes an algebraic expression, 
 - `range` denotes an observation range, 
 - `weight` denotes a weighting expression, and 
 - `options` denotes a list of options.
   
-    Note the comma `,` which separate the command's main body to options.
+    Note the comma <span class="env-green">`,` which separate the command's main body from options</span>.
 
 `by varlist` repeat a cmd for each subset of the data, grouped by `varlist`.
 
@@ -377,7 +384,7 @@ summarize marriage_rate divorce_rate in -5/l
 
 --------------------------------------------------------------------------------
 
-#### Create new variables
+### Create new variables
 
 ```stata
 gen variable = expression      // generate new variables
@@ -455,7 +462,7 @@ list [varlist] [if] [in] [, options]
 
 --------------------------------------------------------------------------------
 
-#### Refer to a range of variables
+### Refer to a range of variables
 
 How can I list, drop, and keep a consecutive set of variables without typing the names individually?
 
@@ -473,6 +480,36 @@ How can I list, drop, and keep a consecutive set of variables without typing the
 // combination of the two
 .  list var1 var3-var5 
 ```
+
+Wildcard characters:
+
+- `*` matches any string of characters, including no characters.
+- `?` matches any single character.
+  - `?*` matches one or more character
+  - `??*` matches two or more characters
+
+`var1-var2` specifies a range of variables, from the first variable to the second variable, in the order in which they appear in the dataset.
+
+A `numlist` is a list of numbers. It can include individual numbers, ranges of numbers, and increments.
+
+Common operators in `numlist`:
+
+- range: `start/end` means all numbers from `start` to `end`, inclusive.
+  - `start to end`
+  - `start:end`
+- specify increment
+
+  `start(increment)end` or `start[increment]end`
+
+Ex
+
+```
+1/3     // 1,2,3
+-5/-8   // -5,-6,-7,-8
+1 to 3  // 1,2,3
+1(2)9   // 1,3,5,7,9
+```
+
 
 If you want to consider reordering the variables in your dataset, `order, sequential` will put the variables in alphabetical order (and does mostly smart things with numeric suffixes).
 
@@ -598,7 +635,7 @@ ___
 
 `help fvvarlist` for documentation on factor variables.
 
-`i.varname` create **indicators** for each level of the variable
+`i.varname` create <span class="env-green">**indicators**</span> for each level of the variable
 
 ```stata
 // group=1 as base level
@@ -609,13 +646,25 @@ list group i3.group in 1/5
 regress y i.group 
 ```
 
-`c.varname` treat as **continuous**
+- `ib#.varname` specify the base level. `#` is the value of the base level.
+  
+  By default, the smallest level becomes the base level.
+
+  `i` might be omitted. `ib3.group` is equivalent to `b3.group`.
+
+`c.varname` treat as <span class="env-green">**continuous**</span>
 
 
+`#` cross, create an <span class="env-green">**interaction**</span> for each combination of the variables. Spaces are not allowed in interactions.
 
-`#` cross, create an **interaction** for each combination of the variables. Spaces are not allowed in interactions.
+```stata
+sex#c.age   // interaction between categorical variable `sex` and continuous variable `age`
 
-`##` factorial cross, a full factorial of the variables: standalone effects for each variable and an interaction
+c.age#c.age        // age squared
+c.age#c.age#c.age  // age cubed
+```
+
+`##` factorial cross, a full factorial of the variables: <span class="env-green">**standalone effects** for each variable and an **interaction**</span>
 
 ```stata
 group##sex
@@ -627,11 +676,12 @@ i.group i.sex i.group#i.sex
 
 `o.varname` **omit** a variable or indicator
 
-`o.age` means that the continuous variable `age` should be omitted, and
-`o2.group` means that the indicator for `group = 2` should be omitted.
+- `o.age` means that the continuous variable `age` should be omitted, and
+- `o2.group` means that the indicator for `group = 2` should be omitted.
 
 
 
+--------------------------------------------------------------------------------
 
 
 **Interaction Expansion**
@@ -672,9 +722,9 @@ By default, `xi` will create interaction variables starting with `_I`.  This can
 
 - Dummy variables are created automatically and are left in your dataset.
 
-	You can drop them by typing `drop I*`. You do not have to do this; each time you use `xi`, any automatically generated dummies with the same prefix as the one specified in the `prefix(string)` option, or `_I` by default, are *dropped and new ones are created*.
-	
-	
+  You can drop them by typing `drop I*`. You do not have to do this; each time you use `xi`, any automatically generated dummies with the same prefix as the one specified in the `prefix(string)` option, or `_I` by default, are *dropped and new ones are created*.
+
+--------------------------------------------------------------------------------
 
 **Use `xi` as a command prefix**
 
@@ -700,6 +750,8 @@ ___
 
 Three time series operators: `L.`, `D.` and `S.`.
 
+Basic syntax: `operator(order/spec).(varlist)`
+
 First convert variables to time variables by using `tsset`, then you can use the TS operators.
 
 ```stata
@@ -721,12 +773,16 @@ xtset country year
 | `L.`        | lag $x_{t-1}$                                                |
 | `L2.`       | 2-period lag $x_{t-2}$                                       |
 | `L(1/2).`   | a varlist $x_{t-1}$ and $x_{t-2}$                            |
+| `L(2/.).`   | from $x_{t-2} up to the maximum available lag                |
 | `F.`        | lead $x_{t+1}$                                               |
 | `F2.`       | 2-period lead $x_{t+2}$                                      |
 | `D.`        | difference $x_{t}-x_{t-1}$                                   |
 | `D2.`       | difference of difference $(x_{t}-x_{t-1})-(x_{t-1}-x_{t-2})$ |
 | `S.`        | "seasonal" difference $x_{t}-x_{t-1}$                        |
 | `S2.`       | lag-2 seasonal difference $x_{t}-x_{t-2}$                    |
+
+
+`2/.` the dot means "up to the **maximum available** lag/lead".
 
 Note that `D1.` = `S1.`, but `D2.` $\ne$ `S2.`.
 

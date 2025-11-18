@@ -152,7 +152,7 @@ What is `.Rprofile`?
 - User-level `.Rprofile` files live in the base of the user's <span style='color:#00CC66'>home directory</span>, and 
 - project-level `.Rprofile` files live in the base of the project directory. 
 
-R will source only one `.Rprofile` file.  If there is a project-level `.Rprofile`, the user-level file will <span style='color:#FF9900'>NOT</span> be sourced, i.e., the project-level config file take priority.
+R will source only one `.Rprofile` file.  If there is a project-level `.Rprofile`, the user-level file will <span style='color:#FF9900'>NOT</span> be sourced, i.e., the project-level config file takes priority.
 
 So if you have both a project-specific `.Rprofile` file and a user `.Rprofile` file that you want to use, you <span class="env-green">**explicitly source**</span> the user-level `.Rprofile` at the top of your project-level `.Rprofile` with `source("~/.Rprofile")`.
 

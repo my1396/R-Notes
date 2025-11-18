@@ -145,6 +145,79 @@ book:
 - The `references.qmd` file will include the generated bibliography (see [References](https://quarto.org/docs/books/book-structure.html#references) below for details).
 
 
+### Course Folder Structure
+
+<pre class="nowrap"><code>
+FIN5005 2025Fall/                            # Course root directory
+├── _quarto.yml                              # Quarto project configuration
+├── .Rprofile                                # R project configuration
+├── _chunk-opt.qmd                           # Global chunk options
+│
+├── 01_introduction.qmd                      # Lecture 1: Probability & Descriptive Stats
+├── 02_Data_Visualization.qmd                # Lecture 2: Data Visualization
+├── 03_Linear_Regression.qmd                 # Lecture 3: Linear Regression
+└── ...                                      # Additional lectures
+│
+├── _lab/                                    # Lab sessions
+│   ├── 01_Lab-1_CLT.qmd                     # Lab 1: Central Limit Theorem
+│   ├── 02_Lab-2_dummy-variable.ipynb        # Lab 2: Dummy Variables (Jupyter)
+│   └── ...                                  # Additional labs
+│
+├── _exam/                                   # Examination materials
+│   ├── 01_final_exam_2025Fall.qmd           # Examiner guidance (solutions visible)
+│   ├── 02_formula_sheet_2025Fall.qmd        # Statistical formulas reference
+│   ├── 03_example_questions.qmd             # Mock exam (20 MCQ + 1 open-ended)
+│   └── distribution_table_all.pdf           # Probability distribution tables
+│
+├── _quiz/                                   # Weekly quiz assignments
+│   ├── quiz_01_*.qmd                        # Quiz 1
+│   ├── quiz_02_*.qmd                        # Quiz 2
+│   ├── quiz_03_*.qmd                        # Quiz 3
+│   └── ...                                  # Additional quizzes
+│   
+├── _class_examples/                         # In-class examples
+│   ├── example_01_*.qmd                     # Example 1
+│   ├── example_02_*.qmd                     # Example 2
+│   └── ...                                  # Additional examples
+│
+├── filters/                                 # Project Quarto Lua filters
+│   ├── color-text.lua                       # Handles colored text (e.g., .blue class)
+│   └── unlisted-sections.lua                # Manages sections under unnumbered headings
+│
+├── latex/                                   # Project LaTeX configuration
+│   └── preamble.tex                         # Custom LaTeX preamble
+│
+├── images/                                  # Course figures and visualizations
+│   ├── Logistic_drill_sim.png               # Quiz 5 figure
+│   ├── hist_skewness.png                    # Distribution examples
+│   ├── QQ_plots.png                         # Q-Q plot examples
+│   └── ...                                  # Additional plots
+│
+├── Rscripts/                                # R utility functions
+│   └── fun_script.R                         # Helper functions for data analysis
+│
+├── data/                                    # Course datasets
+│   ├── asset_returns.csv                    # Example financial data
+│   └── ...                                  # Additional datasets
+│
+└── README.md                                # Project documentation
+
+_shared-resources/                           # Shared resources across courses/projects
+├── filters/                                 # Shared Lua filters
+│   ├── color-text.lua                       # Handles colored text (e.g., .blue class)
+│   └── unlisted-sections.lua                # Manages sections under unnumbered headings
+│
+└── latex/                                   # Shared LaTeX configuration
+    └── preamble.tex                         # Custom LaTeX preamble
+</code></pre>
+
+For more courses, follow the structure below:
+
+```markdown
+├── FIN5005 2025Fall/
+├── EK369E 2025Fall/
+└── _shared-resources/      # Shared resources across all courses
+```
 
 ___
 
@@ -475,6 +548,29 @@ See [HERE](https://quarto.org/docs/journals/templates.html) for an overview of h
 - Use `\appendix` to reset the section counter to 0 and `\renewcommand{\thesubsection}{\Alph{subsection}}` to change the section numbering to letters (A, B, C, ...).
 - Similarly, reset the table and figure counters and change their numbering to include the section letter "A", "B", ... as a prefix.
 - Finally, use `## Optimal Portfolio R Code` to create an appendix section for your first appendix. The `# Appendices` will be level one heading, and `## Optimal Portfolio R Code` will be level two heading under the appendices section.
+
+#### Add TOC
+
+To show TOC pane in pdf, you can either set in YAML or in preambles.
+
+- YAML
+  
+  ```yaml
+  hyperrefoptions:
+    - bookmarksopen=true
+    - bookmarksopenlevel=3
+  ```
+- preambles
+  
+  ```latex
+  % Configure hyperref for expanded bookmarks
+  % Note that this only works for Adobe Acrobat Reader
+  \usepackage{hyperref}
+  \hypersetup{
+    bookmarksopen = true, % show TOC with all the subtrees expanded
+    bookmarksopenlevel = 2 % level to which bookmarks are open
+  }
+  ```
 
 --------------------------------------------------------------------------------
 
@@ -920,8 +1016,10 @@ ___
 
 Use `$` delimiters for inline math and `$$` delimiters for display math.
 
-Note that for inline math, <span class="env-orange">**NO spaces** are allowed between the dollar signs and the math content.</span> Otherwise, it will <span class="env-orange">**NOT**</span> be recognized as math.
+❗️ Note that 
 
+- For inline math, <span class="env-orange">**NO spaces** are allowed between the dollar signs and the math content.</span> Otherwise, it will <span class="env-orange">**NOT**</span> be recognized as math.
+- When you load `tex_math_single_backslash` extension, you can use `\(` and `\[` as math delimiters; you can add spaces after `\(` or before `\)`.
 
 Examples:
 
@@ -959,11 +1057,13 @@ a^2 + b^2 = c^2
 \]
 ```
 
-`form`: Format to read from. Extensions can be individually enabled or disabled by appending +EXTENSION or -EXTENSION to the format name (e.g. `markdown+emoji`).
+`form`: Format to read from. Extensions can be individually enabled or disabled by appending +EXTENSION or -EXTENSION to the format name. E.g. `markdown+emoji` specifies the base format `markdown` with the support of the `emoji` extension.
 
 Extension: `tex_math_single_backslash`
 
-Causes anything between `\(` and `\)` to be interpreted as inline TeX math, and anything between `\[` and `\]` to be interpreted as display TeX math. Note: a drawback of this extension is that it precludes escaping `(` and `[`.
+This extension enables the use of `\(` and `\)` for inline math, and `\[` and `\]` for display math.
+
+**Note:** a drawback is that it precludes escaping `(` and `[`.
 
 
 
@@ -1061,7 +1161,7 @@ from: markdown+emoji
 
 For markdown formats that support text representations of emojis 😁 (e.g. `:grinning:`), the text version will be written. For other formats the literal emoji character will be written. Currently, the [gfm](https://quarto.org/docs/output-formats/gfm.html) and [hugo](https://quarto.org/docs/output-formats/hugo.html) (with `enableEmoji = true` in the site config) formats both support text representation of emojis.
 
-Note: This does <span class="env-orange">**NOT**</span> work for quarto pdf. Use twemoji approach instead. See below.
+Note: This does <span class="env-orange">**NOT**</span> work for quarto pdf. Use the `twemoji` approach instead. See below.
 
 --------------------------------------------------------------------------------
 
@@ -1144,6 +1244,8 @@ ref:
 ### Divs and Spans
 
 [Quarito Guide: Divs and Spans](https://quarto.org/docs/authoring/markdown-basics.html#sec-divs-and-spans)
+
+<span class="env-green">Within Divs, need to escape dollar signs for currency symbols: `\$`.</span> However, in regular body text, Quarto processes it automatically.
 
 You can add classes, attributes, and other identifiers to regions of content using Divs and Spans.
 
@@ -1392,6 +1494,7 @@ Tables in raw LaTeX can be included in Quarto documents using fenced divs or <sp
 - Use <span class="env-green">**fenced div**</span> to add labels `#tbl-xxx` for cross-referencing. Note the `#` is mandatory. Without it, the table cross reference will show as `??` in the output.
   - You can ignore the fenced divs if you don't need cross-reference.
 - Refer to the table using `@tbl-xxx`.
+- The table lable must begin with `tbl-` no matter whether you use div or latex approach for cross-references.
 
 ````latex
 ::: {#tbl-1}
@@ -1416,7 +1519,7 @@ This is a table caption.
 For cross-reference: See @tbl-1.
 ````
 
-Alternatively, use LaTeX syntax entirely as follows.
+**Alternatively**, use LaTeX syntax entirely as follows.
 
 ````latex
 The regression results are summarized in Table \ref{tbl-regression-results}.
@@ -1766,6 +1869,22 @@ path:
 
 You need to use `unless-meta="path.to.metadata"` to refer to your 
 user defined metadata key.
+
+Change file name based on metadata:
+
+- when `params.solution` is true, render to `quiz-solutions.pdf`
+- when `params.solution` is false, render to `quiz-question.pdf`
+- both files can be generated using `render-quiz.sh` script, see the shared library.
+- To support Quarto Preview, create symlinks that link solution/question files to `quiz.pdf`. The file name `quiz.pdf` is used in Quarto Preview to load files; it has to be consistent with `quiz.qmd`.
+
+Work flow:
+
+- When editing the quiz, use `quarto render` (⇧ + ⌘ + K) to preview the quiz.
+- When ready to generate the final files, run `render-quiz file.qmd` in terminal to generate files with specific suffixes (`_solution.pdf` or `_question.pdf`).
+
+
+
+
 
 --------------------------------------------------------------------------------
 

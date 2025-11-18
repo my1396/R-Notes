@@ -97,11 +97,15 @@ where $i=1,\ldots,n$ denotes the firm, and $t=3,\ldots,T$ is the time series dim
 
 - $ys$ is the natural logarithm of *output*, up to lag 2
 
-- Variables $d_3,\ldots,d_T$ are time dummies with corresponding coefficients $\gamma_3,\ldots,\gamma_T.$
+- Variables $d_3,\ldots,d_T$ are time dummies with corresponding coefficients $\gamma_3,\ldots,\gamma_T.$ 
+  
+  You can think of $$\gamma_t d_t$ as time fixed effects capturing economy-wide shocks at time $t$ that affect all firms equally.
 
-- $t$ is a time trend with coefficient $\pi.$
+- $t$ is a time trend with coefficient $\pi.$ 
+  
+  $\pi t$ captures any linear time trend in employment common to all firms.
 
-- $\eta_i$ is the unobserved individual-specific effects.
+- $\eta_i$ is the unobserved individual fiexed effects.
 
 - $\varepsilon_{i,t}$ is an idiosyncratic remainder component.
 
@@ -116,25 +120,48 @@ xtabond n l(0/1).w l(0/2).(k ys) yr1980-yr1984 year, lags(2) vce(robust) noconst
 xtdpd L(0/2).n L(0/1).w L(0/2).(k ys) yr1980-yr1984 year, noconstant div(L(0/1).w L(0/2).(k ys) yr1980-yr1984 year) dgmmiv(n)
 ```
 
-- lagged dependent variables `n`: up to 2 lags
+- `lags(2)`: specify the order of lagged dependent variables `n`; up to 2 lags
+
+  That is, to include `L1.n` ($n_{t-1}$) and `L2.n` ($n_{t-2}$) as independent variables.
+
+  By default, `xtabond` includes 1 lag of the dependent variable.
+
 - lagged independent variables
   - `w`: up to 1 lag
   - `k` and `ys`: up to 2 lags
 
 Note that
 
-- without specifying `div()`, the default of `xtdpd` is to use levels of the dependent variables as instruments for the difference equation.
+- without specifying `div()`, the default of `xtdpd` is to only use levels of the dependent variables as GMM-type instruments for the difference equation.
 
-- By contrast, `xtabond` by default uses the first difference of all the exogenous variables as standard instruments for the difference equation.
+- By contrast, `xtabond` by default uses the first difference of all the exogenous variables ($x_i$'s) as **standard instruments** for the difference equation.
 
-- To use the same instruments as `xtabond`, we need to specify `div()`.
+- To use the same instruments as `xtabond`, we need to specify `div()`. 
+
+  Rewrite all `indepvars` in `div()` as follows:
+
+  ```
+  div(L(0/1).w L(0/2).(k ys) yr1980-yr1984 year)
+  ```
+  
+  tells `xtdpd` to use all exogenous variables as standard instruments for the difference equation, same as `xtabond` default.
+  
+  ```
+  Instruments for differenced equation
+        GMM-type: L(2/.).n
+        Standard: D.w LD.w D.k LD.k L2D.k D.ys LD.ys L2D.ys D.yr1980
+                  D.yr1981 D.yr1982 D.yr1983 D.yr1984 D.year
+  ```
+
+
 
 --------------------------------------------------------------------------------
 
 The `xtabond` output would look like the following.
 
 <pre class="nowrap"><code>
-. xtabond n l(0/1).w l(0/2).(k ys) yr1980-yr1984 year, lags(2) vce(robust) noconstant
+. xtabond n l(0/1).w l(0/2).(k ys) yr1980-yr1984 year, 
+>     lags(2) vce(robust) noconstant
 
 Arellano–Bond dynamic panel-data estimation     Number of obs     =        611
 Group variable: id                              Number of groups  =        140
@@ -183,19 +210,24 @@ Instruments for differenced equation
                   D.yr1981 D.yr1982 D.yr1983 D.yr1984 D.year
 </code></pre>
 
-The footer in the output reports the instruments used.
+**The footer** in the output reports the instruments used.
 
-- The first line indicates that `xtabond` used lags from 2 on back to create the GMM-type instruments described in Arellano and Bond (1991) and Holtz-Eakin, Newey, and Rosen (1988); also see Methods and formulas in [XT] xtdpd. 
-- The second and third lines indicate that the first difference of all the exogenous variables were used as standard instruments. 
+- The first line (GMM-type) indicates that `xtabond` used lags from 2 on back to create the *GMM-type instruments* described in Arellano and Bond (1991) and Holtz-Eakin, Newey, and Rosen (1988); also see Methods and formulas in [XT] xtdpd. 
+- The second and third lines (Standard) indicate that the first difference of all the exogenous variables were used as *standard instruments*. 
 
 --------------------------------------------------------------------------------
 
 The following is the output of the equivalent command using `xtdpd`.
 
-- Without specifying `div()`.
+- **Without specifying `div()`.**
+  
+  Note that the results are *quite different* from those of `xtabond` above.  
+  $\Rightarrow$ This indicates the choice of IVs matters!
+
 
 <pre class="nowrap"><code>
-. xtdpd L(0/2).n L(0/1).w L(0/2).(k ys) yr1980-yr1984 year, noconstant dgmmiv(n)
+. xtdpd L(0/2).n L(0/1).w L(0/2).(k ys) yr1980-yr1984 year, 
+>     noconstant dgmmiv(n)
 
 Dynamic panel-data estimation                   Number of obs     =        611
 Group variable: id                              Number of groups  =        140
@@ -241,11 +273,22 @@ Instruments for differenced equation
 </code></pre>
 
 
-- With specifying `div()`.
+- **With specifying `div()`.**
+
+  When we specify `div()`, the results are now the same as those of `xtabond` above.  
+  $\Rightarrow$ `xtabond` and `xtdpd` can give the same results if the same IVs are used.
+
+  Recall the difference:
+
+  - `xtabond` by default uses the first difference of all the exogenous variables ($x_i$'s) as **standard instruments** for the difference equation. 
+
+  Recommended practice: <span class="env-green">just use `xtanond` to be safe</span> because with `xtdpd`, you need to be careful about specifying `div()` to ensure the full set of IVs is used.  
+  Given that the estimates can differ substantially depending on the choice of IVs, it is safer to use `xtabond`, which by default uses a more complete set of IVs.
+
 
 <pre class="nowrap"><code>
-. xtdpd L(0/2).n L(0/1).w L(0/2).(k ys) yr1980-yr1984 year, noconstant div(L(0/1).w L(0/2).(k ys)
->  yr1980-yr1984 year) dgmmiv(n)
+. xtdpd L(0/2).n L(0/1).w L(0/2).(k ys) yr1980-yr1984 year, noconstant 
+>     div(L(0/1).w L(0/2).(k ys) yr1980-yr1984 year) dgmmiv(n)
 
 Dynamic panel-data estimation                   Number of obs     =        611
 Group variable: id                              Number of groups  =        140
@@ -295,7 +338,7 @@ Instruments for differenced equation
 
 --------------------------------------------------------------------------------
 
-`xtdpdsys` implements the Arellano–Bover / Blundell–Bond system estimator, which includes the lagged differences of `n` (the dependent variable) as instruments for the level equation.
+`xtdpdsys` implements the Arellano–Bover / Blundell–Bond <span class="env-green">system estimator</span>, which includes the lagged differences of `n` (the dependent variable) as instruments for the level equation.
 
 --------------------------------------------------------------------------------
 
@@ -457,8 +500,8 @@ Forecast under `xtabond`:
 
 ```stata
 xtabond2 depvar varlist [if exp] [in range] [weight] [, level(#)
-        svmat svvar twostep robust cluster(varlist) noconstant small 
-				gmmopt [gmmopt ...] ivopt [ivopt ...]]
+    svmat svvar twostep robust cluster(varlist) noconstant small 
+    gmmopt [gmmopt ...] ivopt [ivopt ...]]
 ```
 
 **Options**:
@@ -468,12 +511,19 @@ xtabond2 depvar varlist [if exp] [in range] [weight] [, level(#)
 - `gmmopt`
 
   ```stata
-  gmmstyle(varlist [, laglimits(# #) collapse orthogonal equation({diff | level | both}) passthru split])
+  gmmstyle(
+    varlist [, laglimits(# #) collapse 
+    orthogonal equation({diff | level | both}) 
+    passthru split]
+    )
   ```
   
-  `gmmstyle` specifies a set of variables to be used as bases for "GMM-style" instrument sets described in Holtz-Eakin, Newey, and Rosen (1988) and Arellano and Bond (1991).  By default xtabond2 uses, for each time period, all available lags of the specified variables in levels dated $t-1$ or earlier as instruments for the transformed equation; and uses the contemporaneous first differences as instruments in the levels equation. These defaults are appropriate for predetermined variables that are not strictly exogenous (Bond 2000). Missing values are always replaced by zeros.
+  `gmmstyle` specifies a set of variables to be used as bases for "GMM-style" instrument sets described in Holtz-Eakin, Newey, and Rosen (1988) and Arellano and Bond (1991).
   
-  Since the `gmmstyle()` varlist allows time-series operators, there are many routes to the same specification.  E.g., `gmm(w, lag(2 .))`, the standard treatment for an endogenous variable, is equivalent to `gmm(L.w, lag(1 .))`, thus `gmm(L.w)`.
+  By default `xtabond2` uses, for each time period, all available lags of the specified variables in levels dated $t-1$ or earlier as instruments for the transformed equation; and uses the contemporaneous first differences as instruments in the levels equation. These defaults are appropriate for predetermined variables that are not strictly exogenous (Bond 2000). Missing values are always replaced by zeros.
+  
+  Since the `gmmstyle()` varlist allows time-series operators, there are many routes to the same specification.  
+  E.g., `gmm(w, lag(2 .))`, the standard treatment for an endogenous variable, is equivalent to `gmm(L.w, lag(1 .))`, thus `gmm(L.w)`.
 
 
 - `ivopt`
@@ -486,9 +536,10 @@ xtabond2 depvar varlist [if exp] [in range] [weight] [, level(#)
   
   The `equation()` suboption specifies which equation(s) should use the instruments: 
   
-  - `equation(diff)`: first-difference only
+  - `equation(both)`: both; <span class="env-green">default</span>
+  - `equation(diff)`: first-difference only; used by `xtabond`
   - `equation(level)`: levels only
-  - `equation(both)`: both, default
+  
 
 
 --------------------------------------------------------------------------------
