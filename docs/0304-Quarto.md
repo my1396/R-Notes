@@ -1567,7 +1567,7 @@ ref: <https://github.com/quarto-dev/quarto-cli/discussions/6734#discussioncommen
 
 You can create tables using standard Markdown syntax.
 
-```markdown
+```rmd
 | Col1 | Col2 | Col3 |
 | ---- | ---- | ---- |
 | A    | B    | C    |
@@ -1586,7 +1586,7 @@ See @tbl-letters for the table.
 - You can also explicitly specify columns widths using the `tbl-colwidths` attribute or document-level option.
   If you have a table with two columns, and want to set 1st col to 25% and 2nd col to 75% of the table width, you can do:
 
-  ```markdown
+  ```rmd
   | fruit  | price  |
   |--------|--------|
   | apple  | 2.05   |

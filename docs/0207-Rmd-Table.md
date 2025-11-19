@@ -2,6 +2,34 @@
 
 
 
+
+If you have some data in R and you want to display them as nice tables, you can use `knitr::kable()`, `knitr::kableExtra`, or `xtable` packages.
+
+
+But if you a table already, you can just copy-and-paste the table into your Rmd file. It can be either in 
+
+- Markdown table, or
+- Latex table
+  
+  Note that Pandoc will preserve raw LaTeX code in Markdown documents when converting the document to LaTeX, so you can use LaTeX commands or environments in Markdown. [↩︎](https://bookdown.org/yihui/rmarkdown-cookbook/raw-latex.html#raw-latex)
+
+  You may use a fenced code block with the attribute <span class="env-green">`=latex`</span>, e.g.,
+
+  ````markdown
+  ```{=latex}
+  \begin{tabular}{ll}
+  A & B \\
+  A & B \\
+  \end{tabular}
+  ```
+  ````
+
+  Do not forget the equal sign before `latex`, i.e., it is `=latex` instead of `latex`.
+
+  `=latex` tells Pandoc to treat the content as raw LaTeX code.
+
+--------------------------------------------------------------------------------
+
 <span class="env-green">**Cross reference tables**</span>
 
 Using `bookdown` cmd: `\@ref(tab:chunk-label)`.
@@ -62,6 +90,8 @@ It **adjusts column widths automatically** based on content.
 
   The value of this argument will be <span class="env-green">automatically determined</span> if the function is called within a **knitr** document. 
 
+  If the tables is not rendered properly, you can specify the format manually.
+
 - `digits`  Maximum number of digits for numeric columns, passed to `round()`. 
 
 - `col.names` Rename columns.
@@ -82,9 +112,13 @@ It **adjusts column widths automatically** based on content.
 
     - Don't need to escape `$`, `^` and `_` in math mode.
   
-  - When set to `FALSE`, you have to make sure **yourself** that special characters will not trigger syntax errors in LaTeX or HTML.
+  - When set to `FALSE`, you have to <span class="env-green">make sure **yourself** that special characters will not trigger syntax errors</span> in LaTeX or HTML.
   
-  - Common special LaTeX characters include `#`, `%`, `&`, `{`, and `}`. Common special HTML characters include `&`, `<`, `>`, and `"`. These can easily lead to errors or unexpected effects when you render your file.
+  - Common special LaTeX characters include `#`, `%`, `&`, `{`, and `}`. Common special HTML characters include `&`, `<`, `>`, and `"`. 
+    
+    They have special meanings and will be treated as format commands instead of literal characters. E.g., `#` will be interpreted as section headers. If you want to print them as literal characters, you need to escape them properly.
+
+    These can easily lead to errors or unexpected effects when you render your file.
 
 
 - `align` Column alignment: a character **vector** consisting of `'l'` (left), `'c'` (center) and/or `'r'` (right). 
@@ -235,7 +269,7 @@ To show the `tibble` information (number of row/columns, and group information) 
 ```yaml
 ---
 title: "Use caption with df_print set to page"
-date: "2025-11-18"
+date: "2025-11-19"
 output:
   bookdown::html_document2:
     df_print: paged
@@ -737,7 +771,7 @@ print(xtab, type = "html", include.rownames = TRUE)
 ```
 
 <!-- html table generated in R 4.5.1 by xtable 1.8-4 package -->
-<!-- Tue Nov 18 14:30:47 2025 -->
+<!-- Wed Nov 19 11:15:08 2025 -->
 <table border=1>
 <caption align="bottom"> Asset Parameters </caption>
 <tr> <th>  </th> <th> Asset </th> <th> Mu </th> <th> Sigma </th>  </tr>
@@ -757,7 +791,7 @@ print(xtab_model, type = "html", digits = 3)
 ```
 
 <!-- html table generated in R 4.5.1 by xtable 1.8-4 package -->
-<!-- Tue Nov 18 14:30:47 2025 -->
+<!-- Wed Nov 19 11:15:08 2025 -->
 <table border=1>
 <caption align="bottom"> Regression of mpg on hp and wt </caption>
 <tr> <th>  </th> <th> Estimate </th> <th> Std. Error </th> <th> t value </th> <th> Pr(&gt;|t|) </th>  </tr>

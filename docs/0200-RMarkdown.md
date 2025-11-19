@@ -898,6 +898,48 @@ rmarkdown::render_site("about.Rmd")
 
 ## Chunk Options
 
+
+**Code chunks** 
+
+````md
+```{r}
+# R code here
+x <- 5  # radius of a circle
+```
+
+For a circle with the radius `` `r x` ``,
+its area is `` `r pi * x^2` ``.
+````
+
+A code chunk starts with ```` ```{} ```` and ends with ```` ``` ````.
+
+Inside the curly braces `{}`, you start with the language, e.g., `r`, other languages, such as `python`, are also supported ([see below](#other-languages-rmd)). You can customize the behavior and output of code chunks through chunk options.
+
+
+Distinguish from **Pandoc Fenced Code Blocks** where you quote the language with three or more backticks/tildes. [↩︎](https://pandoc.org/demo/example33/8.5-verbatim-code-blocks.html)
+
+- Fenced Code Blocks are <span class="env-green">for displaying code only, without executing it</span>.
+- Don't need to put language name in curly braces `{}`. 
+  
+  If you do put it in curly braces, need to add a dot before the language name, e.g., `{.r}`, to avoid confusion with Rmd code chunks.
+
+  `{.r}` indicates that the code block has `.r` class for syntax highlighting.
+
+  `{r}` without the dot indicates an R code chunk to be executed.
+
+~~~~md
+```r
+# This is a Pandoc Fenced Code Block  
+x <- 42
+print(x)
+```
+~~~~
+
+
+
+--------------------------------------------------------------------------------
+
+
 If you want to **set chunk options globally**, call `knitr::opts_chunk$set()` in a code chunk (usually the first one in the document), e.g.,
 
 ````md
@@ -940,6 +982,10 @@ opts <- options(knitr.kable.NA = "")
   - This way, the output will show.
   - If you want to further hide the output, use `include = FALSE`. This hides both the source code and the output, but the code is still evaluated, and plots are generated.
 
+--------------------------------------------------------------------------------
+
+
+<a id="other-languages-rmd"></a>
 **Other languages are supported in `Rmd`** 
 
 You can list the names of all available engines via:
@@ -1014,6 +1060,14 @@ The **chunk label** for each chunk is assumed to be unique within the document. 
   ````
 
 
+**Tips about chunk options:** [↩︎](https://yihui.org/knitr/options)
+
+- Starts with language engine, follows by an optional chunk label, then other `tag=value` options. Each component is separated by a comma.
+- All option values must be valid R expressions. 
+  - String option values need to be quoted, whereas numeric and logical values do not need quotes.
+    
+    E.g., `fig.width=6` (numeric, no quotes).
+  - If an option value has special characters, you need to escape them properly, e.g., `out.width='\\textwidth'`.
 
 You may use `knitr::opts_chunk$set()` to change the default values of chunk options in a document. 
 
@@ -1444,7 +1498,7 @@ References:
 
 ## Print Verbatim R code chunks
 
-**verbatim in line code**
+**Verbatim inline code**
 
 - use `knitr::inline_expr`.
 
@@ -1454,11 +1508,17 @@ title: "Test inline expr"
 output: html_document
 ---
 
-To use `chunk_reveal("walrus", title = "## Walrus operator")` inline, you can wrap it in R inline chunk like this `` `r chunk_reveal("walrus", title = "## Walrus operator")` ``
+To use `chunk_reveal("walrus", title = "## Walrus operator")` inline, you can wrap it in R inline chunk like this 
+`` `r chunk_reveal("walrus", title = "## Walrus operator")` ``
 ````
 
+--------------------------------------------------------------------------------
 
-**Including verbatim R code chunks inside R Markdown**
+
+**Verbatim R code chunks inside R Markdown**
+
+Code chunks are executable blocks of code. But somtimes, you may want to display R code chunks verbatim in your output document, without executing them.
+
 
 One solution for including verbatim R code chunks (see below for more) is to insert hidden inline R code (`` `r
   ''` ``) immediately <u>before or after</u> your R code chunk. 

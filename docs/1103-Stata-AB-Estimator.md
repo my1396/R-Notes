@@ -418,7 +418,7 @@ The results from `estat sargan` no longer reject the null hypothesis that the ov
 
 Sometimes we cannot assume strict exogeneity. Recall that a variable, $x_{it}$, is said to be strictly exogenous if $\E[𝑥_{it}\varepsilon_{is}] = 0$ for all $t$ and $s$. 
 
-If $\E[x_{it}\varepsilon_{is}] \ne 0$ for $s < t$ but $\E[x_{it}\varepsilon_{is}] = 0$ for all $s\ge t,$ the variable is said to be <span class="env-green">**predetermined**</span>. Intuitively, if the error term at time $t$ has some feedback on the subsequent realizations of $x_{it},$ $x_{it}$ is a predetermined variable. Because unforecastable errors today might affect future changes in the real wage and in the capital stock, we might suspect that the log of the real product wage and the log of the gross capital stock are predetermined instead of strictly exogenous.
+If $\E[x_{it}\varepsilon_{is}] \ne 0$ for $t > s$ but $\E[x_{it}\varepsilon_{is}] = 0$ for all $t\le s,$ the variable is said to be <span class="env-green">**predetermined**</span>. Intuitively, if the error term at time $t$ has some feedback on the subsequent realizations of $x_{it},$ $x_{it}$ is a predetermined variable. Because unforecastable errors today might affect future changes in the real wage and in the capital stock, we might suspect that the log of the real product wage and the log of the gross capital stock are predetermined instead of strictly exogenous.
 
 We also call predetermined $x_{it}$ as <span class="env-green">**sequential exogenous**</span>.
 
@@ -436,15 +436,22 @@ We are now including GMM-type instruments from the first lag of `L.w` on back an
 
 ### Endogenous Covariates
 
-We might instead suspect that $w$ and $k$ are endogenous in that  $\E[x_{it}\varepsilon_{is}] \ne 0$ for $s \le t$ but $\E[x_{it}\varepsilon_{is}] = 0$ for all $s > t.$
+We might instead suspect that $w$ and $k$ are endogenous in that  $\E[x_{it}\varepsilon_{is}] \ne 0$ for $t \ge s$ but $\E[x_{it}\varepsilon_{is}] = 0$ for all $t < s.$
+
+In comparison to predetermined variables, $\E[x_{it}\varepsilon_{is}]$ is summarized as follows:
+
+|         | Predetermined Variables    | Endogenous Variables        |
+| ------- | -------------------------- | --------------------------- |
+|  $t>s$  | $\E[x_{it}\varepsilon_{is}]\ne 0$ | $\E[x_{it}\varepsilon_{is}]\ne 0$  |
+|  $t=s$  | $\E[x_{it}\varepsilon_{is}]= 0$  | $\E[x_{it}\varepsilon_{is}]\ne 0$  |
+|  $t<s$  | $\E[x_{it}\varepsilon_{is}]= 0$  | $\E[x_{it}\varepsilon_{is}]= 0$   |
+
 
 By this definition, endogenous variables differ from predetermined variables only in that the
 
-- endogenous variables allow for correlation between $x_{it}$ and $\varepsilon_{it}$ at time $t,$ whereas
+- Endogenous variables allow for correlation between $x_{it}$ and $\varepsilon_{it}$ at time $t,$ whereas endogenous variables are treated similarly to the *lagged dependent variable*. Levels of the endogenous variables lagged two or more periods can serve as instruments.
 
-  Endogenous variables are treated similarly to the *lagged dependent variable*. Levels of the endogenous variables lagged two or more periods can serve as instruments.
-
-- predetermined variables do <span style='color:#FF9900'>**NOT**</span> allow for contemporaneous correlation.
+- Predetermined variables do <span style='color:#FF9900'>**NOT**</span> allow for <span class="env-orange">contemporaneous correlation</span>.
 
 In this example, we treat $w$ and $k$ as endogenous variables.
 
@@ -491,17 +498,15 @@ Forecast under `xtabond`:
 
 `xtabond2` was written by David Roodman. More versatile than `xtabond`. 
 
-| `xtabond`                                                    | `xtabond2`               |
-| ------------------------------------------------------------ | ------------------------ |
+| `xtabond`           | `xtabond2`           |
+| ------------------- | ---------------------|
 | Not support factor variables<br />Can be fixed with `xi: xtabond` | Support factor variables |
 
 
-
-
 ```stata
-xtabond2 depvar varlist [if exp] [in range] [weight] [, level(#)
-    svmat svvar twostep robust cluster(varlist) noconstant small 
-    gmmopt [gmmopt ...] ivopt [ivopt ...]]
+xtabond2 depvar varlist [if exp] [in range] [weight] 
+    [, level(#) svmat svvar twostep robust cluster(varlist) 
+       noconstant small gmmopt [gmmopt ...] ivopt [ivopt ...] ]
 ```
 
 **Options**:
@@ -513,8 +518,8 @@ xtabond2 depvar varlist [if exp] [in range] [weight] [, level(#)
   ```stata
   gmmstyle(
     varlist [, laglimits(# #) collapse 
-    orthogonal equation({diff | level | both}) 
-    passthru split]
+      orthogonal equation({diff | level | both}) 
+      passthru split ]
     )
   ```
   
@@ -541,6 +546,44 @@ xtabond2 depvar varlist [if exp] [in range] [weight] [, level(#)
   - `equation(level)`: levels only
   
 
+**Key Differences between GMM-style and Standard Instruments**
+
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+ <thead>
+  <tr>
+   <th style="text-align:left;"> Aspect </th>
+   <th style="text-align:left;"> GMM-style </th>
+   <th style="text-align:left;"> Standard </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;width: 8em; font-weight: bold;"> Size </td>
+   <td style="text-align:left;width: 17em; "> Many instruments (grows with T) </td>
+   <td style="text-align:left;width: 17em; "> One instrument per variable <br>(fixed size) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;width: 8em; font-weight: bold;"> Variables </td>
+   <td style="text-align:left;width: 17em; "> Endogenous or predetermined </td>
+   <td style="text-align:left;width: 17em; "> Strictly exogenous </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;width: 8em; font-weight: bold;"> Formation </td>
+   <td style="text-align:left;width: 17em; "> Usually lagged levels </td>
+   <td style="text-align:left;width: 17em; "> Usually first differences </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;width: 8em; font-weight: bold;"> When to use </td>
+   <td style="text-align:left;width: 17em; "> Variables correlated with error </td>
+   <td style="text-align:left;width: 17em; "> Truly exogenous variables </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;width: 8em; font-weight: bold;"> Examples </td>
+   <td style="text-align:left;width: 17em; "> Lagged dependent variable </td>
+   <td style="text-align:left;width: 17em; "> Time dummies, exogenous controls </td>
+  </tr>
+</tbody>
+</table>
 
 --------------------------------------------------------------------------------
 
@@ -564,6 +607,7 @@ xtabond2 n L.n w L.w k, gmmstyle(L.(w n k), eq(diff)) robust
 - Arellano–Bond or 
   
   also known as the "Difference GMM" estimator. Implemented in `xtabond`.
+
 - the Arellano–Bover/Blundell–Bond system estimator
   
   aka, "System GMM" estimator. Implemented in `xtdpdsys`.
