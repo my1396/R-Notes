@@ -907,8 +907,8 @@ rmarkdown::render_site("about.Rmd")
 x <- 5  # radius of a circle
 ```
 
-For a circle with the radius `` `r x` ``,
-its area is `` `r pi * x^2` ``.
+For a circle with the radius `r x`,
+its area is `r pi * x^2`.
 ````
 
 A code chunk starts with ```` ```{} ```` and ends with ```` ``` ````.
@@ -1498,7 +1498,7 @@ References:
 
 ## Print Verbatim R code chunks
 
-**Verbatim inline code**
+### Verbatim inline code
 
 - use `knitr::inline_expr`.
 
@@ -1509,13 +1509,22 @@ output: html_document
 ---
 
 To use `chunk_reveal("walrus", title = "## Walrus operator")` inline, you can wrap it in R inline chunk like this 
-`` `r chunk_reveal("walrus", title = "## Walrus operator")` ``
+`` `r knitr::inline_expr('chunk_reveal('walrus', title='## Walrus operator')')` ``
+
 ````
+
+will be rendered as:
+
+> To use `chunk_reveal("walrus", title = "## Walrus operator")` inline, you can wrap it in R inline chunk like this  
+> `` `r chunk_reveal('walrus', title = '## Walrus operator')` ``
+
+
+❗️ Need to be careful with nested quotes, single vs. double quotes. They need to be matched properly.
 
 --------------------------------------------------------------------------------
 
 
-**Verbatim R code chunks inside R Markdown**
+### Verbatim R code chunks
 
 Code chunks are executable blocks of code. But somtimes, you may want to display R code chunks verbatim in your output document, without executing them.
 
@@ -1595,7 +1604,7 @@ Q: What is the Markdown Syntax for code?
 A: 
 
 - Inline code use a pair of backticks, e.g., `` `code` ``.  To use $n$ literal backticks, use at least $n+1$ backticks outside. 
-  - Note that use <span style="color: #008B45;">a space</span> (`␣`) to separate your outside backticks from your literal backtick(s). 
+  - Note that use <span class="env-green">a space</span> (`␣`) to separate your outside backticks from your literal backtick(s). 
     
     For example, to generate `` `code` ``, you use ``` ``␣`code`␣`` ``` (i.e., two backticks + space + one backtick + `code` + one backtick + space + two backticks). Note that you need to write sequentially.
 

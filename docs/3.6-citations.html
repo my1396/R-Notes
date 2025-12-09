@@ -420,7 +420,11 @@ div.csl-indent {
 <li class="chapter" data-level="3.3.2" data-path="3.3-chunk-options.html"><a href="3.3-chunk-options.html#external-config-files"><i class="fa fa-check"></i><b>3.3.2</b> External Config Files</a></li>
 <li class="chapter" data-level="3.3.3" data-path="3.3-chunk-options.html"><a href="3.3-chunk-options.html#hooks"><i class="fa fa-check"></i><b>3.3.3</b> Hooks</a></li>
 </ul></li>
-<li class="chapter" data-level="3.4" data-path="3.4-print-verbatim-r-code-chunks.html"><a href="3.4-print-verbatim-r-code-chunks.html"><i class="fa fa-check"></i><b>3.4</b> Print Verbatim R code chunks</a></li>
+<li class="chapter" data-level="3.4" data-path="3.4-print-verbatim-r-code-chunks.html"><a href="3.4-print-verbatim-r-code-chunks.html"><i class="fa fa-check"></i><b>3.4</b> Print Verbatim R code chunks</a>
+<ul>
+<li class="chapter" data-level="3.4.1" data-path="3.4-print-verbatim-r-code-chunks.html"><a href="3.4-print-verbatim-r-code-chunks.html#verbatim-inline-code"><i class="fa fa-check"></i><b>3.4.1</b> Verbatim inline code</a></li>
+<li class="chapter" data-level="3.4.2" data-path="3.4-print-verbatim-r-code-chunks.html"><a href="3.4-print-verbatim-r-code-chunks.html#verbatim-r-code-chunks"><i class="fa fa-check"></i><b>3.4.2</b> Verbatim R code chunks</a></li>
+</ul></li>
 <li class="chapter" data-level="3.5" data-path="3.5-rmd-basics.html"><a href="3.5-rmd-basics.html"><i class="fa fa-check"></i><b>3.5</b> Rmd Basics</a>
 <ul>
 <li class="chapter" data-level="3.5.1" data-path="3.5-rmd-basics.html"><a href="3.5-rmd-basics.html#unnumbered-sections"><i class="fa fa-check"></i><b>3.5.1</b> Unnumbered Sections</a></li>
@@ -807,6 +811,42 @@ document.addEventListener('DOMContentLoaded', function() {
     console.warn('TOC auto-open error', e);
   }
 });
+
+// Toggle collapse: clicking an expanded section collapses it
+document.addEventListener('DOMContentLoaded', function() {
+  try {
+    var summary = document.querySelector('.book-summary ul.summary');
+    if (!summary) return;
+
+    // Add click handlers to chapter links with children
+    summary.querySelectorAll('li.chapter').forEach(function(chapter) {
+      var sublist = chapter.querySelector('ul');
+      if (!sublist) return; // Only chapters with subsections
+
+      var link = chapter.querySelector('a');
+      if (!link) return;
+
+      link.addEventListener('click', function(e) {
+        // Check if this chapter is already expanded
+        var isExpanded = chapter.classList.contains('auto-open');
+        
+        if (isExpanded) {
+          // Collapse it
+          e.preventDefault();
+          chapter.classList.remove('auto-open');
+        } else {
+          // Expand it (remove auto-open from others first)
+          summary.querySelectorAll('li.chapter.auto-open').forEach(function(li) {
+            if (li !== chapter) li.classList.remove('auto-open');
+          });
+          chapter.classList.add('auto-open');
+        }
+      });
+    });
+  } catch(e) {
+    console.warn('TOC toggle error', e);
+  }
+});
 </script>
 <style>
 /* Show nested UL of active chapter when collapse=section */
@@ -916,7 +956,7 @@ In this case, the bibliographic data files need to be in the bibtex or biblatex 
 <p>This feature can be disabled by setting the <code>split_bib</code> YAML field to <code>false</code>, in which case all citations cited in the entire report or book are put on a separate bibliography page. To do this, you can add specific keys in the YAML header in <span class="env-green"><code>_output.yml</code></span>:</p>
 <div class="sourceCode" id="cb191"><pre class="sourceCode yml"><code class="sourceCode yaml"><span id="cb191-1"><a href="3.6-citations.html#cb191-1" tabindex="-1"></a><span class="pp">---</span></span>
 <span id="cb191-2"><a href="3.6-citations.html#cb191-2" tabindex="-1"></a><span class="fu">author</span><span class="kw">:</span><span class="at"> Research Institute for Nature and Forest</span></span>
-<span id="cb191-3"><a href="3.6-citations.html#cb191-3" tabindex="-1"></a><span class="fu">date</span><span class="kw">:</span><span class="at"> </span><span class="st">&#39;2025-11-19&#39;</span></span>
+<span id="cb191-3"><a href="3.6-citations.html#cb191-3" tabindex="-1"></a><span class="fu">date</span><span class="kw">:</span><span class="at"> </span><span class="st">&#39;2025-12-09&#39;</span></span>
 <span id="cb191-4"><a href="3.6-citations.html#cb191-4" tabindex="-1"></a><span class="fu">site</span><span class="kw">:</span><span class="at"> bookdown::bookdown_site</span></span>
 <span id="cb191-5"><a href="3.6-citations.html#cb191-5" tabindex="-1"></a><span class="fu">output</span><span class="kw">:</span></span>
 <span id="cb191-6"><a href="3.6-citations.html#cb191-6" tabindex="-1"></a><span class="at">  bookdown:</span><span class="fu">:gitbook</span><span class="kw">:</span></span>

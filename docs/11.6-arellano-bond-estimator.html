@@ -420,7 +420,11 @@ div.csl-indent {
 <li class="chapter" data-level="3.3.2" data-path="3.3-chunk-options.html"><a href="3.3-chunk-options.html#external-config-files"><i class="fa fa-check"></i><b>3.3.2</b> External Config Files</a></li>
 <li class="chapter" data-level="3.3.3" data-path="3.3-chunk-options.html"><a href="3.3-chunk-options.html#hooks"><i class="fa fa-check"></i><b>3.3.3</b> Hooks</a></li>
 </ul></li>
-<li class="chapter" data-level="3.4" data-path="3.4-print-verbatim-r-code-chunks.html"><a href="3.4-print-verbatim-r-code-chunks.html"><i class="fa fa-check"></i><b>3.4</b> Print Verbatim R code chunks</a></li>
+<li class="chapter" data-level="3.4" data-path="3.4-print-verbatim-r-code-chunks.html"><a href="3.4-print-verbatim-r-code-chunks.html"><i class="fa fa-check"></i><b>3.4</b> Print Verbatim R code chunks</a>
+<ul>
+<li class="chapter" data-level="3.4.1" data-path="3.4-print-verbatim-r-code-chunks.html"><a href="3.4-print-verbatim-r-code-chunks.html#verbatim-inline-code"><i class="fa fa-check"></i><b>3.4.1</b> Verbatim inline code</a></li>
+<li class="chapter" data-level="3.4.2" data-path="3.4-print-verbatim-r-code-chunks.html"><a href="3.4-print-verbatim-r-code-chunks.html#verbatim-r-code-chunks"><i class="fa fa-check"></i><b>3.4.2</b> Verbatim R code chunks</a></li>
+</ul></li>
 <li class="chapter" data-level="3.5" data-path="3.5-rmd-basics.html"><a href="3.5-rmd-basics.html"><i class="fa fa-check"></i><b>3.5</b> Rmd Basics</a>
 <ul>
 <li class="chapter" data-level="3.5.1" data-path="3.5-rmd-basics.html"><a href="3.5-rmd-basics.html#unnumbered-sections"><i class="fa fa-check"></i><b>3.5.1</b> Unnumbered Sections</a></li>
@@ -807,6 +811,42 @@ document.addEventListener('DOMContentLoaded', function() {
     console.warn('TOC auto-open error', e);
   }
 });
+
+// Toggle collapse: clicking an expanded section collapses it
+document.addEventListener('DOMContentLoaded', function() {
+  try {
+    var summary = document.querySelector('.book-summary ul.summary');
+    if (!summary) return;
+
+    // Add click handlers to chapter links with children
+    summary.querySelectorAll('li.chapter').forEach(function(chapter) {
+      var sublist = chapter.querySelector('ul');
+      if (!sublist) return; // Only chapters with subsections
+
+      var link = chapter.querySelector('a');
+      if (!link) return;
+
+      link.addEventListener('click', function(e) {
+        // Check if this chapter is already expanded
+        var isExpanded = chapter.classList.contains('auto-open');
+        
+        if (isExpanded) {
+          // Collapse it
+          e.preventDefault();
+          chapter.classList.remove('auto-open');
+        } else {
+          // Expand it (remove auto-open from others first)
+          summary.querySelectorAll('li.chapter.auto-open').forEach(function(li) {
+            if (li !== chapter) li.classList.remove('auto-open');
+          });
+          chapter.classList.add('auto-open');
+        }
+      });
+    });
+  } catch(e) {
+    console.warn('TOC toggle error', e);
+  }
+});
 </script>
 <style>
 /* Show nested UL of active chapter when collapse=section */
@@ -830,23 +870,102 @@ fixed- and random-effects estimators in the presence of lagged dependent variabl
 <h3><span class="header-section-number">11.6.1</span> xtabond Syntax<a href="11.6-arellano-bond-estimator.html#xtabond-syntax" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>The Arellano-Bond estimator may be obtained in Stata using either the <code>xtabond</code> or <code>xtdpd</code> command.</p>
 <p><a href="https://www.stata.com/manuals/xtxtabond.pdf"><code>xtabond</code></a> fits a linear dynamic panel-data model where the unobserved unit-level effects are correlated with the lags of the dependent variable, known as the Arellano–Bond estimator. This estimator is designed for datasets with many panels and few periods, and it requires that there be <strong>no autocorrelation</strong> in the idiosyncratic errors.</p>
-<p><code>xtabond</code> uses moment conditions in which lags of the dependent variable and first differences of the exogenous variables are instruments for the first-differenced equation.</p>
+<p><code>xtabond</code> uses moment conditions in which <span class="env-green">lags of the dependent variable</span> and <span class="env-green">first differences of the exogenous variables</span> are instruments for the first-differenced equation.</p>
 <div class="sourceCode" id="cb943"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb943-1"><a href="11.6-arellano-bond-estimator.html#cb943-1" tabindex="-1"></a><span class="kw">xtabond</span> depvar [ indepvars ] [ <span class="kw">if</span> ] [ <span class="kw">in</span> ] [, options ]</span></code></pre></div>
-<p><strong>Estimation Options</strong>:</p>
+<p><strong>Estimation options</strong>:</p>
 <ul>
-<li><code>noconstant</code>: suppress the constant term.</li>
-<li><code>lags(#)</code>: <span class="env-green"><strong>#lags of dependent variable</strong></span> as covariates; default is <span class="env-green"><code>lags(1)</code></span></li>
-<li><code>maxldep(#)</code>: maximum lags of dependent variable for use as instruments. Defaults to <span class="math inline">\(T_i-p-2,\)</span> where <span class="math inline">\(p\)</span> is the number of lags of the dependent variable to be included in the model (i.e., <code>lags(#)</code>).</li>
-<li><code>maxlags(#)</code>: maximum lags of predetermined and endogenous variables for use as instruments</li>
-<li><code>twostep</code>: compute the two-step estimator instead of the one-step estimator</li>
-<li><code>pre(varlist)</code>: <strong>predetermined variables</strong>; can be specified more than once</li>
-<li><code>endogenous(varlist)</code>: <strong>endogenous variables</strong>; can be specified more than once</li>
-<li><code>vce(vcetype)</code>
+<li><p><code>noconstant</code>: suppress the constant term.</p></li>
+<li><p><code>lags(#)</code>: <span class="env-green"><strong>#lags of dependent variable</strong></span> as covariates; default is <span class="env-green"><code>lags(1)</code></span>. Let <span class="math inline">\(p\)</span> be the number of lags of the dependent variable included in the model.</p></li>
+<li><p><code>inst(varlist)</code>: additional instruments to be included in the model except for lags of the dependent variable and first differences of exogenous variables, which are included by default.</p>
+<p>These instruments are <span class="env-orange">NOT differenced</span> before including them in the instrument matrix.</p></li>
+<li><p><code>maxldep(#)</code>: maximum lags of dependent variable for use as (GMM-type) instruments.</p>
+<p>Defaults to <span class="math inline">\(T_i-p-2,\)</span> where <span class="math inline">\(p\)</span> is the number of lags of the dependent variable to be included in the model (i.e., <code>lags(#)</code>). <span class="math inline">\(p=1\)</span> by default.</p>
+<p>For example, when <span class="math inline">\(T_i=10\)</span> (10 time periods per panel unit), and <code>lags(1)</code> is specified (one lag of the dependent variable in the RHS), then <code>maxldep(7)</code> (<span class="math inline">\(T_i-p-1=10-1-2=7\)</span>) is the default.</p>
+<p>Here is a small table showing which lags act as instruments at each <span class="math inline">\(t\)</span> from 3 to 10:</p>
+<table>
+<thead>
+<tr class="header">
+<th><span class="math inline">\(t\)</span></th>
+<th>GMM-type instruments</th>
+<th>Number of instruments</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>3</td>
+<td><span class="math inline">\(y_{i,1}\)</span></td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td><span class="math inline">\(y_{i,2}, y_{i,1}\)</span></td>
+<td>2</td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td><span class="math inline">\(y_{i,3}, y_{i,2}, y_{i,1}\)</span></td>
+<td>3</td>
+</tr>
+<tr class="even">
+<td>6</td>
+<td><span class="math inline">\(y_{i,4}, y_{i,3}, y_{i,2}, y_{i,1}\)</span></td>
+<td>4</td>
+</tr>
+<tr class="odd">
+<td>7</td>
+<td><span class="math inline">\(y_{i,5}, y_{i,4}, y_{i,3}, y_{i,2}, y_{i,1}\)</span></td>
+<td>5</td>
+</tr>
+<tr class="even">
+<td>8</td>
+<td><span class="math inline">\(y_{i,6}, y_{i,5}, y_{i,4}, y_{i,3}, y_{i,2}, y_{i,1}\)</span></td>
+<td>6</td>
+</tr>
+<tr class="odd">
+<td>9</td>
+<td><span class="math inline">\(y_{i,7}, y_{i,6}, y_{i,5}, y_{i,4}, y_{i,3}, y_{i,2}\)</span></td>
+<td>7</td>
+</tr>
+<tr class="even">
+<td>10</td>
+<td><span class="math inline">\(y_{i,8}, y_{i,7}, y_{i,6}, y_{i,5}, y_{i,4}, y_{i,3}\)</span></td>
+<td>8</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><p>For <span class="math inline">\(t\le 7,\)</span> there aren’t enough lags to reach the maximum lag of 7, so all available lags are used.</p></li>
+<li><p>Starting from <span class="math inline">\(t=8,\)</span> the maximum lag of 7 is reached, so only lags 2 to 7 are used as instruments.</p></li>
+<li><p>At <span class="math inline">\(t=8,\)</span> you have 6 instruments (lags 2 to 7).</p>
+<ul>
+<li>You don’t use lag one, <span class="math inline">\(y_{i,7},\)</span> because it is already included as a regressor.</li>
+<li>The maximum lag is 7, i.e., <span class="math inline">\(y_{i, 1},\)</span> as <span class="math inline">\(8-7=1.\)</span></li>
+</ul></li>
+<li><p>At <span class="math inline">\(t=10,\)</span> you have 6 instruments (lags 2 to 7).</p></li>
+</ul></li>
+<li><p><code>maxlags(#)</code>: maximum lags of <u>predetermined and endogenous variables</u> for use as (standard) instruments.</p>
+<p>First difference of all the exogenous variables are used as standard instruments by default.</p>
+<ul>
+<li>For predetermined variables, defaults to use all <span class="math inline">\(T_i-p-1\)</span> lags.</li>
+<li>For endogenous variables, defaults to use all <span class="math inline">\(T_i-p-2\)</span> lags.</li>
+</ul></li>
+<li><p><code>twostep</code>: compute the two-step estimator instead of the one-step estimator</p></li>
+<li><p><code>pre(varlist[, lagstruct(prelags, premaxlags)])</code>: <strong>predetermined variables</strong>; can be specified more than once.</p>
+<p>Optionally, you may specify <code>prelags</code> lags of the predetermined variables to be used as instruments. Defaults to 0.</p></li>
+<li><p><code>endogenous(varlist[, lagstruct(endlags, endmaxlags)])</code>: <strong>endogenous variables</strong>; can be specified more than once.</p></li>
+<li><p><code>vce(vcetype)</code></p>
 <ul>
 <li><code>vce(gmm)</code> the default, uses the conventionally derived variance estimator for generalized method of moments estimation.</li>
 <li><code>vce(robust)</code>: uses the robust estimator. After one-step estimation, this is the Arellano–Bond robust VCE estimator. After two-step estimation, this is the Windmeijer (2005) WC-robust estimator.</li>
 </ul></li>
 </ul>
+<p><strong>Reporting options:</strong></p>
+<ul>
+<li><p><code>artests(#)</code>: use <code>#</code> as maximum order for AR tests; default is <code>artests(2)</code>.</p>
+<p>The tests are reported by <code>estat abond</code>.</p>
+<p>Specifying the order of the highest test at <em>estimation time</em> is more <em>efficient</em> than specifying it to <code>estat abond</code>, because <code>estat abond</code> must refit the model to obtain the test statistics.</p></li>
+</ul>
+<hr />
 <p><strong>Quick Start</strong></p>
 <ul>
 <li><p>Arellano–Bond estimation of y on x1 and x2 using xtset data</p>
@@ -1106,6 +1225,14 @@ Instruments for differenced equation
 <span id="cb951-8"><a href="11.6-arellano-bond-estimator.html#cb951-8" tabindex="-1"></a>    2   -1.0572     0.2904</span>
 <span id="cb951-9"><a href="11.6-arellano-bond-estimator.html#cb951-9" tabindex="-1"></a>    3   -.19492     0.8455</span>
 <span id="cb951-10"><a href="11.6-arellano-bond-estimator.html#cb951-10" tabindex="-1"></a>    4   .04472      0.9643</span></code></pre></div>
+<p>The AR test is applied to the first-differenced residuals:</p>
+<p><span class="math display">\[
+\begin{aligned}
+\Delta \varepsilon_{it} &amp;= \varepsilon_{it} - \varepsilon_{i,t-1} \\
+\Delta \varepsilon_{i,t-1} &amp;= \varepsilon_{i,t-1} - \varepsilon_{i,t-2} \\
+\end{aligned}
+\]</span></p>
+<p>Because they share the <span class="math inline">\(\varepsilon_{i,t-1}\)</span> term, AR(1) is expected. Hence, we only need to check for zero autocorrelation for AR(2) and higher.</p>
 <hr />
 </div>
 <div id="test-for-overidentifying-restrictions" class="section level4 hasAnchor" number="11.6.3.2">
@@ -1338,6 +1465,19 @@ Time dummies, exogenous controls
 <span id="cb961-2"><a href="11.6-arellano-bond-estimator.html#cb961-2" tabindex="-1"></a>xtdpd n L.n <span class="fu">w</span> L.<span class="fu">w</span> <span class="kw">k</span>, dgmmiv(<span class="fu">w</span> <span class="kw">k</span> n) <span class="kw">vce</span>(<span class="kw">robust</span>)</span>
 <span id="cb961-3"><a href="11.6-arellano-bond-estimator.html#cb961-3" tabindex="-1"></a>xtabond2 n L.n <span class="fu">w</span> L.<span class="fu">w</span> <span class="kw">k</span>, gmmstyle(L.(<span class="fu">w</span> n <span class="kw">k</span>), <span class="kw">eq</span>(<span class="fu">diff</span>)) <span class="kw">robust</span></span></code></pre></div>
 <p><a href="https://www.statalist.org/forums/forum/general-stata-discussion/general/1548924-xtabond-vs-xtabond2-how-to-get-the-same-results" class="uri">https://www.statalist.org/forums/forum/general-stata-discussion/general/1548924-xtabond-vs-xtabond2-how-to-get-the-same-results</a></p>
+<p>With <code>xtabond2</code>, you need to specify explicitly</p>
+<ul>
+<li>regressors</li>
+<li>instruments</li>
+</ul>
+<p>This is in contrast to <code>xtabond</code>, which automatically treats all variables other than the dependent variable as exogenous and uses them as instruments in the difference equation.</p>
+<p>As a result, <span class="env-green">most variables need to be listed twice in <code>xtabond2</code></span>:</p>
+<ul>
+<li>once as regressors before the comma and</li>
+<li>once as instruments in <code>gmmstyle()</code> or <code>ivstyle()</code> options after the comma.</li>
+</ul>
+<p>The result is a loss of parsimony, but fuller control over the instrument matrix.
+Variables can be used as the basis for “GMM-style” instrument sets without being included as regressors, or vice versa.</p>
 <hr />
 </div>
 <div id="xtdpd" class="section level3 hasAnchor" number="11.6.7">

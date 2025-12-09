@@ -30,6 +30,42 @@ document.addEventListener('DOMContentLoaded', function() {
     console.warn('TOC auto-open error', e);
   }
 });
+
+// Toggle collapse: clicking an expanded section collapses it
+document.addEventListener('DOMContentLoaded', function() {
+  try {
+    var summary = document.querySelector('.book-summary ul.summary');
+    if (!summary) return;
+
+    // Add click handlers to chapter links with children
+    summary.querySelectorAll('li.chapter').forEach(function(chapter) {
+      var sublist = chapter.querySelector('ul');
+      if (!sublist) return; // Only chapters with subsections
+
+      var link = chapter.querySelector('a');
+      if (!link) return;
+
+      link.addEventListener('click', function(e) {
+        // Check if this chapter is already expanded
+        var isExpanded = chapter.classList.contains('auto-open');
+        
+        if (isExpanded) {
+          // Collapse it
+          e.preventDefault();
+          chapter.classList.remove('auto-open');
+        } else {
+          // Expand it (remove auto-open from others first)
+          summary.querySelectorAll('li.chapter.auto-open').forEach(function(li) {
+            if (li !== chapter) li.classList.remove('auto-open');
+          });
+          chapter.classList.add('auto-open');
+        }
+      });
+    });
+  } catch(e) {
+    console.warn('TOC toggle error', e);
+  }
+});
 </script>
 <style>
 /* Show nested UL of active chapter when collapse=section */

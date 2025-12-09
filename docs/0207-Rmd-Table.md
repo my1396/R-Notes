@@ -269,7 +269,7 @@ To show the `tibble` information (number of row/columns, and group information) 
 ```yaml
 ---
 title: "Use caption with df_print set to page"
-date: "2025-11-19"
+date: "2025-12-09"
 output:
   bookdown::html_document2:
     df_print: paged
@@ -771,7 +771,7 @@ print(xtab, type = "html", include.rownames = TRUE)
 ```
 
 <!-- html table generated in R 4.5.1 by xtable 1.8-4 package -->
-<!-- Wed Nov 19 11:15:08 2025 -->
+<!-- Tue Dec  9 09:15:59 2025 -->
 <table border=1>
 <caption align="bottom"> Asset Parameters </caption>
 <tr> <th>  </th> <th> Asset </th> <th> Mu </th> <th> Sigma </th>  </tr>
@@ -791,7 +791,7 @@ print(xtab_model, type = "html", digits = 3)
 ```
 
 <!-- html table generated in R 4.5.1 by xtable 1.8-4 package -->
-<!-- Wed Nov 19 11:15:08 2025 -->
+<!-- Tue Dec  9 09:16:00 2025 -->
 <table border=1>
 <caption align="bottom"> Regression of mpg on hp and wt </caption>
 <tr> <th>  </th> <th> Estimate </th> <th> Std. Error </th> <th> t value </th> <th> Pr(&gt;|t|) </th>  </tr>

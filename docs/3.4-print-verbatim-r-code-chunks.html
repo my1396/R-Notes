@@ -420,7 +420,11 @@ div.csl-indent {
 <li class="chapter" data-level="3.3.2" data-path="3.3-chunk-options.html"><a href="3.3-chunk-options.html#external-config-files"><i class="fa fa-check"></i><b>3.3.2</b> External Config Files</a></li>
 <li class="chapter" data-level="3.3.3" data-path="3.3-chunk-options.html"><a href="3.3-chunk-options.html#hooks"><i class="fa fa-check"></i><b>3.3.3</b> Hooks</a></li>
 </ul></li>
-<li class="chapter" data-level="3.4" data-path="3.4-print-verbatim-r-code-chunks.html"><a href="3.4-print-verbatim-r-code-chunks.html"><i class="fa fa-check"></i><b>3.4</b> Print Verbatim R code chunks</a></li>
+<li class="chapter" data-level="3.4" data-path="3.4-print-verbatim-r-code-chunks.html"><a href="3.4-print-verbatim-r-code-chunks.html"><i class="fa fa-check"></i><b>3.4</b> Print Verbatim R code chunks</a>
+<ul>
+<li class="chapter" data-level="3.4.1" data-path="3.4-print-verbatim-r-code-chunks.html"><a href="3.4-print-verbatim-r-code-chunks.html#verbatim-inline-code"><i class="fa fa-check"></i><b>3.4.1</b> Verbatim inline code</a></li>
+<li class="chapter" data-level="3.4.2" data-path="3.4-print-verbatim-r-code-chunks.html"><a href="3.4-print-verbatim-r-code-chunks.html#verbatim-r-code-chunks"><i class="fa fa-check"></i><b>3.4.2</b> Verbatim R code chunks</a></li>
+</ul></li>
 <li class="chapter" data-level="3.5" data-path="3.5-rmd-basics.html"><a href="3.5-rmd-basics.html"><i class="fa fa-check"></i><b>3.5</b> Rmd Basics</a>
 <ul>
 <li class="chapter" data-level="3.5.1" data-path="3.5-rmd-basics.html"><a href="3.5-rmd-basics.html#unnumbered-sections"><i class="fa fa-check"></i><b>3.5.1</b> Unnumbered Sections</a></li>
@@ -807,6 +811,42 @@ document.addEventListener('DOMContentLoaded', function() {
     console.warn('TOC auto-open error', e);
   }
 });
+
+// Toggle collapse: clicking an expanded section collapses it
+document.addEventListener('DOMContentLoaded', function() {
+  try {
+    var summary = document.querySelector('.book-summary ul.summary');
+    if (!summary) return;
+
+    // Add click handlers to chapter links with children
+    summary.querySelectorAll('li.chapter').forEach(function(chapter) {
+      var sublist = chapter.querySelector('ul');
+      if (!sublist) return; // Only chapters with subsections
+
+      var link = chapter.querySelector('a');
+      if (!link) return;
+
+      link.addEventListener('click', function(e) {
+        // Check if this chapter is already expanded
+        var isExpanded = chapter.classList.contains('auto-open');
+        
+        if (isExpanded) {
+          // Collapse it
+          e.preventDefault();
+          chapter.classList.remove('auto-open');
+        } else {
+          // Expand it (remove auto-open from others first)
+          summary.querySelectorAll('li.chapter.auto-open').forEach(function(li) {
+            if (li !== chapter) li.classList.remove('auto-open');
+          });
+          chapter.classList.add('auto-open');
+        }
+      });
+    });
+  } catch(e) {
+    console.warn('TOC toggle error', e);
+  }
+});
 </script>
 <style>
 /* Show nested UL of active chapter when collapse=section */
@@ -815,7 +855,8 @@ document.addEventListener('DOMContentLoaded', function() {
 </style>
 <div id="print-verbatim-r-code-chunks" class="section level2 hasAnchor" number="3.4">
 <h2><span class="header-section-number">3.4</span> Print Verbatim R code chunks<a href="3.4-print-verbatim-r-code-chunks.html#print-verbatim-r-code-chunks" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p><strong>Verbatim inline code</strong></p>
+<div id="verbatim-inline-code" class="section level3 hasAnchor" number="3.4.1">
+<h3><span class="header-section-number">3.4.1</span> Verbatim inline code<a href="3.4-print-verbatim-r-code-chunks.html#verbatim-inline-code" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <ul>
 <li>use <code>knitr::inline_expr</code>.</li>
 </ul>
@@ -825,9 +866,17 @@ document.addEventListener('DOMContentLoaded', function() {
 <span id="cb158-4"><a href="3.4-print-verbatim-r-code-chunks.html#cb158-4" tabindex="-1"></a><span class="co">---</span></span>
 <span id="cb158-5"><a href="3.4-print-verbatim-r-code-chunks.html#cb158-5" tabindex="-1"></a></span>
 <span id="cb158-6"><a href="3.4-print-verbatim-r-code-chunks.html#cb158-6" tabindex="-1"></a>To use <span class="in">`chunk_reveal(&quot;walrus&quot;, title = &quot;## Walrus operator&quot;)`</span> inline, you can wrap it in R inline chunk like this </span>
-<span id="cb158-7"><a href="3.4-print-verbatim-r-code-chunks.html#cb158-7" tabindex="-1"></a>`<span class="in">` `</span>r chunk_reveal(&quot;walrus&quot;, title = &quot;## Walrus operator&quot;)` ``</span></code></pre></div>
+<span id="cb158-7"><a href="3.4-print-verbatim-r-code-chunks.html#cb158-7" tabindex="-1"></a>`<span class="in">` `</span>r knitr::inline_expr(&#39;chunk_reveal(&#39;walrus&#39;, title=&#39;## Walrus operator&#39;)&#39;)` ``</span></code></pre></div>
+<p>will be rendered as:</p>
+<blockquote>
+<p>To use <code>chunk_reveal("walrus", title = "## Walrus operator")</code> inline, you can wrap it in R inline chunk like this<br />
+<code>`r chunk_reveal('walrus', title = '## Walrus operator')`</code></p>
+</blockquote>
+<p>❗️ Need to be careful with nested quotes, single vs. double quotes. They need to be matched properly.</p>
 <hr />
-<p><strong>Verbatim R code chunks inside R Markdown</strong></p>
+</div>
+<div id="verbatim-r-code-chunks" class="section level3 hasAnchor" number="3.4.2">
+<h3><span class="header-section-number">3.4.2</span> Verbatim R code chunks<a href="3.4-print-verbatim-r-code-chunks.html#verbatim-r-code-chunks" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Code chunks are executable blocks of code. But somtimes, you may want to display R code chunks verbatim in your output document, without executing them.</p>
 <p>One solution for including verbatim R code chunks (see below for more) is to insert hidden inline R code (<code>`r   ''`</code>) immediately <u>before or after</u> your R code chunk.</p>
 <ul>
@@ -875,7 +924,7 @@ A:</p>
 <ul>
 <li><p>Inline code use a pair of backticks, e.g., <code>`code`</code>. To use <span class="math inline">\(n\)</span> literal backticks, use at least <span class="math inline">\(n+1\)</span> backticks outside.</p>
 <ul>
-<li><p>Note that use <span style="color: #008B45;">a space</span> (<code>␣</code>) to separate your outside backticks from your literal backtick(s).</p>
+<li><p>Note that use <span class="env-green">a space</span> (<code>␣</code>) to separate your outside backticks from your literal backtick(s).</p>
 <p>For example, to generate <code>`code`</code>, you use <code>``␣`code`␣``</code> (i.e., two backticks + space + one backtick + <code>code</code> + one backtick + space + two backticks). Note that you need to write sequentially.</p></li>
 </ul></li>
 <li><p>Plain code blocks can be written either</p>
@@ -960,6 +1009,7 @@ qsort [] = []
 <p><a href="https://themockup.blog/posts/2021-08-27-displaying-verbatim-code-chunks-in-xaringan-presentations/" class="uri">https://themockup.blog/posts/2021-08-27-displaying-verbatim-code-chunks-in-xaringan-presentations/</a></p>
 <p>Pandoc’s Markdown: <a href="https://pandoc.org/MANUAL.html#fenced-code-blocks" class="uri">https://pandoc.org/MANUAL.html#fenced-code-blocks</a></p>
 
+</div>
 </div>
             </section>
 

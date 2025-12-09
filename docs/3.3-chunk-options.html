@@ -420,7 +420,11 @@ div.csl-indent {
 <li class="chapter" data-level="3.3.2" data-path="3.3-chunk-options.html"><a href="3.3-chunk-options.html#external-config-files"><i class="fa fa-check"></i><b>3.3.2</b> External Config Files</a></li>
 <li class="chapter" data-level="3.3.3" data-path="3.3-chunk-options.html"><a href="3.3-chunk-options.html#hooks"><i class="fa fa-check"></i><b>3.3.3</b> Hooks</a></li>
 </ul></li>
-<li class="chapter" data-level="3.4" data-path="3.4-print-verbatim-r-code-chunks.html"><a href="3.4-print-verbatim-r-code-chunks.html"><i class="fa fa-check"></i><b>3.4</b> Print Verbatim R code chunks</a></li>
+<li class="chapter" data-level="3.4" data-path="3.4-print-verbatim-r-code-chunks.html"><a href="3.4-print-verbatim-r-code-chunks.html"><i class="fa fa-check"></i><b>3.4</b> Print Verbatim R code chunks</a>
+<ul>
+<li class="chapter" data-level="3.4.1" data-path="3.4-print-verbatim-r-code-chunks.html"><a href="3.4-print-verbatim-r-code-chunks.html#verbatim-inline-code"><i class="fa fa-check"></i><b>3.4.1</b> Verbatim inline code</a></li>
+<li class="chapter" data-level="3.4.2" data-path="3.4-print-verbatim-r-code-chunks.html"><a href="3.4-print-verbatim-r-code-chunks.html#verbatim-r-code-chunks"><i class="fa fa-check"></i><b>3.4.2</b> Verbatim R code chunks</a></li>
+</ul></li>
 <li class="chapter" data-level="3.5" data-path="3.5-rmd-basics.html"><a href="3.5-rmd-basics.html"><i class="fa fa-check"></i><b>3.5</b> Rmd Basics</a>
 <ul>
 <li class="chapter" data-level="3.5.1" data-path="3.5-rmd-basics.html"><a href="3.5-rmd-basics.html#unnumbered-sections"><i class="fa fa-check"></i><b>3.5.1</b> Unnumbered Sections</a></li>
@@ -807,6 +811,42 @@ document.addEventListener('DOMContentLoaded', function() {
     console.warn('TOC auto-open error', e);
   }
 });
+
+// Toggle collapse: clicking an expanded section collapses it
+document.addEventListener('DOMContentLoaded', function() {
+  try {
+    var summary = document.querySelector('.book-summary ul.summary');
+    if (!summary) return;
+
+    // Add click handlers to chapter links with children
+    summary.querySelectorAll('li.chapter').forEach(function(chapter) {
+      var sublist = chapter.querySelector('ul');
+      if (!sublist) return; // Only chapters with subsections
+
+      var link = chapter.querySelector('a');
+      if (!link) return;
+
+      link.addEventListener('click', function(e) {
+        // Check if this chapter is already expanded
+        var isExpanded = chapter.classList.contains('auto-open');
+        
+        if (isExpanded) {
+          // Collapse it
+          e.preventDefault();
+          chapter.classList.remove('auto-open');
+        } else {
+          // Expand it (remove auto-open from others first)
+          summary.querySelectorAll('li.chapter.auto-open').forEach(function(li) {
+            if (li !== chapter) li.classList.remove('auto-open');
+          });
+          chapter.classList.add('auto-open');
+        }
+      });
+    });
+  } catch(e) {
+    console.warn('TOC toggle error', e);
+  }
+});
 </script>
 <style>
 /* Show nested UL of active chapter when collapse=section */
@@ -821,8 +861,8 @@ document.addEventListener('DOMContentLoaded', function() {
 <span id="cb123-3"><a href="3.3-chunk-options.html#cb123-3" tabindex="-1"></a><span class="in">x &lt;- 5  # radius of a circle</span></span>
 <span id="cb123-4"><a href="3.3-chunk-options.html#cb123-4" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb123-5"><a href="3.3-chunk-options.html#cb123-5" tabindex="-1"></a></span>
-<span id="cb123-6"><a href="3.3-chunk-options.html#cb123-6" tabindex="-1"></a>For a circle with the radius `<span class="in">` `</span>r x` ``,</span>
-<span id="cb123-7"><a href="3.3-chunk-options.html#cb123-7" tabindex="-1"></a>its area is `<span class="in">` `</span>r pi * x^2` ``.</span></code></pre></div>
+<span id="cb123-6"><a href="3.3-chunk-options.html#cb123-6" tabindex="-1"></a>For a circle with the radius <span class="in">`r x`</span>,</span>
+<span id="cb123-7"><a href="3.3-chunk-options.html#cb123-7" tabindex="-1"></a>its area is <span class="in">`r pi * x^2`</span>.</span></code></pre></div>
 <p>A code chunk starts with <code>```{}</code> and ends with <code>```</code>.</p>
 <p>Inside the curly braces <code>{}</code>, you start with the language, e.g., <code>r</code>, other languages, such as <code>python</code>, are also supported (<a href="3.3-chunk-options.html#other-languages-rmd">see below</a>). You can customize the behavior and output of code chunks through chunk options.</p>
 <p>Distinguish from <strong>Pandoc Fenced Code Blocks</strong> where you quote the language with three or more backticks/tildes. <a href="https://pandoc.org/demo/example33/8.5-verbatim-code-blocks.html">↩︎</a></p>

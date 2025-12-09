@@ -495,7 +495,10 @@ We
 )</code>
 
 
--   <span class="env-green">**`limits` **</span>
+-   <span class="env-green">**`limits`**</span> A vector of length two describing the minimum and maximum data values to display on the scale.
+    
+    ❗️ Note that setting limits on positional scales will <span class="env-orange">**remove** data outside of the limits.</span> The data outside the limits will be dropped and shown as missing values. This can be especially noticeable for maps.
+    
     -   `NULL` to use the default scale range.
     -   e.g., `c(0,1)` A numeric vector of length two providing limits of the scale. Use `NA` to refer to the existing minimum or maximum.
     -   A function that accepts the existing (automatic) limits and returns new limits. Also accepts rlang [lambda](https://rlang.r-lib.org/reference/as_function.html) function notation. Note that setting limits on positional scales will **remove** data outside of the limits. 

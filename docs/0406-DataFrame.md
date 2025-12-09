@@ -87,8 +87,15 @@ df[!duplicated(lapply(df, summary))]
 
 `NaN` not a number.  0/0 is an example of a calculation that will produce a `NaN`. `NaN`s print as `NaN`, but generally act like `NA`s. Use `is.nan` to check if `NaN`.
 
+`NA` means missing value (Not Available). `is.na` find `NA` values.
+
+`NA` vs. `NaN`:
+
+`NaN` $\subset$ `NA`. That is, all `NaN`s are also `NA`s, but not all `NA`s are `NaN`s.
+
 `Inf` is infinite numbers. `is.infinite` find infinite numbers (`Inf`, `-Inf`).
 
+ref: [Missing Values in R](https://rstudio-pubs-static.s3.amazonaws.com/261838_71b13475011340ab94e9c51d8e462080.html)
 
 `na.omit(x)` remove `NA` values in `x`;
 

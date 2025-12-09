@@ -23,24 +23,81 @@ The Arellano-Bond estimator may be obtained in Stata using either the `xtabond` 
 
 [`xtabond`](https://www.stata.com/manuals/xtxtabond.pdf) fits a linear dynamic panel-data model where the unobserved unit-level effects are correlated with the lags of the dependent variable, known as the Arellano–Bond estimator. This estimator is designed for datasets with many panels and few periods, and it requires that there be **no autocorrelation** in the idiosyncratic errors.
 
-`xtabond` uses moment conditions in which lags of the dependent variable and first differences of the exogenous variables are instruments for the first-differenced equation.
+`xtabond` uses moment conditions in which <span class="env-green">lags of the dependent variable</span> and <span class="env-green">first differences of the exogenous variables</span> are instruments for the first-differenced equation.
 
 ```stata
 xtabond depvar [ indepvars ] [ if ] [ in ] [, options ]
 ```
 
-**Estimation Options**:
+**Estimation options**:
 
 - `noconstant`: suppress the constant term.
-- `lags(#)`: <span class="env-green">**#lags of dependent variable**</span> as covariates; default is <span class="env-green">`lags(1)`</span>
-- `maxldep(#)`: maximum lags of dependent variable for use as instruments. Defaults to $T_i-p-2,$ where $p$ is the number of lags of the dependent variable to be included in the model (i.e., `lags(#)`).
-- `maxlags(#)`: maximum lags of predetermined and endogenous variables for use as instruments
+
+- `lags(#)`: <span class="env-green">**#lags of dependent variable**</span> as covariates; default is <span class="env-green">`lags(1)`</span>. Let $p$ be the number of lags of the dependent variable included in the model.
+
+- `inst(varlist)`: additional instruments to be included in the model except for lags of the dependent variable and first differences of exogenous variables, which are included by default.
+  
+  These instruments are <span class="env-orange">NOT differenced</span> before including them in the instrument matrix.
+
+- `maxldep(#)`: maximum lags of dependent variable for use as (GMM-type) instruments. 
+  
+  Defaults to $T_i-p-2,$ where $p$ is the number of lags of the dependent variable to be included in the model (i.e., `lags(#)`). $p=1$ by default.
+
+  For example, when $T_i=10$ (10 time periods per panel unit), and `lags(1)` is specified (one lag of the dependent variable in the RHS), then `maxldep(7)` ($T_i-p-1=10-1-2=7$) is the default.
+
+  Here is a small table showing which lags act as instruments at each $t$ from 3 to 10:
+
+  | $t$ | GMM-type instruments | Number of instruments |
+  |-----|----------------------|---------------------- |
+  |  3  | $y_{i,1}$                     | 1                   |
+  |  4  | $y_{i,2}, y_{i,1}$            | 2                   |
+  |  5  | $y_{i,3}, y_{i,2}, y_{i,1}$   | 3                   |
+  |  6  | $y_{i,4}, y_{i,3}, y_{i,2}, y_{i,1}$            | 4 |
+  |  7  | $y_{i,5}, y_{i,4}, y_{i,3}, y_{i,2}, y_{i,1}$   | 5 |
+  |  8  | $y_{i,6}, y_{i,5}, y_{i,4}, y_{i,3}, y_{i,2}, y_{i,1}$ | 6 |
+  |  9  | $y_{i,7}, y_{i,6}, y_{i,5}, y_{i,4}, y_{i,3}, y_{i,2}$ | 7 |
+  | 10  | $y_{i,8}, y_{i,7}, y_{i,6}, y_{i,5}, y_{i,4}, y_{i,3}$ | 8 |
+
+  - For $t\le 7,$ there aren't enough lags to reach the maximum lag of 7, so all available lags are used.
+  
+  - Starting from $t=8,$ the maximum lag of 7 is reached, so only lags 2 to 7 are used as instruments.
+   
+  - At $t=8,$ you have 6 instruments (lags 2 to 7). 
+    - You don't use lag one, $y_{i,7},$ because it is already included as a regressor.
+    - The maximum lag is 7, i.e., $y_{i, 1},$ as $8-7=1.$
+  
+  - At $t=10,$ you have 6 instruments (lags 2 to 7).
+
+- `maxlags(#)`: maximum lags of <u>predetermined and endogenous variables</u> for use as (standard) instruments.
+  
+  First difference of all the exogenous variables are used as standard instruments by default.
+
+  - For predetermined variables, defaults to use all $T_i-p-1$ lags.
+  - For endogenous variables, defaults to use all $T_i-p-2$ lags.
+
 - `twostep`: compute the two-step estimator instead of the one-step estimator
-- `pre(varlist)`: **predetermined variables**; can be specified more than once
-- `endogenous(varlist)`: **endogenous variables**; can be specified more than once
+
+- `pre(varlist[, lagstruct(prelags, premaxlags)])`: **predetermined variables**; can be specified more than once.
+  
+  Optionally, you may specify `prelags` lags of the predetermined variables to be used as instruments. Defaults to 0.
+
+- `endogenous(varlist[, lagstruct(endlags, endmaxlags)])`: **endogenous variables**; can be specified more than once.
+
 - `vce(vcetype)`
     - `vce(gmm)` the default, uses the conventionally derived variance estimator for generalized method of moments estimation.
     - `vce(robust)`: uses the robust estimator. After one-step estimation, this is the Arellano–Bond robust VCE estimator. After two-step estimation, this is the Windmeijer (2005) WC-robust estimator.
+
+
+**Reporting options:**
+
+- `artests(#)`: use `#` as maximum order for AR tests; default is `artests(2)`.
+  
+  The tests are reported by `estat abond`. 
+
+  Specifying the order of the highest test at *estimation time* is more *efficient* than specifying it to `estat abond`, because `estat abond` must refit the model to obtain the test statistics.
+
+--------------------------------------------------------------------------------
+
 
 **Quick Start**
 
@@ -361,6 +418,16 @@ Order         z   Prob > z
     4   .04472      0.9643
 ```
 
+The AR test is applied to the first-differenced residuals:
+
+$$
+\begin{aligned}
+\Delta \varepsilon_{it} &= \varepsilon_{it} - \varepsilon_{i,t-1} \\
+\Delta \varepsilon_{i,t-1} &= \varepsilon_{i,t-1} - \varepsilon_{i,t-2} \\
+\end{aligned}
+$$
+
+Because they share the $\varepsilon_{i,t-1}$ term, AR(1) is expected. Hence, we only need to check for zero autocorrelation for AR(2) and higher.
 
 --------------------------------------------------------------------------------
 
@@ -596,6 +663,23 @@ xtabond2 n L.n w L.w k, gmmstyle(L.(w n k), eq(diff)) robust
 ```
 
 <https://www.statalist.org/forums/forum/general-stata-discussion/general/1548924-xtabond-vs-xtabond2-how-to-get-the-same-results>
+
+
+With `xtabond2`, you need to specify explicitly 
+
+- regressors
+- instruments
+
+This is in contrast to `xtabond`, which automatically treats all variables other than the dependent variable as exogenous and uses them as instruments in the difference equation.
+
+As a result, <span class="env-green">most variables need to be listed twice in `xtabond2`</span>: 
+
+- once as regressors before the comma and 
+- once as instruments in `gmmstyle()` or `ivstyle()` options after the comma.
+
+The result is a loss of parsimony, but fuller control over the instrument matrix. 
+Variables can be used as the basis for "GMM-style" instrument sets without being included as regressors, or vice versa.
+
 
 
 --------------------------------------------------------------------------------
