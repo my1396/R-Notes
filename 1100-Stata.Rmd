@@ -985,11 +985,38 @@ estimates table m1 m2
 // with SE
 estimates table m1 m2, se
 
-// with sample size, adjusted 𝑅2, and stars
+// with sample size, adjusted R2, and stars
 estimates table m1 m2, stats(N r2_a) star
 ```
 
 You can add more results to show using options:
+
+**Parameter statistics options:**
+
+- `b[%fmt]` how to format the *coefficients*.
+- `se[%fmt]` show *standard errors* and use optional format
+- `t[%fmt]` show $t$ or $z$ statistics and use optional format
+- `p[%fmt]` show $p$ values and use optional format
+- `varlabel` display *variable labels* rather than variable names
+
+
+```stata
+// show se, t, and p values
+. estimates table, se t p
+```
+
+All statistics are shown in order <u>under the coefficients</u>. If you have a long list of variables, the table can be very long.
+
+<img src="images/solution.png" alt="" style="display: inline; height: 1.2em; vertical-align: middle;" /> You can use `keep(varlist)` to keep only the variables you want to show in the table.
+
+- `varlist` is a list of variables you want to keep in the table.
+  - A list of variables can be specified as `keep(var1 var2 var3)`. 
+    
+    Names are separated by spaces.
+  
+  - <span class="env-orange">Not</span> possible to use variable ranges, e.g., `keep(var1-var3)` will return an error.
+  
+  - When you have multiple equations, use `eqn_name:varname` to specify the variable in a specific equation.
 
 - `stats(scalarlist)` reports additional statistics in the table. Below are commonly used result identifiers:
 
@@ -999,10 +1026,18 @@ You can add more results to show using options:
   - `F` for F-statistic
   - `chi2` for chi-squared statistic
   - `p` for p-value
-  
-  `stats(N r2_a)` to show sample size and adjusted $R^2$
+
+  ```stata
+  // show sample size and adjusted R2
+  . estimates table, stats(N r2_a)
+  ```
 
 - `star` shows stars for significance levels.
+  
+  ```stata
+  // show stars for sig. levels
+  . estimates table, star
+  ```
   
   - By default, <span class="env-green">`star(.05 .01 .001)`</span>, which uses the following significance levels:
     - `*` for $p < 0.05$
@@ -1026,35 +1061,8 @@ You can add more results to show using options:
   option star not allowed
   ```
 
-**Parameter statistics options:**
 
-- `b[%fmt]` how to format the coefficients.
-- `se[%fmt]` show standard errors and use optional format
-- `t[%fmt]` show $t$ or $z$ statistics and use optional format
-- `p[%fmt]` show $p$ values and use optional format
-- `varlabel` display variable labels rather than variable names
-
-
-```stata
-// show stars for sig. levels
-. estimates table, star
-
-// show se, t, and p values
-.  estimates table, se t p
-```
-
-All statistics are shown in order under the coefficients. If you have a long list of variables, the table can be very long.
-
-You can use `keep(varlist)` to keep only the variables you want to show in the table.
-
-- `varlist` is a list of variables you want to keep in the table.
-  - A list of variables can be specified as `keep(var1 var2 var3)`. 
-    
-    Names are separated by spaces.
-  
-  - Not possible to use variable ranges, e.g., `keep(var1-var3)` will return an error.
-  
-  - When you have multiple equations, use `eqn_name:varname` to specify the variable in a specific equation.
+--------------------------------------------------------------------------------
 
 
 **Example output**
@@ -1127,6 +1135,8 @@ Use `keep()` to show only selected variables, and use <span class="env-green">`s
 
 #### `esttab` {#esttab}
 
+`esttab` is a wrapper for `estout`. It is a command for publication-style regression tables that display nicely in Stata's results window or, optionally, can be exported to various formats such as CSV, RTF, HTML, or LaTeX.
+
 ```stata
 esttab [ namelist ] [ using filename ] [, options estout_options ]
 ```
@@ -1140,7 +1150,7 @@ esttab [ namelist ] [ using filename ] [, options estout_options ]
 `eststo` stores a copy of the active estimation results for later tabulation. If name is provided, the estimation set is stored under name. If name is not provided, the estimation set is stored under `est#`, where `#` is a counter for the number of stored estimation sets.
 
 
-eststo may be used in two ways: Either after fitting a model as in
+`eststo` may be used in two ways: Either after fitting a model as in
 
 ```
 . regress y x
@@ -1305,13 +1315,14 @@ Adjusted R-squared (option `ar2`), pseudo R-squared (option `pr2`),  Akaike's or
 
   Note that `cells(b se)` will produce the vertical layout by default. To get the wide layout, two options:
 
-  - put elements in quotes `cells("b se")`
+  - put elements in quotes `cells("b se")`, or
   - put elements in parentheses `cells((b se))`
 
 
 **Long table example**
 
 ```stata
+// avoid "cells(b se)", difficult to read
 . estout, cells(b se)
 
 --------------------------------------
@@ -1333,6 +1344,7 @@ _cons            1946.069    -5853.696
 **Wide table example**
 
 ```stata
+// better to use "cells("b se t p")" for wide format
 . estout est2, cells("b se t p") 
 
 ----------------------------------------------------------------
@@ -1355,7 +1367,7 @@ _cons           -5853.696     3376.987    -1.733408     .0874262
 - `replace` allows Stata to overwrite existing files.
 
 
-ref: <https://repec.sowi.unibe.ch/stata/estout/esttab.html>
+ref: [`estout` package documentation](https://repec.sowi.unibe.ch/stata/estout/esttab.html)
 
 --------------------------------------------------------------------------------
 
