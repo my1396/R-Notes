@@ -931,7 +931,7 @@ ___
 
 ### Save Estimation Results
 
-`estimates store model_name` stores the current (active) estimation results under the name `model_name`.
+<span class="env-green">`estimates store model_name`</span> stores the current (active) estimation results under the name `model_name`.
 
 ```stata
 // Store estimation results as m1 for use later in the same session
@@ -962,8 +962,12 @@ In a different session, you can reload those results:
 ```
 
 Q: What is the difference between `estimates store` and `estimates save`? \
-A: Once estimation results are stored, you can use other `estimates`
-commands to produce tables and reports from them.
+A: Once estimation results are stored (`estimates store`), you can use other `estimates` commands to produce tables and reports from them. `estimates save` saves the results to disk (as a `.ster` file) so that you can use them in a different Stata session.
+
+- `estimates store` keeps the results in memory, fast and temporary. The most common use is to store results from multiple models in the same session for comparison.
+
+- `estimates save` keeps the results on disk, persistent. The most common use is to save time-consuming important results for future reference. Also useful when you want to share results with others.
+
 
 --------------------------------------------------------------------------------
 
@@ -971,9 +975,13 @@ commands to produce tables and reports from them.
 
 If you type estimates table without arguments, a table of the most recent estimation coefficients will be shown.
 
+<span class="env-green">`estimates table namelist` is useful to compare results from multiple models side by side.</span> Good for a *quick preview*. Use <a href="#esttab">`esttab`</a> or <a href="#etable">`etable`</a> for more advanced table formatting and exporting.
+
+
 ```stata
 // Display a table of coefficients for stored estimates m1 and m2
 estimates table m1 m2
+
 // with SE
 estimates table m1 m2, se
 
@@ -993,24 +1001,32 @@ You can add more results to show using options:
   - `p` for p-value
   
   `stats(N r2_a)` to show sample size and adjusted $R^2$
+
 - `star` shows stars for significance levels.
   
-  - By default, `star(.05 .01 .001)`, which uses the following significance levels:
+  - By default, <span class="env-green">`star(.05 .01 .001)`</span>, which uses the following significance levels:
     - `*` for $p < 0.05$
     - `**` for $p < 0.01$
     - `***` for $p < 0.001$
   
-  - You can change the significance levels using `star(.1 .05 .01)` to set the levels to 0.10, 0.05, and 0.01, respectively.
+  - You can change the significance levels using <span class="env-green">`star(.1 .05 .01)`</span> to set the levels to 0.10, 0.05, and 0.01, respectively.
+    
+    <span class="env-green">Many journals use this convention actually.</span> Also this boost the appearance of significance even though the p-values remain the same.
+    
+    - `*` for $p < 0.10$
+    - `**` for $p < 0.05$
+    - `***` for $p < 0.01$
   
-  - N.B. the `star` option may not be combined with the `se`, `t`, or `p` option. 
+  - **N.B.** the `star` option may <span class="env-orange">**NOT**</span> be combined with the `se`, `t`, or `p` option.
   
   An error will be returned if you try to combine them:
-    
-    ```stata
-    .  estimate table, star se t p star
-    option star not allowed
-    ```
+  
+  ```stata
+  . estimate table, star se t p star
+  option star not allowed
+  ```
 
+**Parameter statistics options:**
 
 - `b[%fmt]` how to format the coefficients.
 - `se[%fmt]` show standard errors and use optional format
@@ -1041,18 +1057,314 @@ You can use `keep(varlist)` to keep only the variables you want to show in the t
   - When you have multiple equations, use `eqn_name:varname` to specify the variable in a specific equation.
 
 
-Example of a long variable list
+**Example output**
+
+By default, `estimates table` shows only the coefficients for all regressors. 
+
+Use `keep()` to show only selected variables, and use <span class="env-green">`star`</span> to show significance levels.
 
 ```stata
-estimates table, keep(L1.logd_gdp tmp tmp2 pre pre2 tmp_pre tmp2_pre tmp_pre2 tmp2_pre2) se t p 
+. estimates table global_trend country_trend, keep(L.logd_gdp tmp tmp2 pre pre2 tmp_pre tmp2_pre tmp_pre2 tmp2_pre2) star
+
+----------------------------------------------
+    Variable | global_trend    country_trend  
+-------------+--------------------------------
+    logd_gdp |
+         L1. |  .02106535       .01196853     
+             |
+         tmp |  .02233754**     .02285209**   
+        tmp2 | -.00091508***   -.00093839***  
+         pre |  .07140978       .07469934     
+        pre2 | -.04168053      -.04459604     
+     tmp_pre | -.01259437      -.01284796     
+    tmp2_pre |  .00047348*      .00047987*    
+    tmp_pre2 |  .00472783       .00496185     
+   tmp2_pre2 | -.00013928      -.00014426     
+----------------------------------------------
+      Legend: * p<0.05; ** p<0.01; *** p<0.001
 ```
+
+
+**Print standard errors, t-statistics, and p-values together:**
+
+```stata
+. estimates table global_trend country_trend, keep(L.logd_gdp tmp tmp2 pre pre2 tmp_pre tmp2_pre tmp_pre2 tmp2_pre2) 
+> se t p
+
+----------------------------------------
+    Variable | global_t~d   country_~d  
+-------------+--------------------------
+    logd_gdp |
+         L1. |  .02106535    .01196853  
+             |  .01402981    .01433765  
+             |       1.50         0.83  
+             |     0.1332       0.4039  
+             |
+         tmp |  .02233754    .02285209  
+             |   .0068979    .00701607  
+             |       3.24         3.26  
+             |     0.0012       0.0011  
+        tmp2 | -.00091508   -.00093839  
+             |  .00019456    .00019787  
+             |      -4.70        -4.74  
+             |     0.0000       0.0000  
+...
+...
+    tmp_pre2 |  .00472783    .00496185  
+             |  .00420448    .00427315  
+             |       1.12         1.16  
+             |     0.2608       0.2456  
+   tmp2_pre2 | -.00013928   -.00014426  
+             |  .00009435    .00009588  
+             |      -1.48        -1.50  
+             |     0.1399       0.1324  
+----------------------------------------
+                        Legend: b/se/t/p
+```
+
+--------------------------------------------------------------------------------
+
+
+#### `esttab` {#esttab}
+
+```stata
+esttab [ namelist ] [ using filename ] [, options estout_options ]
+```
+
+- `namelist` is a list of stored estimation results to be included in the table. Can be `_all`.
+  
+  If namelist is omitted, esttab tabulates the estimation sets stored by `eststo`. If no such estimates exist, `esttab` tabulates the most recent estimation results.
+
+--------------------------------------------------------------------------------
+
+`eststo` stores a copy of the active estimation results for later tabulation. If name is provided, the estimation set is stored under name. If name is not provided, the estimation set is stored under `est#`, where `#` is a counter for the number of stored estimation sets.
+
+
+eststo may be used in two ways: Either after fitting a model as in
+
+```
+. regress y x
+. eststo
+```
+
+or as a prefix command:
+
+```
+. eststo: regress y x
+```
+
+Add name to model using `eststo model_name`.
+
+```
+. sysuse auto
+(1978 Automobile Data)
+
+. quietly regress price weight
+
+. eststo model1
+
+. quietly regress turn weight foreign
+
+. eststo model2
+
+. estout
+        
+--------------------------------------
+                    model1       model2
+                        b            b
+--------------------------------------
+weight           2.044063     .0042183
+foreign                      -1.809802
+_cons           -6.707353     27.44963
+--------------------------------------
+```
+
+
+
+Alternatively, use `estimates store model_name` to store estimation results.
 
 
 --------------------------------------------------------------------------------
 
-#### `etable` {.unnumbered}
+Output example of `estab`
+
+```
+--------------------------------------------
+                      (1)             (2)   
+                    price           price   
+--------------------------------------------
+weight              1.747**         3.465***
+                   (2.72)          (5.49)   
+
+mpg                -49.51           21.85   
+                  (-0.57)          (0.29)   
+
+foreign                            3673.1***
+                                   (5.37)   
+
+_cons              1946.1         -5853.7   
+                   (0.54)         (-1.73)   
+--------------------------------------------
+N                      74              74   
+--------------------------------------------
+t statistics in parentheses
+* p<0.05, ** p<0.01, *** p<0.001
+```
+
+The default of esttab is to display raw point estimates along with t-statistics and to print the number of observations in the table footer. 
+
+
+
+<span class="env-green">**Parameter statistics options:**</span>
+
+You can replace the **t-statistics** with standard errors by using the `se` option.
+
+The t-statistics can also be replaced by p-values (option `p`), confidence intervals (option `ci`), or any parameter statistics contained in the estimates (see the `aux()` option). 
+
+
+If you want to include multiple parameter statistics, you can make use of the `cells()` option. E.g., `cells("b(fmt(%9.4f)) se(fmt(%9.4f) par) t(fmt(%9.2f)) p(fmt(%9.3f) star)")` will display the point estimates, standard errors, t-statistics, and p-values in the specified formats. Note that the significance star will be added to the p-values. By doing so, you can perform calculations using the coefficients.
+
+Use [`help estout`](https://repec.sowi.unibe.ch/stata/estout/help-estout.html#stlog-1-cells) for more details about the `cells(element[(subopts)])` option.
+
+<span class="env-green">`cells()`</span> specifies the contents of the table cells. For each element (`b`, `se`, `t`, `p`, etc.), you can specify suboptions in parentheses to control the format and appearance of the statistics.
+
+**Available `cells()` subopts:**
+
+- `fmt(%fmt)` specify the format for the statistic
+- `star` add significance stars
+  - `nostar` suppress significance stars
+
+- `label` add a customized label instead of default abbreviation
+- `par` enclose the statistic in parentheses
+
+
+<span class="env-green">**N.B.**</span> By default, multiple statistics are stacked vertically (i.e., one statistic per line). If you want to display them side by side, enclose the elements in quotes or parentheses, e.g., `cells("b se t p")` or `cells((b se t p))`. You can add suboptions to each element as needed.
+See the [wide table](#wide_table) below for more details.
+
+--------------------------------------------------------------------------------
+
+
+**Summary statistics options:** 
+
+Adjusted R-squared (option `ar2`), pseudo R-squared (option `pr2`),  Akaike's or Schwarz's information criterion (options `aic` and `sic`).
+
+--------------------------------------------------------------------------------
+
+
+**Significance stars options:**
+
+- `star(* .05 ** .01 *** .001)` adds significance stars to the point estimates based on the specified p-value cutoffs.
+  
+  You can change the significance levels by specifying different cutoff values. For example, <span class="env-green">`star(* .1 ** .05 *** .01)`</span> will use 0.1, 0.05, and 0.01 as the significance levels for one, two, and three stars, respectively.
+
+  Syntax: 
+
+  ```stata
+  star[(symbol level [...])]
+  ```
+  
+  Note that the threshold levels must lie in the $(0,1]$ interval and must be specified in *descending* order.
+  
+  `star(+ 0.10 * 0.05)` will use `+` for $p<.10$ and `*` for $p<.05.$
+
+  When you change the default behavior of `star`, the legned is sometimes disabled. This happens when you add the stars to p-values instead of point estimates. 
+  
+  In such cases, use <span class="env-green">`legend`</span> to show the legend explaining the significance levels.
+
+  When you change the significance levels, e.g., `star(* 0.10 ** 0.05 *** 0.01)`, the legend will be updated automatically.
+
+- `staraux` adds significance stars based on auxiliary statistics (t-stat or SE depending on your settings) instead of the point estimates.
+
+--------------------------------------------------------------------------------
+
+**Layout options:**
+
+- `plain` setting all formats to `%9.0g`.
+  
+  This can be useful when you want to export the table to CSV. 
+
+  Without `plain`, the table cells are enclosed in double quotes and preceded by an equal sign (i.e., `="..."`). This is to prevent Excel from interpreting the contents of the table cells.
+
+  But the drawback is that you cannot perform calculations directly in Excel using these cells. To enable calculations, you can use the `plain` option to export the table cells enclosed in double quotes without the leading equal sign.
+
+<a name="wide_table"></a>
+
+- `wide` causes point estimates and t-statistics (or standard errors, etc.) to be printed beside one another instead of beneath one another. (By default, esttab stacks all parameter statistics beneath the point estimates.)
+  
+  **N.B.** This only works when a single parameter statistic is displayed per model.
+
+  If you have multiple statistics per model (e.g., both standard errors and t-statistics), `wide` will be ignored. You need to use `cells()` to explicitly specify the layout you want.
+
+  ```stata
+  // Each statistic as a separate column, wide format
+  esttab dynamic_model_xtabond using "data/stata/xtabond_test.csv", ///
+    cells("b(fmt(%9.4f)) se(fmt(%9.4f)) t(fmt(%9.2f)) p(fmt(%9.3f) star)") ///
+    keep(L.logd_gdp tmp tmp2 pre pre2 tmp_pre tmp2_pre tmp_pre2 tmp2_pre2) ///
+    csv replace legend
+  ```
+
+  Note that `cells(b se)` will produce the vertical layout by default. To get the wide layout, two options:
+
+  - put elements in quotes `cells("b se")`
+  - put elements in parentheses `cells((b se))`
+
+
+**Long table example**
+
+```stata
+. estout, cells(b se)
+
+--------------------------------------
+                     est1         est2
+                     b/se         b/se
+--------------------------------------
+weight           1.746559     3.464706
+                 .6413538      .630749
+mpg             -49.51222      21.8536
+                 86.15604     74.22114
+foreign                        3673.06
+                              683.9783
+_cons            1946.069    -5853.696
+                  3597.05     3376.987
+--------------------------------------
+```
+
+
+**Wide table example**
+
+```stata
+. estout est2, cells("b se t p") 
+
+----------------------------------------------------------------
+                     est2                                       
+                        b           se            t            p
+----------------------------------------------------------------
+weight           3.464706      .630749     5.493003     5.99e-07
+mpg               21.8536     74.22114     .2944391     .7692938
+foreign           3673.06     683.9783     5.370142     9.72e-07
+_cons           -5853.696     3376.987    -1.733408     .0874262
+----------------------------------------------------------------
+```
+
+
+- `mtitles[(list)]` specifies model titles to be printed as the table header. If `list` is omitted, the names of the stored estimation results are used as model titles.
+
+
+**Output options:**
+
+- `replace` allows Stata to overwrite existing files.
+
+
+ref: <https://repec.sowi.unibe.ch/stata/estout/esttab.html>
+
+--------------------------------------------------------------------------------
+
+#### `etable` {#etable}
 
 **`etable`** allows you to easily create a table of estimation results and export it to a variety of file types, e.g., `docx`, `html`, `pdf`, `xlsx`, `tex`, `txt`, `markdown`, `md`.
+
+Easier to use than `esttab` for exporting a regression table; but less flexible. `esttab` is more customizable.
+
 
 ```stata
 // use example of etable
@@ -1076,7 +1388,7 @@ estimates table, keep(L1.logd_gdp tmp tmp2 pre pre2 tmp_pre tmp2_pre tmp_pre2 tm
 - `showstars` and `showstarsnote` shows stars and notes for significance levels.
 - `export` allows you to specify the output format
 
-Alternative to `etable`: `eststo`.
+
 
 
 

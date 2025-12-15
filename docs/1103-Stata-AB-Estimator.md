@@ -569,6 +569,37 @@ Forecast under `xtabond`:
 | ------------------- | ---------------------|
 | Not support factor variables<br />Can be fixed with `xi: xtabond` | Support factor variables |
 
+$$
+\begin{aligned}
+y_{it} &= \bx_{it} * \bb_{1} + \bw_{it} * \bb_{2} + u_{it}, \;i=1,...,N; \; t=1,...,T \\
+u_{it} &= v_i + e_{it}.
+\end{aligned}
+$$
+
+- $\bx_{it}$  is a vector of strictly exogenous covariates (ones dependent on neither current nor past $e_{it}$);
+- $\bw_{it}$ is a vector of predetermined covariates (which may include the lag of $y$) and endogenous covariates, all of which may be correlated with the $v_i.$
+  
+   **Predetermined variables** are potentially correlated with past errors. 
+   
+   **Endogenous ones** are potentially correlated with past and <span class="env-green">present</span> errors.
+
+- $v_i$ are unobserved individual-level effects;
+- $e_{it}$ are the observation-specific errors idiosyncratic shocks,
+
+Asssumptions about the disturbance term:
+
+$$
+\E[v_i] = \E[e_{it}] = \E[v_i e_{it}] = 0
+$$
+
+$\E[v_i e_{it}] = 0$ indicates that the fixed effects and the idiosyncratic shocks are orthogonal.
+
+It also assumes no cross sectional dependence:
+$$
+\E[e_{it}e_{js}] =0  \text{ for } i\ne j .
+$$
+
+
 
 ```stata
 xtabond2 depvar varlist [if exp] [in range] [weight] 
@@ -596,6 +627,23 @@ xtabond2 depvar varlist [if exp] [in range] [weight]
   
   Since the `gmmstyle()` varlist allows time-series operators, there are many routes to the same specification.  
   E.g., `gmm(w, lag(2 .))`, the standard treatment for an endogenous variable, is equivalent to `gmm(L.w, lag(1 .))`, thus `gmm(L.w)`.
+
+  - `laglimits(a b)`: specify the range of lags to be used as instruments.
+    
+    - `a`: the earliest lag to be used
+    - `b`: the latest lag to be used
+
+    For the transformed equation, lagged levels dated $t-a$ to $t-b$ are used as instruments, while for the levels equation, the first-difference dated $t-a+1$ is normally used. 
+
+    `a` and `b` can each be missing (`.`); `a` defaults to 1 and `b` to infinity. 
+
+  - `collapse`: specifies that `xtabond2` should create one instrument for each variable and lag distance, rather than one for each time period, variable, and lag distance.
+      
+      In large samples, collapse reduces statistical efficiency. 
+      
+      But in <span class="env-green">small samples</span> it can avoid the bias that arises as the number of instruments climbs toward the number of observations <span class="env-green">When instruments are many, they tend to **overfit** the instrumented variables and **bias the results toward those of OLS/GLS**.</span>
+      
+      `collapse` also greatly curtails computational demands by reducing the width of the instrument matrix, and helps keep the matrix within Stata's size limit.
 
 
 - `ivopt`
