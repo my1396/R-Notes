@@ -944,11 +944,11 @@ ___
 
 --------------------------------------------------------------------------------
 
-`estimate save` saves the current active estimation results to a file with the extension `.ster`. 
+`estimates save` saves the current active estimation results to a file with the extension `.ster`. 
 
 ```stata
 // Save the current active estimation results
-. estimate save basemodel
+. estimates save basemodel
 file basemodel.ster saved
 ```
 
@@ -967,6 +967,12 @@ A: Once estimation results are stored (`estimates store`), you can use other `es
 - `estimates store` keeps the results in memory, fast and temporary. The most common use is to store results from multiple models in the same session for comparison.
 
 - `estimates save` keeps the results on disk, persistent. The most common use is to save time-consuming important results for future reference. Also useful when you want to share results with others.
+
+--------------------------------------------------------------------------------
+
+Q: How to print the original regression output again after storing the results? \
+A: Use `estimates replay model_name`. This will show the original output as it appeared when the model was first estimated.
+
 
 
 --------------------------------------------------------------------------------
@@ -1046,7 +1052,7 @@ All statistics are shown in order <u>under the coefficients</u>. If you have a l
   
   - You can change the significance levels using <span class="env-green">`star(.1 .05 .01)`</span> to set the levels to 0.10, 0.05, and 0.01, respectively.
     
-    <span class="env-green">Many journals use this convention actually.</span> Also this boost the appearance of significance even though the p-values remain the same.
+    <span class="env-green">Many journals use this convention actually.</span> Also this boosts the appearance of significance even though the p-values remain the same.
     
     - `*` for $p < 0.10$
     - `**` for $p < 0.05$
