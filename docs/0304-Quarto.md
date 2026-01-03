@@ -885,9 +885,11 @@ y_i = \beta_{i}'x + u_i.
 $$ {#eq-cross_sectional_hetero}
 ```
 
-- `@eq-cross_sectional_hetero` gives `Equation 1`. There are <span class="env-orange">no parentheses around the number</span>. 
+- `@eq-cross_sectional_hetero` gives `Equation 1`.
   
-  With the `Equation` prefix, but no parentheses around labels.
+  With the `Equation` prefix, but <span class="env-orange">no parentheses around the label.</span>
+
+  [Quarto Discussion: Add parentheses around equation numbers reference](https://github.com/quarto-dev/quarto-cli/issues/2439) -- Unresolved as of Jan 2026.
 
 - `([-@eq-cross_sectional_hetero])` gives only the tag `(1)`, note that you need to <span class="env-green">add the parentheses yourself</span>.
 
@@ -1175,7 +1177,7 @@ Note: This does <span class="env-orange">**NOT**</span> work for quarto pdf. Use
 
 [**twemoji**](https://github.com/twitter/twemoji/tree/master)
 
-How to add more emoji later:
+<span class="env-green">**Four steps**</span> to add more emojis in the future:
 
 1. Open `twemoji_manifest.json` and append new code points to the emoji object
    
@@ -1222,7 +1224,7 @@ How to add more emoji later:
    
    This ensures when you use the emoji directly, it maps to the correct image file.
 
-4. Optionally add a shortcode mapping in `emoji.lua`'s `emoji_map` to point to the same filename.
+4. **Optionally** add a shortcode mapping in `emoji.lua`'s `emoji_map` to point to the same filename.
    - Example: `[":warning:"] = "26a0.png",`
    
    This allows you to use the shortcode `:warning:` in addition to the direct emoji.
@@ -2005,6 +2007,19 @@ ref:
 
 - <https://jadeyryan.quarto.pub/cascadia-quarto/4-conditionals/>
 - meta variables: <https://quarto.org/docs/authoring/variables.html>
+
+### FAQ
+
+Q: How to add comments in Quarto markdown?  
+A: Use HTML comment syntax: `<!-- This is a comment -->`
+
+Multiline comment:
+
+```html
+<!--
+your comment goes here
+-->
+```
 
 --------------------------------------------------------------------------------
 
