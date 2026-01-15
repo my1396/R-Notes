@@ -139,6 +139,7 @@ The key thing to be aware of is that when you update R, [if you just download th
 Q: How to understand the version number? \
 A: The version number is in the format `major.minor.patch`, e.g. `4.3.1`. The first number is the major version, the second is the minor version, and the third is the patch version. Major versions are released every 18 months, minor versions are released every 6 months, and patches are released as needed.
 
+Click [HERE](https://cran.r-project.org) to check the latest R version.
 
 ### Update R on Mac
 
