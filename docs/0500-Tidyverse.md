@@ -253,6 +253,45 @@ data %>%
 -  `x` and `y` are supposed to have the same structure, i.e., same columns if for data frames.
 
 
+**Count frequency of unique values in a column**
+
+- use `plyr::count`: <span class="env-green">**must**</span> quote the column name
+  
+  
+  ``` r
+  plyr::count(mtcars, "cyl")
+  ```
+  
+  ```
+  ##   cyl freq
+  ## 1   4   11
+  ## 2   6    7
+  ## 3   8   14
+  ```
+
+  The output has two columns: `cyl` and `freq`, where `freq` is the count of each unique value in `cyl`.
+
+- use `dplyr::count`: must <span class="env-orange">**NOT**</span> quote the column name
+  
+  
+  ``` r
+  dplyr::count(mtcars, cyl)
+  ```
+  
+  ```
+  ##   cyl  n
+  ## 1   4 11
+  ## 2   6  7
+  ## 3   8 14
+  ```
+
+  The frequency column is named `n` by default. You can rename it using the `name` argument, e.g. `dplyr::count(mtcars, cyl, name="freq")`
+
+> ❗️ `plyr` conflicts with `dplyr` functions. They have different syntaxes.  
+> If you load both packages, make sure to specify the package name when calling functions, e.g. `dplyr::count()` or `plyr::count()`.  
+> If you are not careful, unexpected errors may occur.
+
+
 ### Column Names
 
 `rename()` replaces an old name with a new one. 

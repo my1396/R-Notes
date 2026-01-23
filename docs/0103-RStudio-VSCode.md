@@ -121,7 +121,13 @@ A: Set `"r.lsp.diagnostics": false`. Then in command palette, type "Developer: R
 ### Radian
 
 Q: There is no syntax highlighting in the R terminal. How to fix it? \
-A: Install [**Radian**](https://github.com/randy3k/radian), an improved **R console** REPL interface that corrects many limitations of the official R terminal and supports many features such as *syntax highlighting* and *auto-completion*. In the terminal, run
+A: Install [**Radian**](https://github.com/randy3k/radian), an improved **R console** REPL interface that corrects many limitations of the official R terminal and supports many features such as *syntax highlighting* and *auto-completion*. 
+
+
+<img src="images/radian.png" width="366" />
+
+Q: How to install Radian? \
+A: In the terminal, run
 
 ```bash
 $pipx install radian
