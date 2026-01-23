@@ -57,7 +57,7 @@ if(file.exists(data)){
 
 --------------------------------------------------------------------------------
 
-
+#### sprintf
 
 `sprintf(fmt, ...)`	The string `fmt` contains normal characters, which are passed through to the output string, and also conversion specifications which operate on the arguments provided through `…`. The allowed conversion specifications start with a `%` and end with one of the letters in the set `aAdifeEgGosxX%`.  	
 
@@ -98,8 +98,68 @@ https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/sprintf
 
 --------------------------------------------------------------------------------
 
+#### `glue::glue()`
+
+`glue::glue(...)` interpolates strings. It is similar to `sprintf`, but more powerful and easier to use.
+
+- `{}` 	curly braces are used to indicate expressions to be evaluated and inserted into the string.
+
+  ```r
+  library(glue)
+  name <- "John"
+  age <- 30
+  glue("My name is {name} and I am {age} years old.")
+  # My name is John and I am 30 years old.
+  ```
+- You can include any valid R expression inside the curly braces.
+
+  ```r
+  x <- 5
+  glue("The square of {x} is {x^2}.")
+  # The square of 5 is 25.
+  ```
+
+  To **format numbers**, include formatting functions inside the braces.
+
+  ```r
+  pi_value <- pi
+  glue("The value of pi rounded to 2 decimal places is {round(pi_value, 2)}.")
+  # The value of pi rounded to 2 decimal places is 3.14.
+  ```
+
+  > Avoid using `%>%` inside `{}` as it might be ignored due to precedence issues.
 
 
+  You can **index/subset data** within the braces.
+
+  ```r
+  x <- seq(1, 10, by = 2)
+  glue("The second element of x is {x[2]}.")
+  # The second element of x is 3.
+  ```
+
+- Use <span class="env-green">`.trim = FALSE`</span> to prevent trimming of leading and trailing whitespace.
+
+  ```r
+  glue("   This string has leading and trailing whitespace.   ", .trim = FALSE)
+  #    This string has leading and trailing whitespace.   
+  ```
+
+- Multiline strings are supported.
+
+  ```r
+  # line breaks are preserved
+  glue("
+  This is a multiline string.
+  It can span multiple lines.
+  ")
+  # This is a multiline string.
+  # It can span multiple lines.
+  ```
+
+
+
+--------------------------------------------------------------------------------
 
 `print` vs. `cat`:
 
