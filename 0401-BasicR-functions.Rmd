@@ -100,7 +100,9 @@ https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/sprintf
 
 #### `glue::glue()`
 
-`glue::glue(...)` interpolates strings. It is similar to `sprintf`, but more powerful and easier to use.
+`glue` is one of the `tidyverse` packages.
+
+`glue::glue(...)` interpolates strings. It is similar to `sprintf`, but more powerful and easier to use. 
 
 - `{}` 	curly braces are used to indicate expressions to be evaluated and inserted into the string.
 
