@@ -100,9 +100,24 @@ https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/sprintf
 
 #### `glue::glue()`
 
-`glue` is one of the `tidyverse` packages.
+`glue` is one of the `tidyverse` packages, but you still need to <span class="env-green">explicitly load</span> it to use the function.
 
 `glue::glue(...)` interpolates strings. It is similar to `sprintf`, but more powerful and easier to use. 
+
+Highlight features of `glue`:
+
+- You can specify variable names directly in the string, vs. `sprintf` requires you to specify the position of the variable
+- `glue` allows you to include any valid R expression inside the curly braces, while `sprintf` only allows for specific formatting options like `%s`, `%d`, etc.
+- `glue` can preserve whitespaces with `.trim=FALSE` and keeps your line breaks, while `sprintf` does not. 
+
+
+| Feature                    | `glue`                                                           | `sprintf`                                                                           |
+| -------------------------- | ---------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| Variable specification     | You can refer to variables directly by name inside `{}`.         | You must specify variable positions using format placeholders like `%s`, `%d`, etc. |
+| Expression support         | Allows any valid R expression inside curly braces.               | Limited to predefined formatting specifiers.                                        |
+| Whitespace and line breaks | Preserves whitespace with `.trim = FALSE` and keeps line breaks. | Does not automatically preserve whitespace or line breaks.                          |
+
+
 
 - `{}` 	curly braces are used to indicate expressions to be evaluated and inserted into the string.
 
