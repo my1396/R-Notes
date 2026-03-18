@@ -899,6 +899,8 @@ Tou can double-click a variable to open it in the Data Viewer. It provides a spr
 
 You can filter, sort, and search the data in the Data Viewer.
 
+--------------------------------------------------------------------------------
+
 **Data Wrangler**
 
 Use [Data Wrangler](https://marketplace.visualstudio.com/items?itemName=ms-toolsai.datawrangler) extension to view data frames in a spreadsheet-like interface. 
@@ -917,11 +919,17 @@ ref: [Quick Start Guide for Data Wrangler in VS Code](https://code.visualstudio.
 
 --------------------------------------------------------------------------------
 
-Export Jupyter notebook to `.py`
+#### Export Jupyter notebook
+
+You can export Jupyter notebooks to various formats, including Python scripts (.py), HTML, PDF, and more.
 
 Refer to [this post](https://stackoverflow.com/questions/64297272/best-way-to-convert-ipynb-to-py-in-vscode)
 
-The tricky part is that the exported .py file will have magic commands and "Run Cell", "Run Below", etc. 
+The exported `.py` file will have "Run Cell", "Run Below", etc. This is due to `# %%` cell markers in the exported .py file. But they don't interfere with the execution of the code in the .py file. Besides, I actually like these segmentation as they organize the code into sections and make it easier to run code in chunks. These features are useful when you run the .py file in an interactive window.
+
+The trick part is you need to deal with the magic commands manually. `.py` files don't support magic commands, so you need to remove them or replace them with equivalent python code.
+
+
 
 
 --------------------------------------------------------------------------------
