@@ -762,35 +762,50 @@ Three code modes in Jupyter notebooks:
 
 --------------------------------------------------------------------------------
 
-#### `.ipynb` keyboard shortcuts:
+#### Keyboard shortcuts
 
 Command Palette, type "**Preferences: Open Keyboard Shortcuts**" to open the keyboard shortcuts editor. You can search for "jupyter" to find all Jupyter-related commands and their shortcuts.
 
 
 **Run code cells**
 
+
 | Shortcut        | Function                                                                                                         |
 | --------------- | ---------------------------------------------------------------------------------------------------------------- |
-| <span class="env-green">`Ctrl+Enter`</span>    | runs the currently selected cell.                                                                                |
-| `Shift+Enter`   | runs the currently selected cell and inserts a new cell immediately below <br />(focus moves to **new cell**).       |
-| `Opt+Enter`     | runs the currently selected cell and inserts a new cell immediately below <br />(focus remains on **current cell**). |
+| <span class="env-green">`Ctrl+Enter`</span>    | runs the currently selected cell; focus stays on the **current cell**             |
+| `Shift+Enter`   | runs the currently selected cell and focus moves to **new cell**.       |
+| `Opt+Enter`     | runs the currently selected cell and <span class="env-green">inserts a new cell</span> immediately below <br />(focus moves to **new cell**). |
 | Run Cells Above | Command Palette, type "**Notebook: Execute Above Cells**"                                                       |
+
+There is no executing current cell and moving focus to the next cell shortcut, you need to first run the current cell with `Ctrl+Enter`, then hit the down arrow key ↓ to move focus to the next cell.
+
+I added one keyboard shortcut for this: `cmd+Enter` to run the current cell and move focus to the next cell. <span class="env-green">This works for both command mode and edit mode.</span>
+
+```json
+{
+  "key": "cmd+enter",
+  "command": "notebook.cell.executeAndSelectBelow",
+  "when": "notebookEditorFocused"
+}
+```
 
 **Insert code cells**
 
-Under <a href="#command-mode">**command mode**</a> (no blue border around the input cell):
+Under <a href="#command-mode">**command mode**</a> (no thin blue border around the input cell, one thick vertical bar on the left):
 
 | Shortcut   | Function                                                                                  |
 | ---------- | ----------------------------------------------------------------------------------------- |
 | `ctrl+; A` | Press `Ctrl+;`, release, then `A`.<br />Insert a new code cell **above** the current one. |
 | `ctrl+; B` | Add a new code cell **below** the selected one.                                           |
 
+Note: On my Mac, I just need to hit `ESC` to enter command mode, then `A` or `B` to insert a new cell above or below the current cell. No need to hit `Ctrl+;` first.
+
 **Change Cell to Code**
 
-| Shortcut   | Function                |
-| ---------- | ----------------------- |
-| cmd mode: `Y` | Change cell to code     |
-| cmd mode: `M` | Change cell to markdown |
+| Shortcut      | Function                |
+| ------------- | ----------------------- |
+| cmd mode: `Y` | Change cell to <span class="env-green">code</span>     |
+| cmd mode: `M` | Change cell to <span class="env-green">Markdown</span> |
 
 **Miscellaneous**
 
@@ -801,6 +816,11 @@ Under <a href="#command-mode">**command mode**</a> (no blue border around the in
 | `L`                | command mode; toggle line numbers |
 | `R`                | Undo last change                  |
 
+
+ref:
+
+- [Most useful keyboard shortcuts for Notebook & Lab](https://discourse.jupyter.org/t/most-useful-keyboard-shortcuts-for-notebook-lab/18113)
+- [Jupyter Tutorial](https://jupyter-tutorial.readthedocs.io/en/24.1.0/notebook/shortcuts.html)
 
 #### Insert Image
 
@@ -845,7 +865,7 @@ Once `repr` package is loaded, all options are set to defaults which weren’t s
 
 | Options               | Descriptions                                     |
 | --------------------- | ------------------------------------------------ |
-| ``repr.plot.width``   | Plotting area width in inches (default: `7 in`)  |
+| `repr.plot.width`     | Plotting area width in inches (default: `7 in`)  |
 | `repr.plot.height`    | Plotting area height in inches (default: `7 in`) |
 | `repr.plot.pointsize` | Text height in pt (default: 12)                  |
 | `repr.plot.res`       | PPI for rasterization (default: 120)             |
@@ -869,6 +889,41 @@ Other output representations
 See [repr CRAN](https://cran.r-project.org/web/packages/repr/refman/repr.html) for all available options.
 
 
+--------------------------------------------------------------------------------
+
+#### View data frames
+
+Jupyter Notebook comes with a built-in Data Viewer. Choose 'Jupyter Variables' in the menu bar on the top, if you don't see it, click the '...' button to find it. It will show you all the variables in the terminal panel.
+
+<img src="https://code.visualstudio.com/assets/docs/datascience/jupyter/variable-explorer-02.png" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
+
+Tou can double-click a variable to open it in the Data Viewer. It provides a spreadsheet-like interface to view the data.
+
+You can filter, sort, and search the data in the Data Viewer.
+
+**Data Wrangler**
+
+Use [Data Wrangler](https://marketplace.visualstudio.com/items?itemName=ms-toolsai.datawrangler) extension to view data frames in a spreadsheet-like interface. 
+
+**Launch Data Wrangler from a Jupyter Notebook**
+
+If you have a Pandas data frame in your notebook, you'll now see an **Open 'df' in Data Wrangler** button (where `df` is the variable name of your data frame) appear in bottom of the cell after running any of `df.head()`, `df.tail()`, `display(df)`, `print(df)`, and `df`.
+
+<img src="https://code.visualstudio.com/assets/docs/datascience/data-wrangler-quick-start/entrypoint-quick-start.png" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:60%;" />
+
+You can also launch Data Wrangler directly from a local file (such as a .csv). Right-click the file in the File Explorer and select **Open in Data Wrangler**.
+
+<img src="https://code.visualstudio.com/assets/docs/datascience/data-wrangler-quick-start/open-from-file.png" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:60%;" />
+
+ref: [Quick Start Guide for Data Wrangler in VS Code](https://code.visualstudio.com/docs/datascience/data-wrangler-quick-start)
+
+--------------------------------------------------------------------------------
+
+Export Jupyter notebook to `.py`
+
+Refer to [this post](https://stackoverflow.com/questions/64297272/best-way-to-convert-ipynb-to-py-in-vscode)
+
+The tricky part is that the exported .py file will have magic commands and "Run Cell", "Run Below", etc. 
 
 
 --------------------------------------------------------------------------------

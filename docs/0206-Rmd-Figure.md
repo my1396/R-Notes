@@ -58,7 +58,7 @@ library(quantmod)
 aapl <- getSymbols("AAPL", 
            src = 'yahoo', 
            from = "2014-08-01", 
-           to = "2024-09-17",   
+           to = "2024-09-17", 
            auto.assign = FALSE
            )
 ```
