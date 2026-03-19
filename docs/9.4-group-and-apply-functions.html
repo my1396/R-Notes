@@ -1,0 +1,1515 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>9.4 Group and Apply Functions | R Notes</title>
+  <meta name="description" content="<p>This is a minimal example of using the bookdown package to write a book.
+The HTML output format for this example is bookdown::gitbook,
+set in the _output.yml file.</p>" />
+  <meta name="generator" content="bookdown 0.45 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="9.4 Group and Apply Functions | R Notes" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="<p>This is a minimal example of using the bookdown package to write a book.
+The HTML output format for this example is bookdown::gitbook,
+set in the _output.yml file.</p>" />
+  <meta name="github-repo" content="my1396/R-Notes" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="9.4 Group and Apply Functions | R Notes" />
+  
+  <meta name="twitter:description" content="<p>This is a minimal example of using the bookdown package to write a book.
+The HTML output format for this example is bookdown::gitbook,
+set in the _output.yml file.</p>" />
+  
+
+<meta name="author" content="Menghan Yuan" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  <link rel="shortcut icon" href="images/r-project-favicon.ico" type="image/x-icon" />
+<link rel="prev" href="9.3-categorical-variables.html"/>
+<link rel="next" href="10-graphics.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+<script src="libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
+<head>
+    <!-- MathJax config: define new macros -->
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+          tex2jax: {
+            inlineMath: [['$','$'], ['\\(','\\)']],
+            processEscapes: true
+          },
+          TeX: { 
+            inlineMath: [   // start/end delimiter pairs for in-line math
+              ['$', '$'],
+              ['\\(', '\\)']
+            ],
+            displayMath: [  // start/end delimiter pairs for display math
+              ['$$', '$$'],
+              ['\\[', '\\]']
+            ],
+            processEscapes: true, // use \$ to produce a literal dollar sign
+            tags: 'ams',  // should be 'ams', 'none', or 'all'
+            Macros: {
+              vect: ["\\mathbf{#1}", 1],
+              mat: ["\\mathbf{#1}", 1], 
+
+              bA: "\\boldsymbol{A}",
+              bB: "\\boldsymbol{B}",
+              bC: "\\boldsymbol{C}",
+              bD: "\\boldsymbol{D}",
+              bE: "\\boldsymbol{E}",
+              bF: "\\boldsymbol{F}",
+              bG: "\\boldsymbol{G}",
+              bH: "\\boldsymbol{H}",
+              bI: "\\boldsymbol{I}",
+              bJ: "\\boldsymbol{J}",
+              bK: "\\boldsymbol{K}",
+              bL: "\\boldsymbol{L}",
+              bM: "\\boldsymbol{M}",
+              bN: "\\boldsymbol{N}",
+              bP: "\\boldsymbol{P}",
+              bQ: "\\boldsymbol{Q}",
+              bR: "\\boldsymbol{R}",
+              bS: "\\boldsymbol{S}",
+              bT: "\\boldsymbol{T}",
+              bU: "\\boldsymbol{U}",
+              bV: "\\boldsymbol{V}",
+              bW: "\\boldsymbol{W}",
+              bX: "\\boldsymbol{X}",
+              bY: "\\boldsymbol{Y}",
+              bZ: "\\boldsymbol{Z}",
+              ba: "\\boldsymbol{a}",
+              bb: "\\boldsymbol{b}",
+              bc: "\\boldsymbol{c}",
+              bd: "\\boldsymbol{d}",
+              be: "\\boldsymbol{e}",
+              bg: "\\boldsymbol{g}",
+              bh: "\\boldsymbol{h}",
+              bi: "\\boldsymbol{\\imath}",
+              bm: "\\boldsymbol{m}",
+              bp: "\\boldsymbol{p}",
+              bq: "\\boldsymbol{q}",
+              br: "\\boldsymbol{r}",
+              bs: "\\boldsymbol{s}",
+              bt: "\\boldsymbol{t}",
+              bu: "\\boldsymbol{u}",
+              bv: "\\boldsymbol{v}",
+              bw: "\\boldsymbol{w}",
+              bx: "\\boldsymbol{x}",
+              by: "\\boldsymbol{y}",
+
+              Acal: "\\mathcal{A}",
+              Bcal: "\\mathcal{B}",
+              Ccal: "\\mathcal{C}",
+              Dcal: "\\mathcal{D}",
+              Ecal: "\\mathcal{E}",
+              Fcal: "\\mathcal{F}",
+              Gcal: "\\mathcal{G}",
+              Hcal: "\\mathcal{H}",
+              Ical: "\\mathcal{I}",
+              Jcal: "\\mathcal{J}",
+              Kcal: "\\mathcal{K}",
+              Lcal: "\\mathcal{L}",
+              Mcal: "\\mathcal{M}",
+              Ncal: "\\mathcal{N}",
+              Ocal: "\\mathcal{O}",
+              Pcal: "\\mathcal{P}",
+              Qcal: "\\mathcal{Q}",
+              Rcal: "\\mathcal{R}",
+              Scal: "\\mathcal{S}",
+              Tcal: "\\mathcal{T}",
+              Ucal: "\\mathcal{U}",
+              Vcal: "\\mathcal{V}",
+              Wcal: "\\mathcal{W}",
+              Xcal: "\\mathcal{X}",
+              Ycal: "\\mathcal{Y}",
+              Zcal: "\\mathcal{Z}",
+
+              A: "\\mathbb{A}",
+              B: "\\mathbb{B}",
+              C: "\\mathbb{C}",
+              D: "\\mathbb{D}",
+              E: "\\mathbb{E}",
+              F: "\\mathbb{F}",
+              G: "\\mathbb{G}",
+              H: "\\mathbb{H}",
+              I: "\\mathbb{I}",
+              J: "\\mathbb{J}",
+              K: "\\mathbb{K}",
+              L: "\\mathbb{L}",
+              M: "\\mathbb{M}",
+              N: "\\mathbb{N}",
+              O: "\\mathbb{O}",
+              P: "\\mathbb{P}",
+              Q: "\\mathbb{Q}",
+              R: "\\mathbb{R}",
+              S: "\\mathbb{S}",
+              T: "\\mathbb{T}",
+              U: "\\mathbb{U}",
+              V: "\\mathbb{V}",
+              W: "\\mathbb{W}",
+              X: "\\mathbb{X}",
+              Y: "\\mathbb{Y}",
+              Z: "\\mathbb{Z}",
+
+              bAlpha: "\\boldsymbol{\\Alpha}",
+              bBeta: "\\boldsymbol{\\beta}",
+              bDelta: "\\boldsymbol{\\delta}",
+              bEta: "\\boldsymbol{\\eta}",
+              bGamma: "\\boldsymbol{\\Gamma}",
+              bLambda: "\\boldsymbol{\\Lambda}",
+              bOmega: "\\boldsymbol{\\Omega}",
+              bPhi: "\\boldsymbol{\\Phi}",
+              bPi: "\\boldsymbol{\\Pi}",
+              bPsi: "\\boldsymbol{\\Psi}",
+              bSigma: "\\boldsymbol{\\Sigma}",
+              bTau: "\\boldsymbol{\\tau}",
+              bXi: "\\boldsymbol{\\Xi}",
+              bbeta: "\\boldsymbol{\\beta}",
+              bdelta: "\\boldsymbol{\\delta}",
+              blambda: "\\boldsymbol{\\lambda}",
+              bmu: "\\boldsymbol{\\mu}",
+              bphi: "\\boldsymbol{\\phi}",
+              bpi: "\\boldsymbol{\\pi}",
+              bpsi: "\\boldsymbol{\\psi}",
+              brho: "\\boldsymbol{\\rho}",
+              bsigma: "\\boldsymbol{\\sigma}",
+              btau: "\\boldsymbol{\\tau}",
+              bxi: "\\boldsymbol{\\xi}",
+              bEta: "\\boldsymbol{\\eta}",
+              bPhi: "\\boldsymbol{\\Phi}",
+              bPi: "\\boldsymbol{\\Pi}",
+              bPsi: "\\boldsymbol{\\Psi}",
+              bXi: "\\boldsymbol{\\Xi}",
+              blambda: "\\boldsymbol{\\lambda}",
+              bmu: "\\boldsymbol{\\mu}",
+              bphi: "\\boldsymbol{\\phi}",
+              bpi: "\\boldsymbol{\\pi}",
+              bpsi: "\\boldsymbol{\\psi}",
+              brho: "\\boldsymbol{\\rho}",
+              bsigma: "\\boldsymbol{\\sigma}",
+                        
+              curl: ["\\left\\lbrace#1\\right\\rbrace", 1],
+              floor: ["\\left\\lfloor#1\\right\\rfloor", 1],
+              ceil: ["\\left\\lceil#1\\right\\rceil", 1],
+              abs: ["\\left\\lvert#1\\right\\rvert", 1],
+              norm: ["\\left\\lVert#1\\right\\rVert", 1],
+
+              independent: "\\mathrel{\\perp\\!\\!\\perp}",
+
+              var: "\\mathrm{Var}",
+              diag: "\\mathrm{diag}",
+              rank: "\\mathrm{rank}",
+              vecc: "\\mathrm{vec}",
+            }
+          }
+        });
+    </script>
+    <!-- Load Google fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro">
+    <!-- Load Font Awesome 6's icon library -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <!-- Font Awesome 4 compatibility shim -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/v4-shims.min.css" />
+    <!-- Load MS codicon library -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@vscode/codicons@latest/dist/codicon.css">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #204a87; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #8f5902; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #204a87; font-weight: bold; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #ce5c00; font-weight: bold; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">R Notes</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> About</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="1.1-usage.html"><a href="1.1-usage.html"><i class="fa fa-check"></i><b>1.1</b> Usage</a></li>
+<li class="chapter" data-level="1.2" data-path="1.2-render-book.html"><a href="1.2-render-book.html"><i class="fa fa-check"></i><b>1.2</b> Render book</a></li>
+<li class="chapter" data-level="1.3" data-path="1.3-preview-book.html"><a href="1.3-preview-book.html"><i class="fa fa-check"></i><b>1.3</b> Preview book</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="2-rstudio.html"><a href="2-rstudio.html"><i class="fa fa-check"></i><b>2</b> RStudio</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="2.1-dark-theme.html"><a href="2.1-dark-theme.html"><i class="fa fa-check"></i><b>2.1</b> Dark Theme</a></li>
+<li class="chapter" data-level="2.2" data-path="2.2-update-r.html"><a href="2.2-update-r.html"><i class="fa fa-check"></i><b>2.2</b> Update R</a>
+<ul>
+<li class="chapter" data-level="2.2.1" data-path="2.2-update-r.html"><a href="2.2-update-r.html#update-r-on-mac"><i class="fa fa-check"></i><b>2.2.1</b> Update R on Mac</a></li>
+<li class="chapter" data-level="2.2.2" data-path="2.2-update-r.html"><a href="2.2-update-r.html#update-r-on-windows"><i class="fa fa-check"></i><b>2.2.2</b> Update R on Windows</a></li>
+<li class="chapter" data-level="2.2.3" data-path="2.2-update-r.html"><a href="2.2-update-r.html#caveats-about-updating-r"><i class="fa fa-check"></i><b>2.2.3</b> Caveats about updating R</a></li>
+</ul></li>
+<li class="chapter" data-level="2.3" data-path="2.3-packages-management.html"><a href="2.3-packages-management.html"><i class="fa fa-check"></i><b>2.3</b> Packages Management</a>
+<ul>
+<li class="chapter" data-level="2.3.1" data-path="2.3-packages-management.html"><a href="2.3-packages-management.html#load-packages"><i class="fa fa-check"></i><b>2.3.1</b> Load packages</a></li>
+<li class="chapter" data-level="2.3.2" data-path="2.3-packages-management.html"><a href="2.3-packages-management.html#install-packages"><i class="fa fa-check"></i><b>2.3.2</b> Install packages</a></li>
+<li class="chapter" data-level="2.3.3" data-path="2.3-packages-management.html"><a href="2.3-packages-management.html#update-packages"><i class="fa fa-check"></i><b>2.3.3</b> Update packages</a></li>
+<li class="chapter" data-level="2.3.4" data-path="2.3-packages-management.html"><a href="2.3-packages-management.html#put-your-r-package-on-github"><i class="fa fa-check"></i><b>2.3.4</b> Put your R package on GitHub</a></li>
+</ul></li>
+<li class="chapter" data-level="2.4" data-path="2.4-using-git-with-rstudio.html"><a href="2.4-using-git-with-rstudio.html"><i class="fa fa-check"></i><b>2.4</b> Using Git with RStudio</a></li>
+<li class="chapter" data-level="2.5" data-path="2.5-github-copilot.html"><a href="2.5-github-copilot.html"><i class="fa fa-check"></i><b>2.5</b> GitHub Copilot</a></li>
+<li class="chapter" data-level="2.6" data-path="2.6-save-r-workspace.html"><a href="2.6-save-r-workspace.html"><i class="fa fa-check"></i><b>2.6</b> Save R Workspace</a></li>
+<li class="chapter" data-level="2.7" data-path="2.7-pane-layout.html"><a href="2.7-pane-layout.html"><i class="fa fa-check"></i><b>2.7</b> Pane Layout</a></li>
+<li class="chapter" data-level="2.8" data-path="2.8-options.html"><a href="2.8-options.html"><i class="fa fa-check"></i><b>2.8</b> Options</a></li>
+<li class="chapter" data-level="2.9" data-path="2.9-r-startup.html"><a href="2.9-r-startup.html"><i class="fa fa-check"></i><b>2.9</b> R Startup</a>
+<ul>
+<li class="chapter" data-level="2.9.1" data-path="2.9-r-startup.html"><a href="2.9-r-startup.html#rprofile"><i class="fa fa-check"></i><b>2.9.1</b> <code>.Rprofile</code></a></li>
+<li class="chapter" data-level="2.9.2" data-path="2.9-r-startup.html"><a href="2.9-r-startup.html#renviron"><i class="fa fa-check"></i><b>2.9.2</b> <code>.Renviron</code></a></li>
+</ul></li>
+<li class="chapter" data-level="2.10" data-path="2.10-faq-1.html"><a href="2.10-faq-1.html"><i class="fa fa-check"></i><b>2.10</b> FAQ</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="3-vs-code.html"><a href="3-vs-code.html"><i class="fa fa-check"></i><b>3</b> VS Code</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="3.1-keyboard-shortcuts.html"><a href="3.1-keyboard-shortcuts.html"><i class="fa fa-check"></i><b>3.1</b> Keyboard shortcuts</a></li>
+<li class="chapter" data-level="3.2" data-path="3.2-languageserver-package.html"><a href="3.2-languageserver-package.html"><i class="fa fa-check"></i><b>3.2</b> <code>languageserver</code> package</a>
+<ul>
+<li class="chapter" data-level="3.2.1" data-path="3.2-languageserver-package.html"><a href="3.2-languageserver-package.html#highlight-features"><i class="fa fa-check"></i><b>3.2.1</b> Highlight Features:</a></li>
+<li class="chapter" data-level="3.2.2" data-path="3.2-languageserver-package.html"><a href="3.2-languageserver-package.html#lintr"><i class="fa fa-check"></i><b>3.2.2</b> <code>lintr</code></a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="3.3-radian.html"><a href="3.3-radian.html"><i class="fa fa-check"></i><b>3.3</b> Radian</a>
+<ul>
+<li class="chapter" data-level="3.3.1" data-path="3.3-radian.html"><a href="3.3-radian.html#configuration"><i class="fa fa-check"></i><b>3.3.1</b> Configuration</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="3.4-plot-viewer.html"><a href="3.4-plot-viewer.html"><i class="fa fa-check"></i><b>3.4</b> Plot Viewer</a></li>
+<li class="chapter" data-level="3.5" data-path="3.5-r-debugger.html"><a href="3.5-r-debugger.html"><i class="fa fa-check"></i><b>3.5</b> R Debugger</a></li>
+<li class="chapter" data-level="3.6" data-path="3.6-emulating-rstudioapi-functions.html"><a href="3.6-emulating-rstudioapi-functions.html"><i class="fa fa-check"></i><b>3.6</b> Emulating <code>rstudioapi</code> functions</a></li>
+<li class="chapter" data-level="3.7" data-path="3.7-work-with-rmd.html"><a href="3.7-work-with-rmd.html"><i class="fa fa-check"></i><b>3.7</b> Work with Rmd</a>
+<ul>
+<li class="chapter" data-level="3.7.1" data-path="3.7-work-with-rmd.html"><a href="3.7-work-with-rmd.html#render-book-1"><i class="fa fa-check"></i><b>3.7.1</b> Render book</a></li>
+<li class="chapter" data-level="3.7.2" data-path="3.7-work-with-rmd.html"><a href="3.7-work-with-rmd.html#view-book"><i class="fa fa-check"></i><b>3.7.2</b> View book</a></li>
+</ul></li>
+<li class="chapter" data-level="3.8" data-path="3.8-extensions.html"><a href="3.8-extensions.html"><i class="fa fa-check"></i><b>3.8</b> Extensions</a></li>
+<li class="chapter" data-level="3.9" data-path="3.9-jupyter-notebooks.html"><a href="3.9-jupyter-notebooks.html"><i class="fa fa-check"></i><b>3.9</b> Jupyter Notebooks</a></li>
+<li class="chapter" data-level="3.10" data-path="3.10-render-jupyter-notebook.html"><a href="3.10-render-jupyter-notebook.html"><i class="fa fa-check"></i><b>3.10</b> Render Jupyter notebook</a>
+<ul>
+<li class="chapter" data-level="3.10.1" data-path="3.10-render-jupyter-notebook.html"><a href="3.10-render-jupyter-notebook.html#code-cell-modes"><i class="fa fa-check"></i><b>3.10.1</b> Code cell modes</a></li>
+<li class="chapter" data-level="3.10.2" data-path="3.10-render-jupyter-notebook.html"><a href="3.10-render-jupyter-notebook.html#keyboard-shortcuts-1"><i class="fa fa-check"></i><b>3.10.2</b> Keyboard shortcuts</a></li>
+<li class="chapter" data-level="3.10.3" data-path="3.10-render-jupyter-notebook.html"><a href="3.10-render-jupyter-notebook.html#insert-image"><i class="fa fa-check"></i><b>3.10.3</b> Insert Image</a></li>
+<li class="chapter" data-level="3.10.4" data-path="3.10-render-jupyter-notebook.html"><a href="3.10-render-jupyter-notebook.html#view-data-frames"><i class="fa fa-check"></i><b>3.10.4</b> View data frames</a></li>
+<li class="chapter" data-level="3.10.5" data-path="3.10-render-jupyter-notebook.html"><a href="3.10-render-jupyter-notebook.html#export-jupyter-notebook"><i class="fa fa-check"></i><b>3.10.5</b> Export Jupyter notebook</a></li>
+</ul></li>
+<li class="chapter" data-level="3.11" data-path="3.11-issues.html"><a href="3.11-issues.html"><i class="fa fa-check"></i><b>3.11</b> Issues</a></li>
+<li class="chapter" data-level="3.12" data-path="3.12-faq-2.html"><a href="3.12-faq-2.html"><i class="fa fa-check"></i><b>3.12</b> FAQ</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="4-rmd.html"><a href="4-rmd.html"><i class="fa fa-check"></i><b>4</b> Rmd</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="4.1-yaml-metadata.html"><a href="4.1-yaml-metadata.html"><i class="fa fa-check"></i><b>4.1</b> YAML metadata</a>
+<ul>
+<li class="chapter" data-level="4.1.1" data-path="4.1-yaml-metadata.html"><a href="4.1-yaml-metadata.html#top-level-yaml-metadata"><i class="fa fa-check"></i><b>4.1.1</b> Top-level YAML metadata</a></li>
+<li class="chapter" data-level="4.1.2" data-path="4.1-yaml-metadata.html"><a href="4.1-yaml-metadata.html#mathjax-options"><i class="fa fa-check"></i><b>4.1.2</b> MathJax Options</a></li>
+<li class="chapter" data-level="4.1.3" data-path="4.1-yaml-metadata.html"><a href="4.1-yaml-metadata.html#document-dependency"><i class="fa fa-check"></i><b>4.1.3</b> Document dependency</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="4.2-render-rmd.html"><a href="4.2-render-rmd.html"><i class="fa fa-check"></i><b>4.2</b> Render Rmd</a>
+<ul>
+<li class="chapter" data-level="4.2.1" data-path="4.2-render-rmd.html"><a href="4.2-render-rmd.html#render-single-rmd"><i class="fa fa-check"></i><b>4.2.1</b> Render a single document</a></li>
+<li class="chapter" data-level="4.2.2" data-path="4.2-render-rmd.html"><a href="4.2-render-rmd.html#render-rmd-site"><i class="fa fa-check"></i><b>4.2.2</b> Render multiple documents as a website</a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path="4.3-chunk-options.html"><a href="4.3-chunk-options.html"><i class="fa fa-check"></i><b>4.3</b> Chunk Options</a>
+<ul>
+<li class="chapter" data-level="4.3.1" data-path="4.3-chunk-options.html"><a href="4.3-chunk-options.html#commonly-used-chunk-options"><i class="fa fa-check"></i><b>4.3.1</b> <span id="common-chunk-options"><strong>Commonly used chunk options</strong></span></a></li>
+<li class="chapter" data-level="4.3.2" data-path="4.3-chunk-options.html"><a href="4.3-chunk-options.html#external-config-files"><i class="fa fa-check"></i><b>4.3.2</b> External Config Files</a></li>
+<li class="chapter" data-level="4.3.3" data-path="4.3-chunk-options.html"><a href="4.3-chunk-options.html#hooks"><i class="fa fa-check"></i><b>4.3.3</b> Hooks</a></li>
+</ul></li>
+<li class="chapter" data-level="4.4" data-path="4.4-print-verbatim-r-code-chunks.html"><a href="4.4-print-verbatim-r-code-chunks.html"><i class="fa fa-check"></i><b>4.4</b> Print Verbatim R code chunks</a>
+<ul>
+<li class="chapter" data-level="4.4.1" data-path="4.4-print-verbatim-r-code-chunks.html"><a href="4.4-print-verbatim-r-code-chunks.html#verbatim-inline-code"><i class="fa fa-check"></i><b>4.4.1</b> Verbatim inline code</a></li>
+<li class="chapter" data-level="4.4.2" data-path="4.4-print-verbatim-r-code-chunks.html"><a href="4.4-print-verbatim-r-code-chunks.html#verbatim-r-code-chunks"><i class="fa fa-check"></i><b>4.4.2</b> Verbatim R code chunks</a></li>
+</ul></li>
+<li class="chapter" data-level="4.5" data-path="4.5-rmd-basics.html"><a href="4.5-rmd-basics.html"><i class="fa fa-check"></i><b>4.5</b> Rmd Basics</a>
+<ul>
+<li class="chapter" data-level="4.5.1" data-path="4.5-rmd-basics.html"><a href="4.5-rmd-basics.html#unnumbered-sections"><i class="fa fa-check"></i><b>4.5.1</b> Unnumbered Sections</a></li>
+<li class="chapter" data-level="4.5.2" data-path="4.5-rmd-basics.html"><a href="4.5-rmd-basics.html#knitting-in-the-global-environment"><i class="fa fa-check"></i><b>4.5.2</b> Knitting in the global environment</a></li>
+</ul></li>
+<li class="chapter" data-level="4.6" data-path="4.6-citations.html"><a href="4.6-citations.html"><i class="fa fa-check"></i><b>4.6</b> Citations</a>
+<ul>
+<li class="chapter" data-level="4.6.1" data-path="4.6-citations.html"><a href="4.6-citations.html#bibliographies"><i class="fa fa-check"></i><b>4.6.1</b> Bibliographies</a></li>
+<li class="chapter" data-level="4.6.2" data-path="4.6-citations.html"><a href="4.6-citations.html#bibliography-placement"><i class="fa fa-check"></i><b>4.6.2</b> Bibliography placement</a></li>
+</ul></li>
+<li class="chapter" data-level="4.7" data-path="4.7-cross-references.html"><a href="4.7-cross-references.html"><i class="fa fa-check"></i><b>4.7</b> Cross References</a>
+<ul>
+<li class="chapter" data-level="4.7.1" data-path="4.7-cross-references.html"><a href="4.7-cross-references.html#using-bookdown"><i class="fa fa-check"></i><b>4.7.1</b> Using <code>bookdown</code></a></li>
+<li class="chapter" data-level="4.7.2" data-path="4.7-cross-references.html"><a href="4.7-cross-references.html#using-the-latex-way"><i class="fa fa-check"></i><b>4.7.2</b> Using the LaTeX Way</a></li>
+</ul></li>
+<li class="chapter" data-level="4.8" data-path="4.8-equations-1.html"><a href="4.8-equations-1.html"><i class="fa fa-check"></i><b>4.8</b> Equations</a>
+<ul>
+<li class="chapter" data-level="4.8.1" data-path="4.8-equations-1.html"><a href="4.8-equations-1.html#rstudio-equation-live-preview"><i class="fa fa-check"></i><b>4.8.1</b> RStudio Equation Live Preview</a></li>
+</ul></li>
+<li class="chapter" data-level="4.9" data-path="4.9-theorems-1.html"><a href="4.9-theorems-1.html"><i class="fa fa-check"></i><b>4.9</b> Theorems</a></li>
+<li class="chapter" data-level="4.10" data-path="4.10-figures-1.html"><a href="4.10-figures-1.html"><i class="fa fa-check"></i><b>4.10</b> Figures</a>
+<ul>
+<li class="chapter" data-level="4.10.1" data-path="4.10-figures-1.html"><a href="4.10-figures-1.html#output-directly-to-document"><i class="fa fa-check"></i><b>4.10.1</b> Output directly to document</a></li>
+<li class="chapter" data-level="4.10.2" data-path="4.10-figures-1.html"><a href="4.10-figures-1.html#fixed-fig.width"><i class="fa fa-check"></i><b>4.10.2</b> Fixed <code>fig.width</code></a></li>
+<li class="chapter" data-level="4.10.3" data-path="4.10-figures-1.html"><a href="4.10-figures-1.html#save-and-reload"><i class="fa fa-check"></i><b>4.10.3</b> Save and reload</a></li>
+<li class="chapter" data-level="4.10.4" data-path="4.10-figures-1.html"><a href="4.10-figures-1.html#control-figure-size"><i class="fa fa-check"></i><b>4.10.4</b> Control figure size</a></li>
+<li class="chapter" data-level="4.10.5" data-path="4.10-figures-1.html"><a href="4.10-figures-1.html#control-output-size"><i class="fa fa-check"></i><b>4.10.5</b> Control output size</a></li>
+<li class="chapter" data-level="" data-path="4.10-figures-1.html"><a href="4.10-figures-1.html#latex-symbols-in-fig.-caption"><i class="fa fa-check"></i>Latex symbols in Fig. caption</a></li>
+<li class="chapter" data-level="" data-path="4.10-figures-1.html"><a href="4.10-figures-1.html#refer-to-another-figure-in-figure-caption"><i class="fa fa-check"></i>Refer to another figure in figure caption</a></li>
+</ul></li>
+<li class="chapter" data-level="4.11" data-path="4.11-tables-1.html"><a href="4.11-tables-1.html"><i class="fa fa-check"></i><b>4.11</b> Tables</a>
+<ul>
+<li class="chapter" data-level="4.11.1" data-path="4.11-tables-1.html"><a href="4.11-tables-1.html#knitrkable"><i class="fa fa-check"></i><b>4.11.1</b> <code>knitr::kable</code></a></li>
+<li class="chapter" data-level="4.11.2" data-path="4.11-tables-1.html"><a href="4.11-tables-1.html#data-frame-printing"><i class="fa fa-check"></i><b>4.11.2</b> Data frame printing</a></li>
+<li class="chapter" data-level="4.11.3" data-path="4.11-tables-1.html"><a href="4.11-tables-1.html#stargazer"><i class="fa fa-check"></i><b>4.11.3</b> Stargazer</a></li>
+<li class="chapter" data-level="4.11.4" data-path="4.11-tables-1.html"><a href="4.11-tables-1.html#xtable"><i class="fa fa-check"></i><b>4.11.4</b> <code>xtable</code></a></li>
+<li class="chapter" data-level="4.11.5" data-path="4.11-tables-1.html"><a href="4.11-tables-1.html#kableextra"><i class="fa fa-check"></i><b>4.11.5</b> <code>kableExtra</code></a></li>
+<li class="chapter" data-level="4.11.6" data-path="4.11-tables-1.html"><a href="4.11-tables-1.html#huxtable"><i class="fa fa-check"></i><b>4.11.6</b> huxtable</a></li>
+</ul></li>
+<li class="chapter" data-level="4.12" data-path="4.12-rmd-github-pages.html"><a href="4.12-rmd-github-pages.html"><i class="fa fa-check"></i><b>4.12</b> Rmd GitHub Pages</a>
+<ul>
+<li class="chapter" data-level="" data-path="4.12-rmd-github-pages.html"><a href="4.12-rmd-github-pages.html#project-structure"><i class="fa fa-check"></i>Project structure</a></li>
+<li class="chapter" data-level="" data-path="4.12-rmd-github-pages.html"><a href="4.12-rmd-github-pages.html#site.yml-config"><i class="fa fa-check"></i><code>_site.yml</code> config</a></li>
+<li class="chapter" data-level="" data-path="4.12-rmd-github-pages.html"><a href="4.12-rmd-github-pages.html#index.rmd"><i class="fa fa-check"></i><code>index.Rmd</code></a></li>
+<li class="chapter" data-level="" data-path="4.12-rmd-github-pages.html"><a href="4.12-rmd-github-pages.html#r-scripts"><i class="fa fa-check"></i>R scripts</a></li>
+<li class="chapter" data-level="" data-path="4.12-rmd-github-pages.html"><a href="4.12-rmd-github-pages.html#workflow"><i class="fa fa-check"></i>Workflow</a></li>
+<li class="chapter" data-level="" data-path="4.12-rmd-github-pages.html"><a href="4.12-rmd-github-pages.html#css-style"><i class="fa fa-check"></i>CSS Style</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="5-bookdown.html"><a href="5-bookdown.html"><i class="fa fa-check"></i><b>5</b> bookdown</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="5.1-bookdown-project-structure.html"><a href="5.1-bookdown-project-structure.html"><i class="fa fa-check"></i><b>5.1</b> bookdown project structure</a>
+<ul>
+<li class="chapter" data-level="" data-path="5.1-bookdown-project-structure.html"><a href="5.1-bookdown-project-structure.html#output.yml"><i class="fa fa-check"></i><code>_output.yml</code></a></li>
+<li class="chapter" data-level="" data-path="5.1-bookdown-project-structure.html"><a href="5.1-bookdown-project-structure.html#bookdown.yml"><i class="fa fa-check"></i><code>_bookdown.yml</code></a></li>
+<li class="chapter" data-level="" data-path="5.1-bookdown-project-structure.html"><a href="5.1-bookdown-project-structure.html#index.rmd-1"><i class="fa fa-check"></i><code>index.Rmd</code></a></li>
+<li class="chapter" data-level="" data-path="5.1-bookdown-project-structure.html"><a href="5.1-bookdown-project-structure.html#rmd-files"><i class="fa fa-check"></i><code>.Rmd</code> files</a></li>
+</ul></li>
+<li class="chapter" data-level="5.2" data-path="5.2-rendering-bookdown.html"><a href="5.2-rendering-bookdown.html"><i class="fa fa-check"></i><b>5.2</b> Rendering bookdown</a>
+<ul>
+<li class="chapter" data-level="5.2.1" data-path="5.2-rendering-bookdown.html"><a href="5.2-rendering-bookdown.html#rendering-bookdown-website"><i class="fa fa-check"></i><b>5.2.1</b> Rendering bookdown website</a></li>
+<li class="chapter" data-level="5.2.2" data-path="5.2-rendering-bookdown.html"><a href="5.2-rendering-bookdown.html#rendering-bookdown-book"><i class="fa fa-check"></i><b>5.2.2</b> Rendering bookdown book</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="5.3-toggle-visibility-of-solutions.html"><a href="5.3-toggle-visibility-of-solutions.html"><i class="fa fa-check"></i><b>5.3</b> Toggle Visibility of Solutions</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="6-quarto.html"><a href="6-quarto.html"><i class="fa fa-check"></i><b>6</b> Quarto</a>
+<ul>
+<li class="chapter" data-level="6.0.1" data-path="6-quarto.html"><a href="6-quarto.html#only-re-render-changed-files"><i class="fa fa-check"></i><b>6.0.1</b> Only re-render changed files</a></li>
+<li class="chapter" data-level="6.1" data-path="6.1-book-structure.html"><a href="6.1-book-structure.html"><i class="fa fa-check"></i><b>6.1</b> Book Structure</a></li>
+<li class="chapter" data-level="6.2" data-path="6.2-course-folder-structure.html"><a href="6.2-course-folder-structure.html"><i class="fa fa-check"></i><b>6.2</b> Course Folder Structure</a></li>
+<li class="chapter" data-level="6.3" data-path="6.3-code-chunks.html"><a href="6.3-code-chunks.html"><i class="fa fa-check"></i><b>6.3</b> Code chunks</a></li>
+<li class="chapter" data-level="6.4" data-path="6.4-knitr-options.html"><a href="6.4-knitr-options.html"><i class="fa fa-check"></i><b>6.4</b> Knitr Options</a></li>
+<li class="chapter" data-level="6.5" data-path="6.5-pdf-options.html"><a href="6.5-pdf-options.html"><i class="fa fa-check"></i><b>6.5</b> PDF Options</a>
+<ul>
+<li class="chapter" data-level="6.5.1" data-path="6.5-pdf-options.html"><a href="6.5-pdf-options.html#title-margin"><i class="fa fa-check"></i><b>6.5.1</b> Title Margin</a></li>
+<li class="chapter" data-level="6.5.2" data-path="6.5-pdf-options.html"><a href="6.5-pdf-options.html#templates"><i class="fa fa-check"></i><b>6.5.2</b> Templates</a></li>
+<li class="chapter" data-level="6.5.3" data-path="6.5-pdf-options.html"><a href="6.5-pdf-options.html#add-appendices"><i class="fa fa-check"></i><b>6.5.3</b> Add Appendices</a></li>
+<li class="chapter" data-level="6.5.4" data-path="6.5-pdf-options.html"><a href="6.5-pdf-options.html#add-toc"><i class="fa fa-check"></i><b>6.5.4</b> Add TOC</a></li>
+</ul></li>
+<li class="chapter" data-level="6.6" data-path="6.6-html-theming.html"><a href="6.6-html-theming.html"><i class="fa fa-check"></i><b>6.6</b> HTML Theming</a>
+<ul>
+<li class="chapter" data-level="" data-path="6.6-html-theming.html"><a href="6.6-html-theming.html#custom-themes"><i class="fa fa-check"></i>Custom Themes</a></li>
+<li class="chapter" data-level="" data-path="6.6-html-theming.html"><a href="6.6-html-theming.html#theme-options"><i class="fa fa-check"></i>Theme Options</a></li>
+</ul></li>
+<li class="chapter" data-level="6.7" data-path="6.7-render-quarto.html"><a href="6.7-render-quarto.html"><i class="fa fa-check"></i><b>6.7</b> Render Quarto</a>
+<ul>
+<li class="chapter" data-level="" data-path="6.7-render-quarto.html"><a href="6.7-render-quarto.html#in-terminal"><i class="fa fa-check"></i>In terminal</a></li>
+<li class="chapter" data-level="" data-path="6.7-render-quarto.html"><a href="6.7-render-quarto.html#in-vs-code"><i class="fa fa-check"></i>In VS Code</a></li>
+<li class="chapter" data-level="" data-path="6.7-render-quarto.html"><a href="6.7-render-quarto.html#in-r"><i class="fa fa-check"></i>In R</a></li>
+</ul></li>
+<li class="chapter" data-level="6.8" data-path="6.8-cross-references-1.html"><a href="6.8-cross-references-1.html"><i class="fa fa-check"></i><b>6.8</b> Cross References</a>
+<ul>
+<li class="chapter" data-level="" data-path="6.8-cross-references-1.html"><a href="6.8-cross-references-1.html#cross-references-to-equations"><i class="fa fa-check"></i>Cross-references to Equations</a></li>
+</ul></li>
+<li class="chapter" data-level="6.9" data-path="6.9-equations-2.html"><a href="6.9-equations-2.html"><i class="fa fa-check"></i><b>6.9</b> Equations</a>
+<ul>
+<li class="chapter" data-level="6.9.1" data-path="6.9-equations-2.html"><a href="6.9-equations-2.html#individual-qmd-file"><i class="fa fa-check"></i><b>6.9.1</b> Individual <code>qmd</code> file</a></li>
+<li class="chapter" data-level="6.9.2" data-path="6.9-equations-2.html"><a href="6.9-equations-2.html#quarto-project"><i class="fa fa-check"></i><b>6.9.2</b> Quarto project</a></li>
+<li class="chapter" data-level="6.9.3" data-path="6.9-equations-2.html"><a href="6.9-equations-2.html#cross-referencing-equations"><i class="fa fa-check"></i><b>6.9.3</b> Cross-referencing Equations</a></li>
+<li class="chapter" data-level="6.9.4" data-path="6.9-equations-2.html"><a href="6.9-equations-2.html#math-delimiters"><i class="fa fa-check"></i><b>6.9.4</b> Math delimiters</a></li>
+</ul></li>
+<li class="chapter" data-level="6.10" data-path="6.10-extensions-1.html"><a href="6.10-extensions-1.html"><i class="fa fa-check"></i><b>6.10</b> Extensions</a>
+<ul>
+<li class="chapter" data-level="6.10.1" data-path="6.10-extensions-1.html"><a href="6.10-extensions-1.html#color-text"><i class="fa fa-check"></i><b>6.10.1</b> Color Text</a></li>
+<li class="chapter" data-level="6.10.2" data-path="6.10-extensions-1.html"><a href="6.10-extensions-1.html#emoji"><i class="fa fa-check"></i><b>6.10.2</b> Emoji</a></li>
+</ul></li>
+<li class="chapter" data-level="6.11" data-path="6.11-divs-and-spans.html"><a href="6.11-divs-and-spans.html"><i class="fa fa-check"></i><b>6.11</b> Divs and Spans</a>
+<ul>
+<li class="chapter" data-level="6.11.1" data-path="6.11-divs-and-spans.html"><a href="6.11-divs-and-spans.html#block-attributes"><i class="fa fa-check"></i><b>6.11.1</b> Block Attributes</a></li>
+<li class="chapter" data-level="6.11.2" data-path="6.11-divs-and-spans.html"><a href="6.11-divs-and-spans.html#inline-attributes"><i class="fa fa-check"></i><b>6.11.2</b> Inline Attributes</a></li>
+</ul></li>
+<li class="chapter" data-level="6.12" data-path="6.12-theorems-2.html"><a href="6.12-theorems-2.html"><i class="fa fa-check"></i><b>6.12</b> Theorems</a></li>
+<li class="chapter" data-level="6.13" data-path="6.13-tables-2.html"><a href="6.13-tables-2.html"><i class="fa fa-check"></i><b>6.13</b> Tables</a></li>
+<li class="chapter" data-level="6.14" data-path="6.14-raw-content.html"><a href="6.14-raw-content.html"><i class="fa fa-check"></i><b>6.14</b> Raw Content</a></li>
+<li class="chapter" data-level="6.15" data-path="6.15-lists.html"><a href="6.15-lists.html"><i class="fa fa-check"></i><b>6.15</b> Lists</a></li>
+<li class="chapter" data-level="6.16" data-path="6.16-callouts.html"><a href="6.16-callouts.html"><i class="fa fa-check"></i><b>6.16</b> Callouts</a>
+<ul>
+<li class="chapter" data-level="6.16.1" data-path="6.16-callouts.html"><a href="6.16-callouts.html#nested-callouts"><i class="fa fa-check"></i><b>6.16.1</b> Nested Callouts</a></li>
+<li class="chapter" data-level="6.16.2" data-path="6.16-callouts.html"><a href="6.16-callouts.html#cross-reference-callouts"><i class="fa fa-check"></i><b>6.16.2</b> Cross-reference Callouts</a></li>
+</ul></li>
+<li class="chapter" data-level="6.17" data-path="6.17-conditional-content.html"><a href="6.17-conditional-content.html"><i class="fa fa-check"></i><b>6.17</b> Conditional Content</a>
+<ul>
+<li class="chapter" data-level="6.17.1" data-path="6.17-conditional-content.html"><a href="6.17-conditional-content.html#set-up-multiple-profiles"><i class="fa fa-check"></i><b>6.17.1</b> Set up multiple profiles</a></li>
+<li class="chapter" data-level="6.17.2" data-path="6.17-conditional-content.html"><a href="6.17-conditional-content.html#conditional-code-blocks"><i class="fa fa-check"></i><b>6.17.2</b> Conditional Code Blocks</a></li>
+</ul></li>
+<li class="chapter" data-level="6.18" data-path="6.18-faq-3.html"><a href="6.18-faq-3.html"><i class="fa fa-check"></i><b>6.18</b> FAQ</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="7-xaringan-presentation.html"><a href="7-xaringan-presentation.html"><i class="fa fa-check"></i><b>7</b> xaringan Presentation</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="7.1-render-slides.html"><a href="7.1-render-slides.html"><i class="fa fa-check"></i><b>7.1</b> Render Slides</a></li>
+<li class="chapter" data-level="7.2" data-path="7.2-remark-markdown-basics.html"><a href="7.2-remark-markdown-basics.html"><i class="fa fa-check"></i><b>7.2</b> Remark Markdown Basics</a>
+<ul>
+<li class="chapter" data-level="7.2.1" data-path="7.2-remark-markdown-basics.html"><a href="7.2-remark-markdown-basics.html#create-a-new-slide"><i class="fa fa-check"></i><b>7.2.1</b> Create a New Slide</a></li>
+<li class="chapter" data-level="7.2.2" data-path="7.2-remark-markdown-basics.html"><a href="7.2-remark-markdown-basics.html#slide-properties"><i class="fa fa-check"></i><b>7.2.2</b> Slide Properties</a></li>
+<li class="chapter" data-level="7.2.3" data-path="7.2-remark-markdown-basics.html"><a href="7.2-remark-markdown-basics.html#add-attributes"><i class="fa fa-check"></i><b>7.2.3</b> Add Attributes</a></li>
+</ul></li>
+<li class="chapter" data-level="7.3" data-path="7.3-math-environments.html"><a href="7.3-math-environments.html"><i class="fa fa-check"></i><b>7.3</b> Math Environments</a>
+<ul>
+<li class="chapter" data-level="7.3.1" data-path="7.3-math-environments.html"><a href="7.3-math-environments.html#color-equations"><i class="fa fa-check"></i><b>7.3.1</b> Color equations</a></li>
+</ul></li>
+<li class="chapter" data-level="7.4" data-path="7.4-bullet-list.html"><a href="7.4-bullet-list.html"><i class="fa fa-check"></i><b>7.4</b> Bullet list</a>
+<ul>
+<li class="chapter" data-level="7.4.1" data-path="7.4-bullet-list.html"><a href="7.4-bullet-list.html#ordered-list-with-letters"><i class="fa fa-check"></i><b>7.4.1</b> Ordered list with letters</a></li>
+</ul></li>
+<li class="chapter" data-level="7.5" data-path="7.5-tables-3.html"><a href="7.5-tables-3.html"><i class="fa fa-check"></i><b>7.5</b> Tables</a></li>
+<li class="chapter" data-level="7.6" data-path="7.6-images.html"><a href="7.6-images.html"><i class="fa fa-check"></i><b>7.6</b> Images</a></li>
+<li class="chapter" data-level="7.7" data-path="7.7-presenter-notes.html"><a href="7.7-presenter-notes.html"><i class="fa fa-check"></i><b>7.7</b> Presenter Notes</a></li>
+<li class="chapter" data-level="7.8" data-path="7.8-css-and-themes.html"><a href="7.8-css-and-themes.html"><i class="fa fa-check"></i><b>7.8</b> CSS and themes</a></li>
+<li class="chapter" data-level="7.9" data-path="7.9-smart-punctuation.html"><a href="7.9-smart-punctuation.html"><i class="fa fa-check"></i><b>7.9</b> Smart Punctuation</a></li>
+<li class="chapter" data-level="7.10" data-path="7.10-working-offline.html"><a href="7.10-working-offline.html"><i class="fa fa-check"></i><b>7.10</b> Working offline</a></li>
+<li class="chapter" data-level="7.11" data-path="7.11-parser.html"><a href="7.11-parser.html"><i class="fa fa-check"></i><b>7.11</b> Parser</a></li>
+<li class="chapter" data-level="7.12" data-path="7.12-xaringanextra.html"><a href="7.12-xaringanextra.html"><i class="fa fa-check"></i><b>7.12</b> xaringanExtra</a></li>
+<li class="chapter" data-level="7.13" data-path="7.13-faq-4.html"><a href="7.13-faq-4.html"><i class="fa fa-check"></i><b>7.13</b> FAQ</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="8-basic-r.html"><a href="8-basic-r.html"><i class="fa fa-check"></i><b>8</b> Basic R</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="8.1-data-input-output.html"><a href="8.1-data-input-output.html"><i class="fa fa-check"></i><b>8.1</b> Data Input &amp; Output</a>
+<ul>
+<li class="chapter" data-level="8.1.1" data-path="8.1-data-input-output.html"><a href="8.1-data-input-output.html#read-data"><i class="fa fa-check"></i><b>8.1.1</b> Read Data</a></li>
+<li class="chapter" data-level="8.1.2" data-path="8.1-data-input-output.html"><a href="8.1-data-input-output.html#write-data"><i class="fa fa-check"></i><b>8.1.2</b> Write Data</a></li>
+</ul></li>
+<li class="chapter" data-level="8.2" data-path="8.2-functions.html"><a href="8.2-functions.html"><i class="fa fa-check"></i><b>8.2</b> Functions</a>
+<ul>
+<li class="chapter" data-level="8.2.1" data-path="8.2-functions.html"><a href="8.2-functions.html#inspecting-object-types-and-structure"><i class="fa fa-check"></i><b>8.2.1</b> Inspecting Object Types and Structure</a></li>
+<li class="chapter" data-level="8.2.2" data-path="8.2-functions.html"><a href="8.2-functions.html#type-of-variables"><i class="fa fa-check"></i><b>8.2.2</b> Type of Variables</a></li>
+<li class="chapter" data-level="8.2.3" data-path="8.2-functions.html"><a href="8.2-functions.html#variable-scope"><i class="fa fa-check"></i><b>8.2.3</b> Variable Scope</a></li>
+<li class="chapter" data-level="8.2.4" data-path="8.2-functions.html"><a href="8.2-functions.html#control-structures"><i class="fa fa-check"></i><b>8.2.4</b> Control Structures</a></li>
+</ul></li>
+<li class="chapter" data-level="8.3" data-path="8.3-basic-r-functions.html"><a href="8.3-basic-r-functions.html"><i class="fa fa-check"></i><b>8.3</b> Basic R functions</a>
+<ul>
+<li class="chapter" data-level="8.3.1" data-path="8.3-basic-r-functions.html"><a href="8.3-basic-r-functions.html#workspace-management"><i class="fa fa-check"></i><b>8.3.1</b> Workspace Management</a></li>
+<li class="chapter" data-level="8.3.2" data-path="8.3-basic-r-functions.html"><a href="8.3-basic-r-functions.html#data-display-and-output"><i class="fa fa-check"></i><b>8.3.2</b> Data Display and Output</a></li>
+<li class="chapter" data-level="8.3.3" data-path="8.3-basic-r-functions.html"><a href="8.3-basic-r-functions.html#data-manipulation-and-transformation"><i class="fa fa-check"></i><b>8.3.3</b> Data Manipulation and Transformation</a></li>
+<li class="chapter" data-level="8.3.4" data-path="8.3-basic-r-functions.html"><a href="8.3-basic-r-functions.html#generate-random-seeds"><i class="fa fa-check"></i><b>8.3.4</b> Generate Random Seeds</a></li>
+<li class="chapter" data-level="8.3.5" data-path="8.3-basic-r-functions.html"><a href="8.3-basic-r-functions.html#draw-random-samples"><i class="fa fa-check"></i><b>8.3.5</b> Draw random samples</a></li>
+<li class="chapter" data-level="8.3.6" data-path="8.3-basic-r-functions.html"><a href="8.3-basic-r-functions.html#fit-a-distribution"><i class="fa fa-check"></i><b>8.3.6</b> Fit a distribution</a></li>
+<li class="chapter" data-level="8.3.7" data-path="8.3-basic-r-functions.html"><a href="8.3-basic-r-functions.html#operation-on-list"><i class="fa fa-check"></i><b>8.3.7</b> Operation on list</a></li>
+</ul></li>
+<li class="chapter" data-level="8.4" data-path="8.4-data-splitting-and-grouping.html"><a href="8.4-data-splitting-and-grouping.html"><i class="fa fa-check"></i><b>8.4</b> Data Splitting and Grouping</a>
+<ul>
+<li class="chapter" data-level="8.4.1" data-path="8.4-data-splitting-and-grouping.html"><a href="8.4-data-splitting-and-grouping.html#the-split-function"><i class="fa fa-check"></i><b>8.4.1</b> The <code>split()</code> Function</a></li>
+<li class="chapter" data-level="8.4.2" data-path="8.4-data-splitting-and-grouping.html"><a href="8.4-data-splitting-and-grouping.html#split-and-apply-operations"><i class="fa fa-check"></i><b>8.4.2</b> Split-and-Apply Operations</a></li>
+</ul></li>
+<li class="chapter" data-level="8.5" data-path="8.5-apply-family.html"><a href="8.5-apply-family.html"><i class="fa fa-check"></i><b>8.5</b> <code>*apply()</code> Family</a>
+<ul>
+<li class="chapter" data-level="8.5.1" data-path="8.5-apply-family.html"><a href="8.5-apply-family.html#parallel-version-of-apply-function"><i class="fa fa-check"></i><b>8.5.1</b> <span class="env-green">Parallel</span> version of <code>apply</code> function</a></li>
+<li class="chapter" data-level="8.5.2" data-path="8.5-apply-family.html"><a href="8.5-apply-family.html#related-functions"><i class="fa fa-check"></i><b>8.5.2</b> Related Functions</a></li>
+</ul></li>
+<li class="chapter" data-level="8.6" data-path="8.6-statistical-summary-functions.html"><a href="8.6-statistical-summary-functions.html"><i class="fa fa-check"></i><b>8.6</b> Statistical Summary Functions</a>
+<ul>
+<li class="chapter" data-level="8.6.1" data-path="8.6-statistical-summary-functions.html"><a href="8.6-statistical-summary-functions.html#the-summary-function"><i class="fa fa-check"></i><b>8.6.1</b> The <code>summary()</code> Function</a></li>
+<li class="chapter" data-level="8.6.2" data-path="8.6-statistical-summary-functions.html"><a href="8.6-statistical-summary-functions.html#user-defined-summary-function"><i class="fa fa-check"></i><b>8.6.2</b> User-defined summary function</a></li>
+<li class="chapter" data-level="8.6.3" data-path="8.6-statistical-summary-functions.html"><a href="8.6-statistical-summary-functions.html#stargazer-function"><i class="fa fa-check"></i><b>8.6.3</b> <code>stargazer()</code> function</a></li>
+<li class="chapter" data-level="8.6.4" data-path="8.6-statistical-summary-functions.html"><a href="8.6-statistical-summary-functions.html#box-plot-statistics"><i class="fa fa-check"></i><b>8.6.4</b> Box plot statistics</a></li>
+</ul></li>
+<li class="chapter" data-level="8.7" data-path="8.7-contingency-table.html"><a href="8.7-contingency-table.html"><i class="fa fa-check"></i><b>8.7</b> Contingency Table</a>
+<ul>
+<li class="chapter" data-level="8.7.1" data-path="8.7-contingency-table.html"><a href="8.7-contingency-table.html#basic-frequency-counting"><i class="fa fa-check"></i><b>8.7.1</b> Basic Frequency Counting</a></li>
+<li class="chapter" data-level="8.7.2" data-path="8.7-contingency-table.html"><a href="8.7-contingency-table.html#creating-contingency-tables"><i class="fa fa-check"></i><b>8.7.2</b> Creating Contingency Tables</a></li>
+<li class="chapter" data-level="8.7.3" data-path="8.7-contingency-table.html"><a href="8.7-contingency-table.html#working-with-arrays-and-multi-dimensional-tables"><i class="fa fa-check"></i><b>8.7.3</b> Working with Arrays and Multi-dimensional Tables</a></li>
+<li class="chapter" data-level="8.7.4" data-path="8.7-contingency-table.html"><a href="8.7-contingency-table.html#flattening-and-exporting-tables"><i class="fa fa-check"></i><b>8.7.4</b> Flattening and Exporting Tables</a></li>
+<li class="chapter" data-level="8.7.5" data-path="8.7-contingency-table.html"><a href="8.7-contingency-table.html#table-visualization-and-formatting"><i class="fa fa-check"></i><b>8.7.5</b> Table Visualization and Formatting</a></li>
+</ul></li>
+<li class="chapter" data-level="8.8" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html"><i class="fa fa-check"></i><b>8.8</b> Data Frame Operations</a>
+<ul>
+<li class="chapter" data-level="" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#columnrow-wise-operations"><i class="fa fa-check"></i>Column/Row-wise Operations</a></li>
+<li class="chapter" data-level="8.8.1" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#process-na-values"><i class="fa fa-check"></i><b>8.8.1</b> <span class="env-green"><strong>Process <code>NA</code> values</strong></span></a></li>
+</ul></li>
+<li class="chapter" data-level="8.9" data-path="8.9-matrix-multiplication.html"><a href="8.9-matrix-multiplication.html"><i class="fa fa-check"></i><b>8.9</b> Matrix multiplication</a></li>
+<li class="chapter" data-level="8.10" data-path="8.10-string-operations.html"><a href="8.10-string-operations.html"><i class="fa fa-check"></i><b>8.10</b> String Operations</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="9-tidyverse.html"><a href="9-tidyverse.html"><i class="fa fa-check"></i><b>9</b> Tidyverse</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="9.1-basic-operations-on-tibbles.html"><a href="9.1-basic-operations-on-tibbles.html"><i class="fa fa-check"></i><b>9.1</b> Basic operations on tibbles</a>
+<ul>
+<li class="chapter" data-level="9.1.1" data-path="9.1-basic-operations-on-tibbles.html"><a href="9.1-basic-operations-on-tibbles.html#check-unique-values"><i class="fa fa-check"></i><b>9.1.1</b> Check Unique Values</a></li>
+<li class="chapter" data-level="9.1.2" data-path="9.1-basic-operations-on-tibbles.html"><a href="9.1-basic-operations-on-tibbles.html#column-names"><i class="fa fa-check"></i><b>9.1.2</b> Column Names</a></li>
+<li class="chapter" data-level="9.1.3" data-path="9.1-basic-operations-on-tibbles.html"><a href="9.1-basic-operations-on-tibbles.html#column-operations"><i class="fa fa-check"></i><b>9.1.3</b> Column Operations</a></li>
+<li class="chapter" data-level="9.1.4" data-path="9.1-basic-operations-on-tibbles.html"><a href="9.1-basic-operations-on-tibbles.html#mutate"><i class="fa fa-check"></i><b>9.1.4</b> <code>mutate</code></a></li>
+<li class="chapter" data-level="9.1.5" data-path="9.1-basic-operations-on-tibbles.html"><a href="9.1-basic-operations-on-tibbles.html#concatenate-rows-into-a-tibble"><i class="fa fa-check"></i><b>9.1.5</b> Concatenate rows into a <code>tibble</code></a></li>
+<li class="chapter" data-level="9.1.6" data-path="9.1-basic-operations-on-tibbles.html"><a href="9.1-basic-operations-on-tibbles.html#data-subsetting-1"><i class="fa fa-check"></i><b>9.1.6</b> Data Subsetting</a></li>
+<li class="chapter" data-level="9.1.7" data-path="9.1-basic-operations-on-tibbles.html"><a href="9.1-basic-operations-on-tibbles.html#indirection"><i class="fa fa-check"></i><b>9.1.7</b> Indirection</a></li>
+<li class="chapter" data-level="9.1.8" data-path="9.1-basic-operations-on-tibbles.html"><a href="9.1-basic-operations-on-tibbles.html#dynamic-selection"><i class="fa fa-check"></i><b>9.1.8</b> Dynamic Selection</a></li>
+<li class="chapter" data-level="9.1.9" data-path="9.1-basic-operations-on-tibbles.html"><a href="9.1-basic-operations-on-tibbles.html#merge"><i class="fa fa-check"></i><b>9.1.9</b> Merge</a></li>
+</ul></li>
+<li class="chapter" data-level="9.2" data-path="9.2-pipe-operator.html"><a href="9.2-pipe-operator.html"><i class="fa fa-check"></i><b>9.2</b> Pipe Operator</a>
+<ul>
+<li class="chapter" data-level="9.2.1" data-path="9.2-pipe-operator.html"><a href="9.2-pipe-operator.html#native-pipe"><i class="fa fa-check"></i><b>9.2.1</b> Native Pipe <code>|&gt;</code></a></li>
+</ul></li>
+<li class="chapter" data-level="9.3" data-path="9.3-categorical-variables.html"><a href="9.3-categorical-variables.html"><i class="fa fa-check"></i><b>9.3</b> Categorical Variables</a>
+<ul>
+<li class="chapter" data-level="9.3.1" data-path="9.3-categorical-variables.html"><a href="9.3-categorical-variables.html#manipulate-string-columns"><i class="fa fa-check"></i><b>9.3.1</b> Manipulate String Columns</a></li>
+<li class="chapter" data-level="9.3.2" data-path="9.3-categorical-variables.html"><a href="9.3-categorical-variables.html#factors"><i class="fa fa-check"></i><b>9.3.2</b> Factors</a></li>
+</ul></li>
+<li class="chapter" data-level="9.4" data-path="9.4-group-and-apply-functions.html"><a href="9.4-group-and-apply-functions.html"><i class="fa fa-check"></i><b>9.4</b> Group and Apply Functions</a>
+<ul>
+<li class="chapter" data-level="9.4.1" data-path="9.4-group-and-apply-functions.html"><a href="9.4-group-and-apply-functions.html#group_by"><i class="fa fa-check"></i><b>9.4.1</b> <code>group_by()</code></a></li>
+<li class="chapter" data-level="9.4.2" data-path="9.4-group-and-apply-functions.html"><a href="9.4-group-and-apply-functions.html#subset-rows"><i class="fa fa-check"></i><b>9.4.2</b> Subset rows</a></li>
+<li class="chapter" data-level="9.4.3" data-path="9.4-group-and-apply-functions.html"><a href="9.4-group-and-apply-functions.html#summarize"><i class="fa fa-check"></i><b>9.4.3</b> Summarize</a></li>
+<li class="chapter" data-level="9.4.4" data-path="9.4-group-and-apply-functions.html"><a href="9.4-group-and-apply-functions.html#split-apply-combine"><i class="fa fa-check"></i><b>9.4.4</b> split-apply-combine</a></li>
+<li class="chapter" data-level="9.4.5" data-path="9.4-group-and-apply-functions.html"><a href="9.4-group-and-apply-functions.html#dplyrgroup_modify"><i class="fa fa-check"></i><b>9.4.5</b> <code>dplyr::group_modify()</code></a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="10-graphics.html"><a href="10-graphics.html"><i class="fa fa-check"></i><b>10</b> Graphics</a>
+<ul>
+<li class="chapter" data-level="10.1" data-path="10.1-multipanel-plot.html"><a href="10.1-multipanel-plot.html"><i class="fa fa-check"></i><b>10.1</b> Multipanel Plot</a>
+<ul>
+<li class="chapter" data-level="10.1.1" data-path="10.1-multipanel-plot.html"><a href="10.1-multipanel-plot.html#with-base-r"><i class="fa fa-check"></i><b>10.1.1</b> With Base R</a></li>
+<li class="chapter" data-level="10.1.2" data-path="10.1-multipanel-plot.html"><a href="10.1-multipanel-plot.html#with-cowplot-package"><i class="fa fa-check"></i><b>10.1.2</b> With <code>cowplot</code> package</a></li>
+</ul></li>
+<li class="chapter" data-level="10.2" data-path="10.2-goodlooking-colors.html"><a href="10.2-goodlooking-colors.html"><i class="fa fa-check"></i><b>10.2</b> Goodlooking Colors</a>
+<ul>
+<li class="chapter" data-level="10.2.1" data-path="10.2-goodlooking-colors.html"><a href="10.2-goodlooking-colors.html#color-models"><i class="fa fa-check"></i><b>10.2.1</b> Color models</a></li>
+<li class="chapter" data-level="10.2.2" data-path="10.2-goodlooking-colors.html"><a href="10.2-goodlooking-colors.html#base-r-functions-to-specify-colors"><i class="fa fa-check"></i><b>10.2.2</b> Base R functions to specify colors</a></li>
+<li class="chapter" data-level="10.2.3" data-path="10.2-goodlooking-colors.html"><a href="10.2-goodlooking-colors.html#colorspace-package"><i class="fa fa-check"></i><b>10.2.3</b> <code>colorspace</code> Package</a></li>
+<li class="chapter" data-level="10.2.4" data-path="10.2-goodlooking-colors.html"><a href="10.2-goodlooking-colors.html#rcolorbrewer"><i class="fa fa-check"></i><b>10.2.4</b> RColorBrewer</a></li>
+<li class="chapter" data-level="10.2.5" data-path="10.2-goodlooking-colors.html"><a href="10.2-goodlooking-colors.html#grey-scale"><i class="fa fa-check"></i><b>10.2.5</b> Grey Scale</a></li>
+<li class="chapter" data-level="10.2.6" data-path="10.2-goodlooking-colors.html"><a href="10.2-goodlooking-colors.html#viridis"><i class="fa fa-check"></i><b>10.2.6</b> viridis</a></li>
+<li class="chapter" data-level="10.2.7" data-path="10.2-goodlooking-colors.html"><a href="10.2-goodlooking-colors.html#ggsci"><i class="fa fa-check"></i><b>10.2.7</b> <code>ggsci</code></a></li>
+<li class="chapter" data-level="10.2.8" data-path="10.2-goodlooking-colors.html"><a href="10.2-goodlooking-colors.html#generate-and-show-color-palettes"><i class="fa fa-check"></i><b>10.2.8</b> <strong>Generate and Show Color Palettes</strong></a></li>
+<li class="chapter" data-level="10.2.9" data-path="10.2-goodlooking-colors.html"><a href="10.2-goodlooking-colors.html#color-interpolation"><i class="fa fa-check"></i><b>10.2.9</b> Color Interpolation</a></li>
+</ul></li>
+<li class="chapter" data-level="10.3" data-path="10.3-math-expression-in-figures.html"><a href="10.3-math-expression-in-figures.html"><i class="fa fa-check"></i><b>10.3</b> Math Expression in Figures</a></li>
+<li class="chapter" data-level="10.4" data-path="10.4-control-graphics-devices.html"><a href="10.4-control-graphics-devices.html"><i class="fa fa-check"></i><b>10.4</b> Control Graphics Devices</a>
+<ul>
+<li class="chapter" data-level="10.4.1" data-path="10.4-control-graphics-devices.html"><a href="10.4-control-graphics-devices.html#save-png"><i class="fa fa-check"></i><b>10.4.1</b> Save PNG</a></li>
+</ul></li>
+<li class="chapter" data-level="10.5" data-path="10.5-ggplot.html"><a href="10.5-ggplot.html"><i class="fa fa-check"></i><b>10.5</b> ggplot</a>
+<ul>
+<li class="chapter" data-level="10.5.1" data-path="10.5-ggplot.html"><a href="10.5-ggplot.html#wide-table-to-long-table"><i class="fa fa-check"></i><b>10.5.1</b> Wide table to Long table</a></li>
+<li class="chapter" data-level="10.5.2" data-path="10.5-ggplot.html"><a href="10.5-ggplot.html#dual-y-axis-plot"><i class="fa fa-check"></i><b>10.5.2</b> <strong>Dual y-axis plot</strong></a></li>
+<li class="chapter" data-level="10.5.3" data-path="10.5-ggplot.html"><a href="10.5-ggplot.html#aes"><i class="fa fa-check"></i><b>10.5.3</b> <code>aes()</code></a></li>
+<li class="chapter" data-level="10.5.4" data-path="10.5-ggplot.html"><a href="10.5-ggplot.html#continuous-scales-for-data"><i class="fa fa-check"></i><b>10.5.4</b> Continuous scales for data</a></li>
+<li class="chapter" data-level="10.5.5" data-path="10.5-ggplot.html"><a href="10.5-ggplot.html#add-regression-line"><i class="fa fa-check"></i><b>10.5.5</b> Add regression line</a></li>
+<li class="chapter" data-level="10.5.6" data-path="10.5-ggplot.html"><a href="10.5-ggplot.html#subplots-faceting"><i class="fa fa-check"></i><b>10.5.6</b> Subplots / Faceting</a></li>
+<li class="chapter" data-level="10.5.7" data-path="10.5-ggplot.html"><a href="10.5-ggplot.html#parameters-1"><i class="fa fa-check"></i><b>10.5.7</b> Parameters</a></li>
+<li class="chapter" data-level="10.5.8" data-path="10.5-ggplot.html"><a href="10.5-ggplot.html#guides-together-with-guide_legend"><i class="fa fa-check"></i><b>10.5.8</b> <code>guides()</code>, together with <code>guide_legend()</code></a></li>
+<li class="chapter" data-level="10.5.9" data-path="10.5-ggplot.html"><a href="10.5-ggplot.html#template-for-multi-series"><i class="fa fa-check"></i><b>10.5.9</b> Template for multi-series</a></li>
+<li class="chapter" data-level="10.5.10" data-path="10.5-ggplot.html"><a href="10.5-ggplot.html#grid.gedit"><i class="fa fa-check"></i><b>10.5.10</b> <code>grid.gedit()</code></a></li>
+</ul></li>
+<li class="chapter" data-level="10.6" data-path="10.6-plot-raster-data.html"><a href="10.6-plot-raster-data.html"><i class="fa fa-check"></i><b>10.6</b> plot <code>Raster</code> data</a>
+<ul>
+<li class="chapter" data-level="10.6.1" data-path="10.6-plot-raster-data.html"><a href="10.6-plot-raster-data.html#add-patterns-to-shapes"><i class="fa fa-check"></i><b>10.6.1</b> Add Patterns to Shapes</a></li>
+</ul></li>
+<li class="chapter" data-level="10.7" data-path="10.7-histogram.html"><a href="10.7-histogram.html"><i class="fa fa-check"></i><b>10.7</b> Histogram</a></li>
+<li class="chapter" data-level="10.8" data-path="10.8-qq-plot.html"><a href="10.8-qq-plot.html"><i class="fa fa-check"></i><b>10.8</b> QQ-plot</a></li>
+<li class="chapter" data-level="10.9" data-path="10.9-heatmap.html"><a href="10.9-heatmap.html"><i class="fa fa-check"></i><b>10.9</b> Heatmap</a></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="11-time-series.html"><a href="11-time-series.html"><i class="fa fa-check"></i><b>11</b> Time Series</a>
+<ul>
+<li class="chapter" data-level="11.1" data-path="11.1-date.html"><a href="11.1-date.html"><i class="fa fa-check"></i><b>11.1</b> Date</a></li>
+<li class="chapter" data-level="11.2" data-path="11.2-process-data.html"><a href="11.2-process-data.html"><i class="fa fa-check"></i><b>11.2</b> Process Data</a>
+<ul>
+<li class="chapter" data-level="11.2.1" data-path="11.2-process-data.html"><a href="11.2-process-data.html#tidyquant"><i class="fa fa-check"></i><b>11.2.1</b> <code>tidyquant</code></a></li>
+<li class="chapter" data-level="11.2.2" data-path="11.2-process-data.html"><a href="11.2-process-data.html#from-tibble-to-xts"><i class="fa fa-check"></i><b>11.2.2</b> From tibble to <code>xts</code></a></li>
+</ul></li>
+<li class="chapter" data-level="11.3" data-path="11.3-portfolio-return.html"><a href="11.3-portfolio-return.html"><i class="fa fa-check"></i><b>11.3</b> Portfolio Return</a></li>
+<li class="chapter" data-level="11.4" data-path="11.4-plot-ts.html"><a href="11.4-plot-ts.html"><i class="fa fa-check"></i><b>11.4</b> Plot TS</a>
+<ul>
+<li class="chapter" data-level="11.4.1" data-path="11.4-plot-ts.html"><a href="11.4-plot-ts.html#plot.xts"><i class="fa fa-check"></i><b>11.4.1</b> <code>plot.xts</code></a></li>
+<li class="chapter" data-level="11.4.2" data-path="11.4-plot-ts.html"><a href="11.4-plot-ts.html#autoplot"><i class="fa fa-check"></i><b>11.4.2</b> <code>autoplot</code></a></li>
+</ul></li>
+<li class="chapter" data-level="11.5" data-path="11.5-time-series-regression.html"><a href="11.5-time-series-regression.html"><i class="fa fa-check"></i><b>11.5</b> Time Series Regression</a>
+<ul>
+<li class="chapter" data-level="11.5.1" data-path="11.5-time-series-regression.html"><a href="11.5-time-series-regression.html#lag-polynomial"><i class="fa fa-check"></i><b>11.5.1</b> Lag Polynomial</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="12-regression.html"><a href="12-regression.html"><i class="fa fa-check"></i><b>12</b> Regression</a>
+<ul>
+<li class="chapter" data-level="12.1" data-path="12.1-ols.html"><a href="12.1-ols.html"><i class="fa fa-check"></i><b>12.1</b> OLS</a>
+<ul>
+<li class="chapter" data-level="12.1.1" data-path="12.1-ols.html"><a href="12.1-ols.html#get-the-coef-estimates"><i class="fa fa-check"></i><b>12.1.1</b> Get the coef estimates</a></li>
+<li class="chapter" data-level="12.1.2" data-path="12.1-ols.html"><a href="12.1-ols.html#covariance-matrix"><i class="fa fa-check"></i><b>12.1.2</b> Covariance Matrix</a></li>
+<li class="chapter" data-level="12.1.3" data-path="12.1-ols.html"><a href="12.1-ols.html#model-performance"><i class="fa fa-check"></i><b>12.1.3</b> Model performance</a></li>
+<li class="chapter" data-level="12.1.4" data-path="12.1-ols.html"><a href="12.1-ols.html#diagnostic-plots"><i class="fa fa-check"></i><b>12.1.4</b> Diagnostic Plots</a></li>
+<li class="chapter" data-level="12.1.5" data-path="12.1-ols.html"><a href="12.1-ols.html#model-summary"><i class="fa fa-check"></i><b>12.1.5</b> Model Summary</a></li>
+<li class="chapter" data-level="12.1.6" data-path="12.1-ols.html"><a href="12.1-ols.html#dummy-variable"><i class="fa fa-check"></i><b>12.1.6</b> Dummy variable</a></li>
+<li class="chapter" data-level="12.1.7" data-path="12.1-ols.html"><a href="12.1-ols.html#prediction"><i class="fa fa-check"></i><b>12.1.7</b> Prediction</a></li>
+</ul></li>
+<li class="chapter" data-level="12.2" data-path="12.2-panel.html"><a href="12.2-panel.html"><i class="fa fa-check"></i><b>12.2</b> Panel</a>
+<ul>
+<li class="chapter" data-level="12.2.1" data-path="12.2-panel.html"><a href="12.2-panel.html#dynamic-panel"><i class="fa fa-check"></i><b>12.2.1</b> Dynamic Panel</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="13-machine-learning.html"><a href="13-machine-learning.html"><i class="fa fa-check"></i><b>13</b> Machine Learning</a>
+<ul>
+<li class="chapter" data-level="13.1" data-path="13.1-imbalanced-datasets.html"><a href="13.1-imbalanced-datasets.html"><i class="fa fa-check"></i><b>13.1</b> Imbalanced datasets</a>
+<ul>
+<li class="chapter" data-level="13.1.1" data-path="13.1-imbalanced-datasets.html"><a href="13.1-imbalanced-datasets.html#downsampling-and-upweighting"><i class="fa fa-check"></i><b>13.1.1</b> Downsampling and Upweighting</a></li>
+</ul></li>
+<li class="chapter" data-level="13.2" data-path="13.2-random-forest.html"><a href="13.2-random-forest.html"><i class="fa fa-check"></i><b>13.2</b> Random Forest</a>
+<ul>
+<li class="chapter" data-level="" data-path="13.2-random-forest.html"><a href="13.2-random-forest.html#implementation-in-r"><i class="fa fa-check"></i>Implementation in R</a></li>
+<li class="chapter" data-level="" data-path="13.2-random-forest.html"><a href="13.2-random-forest.html#imbalance-classification"><i class="fa fa-check"></i>Imbalance Classification</a></li>
+</ul></li>
+<li class="chapter" data-level="13.3" data-path="13.3-neural-network.html"><a href="13.3-neural-network.html"><i class="fa fa-check"></i><b>13.3</b> Neural Network</a></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="14-stata.html"><a href="14-stata.html"><i class="fa fa-check"></i><b>14</b> Stata</a>
+<ul>
+<li class="chapter" data-level="14.1" data-path="14.1-basic-syntax.html"><a href="14.1-basic-syntax.html"><i class="fa fa-check"></i><b>14.1</b> Basic syntax</a>
+<ul>
+<li class="chapter" data-level="14.1.1" data-path="14.1-basic-syntax.html"><a href="14.1-basic-syntax.html#package-management"><i class="fa fa-check"></i><b>14.1.1</b> Package management</a></li>
+<li class="chapter" data-level="14.1.2" data-path="14.1-basic-syntax.html"><a href="14.1-basic-syntax.html#types-and-declarations"><i class="fa fa-check"></i><b>14.1.2</b> Types and Declarations</a></li>
+<li class="chapter" data-level="14.1.3" data-path="14.1-basic-syntax.html"><a href="14.1-basic-syntax.html#create-new-variables"><i class="fa fa-check"></i><b>14.1.3</b> Create new variables</a></li>
+<li class="chapter" data-level="14.1.4" data-path="14.1-basic-syntax.html"><a href="14.1-basic-syntax.html#refer-to-a-range-of-variables"><i class="fa fa-check"></i><b>14.1.4</b> Refer to a range of variables</a></li>
+<li class="chapter" data-level="14.1.5" data-path="14.1-basic-syntax.html"><a href="14.1-basic-syntax.html#system-variables"><i class="fa fa-check"></i><b>14.1.5</b> System Variables</a></li>
+<li class="chapter" data-level="14.1.6" data-path="14.1-basic-syntax.html"><a href="14.1-basic-syntax.html#matrix"><i class="fa fa-check"></i><b>14.1.6</b> Matrix</a></li>
+<li class="chapter" data-level="14.1.7" data-path="14.1-basic-syntax.html"><a href="14.1-basic-syntax.html#factor-variables"><i class="fa fa-check"></i><b>14.1.7</b> Factor Variables</a></li>
+<li class="chapter" data-level="14.1.8" data-path="14.1-basic-syntax.html"><a href="14.1-basic-syntax.html#time-series-varlists"><i class="fa fa-check"></i><b>14.1.8</b> Time series varlists</a></li>
+<li class="chapter" data-level="14.1.9" data-path="14.1-basic-syntax.html"><a href="14.1-basic-syntax.html#labels"><i class="fa fa-check"></i><b>14.1.9</b> Labels</a></li>
+<li class="chapter" data-level="14.1.10" data-path="14.1-basic-syntax.html"><a href="14.1-basic-syntax.html#output-format"><i class="fa fa-check"></i><b>14.1.10</b> Output format</a></li>
+</ul></li>
+<li class="chapter" data-level="14.2" data-path="14.2-data-manipulation.html"><a href="14.2-data-manipulation.html"><i class="fa fa-check"></i><b>14.2</b> Data Manipulation</a>
+<ul>
+<li class="chapter" data-level="14.2.1" data-path="14.2-data-manipulation.html"><a href="14.2-data-manipulation.html#import-and-export"><i class="fa fa-check"></i><b>14.2.1</b> Import and Export</a></li>
+<li class="chapter" data-level="14.2.2" data-path="14.2-data-manipulation.html"><a href="14.2-data-manipulation.html#save-estimation-results"><i class="fa fa-check"></i><b>14.2.2</b> Save Estimation Results</a></li>
+<li class="chapter" data-level="14.2.3" data-path="14.2-data-manipulation.html"><a href="14.2-data-manipulation.html#stored-results"><i class="fa fa-check"></i><b>14.2.3</b> Stored Results</a></li>
+</ul></li>
+<li class="chapter" data-level="14.3" data-path="14.3-predict.html"><a href="14.3-predict.html"><i class="fa fa-check"></i><b>14.3</b> Predict</a></li>
+<li class="chapter" data-level="14.4" data-path="14.4-forecast.html"><a href="14.4-forecast.html"><i class="fa fa-check"></i><b>14.4</b> Forecast</a>
+<ul>
+<li class="chapter" data-level="14.4.1" data-path="14.4-forecast.html"><a href="14.4-forecast.html#essential-procedure"><i class="fa fa-check"></i><b>14.4.1</b> Essential Procedure</a></li>
+<li class="chapter" data-level="14.4.2" data-path="14.4-forecast.html"><a href="14.4-forecast.html#creates-a-new-forecast-model"><i class="fa fa-check"></i><b>14.4.2</b> Creates a new forecast model</a></li>
+<li class="chapter" data-level="14.4.3" data-path="14.4-forecast.html"><a href="14.4-forecast.html#add-equationsidentifies"><i class="fa fa-check"></i><b>14.4.3</b> Add equations/identifies</a></li>
+<li class="chapter" data-level="14.4.4" data-path="14.4-forecast.html"><a href="14.4-forecast.html#solve-the-foreceast"><i class="fa fa-check"></i><b>14.4.4</b> Solve the foreceast</a></li>
+<li class="chapter" data-level="14.4.5" data-path="14.4-forecast.html"><a href="14.4-forecast.html#use-example-forecast-a-panel"><i class="fa fa-check"></i><b>14.4.5</b> Use example: forecast a panel</a></li>
+</ul></li>
+<li class="chapter" data-level="14.5" data-path="14.5-panel-1.html"><a href="14.5-panel-1.html"><i class="fa fa-check"></i><b>14.5</b> Panel</a></li>
+<li class="chapter" data-level="14.6" data-path="14.6-arellano-bond-estimator.html"><a href="14.6-arellano-bond-estimator.html"><i class="fa fa-check"></i><b>14.6</b> Arellano-Bond Estimator</a>
+<ul>
+<li class="chapter" data-level="14.6.1" data-path="14.6-arellano-bond-estimator.html"><a href="14.6-arellano-bond-estimator.html#xtabond-syntax"><i class="fa fa-check"></i><b>14.6.1</b> xtabond Syntax</a></li>
+<li class="chapter" data-level="14.6.2" data-path="14.6-arellano-bond-estimator.html"><a href="14.6-arellano-bond-estimator.html#use-example"><i class="fa fa-check"></i><b>14.6.2</b> Use Example</a></li>
+<li class="chapter" data-level="14.6.3" data-path="14.6-arellano-bond-estimator.html"><a href="14.6-arellano-bond-estimator.html#diagnostic-tests"><i class="fa fa-check"></i><b>14.6.3</b> Diagnostic Tests</a></li>
+<li class="chapter" data-level="14.6.4" data-path="14.6-arellano-bond-estimator.html"><a href="14.6-arellano-bond-estimator.html#predetermined-covariates"><i class="fa fa-check"></i><b>14.6.4</b> Predetermined Covariates</a></li>
+<li class="chapter" data-level="14.6.5" data-path="14.6-arellano-bond-estimator.html"><a href="14.6-arellano-bond-estimator.html#endogenous-covariates"><i class="fa fa-check"></i><b>14.6.5</b> Endogenous Covariates</a></li>
+<li class="chapter" data-level="14.6.6" data-path="14.6-arellano-bond-estimator.html"><a href="14.6-arellano-bond-estimator.html#xtabond2"><i class="fa fa-check"></i><b>14.6.6</b> xtabond2</a></li>
+<li class="chapter" data-level="14.6.7" data-path="14.6-arellano-bond-estimator.html"><a href="14.6-arellano-bond-estimator.html#xtdpd"><i class="fa fa-check"></i><b>14.6.7</b> xtdpd</a></li>
+<li class="chapter" data-level="14.6.8" data-path="14.6-arellano-bond-estimator.html"><a href="14.6-arellano-bond-estimator.html#system-gmm-estimation"><i class="fa fa-check"></i><b>14.6.8</b> System GMM Estimation</a></li>
+</ul></li>
+<li class="chapter" data-level="14.7" data-path="14.7-common-correlated-effects-models.html"><a href="14.7-common-correlated-effects-models.html"><i class="fa fa-check"></i><b>14.7</b> Common Correlated Effects Models</a>
+<ul>
+<li class="chapter" data-level="14.7.1" data-path="14.7-common-correlated-effects-models.html"><a href="14.7-common-correlated-effects-models.html#econometric-model"><i class="fa fa-check"></i><b>14.7.1</b> Econometric model</a></li>
+<li class="chapter" data-level="14.7.2" data-path="14.7-common-correlated-effects-models.html"><a href="14.7-common-correlated-effects-models.html#estimation"><i class="fa fa-check"></i><b>14.7.2</b> Estimation</a></li>
+<li class="chapter" data-level="14.7.3" data-path="14.7-common-correlated-effects-models.html"><a href="14.7-common-correlated-effects-models.html#long-run-effects"><i class="fa fa-check"></i><b>14.7.3</b> Long run effects</a></li>
+<li class="chapter" data-level="14.7.4" data-path="14.7-common-correlated-effects-models.html"><a href="14.7-common-correlated-effects-models.html#boostrap"><i class="fa fa-check"></i><b>14.7.4</b> Boostrap</a></li>
+</ul></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">R Notes</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<script>
+// Simple toggle utility retained
+function myFunction(id) {
+  var x = document.getElementById(id);
+  x.style.display = (x.style.display === 'none') ? 'block' : 'none';
+}
+
+// Auto-expand active top-level section so its level 2/3 items are visible
+document.addEventListener('DOMContentLoaded', function() {
+  try {
+    var summary = document.querySelector('.book-summary ul.summary');
+    if (!summary) return;
+
+    function applyAutoOpen() {
+      // Clear previous
+      summary.querySelectorAll('li.chapter.auto-open').forEach(function(li){ li.classList.remove('auto-open'); });
+      var active = summary.querySelector('li.chapter.active');
+      if (active) active.classList.add('auto-open');
+    }
+
+    applyAutoOpen();
+
+    // GitBook emits page.change on navigation
+    if (typeof gitbook !== 'undefined' && gitbook.events) {
+      gitbook.events.on('page.change', function(){
+        applyAutoOpen();
+      });
+    }
+  } catch(e) {
+    console.warn('TOC auto-open error', e);
+  }
+});
+
+// Toggle collapse: clicking an expanded section collapses it
+document.addEventListener('DOMContentLoaded', function() {
+  try {
+    var summary = document.querySelector('.book-summary ul.summary');
+    if (!summary) return;
+
+    // Add click handlers to chapter links with children
+    summary.querySelectorAll('li.chapter').forEach(function(chapter) {
+      var sublist = chapter.querySelector('ul');
+      if (!sublist) return; // Only chapters with subsections
+
+      var link = chapter.querySelector('a');
+      if (!link) return;
+
+      link.addEventListener('click', function(e) {
+        // Check if this chapter is already expanded
+        var isExpanded = chapter.classList.contains('auto-open');
+        
+        if (isExpanded) {
+          // Collapse it
+          e.preventDefault();
+          chapter.classList.remove('auto-open');
+        } else {
+          // Expand it (remove auto-open from others first)
+          summary.querySelectorAll('li.chapter.auto-open').forEach(function(li) {
+            if (li !== chapter) li.classList.remove('auto-open');
+          });
+          chapter.classList.add('auto-open');
+        }
+      });
+    });
+  } catch(e) {
+    console.warn('TOC toggle error', e);
+  }
+});
+</script>
+<style>
+/* Show nested UL of active chapter when collapse=section */
+.book-summary ul.summary li.chapter.auto-open ul { display: block !important; }
+.book-summary ul.summary li.chapter.auto-open > a { font-weight: 700; }
+</style>
+<div id="group-and-apply-functions" class="section level2 hasAnchor" number="9.4">
+<h2><span class="header-section-number">9.4</span> Group and Apply Functions<a href="9.4-group-and-apply-functions.html#group-and-apply-functions" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="group_by" class="section level3 hasAnchor" number="9.4.1">
+<h3><span class="header-section-number">9.4.1</span> <code>group_by()</code><a href="9.4-group-and-apply-functions.html#group_by" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p><code>group_by</code> grouping <em>doesn’t change how the data looks</em>, it changes how it acts with the other dplyr verbs.</p>
+<div class="sourceCode" id="cb642"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb642-1"><a href="9.4-group-and-apply-functions.html#cb642-1" tabindex="-1"></a>by_cyl <span class="ot">&lt;-</span> mtcars <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(cyl)</span>
+<span id="cb642-2"><a href="9.4-group-and-apply-functions.html#cb642-2" tabindex="-1"></a><span class="co"># conflict with plyr, specify which to use</span></span>
+<span id="cb642-3"><a href="9.4-group-and-apply-functions.html#cb642-3" tabindex="-1"></a>summarise <span class="ot">&lt;-</span> dplyr<span class="sc">::</span>summarise</span>
+<span id="cb642-4"><a href="9.4-group-and-apply-functions.html#cb642-4" tabindex="-1"></a>summarize <span class="ot">&lt;-</span> dplyr<span class="sc">::</span>summarize</span>
+<span id="cb642-5"><a href="9.4-group-and-apply-functions.html#cb642-5" tabindex="-1"></a>by_cyl <span class="sc">%&gt;%</span> </span>
+<span id="cb642-6"><a href="9.4-group-and-apply-functions.html#cb642-6" tabindex="-1"></a>    <span class="fu">summarise</span>(</span>
+<span id="cb642-7"><a href="9.4-group-and-apply-functions.html#cb642-7" tabindex="-1"></a>        <span class="at">disp =</span> <span class="fu">mean</span>(disp),</span>
+<span id="cb642-8"><a href="9.4-group-and-apply-functions.html#cb642-8" tabindex="-1"></a>        <span class="at">hp =</span> <span class="fu">mean</span>(hp),</span>
+<span id="cb642-9"><a href="9.4-group-and-apply-functions.html#cb642-9" tabindex="-1"></a>        <span class="at">count =</span> <span class="fu">n</span>() <span class="co"># count the size of each group</span></span>
+<span id="cb642-10"><a href="9.4-group-and-apply-functions.html#cb642-10" tabindex="-1"></a>        )</span>
+<span id="cb642-11"><a href="9.4-group-and-apply-functions.html#cb642-11" tabindex="-1"></a><span class="co"># A tibble: 3 × 4</span></span>
+<span id="cb642-12"><a href="9.4-group-and-apply-functions.html#cb642-12" tabindex="-1"></a>    cyl  disp    hp count</span>
+<span id="cb642-13"><a href="9.4-group-and-apply-functions.html#cb642-13" tabindex="-1"></a>  <span class="sc">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>int<span class="sc">&gt;</span></span>
+<span id="cb642-14"><a href="9.4-group-and-apply-functions.html#cb642-14" tabindex="-1"></a><span class="dv">1</span>     <span class="dv">4</span>  <span class="fl">105.</span>  <span class="fl">82.6</span>    <span class="dv">11</span></span>
+<span id="cb642-15"><a href="9.4-group-and-apply-functions.html#cb642-15" tabindex="-1"></a><span class="dv">2</span>     <span class="dv">6</span>  <span class="fl">183.</span> <span class="fl">122.</span>      <span class="dv">7</span></span>
+<span id="cb642-16"><a href="9.4-group-and-apply-functions.html#cb642-16" tabindex="-1"></a><span class="dv">3</span>     <span class="dv">8</span>  <span class="fl">353.</span> <span class="fl">209.</span>     <span class="dv">14</span></span></code></pre></div>
+<p><code>n()</code> gives the current group size. Only works inside <code>summarise()</code>.</p>
+<p><span class="env-green"><strong>Information about the “current” group or variable</strong></span></p>
+<p>These functions return information about the “current” group or “current” variable, so only work inside specific contexts like <code>summarise()</code> and <code>mutate()</code>.</p>
+<ul>
+<li><p><code>n()</code> gives the current group size.</p>
+<blockquote>
+<p>Error in <code>n()</code>:
+! Must only be used inside data-masking verbs like <code>mutate()</code>, <code>filter()</code>, and
+<code>group_by()</code>.</p>
+</blockquote>
+<p>Cause: R’s confused with which summarize function (<code>dplyr</code> vs. <code>plyr</code>) it should use.</p>
+<p>Fix: Explicitly specify <code>dplyr::summarise()</code></p></li>
+<li><p><code>cur_group()</code> gives the group keys, a tibble with one row and one column for each grouping variable.</p>
+<p>Equivalent to <code>.BY</code> in <code>data.table</code>.</p></li>
+<li><p><code>cur_group_id()</code> gives a unique numeric identifier for the current group.</p>
+<p>Equivalent to <code>.GBP</code> in <code>data.table</code>.</p></li>
+<li><p><code>cur_group_rows()</code> gives the row indices for the current group.</p>
+<p>Equivalent to <code>.I</code> in <code>data.table</code>.</p></li>
+<li><p><code>cur_column()</code> gives the name of the current column (in <code>across()</code> only).</p></li>
+</ul>
+<div class="sourceCode" id="cb643"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb643-1"><a href="9.4-group-and-apply-functions.html#cb643-1" tabindex="-1"></a><span class="co"># prioritize functions in `dplyr` to avoid conflicts with `plyr`</span></span>
+<span id="cb643-2"><a href="9.4-group-and-apply-functions.html#cb643-2" tabindex="-1"></a><span class="sc">&gt;</span> needs<span class="sc">::</span><span class="fu">prioritize</span>(dplyr)</span>
+<span id="cb643-3"><a href="9.4-group-and-apply-functions.html#cb643-3" tabindex="-1"></a><span class="sc">&gt;</span> by_cyl <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">id =</span> <span class="fu">cur_group_id</span>())</span>
+<span id="cb643-4"><a href="9.4-group-and-apply-functions.html#cb643-4" tabindex="-1"></a><span class="co"># A tibble: 32 × 12</span></span>
+<span id="cb643-5"><a href="9.4-group-and-apply-functions.html#cb643-5" tabindex="-1"></a><span class="co"># Groups:   cyl [3]</span></span>
+<span id="cb643-6"><a href="9.4-group-and-apply-functions.html#cb643-6" tabindex="-1"></a>     mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb    id</span>
+<span id="cb643-7"><a href="9.4-group-and-apply-functions.html#cb643-7" tabindex="-1"></a>   <span class="sc">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>int<span class="sc">&gt;</span></span>
+<span id="cb643-8"><a href="9.4-group-and-apply-functions.html#cb643-8" tabindex="-1"></a> <span class="dv">1</span>  <span class="dv">21</span>       <span class="dv">6</span>  <span class="dv">160</span>    <span class="dv">110</span>  <span class="fl">3.9</span>   <span class="fl">2.62</span>  <span class="fl">16.5</span>     <span class="dv">0</span>     <span class="dv">1</span>     <span class="dv">4</span>     <span class="dv">4</span>     <span class="dv">2</span></span>
+<span id="cb643-9"><a href="9.4-group-and-apply-functions.html#cb643-9" tabindex="-1"></a> <span class="dv">2</span>  <span class="dv">21</span>       <span class="dv">6</span>  <span class="dv">160</span>    <span class="dv">110</span>  <span class="fl">3.9</span>   <span class="fl">2.88</span>  <span class="fl">17.0</span>     <span class="dv">0</span>     <span class="dv">1</span>     <span class="dv">4</span>     <span class="dv">4</span>     <span class="dv">2</span></span>
+<span id="cb643-10"><a href="9.4-group-and-apply-functions.html#cb643-10" tabindex="-1"></a> <span class="dv">3</span>  <span class="fl">22.8</span>     <span class="dv">4</span>  <span class="dv">108</span>     <span class="dv">93</span>  <span class="fl">3.85</span>  <span class="fl">2.32</span>  <span class="fl">18.6</span>     <span class="dv">1</span>     <span class="dv">1</span>     <span class="dv">4</span>     <span class="dv">1</span>     <span class="dv">1</span></span>
+<span id="cb643-11"><a href="9.4-group-and-apply-functions.html#cb643-11" tabindex="-1"></a> <span class="dv">4</span>  <span class="fl">21.4</span>     <span class="dv">6</span>  <span class="dv">258</span>    <span class="dv">110</span>  <span class="fl">3.08</span>  <span class="fl">3.22</span>  <span class="fl">19.4</span>     <span class="dv">1</span>     <span class="dv">0</span>     <span class="dv">3</span>     <span class="dv">1</span>     <span class="dv">2</span></span>
+<span id="cb643-12"><a href="9.4-group-and-apply-functions.html#cb643-12" tabindex="-1"></a> <span class="dv">5</span>  <span class="fl">18.7</span>     <span class="dv">8</span>  <span class="dv">360</span>    <span class="dv">175</span>  <span class="fl">3.15</span>  <span class="fl">3.44</span>  <span class="fl">17.0</span>     <span class="dv">0</span>     <span class="dv">0</span>     <span class="dv">3</span>     <span class="dv">2</span>     <span class="dv">3</span></span>
+<span id="cb643-13"><a href="9.4-group-and-apply-functions.html#cb643-13" tabindex="-1"></a> <span class="dv">6</span>  <span class="fl">18.1</span>     <span class="dv">6</span>  <span class="dv">225</span>    <span class="dv">105</span>  <span class="fl">2.76</span>  <span class="fl">3.46</span>  <span class="fl">20.2</span>     <span class="dv">1</span>     <span class="dv">0</span>     <span class="dv">3</span>     <span class="dv">1</span>     <span class="dv">2</span></span>
+<span id="cb643-14"><a href="9.4-group-and-apply-functions.html#cb643-14" tabindex="-1"></a> <span class="dv">7</span>  <span class="fl">14.3</span>     <span class="dv">8</span>  <span class="dv">360</span>    <span class="dv">245</span>  <span class="fl">3.21</span>  <span class="fl">3.57</span>  <span class="fl">15.8</span>     <span class="dv">0</span>     <span class="dv">0</span>     <span class="dv">3</span>     <span class="dv">4</span>     <span class="dv">3</span></span>
+<span id="cb643-15"><a href="9.4-group-and-apply-functions.html#cb643-15" tabindex="-1"></a> <span class="dv">8</span>  <span class="fl">24.4</span>     <span class="dv">4</span>  <span class="fl">147.</span>    <span class="dv">62</span>  <span class="fl">3.69</span>  <span class="fl">3.19</span>  <span class="dv">20</span>       <span class="dv">1</span>     <span class="dv">0</span>     <span class="dv">4</span>     <span class="dv">2</span>     <span class="dv">1</span></span>
+<span id="cb643-16"><a href="9.4-group-and-apply-functions.html#cb643-16" tabindex="-1"></a> <span class="dv">9</span>  <span class="fl">22.8</span>     <span class="dv">4</span>  <span class="fl">141.</span>    <span class="dv">95</span>  <span class="fl">3.92</span>  <span class="fl">3.15</span>  <span class="fl">22.9</span>     <span class="dv">1</span>     <span class="dv">0</span>     <span class="dv">4</span>     <span class="dv">2</span>     <span class="dv">1</span></span>
+<span id="cb643-17"><a href="9.4-group-and-apply-functions.html#cb643-17" tabindex="-1"></a><span class="dv">10</span>  <span class="fl">19.2</span>     <span class="dv">6</span>  <span class="fl">168.</span>   <span class="dv">123</span>  <span class="fl">3.92</span>  <span class="fl">3.44</span>  <span class="fl">18.3</span>     <span class="dv">1</span>     <span class="dv">0</span>     <span class="dv">4</span>     <span class="dv">4</span>     <span class="dv">2</span></span>
+<span id="cb643-18"><a href="9.4-group-and-apply-functions.html#cb643-18" tabindex="-1"></a><span class="co"># ℹ 22 more rows</span></span>
+<span id="cb643-19"><a href="9.4-group-and-apply-functions.html#cb643-19" tabindex="-1"></a><span class="co"># ℹ Use `print(n = ...)` to see more rows</span></span>
+<span id="cb643-20"><a href="9.4-group-and-apply-functions.html#cb643-20" tabindex="-1"></a></span>
+<span id="cb643-21"><a href="9.4-group-and-apply-functions.html#cb643-21" tabindex="-1"></a><span class="sc">&gt;</span> by_cyl <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(<span class="at">id =</span> <span class="fu">cur_group_id</span>())</span>
+<span id="cb643-22"><a href="9.4-group-and-apply-functions.html#cb643-22" tabindex="-1"></a><span class="co"># A tibble: 3 × 2</span></span>
+<span id="cb643-23"><a href="9.4-group-and-apply-functions.html#cb643-23" tabindex="-1"></a>    cyl    id</span>
+<span id="cb643-24"><a href="9.4-group-and-apply-functions.html#cb643-24" tabindex="-1"></a>  <span class="sc">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>int<span class="sc">&gt;</span></span>
+<span id="cb643-25"><a href="9.4-group-and-apply-functions.html#cb643-25" tabindex="-1"></a><span class="dv">1</span>     <span class="dv">4</span>     <span class="dv">1</span></span>
+<span id="cb643-26"><a href="9.4-group-and-apply-functions.html#cb643-26" tabindex="-1"></a><span class="dv">2</span>     <span class="dv">6</span>     <span class="dv">2</span></span>
+<span id="cb643-27"><a href="9.4-group-and-apply-functions.html#cb643-27" tabindex="-1"></a><span class="dv">3</span>     <span class="dv">8</span>     <span class="dv">3</span></span>
+<span id="cb643-28"><a href="9.4-group-and-apply-functions.html#cb643-28" tabindex="-1"></a></span>
+<span id="cb643-29"><a href="9.4-group-and-apply-functions.html#cb643-29" tabindex="-1"></a><span class="sc">&gt;</span> by_cyl <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(<span class="at">data =</span> <span class="fu">cur_group</span>())</span>
+<span id="cb643-30"><a href="9.4-group-and-apply-functions.html#cb643-30" tabindex="-1"></a><span class="co"># A tibble: 3 × 2</span></span>
+<span id="cb643-31"><a href="9.4-group-and-apply-functions.html#cb643-31" tabindex="-1"></a>    cyl data<span class="sc">$</span>cyl</span>
+<span id="cb643-32"><a href="9.4-group-and-apply-functions.html#cb643-32" tabindex="-1"></a>  <span class="sc">&lt;</span>dbl<span class="sc">&gt;</span>    <span class="er">&lt;</span>dbl<span class="sc">&gt;</span></span>
+<span id="cb643-33"><a href="9.4-group-and-apply-functions.html#cb643-33" tabindex="-1"></a><span class="dv">1</span>     <span class="dv">4</span>        <span class="dv">4</span></span>
+<span id="cb643-34"><a href="9.4-group-and-apply-functions.html#cb643-34" tabindex="-1"></a><span class="dv">2</span>     <span class="dv">6</span>        <span class="dv">6</span></span>
+<span id="cb643-35"><a href="9.4-group-and-apply-functions.html#cb643-35" tabindex="-1"></a><span class="dv">3</span>     <span class="dv">8</span>        <span class="dv">8</span></span></code></pre></div>
+<div class="sourceCode" id="cb644"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb644-1"><a href="9.4-group-and-apply-functions.html#cb644-1" tabindex="-1"></a><span class="sc">&gt;</span> df <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb644-2"><a href="9.4-group-and-apply-functions.html#cb644-2" tabindex="-1"></a>    <span class="at">g =</span> <span class="fu">sample</span>(<span class="fu">rep</span>(letters[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>], <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>)),</span>
+<span id="cb644-3"><a href="9.4-group-and-apply-functions.html#cb644-3" tabindex="-1"></a>    <span class="at">x =</span> <span class="fu">runif</span>(<span class="dv">6</span>),</span>
+<span id="cb644-4"><a href="9.4-group-and-apply-functions.html#cb644-4" tabindex="-1"></a>    <span class="at">y =</span> <span class="fu">runif</span>(<span class="dv">6</span>)</span>
+<span id="cb644-5"><a href="9.4-group-and-apply-functions.html#cb644-5" tabindex="-1"></a>        )</span>
+<span id="cb644-6"><a href="9.4-group-and-apply-functions.html#cb644-6" tabindex="-1"></a><span class="sc">&gt;</span> gf <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(g)</span>
+<span id="cb644-7"><a href="9.4-group-and-apply-functions.html#cb644-7" tabindex="-1"></a><span class="sc">&gt;</span> gf</span>
+<span id="cb644-8"><a href="9.4-group-and-apply-functions.html#cb644-8" tabindex="-1"></a><span class="co"># A tibble: 6 × 3</span></span>
+<span id="cb644-9"><a href="9.4-group-and-apply-functions.html#cb644-9" tabindex="-1"></a><span class="co"># Groups:   g [3]</span></span>
+<span id="cb644-10"><a href="9.4-group-and-apply-functions.html#cb644-10" tabindex="-1"></a>  g          x     y</span>
+<span id="cb644-11"><a href="9.4-group-and-apply-functions.html#cb644-11" tabindex="-1"></a>  <span class="sc">&lt;</span>chr<span class="sc">&gt;</span>  <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span></span>
+<span id="cb644-12"><a href="9.4-group-and-apply-functions.html#cb644-12" tabindex="-1"></a><span class="dv">1</span> b     <span class="fl">0.0246</span> <span class="fl">0.143</span></span>
+<span id="cb644-13"><a href="9.4-group-and-apply-functions.html#cb644-13" tabindex="-1"></a><span class="dv">2</span> c     <span class="fl">0.478</span>  <span class="fl">0.415</span></span>
+<span id="cb644-14"><a href="9.4-group-and-apply-functions.html#cb644-14" tabindex="-1"></a><span class="dv">3</span> a     <span class="fl">0.758</span>  <span class="fl">0.414</span></span>
+<span id="cb644-15"><a href="9.4-group-and-apply-functions.html#cb644-15" tabindex="-1"></a><span class="dv">4</span> c     <span class="fl">0.216</span>  <span class="fl">0.369</span></span>
+<span id="cb644-16"><a href="9.4-group-and-apply-functions.html#cb644-16" tabindex="-1"></a><span class="dv">5</span> c     <span class="fl">0.318</span>  <span class="fl">0.152</span></span>
+<span id="cb644-17"><a href="9.4-group-and-apply-functions.html#cb644-17" tabindex="-1"></a><span class="dv">6</span> b     <span class="fl">0.232</span>  <span class="fl">0.139</span></span>
+<span id="cb644-18"><a href="9.4-group-and-apply-functions.html#cb644-18" tabindex="-1"></a></span>
+<span id="cb644-19"><a href="9.4-group-and-apply-functions.html#cb644-19" tabindex="-1"></a><span class="co"># get row indices for the current group</span></span>
+<span id="cb644-20"><a href="9.4-group-and-apply-functions.html#cb644-20" tabindex="-1"></a><span class="sc">&gt;</span> gf <span class="sc">%&gt;%</span> <span class="fu">reframe</span>(<span class="at">row=</span><span class="fu">cur_group_rows</span>())</span>
+<span id="cb644-21"><a href="9.4-group-and-apply-functions.html#cb644-21" tabindex="-1"></a><span class="co"># A tibble: 6 × 2</span></span>
+<span id="cb644-22"><a href="9.4-group-and-apply-functions.html#cb644-22" tabindex="-1"></a>  g       row</span>
+<span id="cb644-23"><a href="9.4-group-and-apply-functions.html#cb644-23" tabindex="-1"></a>  <span class="sc">&lt;</span>chr<span class="sc">&gt;</span> <span class="er">&lt;</span>int<span class="sc">&gt;</span></span>
+<span id="cb644-24"><a href="9.4-group-and-apply-functions.html#cb644-24" tabindex="-1"></a><span class="dv">1</span> a         <span class="dv">3</span></span>
+<span id="cb644-25"><a href="9.4-group-and-apply-functions.html#cb644-25" tabindex="-1"></a><span class="dv">2</span> b         <span class="dv">1</span></span>
+<span id="cb644-26"><a href="9.4-group-and-apply-functions.html#cb644-26" tabindex="-1"></a><span class="dv">3</span> b         <span class="dv">6</span></span>
+<span id="cb644-27"><a href="9.4-group-and-apply-functions.html#cb644-27" tabindex="-1"></a><span class="dv">4</span> c         <span class="dv">2</span></span>
+<span id="cb644-28"><a href="9.4-group-and-apply-functions.html#cb644-28" tabindex="-1"></a><span class="dv">5</span> c         <span class="dv">4</span></span>
+<span id="cb644-29"><a href="9.4-group-and-apply-functions.html#cb644-29" tabindex="-1"></a><span class="dv">6</span> c         <span class="dv">5</span></span></code></pre></div>
+<p><code>group_by</code> then count <code>non-NA</code> values</p>
+<div class="sourceCode" id="cb645"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb645-1"><a href="9.4-group-and-apply-functions.html#cb645-1" tabindex="-1"></a>gdp_df <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(year) <span class="sc">%&gt;%</span> <span class="fu">summarise_all</span>(<span class="sc">~</span> <span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(.)))</span></code></pre></div>
+<p><code>group_split()</code> split <code>data.frame</code> by groups, good friend with <code>group_by</code>, i.e. it used grouping structure from <code>group_by()</code> and therefore is subject to the data mask.</p>
+<p>It returns a list of tibbles. Each tibble contains the rows of <code>.tbl</code> for the associated group and all the columns, including the grouping variables.</p>
+<div class="sourceCode" id="cb646"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb646-1"><a href="9.4-group-and-apply-functions.html#cb646-1" tabindex="-1"></a>ir <span class="ot">&lt;-</span> iris <span class="sc">%&gt;%</span></span>
+<span id="cb646-2"><a href="9.4-group-and-apply-functions.html#cb646-2" tabindex="-1"></a>    <span class="fu">group_by</span>(Species) </span>
+<span id="cb646-3"><a href="9.4-group-and-apply-functions.html#cb646-3" tabindex="-1"></a></span>
+<span id="cb646-4"><a href="9.4-group-and-apply-functions.html#cb646-4" tabindex="-1"></a><span class="co"># returns a list of groups</span></span>
+<span id="cb646-5"><a href="9.4-group-and-apply-functions.html#cb646-5" tabindex="-1"></a>ir <span class="sc">%&gt;%</span> <span class="fu">group_split</span>()</span>
+<span id="cb646-6"><a href="9.4-group-and-apply-functions.html#cb646-6" tabindex="-1"></a></span>
+<span id="cb646-7"><a href="9.4-group-and-apply-functions.html#cb646-7" tabindex="-1"></a><span class="co"># returns a tibble of group keys</span></span>
+<span id="cb646-8"><a href="9.4-group-and-apply-functions.html#cb646-8" tabindex="-1"></a>ir <span class="sc">%&gt;%</span> <span class="fu">group_keys</span>()</span>
+<span id="cb646-9"><a href="9.4-group-and-apply-functions.html#cb646-9" tabindex="-1"></a><span class="co"># A tibble: 3 x 1</span></span>
+<span id="cb646-10"><a href="9.4-group-and-apply-functions.html#cb646-10" tabindex="-1"></a>  Species   </span>
+<span id="cb646-11"><a href="9.4-group-and-apply-functions.html#cb646-11" tabindex="-1"></a>  <span class="sc">&lt;</span>fct<span class="sc">&gt;</span>     </span>
+<span id="cb646-12"><a href="9.4-group-and-apply-functions.html#cb646-12" tabindex="-1"></a><span class="dv">1</span> setosa    </span>
+<span id="cb646-13"><a href="9.4-group-and-apply-functions.html#cb646-13" tabindex="-1"></a><span class="dv">2</span> versicolor</span>
+<span id="cb646-14"><a href="9.4-group-and-apply-functions.html#cb646-14" tabindex="-1"></a><span class="dv">3</span> virginica </span>
+<span id="cb646-15"><a href="9.4-group-and-apply-functions.html#cb646-15" tabindex="-1"></a></span>
+<span id="cb646-16"><a href="9.4-group-and-apply-functions.html#cb646-16" tabindex="-1"></a><span class="co"># get group_keys() with index, so you can access each specific group with group info</span></span>
+<span id="cb646-17"><a href="9.4-group-and-apply-functions.html#cb646-17" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(ID) <span class="sc">%&gt;%</span> <span class="fu">group_keys</span>() <span class="sc">%&gt;%</span> <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span> <span class="fu">t</span>()</span>
+<span id="cb646-18"><a href="9.4-group-and-apply-functions.html#cb646-18" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(ID) <span class="sc">%&gt;%</span> <span class="fu">group_keys</span>() <span class="sc">%&gt;%</span> <span class="fu">pull</span>(Species)</span>
+<span id="cb646-19"><a href="9.4-group-and-apply-functions.html#cb646-19" tabindex="-1"></a></span>
+<span id="cb646-20"><a href="9.4-group-and-apply-functions.html#cb646-20" tabindex="-1"></a><span class="co"># assgin a index column to indicate the group number</span></span>
+<span id="cb646-21"><a href="9.4-group-and-apply-functions.html#cb646-21" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(ID) <span class="sc">%&gt;%</span> <span class="fu">group_keys</span>() <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">id =</span> <span class="fu">row_number</span>())</span>
+<span id="cb646-22"><a href="9.4-group-and-apply-functions.html#cb646-22" tabindex="-1"></a><span class="co"># equivalently</span></span>
+<span id="cb646-23"><a href="9.4-group-and-apply-functions.html#cb646-23" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(ID) <span class="sc">%&gt;%</span> <span class="fu">group_keys</span>() <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">id =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">n</span>() )</span></code></pre></div>
+<p>Group by and count the number of observations in each group with <code>tally</code></p>
+<div class="sourceCode" id="cb647"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb647-1"><a href="9.4-group-and-apply-functions.html#cb647-1" tabindex="-1"></a><span class="co"># count the number of rows per group</span></span>
+<span id="cb647-2"><a href="9.4-group-and-apply-functions.html#cb647-2" tabindex="-1"></a>ir <span class="sc">%&gt;%</span> <span class="fu">tally</span>(<span class="at">sort=</span><span class="cn">TRUE</span>) <span class="co">#  same as ir %&gt;% summarize(count=n())</span></span>
+<span id="cb647-3"><a href="9.4-group-and-apply-functions.html#cb647-3" tabindex="-1"></a><span class="co"># A tibble: 3 × 2</span></span>
+<span id="cb647-4"><a href="9.4-group-and-apply-functions.html#cb647-4" tabindex="-1"></a>  Species        n</span>
+<span id="cb647-5"><a href="9.4-group-and-apply-functions.html#cb647-5" tabindex="-1"></a>  <span class="sc">&lt;</span>fct<span class="sc">&gt;</span>      <span class="er">&lt;</span>int<span class="sc">&gt;</span></span>
+<span id="cb647-6"><a href="9.4-group-and-apply-functions.html#cb647-6" tabindex="-1"></a><span class="dv">1</span> setosa        <span class="dv">50</span></span>
+<span id="cb647-7"><a href="9.4-group-and-apply-functions.html#cb647-7" tabindex="-1"></a><span class="dv">2</span> versicolor    <span class="dv">50</span></span>
+<span id="cb647-8"><a href="9.4-group-and-apply-functions.html#cb647-8" tabindex="-1"></a><span class="dv">3</span> virginica     <span class="dv">50</span></span></code></pre></div>
+<p><code>dplyr::row_number(x)</code> gives every input a unique rank to a vector <code>x</code>, so that <code>c(10, 20, 20, 30)</code> would get ranks <code>c(1, 2, 3, 4)</code>. From smallest to largest.</p>
+<ul>
+<li><p>To rank by multiple columns at once, supply a data frame <code>x</code>.</p>
+<p>Rank by value, ascending:</p>
+<div class="sourceCode" id="cb648"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb648-1"><a href="9.4-group-and-apply-functions.html#cb648-1" tabindex="-1"></a>data <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">rank =</span> <span class="fu">row_number</span>(value) )</span></code></pre></div></li>
+<li><p>If want descending, use <code>row_number(desc(.)</code></p>
+<div class="sourceCode" id="cb649"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb649-1"><a href="9.4-group-and-apply-functions.html#cb649-1" tabindex="-1"></a>data <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">rank =</span> <span class="fu">row_number</span>(<span class="fu">desc</span>(value) ) )</span>
+<span id="cb649-2"><a href="9.4-group-and-apply-functions.html#cb649-2" tabindex="-1"></a><span class="co"># equivalently, with a - before value</span></span>
+<span id="cb649-3"><a href="9.4-group-and-apply-functions.html#cb649-3" tabindex="-1"></a>data <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">rank =</span> <span class="fu">row_number</span>(<span class="sc">-</span>value) )</span></code></pre></div></li>
+<li><p>Another use is to add row number to a data frame.</p>
+<p>Here, we assign row number to a variable or column name “row_id”.</p>
+<div class="sourceCode" id="cb650"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb650-1"><a href="9.4-group-and-apply-functions.html#cb650-1" tabindex="-1"></a>data <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">row_id =</span> <span class="fu">row_number</span>())</span></code></pre></div></li>
+</ul>
+</div>
+<div id="subset-rows" class="section level3 hasAnchor" number="9.4.2">
+<h3><span class="header-section-number">9.4.2</span> Subset rows<a href="9.4-group-and-apply-functions.html#subset-rows" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<ul>
+<li><code>slice_head(.data, n)</code> and <code>slice_tail(.data, n)</code> select the first or last <code>n</code> rows in <code>.data</code>.</li>
+<li><code>slice_sample()</code> randomly selects rows.</li>
+<li><code>slice_min(.data, order_by, n)</code> and <code>slice_max()</code> select rows with the smallest or largest values of a variable.</li>
+</ul>
+<div class="sourceCode" id="cb651"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb651-1"><a href="9.4-group-and-apply-functions.html#cb651-1" tabindex="-1"></a><span class="co"># Similar to head(mtcars, 1):</span></span>
+<span id="cb651-2"><a href="9.4-group-and-apply-functions.html#cb651-2" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> <span class="fu">slice</span>(<span class="dv">1</span><span class="dt">L</span>)</span>
+<span id="cb651-3"><a href="9.4-group-and-apply-functions.html#cb651-3" tabindex="-1"></a><span class="co"># first two rows every group</span></span>
+<span id="cb651-4"><a href="9.4-group-and-apply-functions.html#cb651-4" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(group) <span class="sc">%&gt;%</span> <span class="fu">slice_head</span>(<span class="at">n =</span> <span class="dv">2</span>)</span>
+<span id="cb651-5"><a href="9.4-group-and-apply-functions.html#cb651-5" tabindex="-1"></a><span class="co"># first row</span></span>
+<span id="cb651-6"><a href="9.4-group-and-apply-functions.html#cb651-6" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="fu">row_number</span>() <span class="sc">==</span> <span class="dv">1</span><span class="dt">L</span>)</span>
+<span id="cb651-7"><a href="9.4-group-and-apply-functions.html#cb651-7" tabindex="-1"></a><span class="co"># last row</span></span>
+<span id="cb651-8"><a href="9.4-group-and-apply-functions.html#cb651-8" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="fu">row_number</span>() <span class="sc">==</span> <span class="fu">n</span>())</span>
+<span id="cb651-9"><a href="9.4-group-and-apply-functions.html#cb651-9" tabindex="-1"></a><span class="co"># Rows with minimum values of a variable</span></span>
+<span id="cb651-10"><a href="9.4-group-and-apply-functions.html#cb651-10" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> <span class="fu">slice_min</span>(mpg, <span class="at">n =</span> <span class="dv">5</span>) </span></code></pre></div>
+</div>
+<div id="summarize" class="section level3 hasAnchor" number="9.4.3">
+<h3><span class="header-section-number">9.4.3</span> Summarize<a href="9.4-group-and-apply-functions.html#summarize" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Scoped verbs (<code>summarize_if</code>, <code>summarize_at</code>, <code>summarize_all</code>) have been superseded by the use of <code>across(.var, .fun)</code> inside <code>summarize()</code>.</p>
+<p><code>summarize_at(.tbl, .var, .fun, ...)</code> <span class="math inline">\(\rightarrow\)</span> <code>summarize(.tbl, across(.var, .fun) )</code></p>
+<ul>
+<li><code>.tbl</code> a <code>tbl</code> object, eg. a groupped <code>tibble</code></li>
+<li><code>.var</code> A list of columns generated by vars(), a <code>character</code> vector of column names, a <code>numeric</code> vector of column positions, or NULL. 可以用变量名字 (character) 或者位置 (numeric)。
+<ul>
+<li>Note that <code>numeric</code> position start with the group <em>keys</em>, and then followed by ordinary columns.</li>
+</ul></li>
+<li><code>.fun</code> A function fun, a quosure style lambda <code>~ fun(.)</code> or a list of either form.</li>
+<li><code>...</code> Additional arguments for the function calls in <code>.funs</code>.</li>
+</ul>
+<div class="sourceCode" id="cb652"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb652-1"><a href="9.4-group-and-apply-functions.html#cb652-1" tabindex="-1"></a><span class="co"># `summarize_at` affects variables selected with a character vector or vars()</span></span>
+<span id="cb652-2"><a href="9.4-group-and-apply-functions.html#cb652-2" tabindex="-1"></a>error_continent_all <span class="sc">%&gt;%</span> </span>
+<span id="cb652-3"><a href="9.4-group-and-apply-functions.html#cb652-3" tabindex="-1"></a>    <span class="fu">group_by</span>(pct, CON) <span class="sc">%&gt;%</span> </span>
+<span id="cb652-4"><a href="9.4-group-and-apply-functions.html#cb652-4" tabindex="-1"></a>    <span class="fu">summarize</span>(<span class="fu">across</span>(<span class="sc">-</span>r_no, <span class="sc">~</span><span class="fu">mean</span>(.x, <span class="at">na.rm=</span><span class="cn">TRUE</span>)) )</span>
+<span id="cb652-5"><a href="9.4-group-and-apply-functions.html#cb652-5" tabindex="-1"></a></span>
+<span id="cb652-6"><a href="9.4-group-and-apply-functions.html#cb652-6" tabindex="-1"></a>starwars <span class="sc">%&gt;%</span></span>
+<span id="cb652-7"><a href="9.4-group-and-apply-functions.html#cb652-7" tabindex="-1"></a>  <span class="fu">summarise_if</span>(is.numeric, mean, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb652-8"><a href="9.4-group-and-apply-functions.html#cb652-8" tabindex="-1"></a>starwars <span class="sc">%&gt;%</span></span>
+<span id="cb652-9"><a href="9.4-group-and-apply-functions.html#cb652-9" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span> <span class="fu">mean</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)))</span>
+<span id="cb652-10"><a href="9.4-group-and-apply-functions.html#cb652-10" tabindex="-1"></a></span>
+<span id="cb652-11"><a href="9.4-group-and-apply-functions.html#cb652-11" tabindex="-1"></a>by_species <span class="ot">&lt;-</span> iris <span class="sc">%&gt;%</span></span>
+<span id="cb652-12"><a href="9.4-group-and-apply-functions.html#cb652-12" tabindex="-1"></a>  <span class="fu">group_by</span>(Species)</span>
+<span id="cb652-13"><a href="9.4-group-and-apply-functions.html#cb652-13" tabindex="-1"></a>by_species <span class="sc">%&gt;%</span></span>
+<span id="cb652-14"><a href="9.4-group-and-apply-functions.html#cb652-14" tabindex="-1"></a>  <span class="fu">summarise_all</span>(<span class="fu">list</span>(min, max))</span>
+<span id="cb652-15"><a href="9.4-group-and-apply-functions.html#cb652-15" tabindex="-1"></a>by_species <span class="sc">%&gt;%</span></span>
+<span id="cb652-16"><a href="9.4-group-and-apply-functions.html#cb652-16" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), <span class="fu">list</span>(<span class="at">min =</span> min, <span class="at">max =</span> max)))</span></code></pre></div>
+<div class="sourceCode" id="cb653"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb653-1"><a href="9.4-group-and-apply-functions.html#cb653-1" tabindex="-1"></a><span class="co"># Count size of group</span></span>
+<span id="cb653-2"><a href="9.4-group-and-apply-functions.html#cb653-2" tabindex="-1"></a>by_species <span class="sc">%&gt;%</span> <span class="fu">summarize</span>(<span class="at">count=</span><span class="fu">n</span>())</span>
+<span id="cb653-3"><a href="9.4-group-and-apply-functions.html#cb653-3" tabindex="-1"></a></span>
+<span id="cb653-4"><a href="9.4-group-and-apply-functions.html#cb653-4" tabindex="-1"></a><span class="co"># Or use `tally()`</span></span>
+<span id="cb653-5"><a href="9.4-group-and-apply-functions.html#cb653-5" tabindex="-1"></a>by_species <span class="sc">%&gt;%</span> <span class="fu">tally</span>(<span class="at">sort=</span><span class="cn">TRUE</span>)</span></code></pre></div>
+<p>Select one group</p>
+<div class="sourceCode" id="cb654"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb654-1"><a href="9.4-group-and-apply-functions.html#cb654-1" tabindex="-1"></a><span class="co"># Select one element from a list</span></span>
+<span id="cb654-2"><a href="9.4-group-and-apply-functions.html#cb654-2" tabindex="-1"></a>iris <span class="sc">%&gt;%</span></span>
+<span id="cb654-3"><a href="9.4-group-and-apply-functions.html#cb654-3" tabindex="-1"></a>  <span class="st">`</span><span class="at">[[</span><span class="st">`</span>(<span class="st">&quot;Species&quot;</span>)</span>
+<span id="cb654-4"><a href="9.4-group-and-apply-functions.html#cb654-4" tabindex="-1"></a><span class="co"># select one group</span></span>
+<span id="cb654-5"><a href="9.4-group-and-apply-functions.html#cb654-5" tabindex="-1"></a>by_species <span class="sc">%&gt;%</span> <span class="fu">group_split</span>() <span class="sc">%&gt;%</span> <span class="st">`</span><span class="at">[[</span><span class="st">`</span>(<span class="dv">1</span>)  <span class="co"># can extract by either position or name</span></span></code></pre></div>
+<p><code>across(.cols = everything(), .fns = NULL, ..., .names = NULL)</code> makes it easy to apply the same transformation to multiple columns, allowing you to use <code>select()</code> semantics inside in <code>summarise()</code> and <code>mutate()</code>.</p>
+<ul>
+<li><p><code>.cols</code> Columns to transform.</p>
+<p>could use functions to select columns, eg, <code>starts_with("Sepal")</code>, <code>where(is.factor)</code></p></li>
+<li><p><code>.fns</code> Functions to apply to each of the selected columns.</p></li>
+<li><p><code>.names</code> A glue specification that describes how to name the output columns.</p></li>
+</ul>
+<div class="sourceCode" id="cb655"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb655-1"><a href="9.4-group-and-apply-functions.html#cb655-1" tabindex="-1"></a><span class="co"># code snippet for counting non-NA values for multiple select columns</span></span>
+<span id="cb655-2"><a href="9.4-group-and-apply-functions.html#cb655-2" tabindex="-1"></a>data_desp <span class="sc">%&gt;%</span> </span>
+<span id="cb655-3"><a href="9.4-group-and-apply-functions.html#cb655-3" tabindex="-1"></a>    <span class="fu">group_by</span>(ISO_C3) <span class="sc">%&gt;%</span> </span>
+<span id="cb655-4"><a href="9.4-group-and-apply-functions.html#cb655-4" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">c</span>(<span class="st">&quot;logDiff&quot;</span>,<span class="st">&quot;tmp&quot;</span>,<span class="st">&quot;pre&quot;</span>,<span class="st">&quot;dtr&quot;</span>), <span class="sc">~</span><span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(.))) ) <span class="sc">%&gt;%</span> </span>
+<span id="cb655-5"><a href="9.4-group-and-apply-functions.html#cb655-5" tabindex="-1"></a>    <span class="fu">arrange</span>(logDiff)</span></code></pre></div>
+</div>
+<div id="split-apply-combine" class="section level3 hasAnchor" number="9.4.4">
+<h3><span class="header-section-number">9.4.4</span> split-apply-combine<a href="9.4-group-and-apply-functions.html#split-apply-combine" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Here is a summary of the split-apply-combine approach:</p>
+<ul>
+<li><code>dplyr::group_map()</code>, <code>dplyr::group_modify()</code> …</li>
+<li><code>split</code> → <code>purrr::map()</code> / <code>purrr::map_dfr</code> / <code>purrr::map_dfc</code></li>
+<li><code>plyr::ddply()</code></li>
+<li><code>data.table::setDT()</code></li>
+</ul>
+<div class="sourceCode" id="cb656"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb656-1"><a href="9.4-group-and-apply-functions.html#cb656-1" tabindex="-1"></a><span class="co"># with `dplyr`</span></span>
+<span id="cb656-2"><a href="9.4-group-and-apply-functions.html#cb656-2" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(type) <span class="sc">%&gt;%</span> <span class="fu">group_map</span>(<span class="sc">~</span><span class="fu">tibble</span>(<span class="fu">trivial_func</span>(.)))</span>
+<span id="cb656-3"><a href="9.4-group-and-apply-functions.html#cb656-3" tabindex="-1"></a></span>
+<span id="cb656-4"><a href="9.4-group-and-apply-functions.html#cb656-4" tabindex="-1"></a><span class="co"># must do `group_split` before your can `map_dfr`</span></span>
+<span id="cb656-5"><a href="9.4-group-and-apply-functions.html#cb656-5" tabindex="-1"></a>df <span class="sc">%&gt;%</span> </span>
+<span id="cb656-6"><a href="9.4-group-and-apply-functions.html#cb656-6" tabindex="-1"></a>  <span class="fu">split</span>(type) <span class="sc">%&gt;%</span>    <span class="co"># equivalent to `group_by(type)` then `group_split()`</span></span>
+<span id="cb656-7"><a href="9.4-group-and-apply-functions.html#cb656-7" tabindex="-1"></a>  purrr<span class="sc">::</span><span class="fu">map_dfr</span>(trivial_func)</span>
+<span id="cb656-8"><a href="9.4-group-and-apply-functions.html#cb656-8" tabindex="-1"></a></span>
+<span id="cb656-9"><a href="9.4-group-and-apply-functions.html#cb656-9" tabindex="-1"></a><span class="co"># with `data.table`</span></span>
+<span id="cb656-10"><a href="9.4-group-and-apply-functions.html#cb656-10" tabindex="-1"></a><span class="fu">library</span>(data.table)</span>
+<span id="cb656-11"><a href="9.4-group-and-apply-functions.html#cb656-11" tabindex="-1"></a><span class="fu">setDT</span>(df)[, <span class="fu">trivial_func</span>(.SD), type]</span>
+<span id="cb656-12"><a href="9.4-group-and-apply-functions.html#cb656-12" tabindex="-1"></a></span>
+<span id="cb656-13"><a href="9.4-group-and-apply-functions.html#cb656-13" tabindex="-1"></a><span class="co"># with `plyr`</span></span>
+<span id="cb656-14"><a href="9.4-group-and-apply-functions.html#cb656-14" tabindex="-1"></a>plyr<span class="sc">::</span><span class="fu">ddply</span>(df, .(type), trivial_func)</span></code></pre></div>
+<hr />
+<p>Apply regression to each group with <span class="env-green"><code>purrr::map</code></span></p>
+<div class="sourceCode" id="cb657"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb657-1"><a href="9.4-group-and-apply-functions.html#cb657-1" tabindex="-1"></a><span class="co"># A more realistic example: split a data frame into pieces, fit a</span></span>
+<span id="cb657-2"><a href="9.4-group-and-apply-functions.html#cb657-2" tabindex="-1"></a><span class="co"># model to each piece, summarise and extract R^2</span></span>
+<span id="cb657-3"><a href="9.4-group-and-apply-functions.html#cb657-3" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span></span>
+<span id="cb657-4"><a href="9.4-group-and-apply-functions.html#cb657-4" tabindex="-1"></a>  <span class="fu">split</span>(.<span class="sc">$</span>cyl) <span class="sc">%&gt;%</span></span>
+<span id="cb657-5"><a href="9.4-group-and-apply-functions.html#cb657-5" tabindex="-1"></a>  <span class="fu">map</span>(<span class="sc">~</span> <span class="fu">lm</span>(mpg <span class="sc">~</span> wt, <span class="at">data =</span> .x)) <span class="sc">%&gt;%</span></span>
+<span id="cb657-6"><a href="9.4-group-and-apply-functions.html#cb657-6" tabindex="-1"></a>  <span class="fu">map</span>(summary) <span class="sc">%&gt;%</span></span>
+<span id="cb657-7"><a href="9.4-group-and-apply-functions.html#cb657-7" tabindex="-1"></a>  <span class="fu">map_dbl</span>(<span class="st">&quot;r.squared&quot;</span>)</span>
+<span id="cb657-8"><a href="9.4-group-and-apply-functions.html#cb657-8" tabindex="-1"></a></span>
+<span id="cb657-9"><a href="9.4-group-and-apply-functions.html#cb657-9" tabindex="-1"></a><span class="co"># If each element of the output is a data frame, use</span></span>
+<span id="cb657-10"><a href="9.4-group-and-apply-functions.html#cb657-10" tabindex="-1"></a><span class="co"># map_dfr to row-bind them together:</span></span>
+<span id="cb657-11"><a href="9.4-group-and-apply-functions.html#cb657-11" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span></span>
+<span id="cb657-12"><a href="9.4-group-and-apply-functions.html#cb657-12" tabindex="-1"></a>  <span class="fu">split</span>(.<span class="sc">$</span>cyl) <span class="sc">%&gt;%</span></span>
+<span id="cb657-13"><a href="9.4-group-and-apply-functions.html#cb657-13" tabindex="-1"></a>  <span class="fu">map</span>(<span class="sc">~</span> <span class="fu">lm</span>(mpg <span class="sc">~</span> wt, <span class="at">data =</span> .x)) <span class="sc">%&gt;%</span></span>
+<span id="cb657-14"><a href="9.4-group-and-apply-functions.html#cb657-14" tabindex="-1"></a>  <span class="fu">map_dfr</span>(<span class="sc">~</span> <span class="fu">as.data.frame</span>(<span class="fu">t</span>(<span class="fu">as.matrix</span>(<span class="fu">coef</span>(.)))))</span>
+<span id="cb657-15"><a href="9.4-group-and-apply-functions.html#cb657-15" tabindex="-1"></a><span class="co"># (if you also want to preserve the variable names see</span></span>
+<span id="cb657-16"><a href="9.4-group-and-apply-functions.html#cb657-16" tabindex="-1"></a><span class="co"># the broom package)</span></span></code></pre></div>
+<hr />
+</div>
+<div id="dplyrgroup_modify" class="section level3 hasAnchor" number="9.4.5">
+<h3><span class="header-section-number">9.4.5</span> <code>dplyr::group_modify()</code><a href="9.4-group-and-apply-functions.html#dplyrgroup_modify" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p><code>dplyr::group_modify()</code> and <code>dplyr::group_map()</code> are purrr-style functions that can be used to iterate on <span class="env-green"><u>grouped tibbles</u></span>.</p>
+<ul>
+<li><p>Note that <code>purrr::map</code>, <code>purrr::map_dfr</code>, and <code>purrr::map_dfc</code> does NOT work on groupped tibbles. You must do <code>group_split</code> to a list, then you can apply the purrr-style functions.</p>
+<ul>
+<li><p>Convenient for multistep operations, <strong>easy to debug</strong>.</p></li>
+<li><p><code>map</code> is the main mapping function and returns a list</p></li>
+<li><p><code>map_dfr</code> stacks data frames by rows, <code>map_dfc</code> stacks data frames by columns.</p>
+<p><code>map_dfr()</code> aligns the columns of the individual tibbles by name.</p>
+<p><code>map_dfc</code> aligns the rows of the individual tibbles by position. → Difficult to check if the data in each row is aligned correctly. → Prone to error.</p></li>
+</ul></li>
+<li><p><code>group_modify</code> takes in a groupped tibble; returns a groupped tibble and <code>.f</code> must return a data frame.</p>
+<ul>
+<li><code>group_map</code> takes in a groupped tibble and returns a <span class="env-green">list</span>.</li>
+<li>They takes in groupped tibbles, not good at multistep operations, <strong>hard to debug</strong> because you need to wrap up your whole calculation in one function.</li>
+</ul></li>
+</ul>
+<p><span style="color:red"><code>group_modify(.data, .f, ..., .keep = FALSE)</code> </span> returns a grouped <strong>tibble</strong>.</p>
+<ul>
+<li><p><code>.data</code> A <strong>grouped tibble</strong></p></li>
+<li><p><code>.f</code> A function, formula, or vector to apply to each group. It <span style="color:#FF9900"><strong>MUST return a data frame or a tibble</strong></span>! Matices do not work.</p>
+<p>A workaround is to use <span class="env-green"><code>tibble::enframe</code></span> to convert named atomic vectors or lists to one- or two-column data frames.</p>
+<ul>
+<li><p>If a <strong>function</strong>, it is used as is. It should have <strong>at least 2 formal arguments</strong>.</p>
+<ul>
+<li><p><u>If your costum function has only one argument</u>, you use the formula specification <code>~f(.x)</code>.</p>
+<div class="sourceCode" id="cb658"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb658-1"><a href="9.4-group-and-apply-functions.html#cb658-1" tabindex="-1"></a>econ_data <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(year) <span class="sc">%&gt;%</span> <span class="fu">group_modify</span>(<span class="sc">~</span><span class="fu">funPer_group</span>(.x))</span></code></pre></div></li>
+</ul></li>
+<li><p>If a <strong>formula</strong>, e.g. <code>~ head(.x)</code>, it is converted to a function.</p>
+<p>In the formula, you can use</p></li>
+<li><p><span class="env-green"><strong><code>.</code></strong></span> or <span class="env-green"><strong><code>.x</code></strong></span> to refer to the subset of rows of <code>.tbl</code> for <span class="env-green"><strong>the given group</strong></span></p>
+<ul>
+<li><span class="env-green"> <strong><code>.y</code></strong></span> to refer to the <span class="env-green"><strong>group key</strong></span>, a one row <code>tibble</code> with one column per grouping variable that identifies the group</li>
+</ul></li>
+</ul></li>
+<li><p><code>...</code> Additional arguments passed on to <code>.f</code></p></li>
+<li><p><code>.keep=FALSE</code> whether the grouping variables are kept in <code>.x</code>.</p>
+<ul>
+<li>Default to <span class="env-green">drop</span>&gt; the grouping variable. Be mindful of this when you want to subset columns by position.</li>
+</ul></li>
+</ul>
+<div class="sourceCode" id="cb659"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb659-1"><a href="9.4-group-and-apply-functions.html#cb659-1" tabindex="-1"></a>cntry_group <span class="ot">&lt;-</span> cntry_agg_df <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(<span class="fu">as.numeric</span>(ISO_N3), year)</span>
+<span id="cb659-2"><a href="9.4-group-and-apply-functions.html#cb659-2" tabindex="-1"></a></span>
+<span id="cb659-3"><a href="9.4-group-and-apply-functions.html#cb659-3" tabindex="-1"></a>groups <span class="ot">&lt;-</span> cntry_group <span class="sc">%&gt;%</span> <span class="fu">group_split</span>()</span>
+<span id="cb659-4"><a href="9.4-group-and-apply-functions.html#cb659-4" tabindex="-1"></a>cntry_key <span class="ot">&lt;-</span> <span class="fu">group_keys</span>(cntry_group)</span>
+<span id="cb659-5"><a href="9.4-group-and-apply-functions.html#cb659-5" tabindex="-1"></a></span>
+<span id="cb659-6"><a href="9.4-group-and-apply-functions.html#cb659-6" tabindex="-1"></a><span class="co"># use a lambda function which includes a sequence of calculations</span></span>
+<span id="cb659-7"><a href="9.4-group-and-apply-functions.html#cb659-7" tabindex="-1"></a>cntry_stat <span class="ot">&lt;-</span> cntry_group <span class="sc">%&gt;%</span> </span>
+<span id="cb659-8"><a href="9.4-group-and-apply-functions.html#cb659-8" tabindex="-1"></a>    <span class="fu">group_modify</span>(<span class="sc">~</span> {</span>
+<span id="cb659-9"><a href="9.4-group-and-apply-functions.html#cb659-9" tabindex="-1"></a>        .x <span class="sc">%&gt;%</span> <span class="fu">select</span>(var_vec) <span class="sc">%&gt;%</span></span>
+<span id="cb659-10"><a href="9.4-group-and-apply-functions.html#cb659-10" tabindex="-1"></a>            <span class="fu">map_dfc</span>(cal_stat) <span class="sc">%&gt;%</span>                   <span class="co"># calculate stat</span></span>
+<span id="cb659-11"><a href="9.4-group-and-apply-functions.html#cb659-11" tabindex="-1"></a>            <span class="fu">mutate</span>(<span class="at">stat =</span> <span class="fu">c</span>(<span class="st">&quot;mean&quot;</span>, <span class="st">&quot;std&quot;</span>)) <span class="co"># assign stat names</span></span>
+<span id="cb659-12"><a href="9.4-group-and-apply-functions.html#cb659-12" tabindex="-1"></a>            }) <span class="sc">%&gt;%</span> </span>
+<span id="cb659-13"><a href="9.4-group-and-apply-functions.html#cb659-13" tabindex="-1"></a>        <span class="fu">ungroup</span>()</span></code></pre></div>
+<p>When using a lambda function inside <code>group_modify</code>:</p>
+<ul>
+<li><p><code>.x</code> <u>can only be used once at the first function</u>; <span class="env-green">for later use, use <code>.</code></span></p>
+<p><code>.x</code> and <code>.</code> are useful when the argument being assigned is NOT the first argument.</p>
+<p>If you use <code>.x</code> instead of <code>.</code>, you will encounter the following error:</p>
+<blockquote>
+<p>Error in xj[i] : invalid subscript type ‘language’</p>
+</blockquote></li>
+</ul>
+<p><code>enframe(x, name = "name", value = "value")</code> use examples:</p>
+<ul>
+<li><p>Convert named atomic vectors to a tibble with one row per element.</p>
+<div class="sourceCode" id="cb660"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb660-1"><a href="9.4-group-and-apply-functions.html#cb660-1" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">enframe</span>(<span class="fu">c</span>(<span class="at">a =</span> <span class="dv">5</span>, <span class="at">b =</span> <span class="dv">7</span>))</span>
+<span id="cb660-2"><a href="9.4-group-and-apply-functions.html#cb660-2" tabindex="-1"></a><span class="co"># A tibble: 2 × 2</span></span>
+<span id="cb660-3"><a href="9.4-group-and-apply-functions.html#cb660-3" tabindex="-1"></a>  name  value</span>
+<span id="cb660-4"><a href="9.4-group-and-apply-functions.html#cb660-4" tabindex="-1"></a>  <span class="sc">&lt;</span>chr<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span></span>
+<span id="cb660-5"><a href="9.4-group-and-apply-functions.html#cb660-5" tabindex="-1"></a><span class="dv">1</span> a         <span class="dv">5</span></span>
+<span id="cb660-6"><a href="9.4-group-and-apply-functions.html#cb660-6" tabindex="-1"></a><span class="dv">2</span> b         <span class="dv">7</span></span></code></pre></div></li>
+<li><p>Convert named list to a tibble with one row per element.</p>
+<div class="sourceCode" id="cb661"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb661-1"><a href="9.4-group-and-apply-functions.html#cb661-1" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">enframe</span>(<span class="fu">list</span>(<span class="at">one =</span> <span class="dv">1</span>, <span class="at">two =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">3</span>, <span class="at">three =</span> <span class="dv">4</span><span class="sc">:</span><span class="dv">6</span>))</span>
+<span id="cb661-2"><a href="9.4-group-and-apply-functions.html#cb661-2" tabindex="-1"></a><span class="co"># A tibble: 3 × 2</span></span>
+<span id="cb661-3"><a href="9.4-group-and-apply-functions.html#cb661-3" tabindex="-1"></a>  name  value    </span>
+<span id="cb661-4"><a href="9.4-group-and-apply-functions.html#cb661-4" tabindex="-1"></a>  <span class="sc">&lt;</span>chr<span class="sc">&gt;</span> <span class="er">&lt;</span>list<span class="sc">&gt;</span>   </span>
+<span id="cb661-5"><a href="9.4-group-and-apply-functions.html#cb661-5" tabindex="-1"></a><span class="dv">1</span> one   <span class="sc">&lt;</span>dbl [<span class="dv">1</span>]<span class="sc">&gt;</span></span>
+<span id="cb661-6"><a href="9.4-group-and-apply-functions.html#cb661-6" tabindex="-1"></a><span class="dv">2</span> two   <span class="sc">&lt;</span>int [<span class="dv">2</span>]<span class="sc">&gt;</span></span>
+<span id="cb661-7"><a href="9.4-group-and-apply-functions.html#cb661-7" tabindex="-1"></a><span class="dv">3</span> three <span class="sc">&lt;</span>int [<span class="dv">3</span>]<span class="sc">&gt;</span></span></code></pre></div></li>
+</ul>
+<hr />
+<p><strong>Apply CAPM to each company</strong></p>
+<div class="sourceCode" id="cb662"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb662-1"><a href="9.4-group-and-apply-functions.html#cb662-1" tabindex="-1"></a><span class="co"># Apply CAPM to each company</span></span>
+<span id="cb662-2"><a href="9.4-group-and-apply-functions.html#cb662-2" tabindex="-1"></a><span class="co"># start with `.x`</span></span>
+<span id="cb662-3"><a href="9.4-group-and-apply-functions.html#cb662-3" tabindex="-1"></a><span class="co"># clearer logic flow, I prefer this approach ✓</span></span>
+<span id="cb662-4"><a href="9.4-group-and-apply-functions.html#cb662-4" tabindex="-1"></a>data_group <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(ISIN)</span>
+<span id="cb662-5"><a href="9.4-group-and-apply-functions.html#cb662-5" tabindex="-1"></a>data_group <span class="sc">%&gt;%</span> </span>
+<span id="cb662-6"><a href="9.4-group-and-apply-functions.html#cb662-6" tabindex="-1"></a>    <span class="co"># filter(cur_group_id() %in% c(1,2)) %&gt;% </span></span>
+<span id="cb662-7"><a href="9.4-group-and-apply-functions.html#cb662-7" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="fu">cur_group_id</span>() <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb662-8"><a href="9.4-group-and-apply-functions.html#cb662-8" tabindex="-1"></a>    <span class="fu">group_modify</span>(<span class="sc">~</span> {</span>
+<span id="cb662-9"><a href="9.4-group-and-apply-functions.html#cb662-9" tabindex="-1"></a>        .x <span class="sc">%&gt;%</span> </span>
+<span id="cb662-10"><a href="9.4-group-and-apply-functions.html#cb662-10" tabindex="-1"></a>            <span class="fu">filter</span>(<span class="fu">between</span>(p_date, estimation_start, estimation_end)) <span class="sc">%&gt;%</span> </span>
+<span id="cb662-11"><a href="9.4-group-and-apply-functions.html#cb662-11" tabindex="-1"></a>            <span class="fu">lm</span>(eRi<span class="sc">~</span>rmrf, <span class="at">data=</span>.) <span class="sc">%&gt;%</span> </span>
+<span id="cb662-12"><a href="9.4-group-and-apply-functions.html#cb662-12" tabindex="-1"></a>            <span class="fu">tidy</span>(.)</span>
+<span id="cb662-13"><a href="9.4-group-and-apply-functions.html#cb662-13" tabindex="-1"></a>    })</span>
+<span id="cb662-14"><a href="9.4-group-and-apply-functions.html#cb662-14" tabindex="-1"></a></span>
+<span id="cb662-15"><a href="9.4-group-and-apply-functions.html#cb662-15" tabindex="-1"></a><span class="co"># ------------------------------------------------</span></span>
+<span id="cb662-16"><a href="9.4-group-and-apply-functions.html#cb662-16" tabindex="-1"></a><span class="co"># Equivalently, plug in `.x` in the first func</span></span>
+<span id="cb662-17"><a href="9.4-group-and-apply-functions.html#cb662-17" tabindex="-1"></a><span class="co"># one line shorter, more concise</span></span>
+<span id="cb662-18"><a href="9.4-group-and-apply-functions.html#cb662-18" tabindex="-1"></a>data_group <span class="sc">%&gt;%</span> </span>
+<span id="cb662-19"><a href="9.4-group-and-apply-functions.html#cb662-19" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="fu">cur_group_id</span>() <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb662-20"><a href="9.4-group-and-apply-functions.html#cb662-20" tabindex="-1"></a>    <span class="fu">group_modify</span>(<span class="sc">~</span> {</span>
+<span id="cb662-21"><a href="9.4-group-and-apply-functions.html#cb662-21" tabindex="-1"></a>            <span class="fu">filter</span>(.x, <span class="fu">between</span>(p_date, estimation_start, estimation_end)) <span class="sc">%&gt;%</span> </span>
+<span id="cb662-22"><a href="9.4-group-and-apply-functions.html#cb662-22" tabindex="-1"></a>            <span class="fu">lm</span>(eRi<span class="sc">~</span>rmrf, <span class="at">data=</span>.) <span class="sc">%&gt;%</span> </span>
+<span id="cb662-23"><a href="9.4-group-and-apply-functions.html#cb662-23" tabindex="-1"></a>            <span class="fu">tidy</span>(.)</span>
+<span id="cb662-24"><a href="9.4-group-and-apply-functions.html#cb662-24" tabindex="-1"></a>    })</span></code></pre></div>
+<ul>
+<li><code>filter(cur_group_id() == 1)</code> select the 1st group to test run your function</li>
+</ul>
+<p>✅ Can also <span class="env-green"><strong>define a function and pass to <code>group_modify</code></strong></span></p>
+<ul>
+<li>This approach is easier to debug, whereas long sequence of lambda is hard to debug.</li>
+</ul>
+<div class="sourceCode" id="cb663"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb663-1"><a href="9.4-group-and-apply-functions.html#cb663-1" tabindex="-1"></a>factor_model <span class="ot">&lt;-</span> <span class="cf">function</span>(company_data){</span>
+<span id="cb663-2"><a href="9.4-group-and-apply-functions.html#cb663-2" tabindex="-1"></a>    company_data <span class="ot">&lt;-</span> company_data <span class="sc">%&gt;%</span> </span>
+<span id="cb663-3"><a href="9.4-group-and-apply-functions.html#cb663-3" tabindex="-1"></a>        <span class="fu">filter</span>(<span class="fu">between</span>(p_date, estimation_start, estimation_end))</span>
+<span id="cb663-4"><a href="9.4-group-and-apply-functions.html#cb663-4" tabindex="-1"></a>    reg_ml <span class="ot">&lt;-</span> <span class="fu">lm</span>(eRi<span class="sc">~</span>rmrf, <span class="at">data=</span>company_data)</span>
+<span id="cb663-5"><a href="9.4-group-and-apply-functions.html#cb663-5" tabindex="-1"></a>    coef_est <span class="ot">&lt;-</span> <span class="fu">tidy</span>(reg_ml)</span>
+<span id="cb663-6"><a href="9.4-group-and-apply-functions.html#cb663-6" tabindex="-1"></a>    <span class="fu">return</span> (coef_est)</span>
+<span id="cb663-7"><a href="9.4-group-and-apply-functions.html#cb663-7" tabindex="-1"></a>}</span>
+<span id="cb663-8"><a href="9.4-group-and-apply-functions.html#cb663-8" tabindex="-1"></a><span class="co"># Debug with one group</span></span>
+<span id="cb663-9"><a href="9.4-group-and-apply-functions.html#cb663-9" tabindex="-1"></a>groups <span class="ot">&lt;-</span> data_group <span class="sc">%&gt;%</span> <span class="fu">group_split</span>()</span>
+<span id="cb663-10"><a href="9.4-group-and-apply-functions.html#cb663-10" tabindex="-1"></a><span class="fu">factor_model</span>(groups[[<span class="dv">1</span>]])</span>
+<span id="cb663-11"><a href="9.4-group-and-apply-functions.html#cb663-11" tabindex="-1"></a><span class="co"># A tibble: 2 × 5</span></span>
+<span id="cb663-12"><a href="9.4-group-and-apply-functions.html#cb663-12" tabindex="-1"></a>  term        estimate std.error statistic p.value</span>
+<span id="cb663-13"><a href="9.4-group-and-apply-functions.html#cb663-13" tabindex="-1"></a>  <span class="sc">&lt;</span>chr<span class="sc">&gt;</span>          <span class="er">&lt;</span>dbl<span class="sc">&gt;</span>     <span class="er">&lt;</span>dbl<span class="sc">&gt;</span>     <span class="er">&lt;</span>dbl<span class="sc">&gt;</span>   <span class="er">&lt;</span>dbl<span class="sc">&gt;</span></span>
+<span id="cb663-14"><a href="9.4-group-and-apply-functions.html#cb663-14" tabindex="-1"></a><span class="dv">1</span> (Intercept)    <span class="fl">0.114</span>    <span class="fl">0.0784</span>      <span class="fl">1.45</span> <span class="fl">0.147</span>  </span>
+<span id="cb663-15"><a href="9.4-group-and-apply-functions.html#cb663-15" tabindex="-1"></a><span class="dv">2</span> rmrf           <span class="fl">0.280</span>    <span class="fl">0.0945</span>      <span class="fl">2.97</span> <span class="fl">0.00331</span></span>
+<span id="cb663-16"><a href="9.4-group-and-apply-functions.html#cb663-16" tabindex="-1"></a></span>
+<span id="cb663-17"><a href="9.4-group-and-apply-functions.html#cb663-17" tabindex="-1"></a><span class="co"># Apply to all groups</span></span>
+<span id="cb663-18"><a href="9.4-group-and-apply-functions.html#cb663-18" tabindex="-1"></a>data_group <span class="sc">%&gt;%</span> </span>
+<span id="cb663-19"><a href="9.4-group-and-apply-functions.html#cb663-19" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="fu">cur_group_id</span>() <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb663-20"><a href="9.4-group-and-apply-functions.html#cb663-20" tabindex="-1"></a>    <span class="fu">group_modify</span>(<span class="sc">~</span><span class="fu">factor_model</span>(.x))</span></code></pre></div>
+<ul>
+<li><code>group_modify</code> requires at least 2 formal arguments for the function.</li>
+<li>Since the custom function <code>factor_model</code> has only 1 argument, we must use the lambda formula to pass to <code>group_modify</code>.</li>
+</ul>
+<p><span style="color:red"><code>group_map(.data, .f, ..., .keep = FALSE)</code></span> returns a <strong>list</strong> of results.</p>
+<p><strong>More examples of <code>group_modify</code></strong></p>
+<ul>
+<li><p>Apply a regression</p>
+<p>What I like most about <code>group_modify</code> is that it automatically <span class="env-green">adds the group key to the returned results</span>. You don’t need to specify identifiers by yourself then.</p></li>
+<li><p>Calculate summary statistics</p></li>
+</ul>
+<p><code>group_modify</code> code snippets</p>
+<div class="sourceCode" id="cb664"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb664-1"><a href="9.4-group-and-apply-functions.html#cb664-1" tabindex="-1"></a><span class="co"># Apply a regression</span></span>
+<span id="cb664-2"><a href="9.4-group-and-apply-functions.html#cb664-2" tabindex="-1"></a>iris <span class="sc">%&gt;%</span></span>
+<span id="cb664-3"><a href="9.4-group-and-apply-functions.html#cb664-3" tabindex="-1"></a>  <span class="fu">group_by</span>(Species) <span class="sc">%&gt;%</span></span>
+<span id="cb664-4"><a href="9.4-group-and-apply-functions.html#cb664-4" tabindex="-1"></a>  <span class="fu">group_modify</span>(<span class="sc">~</span> broom<span class="sc">::</span><span class="fu">tidy</span>(<span class="fu">lm</span>(Petal.Length <span class="sc">~</span> Sepal.Length, <span class="at">data =</span> .x)))</span>
+<span id="cb664-5"><a href="9.4-group-and-apply-functions.html#cb664-5" tabindex="-1"></a><span class="co">#&gt; # A tibble: 6 × 6</span></span>
+<span id="cb664-6"><a href="9.4-group-and-apply-functions.html#cb664-6" tabindex="-1"></a><span class="co">#&gt; # Groups:   Species [3]</span></span>
+<span id="cb664-7"><a href="9.4-group-and-apply-functions.html#cb664-7" tabindex="-1"></a><span class="co">#&gt;   Species    term         estimate std.error statistic  p.value</span></span>
+<span id="cb664-8"><a href="9.4-group-and-apply-functions.html#cb664-8" tabindex="-1"></a><span class="co">#&gt;   &lt;fct&gt;      &lt;chr&gt;           &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;</span></span>
+<span id="cb664-9"><a href="9.4-group-and-apply-functions.html#cb664-9" tabindex="-1"></a><span class="co">#&gt; 1 setosa     (Intercept)     0.803    0.344      2.34  2.38e- 2</span></span>
+<span id="cb664-10"><a href="9.4-group-and-apply-functions.html#cb664-10" tabindex="-1"></a><span class="co">#&gt; 2 setosa     Sepal.Length    0.132    0.0685     1.92  6.07e- 2</span></span>
+<span id="cb664-11"><a href="9.4-group-and-apply-functions.html#cb664-11" tabindex="-1"></a><span class="co">#&gt; 3 versicolor (Intercept)     0.185    0.514      0.360 7.20e- 1</span></span>
+<span id="cb664-12"><a href="9.4-group-and-apply-functions.html#cb664-12" tabindex="-1"></a><span class="co">#&gt; 4 versicolor Sepal.Length    0.686    0.0863     7.95  2.59e-10</span></span>
+<span id="cb664-13"><a href="9.4-group-and-apply-functions.html#cb664-13" tabindex="-1"></a><span class="co">#&gt; 5 virginica  (Intercept)     0.610    0.417      1.46  1.50e- 1</span></span>
+<span id="cb664-14"><a href="9.4-group-and-apply-functions.html#cb664-14" tabindex="-1"></a><span class="co">#&gt; 6 virginica  Sepal.Length    0.750    0.0630    11.9   6.30e-16</span></span>
+<span id="cb664-15"><a href="9.4-group-and-apply-functions.html#cb664-15" tabindex="-1"></a></span>
+<span id="cb664-16"><a href="9.4-group-and-apply-functions.html#cb664-16" tabindex="-1"></a><span class="co"># ---------------------------------------------------------------</span></span>
+<span id="cb664-17"><a href="9.4-group-and-apply-functions.html#cb664-17" tabindex="-1"></a><span class="co"># descriptive statistics</span></span>
+<span id="cb664-18"><a href="9.4-group-and-apply-functions.html#cb664-18" tabindex="-1"></a><span class="co"># to use group_modify() the lambda must return a data frame</span></span>
+<span id="cb664-19"><a href="9.4-group-and-apply-functions.html#cb664-19" tabindex="-1"></a>iris <span class="sc">%&gt;%</span></span>
+<span id="cb664-20"><a href="9.4-group-and-apply-functions.html#cb664-20" tabindex="-1"></a>  <span class="fu">group_by</span>(Species) <span class="sc">%&gt;%</span></span>
+<span id="cb664-21"><a href="9.4-group-and-apply-functions.html#cb664-21" tabindex="-1"></a>  <span class="fu">group_modify</span>(<span class="sc">~</span> {</span>
+<span id="cb664-22"><a href="9.4-group-and-apply-functions.html#cb664-22" tabindex="-1"></a>     <span class="fu">quantile</span>(.x<span class="sc">$</span>Petal.Length, <span class="at">probs =</span> <span class="fu">c</span>(<span class="fl">0.25</span>, <span class="fl">0.5</span>, <span class="fl">0.75</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb664-23"><a href="9.4-group-and-apply-functions.html#cb664-23" tabindex="-1"></a>     tibble<span class="sc">::</span><span class="fu">enframe</span>(<span class="at">name =</span> <span class="st">&quot;prob&quot;</span>, <span class="at">value =</span> <span class="st">&quot;quantile&quot;</span>)</span>
+<span id="cb664-24"><a href="9.4-group-and-apply-functions.html#cb664-24" tabindex="-1"></a>  })</span>
+<span id="cb664-25"><a href="9.4-group-and-apply-functions.html#cb664-25" tabindex="-1"></a><span class="co">#&gt; # A tibble: 9 × 3</span></span>
+<span id="cb664-26"><a href="9.4-group-and-apply-functions.html#cb664-26" tabindex="-1"></a><span class="co">#&gt; # Groups:   Species [3]</span></span>
+<span id="cb664-27"><a href="9.4-group-and-apply-functions.html#cb664-27" tabindex="-1"></a><span class="co">#&gt;   Species    prob  quantile</span></span>
+<span id="cb664-28"><a href="9.4-group-and-apply-functions.html#cb664-28" tabindex="-1"></a><span class="co">#&gt;   &lt;fct&gt;      &lt;chr&gt;    &lt;dbl&gt;</span></span>
+<span id="cb664-29"><a href="9.4-group-and-apply-functions.html#cb664-29" tabindex="-1"></a><span class="co">#&gt; 1 setosa     25%       1.4 </span></span>
+<span id="cb664-30"><a href="9.4-group-and-apply-functions.html#cb664-30" tabindex="-1"></a><span class="co">#&gt; 2 setosa     50%       1.5 </span></span>
+<span id="cb664-31"><a href="9.4-group-and-apply-functions.html#cb664-31" tabindex="-1"></a><span class="co">#&gt; 3 setosa     75%       1.58</span></span>
+<span id="cb664-32"><a href="9.4-group-and-apply-functions.html#cb664-32" tabindex="-1"></a><span class="co">#&gt; 4 versicolor 25%       4   </span></span>
+<span id="cb664-33"><a href="9.4-group-and-apply-functions.html#cb664-33" tabindex="-1"></a><span class="co">#&gt; 5 versicolor 50%       4.35</span></span>
+<span id="cb664-34"><a href="9.4-group-and-apply-functions.html#cb664-34" tabindex="-1"></a><span class="co">#&gt; 6 versicolor 75%       4.6 </span></span>
+<span id="cb664-35"><a href="9.4-group-and-apply-functions.html#cb664-35" tabindex="-1"></a><span class="co">#&gt; 7 virginica  25%       5.1 </span></span>
+<span id="cb664-36"><a href="9.4-group-and-apply-functions.html#cb664-36" tabindex="-1"></a><span class="co">#&gt; 8 virginica  50%       5.55</span></span>
+<span id="cb664-37"><a href="9.4-group-and-apply-functions.html#cb664-37" tabindex="-1"></a><span class="co">#&gt; 9 virginica  75%       5.88</span></span>
+<span id="cb664-38"><a href="9.4-group-and-apply-functions.html#cb664-38" tabindex="-1"></a></span>
+<span id="cb664-39"><a href="9.4-group-and-apply-functions.html#cb664-39" tabindex="-1"></a><span class="co"># `fivenum()` returns min, lower-hinge (Q1), median (Q1), </span></span>
+<span id="cb664-40"><a href="9.4-group-and-apply-functions.html#cb664-40" tabindex="-1"></a><span class="co">#   upper-hinge (Q3), and max</span></span>
+<span id="cb664-41"><a href="9.4-group-and-apply-functions.html#cb664-41" tabindex="-1"></a>iris <span class="sc">%&gt;%</span></span>
+<span id="cb664-42"><a href="9.4-group-and-apply-functions.html#cb664-42" tabindex="-1"></a>  <span class="fu">group_by</span>(Species) <span class="sc">%&gt;%</span></span>
+<span id="cb664-43"><a href="9.4-group-and-apply-functions.html#cb664-43" tabindex="-1"></a>  <span class="fu">group_modify</span>(<span class="sc">~</span> {</span>
+<span id="cb664-44"><a href="9.4-group-and-apply-functions.html#cb664-44" tabindex="-1"></a>    .x <span class="sc">%&gt;%</span></span>
+<span id="cb664-45"><a href="9.4-group-and-apply-functions.html#cb664-45" tabindex="-1"></a>      purrr<span class="sc">::</span><span class="fu">map_dfc</span>(fivenum) <span class="sc">%&gt;%</span></span>
+<span id="cb664-46"><a href="9.4-group-and-apply-functions.html#cb664-46" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">nms =</span> <span class="fu">c</span>(<span class="st">&quot;min&quot;</span>, <span class="st">&quot;Q1&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q3&quot;</span>, <span class="st">&quot;max&quot;</span>))</span>
+<span id="cb664-47"><a href="9.4-group-and-apply-functions.html#cb664-47" tabindex="-1"></a>  })</span>
+<span id="cb664-48"><a href="9.4-group-and-apply-functions.html#cb664-48" tabindex="-1"></a><span class="co">#&gt; # A tibble: 15 × 6</span></span>
+<span id="cb664-49"><a href="9.4-group-and-apply-functions.html#cb664-49" tabindex="-1"></a><span class="co">#&gt; # Groups:   Species [3]</span></span>
+<span id="cb664-50"><a href="9.4-group-and-apply-functions.html#cb664-50" tabindex="-1"></a><span class="co">#&gt;    Species    Sepal.Length Sepal.Width Petal.Length Petal.Width nms   </span></span>
+<span id="cb664-51"><a href="9.4-group-and-apply-functions.html#cb664-51" tabindex="-1"></a><span class="co">#&gt;    &lt;fct&gt;             &lt;dbl&gt;       &lt;dbl&gt;        &lt;dbl&gt;       &lt;dbl&gt; &lt;chr&gt; </span></span>
+<span id="cb664-52"><a href="9.4-group-and-apply-functions.html#cb664-52" tabindex="-1"></a><span class="co">#&gt;  1 setosa              4.3         2.3         1            0.1 min   </span></span>
+<span id="cb664-53"><a href="9.4-group-and-apply-functions.html#cb664-53" tabindex="-1"></a><span class="co">#&gt;  2 setosa              4.8         3.2         1.4          0.2 Q1    </span></span>
+<span id="cb664-54"><a href="9.4-group-and-apply-functions.html#cb664-54" tabindex="-1"></a><span class="co">#&gt;  3 setosa              5           3.4         1.5          0.2 median</span></span>
+<span id="cb664-55"><a href="9.4-group-and-apply-functions.html#cb664-55" tabindex="-1"></a><span class="co">#&gt;  4 setosa              5.2         3.7         1.6          0.3 Q3    </span></span>
+<span id="cb664-56"><a href="9.4-group-and-apply-functions.html#cb664-56" tabindex="-1"></a><span class="co">#&gt;  5 setosa              5.8         4.4         1.9          0.6 max   </span></span>
+<span id="cb664-57"><a href="9.4-group-and-apply-functions.html#cb664-57" tabindex="-1"></a><span class="co">#&gt;  6 versicolor          4.9         2           3            1   min   </span></span>
+<span id="cb664-58"><a href="9.4-group-and-apply-functions.html#cb664-58" tabindex="-1"></a><span class="co">#&gt;  7 versicolor          5.6         2.5         4            1.2 Q1    </span></span>
+<span id="cb664-59"><a href="9.4-group-and-apply-functions.html#cb664-59" tabindex="-1"></a><span class="co">#&gt;  8 versicolor          5.9         2.8         4.35         1.3 median</span></span>
+<span id="cb664-60"><a href="9.4-group-and-apply-functions.html#cb664-60" tabindex="-1"></a><span class="co">#&gt;  9 versicolor          6.3         3           4.6          1.5 Q3    </span></span>
+<span id="cb664-61"><a href="9.4-group-and-apply-functions.html#cb664-61" tabindex="-1"></a><span class="co">#&gt; 10 versicolor          7           3.4         5.1          1.8 max   </span></span>
+<span id="cb664-62"><a href="9.4-group-and-apply-functions.html#cb664-62" tabindex="-1"></a><span class="co">#&gt; 11 virginica           4.9         2.2         4.5          1.4 min   </span></span>
+<span id="cb664-63"><a href="9.4-group-and-apply-functions.html#cb664-63" tabindex="-1"></a><span class="co">#&gt; 12 virginica           6.2         2.8         5.1          1.8 Q1    </span></span>
+<span id="cb664-64"><a href="9.4-group-and-apply-functions.html#cb664-64" tabindex="-1"></a><span class="co">#&gt; 13 virginica           6.5         3           5.55         2   median</span></span>
+<span id="cb664-65"><a href="9.4-group-and-apply-functions.html#cb664-65" tabindex="-1"></a><span class="co">#&gt; 14 virginica           6.9         3.2         5.9          2.3 Q3    </span></span>
+<span id="cb664-66"><a href="9.4-group-and-apply-functions.html#cb664-66" tabindex="-1"></a><span class="co">#&gt; 15 virginica           7.9         3.8         6.9          2.5 max   </span></span></code></pre></div>
+<p><code>group_walk(.data, .f)</code> calls <code>.f</code> for side effects and returns the input <code>.tbl</code>, invisibly.</p>
+<p>Can be used to write dplyr groups to separate files.</p>
+<div class="sourceCode" id="cb665"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb665-1"><a href="9.4-group-and-apply-functions.html#cb665-1" tabindex="-1"></a><span class="co"># `.x` refers to the group</span></span>
+<span id="cb665-2"><a href="9.4-group-and-apply-functions.html#cb665-2" tabindex="-1"></a><span class="co"># `.y` refers to the key</span></span>
+<span id="cb665-3"><a href="9.4-group-and-apply-functions.html#cb665-3" tabindex="-1"></a><span class="co"># `.keep = TRUE` keeps the key column</span></span>
+<span id="cb665-4"><a href="9.4-group-and-apply-functions.html#cb665-4" tabindex="-1"></a>all_df <span class="sc">%&gt;%</span> </span>
+<span id="cb665-5"><a href="9.4-group-and-apply-functions.html#cb665-5" tabindex="-1"></a>    <span class="fu">group_by</span>(ISO_C3) <span class="sc">%&gt;%</span> </span>
+<span id="cb665-6"><a href="9.4-group-and-apply-functions.html#cb665-6" tabindex="-1"></a>    <span class="fu">group_walk</span>(<span class="sc">~</span> <span class="fu">write_csv</span>(.x, <span class="fu">sprintf</span>(<span class="st">&quot;./data/reg_result/bootstrap/%s/pathway_country/country-impact_bootstrap1000_tmp_%s.csv&quot;</span>, ssp, .y<span class="sc">$</span>ISO_C3) ), <span class="at">.keep =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<p><strong>Suset specific groups</strong></p>
+<div class="sourceCode" id="cb666"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb666-1"><a href="9.4-group-and-apply-functions.html#cb666-1" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span></span>
+<span id="cb666-2"><a href="9.4-group-and-apply-functions.html#cb666-2" tabindex="-1"></a>  <span class="fu">group_by</span>(cyl) <span class="sc">%&gt;%</span></span>
+<span id="cb666-3"><a href="9.4-group-and-apply-functions.html#cb666-3" tabindex="-1"></a>  <span class="fu">select_first_n_groups</span>(<span class="dv">2</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb666-4"><a href="9.4-group-and-apply-functions.html#cb666-4" tabindex="-1"></a>  <span class="fu">do</span>({<span class="st">&#39;complicated expression&#39;</span>})</span></code></pre></div>
+<p><code>data.table</code> implementation</p>
+<div class="sourceCode" id="cb667"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb667-1"><a href="9.4-group-and-apply-functions.html#cb667-1" tabindex="-1"></a><span class="fu">setDT</span>(mtcars)[, .SD[.GRP <span class="sc">%in%</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>], by<span class="ot">=</span>cyl]</span></code></pre></div>
+<p><code>dplyr</code> implementation</p>
+<div class="sourceCode" id="cb668"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb668-1"><a href="9.4-group-and-apply-functions.html#cb668-1" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span></span>
+<span id="cb668-2"><a href="9.4-group-and-apply-functions.html#cb668-2" tabindex="-1"></a>  <span class="fu">group_by</span>(cyl) <span class="sc">%&gt;%</span></span>
+<span id="cb668-3"><a href="9.4-group-and-apply-functions.html#cb668-3" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">cur_group_id</span>() <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>))</span></code></pre></div>
+
+</div>
+</div>
+<!-- </div> -->
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="9.3-categorical-variables.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="10-graphics.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+  "sharing": {
+    "github": true,
+    "facebook": true,
+    "twitter": true,
+    "linkedin": false,
+    "weibo": false,
+    "instapaper": false,
+    "vk": false,
+    "whatsapp": false,
+    "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+  },
+  "fontsettings": {
+    "theme": "night",
+    "family": "sans",
+    "size": 3
+  },
+  "edit": {
+    "link": "https://github.com/my1396/R-Notes/edit/main/0503-Group-and-Apply.Rmd",
+    "text": "Edit"
+  },
+  "history": {
+    "link": null,
+    "text": null
+  },
+  "view": {
+    "link": null,
+    "text": null
+  },
+  "download": ["_main.pdf", "_main.epub", "https://github.com/my1396/R-Notes/raw/main/0503-Group-and-Apply.Rmd"],
+  "search": {
+    "engine": "fuse",
+    "options": null
+  },
+  "toc": {
+    "collapse": "section",
+    "scroll_highlight": true
+  },
+  "toc_depth": 3,
+  "toc_float": true,
+  "enableEmoji": true
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

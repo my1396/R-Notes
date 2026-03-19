@@ -1,4 +1,4 @@
-## xaringan Presentation
+# xaringan Presentation
 
 - Get Start: <https://slides.yihui.org/xaringan/#1>
 - `xaringan` package 
@@ -103,7 +103,7 @@ See the R help page `?xaringan::moon_reader` for all possible configurations.
 
 --------------------------------------------------------------------------------
 
-### Render Slides
+## Render Slides
 
 There are two steps to render slides to pdf:
 
@@ -164,7 +164,7 @@ Fix: Set pdf output font specifically.
 
 --------------------------------------------------------------------------------
 
-### Remark Markdown Basics
+## Remark Markdown Basics
 
 Remark.js uses its own flavor of Markdown, which is <span class="env-green">different from Pandoc's Markdown</span>! It is limited but should be sufficient for most use cases.
 
@@ -172,7 +172,7 @@ Features that are provided in Pandoc but missing in remark.js's Markdown:
 
 - fancy lists (ordered lists with letters, e.g., a., b., c., etc.)
 
-#### Create a New Slide
+### Create a New Slide
 
 - Every new slide is created under three dashes (`---`).
 - Two dashes (`--`) create a new fragment (incremental reveal) within the same slide.
@@ -184,7 +184,7 @@ Features that are provided in Pandoc but missing in remark.js's Markdown:
 
 --------------------------------------------------------------------------------
 
-#### Slide Properties
+### Slide Properties
 
 - A slide can have a few properties, including `class` and `background-image`, etc. 
   
@@ -226,7 +226,7 @@ Features that are provided in Pandoc but missing in remark.js's Markdown:
 
 --------------------------------------------------------------------------------
 
-#### Add Attributes
+### Add Attributes
 
 Follow `remark` syntax to add attributes to elements.
 
@@ -304,7 +304,7 @@ will be rendered as:
 
 --------------------------------------------------------------------------------
 
-### Math Environments
+## Math Environments
 
 Display math enclosed in double dollar signs (`$$...$$`), but note that
 
@@ -328,7 +328,7 @@ $$E = mc^2$$
 
 --------------------------------------------------------------------------------
 
-#### Color equations
+### Color equations
 
 1. In mathjax configuration file, define color macros, e.g., in `libs/mathjax.html`:
    ```javascript
@@ -355,7 +355,7 @@ $$E = mc^2$$
 
 --------------------------------------------------------------------------------
 
-### Bullet list
+## Bullet list
 
 Third level lists need an extra tab. [↩︎](https://github.com/yihui/xaringan/issues/282)
 
@@ -381,7 +381,7 @@ Q: I think you need four spaces (or a true tab instead of two spaces) to indicat
 
 --------------------------------------------------------------------------------
 
-#### Ordered list with letters
+### Ordered list with letters
 
 Issue: <span class="env-orange">xaringan does not recognize letters as list markers</span> for ordered lists by default. 
 
@@ -437,7 +437,7 @@ Fix: Use CSS to customize the list style or use html tags directly.
 
 --------------------------------------------------------------------------------
 
-### Tables
+## Tables
 
 Q: How to make the tables **more compact**, e.g, reduce the row height?
 
@@ -526,7 +526,7 @@ cat(tbl_html)
 
 --------------------------------------------------------------------------------
 
-### Images
+## Images
 
 Issue: Image resolution too low.
 
@@ -541,7 +541,7 @@ Explanation: `xaringan` uses `remark.js` to render slides, which does not suppor
 
 --------------------------------------------------------------------------------
 
-### Presenter Notes
+## Presenter Notes
 
 Q: Why using presenter notes? 
 
@@ -589,7 +589,7 @@ The figure below shows the **Displays** settings on macOS for extended display m
 
 Ref: [R Markdown: The Definitive Guide, Section 7.3.5](https://bookdown.org/yihui/rmarkdown/xaringan-format.html#xaringan-notes)
 
-### CSS and themes
+## CSS and themes
 
 The format `xaringan::moon_reader` has a `css` option, to which you can pass a vector of CSS file paths, e.g.,
 
@@ -617,7 +617,7 @@ Read [R Markdown: The Definitive Guide, Section 7.5](https://bookdown.org/yihui/
 
 --------------------------------------------------------------------------------
 
-### Smart Punctuation
+## Smart Punctuation
 
 `xaringan-smartify` provides a javascript hack to turn ugly quotes and dashes (`'  "  --  ---`) into their pretty versions (‘ ’ “ ” – —) in xaringan HTML slides.
 
@@ -625,7 +625,7 @@ Follow instructions on [`xaringan-smartify` GitHub Repo](https://github.com/fnau
 
 --------------------------------------------------------------------------------
 
-### Working offline
+## Working offline
 
 Making the slides work offline can be tricky, since you may have other dependencies. For example, if you used Google web fonts in slides (the default theme uses *Yanone Kaffeesatz*, *Droid Serif*, and *Source Code Pro*), they will not work offline unless you download or install them locally.
 
@@ -634,7 +634,7 @@ To make slides work offline, you need to download a copy of remark.js in advance
 Refer to [R Markdown: The Definitive Guide, Section 7.6.4](https://bookdown.org/yihui/rmarkdown/some-tips.html#working-offline) for details.
 
 
-### Parser
+## Parser
 
 -   **Remark default parser** (default in xaringan):
 
@@ -661,7 +661,7 @@ Refer to [R Markdown: The Definitive Guide, Section 7.6.4](https://bookdown.org/
 
 --------------------------------------------------------------------------------
 
-### xaringanExtra
+## xaringanExtra
 
 The [`xaringanExtra` package](https://pkg.garrickadenbuie.com/xaringanExtra/#/?id=xaringanextra) provides additional functionalities and themes for `xaringan` presentations.
 
@@ -714,7 +714,7 @@ xaringanExtra::use_progress_bar(color="red", location="top", height="0.25em")
 
 --------------------------------------------------------------------------------
 
-### FAQ
+## FAQ
 
 Q: Error when using `kableExtra` in `xaringan` slides? See error message below:
 
