@@ -556,17 +556,25 @@ bind_rows(tibbleList) # combine all tibbles in the list
 
 
 
-<span style='color:red'>**`filter(.data, ..., .preserve=FALSE)`**</span> chooses rows/cases where conditions are true. Unlike base subsetting with `[`, rows where the condition evaluates to `NA` are dropped.
+<span class="env-green">`filter(.data, ..., .preserve=FALSE)`</span> chooses rows/cases where conditions are true. Unlike base subsetting with `[`, rows where the condition evaluates to `NA` are dropped.
 
--   `...` 	<`data-masking`> Expressions that return a logical value, and are defined in terms of the variables in `.data`. If **multiple expressions** are included, they are combined with the **`&`** operator. Only rows for which all conditions evaluate to `TRUE` are kept.
+-   `...`: <`data-masking`> Expressions that return a logical value, and are defined in terms of the variables in `.data`. 
+    
+    If **multiple expressions** are included, they are combined with the **<span class="env-green">`&`</span>** operator. 
+    Only rows for which all conditions evaluate to `TRUE` are kept.
+
 -   `.preserve`   Relevant when the `.data` input is grouped. If `.preserve = FALSE` (the default), the grouping structure is recalculated based on the resulting data, otherwise the grouping is kept as is.
 
 
 ``` r
 # Countries with a life expectancy longer than 82 years
-world6 = filter(world, lifeExp > 82)
+world6 <- world %>% filter(lifeExp > 82)
+
+# Countries with a life expectancy longer than 82 years AND a population larger than 10 million
+world7 = world %>% filter(lifeExp > 82, pop > 10)
+
 # filter based on vector
-filter(diamonds, cut %in% c('Ideal', 'Premium'))
+diamonds %>% filter(cut %in% c('Ideal', 'Premium'))
 ```
 
 Useful filter functions:

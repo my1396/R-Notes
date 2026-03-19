@@ -137,6 +137,39 @@ p_allCON
 
 ## Data Input & Output
 
+File names
+
+`file.path(...)` constructs file paths in a platform-independent way. `...` are character vectors, which are concatenated together with `\` on Windows and `/` on Unix-alikes (Mac) as the path separator.
+
+On Windows, the path separator is `\`, but in R you need to use `\\` to represent a single backslash because `\` is an escape character in R strings. 
+
+```R
+# define file path
+path <- file.path("C:", "Users", "bob", "Data_Science_Documents")
+
+# view file path
+path
+[1] "C:\\Users\\bob\\Data_Science_Documents"
+
+# set path as working directory
+setwd(path)
+```
+
+The working directory is now set to the following location: `C:\Users\bob\Data_Science_Documents`. 
+
+--------------------------------------------------------------------------------
+
+On Mac,
+
+```R
+path <- file.path("data", "my_data.csv")
+
+# view file path
+path
+[1] "data/my_data.csv"
+```
+
+
 ### Read Data
 
 **Read Fortran**

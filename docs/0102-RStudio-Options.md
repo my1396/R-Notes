@@ -251,6 +251,28 @@ https://developer.apple.com/download/all/
   https://rpubs.com/Kibalnikov/776164
 
 
+--------------------------------------------------------------------------------
+
+## FAQ
+
+Q: How can I set a specific CRAN mirror permanently in R, so it won't ask me again which mirror to choose? \
+A: Add the following line to your `~/.Rprofile` file:
+
+```r
+# add this line to ~/.Rprofile, restart your R session so it takes effect
+> options(repos = c(CRAN = "https://mirror.accum.se/mirror/CRAN/"))
+```
+
+Restart your R session so it takes effect.
+
+```r
+# to verify that CRAN mirror is set correctly
+> getOption("repos")
+                                  CRAN 
+"https://mirror.accum.se/mirror/CRAN/" 
+```
+
+You can find a list of CRAN mirrors [here](https://cran.r-project.org/mirrors.html). The principle is to choose a location close to you. 
 
 
 

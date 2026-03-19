@@ -1,0 +1,1769 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>12.6 Arellano-Bond Estimator | R Notes</title>
+  <meta name="description" content="<p>This is a minimal example of using the bookdown package to write a book.
+The HTML output format for this example is bookdown::gitbook,
+set in the _output.yml file.</p>" />
+  <meta name="generator" content="bookdown 0.45 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="12.6 Arellano-Bond Estimator | R Notes" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="<p>This is a minimal example of using the bookdown package to write a book.
+The HTML output format for this example is bookdown::gitbook,
+set in the _output.yml file.</p>" />
+  <meta name="github-repo" content="my1396/R-Notes" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="12.6 Arellano-Bond Estimator | R Notes" />
+  
+  <meta name="twitter:description" content="<p>This is a minimal example of using the bookdown package to write a book.
+The HTML output format for this example is bookdown::gitbook,
+set in the _output.yml file.</p>" />
+  
+
+<meta name="author" content="Menghan Yuan" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  <link rel="shortcut icon" href="images/r-project-favicon.ico" type="image/x-icon" />
+<link rel="prev" href="12.5-panel-1.html"/>
+<link rel="next" href="12.7-common-correlated-effects-models.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+<script src="libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
+<head>
+    <!-- MathJax config: define new macros -->
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+          tex2jax: {
+            inlineMath: [['$','$'], ['\\(','\\)']],
+            processEscapes: true
+          },
+          TeX: { 
+            inlineMath: [   // start/end delimiter pairs for in-line math
+              ['$', '$'],
+              ['\\(', '\\)']
+            ],
+            displayMath: [  // start/end delimiter pairs for display math
+              ['$$', '$$'],
+              ['\\[', '\\]']
+            ],
+            processEscapes: true, // use \$ to produce a literal dollar sign
+            tags: 'ams',  // should be 'ams', 'none', or 'all'
+            Macros: {
+              vect: ["\\mathbf{#1}", 1],
+              mat: ["\\mathbf{#1}", 1], 
+
+              bA: "\\boldsymbol{A}",
+              bB: "\\boldsymbol{B}",
+              bC: "\\boldsymbol{C}",
+              bD: "\\boldsymbol{D}",
+              bE: "\\boldsymbol{E}",
+              bF: "\\boldsymbol{F}",
+              bG: "\\boldsymbol{G}",
+              bH: "\\boldsymbol{H}",
+              bI: "\\boldsymbol{I}",
+              bJ: "\\boldsymbol{J}",
+              bK: "\\boldsymbol{K}",
+              bL: "\\boldsymbol{L}",
+              bM: "\\boldsymbol{M}",
+              bN: "\\boldsymbol{N}",
+              bP: "\\boldsymbol{P}",
+              bQ: "\\boldsymbol{Q}",
+              bR: "\\boldsymbol{R}",
+              bS: "\\boldsymbol{S}",
+              bT: "\\boldsymbol{T}",
+              bU: "\\boldsymbol{U}",
+              bV: "\\boldsymbol{V}",
+              bW: "\\boldsymbol{W}",
+              bX: "\\boldsymbol{X}",
+              bY: "\\boldsymbol{Y}",
+              bZ: "\\boldsymbol{Z}",
+              ba: "\\boldsymbol{a}",
+              bb: "\\boldsymbol{b}",
+              bc: "\\boldsymbol{c}",
+              bd: "\\boldsymbol{d}",
+              be: "\\boldsymbol{e}",
+              bg: "\\boldsymbol{g}",
+              bh: "\\boldsymbol{h}",
+              bi: "\\boldsymbol{\\imath}",
+              bm: "\\boldsymbol{m}",
+              bp: "\\boldsymbol{p}",
+              bq: "\\boldsymbol{q}",
+              br: "\\boldsymbol{r}",
+              bs: "\\boldsymbol{s}",
+              bt: "\\boldsymbol{t}",
+              bu: "\\boldsymbol{u}",
+              bv: "\\boldsymbol{v}",
+              bw: "\\boldsymbol{w}",
+              bx: "\\boldsymbol{x}",
+              by: "\\boldsymbol{y}",
+
+              Acal: "\\mathcal{A}",
+              Bcal: "\\mathcal{B}",
+              Ccal: "\\mathcal{C}",
+              Dcal: "\\mathcal{D}",
+              Ecal: "\\mathcal{E}",
+              Fcal: "\\mathcal{F}",
+              Gcal: "\\mathcal{G}",
+              Hcal: "\\mathcal{H}",
+              Ical: "\\mathcal{I}",
+              Jcal: "\\mathcal{J}",
+              Kcal: "\\mathcal{K}",
+              Lcal: "\\mathcal{L}",
+              Mcal: "\\mathcal{M}",
+              Ncal: "\\mathcal{N}",
+              Ocal: "\\mathcal{O}",
+              Pcal: "\\mathcal{P}",
+              Qcal: "\\mathcal{Q}",
+              Rcal: "\\mathcal{R}",
+              Scal: "\\mathcal{S}",
+              Tcal: "\\mathcal{T}",
+              Ucal: "\\mathcal{U}",
+              Vcal: "\\mathcal{V}",
+              Wcal: "\\mathcal{W}",
+              Xcal: "\\mathcal{X}",
+              Ycal: "\\mathcal{Y}",
+              Zcal: "\\mathcal{Z}",
+
+              A: "\\mathbb{A}",
+              B: "\\mathbb{B}",
+              C: "\\mathbb{C}",
+              D: "\\mathbb{D}",
+              E: "\\mathbb{E}",
+              F: "\\mathbb{F}",
+              G: "\\mathbb{G}",
+              H: "\\mathbb{H}",
+              I: "\\mathbb{I}",
+              J: "\\mathbb{J}",
+              K: "\\mathbb{K}",
+              L: "\\mathbb{L}",
+              M: "\\mathbb{M}",
+              N: "\\mathbb{N}",
+              O: "\\mathbb{O}",
+              P: "\\mathbb{P}",
+              Q: "\\mathbb{Q}",
+              R: "\\mathbb{R}",
+              S: "\\mathbb{S}",
+              T: "\\mathbb{T}",
+              U: "\\mathbb{U}",
+              V: "\\mathbb{V}",
+              W: "\\mathbb{W}",
+              X: "\\mathbb{X}",
+              Y: "\\mathbb{Y}",
+              Z: "\\mathbb{Z}",
+
+              bAlpha: "\\boldsymbol{\\Alpha}",
+              bBeta: "\\boldsymbol{\\beta}",
+              bDelta: "\\boldsymbol{\\delta}",
+              bEta: "\\boldsymbol{\\eta}",
+              bGamma: "\\boldsymbol{\\Gamma}",
+              bLambda: "\\boldsymbol{\\Lambda}",
+              bOmega: "\\boldsymbol{\\Omega}",
+              bPhi: "\\boldsymbol{\\Phi}",
+              bPi: "\\boldsymbol{\\Pi}",
+              bPsi: "\\boldsymbol{\\Psi}",
+              bSigma: "\\boldsymbol{\\Sigma}",
+              bTau: "\\boldsymbol{\\tau}",
+              bXi: "\\boldsymbol{\\Xi}",
+              bbeta: "\\boldsymbol{\\beta}",
+              bdelta: "\\boldsymbol{\\delta}",
+              blambda: "\\boldsymbol{\\lambda}",
+              bmu: "\\boldsymbol{\\mu}",
+              bphi: "\\boldsymbol{\\phi}",
+              bpi: "\\boldsymbol{\\pi}",
+              bpsi: "\\boldsymbol{\\psi}",
+              brho: "\\boldsymbol{\\rho}",
+              bsigma: "\\boldsymbol{\\sigma}",
+              btau: "\\boldsymbol{\\tau}",
+              bxi: "\\boldsymbol{\\xi}",
+              bEta: "\\boldsymbol{\\eta}",
+              bPhi: "\\boldsymbol{\\Phi}",
+              bPi: "\\boldsymbol{\\Pi}",
+              bPsi: "\\boldsymbol{\\Psi}",
+              bXi: "\\boldsymbol{\\Xi}",
+              blambda: "\\boldsymbol{\\lambda}",
+              bmu: "\\boldsymbol{\\mu}",
+              bphi: "\\boldsymbol{\\phi}",
+              bpi: "\\boldsymbol{\\pi}",
+              bpsi: "\\boldsymbol{\\psi}",
+              brho: "\\boldsymbol{\\rho}",
+              bsigma: "\\boldsymbol{\\sigma}",
+                        
+              curl: ["\\left\\lbrace#1\\right\\rbrace", 1],
+              floor: ["\\left\\lfloor#1\\right\\rfloor", 1],
+              ceil: ["\\left\\lceil#1\\right\\rceil", 1],
+              abs: ["\\left\\lvert#1\\right\\rvert", 1],
+              norm: ["\\left\\lVert#1\\right\\rVert", 1],
+
+              independent: "\\mathrel{\\perp\\!\\!\\perp}",
+
+              var: "\\mathrm{Var}",
+              diag: "\\mathrm{diag}",
+              rank: "\\mathrm{rank}",
+              vecc: "\\mathrm{vec}",
+            }
+          }
+        });
+    </script>
+    <!-- Load Google fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro">
+    <!-- Load Font Awesome 6's icon library -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <!-- Font Awesome 4 compatibility shim -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/v4-shims.min.css" />
+    <!-- Load MS codicon library -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@vscode/codicons@latest/dist/codicon.css">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #204a87; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #8f5902; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #204a87; font-weight: bold; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #ce5c00; font-weight: bold; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">R Notes</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> About</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="1.1-usage.html"><a href="1.1-usage.html"><i class="fa fa-check"></i><b>1.1</b> Usage</a></li>
+<li class="chapter" data-level="1.2" data-path="1.2-render-book.html"><a href="1.2-render-book.html"><i class="fa fa-check"></i><b>1.2</b> Render book</a></li>
+<li class="chapter" data-level="1.3" data-path="1.3-preview-book.html"><a href="1.3-preview-book.html"><i class="fa fa-check"></i><b>1.3</b> Preview book</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="2-rstudio.html"><a href="2-rstudio.html"><i class="fa fa-check"></i><b>2</b> RStudio</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="2.1-dark-theme.html"><a href="2.1-dark-theme.html"><i class="fa fa-check"></i><b>2.1</b> Dark Theme</a></li>
+<li class="chapter" data-level="2.2" data-path="2.2-update-r.html"><a href="2.2-update-r.html"><i class="fa fa-check"></i><b>2.2</b> Update R</a>
+<ul>
+<li class="chapter" data-level="2.2.1" data-path="2.2-update-r.html"><a href="2.2-update-r.html#update-r-on-mac"><i class="fa fa-check"></i><b>2.2.1</b> Update R on Mac</a></li>
+<li class="chapter" data-level="2.2.2" data-path="2.2-update-r.html"><a href="2.2-update-r.html#update-r-on-windows"><i class="fa fa-check"></i><b>2.2.2</b> Update R on Windows</a></li>
+<li class="chapter" data-level="2.2.3" data-path="2.2-update-r.html"><a href="2.2-update-r.html#caveats-about-updating-r"><i class="fa fa-check"></i><b>2.2.3</b> Caveats about updating R</a></li>
+</ul></li>
+<li class="chapter" data-level="2.3" data-path="2.3-packages-management.html"><a href="2.3-packages-management.html"><i class="fa fa-check"></i><b>2.3</b> Packages Management</a>
+<ul>
+<li class="chapter" data-level="2.3.1" data-path="2.3-packages-management.html"><a href="2.3-packages-management.html#load-packages"><i class="fa fa-check"></i><b>2.3.1</b> Load packages</a></li>
+<li class="chapter" data-level="2.3.2" data-path="2.3-packages-management.html"><a href="2.3-packages-management.html#install-packages"><i class="fa fa-check"></i><b>2.3.2</b> Install packages</a></li>
+<li class="chapter" data-level="2.3.3" data-path="2.3-packages-management.html"><a href="2.3-packages-management.html#update-packages"><i class="fa fa-check"></i><b>2.3.3</b> Update packages</a></li>
+<li class="chapter" data-level="2.3.4" data-path="2.3-packages-management.html"><a href="2.3-packages-management.html#put-your-r-package-on-github"><i class="fa fa-check"></i><b>2.3.4</b> Put your R package on GitHub</a></li>
+</ul></li>
+<li class="chapter" data-level="2.4" data-path="2.4-using-git-with-rstudio.html"><a href="2.4-using-git-with-rstudio.html"><i class="fa fa-check"></i><b>2.4</b> Using Git with RStudio</a></li>
+<li class="chapter" data-level="2.5" data-path="2.5-github-copilot.html"><a href="2.5-github-copilot.html"><i class="fa fa-check"></i><b>2.5</b> GitHub Copilot</a></li>
+<li class="chapter" data-level="2.6" data-path="2.6-save-r-workspace.html"><a href="2.6-save-r-workspace.html"><i class="fa fa-check"></i><b>2.6</b> Save R Workspace</a></li>
+<li class="chapter" data-level="2.7" data-path="2.7-pane-layout.html"><a href="2.7-pane-layout.html"><i class="fa fa-check"></i><b>2.7</b> Pane Layout</a></li>
+<li class="chapter" data-level="2.8" data-path="2.8-options.html"><a href="2.8-options.html"><i class="fa fa-check"></i><b>2.8</b> Options</a></li>
+<li class="chapter" data-level="2.9" data-path="2.9-r-startup.html"><a href="2.9-r-startup.html"><i class="fa fa-check"></i><b>2.9</b> R Startup</a>
+<ul>
+<li class="chapter" data-level="2.9.1" data-path="2.9-r-startup.html"><a href="2.9-r-startup.html#rprofile"><i class="fa fa-check"></i><b>2.9.1</b> <code>.Rprofile</code></a></li>
+<li class="chapter" data-level="2.9.2" data-path="2.9-r-startup.html"><a href="2.9-r-startup.html#renviron"><i class="fa fa-check"></i><b>2.9.2</b> <code>.Renviron</code></a></li>
+</ul></li>
+<li class="chapter" data-level="2.10" data-path="2.10-faq-1.html"><a href="2.10-faq-1.html"><i class="fa fa-check"></i><b>2.10</b> FAQ</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="3-vs-code.html"><a href="3-vs-code.html"><i class="fa fa-check"></i><b>3</b> VS Code</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="3.1-keyboard-shortcuts.html"><a href="3.1-keyboard-shortcuts.html"><i class="fa fa-check"></i><b>3.1</b> Keyboard shortcuts</a></li>
+<li class="chapter" data-level="3.2" data-path="3.2-languageserver-package.html"><a href="3.2-languageserver-package.html"><i class="fa fa-check"></i><b>3.2</b> <code>languageserver</code> package</a>
+<ul>
+<li class="chapter" data-level="3.2.1" data-path="3.2-languageserver-package.html"><a href="3.2-languageserver-package.html#highlight-features"><i class="fa fa-check"></i><b>3.2.1</b> Highlight Features:</a></li>
+<li class="chapter" data-level="3.2.2" data-path="3.2-languageserver-package.html"><a href="3.2-languageserver-package.html#lintr"><i class="fa fa-check"></i><b>3.2.2</b> <code>lintr</code></a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="3.3-radian.html"><a href="3.3-radian.html"><i class="fa fa-check"></i><b>3.3</b> Radian</a>
+<ul>
+<li class="chapter" data-level="3.3.1" data-path="3.3-radian.html"><a href="3.3-radian.html#configuration"><i class="fa fa-check"></i><b>3.3.1</b> Configuration</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="3.4-plot-viewer.html"><a href="3.4-plot-viewer.html"><i class="fa fa-check"></i><b>3.4</b> Plot Viewer</a></li>
+<li class="chapter" data-level="3.5" data-path="3.5-r-debugger.html"><a href="3.5-r-debugger.html"><i class="fa fa-check"></i><b>3.5</b> R Debugger</a></li>
+<li class="chapter" data-level="3.6" data-path="3.6-emulating-rstudioapi-functions.html"><a href="3.6-emulating-rstudioapi-functions.html"><i class="fa fa-check"></i><b>3.6</b> Emulating <code>rstudioapi</code> functions</a></li>
+<li class="chapter" data-level="3.7" data-path="3.7-work-with-rmd.html"><a href="3.7-work-with-rmd.html"><i class="fa fa-check"></i><b>3.7</b> Work with Rmd</a>
+<ul>
+<li class="chapter" data-level="3.7.1" data-path="3.7-work-with-rmd.html"><a href="3.7-work-with-rmd.html#render-book-1"><i class="fa fa-check"></i><b>3.7.1</b> Render book</a></li>
+<li class="chapter" data-level="3.7.2" data-path="3.7-work-with-rmd.html"><a href="3.7-work-with-rmd.html#view-book"><i class="fa fa-check"></i><b>3.7.2</b> View book</a></li>
+</ul></li>
+<li class="chapter" data-level="3.8" data-path="3.8-extensions.html"><a href="3.8-extensions.html"><i class="fa fa-check"></i><b>3.8</b> Extensions</a></li>
+<li class="chapter" data-level="3.9" data-path="3.9-jupyter-notebooks.html"><a href="3.9-jupyter-notebooks.html"><i class="fa fa-check"></i><b>3.9</b> Jupyter Notebooks</a></li>
+<li class="chapter" data-level="3.10" data-path="3.10-render-jupyter-notebook.html"><a href="3.10-render-jupyter-notebook.html"><i class="fa fa-check"></i><b>3.10</b> Render Jupyter notebook</a>
+<ul>
+<li class="chapter" data-level="3.10.1" data-path="3.10-render-jupyter-notebook.html"><a href="3.10-render-jupyter-notebook.html#code-cell-modes"><i class="fa fa-check"></i><b>3.10.1</b> Code cell modes</a></li>
+<li class="chapter" data-level="3.10.2" data-path="3.10-render-jupyter-notebook.html"><a href="3.10-render-jupyter-notebook.html#keyboard-shortcuts-1"><i class="fa fa-check"></i><b>3.10.2</b> Keyboard shortcuts</a></li>
+<li class="chapter" data-level="3.10.3" data-path="3.10-render-jupyter-notebook.html"><a href="3.10-render-jupyter-notebook.html#insert-image"><i class="fa fa-check"></i><b>3.10.3</b> Insert Image</a></li>
+<li class="chapter" data-level="3.10.4" data-path="3.10-render-jupyter-notebook.html"><a href="3.10-render-jupyter-notebook.html#view-data-frames"><i class="fa fa-check"></i><b>3.10.4</b> View data frames</a></li>
+<li class="chapter" data-level="3.10.5" data-path="3.10-render-jupyter-notebook.html"><a href="3.10-render-jupyter-notebook.html#export-jupyter-notebook"><i class="fa fa-check"></i><b>3.10.5</b> Export Jupyter notebook</a></li>
+</ul></li>
+<li class="chapter" data-level="3.11" data-path="3.11-issues.html"><a href="3.11-issues.html"><i class="fa fa-check"></i><b>3.11</b> Issues</a></li>
+<li class="chapter" data-level="3.12" data-path="3.12-faq-2.html"><a href="3.12-faq-2.html"><i class="fa fa-check"></i><b>3.12</b> FAQ</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="4-rmd.html"><a href="4-rmd.html"><i class="fa fa-check"></i><b>4</b> Rmd</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="4.1-yaml-metadata.html"><a href="4.1-yaml-metadata.html"><i class="fa fa-check"></i><b>4.1</b> YAML metadata</a>
+<ul>
+<li class="chapter" data-level="4.1.1" data-path="4.1-yaml-metadata.html"><a href="4.1-yaml-metadata.html#top-level-yaml-metadata"><i class="fa fa-check"></i><b>4.1.1</b> Top-level YAML metadata</a></li>
+<li class="chapter" data-level="4.1.2" data-path="4.1-yaml-metadata.html"><a href="4.1-yaml-metadata.html#mathjax-options"><i class="fa fa-check"></i><b>4.1.2</b> MathJax Options</a></li>
+<li class="chapter" data-level="4.1.3" data-path="4.1-yaml-metadata.html"><a href="4.1-yaml-metadata.html#document-dependency"><i class="fa fa-check"></i><b>4.1.3</b> Document dependency</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="4.2-render-rmd.html"><a href="4.2-render-rmd.html"><i class="fa fa-check"></i><b>4.2</b> Render Rmd</a>
+<ul>
+<li class="chapter" data-level="4.2.1" data-path="4.2-render-rmd.html"><a href="4.2-render-rmd.html#render-single-rmd"><i class="fa fa-check"></i><b>4.2.1</b> Render a single document</a></li>
+<li class="chapter" data-level="4.2.2" data-path="4.2-render-rmd.html"><a href="4.2-render-rmd.html#render-rmd-site"><i class="fa fa-check"></i><b>4.2.2</b> Render multiple documents as a website</a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path="4.3-chunk-options.html"><a href="4.3-chunk-options.html"><i class="fa fa-check"></i><b>4.3</b> Chunk Options</a>
+<ul>
+<li class="chapter" data-level="4.3.1" data-path="4.3-chunk-options.html"><a href="4.3-chunk-options.html#commonly-used-chunk-options"><i class="fa fa-check"></i><b>4.3.1</b> <span id="common-chunk-options"><strong>Commonly used chunk options</strong></span></a></li>
+<li class="chapter" data-level="4.3.2" data-path="4.3-chunk-options.html"><a href="4.3-chunk-options.html#external-config-files"><i class="fa fa-check"></i><b>4.3.2</b> External Config Files</a></li>
+<li class="chapter" data-level="4.3.3" data-path="4.3-chunk-options.html"><a href="4.3-chunk-options.html#hooks"><i class="fa fa-check"></i><b>4.3.3</b> Hooks</a></li>
+</ul></li>
+<li class="chapter" data-level="4.4" data-path="4.4-print-verbatim-r-code-chunks.html"><a href="4.4-print-verbatim-r-code-chunks.html"><i class="fa fa-check"></i><b>4.4</b> Print Verbatim R code chunks</a>
+<ul>
+<li class="chapter" data-level="4.4.1" data-path="4.4-print-verbatim-r-code-chunks.html"><a href="4.4-print-verbatim-r-code-chunks.html#verbatim-inline-code"><i class="fa fa-check"></i><b>4.4.1</b> Verbatim inline code</a></li>
+<li class="chapter" data-level="4.4.2" data-path="4.4-print-verbatim-r-code-chunks.html"><a href="4.4-print-verbatim-r-code-chunks.html#verbatim-r-code-chunks"><i class="fa fa-check"></i><b>4.4.2</b> Verbatim R code chunks</a></li>
+</ul></li>
+<li class="chapter" data-level="4.5" data-path="4.5-rmd-basics.html"><a href="4.5-rmd-basics.html"><i class="fa fa-check"></i><b>4.5</b> Rmd Basics</a>
+<ul>
+<li class="chapter" data-level="4.5.1" data-path="4.5-rmd-basics.html"><a href="4.5-rmd-basics.html#unnumbered-sections"><i class="fa fa-check"></i><b>4.5.1</b> Unnumbered Sections</a></li>
+<li class="chapter" data-level="4.5.2" data-path="4.5-rmd-basics.html"><a href="4.5-rmd-basics.html#knitting-in-the-global-environment"><i class="fa fa-check"></i><b>4.5.2</b> Knitting in the global environment</a></li>
+</ul></li>
+<li class="chapter" data-level="4.6" data-path="4.6-citations.html"><a href="4.6-citations.html"><i class="fa fa-check"></i><b>4.6</b> Citations</a>
+<ul>
+<li class="chapter" data-level="4.6.1" data-path="4.6-citations.html"><a href="4.6-citations.html#bibliographies"><i class="fa fa-check"></i><b>4.6.1</b> Bibliographies</a></li>
+<li class="chapter" data-level="4.6.2" data-path="4.6-citations.html"><a href="4.6-citations.html#bibliography-placement"><i class="fa fa-check"></i><b>4.6.2</b> Bibliography placement</a></li>
+</ul></li>
+<li class="chapter" data-level="4.7" data-path="4.7-cross-references.html"><a href="4.7-cross-references.html"><i class="fa fa-check"></i><b>4.7</b> Cross References</a>
+<ul>
+<li class="chapter" data-level="4.7.1" data-path="4.7-cross-references.html"><a href="4.7-cross-references.html#using-bookdown"><i class="fa fa-check"></i><b>4.7.1</b> Using <code>bookdown</code></a></li>
+<li class="chapter" data-level="4.7.2" data-path="4.7-cross-references.html"><a href="4.7-cross-references.html#using-the-latex-way"><i class="fa fa-check"></i><b>4.7.2</b> Using the LaTeX Way</a></li>
+</ul></li>
+<li class="chapter" data-level="4.8" data-path="4.8-equations-1.html"><a href="4.8-equations-1.html"><i class="fa fa-check"></i><b>4.8</b> Equations</a>
+<ul>
+<li class="chapter" data-level="4.8.1" data-path="4.8-equations-1.html"><a href="4.8-equations-1.html#rstudio-equation-live-preview"><i class="fa fa-check"></i><b>4.8.1</b> RStudio Equation Live Preview</a></li>
+</ul></li>
+<li class="chapter" data-level="4.9" data-path="4.9-theorems-1.html"><a href="4.9-theorems-1.html"><i class="fa fa-check"></i><b>4.9</b> Theorems</a></li>
+<li class="chapter" data-level="4.10" data-path="4.10-figures-1.html"><a href="4.10-figures-1.html"><i class="fa fa-check"></i><b>4.10</b> Figures</a>
+<ul>
+<li class="chapter" data-level="4.10.1" data-path="4.10-figures-1.html"><a href="4.10-figures-1.html#output-directly-to-document"><i class="fa fa-check"></i><b>4.10.1</b> Output directly to document</a></li>
+<li class="chapter" data-level="4.10.2" data-path="4.10-figures-1.html"><a href="4.10-figures-1.html#fixed-fig.width"><i class="fa fa-check"></i><b>4.10.2</b> Fixed <code>fig.width</code></a></li>
+<li class="chapter" data-level="4.10.3" data-path="4.10-figures-1.html"><a href="4.10-figures-1.html#save-and-reload"><i class="fa fa-check"></i><b>4.10.3</b> Save and reload</a></li>
+<li class="chapter" data-level="4.10.4" data-path="4.10-figures-1.html"><a href="4.10-figures-1.html#control-figure-size"><i class="fa fa-check"></i><b>4.10.4</b> Control figure size</a></li>
+<li class="chapter" data-level="4.10.5" data-path="4.10-figures-1.html"><a href="4.10-figures-1.html#control-output-size"><i class="fa fa-check"></i><b>4.10.5</b> Control output size</a></li>
+<li class="chapter" data-level="" data-path="4.10-figures-1.html"><a href="4.10-figures-1.html#latex-symbols-in-fig.-caption"><i class="fa fa-check"></i>Latex symbols in Fig. caption</a></li>
+<li class="chapter" data-level="" data-path="4.10-figures-1.html"><a href="4.10-figures-1.html#refer-to-another-figure-in-figure-caption"><i class="fa fa-check"></i>Refer to another figure in figure caption</a></li>
+</ul></li>
+<li class="chapter" data-level="4.11" data-path="4.11-tables-1.html"><a href="4.11-tables-1.html"><i class="fa fa-check"></i><b>4.11</b> Tables</a>
+<ul>
+<li class="chapter" data-level="4.11.1" data-path="4.11-tables-1.html"><a href="4.11-tables-1.html#knitrkable"><i class="fa fa-check"></i><b>4.11.1</b> <code>knitr::kable</code></a></li>
+<li class="chapter" data-level="4.11.2" data-path="4.11-tables-1.html"><a href="4.11-tables-1.html#data-frame-printing"><i class="fa fa-check"></i><b>4.11.2</b> Data frame printing</a></li>
+<li class="chapter" data-level="4.11.3" data-path="4.11-tables-1.html"><a href="4.11-tables-1.html#stargazer"><i class="fa fa-check"></i><b>4.11.3</b> Stargazer</a></li>
+<li class="chapter" data-level="4.11.4" data-path="4.11-tables-1.html"><a href="4.11-tables-1.html#xtable"><i class="fa fa-check"></i><b>4.11.4</b> <code>xtable</code></a></li>
+<li class="chapter" data-level="4.11.5" data-path="4.11-tables-1.html"><a href="4.11-tables-1.html#kableextra"><i class="fa fa-check"></i><b>4.11.5</b> <code>kableExtra</code></a></li>
+<li class="chapter" data-level="4.11.6" data-path="4.11-tables-1.html"><a href="4.11-tables-1.html#huxtable"><i class="fa fa-check"></i><b>4.11.6</b> huxtable</a></li>
+</ul></li>
+<li class="chapter" data-level="4.12" data-path="4.12-rmd-github-pages.html"><a href="4.12-rmd-github-pages.html"><i class="fa fa-check"></i><b>4.12</b> Rmd GitHub Pages</a>
+<ul>
+<li class="chapter" data-level="" data-path="4.12-rmd-github-pages.html"><a href="4.12-rmd-github-pages.html#project-structure"><i class="fa fa-check"></i>Project structure</a></li>
+<li class="chapter" data-level="" data-path="4.12-rmd-github-pages.html"><a href="4.12-rmd-github-pages.html#site.yml-config"><i class="fa fa-check"></i><code>_site.yml</code> config</a></li>
+<li class="chapter" data-level="" data-path="4.12-rmd-github-pages.html"><a href="4.12-rmd-github-pages.html#index.rmd"><i class="fa fa-check"></i><code>index.Rmd</code></a></li>
+<li class="chapter" data-level="" data-path="4.12-rmd-github-pages.html"><a href="4.12-rmd-github-pages.html#r-scripts"><i class="fa fa-check"></i>R scripts</a></li>
+<li class="chapter" data-level="" data-path="4.12-rmd-github-pages.html"><a href="4.12-rmd-github-pages.html#workflow"><i class="fa fa-check"></i>Workflow</a></li>
+<li class="chapter" data-level="" data-path="4.12-rmd-github-pages.html"><a href="4.12-rmd-github-pages.html#css-style"><i class="fa fa-check"></i>CSS Style</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="5-bookdown.html"><a href="5-bookdown.html"><i class="fa fa-check"></i><b>5</b> bookdown</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="5.1-bookdown-project-structure.html"><a href="5.1-bookdown-project-structure.html"><i class="fa fa-check"></i><b>5.1</b> bookdown project structure</a>
+<ul>
+<li class="chapter" data-level="" data-path="5.1-bookdown-project-structure.html"><a href="5.1-bookdown-project-structure.html#output.yml"><i class="fa fa-check"></i><code>_output.yml</code></a></li>
+<li class="chapter" data-level="" data-path="5.1-bookdown-project-structure.html"><a href="5.1-bookdown-project-structure.html#bookdown.yml"><i class="fa fa-check"></i><code>_bookdown.yml</code></a></li>
+<li class="chapter" data-level="" data-path="5.1-bookdown-project-structure.html"><a href="5.1-bookdown-project-structure.html#index.rmd-1"><i class="fa fa-check"></i><code>index.Rmd</code></a></li>
+<li class="chapter" data-level="" data-path="5.1-bookdown-project-structure.html"><a href="5.1-bookdown-project-structure.html#rmd-files"><i class="fa fa-check"></i><code>.Rmd</code> files</a></li>
+</ul></li>
+<li class="chapter" data-level="5.2" data-path="5.2-rendering-bookdown.html"><a href="5.2-rendering-bookdown.html"><i class="fa fa-check"></i><b>5.2</b> Rendering bookdown</a>
+<ul>
+<li class="chapter" data-level="5.2.1" data-path="5.2-rendering-bookdown.html"><a href="5.2-rendering-bookdown.html#rendering-bookdown-website"><i class="fa fa-check"></i><b>5.2.1</b> Rendering bookdown website</a></li>
+<li class="chapter" data-level="5.2.2" data-path="5.2-rendering-bookdown.html"><a href="5.2-rendering-bookdown.html#rendering-bookdown-book"><i class="fa fa-check"></i><b>5.2.2</b> Rendering bookdown book</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="5.3-toggle-visibility-of-solutions.html"><a href="5.3-toggle-visibility-of-solutions.html"><i class="fa fa-check"></i><b>5.3</b> Toggle Visibility of Solutions</a></li>
+<li class="chapter" data-level="5.4" data-path="5.4-quarto.html"><a href="5.4-quarto.html"><i class="fa fa-check"></i><b>5.4</b> Quarto</a>
+<ul>
+<li class="chapter" data-level="5.4.1" data-path="5.4-quarto.html"><a href="5.4-quarto.html#book-structure"><i class="fa fa-check"></i><b>5.4.1</b> Book Structure</a></li>
+<li class="chapter" data-level="5.4.2" data-path="5.4-quarto.html"><a href="5.4-quarto.html#course-folder-structure"><i class="fa fa-check"></i><b>5.4.2</b> Course Folder Structure</a></li>
+<li class="chapter" data-level="5.4.3" data-path="5.4-quarto.html"><a href="5.4-quarto.html#code-chunks"><i class="fa fa-check"></i><b>5.4.3</b> Code chunks</a></li>
+<li class="chapter" data-level="5.4.4" data-path="5.4-quarto.html"><a href="5.4-quarto.html#knitr-options"><i class="fa fa-check"></i><b>5.4.4</b> Knitr Options</a></li>
+<li class="chapter" data-level="5.4.5" data-path="5.4-quarto.html"><a href="5.4-quarto.html#pdf-options"><i class="fa fa-check"></i><b>5.4.5</b> PDF Options</a></li>
+<li class="chapter" data-level="5.4.6" data-path="5.4-quarto.html"><a href="5.4-quarto.html#html-theming"><i class="fa fa-check"></i><b>5.4.6</b> HTML Theming</a></li>
+<li class="chapter" data-level="5.4.7" data-path="5.4-quarto.html"><a href="5.4-quarto.html#render-quarto"><i class="fa fa-check"></i><b>5.4.7</b> Render Quarto</a></li>
+<li class="chapter" data-level="5.4.8" data-path="5.4-quarto.html"><a href="5.4-quarto.html#cross-references-1"><i class="fa fa-check"></i><b>5.4.8</b> Cross References</a></li>
+<li class="chapter" data-level="5.4.9" data-path="5.4-quarto.html"><a href="5.4-quarto.html#equations-2"><i class="fa fa-check"></i><b>5.4.9</b> Equations</a></li>
+<li class="chapter" data-level="5.4.10" data-path="5.4-quarto.html"><a href="5.4-quarto.html#extensions-1"><i class="fa fa-check"></i><b>5.4.10</b> Extensions</a></li>
+<li class="chapter" data-level="5.4.11" data-path="5.4-quarto.html"><a href="5.4-quarto.html#divs-and-spans"><i class="fa fa-check"></i><b>5.4.11</b> Divs and Spans</a></li>
+<li class="chapter" data-level="5.4.12" data-path="5.4-quarto.html"><a href="5.4-quarto.html#theorems-2"><i class="fa fa-check"></i><b>5.4.12</b> Theorems</a></li>
+<li class="chapter" data-level="5.4.13" data-path="5.4-quarto.html"><a href="5.4-quarto.html#tables-2"><i class="fa fa-check"></i><b>5.4.13</b> Tables</a></li>
+<li class="chapter" data-level="5.4.14" data-path="5.4-quarto.html"><a href="5.4-quarto.html#raw-content"><i class="fa fa-check"></i><b>5.4.14</b> Raw Content</a></li>
+<li class="chapter" data-level="5.4.15" data-path="5.4-quarto.html"><a href="5.4-quarto.html#lists"><i class="fa fa-check"></i><b>5.4.15</b> Lists</a></li>
+<li class="chapter" data-level="5.4.16" data-path="5.4-quarto.html"><a href="5.4-quarto.html#callouts"><i class="fa fa-check"></i><b>5.4.16</b> Callouts</a></li>
+<li class="chapter" data-level="5.4.17" data-path="5.4-quarto.html"><a href="5.4-quarto.html#conditional-content"><i class="fa fa-check"></i><b>5.4.17</b> Conditional Content</a></li>
+<li class="chapter" data-level="5.4.18" data-path="5.4-quarto.html"><a href="5.4-quarto.html#faq-3"><i class="fa fa-check"></i><b>5.4.18</b> FAQ</a></li>
+</ul></li>
+<li class="chapter" data-level="5.5" data-path="5.5-xaringan-presentation.html"><a href="5.5-xaringan-presentation.html"><i class="fa fa-check"></i><b>5.5</b> xaringan Presentation</a>
+<ul>
+<li class="chapter" data-level="5.5.1" data-path="5.5-xaringan-presentation.html"><a href="5.5-xaringan-presentation.html#render-slides"><i class="fa fa-check"></i><b>5.5.1</b> Render Slides</a></li>
+<li class="chapter" data-level="5.5.2" data-path="5.5-xaringan-presentation.html"><a href="5.5-xaringan-presentation.html#remark-markdown-basics"><i class="fa fa-check"></i><b>5.5.2</b> Remark Markdown Basics</a></li>
+<li class="chapter" data-level="5.5.3" data-path="5.5-xaringan-presentation.html"><a href="5.5-xaringan-presentation.html#math-environments"><i class="fa fa-check"></i><b>5.5.3</b> Math Environments</a></li>
+<li class="chapter" data-level="5.5.4" data-path="5.5-xaringan-presentation.html"><a href="5.5-xaringan-presentation.html#bullet-list"><i class="fa fa-check"></i><b>5.5.4</b> Bullet list</a></li>
+<li class="chapter" data-level="5.5.5" data-path="5.5-xaringan-presentation.html"><a href="5.5-xaringan-presentation.html#tables-3"><i class="fa fa-check"></i><b>5.5.5</b> Tables</a></li>
+<li class="chapter" data-level="5.5.6" data-path="5.5-xaringan-presentation.html"><a href="5.5-xaringan-presentation.html#images"><i class="fa fa-check"></i><b>5.5.6</b> Images</a></li>
+<li class="chapter" data-level="5.5.7" data-path="5.5-xaringan-presentation.html"><a href="5.5-xaringan-presentation.html#presenter-notes"><i class="fa fa-check"></i><b>5.5.7</b> Presenter Notes</a></li>
+<li class="chapter" data-level="5.5.8" data-path="5.5-xaringan-presentation.html"><a href="5.5-xaringan-presentation.html#css-and-themes"><i class="fa fa-check"></i><b>5.5.8</b> CSS and themes</a></li>
+<li class="chapter" data-level="5.5.9" data-path="5.5-xaringan-presentation.html"><a href="5.5-xaringan-presentation.html#smart-punctuation"><i class="fa fa-check"></i><b>5.5.9</b> Smart Punctuation</a></li>
+<li class="chapter" data-level="5.5.10" data-path="5.5-xaringan-presentation.html"><a href="5.5-xaringan-presentation.html#working-offline"><i class="fa fa-check"></i><b>5.5.10</b> Working offline</a></li>
+<li class="chapter" data-level="5.5.11" data-path="5.5-xaringan-presentation.html"><a href="5.5-xaringan-presentation.html#parser"><i class="fa fa-check"></i><b>5.5.11</b> Parser</a></li>
+<li class="chapter" data-level="5.5.12" data-path="5.5-xaringan-presentation.html"><a href="5.5-xaringan-presentation.html#xaringanextra"><i class="fa fa-check"></i><b>5.5.12</b> xaringanExtra</a></li>
+<li class="chapter" data-level="5.5.13" data-path="5.5-xaringan-presentation.html"><a href="5.5-xaringan-presentation.html#faq-4"><i class="fa fa-check"></i><b>5.5.13</b> FAQ</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="6-basic-r.html"><a href="6-basic-r.html"><i class="fa fa-check"></i><b>6</b> Basic R</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="6.1-data-input-output.html"><a href="6.1-data-input-output.html"><i class="fa fa-check"></i><b>6.1</b> Data Input &amp; Output</a>
+<ul>
+<li class="chapter" data-level="6.1.1" data-path="6.1-data-input-output.html"><a href="6.1-data-input-output.html#read-data"><i class="fa fa-check"></i><b>6.1.1</b> Read Data</a></li>
+<li class="chapter" data-level="6.1.2" data-path="6.1-data-input-output.html"><a href="6.1-data-input-output.html#write-data"><i class="fa fa-check"></i><b>6.1.2</b> Write Data</a></li>
+</ul></li>
+<li class="chapter" data-level="6.2" data-path="6.2-functions.html"><a href="6.2-functions.html"><i class="fa fa-check"></i><b>6.2</b> Functions</a>
+<ul>
+<li class="chapter" data-level="6.2.1" data-path="6.2-functions.html"><a href="6.2-functions.html#inspecting-object-types-and-structure"><i class="fa fa-check"></i><b>6.2.1</b> Inspecting Object Types and Structure</a></li>
+<li class="chapter" data-level="6.2.2" data-path="6.2-functions.html"><a href="6.2-functions.html#type-of-variables"><i class="fa fa-check"></i><b>6.2.2</b> Type of Variables</a></li>
+<li class="chapter" data-level="6.2.3" data-path="6.2-functions.html"><a href="6.2-functions.html#variable-scope"><i class="fa fa-check"></i><b>6.2.3</b> Variable Scope</a></li>
+<li class="chapter" data-level="6.2.4" data-path="6.2-functions.html"><a href="6.2-functions.html#control-structures"><i class="fa fa-check"></i><b>6.2.4</b> Control Structures</a></li>
+</ul></li>
+<li class="chapter" data-level="6.3" data-path="6.3-basic-r-functions.html"><a href="6.3-basic-r-functions.html"><i class="fa fa-check"></i><b>6.3</b> Basic R functions</a>
+<ul>
+<li class="chapter" data-level="6.3.1" data-path="6.3-basic-r-functions.html"><a href="6.3-basic-r-functions.html#workspace-management"><i class="fa fa-check"></i><b>6.3.1</b> Workspace Management</a></li>
+<li class="chapter" data-level="6.3.2" data-path="6.3-basic-r-functions.html"><a href="6.3-basic-r-functions.html#data-display-and-output"><i class="fa fa-check"></i><b>6.3.2</b> Data Display and Output</a></li>
+<li class="chapter" data-level="6.3.3" data-path="6.3-basic-r-functions.html"><a href="6.3-basic-r-functions.html#data-manipulation-and-transformation"><i class="fa fa-check"></i><b>6.3.3</b> Data Manipulation and Transformation</a></li>
+<li class="chapter" data-level="6.3.4" data-path="6.3-basic-r-functions.html"><a href="6.3-basic-r-functions.html#generate-random-seeds"><i class="fa fa-check"></i><b>6.3.4</b> Generate Random Seeds</a></li>
+<li class="chapter" data-level="6.3.5" data-path="6.3-basic-r-functions.html"><a href="6.3-basic-r-functions.html#draw-random-samples"><i class="fa fa-check"></i><b>6.3.5</b> Draw random samples</a></li>
+<li class="chapter" data-level="6.3.6" data-path="6.3-basic-r-functions.html"><a href="6.3-basic-r-functions.html#fit-a-distribution"><i class="fa fa-check"></i><b>6.3.6</b> Fit a distribution</a></li>
+<li class="chapter" data-level="6.3.7" data-path="6.3-basic-r-functions.html"><a href="6.3-basic-r-functions.html#operation-on-list"><i class="fa fa-check"></i><b>6.3.7</b> Operation on list</a></li>
+</ul></li>
+<li class="chapter" data-level="6.4" data-path="6.4-data-splitting-and-grouping.html"><a href="6.4-data-splitting-and-grouping.html"><i class="fa fa-check"></i><b>6.4</b> Data Splitting and Grouping</a>
+<ul>
+<li class="chapter" data-level="6.4.1" data-path="6.4-data-splitting-and-grouping.html"><a href="6.4-data-splitting-and-grouping.html#the-split-function"><i class="fa fa-check"></i><b>6.4.1</b> The <code>split()</code> Function</a></li>
+<li class="chapter" data-level="6.4.2" data-path="6.4-data-splitting-and-grouping.html"><a href="6.4-data-splitting-and-grouping.html#split-and-apply-operations"><i class="fa fa-check"></i><b>6.4.2</b> Split-and-Apply Operations</a></li>
+</ul></li>
+<li class="chapter" data-level="6.5" data-path="6.5-apply-family.html"><a href="6.5-apply-family.html"><i class="fa fa-check"></i><b>6.5</b> <code>*apply()</code> Family</a>
+<ul>
+<li class="chapter" data-level="6.5.1" data-path="6.5-apply-family.html"><a href="6.5-apply-family.html#parallel-version-of-apply-function"><i class="fa fa-check"></i><b>6.5.1</b> <span class="env-green">Parallel</span> version of <code>apply</code> function</a></li>
+<li class="chapter" data-level="6.5.2" data-path="6.5-apply-family.html"><a href="6.5-apply-family.html#related-functions"><i class="fa fa-check"></i><b>6.5.2</b> Related Functions</a></li>
+</ul></li>
+<li class="chapter" data-level="6.6" data-path="6.6-statistical-summary-functions.html"><a href="6.6-statistical-summary-functions.html"><i class="fa fa-check"></i><b>6.6</b> Statistical Summary Functions</a>
+<ul>
+<li class="chapter" data-level="6.6.1" data-path="6.6-statistical-summary-functions.html"><a href="6.6-statistical-summary-functions.html#the-summary-function"><i class="fa fa-check"></i><b>6.6.1</b> The <code>summary()</code> Function</a></li>
+<li class="chapter" data-level="6.6.2" data-path="6.6-statistical-summary-functions.html"><a href="6.6-statistical-summary-functions.html#user-defined-summary-function"><i class="fa fa-check"></i><b>6.6.2</b> User-defined summary function</a></li>
+<li class="chapter" data-level="6.6.3" data-path="6.6-statistical-summary-functions.html"><a href="6.6-statistical-summary-functions.html#stargazer-function"><i class="fa fa-check"></i><b>6.6.3</b> <code>stargazer()</code> function</a></li>
+<li class="chapter" data-level="6.6.4" data-path="6.6-statistical-summary-functions.html"><a href="6.6-statistical-summary-functions.html#box-plot-statistics"><i class="fa fa-check"></i><b>6.6.4</b> Box plot statistics</a></li>
+</ul></li>
+<li class="chapter" data-level="6.7" data-path="6.7-contingency-table.html"><a href="6.7-contingency-table.html"><i class="fa fa-check"></i><b>6.7</b> Contingency Table</a>
+<ul>
+<li class="chapter" data-level="6.7.1" data-path="6.7-contingency-table.html"><a href="6.7-contingency-table.html#basic-frequency-counting"><i class="fa fa-check"></i><b>6.7.1</b> Basic Frequency Counting</a></li>
+<li class="chapter" data-level="6.7.2" data-path="6.7-contingency-table.html"><a href="6.7-contingency-table.html#creating-contingency-tables"><i class="fa fa-check"></i><b>6.7.2</b> Creating Contingency Tables</a></li>
+<li class="chapter" data-level="6.7.3" data-path="6.7-contingency-table.html"><a href="6.7-contingency-table.html#working-with-arrays-and-multi-dimensional-tables"><i class="fa fa-check"></i><b>6.7.3</b> Working with Arrays and Multi-dimensional Tables</a></li>
+<li class="chapter" data-level="6.7.4" data-path="6.7-contingency-table.html"><a href="6.7-contingency-table.html#flattening-and-exporting-tables"><i class="fa fa-check"></i><b>6.7.4</b> Flattening and Exporting Tables</a></li>
+<li class="chapter" data-level="6.7.5" data-path="6.7-contingency-table.html"><a href="6.7-contingency-table.html#table-visualization-and-formatting"><i class="fa fa-check"></i><b>6.7.5</b> Table Visualization and Formatting</a></li>
+</ul></li>
+<li class="chapter" data-level="6.8" data-path="6.8-data-frame-operations.html"><a href="6.8-data-frame-operations.html"><i class="fa fa-check"></i><b>6.8</b> Data Frame Operations</a>
+<ul>
+<li class="chapter" data-level="" data-path="6.8-data-frame-operations.html"><a href="6.8-data-frame-operations.html#columnrow-wise-operations"><i class="fa fa-check"></i>Column/Row-wise Operations</a></li>
+<li class="chapter" data-level="6.8.1" data-path="6.8-data-frame-operations.html"><a href="6.8-data-frame-operations.html#process-na-values"><i class="fa fa-check"></i><b>6.8.1</b> <span class="env-green"><strong>Process <code>NA</code> values</strong></span></a></li>
+</ul></li>
+<li class="chapter" data-level="6.9" data-path="6.9-matrix-multiplication.html"><a href="6.9-matrix-multiplication.html"><i class="fa fa-check"></i><b>6.9</b> Matrix multiplication</a></li>
+<li class="chapter" data-level="6.10" data-path="6.10-string-operations.html"><a href="6.10-string-operations.html"><i class="fa fa-check"></i><b>6.10</b> String Operations</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="7-tidyverse.html"><a href="7-tidyverse.html"><i class="fa fa-check"></i><b>7</b> Tidyverse</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="7.1-basic-operations-on-tibbles.html"><a href="7.1-basic-operations-on-tibbles.html"><i class="fa fa-check"></i><b>7.1</b> Basic operations on tibbles</a>
+<ul>
+<li class="chapter" data-level="7.1.1" data-path="7.1-basic-operations-on-tibbles.html"><a href="7.1-basic-operations-on-tibbles.html#check-unique-values"><i class="fa fa-check"></i><b>7.1.1</b> Check Unique Values</a></li>
+<li class="chapter" data-level="7.1.2" data-path="7.1-basic-operations-on-tibbles.html"><a href="7.1-basic-operations-on-tibbles.html#column-names"><i class="fa fa-check"></i><b>7.1.2</b> Column Names</a></li>
+<li class="chapter" data-level="7.1.3" data-path="7.1-basic-operations-on-tibbles.html"><a href="7.1-basic-operations-on-tibbles.html#column-operations"><i class="fa fa-check"></i><b>7.1.3</b> Column Operations</a></li>
+<li class="chapter" data-level="7.1.4" data-path="7.1-basic-operations-on-tibbles.html"><a href="7.1-basic-operations-on-tibbles.html#mutate"><i class="fa fa-check"></i><b>7.1.4</b> <code>mutate</code></a></li>
+<li class="chapter" data-level="7.1.5" data-path="7.1-basic-operations-on-tibbles.html"><a href="7.1-basic-operations-on-tibbles.html#concatenate-rows-into-a-tibble"><i class="fa fa-check"></i><b>7.1.5</b> Concatenate rows into a <code>tibble</code></a></li>
+<li class="chapter" data-level="7.1.6" data-path="7.1-basic-operations-on-tibbles.html"><a href="7.1-basic-operations-on-tibbles.html#data-subsetting-1"><i class="fa fa-check"></i><b>7.1.6</b> Data Subsetting</a></li>
+<li class="chapter" data-level="7.1.7" data-path="7.1-basic-operations-on-tibbles.html"><a href="7.1-basic-operations-on-tibbles.html#indirection"><i class="fa fa-check"></i><b>7.1.7</b> Indirection</a></li>
+<li class="chapter" data-level="7.1.8" data-path="7.1-basic-operations-on-tibbles.html"><a href="7.1-basic-operations-on-tibbles.html#dynamic-selection"><i class="fa fa-check"></i><b>7.1.8</b> Dynamic Selection</a></li>
+<li class="chapter" data-level="7.1.9" data-path="7.1-basic-operations-on-tibbles.html"><a href="7.1-basic-operations-on-tibbles.html#merge"><i class="fa fa-check"></i><b>7.1.9</b> Merge</a></li>
+</ul></li>
+<li class="chapter" data-level="7.2" data-path="7.2-pipe-operator.html"><a href="7.2-pipe-operator.html"><i class="fa fa-check"></i><b>7.2</b> Pipe Operator</a>
+<ul>
+<li class="chapter" data-level="7.2.1" data-path="7.2-pipe-operator.html"><a href="7.2-pipe-operator.html#native-pipe"><i class="fa fa-check"></i><b>7.2.1</b> Native Pipe <code>|&gt;</code></a></li>
+</ul></li>
+<li class="chapter" data-level="7.3" data-path="7.3-categorical-variables.html"><a href="7.3-categorical-variables.html"><i class="fa fa-check"></i><b>7.3</b> Categorical Variables</a>
+<ul>
+<li class="chapter" data-level="7.3.1" data-path="7.3-categorical-variables.html"><a href="7.3-categorical-variables.html#manipulate-string-columns"><i class="fa fa-check"></i><b>7.3.1</b> Manipulate String Columns</a></li>
+<li class="chapter" data-level="7.3.2" data-path="7.3-categorical-variables.html"><a href="7.3-categorical-variables.html#factors"><i class="fa fa-check"></i><b>7.3.2</b> Factors</a></li>
+</ul></li>
+<li class="chapter" data-level="7.4" data-path="7.4-group-and-apply-functions.html"><a href="7.4-group-and-apply-functions.html"><i class="fa fa-check"></i><b>7.4</b> Group and Apply Functions</a>
+<ul>
+<li class="chapter" data-level="7.4.1" data-path="7.4-group-and-apply-functions.html"><a href="7.4-group-and-apply-functions.html#group_by"><i class="fa fa-check"></i><b>7.4.1</b> <code>group_by()</code></a></li>
+<li class="chapter" data-level="7.4.2" data-path="7.4-group-and-apply-functions.html"><a href="7.4-group-and-apply-functions.html#subset-rows"><i class="fa fa-check"></i><b>7.4.2</b> Subset rows</a></li>
+<li class="chapter" data-level="7.4.3" data-path="7.4-group-and-apply-functions.html"><a href="7.4-group-and-apply-functions.html#summarize"><i class="fa fa-check"></i><b>7.4.3</b> Summarize</a></li>
+<li class="chapter" data-level="7.4.4" data-path="7.4-group-and-apply-functions.html"><a href="7.4-group-and-apply-functions.html#split-apply-combine"><i class="fa fa-check"></i><b>7.4.4</b> split-apply-combine</a></li>
+<li class="chapter" data-level="7.4.5" data-path="7.4-group-and-apply-functions.html"><a href="7.4-group-and-apply-functions.html#dplyrgroup_modify"><i class="fa fa-check"></i><b>7.4.5</b> <code>dplyr::group_modify()</code></a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="8-graphics.html"><a href="8-graphics.html"><i class="fa fa-check"></i><b>8</b> Graphics</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="8.1-multipanel-plot.html"><a href="8.1-multipanel-plot.html"><i class="fa fa-check"></i><b>8.1</b> Multipanel Plot</a>
+<ul>
+<li class="chapter" data-level="8.1.1" data-path="8.1-multipanel-plot.html"><a href="8.1-multipanel-plot.html#with-base-r"><i class="fa fa-check"></i><b>8.1.1</b> With Base R</a></li>
+<li class="chapter" data-level="8.1.2" data-path="8.1-multipanel-plot.html"><a href="8.1-multipanel-plot.html#with-cowplot-package"><i class="fa fa-check"></i><b>8.1.2</b> With <code>cowplot</code> package</a></li>
+</ul></li>
+<li class="chapter" data-level="8.2" data-path="8.2-goodlooking-colors.html"><a href="8.2-goodlooking-colors.html"><i class="fa fa-check"></i><b>8.2</b> Goodlooking Colors</a>
+<ul>
+<li class="chapter" data-level="8.2.1" data-path="8.2-goodlooking-colors.html"><a href="8.2-goodlooking-colors.html#color-models"><i class="fa fa-check"></i><b>8.2.1</b> Color models</a></li>
+<li class="chapter" data-level="8.2.2" data-path="8.2-goodlooking-colors.html"><a href="8.2-goodlooking-colors.html#base-r-functions-to-specify-colors"><i class="fa fa-check"></i><b>8.2.2</b> Base R functions to specify colors</a></li>
+<li class="chapter" data-level="8.2.3" data-path="8.2-goodlooking-colors.html"><a href="8.2-goodlooking-colors.html#colorspace-package"><i class="fa fa-check"></i><b>8.2.3</b> <code>colorspace</code> Package</a></li>
+<li class="chapter" data-level="8.2.4" data-path="8.2-goodlooking-colors.html"><a href="8.2-goodlooking-colors.html#rcolorbrewer"><i class="fa fa-check"></i><b>8.2.4</b> RColorBrewer</a></li>
+<li class="chapter" data-level="8.2.5" data-path="8.2-goodlooking-colors.html"><a href="8.2-goodlooking-colors.html#grey-scale"><i class="fa fa-check"></i><b>8.2.5</b> Grey Scale</a></li>
+<li class="chapter" data-level="8.2.6" data-path="8.2-goodlooking-colors.html"><a href="8.2-goodlooking-colors.html#viridis"><i class="fa fa-check"></i><b>8.2.6</b> viridis</a></li>
+<li class="chapter" data-level="8.2.7" data-path="8.2-goodlooking-colors.html"><a href="8.2-goodlooking-colors.html#ggsci"><i class="fa fa-check"></i><b>8.2.7</b> <code>ggsci</code></a></li>
+<li class="chapter" data-level="8.2.8" data-path="8.2-goodlooking-colors.html"><a href="8.2-goodlooking-colors.html#generate-and-show-color-palettes"><i class="fa fa-check"></i><b>8.2.8</b> <strong>Generate and Show Color Palettes</strong></a></li>
+<li class="chapter" data-level="8.2.9" data-path="8.2-goodlooking-colors.html"><a href="8.2-goodlooking-colors.html#color-interpolation"><i class="fa fa-check"></i><b>8.2.9</b> Color Interpolation</a></li>
+</ul></li>
+<li class="chapter" data-level="8.3" data-path="8.3-math-expression-in-figures.html"><a href="8.3-math-expression-in-figures.html"><i class="fa fa-check"></i><b>8.3</b> Math Expression in Figures</a></li>
+<li class="chapter" data-level="8.4" data-path="8.4-control-graphics-devices.html"><a href="8.4-control-graphics-devices.html"><i class="fa fa-check"></i><b>8.4</b> Control Graphics Devices</a>
+<ul>
+<li class="chapter" data-level="8.4.1" data-path="8.4-control-graphics-devices.html"><a href="8.4-control-graphics-devices.html#save-png"><i class="fa fa-check"></i><b>8.4.1</b> Save PNG</a></li>
+</ul></li>
+<li class="chapter" data-level="8.5" data-path="8.5-ggplot.html"><a href="8.5-ggplot.html"><i class="fa fa-check"></i><b>8.5</b> ggplot</a>
+<ul>
+<li class="chapter" data-level="8.5.1" data-path="8.5-ggplot.html"><a href="8.5-ggplot.html#wide-table-to-long-table"><i class="fa fa-check"></i><b>8.5.1</b> Wide table to Long table</a></li>
+<li class="chapter" data-level="8.5.2" data-path="8.5-ggplot.html"><a href="8.5-ggplot.html#dual-y-axis-plot"><i class="fa fa-check"></i><b>8.5.2</b> <strong>Dual y-axis plot</strong></a></li>
+<li class="chapter" data-level="8.5.3" data-path="8.5-ggplot.html"><a href="8.5-ggplot.html#aes"><i class="fa fa-check"></i><b>8.5.3</b> <code>aes()</code></a></li>
+<li class="chapter" data-level="8.5.4" data-path="8.5-ggplot.html"><a href="8.5-ggplot.html#continuous-scales-for-data"><i class="fa fa-check"></i><b>8.5.4</b> Continuous scales for data</a></li>
+<li class="chapter" data-level="8.5.5" data-path="8.5-ggplot.html"><a href="8.5-ggplot.html#add-regression-line"><i class="fa fa-check"></i><b>8.5.5</b> Add regression line</a></li>
+<li class="chapter" data-level="8.5.6" data-path="8.5-ggplot.html"><a href="8.5-ggplot.html#subplots-faceting"><i class="fa fa-check"></i><b>8.5.6</b> Subplots / Faceting</a></li>
+<li class="chapter" data-level="8.5.7" data-path="8.5-ggplot.html"><a href="8.5-ggplot.html#parameters-1"><i class="fa fa-check"></i><b>8.5.7</b> Parameters</a></li>
+<li class="chapter" data-level="8.5.8" data-path="8.5-ggplot.html"><a href="8.5-ggplot.html#guides-together-with-guide_legend"><i class="fa fa-check"></i><b>8.5.8</b> <code>guides()</code>, together with <code>guide_legend()</code></a></li>
+<li class="chapter" data-level="8.5.9" data-path="8.5-ggplot.html"><a href="8.5-ggplot.html#template-for-multi-series"><i class="fa fa-check"></i><b>8.5.9</b> Template for multi-series</a></li>
+<li class="chapter" data-level="8.5.10" data-path="8.5-ggplot.html"><a href="8.5-ggplot.html#grid.gedit"><i class="fa fa-check"></i><b>8.5.10</b> <code>grid.gedit()</code></a></li>
+</ul></li>
+<li class="chapter" data-level="8.6" data-path="8.6-plot-raster-data.html"><a href="8.6-plot-raster-data.html"><i class="fa fa-check"></i><b>8.6</b> plot <code>Raster</code> data</a>
+<ul>
+<li class="chapter" data-level="8.6.1" data-path="8.6-plot-raster-data.html"><a href="8.6-plot-raster-data.html#add-patterns-to-shapes"><i class="fa fa-check"></i><b>8.6.1</b> Add Patterns to Shapes</a></li>
+</ul></li>
+<li class="chapter" data-level="8.7" data-path="8.7-histogram.html"><a href="8.7-histogram.html"><i class="fa fa-check"></i><b>8.7</b> Histogram</a></li>
+<li class="chapter" data-level="8.8" data-path="8.8-qq-plot.html"><a href="8.8-qq-plot.html"><i class="fa fa-check"></i><b>8.8</b> QQ-plot</a></li>
+<li class="chapter" data-level="8.9" data-path="8.9-heatmap.html"><a href="8.9-heatmap.html"><i class="fa fa-check"></i><b>8.9</b> Heatmap</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="9-time-series.html"><a href="9-time-series.html"><i class="fa fa-check"></i><b>9</b> Time Series</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="9.1-date.html"><a href="9.1-date.html"><i class="fa fa-check"></i><b>9.1</b> Date</a></li>
+<li class="chapter" data-level="9.2" data-path="9.2-process-data.html"><a href="9.2-process-data.html"><i class="fa fa-check"></i><b>9.2</b> Process Data</a>
+<ul>
+<li class="chapter" data-level="9.2.1" data-path="9.2-process-data.html"><a href="9.2-process-data.html#tidyquant"><i class="fa fa-check"></i><b>9.2.1</b> <code>tidyquant</code></a></li>
+<li class="chapter" data-level="9.2.2" data-path="9.2-process-data.html"><a href="9.2-process-data.html#from-tibble-to-xts"><i class="fa fa-check"></i><b>9.2.2</b> From tibble to <code>xts</code></a></li>
+</ul></li>
+<li class="chapter" data-level="9.3" data-path="9.3-portfolio-return.html"><a href="9.3-portfolio-return.html"><i class="fa fa-check"></i><b>9.3</b> Portfolio Return</a></li>
+<li class="chapter" data-level="9.4" data-path="9.4-plot-ts.html"><a href="9.4-plot-ts.html"><i class="fa fa-check"></i><b>9.4</b> Plot TS</a>
+<ul>
+<li class="chapter" data-level="9.4.1" data-path="9.4-plot-ts.html"><a href="9.4-plot-ts.html#plot.xts"><i class="fa fa-check"></i><b>9.4.1</b> <code>plot.xts</code></a></li>
+<li class="chapter" data-level="9.4.2" data-path="9.4-plot-ts.html"><a href="9.4-plot-ts.html#autoplot"><i class="fa fa-check"></i><b>9.4.2</b> <code>autoplot</code></a></li>
+</ul></li>
+<li class="chapter" data-level="9.5" data-path="9.5-time-series-regression.html"><a href="9.5-time-series-regression.html"><i class="fa fa-check"></i><b>9.5</b> Time Series Regression</a>
+<ul>
+<li class="chapter" data-level="9.5.1" data-path="9.5-time-series-regression.html"><a href="9.5-time-series-regression.html#lag-polynomial"><i class="fa fa-check"></i><b>9.5.1</b> Lag Polynomial</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="10-regression.html"><a href="10-regression.html"><i class="fa fa-check"></i><b>10</b> Regression</a>
+<ul>
+<li class="chapter" data-level="10.1" data-path="10.1-ols.html"><a href="10.1-ols.html"><i class="fa fa-check"></i><b>10.1</b> OLS</a>
+<ul>
+<li class="chapter" data-level="10.1.1" data-path="10.1-ols.html"><a href="10.1-ols.html#get-the-coef-estimates"><i class="fa fa-check"></i><b>10.1.1</b> Get the coef estimates</a></li>
+<li class="chapter" data-level="10.1.2" data-path="10.1-ols.html"><a href="10.1-ols.html#covariance-matrix"><i class="fa fa-check"></i><b>10.1.2</b> Covariance Matrix</a></li>
+<li class="chapter" data-level="10.1.3" data-path="10.1-ols.html"><a href="10.1-ols.html#model-performance"><i class="fa fa-check"></i><b>10.1.3</b> Model performance</a></li>
+<li class="chapter" data-level="10.1.4" data-path="10.1-ols.html"><a href="10.1-ols.html#diagnostic-plots"><i class="fa fa-check"></i><b>10.1.4</b> Diagnostic Plots</a></li>
+<li class="chapter" data-level="10.1.5" data-path="10.1-ols.html"><a href="10.1-ols.html#model-summary"><i class="fa fa-check"></i><b>10.1.5</b> Model Summary</a></li>
+<li class="chapter" data-level="10.1.6" data-path="10.1-ols.html"><a href="10.1-ols.html#dummy-variable"><i class="fa fa-check"></i><b>10.1.6</b> Dummy variable</a></li>
+<li class="chapter" data-level="10.1.7" data-path="10.1-ols.html"><a href="10.1-ols.html#prediction"><i class="fa fa-check"></i><b>10.1.7</b> Prediction</a></li>
+</ul></li>
+<li class="chapter" data-level="10.2" data-path="10.2-panel.html"><a href="10.2-panel.html"><i class="fa fa-check"></i><b>10.2</b> Panel</a>
+<ul>
+<li class="chapter" data-level="10.2.1" data-path="10.2-panel.html"><a href="10.2-panel.html#dynamic-panel"><i class="fa fa-check"></i><b>10.2.1</b> Dynamic Panel</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="11-machine-learning.html"><a href="11-machine-learning.html"><i class="fa fa-check"></i><b>11</b> Machine Learning</a>
+<ul>
+<li class="chapter" data-level="11.1" data-path="11.1-imbalanced-datasets.html"><a href="11.1-imbalanced-datasets.html"><i class="fa fa-check"></i><b>11.1</b> Imbalanced datasets</a>
+<ul>
+<li class="chapter" data-level="11.1.1" data-path="11.1-imbalanced-datasets.html"><a href="11.1-imbalanced-datasets.html#downsampling-and-upweighting"><i class="fa fa-check"></i><b>11.1.1</b> Downsampling and Upweighting</a></li>
+</ul></li>
+<li class="chapter" data-level="11.2" data-path="11.2-random-forest.html"><a href="11.2-random-forest.html"><i class="fa fa-check"></i><b>11.2</b> Random Forest</a>
+<ul>
+<li class="chapter" data-level="" data-path="11.2-random-forest.html"><a href="11.2-random-forest.html#implementation-in-r"><i class="fa fa-check"></i>Implementation in R</a></li>
+<li class="chapter" data-level="" data-path="11.2-random-forest.html"><a href="11.2-random-forest.html#imbalance-classification"><i class="fa fa-check"></i>Imbalance Classification</a></li>
+</ul></li>
+<li class="chapter" data-level="11.3" data-path="11.3-neural-network.html"><a href="11.3-neural-network.html"><i class="fa fa-check"></i><b>11.3</b> Neural Network</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="12-stata.html"><a href="12-stata.html"><i class="fa fa-check"></i><b>12</b> Stata</a>
+<ul>
+<li class="chapter" data-level="12.1" data-path="12.1-basic-syntax.html"><a href="12.1-basic-syntax.html"><i class="fa fa-check"></i><b>12.1</b> Basic syntax</a>
+<ul>
+<li class="chapter" data-level="12.1.1" data-path="12.1-basic-syntax.html"><a href="12.1-basic-syntax.html#package-management"><i class="fa fa-check"></i><b>12.1.1</b> Package management</a></li>
+<li class="chapter" data-level="12.1.2" data-path="12.1-basic-syntax.html"><a href="12.1-basic-syntax.html#types-and-declarations"><i class="fa fa-check"></i><b>12.1.2</b> Types and Declarations</a></li>
+<li class="chapter" data-level="12.1.3" data-path="12.1-basic-syntax.html"><a href="12.1-basic-syntax.html#create-new-variables"><i class="fa fa-check"></i><b>12.1.3</b> Create new variables</a></li>
+<li class="chapter" data-level="12.1.4" data-path="12.1-basic-syntax.html"><a href="12.1-basic-syntax.html#refer-to-a-range-of-variables"><i class="fa fa-check"></i><b>12.1.4</b> Refer to a range of variables</a></li>
+<li class="chapter" data-level="12.1.5" data-path="12.1-basic-syntax.html"><a href="12.1-basic-syntax.html#system-variables"><i class="fa fa-check"></i><b>12.1.5</b> System Variables</a></li>
+<li class="chapter" data-level="12.1.6" data-path="12.1-basic-syntax.html"><a href="12.1-basic-syntax.html#matrix"><i class="fa fa-check"></i><b>12.1.6</b> Matrix</a></li>
+<li class="chapter" data-level="12.1.7" data-path="12.1-basic-syntax.html"><a href="12.1-basic-syntax.html#factor-variables"><i class="fa fa-check"></i><b>12.1.7</b> Factor Variables</a></li>
+<li class="chapter" data-level="12.1.8" data-path="12.1-basic-syntax.html"><a href="12.1-basic-syntax.html#time-series-varlists"><i class="fa fa-check"></i><b>12.1.8</b> Time series varlists</a></li>
+<li class="chapter" data-level="12.1.9" data-path="12.1-basic-syntax.html"><a href="12.1-basic-syntax.html#labels"><i class="fa fa-check"></i><b>12.1.9</b> Labels</a></li>
+<li class="chapter" data-level="12.1.10" data-path="12.1-basic-syntax.html"><a href="12.1-basic-syntax.html#output-format"><i class="fa fa-check"></i><b>12.1.10</b> Output format</a></li>
+</ul></li>
+<li class="chapter" data-level="12.2" data-path="12.2-data-manipulation.html"><a href="12.2-data-manipulation.html"><i class="fa fa-check"></i><b>12.2</b> Data Manipulation</a>
+<ul>
+<li class="chapter" data-level="12.2.1" data-path="12.2-data-manipulation.html"><a href="12.2-data-manipulation.html#import-and-export"><i class="fa fa-check"></i><b>12.2.1</b> Import and Export</a></li>
+<li class="chapter" data-level="12.2.2" data-path="12.2-data-manipulation.html"><a href="12.2-data-manipulation.html#save-estimation-results"><i class="fa fa-check"></i><b>12.2.2</b> Save Estimation Results</a></li>
+<li class="chapter" data-level="12.2.3" data-path="12.2-data-manipulation.html"><a href="12.2-data-manipulation.html#stored-results"><i class="fa fa-check"></i><b>12.2.3</b> Stored Results</a></li>
+</ul></li>
+<li class="chapter" data-level="12.3" data-path="12.3-predict.html"><a href="12.3-predict.html"><i class="fa fa-check"></i><b>12.3</b> Predict</a></li>
+<li class="chapter" data-level="12.4" data-path="12.4-forecast.html"><a href="12.4-forecast.html"><i class="fa fa-check"></i><b>12.4</b> Forecast</a>
+<ul>
+<li class="chapter" data-level="12.4.1" data-path="12.4-forecast.html"><a href="12.4-forecast.html#essential-procedure"><i class="fa fa-check"></i><b>12.4.1</b> Essential Procedure</a></li>
+<li class="chapter" data-level="12.4.2" data-path="12.4-forecast.html"><a href="12.4-forecast.html#creates-a-new-forecast-model"><i class="fa fa-check"></i><b>12.4.2</b> Creates a new forecast model</a></li>
+<li class="chapter" data-level="12.4.3" data-path="12.4-forecast.html"><a href="12.4-forecast.html#add-equationsidentifies"><i class="fa fa-check"></i><b>12.4.3</b> Add equations/identifies</a></li>
+<li class="chapter" data-level="12.4.4" data-path="12.4-forecast.html"><a href="12.4-forecast.html#solve-the-foreceast"><i class="fa fa-check"></i><b>12.4.4</b> Solve the foreceast</a></li>
+<li class="chapter" data-level="12.4.5" data-path="12.4-forecast.html"><a href="12.4-forecast.html#use-example-forecast-a-panel"><i class="fa fa-check"></i><b>12.4.5</b> Use example: forecast a panel</a></li>
+</ul></li>
+<li class="chapter" data-level="12.5" data-path="12.5-panel-1.html"><a href="12.5-panel-1.html"><i class="fa fa-check"></i><b>12.5</b> Panel</a></li>
+<li class="chapter" data-level="12.6" data-path="12.6-arellano-bond-estimator.html"><a href="12.6-arellano-bond-estimator.html"><i class="fa fa-check"></i><b>12.6</b> Arellano-Bond Estimator</a>
+<ul>
+<li class="chapter" data-level="12.6.1" data-path="12.6-arellano-bond-estimator.html"><a href="12.6-arellano-bond-estimator.html#xtabond-syntax"><i class="fa fa-check"></i><b>12.6.1</b> xtabond Syntax</a></li>
+<li class="chapter" data-level="12.6.2" data-path="12.6-arellano-bond-estimator.html"><a href="12.6-arellano-bond-estimator.html#use-example"><i class="fa fa-check"></i><b>12.6.2</b> Use Example</a></li>
+<li class="chapter" data-level="12.6.3" data-path="12.6-arellano-bond-estimator.html"><a href="12.6-arellano-bond-estimator.html#diagnostic-tests"><i class="fa fa-check"></i><b>12.6.3</b> Diagnostic Tests</a></li>
+<li class="chapter" data-level="12.6.4" data-path="12.6-arellano-bond-estimator.html"><a href="12.6-arellano-bond-estimator.html#predetermined-covariates"><i class="fa fa-check"></i><b>12.6.4</b> Predetermined Covariates</a></li>
+<li class="chapter" data-level="12.6.5" data-path="12.6-arellano-bond-estimator.html"><a href="12.6-arellano-bond-estimator.html#endogenous-covariates"><i class="fa fa-check"></i><b>12.6.5</b> Endogenous Covariates</a></li>
+<li class="chapter" data-level="12.6.6" data-path="12.6-arellano-bond-estimator.html"><a href="12.6-arellano-bond-estimator.html#xtabond2"><i class="fa fa-check"></i><b>12.6.6</b> xtabond2</a></li>
+<li class="chapter" data-level="12.6.7" data-path="12.6-arellano-bond-estimator.html"><a href="12.6-arellano-bond-estimator.html#xtdpd"><i class="fa fa-check"></i><b>12.6.7</b> xtdpd</a></li>
+<li class="chapter" data-level="12.6.8" data-path="12.6-arellano-bond-estimator.html"><a href="12.6-arellano-bond-estimator.html#system-gmm-estimation"><i class="fa fa-check"></i><b>12.6.8</b> System GMM Estimation</a></li>
+</ul></li>
+<li class="chapter" data-level="12.7" data-path="12.7-common-correlated-effects-models.html"><a href="12.7-common-correlated-effects-models.html"><i class="fa fa-check"></i><b>12.7</b> Common Correlated Effects Models</a>
+<ul>
+<li class="chapter" data-level="12.7.1" data-path="12.7-common-correlated-effects-models.html"><a href="12.7-common-correlated-effects-models.html#econometric-model"><i class="fa fa-check"></i><b>12.7.1</b> Econometric model</a></li>
+<li class="chapter" data-level="12.7.2" data-path="12.7-common-correlated-effects-models.html"><a href="12.7-common-correlated-effects-models.html#estimation"><i class="fa fa-check"></i><b>12.7.2</b> Estimation</a></li>
+<li class="chapter" data-level="12.7.3" data-path="12.7-common-correlated-effects-models.html"><a href="12.7-common-correlated-effects-models.html#long-run-effects"><i class="fa fa-check"></i><b>12.7.3</b> Long run effects</a></li>
+<li class="chapter" data-level="12.7.4" data-path="12.7-common-correlated-effects-models.html"><a href="12.7-common-correlated-effects-models.html#boostrap"><i class="fa fa-check"></i><b>12.7.4</b> Boostrap</a></li>
+</ul></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">R Notes</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<script>
+// Simple toggle utility retained
+function myFunction(id) {
+  var x = document.getElementById(id);
+  x.style.display = (x.style.display === 'none') ? 'block' : 'none';
+}
+
+// Auto-expand active top-level section so its level 2/3 items are visible
+document.addEventListener('DOMContentLoaded', function() {
+  try {
+    var summary = document.querySelector('.book-summary ul.summary');
+    if (!summary) return;
+
+    function applyAutoOpen() {
+      // Clear previous
+      summary.querySelectorAll('li.chapter.auto-open').forEach(function(li){ li.classList.remove('auto-open'); });
+      var active = summary.querySelector('li.chapter.active');
+      if (active) active.classList.add('auto-open');
+    }
+
+    applyAutoOpen();
+
+    // GitBook emits page.change on navigation
+    if (typeof gitbook !== 'undefined' && gitbook.events) {
+      gitbook.events.on('page.change', function(){
+        applyAutoOpen();
+      });
+    }
+  } catch(e) {
+    console.warn('TOC auto-open error', e);
+  }
+});
+
+// Toggle collapse: clicking an expanded section collapses it
+document.addEventListener('DOMContentLoaded', function() {
+  try {
+    var summary = document.querySelector('.book-summary ul.summary');
+    if (!summary) return;
+
+    // Add click handlers to chapter links with children
+    summary.querySelectorAll('li.chapter').forEach(function(chapter) {
+      var sublist = chapter.querySelector('ul');
+      if (!sublist) return; // Only chapters with subsections
+
+      var link = chapter.querySelector('a');
+      if (!link) return;
+
+      link.addEventListener('click', function(e) {
+        // Check if this chapter is already expanded
+        var isExpanded = chapter.classList.contains('auto-open');
+        
+        if (isExpanded) {
+          // Collapse it
+          e.preventDefault();
+          chapter.classList.remove('auto-open');
+        } else {
+          // Expand it (remove auto-open from others first)
+          summary.querySelectorAll('li.chapter.auto-open').forEach(function(li) {
+            if (li !== chapter) li.classList.remove('auto-open');
+          });
+          chapter.classList.add('auto-open');
+        }
+      });
+    });
+  } catch(e) {
+    console.warn('TOC toggle error', e);
+  }
+});
+</script>
+<style>
+/* Show nested UL of active chapter when collapse=section */
+.book-summary ul.summary li.chapter.auto-open ul { display: block !important; }
+.book-summary ul.summary li.chapter.auto-open > a { font-weight: 700; }
+</style>
+<div id="arellano-bond-estimator" class="section level2 hasAnchor" number="12.6">
+<h2><span class="header-section-number">12.6</span> Arellano-Bond Estimator<a href="12.6-arellano-bond-estimator.html#arellano-bond-estimator" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>If an equation did contain a lagged dependent variable, then one could use a <strong>dynamic panel-data</strong> (DPD) estimator such as <code>xtabond</code>, <code>xtdpd</code>, or <code>xtdpdsys</code>. DPD estimators are designed for cases where the number of observations per panel <span class="math inline">\(T\)</span> is small.</p>
+<p>As shown by <span class="citation">Nickell (<a href="#ref-Nickell1981">1981</a>)</span>, the bias of the standard
+fixed- and random-effects estimators in the presence of lagged dependent variables is of order <span class="math inline">\(1/T\)</span> and is thus particularly severe when each panel has relatively few observations.</p>
+<p><span class="citation">Judson and Owen (<a href="#ref-Judson1999">1999</a>)</span> perform Monte Carlo experiments to examine the relative performance of different panel-data estimators in the presence of lagged dependent variables when used with panel datasets having dimensions more commonly encountered in macroeconomic applications. Based on their results,</p>
+<ul>
+<li><p>The bias of the standard fixed-effects estimator (LSDV in their notation) is not inconsequential even when <span class="math inline">\(T=20.\)</span></p></li>
+<li><p>For <span class="math inline">\(T=30\)</span>, the fixed-effects estimator does work as well as most alternatives.</p>
+<p>The only estimator that appreciably outperformed the standard fixed-effects estimator when <span class="math inline">\(T=30\)</span> is the least-squares dummy variable corrected estimator (LSDVC in their notation).</p>
+<p><span class="citation">Bruno (<a href="#ref-Bruno2005">2005</a>)</span> provides a Stata implementation of that estimator.</p></li>
+</ul>
+<p>The <a href="https://www.stata.com/manuals/xtxtabond.pdf">Arellano–Bond estimator</a> is for datasets with many panels and few periods. (Technically, the large-sample properties are derived with the number of panels going to infinity and the number of periods held fixed.) The number of instruments increases quadratically in the number of periods. If your dataset is better described by a framework in which both the number of panels and the number of periods is large, then you should consider other estimators such as <code>xtiveg</code> or <code>xtreg, fe</code>.</p>
+<div id="xtabond-syntax" class="section level3 hasAnchor" number="12.6.1">
+<h3><span class="header-section-number">12.6.1</span> xtabond Syntax<a href="12.6-arellano-bond-estimator.html#xtabond-syntax" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The Arellano-Bond estimator may be obtained in Stata using either the <code>xtabond</code> or <code>xtdpd</code> command.</p>
+<p><a href="https://www.stata.com/manuals/xtxtabond.pdf"><code>xtabond</code></a> fits a linear dynamic panel-data model where the unobserved unit-level effects are correlated with the lags of the dependent variable, known as the Arellano–Bond estimator. This estimator is designed for datasets with many panels and few periods, and it requires that there be <strong>no autocorrelation</strong> in the idiosyncratic errors.</p>
+<p><code>xtabond</code> uses moment conditions in which <span class="env-green">lags of the dependent variable</span> and <span class="env-green">first differences of the exogenous variables</span> are instruments for the first-differenced equation.</p>
+<div class="sourceCode" id="cb969"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb969-1"><a href="12.6-arellano-bond-estimator.html#cb969-1" tabindex="-1"></a><span class="kw">xtabond</span> depvar [ indepvars ] [ <span class="kw">if</span> ] [ <span class="kw">in</span> ] [, options ]</span></code></pre></div>
+<p><strong>Estimation options</strong>:</p>
+<ul>
+<li><p><code>noconstant</code>: suppress the constant term.</p></li>
+<li><p><code>lags(#)</code>: <span class="env-green"><strong>#lags of dependent variable</strong></span> as covariates; default is <span class="env-green"><code>lags(1)</code></span>. Let <span class="math inline">\(p\)</span> be the number of lags of the dependent variable included in the model.</p></li>
+<li><p><code>inst(varlist)</code>: additional instruments to be included in the model except for lags of the dependent variable and first differences of exogenous variables, which are included by default.</p>
+<p>These instruments are <span class="env-orange">NOT differenced</span> before including them in the instrument matrix.</p></li>
+<li><p><code>maxldep(#)</code>: maximum lags of dependent variable for use as (GMM-type) instruments.</p>
+<p>Defaults to <span class="math inline">\(T_i-p-2,\)</span> where <span class="math inline">\(p\)</span> is the number of lags of the dependent variable to be included in the model (i.e., <code>lags(#)</code>). <span class="math inline">\(p=1\)</span> by default.</p>
+<p>For example, when <span class="math inline">\(T_i=10\)</span> (10 time periods per panel unit), and <code>lags(1)</code> is specified (one lag of the dependent variable in the RHS), then <code>maxldep(7)</code> (<span class="math inline">\(T_i-p-1=10-1-2=7\)</span>) is the default.</p>
+<p>Here is a small table showing which lags act as instruments at each <span class="math inline">\(t\)</span> from 3 to 10:</p>
+<table>
+<thead>
+<tr class="header">
+<th><span class="math inline">\(t\)</span></th>
+<th>GMM-type instruments</th>
+<th>Number of instruments</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>3</td>
+<td><span class="math inline">\(y_{i,1}\)</span></td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td><span class="math inline">\(y_{i,2}, y_{i,1}\)</span></td>
+<td>2</td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td><span class="math inline">\(y_{i,3}, y_{i,2}, y_{i,1}\)</span></td>
+<td>3</td>
+</tr>
+<tr class="even">
+<td>6</td>
+<td><span class="math inline">\(y_{i,4}, y_{i,3}, y_{i,2}, y_{i,1}\)</span></td>
+<td>4</td>
+</tr>
+<tr class="odd">
+<td>7</td>
+<td><span class="math inline">\(y_{i,5}, y_{i,4}, y_{i,3}, y_{i,2}, y_{i,1}\)</span></td>
+<td>5</td>
+</tr>
+<tr class="even">
+<td>8</td>
+<td><span class="math inline">\(y_{i,6}, y_{i,5}, y_{i,4}, y_{i,3}, y_{i,2}, y_{i,1}\)</span></td>
+<td>6</td>
+</tr>
+<tr class="odd">
+<td>9</td>
+<td><span class="math inline">\(y_{i,7}, y_{i,6}, y_{i,5}, y_{i,4}, y_{i,3}, y_{i,2}\)</span></td>
+<td>7</td>
+</tr>
+<tr class="even">
+<td>10</td>
+<td><span class="math inline">\(y_{i,8}, y_{i,7}, y_{i,6}, y_{i,5}, y_{i,4}, y_{i,3}\)</span></td>
+<td>8</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><p>For <span class="math inline">\(t\le 7,\)</span> there aren’t enough lags to reach the maximum lag of 7, so all available lags are used.</p></li>
+<li><p>Starting from <span class="math inline">\(t=8,\)</span> the maximum lag of 7 is reached, so only lags 2 to 7 are used as instruments.</p></li>
+<li><p>At <span class="math inline">\(t=8,\)</span> you have 6 instruments (lags 2 to 7).</p>
+<ul>
+<li>You don’t use lag one, <span class="math inline">\(y_{i,7},\)</span> because it is already included as a regressor.</li>
+<li>The maximum lag is 7, i.e., <span class="math inline">\(y_{i, 1},\)</span> as <span class="math inline">\(8-7=1.\)</span></li>
+</ul></li>
+<li><p>At <span class="math inline">\(t=10,\)</span> you have 6 instruments (lags 2 to 7).</p></li>
+</ul></li>
+<li><p><code>maxlags(#)</code>: maximum lags of <u>predetermined and endogenous variables</u> for use as (standard) instruments.</p>
+<p>First difference of all the exogenous variables are used as standard instruments by default.</p>
+<ul>
+<li>For predetermined variables, defaults to use all <span class="math inline">\(T_i-p-1\)</span> lags.</li>
+<li>For endogenous variables, defaults to use all <span class="math inline">\(T_i-p-2\)</span> lags.</li>
+</ul></li>
+<li><p><code>twostep</code>: compute the two-step estimator instead of the one-step estimator</p></li>
+<li><p><code>pre(varlist[, lagstruct(prelags, premaxlags)])</code>: <strong>predetermined variables</strong>; can be specified more than once.</p>
+<p>Optionally, you may specify <code>prelags</code> lags of the predetermined variables to be used as instruments. Defaults to 0.</p></li>
+<li><p><code>endogenous(varlist[, lagstruct(endlags, endmaxlags)])</code>: <strong>endogenous variables</strong>; can be specified more than once.</p></li>
+<li><p><code>vce(vcetype)</code></p>
+<ul>
+<li><code>vce(gmm)</code> the default, uses the conventionally derived variance estimator for generalized method of moments estimation.</li>
+<li><code>vce(robust)</code>: uses the robust estimator. After one-step estimation, this is the Arellano–Bond robust VCE estimator. After two-step estimation, this is the Windmeijer (2005) WC-robust estimator.</li>
+</ul></li>
+</ul>
+<p><strong>Reporting options:</strong></p>
+<ul>
+<li><p><code>artests(#)</code>: use <code>#</code> as maximum order for AR tests; default is <code>artests(2)</code>.</p>
+<p>The tests are reported by <code>estat abond</code>.</p>
+<p>Specifying the order of the highest test at <em>estimation time</em> is more <em>efficient</em> than specifying it to <code>estat abond</code>, because <code>estat abond</code> must refit the model to obtain the test statistics.</p></li>
+</ul>
+<hr />
+<p><strong>Quick Start</strong></p>
+<ul>
+<li><p>Arellano–Bond estimation of y on x1 and x2 using xtset data</p>
+<div class="sourceCode" id="cb970"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb970-1"><a href="12.6-arellano-bond-estimator.html#cb970-1" tabindex="-1"></a><span class="kw">xtabond</span> <span class="fu">y</span> x1 <span class="kw">x2</span></span></code></pre></div></li>
+<li><p>One-step estimator with robust standard errors</p>
+<div class="sourceCode" id="cb971"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb971-1"><a href="12.6-arellano-bond-estimator.html#cb971-1" tabindex="-1"></a><span class="kw">xtabond</span> <span class="fu">y</span> x1 <span class="kw">x2</span>, <span class="kw">vce</span>(<span class="kw">robust</span>)</span></code></pre></div></li>
+<li><p>Two-step estimator with bias-corrected robust standard errors</p>
+<div class="sourceCode" id="cb972"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb972-1"><a href="12.6-arellano-bond-estimator.html#cb972-1" tabindex="-1"></a><span class="kw">xtabond</span> <span class="fu">y</span> x1 <span class="kw">x2</span>, <span class="kw">vce</span>(<span class="kw">robust</span>) twostep</span></code></pre></div></li>
+<li><p>Arellano–Bond estimation also including 2 lagged values of y</p>
+<div class="sourceCode" id="cb973"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb973-1"><a href="12.6-arellano-bond-estimator.html#cb973-1" tabindex="-1"></a><span class="kw">xtabond</span> <span class="fu">y</span> x1 <span class="kw">x2</span>, lags(2)</span></code></pre></div></li>
+</ul>
+</div>
+<div id="use-example" class="section level3 hasAnchor" number="12.6.2">
+<h3><span class="header-section-number">12.6.2</span> Use Example<a href="12.6-arellano-bond-estimator.html#use-example" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p><span class="citation">Arellano and Bond (<a href="#ref-Arellano1991">1991</a>)</span> apply their new estimators and test statistics to a model of dynamic labor demand that had previously been considered by Layard and Nickell (1986), using data from an unbalanced panel of firms from the United Kingdom. All variables are indexed over the firm <span class="math inline">\(i\)</span> and time <span class="math inline">\(t\)</span>.</p>
+<p><span class="math display" id="eq:AB-model">\[
+\begin{equation} \tag{12.1}
+\begin{split}
+n_{i,t}
+&amp;= \alpha_1 n_{i,t-1} + \alpha_2 n_{i,t-2} + \bbeta&#39;(L) \bx_{it} + \lambda_t + \eta_i + \varepsilon_{i,t} \\
+&amp;= \alpha_1 n_{i,t-1} + \alpha_2 n_{i,t-2}  \\
+&amp;\phantom{=}\quad  + \beta_1 w_{i,t} + \beta_2 w_{i,t-1} \\
+&amp;\phantom{=}\quad  + \beta_3 k_{i,t} + \beta_4 k_{i,t-1} + \beta_5 k_{i,t-2} \\
+&amp;\phantom{=}\quad + \beta_6 ys_{i,t} + \beta_7 ys_{i,t-1} + \beta_8 ys_{i,t-2}  \\
+&amp;\phantom{=}\quad + \gamma_3 d_3 + \dots + \gamma_T d_T + \pi\, t + \eta_i + \varepsilon_{i,t},
+\end{split}
+\end{equation}
+\]</span></p>
+<p>where <span class="math inline">\(i=1,\ldots,n\)</span> denotes the firm, and <span class="math inline">\(t=3,\ldots,T\)</span> is the time series dimension.</p>
+<ul>
+<li><p><span class="math inline">\(n_{i,t}\)</span> is the natural logarithm of <em>employment</em>, <strong>first and second lagged</strong> were used as independent variables</p></li>
+<li><p><span class="math inline">\(w\)</span> refers to the natural logarithm of <em>wage</em>, up to lag 1</p></li>
+<li><p><span class="math inline">\(k\)</span> is the natural logarithm of <em>capital</em>, up to lag 2</p></li>
+<li><p><span class="math inline">\(ys\)</span> is the natural logarithm of <em>output</em>, up to lag 2</p></li>
+<li><p>Variables <span class="math inline">\(d_3,\ldots,d_T\)</span> are time dummies with corresponding coefficients <span class="math inline">\(\gamma_3,\ldots,\gamma_T.\)</span></p>
+<p>You can think of $<span class="math inline">\(\gamma_t d_t\)</span> as time fixed effects capturing economy-wide shocks at time <span class="math inline">\(t\)</span> that affect all firms equally.</p></li>
+<li><p><span class="math inline">\(t\)</span> is a time trend with coefficient <span class="math inline">\(\pi.\)</span></p>
+<p><span class="math inline">\(\pi t\)</span> captures any linear time trend in employment common to all firms.</p></li>
+<li><p><span class="math inline">\(\eta_i\)</span> is the unobserved individual fiexed effects.</p></li>
+<li><p><span class="math inline">\(\varepsilon_{i,t}\)</span> is an idiosyncratic remainder component.</p></li>
+</ul>
+<p>Model <a href="12.6-arellano-bond-estimator.html#eq:AB-model">(12.1)</a> can be implemented using <code>xtabond</code>.</p>
+<div class="sourceCode" id="cb974"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb974-1"><a href="12.6-arellano-bond-estimator.html#cb974-1" tabindex="-1"></a><span class="co">// Use example of xtabond</span></span>
+<span id="cb974-2"><a href="12.6-arellano-bond-estimator.html#cb974-2" tabindex="-1"></a><span class="kw">use</span> https:<span class="co">//www.stata-press.com/data/r19/abdata</span></span>
+<span id="cb974-3"><a href="12.6-arellano-bond-estimator.html#cb974-3" tabindex="-1"></a><span class="kw">xtabond</span> n <span class="ot">l</span>(0/1).<span class="fu">w</span> <span class="ot">l</span>(0/2).(<span class="kw">k</span> ys) yr1980-yr1984 <span class="fu">year</span>, lags(2) <span class="kw">vce</span>(<span class="kw">robust</span>) <span class="kw">noconstant</span></span>
+<span id="cb974-4"><a href="12.6-arellano-bond-estimator.html#cb974-4" tabindex="-1"></a></span>
+<span id="cb974-5"><a href="12.6-arellano-bond-estimator.html#cb974-5" tabindex="-1"></a><span class="co">// Equivalent command using xtdpd, need to specify exogenous variables in div()</span></span>
+<span id="cb974-6"><a href="12.6-arellano-bond-estimator.html#cb974-6" tabindex="-1"></a>xtdpd L(0/2).n L(0/1).<span class="fu">w</span> L(0/2).(<span class="kw">k</span> ys) yr1980-yr1984 <span class="fu">year</span>, <span class="kw">noconstant</span> div(L(0/1).<span class="fu">w</span> L(0/2).(<span class="kw">k</span> ys) yr1980-yr1984 <span class="fu">year</span>) dgmmiv(n)</span></code></pre></div>
+<ul>
+<li><p><code>lags(2)</code>: specify the order of lagged dependent variables <code>n</code>; up to 2 lags</p>
+<p>That is, to include <code>L1.n</code> (<span class="math inline">\(n_{t-1}\)</span>) and <code>L2.n</code> (<span class="math inline">\(n_{t-2}\)</span>) as independent variables.</p>
+<p>By default, <code>xtabond</code> includes 1 lag of the dependent variable.</p></li>
+<li><p>lagged independent variables</p>
+<ul>
+<li><code>w</code>: up to 1 lag</li>
+<li><code>k</code> and <code>ys</code>: up to 2 lags</li>
+</ul></li>
+</ul>
+<p>Note that</p>
+<ul>
+<li><p>without specifying <code>div()</code>, the default of <code>xtdpd</code> is to only use levels of the dependent variables as GMM-type instruments for the difference equation.</p></li>
+<li><p>By contrast, <code>xtabond</code> by default uses the first difference of all the exogenous variables (<span class="math inline">\(x_i\)</span>’s) as <strong>standard instruments</strong> for the difference equation.</p></li>
+<li><p>To use the same instruments as <code>xtabond</code>, we need to specify <code>div()</code>.</p>
+<p>Rewrite all <code>indepvars</code> in <code>div()</code> as follows:</p>
+<pre><code>div(L(0/1).w L(0/2).(k ys) yr1980-yr1984 year)</code></pre>
+<p>tells <code>xtdpd</code> to use all exogenous variables as standard instruments for the difference equation, same as <code>xtabond</code> default.</p>
+<pre><code>Instruments for differenced equation
+      GMM-type: L(2/.).n
+      Standard: D.w LD.w D.k LD.k L2D.k D.ys LD.ys L2D.ys D.yr1980
+                D.yr1981 D.yr1982 D.yr1983 D.yr1984 D.year</code></pre></li>
+</ul>
+<hr />
+<p>The <code>xtabond</code> output would look like the following.</p>
+<pre class="nowrap"><code>
+. xtabond n l(0/1).w l(0/2).(k ys) yr1980-yr1984 year, 
+>     lags(2) vce(robust) noconstant
+
+Arellano–Bond dynamic panel-data estimation     Number of obs     =        611
+Group variable: id                              Number of groups  =        140
+Time variable: year
+                                                Obs per group:
+                                                              min =          4
+                                                              avg =   4.364286
+                                                              max =          6
+
+Number of instruments =     41                  Wald chi2(16)     =    1727.45
+                                                Prob > chi2       =     0.0000
+One-step results
+                                     (Std. err. adjusted for clustering on id)
+------------------------------------------------------------------------------
+             |               Robust
+           n | Coefficient  std. err.      z    P>|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+           n |
+         L1. |   .6862261   .1445943     4.75   0.000     .4028266    .9696257
+         L2. |  -.0853582   .0560155    -1.52   0.128    -.1951467    .0244302
+             |
+           w |
+         --. |  -.6078208   .1782055    -3.41   0.001    -.9570972   -.2585445
+         L1. |   .3926237   .1679931     2.34   0.019     .0633632    .7218842
+             |
+           k |
+         --. |   .3568456   .0590203     6.05   0.000      .241168    .4725233
+         L1. |  -.0580012   .0731797    -0.79   0.428    -.2014308    .0854284
+         L2. |  -.0199475   .0327126    -0.61   0.542    -.0840631    .0441681
+             |
+          ys |
+         --. |   .6085073   .1725313     3.53   0.000     .2703522    .9466624
+         L1. |  -.7111651   .2317163    -3.07   0.002    -1.165321   -.2570095
+         L2. |   .1057969   .1412021     0.75   0.454    -.1709542     .382548
+             |
+      yr1980 |   .0029062   .0158028     0.18   0.854    -.0280667    .0338791
+      yr1981 |  -.0404378   .0280582    -1.44   0.150    -.0954307    .0145552
+      yr1982 |  -.0652767   .0365451    -1.79   0.074    -.1369038    .0063503
+      yr1983 |  -.0690928    .047413    -1.46   0.145    -.1620205    .0238348
+      yr1984 |  -.0650302   .0576305    -1.13   0.259    -.1779839    .0479235
+        year |   .0095545   .0102896     0.93   0.353    -.0106127    .0297217
+------------------------------------------------------------------------------
+Instruments for differenced equation
+        GMM-type: L(2/.).n
+        Standard: D.w LD.w D.k LD.k L2D.k D.ys LD.ys L2D.ys D.yr1980
+                  D.yr1981 D.yr1982 D.yr1983 D.yr1984 D.year
+</code></pre>
+<p><strong>The footer</strong> in the output reports the instruments used.</p>
+<ul>
+<li>The first line (GMM-type) indicates that <code>xtabond</code> used lags from 2 on back to create the <em>GMM-type instruments</em> described in Arellano and Bond (1991) and Holtz-Eakin, Newey, and Rosen (1988); also see Methods and formulas in [XT] xtdpd.</li>
+<li>The second and third lines (Standard) indicate that the first difference of all the exogenous variables were used as <em>standard instruments</em>.</li>
+</ul>
+<hr />
+<p>The following is the output of the equivalent command using <code>xtdpd</code>.</p>
+<ul>
+<li><p><strong>Without specifying <code>div()</code>.</strong></p>
+<p>Note that the results are <em>quite different</em> from those of <code>xtabond</code> above.<br />
+<span class="math inline">\(\Rightarrow\)</span> This indicates the choice of IVs matters!</p></li>
+</ul>
+<pre class="nowrap"><code>
+. xtdpd L(0/2).n L(0/1).w L(0/2).(k ys) yr1980-yr1984 year, 
+>     noconstant dgmmiv(n)
+
+Dynamic panel-data estimation                   Number of obs     =        611
+Group variable: id                              Number of groups  =        140
+Time variable: year
+                                                Obs per group:
+                                                              min =          4
+                                                              avg =   4.364286
+                                                              max =          6
+
+Number of instruments =     27                  Wald chi2(16)     =     230.72
+                                                Prob > chi2       =     0.0000
+One-step results
+------------------------------------------------------------------------------
+           n | Coefficient  Std. err.      z    P>|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+           n |
+         L1. |   .7210638    .404417     1.78   0.075    -.0715789    1.513707
+         L2. |   .0387296   .2178553     0.18   0.859     -.388259    .4657181
+             |
+           w |
+         --. |  -.3089982   .5679262    -0.54   0.586    -1.422113    .8041166
+         L1. |   .5261578   .5830132     0.90   0.367     -.616527    1.668843
+             |
+           k |
+         --. |   1.312798   .5597144     2.35   0.019     .2157781    2.409818
+         L1. |  -.2839418    .293703    -0.97   0.334    -.8595891    .2917054
+         L2. |  -.1448001   .2486989    -0.58   0.560    -.6322411    .3426409
+             |
+          ys |
+         --. |  -.2204921   .8476672    -0.26   0.795    -1.881889    1.440905
+         L1. |   -.414458   1.167557    -0.35   0.723    -2.702827    1.873911
+         L2. |  -2.635413   1.152849    -2.29   0.022    -4.894956   -.3758697
+             |
+      yr1980 |  -.0267764   .0721829    -0.37   0.711    -.1682524    .1146995
+      yr1981 |  -.1019741   .1386003    -0.74   0.462    -.3736256    .1696775
+      yr1982 |  -.2540348   .2046535    -1.24   0.214    -.6551483    .1470787
+      yr1983 |  -.4411154   .2789873    -1.58   0.114    -.9879205    .1056897
+      yr1984 |  -.4675579   .3241822    -1.44   0.149    -1.102943    .1678275
+        year |   .0319349   .0421826     0.76   0.449    -.0507414    .1146113
+------------------------------------------------------------------------------
+Instruments for differenced equation
+        GMM-type: L(2/.).n
+</code></pre>
+<ul>
+<li><p><strong>With specifying <code>div()</code>.</strong></p>
+<p>When we specify <code>div()</code>, the results are now the same as those of <code>xtabond</code> above.<br />
+<span class="math inline">\(\Rightarrow\)</span> <code>xtabond</code> and <code>xtdpd</code> can give the same results if the same IVs are used.</p>
+<p>Recall the difference:</p>
+<ul>
+<li><code>xtabond</code> by default uses the first difference of all the exogenous variables (<span class="math inline">\(x_i\)</span>’s) as <strong>standard instruments</strong> for the difference equation.</li>
+</ul>
+<p>Recommended practice: <span class="env-green">just use <code>xtanond</code> to be safe</span> because with <code>xtdpd</code>, you need to be careful about specifying <code>div()</code> to ensure the full set of IVs is used.<br />
+Given that the estimates can differ substantially depending on the choice of IVs, it is safer to use <code>xtabond</code>, which by default uses a more complete set of IVs.</p></li>
+</ul>
+<pre class="nowrap"><code>
+. xtdpd L(0/2).n L(0/1).w L(0/2).(k ys) yr1980-yr1984 year, noconstant 
+>     div(L(0/1).w L(0/2).(k ys) yr1980-yr1984 year) dgmmiv(n)
+
+Dynamic panel-data estimation                   Number of obs     =        611
+Group variable: id                              Number of groups  =        140
+Time variable: year
+                                                Obs per group:
+                                                              min =          4
+                                                              avg =   4.364286
+                                                              max =          6
+
+Number of instruments =     41                  Wald chi2(16)     =    1757.07
+                                                Prob > chi2       =     0.0000
+One-step results
+------------------------------------------------------------------------------
+           n | Coefficient  Std. err.      z    P>|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+           n |
+         L1. |   .6862261   .1486163     4.62   0.000     .3949435    .9775088
+         L2. |  -.0853582   .0444365    -1.92   0.055    -.1724523    .0017358
+             |
+           w |
+         --. |  -.6078208   .0657694    -9.24   0.000    -.7367265   -.4789151
+         L1. |   .3926237   .1092374     3.59   0.000     .1785222    .6067251
+             |
+           k |
+         --. |   .3568456   .0370314     9.64   0.000     .2842653    .4294259
+         L1. |  -.0580012   .0583051    -0.99   0.320     -.172277    .0562747
+         L2. |  -.0199475   .0416274    -0.48   0.632    -.1015357    .0616408
+             |
+          ys |
+         --. |   .6085073   .1345412     4.52   0.000     .3448115    .8722031
+         L1. |  -.7111651   .1844599    -3.86   0.000      -1.0727   -.3496304
+         L2. |   .1057969   .1428568     0.74   0.459    -.1741974    .3857912
+             |
+      yr1980 |   .0029062   .0212705     0.14   0.891    -.0387832    .0445957
+      yr1981 |  -.0404378   .0354707    -1.14   0.254    -.1099591    .0290836
+      yr1982 |  -.0652767    .048209    -1.35   0.176    -.1597646    .0292111
+      yr1983 |  -.0690928   .0627354    -1.10   0.271    -.1920521    .0538664
+      yr1984 |  -.0650302   .0781322    -0.83   0.405    -.2181665    .0881061
+        year |   .0095545   .0142073     0.67   0.501    -.0182912    .0374002
+------------------------------------------------------------------------------
+Instruments for differenced equation
+        GMM-type: L(2/.).n
+        Standard: D.w LD.w D.k LD.k L2D.k D.ys LD.ys L2D.ys D.yr1980
+                  D.yr1981 D.yr1982 D.yr1983 D.yr1984 D.year
+</code></pre>
+<hr />
+<p><code>xtdpdsys</code> implements the Arellano–Bover / Blundell–Bond <span class="env-green">system estimator</span>, which includes the lagged differences of <code>n</code> (the dependent variable) as instruments for the level equation.</p>
+<hr />
+</div>
+<div id="diagnostic-tests" class="section level3 hasAnchor" number="12.6.3">
+<h3><span class="header-section-number">12.6.3</span> Diagnostic Tests<a href="12.6-arellano-bond-estimator.html#diagnostic-tests" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="test-for-autocorrelation" class="section level4 hasAnchor" number="12.6.3.1">
+<h4><span class="header-section-number">12.6.3.1</span> Test for Autocorrelation<a href="12.6-arellano-bond-estimator.html#test-for-autocorrelation" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>The moment conditions of these GMM estimators are valid only if there is no serial correlation in the idiosyncratic errors. Because the first difference of white noise is necessarily autocorrelated, we need only concern ourselves with second and higher autocorrelation. We can use <strong><code>estat abond</code></strong> to test for autocorrelation:</p>
+<div class="sourceCode" id="cb977"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb977-1"><a href="12.6-arellano-bond-estimator.html#cb977-1" tabindex="-1"></a>. <span class="kw">estat</span> abond, artests(4)</span>
+<span id="cb977-2"><a href="12.6-arellano-bond-estimator.html#cb977-2" tabindex="-1"></a></span>
+<span id="cb977-3"><a href="12.6-arellano-bond-estimator.html#cb977-3" tabindex="-1"></a>Arellano–Bond <span class="kw">test</span> <span class="kw">for</span> <span class="bn">zero</span> autocorrelation <span class="kw">in</span> first-differenced errors</span>
+<span id="cb977-4"><a href="12.6-arellano-bond-estimator.html#cb977-4" tabindex="-1"></a>H0: No autocorrelation </span>
+<span id="cb977-5"><a href="12.6-arellano-bond-estimator.html#cb977-5" tabindex="-1"></a></span>
+<span id="cb977-6"><a href="12.6-arellano-bond-estimator.html#cb977-6" tabindex="-1"></a>Order         z   Prob &gt; z</span>
+<span id="cb977-7"><a href="12.6-arellano-bond-estimator.html#cb977-7" tabindex="-1"></a>    1   -4.6414     0.0000</span>
+<span id="cb977-8"><a href="12.6-arellano-bond-estimator.html#cb977-8" tabindex="-1"></a>    2   -1.0572     0.2904</span>
+<span id="cb977-9"><a href="12.6-arellano-bond-estimator.html#cb977-9" tabindex="-1"></a>    3   -.19492     0.8455</span>
+<span id="cb977-10"><a href="12.6-arellano-bond-estimator.html#cb977-10" tabindex="-1"></a>    4   .04472      0.9643</span></code></pre></div>
+<p>The AR test is applied to the first-differenced residuals:</p>
+<p><span class="math display">\[
+\begin{aligned}
+\Delta \varepsilon_{it} &amp;= \varepsilon_{it} - \varepsilon_{i,t-1} \\
+\Delta \varepsilon_{i,t-1} &amp;= \varepsilon_{i,t-1} - \varepsilon_{i,t-2} \\
+\end{aligned}
+\]</span></p>
+<p>Because they share the <span class="math inline">\(\varepsilon_{i,t-1}\)</span> term, AR(1) is expected. Hence, we only need to check for zero autocorrelation for AR(2) and higher.</p>
+<hr />
+</div>
+<div id="test-for-overidentifying-restrictions" class="section level4 hasAnchor" number="12.6.3.2">
+<h4><span class="header-section-number">12.6.3.2</span> Test for Overidentifying Restrictions<a href="12.6-arellano-bond-estimator.html#test-for-overidentifying-restrictions" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p><code>estat sargan</code> reports the Sargan test of overidentifying restrictions.</p>
+<p>The moment conditions are valid only if the idiosyncratic errors are i.i.d. We use the Sargan test to test the validity of the moment conditions. The null hypothesis (<span class="math inline">\(H_0\)</span>) is that the overidentifying restrictions are valid, i.e., that the moment conditions are valid.</p>
+<div class="sourceCode" id="cb978"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb978-1"><a href="12.6-arellano-bond-estimator.html#cb978-1" tabindex="-1"></a>. <span class="kw">estat</span> sargan</span>
+<span id="cb978-2"><a href="12.6-arellano-bond-estimator.html#cb978-2" tabindex="-1"></a></span>
+<span id="cb978-3"><a href="12.6-arellano-bond-estimator.html#cb978-3" tabindex="-1"></a>Sargan <span class="kw">test</span> <span class="kw">of</span> overidentifying restrictions</span>
+<span id="cb978-4"><a href="12.6-arellano-bond-estimator.html#cb978-4" tabindex="-1"></a>H0: Overidentifying restrictions are valid</span>
+<span id="cb978-5"><a href="12.6-arellano-bond-estimator.html#cb978-5" tabindex="-1"></a>        <span class="fu">chi2</span>(25) = 65.81806</span>
+<span id="cb978-6"><a href="12.6-arellano-bond-estimator.html#cb978-6" tabindex="-1"></a>        Prob &gt; <span class="fu">chi2</span> = 0.0000</span></code></pre></div>
+<p>Noting that the Sargan test rejects the null hypothesis that the overidentifying restrictions are valid in the model with i.i.d. errors.</p>
+<p>Now we fit the model using only the moment conditions constructed starting from the third lags as instruments of the first-differenced equation.</p>
+<div class="sourceCode" id="cb979"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb979-1"><a href="12.6-arellano-bond-estimator.html#cb979-1" tabindex="-1"></a>. xtdpd L(0/2).n L(0/1).<span class="fu">w</span> L(0/2).(<span class="kw">k</span> ys) yr1980-yr1984 <span class="fu">year</span>, </span>
+<span id="cb979-2"><a href="12.6-arellano-bond-estimator.html#cb979-2" tabindex="-1"></a>&gt; <span class="kw">noconstant</span> div(L(0/1).<span class="fu">w</span> L(0/2).(<span class="kw">k</span> ys) yr1980-yr1984 <span class="fu">year</span>) dgmmiv(n, lag(3 .))</span></code></pre></div>
+<ul>
+<li><code>dgmmiv(n, lag(3 .)</code> means
+<ul>
+<li><code>n</code> is treated as endogenous.</li>
+<li>use the <strong>third and higher lags</strong> of <code>n</code> as GMM-type instruments for the first-differenced equation.</li>
+<li><code>.</code> means “up to the maximum available lag.”</li>
+</ul></li>
+</ul>
+<p>(<code>xtdpd</code> output omitted)</p>
+<div class="sourceCode" id="cb980"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb980-1"><a href="12.6-arellano-bond-estimator.html#cb980-1" tabindex="-1"></a>. <span class="kw">estat</span> sargan</span>
+<span id="cb980-2"><a href="12.6-arellano-bond-estimator.html#cb980-2" tabindex="-1"></a></span>
+<span id="cb980-3"><a href="12.6-arellano-bond-estimator.html#cb980-3" tabindex="-1"></a>Sargan <span class="kw">test</span> <span class="kw">of</span> overidentifying restrictions</span>
+<span id="cb980-4"><a href="12.6-arellano-bond-estimator.html#cb980-4" tabindex="-1"></a>H0: Overidentifying restrictions are valid</span>
+<span id="cb980-5"><a href="12.6-arellano-bond-estimator.html#cb980-5" tabindex="-1"></a>        <span class="fu">chi2</span>(19)     =  23.91962</span>
+<span id="cb980-6"><a href="12.6-arellano-bond-estimator.html#cb980-6" tabindex="-1"></a>        Prob &gt; <span class="fu">chi2</span>  =    0.1993</span></code></pre></div>
+<p>The results from <code>estat sargan</code> no longer reject the null hypothesis that the overidentifying restrictions are valid.</p>
+<hr />
+</div>
+</div>
+<div id="predetermined-covariates" class="section level3 hasAnchor" number="12.6.4">
+<h3><span class="header-section-number">12.6.4</span> Predetermined Covariates<a href="12.6-arellano-bond-estimator.html#predetermined-covariates" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Sometimes we cannot assume strict exogeneity. Recall that a variable, <span class="math inline">\(x_{it}\)</span>, is said to be strictly exogenous if <span class="math inline">\(\E[𝑥_{it}\varepsilon_{is}] = 0\)</span> for all <span class="math inline">\(t\)</span> and <span class="math inline">\(s\)</span>.</p>
+<p>If <span class="math inline">\(\E[x_{it}\varepsilon_{is}] \ne 0\)</span> for <span class="math inline">\(t &gt; s\)</span> but <span class="math inline">\(\E[x_{it}\varepsilon_{is}] = 0\)</span> for all <span class="math inline">\(t\le s,\)</span> the variable is said to be <span class="env-green"><strong>predetermined</strong></span>. Intuitively, if the error term at time <span class="math inline">\(t\)</span> has some feedback on the subsequent realizations of <span class="math inline">\(x_{it},\)</span> <span class="math inline">\(x_{it}\)</span> is a predetermined variable. Because unforecastable errors today might affect future changes in the real wage and in the capital stock, we might suspect that the log of the real product wage and the log of the gross capital stock are predetermined instead of strictly exogenous.</p>
+<p>We also call predetermined <span class="math inline">\(x_{it}\)</span> as <span class="env-green"><strong>sequential exogenous</strong></span>.</p>
+<p>Here we treat <span class="math inline">\(w\)</span> and <span class="math inline">\(k\)</span> as predetermined and use lagged levels as instruments.</p>
+<div class="sourceCode" id="cb981"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb981-1"><a href="12.6-arellano-bond-estimator.html#cb981-1" tabindex="-1"></a><span class="kw">xtabond</span> n <span class="ot">l</span>(0/1).ys yr1980-yr1984 <span class="fu">year</span>, lags(2) twostep pre(<span class="fu">w</span>, lag(1,.)) pre(<span class="kw">k</span>, lag(2,.)) <span class="kw">noconstant</span> <span class="kw">vce</span>(<span class="kw">robust</span>)</span></code></pre></div>
+<p>We are now including GMM-type instruments from the first lag of <code>L.w</code> on back and from the first lag of <code>L2.k</code> on back.</p>
+<p><code>pre(w, lag(1, .))</code> to mean that <code>L.w</code> is a predetermined variable and <code>pre(k, lag(2, .))</code> to mean that <code>L2.k</code> is a predetermined variable.</p>
+</div>
+<div id="endogenous-covariates" class="section level3 hasAnchor" number="12.6.5">
+<h3><span class="header-section-number">12.6.5</span> Endogenous Covariates<a href="12.6-arellano-bond-estimator.html#endogenous-covariates" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>We might instead suspect that <span class="math inline">\(w\)</span> and <span class="math inline">\(k\)</span> are endogenous in that <span class="math inline">\(\E[x_{it}\varepsilon_{is}] \ne 0\)</span> for <span class="math inline">\(t \ge s\)</span> but <span class="math inline">\(\E[x_{it}\varepsilon_{is}] = 0\)</span> for all <span class="math inline">\(t &lt; s.\)</span></p>
+<p>In comparison to predetermined variables, <span class="math inline">\(\E[x_{it}\varepsilon_{is}]\)</span> is summarized as follows:</p>
+<table>
+<colgroup>
+<col width="11%" />
+<col width="43%" />
+<col width="45%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>Predetermined Variables</th>
+<th>Endogenous Variables</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(t&gt;s\)</span></td>
+<td><span class="math inline">\(\E[x_{it}\varepsilon_{is}]\ne 0\)</span></td>
+<td><span class="math inline">\(\E[x_{it}\varepsilon_{is}]\ne 0\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(t=s\)</span></td>
+<td><span class="math inline">\(\E[x_{it}\varepsilon_{is}]= 0\)</span></td>
+<td><span class="math inline">\(\E[x_{it}\varepsilon_{is}]\ne 0\)</span></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(t&lt;s\)</span></td>
+<td><span class="math inline">\(\E[x_{it}\varepsilon_{is}]= 0\)</span></td>
+<td><span class="math inline">\(\E[x_{it}\varepsilon_{is}]= 0\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>By this definition, endogenous variables differ from predetermined variables only in that the</p>
+<ul>
+<li><p>Endogenous variables allow for correlation between <span class="math inline">\(x_{it}\)</span> and <span class="math inline">\(\varepsilon_{it}\)</span> at time <span class="math inline">\(t,\)</span> whereas endogenous variables are treated similarly to the <em>lagged dependent variable</em>. Levels of the endogenous variables lagged two or more periods can serve as instruments.</p></li>
+<li><p>Predetermined variables do <span style="color:#FF9900"><strong>NOT</strong></span> allow for <span class="env-orange">contemporaneous correlation</span>.</p></li>
+</ul>
+<p>In this example, we treat <span class="math inline">\(w\)</span> and <span class="math inline">\(k\)</span> as endogenous variables.</p>
+<div class="sourceCode" id="cb982"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb982-1"><a href="12.6-arellano-bond-estimator.html#cb982-1" tabindex="-1"></a><span class="kw">xtabond</span> n <span class="ot">l</span>(0/1).ys yr1980-yr1984 <span class="fu">year</span>, lags(2) twostep endogenous(<span class="fu">w</span>, lag(1,.)) endogenous(<span class="kw">k</span>, lag(2,.)) <span class="kw">noconstant</span> <span class="kw">vce</span>(<span class="kw">robust</span>)</span></code></pre></div>
+<p>Although some estimated coefficients changed in magnitude, none changed in sign, and these results are similar to those obtained by treating <span class="math inline">\(w\)</span> and <span class="math inline">\(k\)</span> as predetermined.</p>
+<p>Prefix <code>xtabond</code> with <code>xi:</code> if you need to include factor variables</p>
+<div class="sourceCode" id="cb983"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb983-1"><a href="12.6-arellano-bond-estimator.html#cb983-1" tabindex="-1"></a><span class="co">// AB estimator with factor variables</span></span>
+<span id="cb983-2"><a href="12.6-arellano-bond-estimator.html#cb983-2" tabindex="-1"></a><span class="kw">xi</span>: <span class="kw">xtabond</span> logd_gdp tmp tmp2 pre pre2 <span class="co">///</span></span>
+<span id="cb983-3"><a href="12.6-arellano-bond-estimator.html#cb983-3" tabindex="-1"></a>    tmp_pre tmp2_pre tmp_pre2 tmp2_pre2 <span class="co">///</span></span>
+<span id="cb983-4"><a href="12.6-arellano-bond-estimator.html#cb983-4" tabindex="-1"></a>    i.<span class="fu">year</span> i.iso|year_id i.iso|year_id2, <span class="co">///</span></span>
+<span id="cb983-5"><a href="12.6-arellano-bond-estimator.html#cb983-5" tabindex="-1"></a>    lags(1) <span class="kw">vce</span>(<span class="kw">robust</span>)</span></code></pre></div>
+<ul>
+<li><p><code>i.year</code>: time fixed effects;</p></li>
+<li><p><code>i.iso|year_id</code>: country-specific linear time trends</p></li>
+<li><p><code>i.iso|year_id2</code>: country-specific quadratic time trends</p></li>
+</ul>
+<hr />
+<p>Forecast under <code>xtabond</code>:</p>
+<ul>
+<li><a href="https://www.stata.com/stata-news/news29-3/forecast/" class="uri">https://www.stata.com/stata-news/news29-3/forecast/</a></li>
+</ul>
+<hr />
+</div>
+<div id="xtabond2" class="section level3 hasAnchor" number="12.6.6">
+<h3><span class="header-section-number">12.6.6</span> xtabond2<a href="12.6-arellano-bond-estimator.html#xtabond2" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p><code>xtabond2</code> was written by David Roodman. More versatile than <code>xtabond</code>.</p>
+<table>
+<colgroup>
+<col width="47%" />
+<col width="52%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><code>xtabond</code></th>
+<th><code>xtabond2</code></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Not support factor variables<br />Can be fixed with <code>xi: xtabond</code></td>
+<td>Support factor variables</td>
+</tr>
+</tbody>
+</table>
+<p><span class="math display">\[
+\begin{aligned}
+y_{it} &amp;= \bx_{it} * \bb_{1} + \bw_{it} * \bb_{2} + u_{it}, \;i=1,...,N; \; t=1,...,T \\
+u_{it} &amp;= v_i + e_{it}.
+\end{aligned}
+\]</span></p>
+<ul>
+<li><p><span class="math inline">\(\bx_{it}\)</span> is a vector of strictly exogenous covariates (ones dependent on neither current nor past <span class="math inline">\(e_{it}\)</span>);</p></li>
+<li><p><span class="math inline">\(\bw_{it}\)</span> is a vector of predetermined covariates (which may include the lag of <span class="math inline">\(y\)</span>) and endogenous covariates, all of which may be correlated with the <span class="math inline">\(v_i.\)</span></p>
+<p><strong>Predetermined variables</strong> are potentially correlated with past errors.</p>
+<p><strong>Endogenous ones</strong> are potentially correlated with past and <span class="env-green">present</span> errors.</p></li>
+<li><p><span class="math inline">\(v_i\)</span> are unobserved individual-level effects;</p></li>
+<li><p><span class="math inline">\(e_{it}\)</span> are the observation-specific errors idiosyncratic shocks,</p></li>
+</ul>
+<p>Asssumptions about the disturbance term:</p>
+<p><span class="math display">\[
+\E[v_i] = \E[e_{it}] = \E[v_i e_{it}] = 0
+\]</span></p>
+<p><span class="math inline">\(\E[v_i e_{it}] = 0\)</span> indicates that the fixed effects and the idiosyncratic shocks are orthogonal.</p>
+<p>It also assumes no cross sectional dependence:
+<span class="math display">\[
+\E[e_{it}e_{js}] =0  \text{ for } i\ne j .
+\]</span></p>
+<div class="sourceCode" id="cb984"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb984-1"><a href="12.6-arellano-bond-estimator.html#cb984-1" tabindex="-1"></a>xtabond2 depvar <span class="kw">varlist</span> [<span class="kw">if</span> <span class="fu">exp</span>] [<span class="kw">in</span> <span class="kw">range</span>] [<span class="kw">weight</span>] </span>
+<span id="cb984-2"><a href="12.6-arellano-bond-estimator.html#cb984-2" tabindex="-1"></a>    [, <span class="dv">level</span>(#) <span class="kw">svmat</span> svvar twostep <span class="kw">robust</span> <span class="kw">cluster</span>(<span class="kw">varlist</span>) </span>
+<span id="cb984-3"><a href="12.6-arellano-bond-estimator.html#cb984-3" tabindex="-1"></a>       <span class="kw">noconstant</span> small gmmopt [gmmopt ...] ivopt [ivopt ...] ]</span></code></pre></div>
+<p><strong>Options</strong>:</p>
+<ul>
+<li><p><code>level(#)</code> confidence level, default to <code>level(95)</code></p></li>
+<li><p><code>gmmopt</code></p>
+<div class="sourceCode" id="cb985"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb985-1"><a href="12.6-arellano-bond-estimator.html#cb985-1" tabindex="-1"></a>gmmstyle(</span>
+<span id="cb985-2"><a href="12.6-arellano-bond-estimator.html#cb985-2" tabindex="-1"></a>  <span class="kw">varlist</span> [, laglimits(# #) <span class="kw">collapse</span> </span>
+<span id="cb985-3"><a href="12.6-arellano-bond-estimator.html#cb985-3" tabindex="-1"></a>    orthogonal equation({<span class="fu">diff</span> | <span class="dv">level</span> | both}) </span>
+<span id="cb985-4"><a href="12.6-arellano-bond-estimator.html#cb985-4" tabindex="-1"></a>    passthru <span class="kw">split</span> ]</span>
+<span id="cb985-5"><a href="12.6-arellano-bond-estimator.html#cb985-5" tabindex="-1"></a>  )</span></code></pre></div>
+<p><code>gmmstyle</code> specifies a set of variables to be used as bases for “GMM-style” instrument sets described in Holtz-Eakin, Newey, and Rosen (1988) and Arellano and Bond (1991).</p>
+<p>By default <code>xtabond2</code> uses, for each time period, all available lags of the specified variables in levels dated <span class="math inline">\(t-1\)</span> or earlier as instruments for the transformed equation; and uses the contemporaneous first differences as instruments in the levels equation. These defaults are appropriate for predetermined variables that are not strictly exogenous (Bond 2000). Missing values are always replaced by zeros.</p>
+<p>Since the <code>gmmstyle()</code> varlist allows time-series operators, there are many routes to the same specification.<br />
+E.g., <code>gmm(w, lag(2 .))</code>, the standard treatment for an endogenous variable, is equivalent to <code>gmm(L.w, lag(1 .))</code>, thus <code>gmm(L.w)</code>.</p>
+<ul>
+<li><p><code>laglimits(a b)</code>: specify the range of lags to be used as instruments.</p>
+<ul>
+<li><code>a</code>: the earliest lag to be used</li>
+<li><code>b</code>: the latest lag to be used</li>
+</ul>
+<p>For the transformed equation, lagged levels dated <span class="math inline">\(t-a\)</span> to <span class="math inline">\(t-b\)</span> are used as instruments, while for the levels equation, the first-difference dated <span class="math inline">\(t-a+1\)</span> is normally used.</p>
+<p><code>a</code> and <code>b</code> can each be missing (<code>.</code>); <code>a</code> defaults to 1 and <code>b</code> to infinity.</p></li>
+<li><p><code>collapse</code>: specifies that <code>xtabond2</code> should create one instrument for each variable and lag distance, rather than one for each time period, variable, and lag distance.</p>
+<p>In large samples, collapse reduces statistical efficiency.</p>
+<p>But in <span class="env-green">small samples</span> it can avoid the bias that arises as the number of instruments climbs toward the number of observations <span class="env-green">When instruments are many, they tend to <strong>overfit</strong> the instrumented variables and <strong>bias the results toward those of OLS/GLS</strong>.</span></p>
+<p><code>collapse</code> also greatly curtails computational demands by reducing the width of the instrument matrix, and helps keep the matrix within Stata’s size limit.</p></li>
+</ul></li>
+<li><p><code>ivopt</code></p>
+<div class="sourceCode" id="cb986"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb986-1"><a href="12.6-arellano-bond-estimator.html#cb986-1" tabindex="-1"></a>ivstyle(<span class="kw">varlist</span> [, equation({<span class="fu">diff</span> | <span class="dv">level</span> | both}) passthru mz])</span></code></pre></div>
+<p><code>ivstyle</code> specifies a set of variables to serve as standard instruments, with one column in the instrument matrix per variable. Normally, strictly exogenous regressors are included in <code>ivstyle</code> options, in order to enter the instrument matrix, as well as being listed before the main comma of the command line.</p>
+<p>The <code>equation()</code> suboption specifies which equation(s) should use the instruments:</p>
+<ul>
+<li><code>equation(both)</code>: both; <span class="env-green">default</span></li>
+<li><code>equation(diff)</code>: first-difference only; used by <code>xtabond</code></li>
+<li><code>equation(level)</code>: levels only</li>
+</ul></li>
+</ul>
+<p><strong>Key Differences between GMM-style and Standard Instruments</strong></p>
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Aspect
+</th>
+<th style="text-align:left;">
+GMM-style
+</th>
+<th style="text-align:left;">
+Standard
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;width: 8em; font-weight: bold;">
+Size
+</td>
+<td style="text-align:left;width: 17em; ">
+Many instruments (grows with T)
+</td>
+<td style="text-align:left;width: 17em; ">
+One instrument per variable <br>(fixed size)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 8em; font-weight: bold;">
+Variables
+</td>
+<td style="text-align:left;width: 17em; ">
+Endogenous or predetermined
+</td>
+<td style="text-align:left;width: 17em; ">
+Strictly exogenous
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 8em; font-weight: bold;">
+Formation
+</td>
+<td style="text-align:left;width: 17em; ">
+Usually lagged levels
+</td>
+<td style="text-align:left;width: 17em; ">
+Usually first differences
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 8em; font-weight: bold;">
+When to use
+</td>
+<td style="text-align:left;width: 17em; ">
+Variables correlated with error
+</td>
+<td style="text-align:left;width: 17em; ">
+Truly exogenous variables
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 8em; font-weight: bold;">
+Examples
+</td>
+<td style="text-align:left;width: 17em; ">
+Lagged dependent variable
+</td>
+<td style="text-align:left;width: 17em; ">
+Time dummies, exogenous controls
+</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p><strong>A matching triplet</strong> using different pkgs to achieve the same results (pp42, <a href="https://journals.sagepub.com/doi/pdf/10.1177/1536867X0900900106">Stata Journal article by David Roodman</a>)</p>
+<div class="sourceCode" id="cb987"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb987-1"><a href="12.6-arellano-bond-estimator.html#cb987-1" tabindex="-1"></a><span class="kw">xtabond</span> n, lags(1) pre(<span class="fu">w</span>, lagstruct(1,.)) pre(<span class="kw">k</span>, endog) <span class="kw">robust</span></span>
+<span id="cb987-2"><a href="12.6-arellano-bond-estimator.html#cb987-2" tabindex="-1"></a>xtdpd n L.n <span class="fu">w</span> L.<span class="fu">w</span> <span class="kw">k</span>, dgmmiv(<span class="fu">w</span> <span class="kw">k</span> n) <span class="kw">vce</span>(<span class="kw">robust</span>)</span>
+<span id="cb987-3"><a href="12.6-arellano-bond-estimator.html#cb987-3" tabindex="-1"></a>xtabond2 n L.n <span class="fu">w</span> L.<span class="fu">w</span> <span class="kw">k</span>, gmmstyle(L.(<span class="fu">w</span> n <span class="kw">k</span>), <span class="kw">eq</span>(<span class="fu">diff</span>)) <span class="kw">robust</span></span></code></pre></div>
+<p><a href="https://www.statalist.org/forums/forum/general-stata-discussion/general/1548924-xtabond-vs-xtabond2-how-to-get-the-same-results" class="uri">https://www.statalist.org/forums/forum/general-stata-discussion/general/1548924-xtabond-vs-xtabond2-how-to-get-the-same-results</a></p>
+<p>With <code>xtabond2</code>, you need to specify explicitly</p>
+<ul>
+<li>regressors</li>
+<li>instruments</li>
+</ul>
+<p>This is in contrast to <code>xtabond</code>, which automatically treats all variables other than the dependent variable as exogenous and uses them as instruments in the difference equation.</p>
+<p>As a result, <span class="env-green">most variables need to be listed twice in <code>xtabond2</code></span>:</p>
+<ul>
+<li>once as regressors before the comma and</li>
+<li>once as instruments in <code>gmmstyle()</code> or <code>ivstyle()</code> options after the comma.</li>
+</ul>
+<p>The result is a loss of parsimony, but fuller control over the instrument matrix.
+Variables can be used as the basis for “GMM-style” instrument sets without being included as regressors, or vice versa.</p>
+<hr />
+</div>
+<div id="xtdpd" class="section level3 hasAnchor" number="12.6.7">
+<h3><span class="header-section-number">12.6.7</span> xtdpd<a href="12.6-arellano-bond-estimator.html#xtdpd" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p><a href="https://www.stata.com/manuals/xtxtdpd.pdf">Linear Dynamic panel data (DPD) estimation</a> fits dynamic panel-data models by using the</p>
+<ul>
+<li><p>Arellano–Bond or</p>
+<p>also known as the “Difference GMM” estimator. Implemented in <code>xtabond</code>.</p></li>
+<li><p>the Arellano–Bover/Blundell–Bond system estimator</p>
+<p>aka, “System GMM” estimator. Implemented in <code>xtdpdsys</code>.</p></li>
+</ul>
+<p><code>xtdpd</code> can fit more complex models at the cost of a more complicated syntax. That the idiosyncratic errors follow a low-order MA process and that the predetermined variables have a more complicated structure than accommodated by <code>xtabond</code> and <code>xtdpdsys</code> are two common reasons for using <code>xtdpd</code> instead of <code>xtabond</code> or <code>xtdpdsys</code>.</p>
+<p><strong>Syntax</strong></p>
+<p>A panel variable and a time variable must be specified; use <code>xtset</code>.</p>
+<div class="sourceCode" id="cb988"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb988-1"><a href="12.6-arellano-bond-estimator.html#cb988-1" tabindex="-1"></a>xtdpd depvar [ indepvars ] [ <span class="kw">if</span> ] [ <span class="kw">in</span> ], dgmmiv(<span class="kw">varlist</span> [...]) [ options ]</span></code></pre></div>
+<p>Options:</p>
+<ul>
+<li><p><code>dgmmiv(varlist [, lagrange(flag [llag])])</code> specifies <strong>GMM-type instruments</strong> for the <strong>difference equation</strong>; this is a mandatory option.</p>
+<ul>
+<li>Levels of the variables are used to form GMM-type instruments for the difference equation.</li>
+<li>All possible lags are used, unless <code>lagrange(flag llag)</code> restricts the lags:
+<ul>
+<li>begin with <code>flag</code> and</li>
+<li>end with <code>llag</code>.</li>
+</ul></li>
+</ul></li>
+<li><p><code>div(varlist [, nodifference])</code> specifies additional standard instruments for the <strong>difference equation</strong>.</p>
+<p>Differences of the variables are used, unless <code>nodifference</code> is specified, which requests that levels of the variables be used as instruments for the difference equation.</p></li>
+<li><p>Support time-series operators, e.g., <code>L.</code> and <code>D.</code>. See <code>help tsvarlist</code> for more information.
+<code>depvar</code>, <code>indepvars</code>, and all <code>varlists</code> may contain time-series operators;</p></li>
+<li><p>Prefix commands: <code>by</code>, <code>collect</code>, <code>statsby</code>, and <code>xi</code> are allowed. Use <code>help prefix commands</code> for more information.</p></li>
+<li><p><code>vce(vcetype)</code> specifies the type of standard error reported. Two options:</p>
+<ul>
+<li><code>vce(gmm)</code>: the default; the conventionally derived variance estimator for generalized method of moments estimation.</li>
+<li><code>vce(robust)</code>: the robust estimator. After one-step estimation, this is the Arellano–Bond robust VCE estimator. After two-step estimation, this is the Windmeijer (2005) WC-robust estimator.</li>
+</ul></li>
+</ul>
+<p>Refer to <a href="12.6-arellano-bond-estimator.html#use-example">Use Example</a> for an illustration of <strong>Difference GMM estimation</strong>.</p>
+<hr />
+</div>
+<div id="system-gmm-estimation" class="section level3 hasAnchor" number="12.6.8">
+<h3><span class="header-section-number">12.6.8</span> System GMM Estimation<a href="12.6-arellano-bond-estimator.html#system-gmm-estimation" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Consider the following dynamic panel-data model:</p>
+<p><span class="math display">\[
+y_{it} = \sum_{j=1}^p \alpha_j y_{i,t-j} + \bbeta&#39; \bx_{it} + \nu_i + \varepsilon_{it} .
+\]</span></p>
+<ul>
+<li><span class="math inline">\(\nu_i\)</span> are the panel-level effects, which may be correlated with <span class="math inline">\(\bx_{it}\)</span></li>
+<li><span class="math inline">\(\varepsilon_{it}\)</span> are i.i.d. or come from a low-order moving-average process, with variance <span class="math inline">\(\sigma^2_\varepsilon\)</span>.</li>
+</ul>
+<p>Building on the work of Arellano and Bover (1995), Blundell and Bond (1998) proposed a system estimator that uses moment conditions in which lagged differences are used as instruments for the level equation in addition to the moment conditions of lagged levels as instruments for the difference equation. The additional moment conditions are valid only if the initial condition</p>
+<p><span class="math display">\[
+\E[\nu_i \Delta y_{i2}] = 0
+\]</span></p>
+<p>holds for all <span class="math inline">\(i\)</span>; see Blundell and Bond (1998) and Blundell, Bond, and Windmeijer (2000).</p>
+<p>Relevant Options for system GMM estimation:</p>
+<ul>
+<li><p><code>lgmmiv(varlist [, lag(#)])</code> specifies GMM-type instruments for the <strong>level equation</strong>.</p>
+<p>Differences of the variables are used to form GMM-type instruments for the level equation.</p>
+<p>The default is to the first lag of the differences. If <code>lag(#)</code> is specified, then the <code>#th</code> lag of the differences will be used.</p></li>
+<li><p><code>liv(varlist)</code> specifies additional standard instruments for the <strong>level equation</strong>.</p>
+<p>Levels of the variables are used as instruments for the level equation.</p></li>
+</ul>
+<div class="sourceCode" id="cb989"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb989-1"><a href="12.6-arellano-bond-estimator.html#cb989-1" tabindex="-1"></a><span class="co">// System estimator</span></span>
+<span id="cb989-2"><a href="12.6-arellano-bond-estimator.html#cb989-2" tabindex="-1"></a>xtdpd L(0/1).n L(0/2).(<span class="fu">w</span> <span class="kw">k</span>) yr1980-yr1984 <span class="fu">year</span>, div(L(0/1).(<span class="fu">w</span> <span class="kw">k</span>) yr1980-yr1984 <span class="fu">year</span>) dgmmiv(n) lgmmiv(n) hascons</span></code></pre></div>
+<p>(output omitted)</p>
+<div class="sourceCode" id="cb990"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb990-1"><a href="12.6-arellano-bond-estimator.html#cb990-1" tabindex="-1"></a>. <span class="kw">estat</span> sargan</span>
+<span id="cb990-2"><a href="12.6-arellano-bond-estimator.html#cb990-2" tabindex="-1"></a></span>
+<span id="cb990-3"><a href="12.6-arellano-bond-estimator.html#cb990-3" tabindex="-1"></a>Sargan <span class="kw">test</span> <span class="kw">of</span> overidentifying restrictions</span>
+<span id="cb990-4"><a href="12.6-arellano-bond-estimator.html#cb990-4" tabindex="-1"></a>H0: Overidentifying restrictions are valid</span>
+<span id="cb990-5"><a href="12.6-arellano-bond-estimator.html#cb990-5" tabindex="-1"></a>        <span class="fu">chi2</span>(31)     =  59.22907</span>
+<span id="cb990-6"><a href="12.6-arellano-bond-estimator.html#cb990-6" tabindex="-1"></a>        Prob &gt; <span class="fu">chi2</span>  =    0.0017</span></code></pre></div>
+<p>We note that the Sargan test rejects the null hypothesis after fitting the model with i.i.d. errors.</p>
+<p>Now we fit the model using the additional moment conditions constructed from the second lag of <code>n</code> as an instrument for the level equation.</p>
+<div class="sourceCode" id="cb991"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb991-1"><a href="12.6-arellano-bond-estimator.html#cb991-1" tabindex="-1"></a>xtdpd L(0/1).n L(0/2).(<span class="fu">w</span> <span class="kw">k</span>) yr1980-yr1984 <span class="fu">year</span>, div(L(0/1).(<span class="fu">w</span> <span class="kw">k</span>) yr1980-yr1984 <span class="fu">year</span>) dgmmiv(n, lag(3 .)) lgmmiv(n, lag(2)) hascons</span></code></pre></div>
+<p>Output</p>
+<pre class="nowrap"><code>
+. xtdpd L(0/1).n L(0/2).(w k) yr1980-yr1984 year, 
+> div(L(0/1).(w k) yr1980-yr1984 year) dgmmiv(n, lag(3 .)) lgmmiv(n, lag(2)) 
+> hascons
+
+Dynamic panel-data estimation                   Number of obs     =        751
+Group variable: id                              Number of groups  =        140
+Time variable: year
+                                                Obs per group:
+                                                              min =          5
+                                                              avg =   5.364286
+                                                              max =          7
+
+Number of instruments =     38                  Wald chi2(13)     =    3680.01
+                                                Prob > chi2       =     0.0000
+One-step results
+------------------------------------------------------------------------------
+           n | Coefficient  Std. err.      z    P>|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+           n |
+         L1. |   .9603675    .095608    10.04   0.000     .7729794    1.147756
+             |
+           w |
+         --. |  -.5433987    .068835    -7.89   0.000    -.6783128   -.4084845
+         L1. |   .4356183   .0881727     4.94   0.000      .262803    .6084336
+         L2. |  -.2785721   .1115061    -2.50   0.012    -.4971201   -.0600241
+             |
+           k |
+         --. |   .3139331   .0419054     7.49   0.000     .2317999    .3960662
+         L1. |   -.160103   .0546915    -2.93   0.003    -.2672963   -.0529096
+         L2. |  -.1295766   .0507752    -2.55   0.011    -.2290943    -.030059
+             |
+      yr1980 |  -.0200704   .0248954    -0.81   0.420    -.0688644    .0287236
+      yr1981 |  -.0425838   .0422155    -1.01   0.313    -.1253246     .040157
+      yr1982 |   .0048723   .0600938     0.08   0.935    -.1129093     .122654
+      yr1983 |   .0458978   .0785687     0.58   0.559    -.1080941    .1998897
+      yr1984 |   .0633219   .1026188     0.62   0.537    -.1378074    .2644511
+        year |  -.0075599    .019059    -0.40   0.692    -.0449148     .029795
+       _cons |   16.20856   38.00619     0.43   0.670    -58.28221    90.69932
+------------------------------------------------------------------------------
+Instruments for differenced equation
+        GMM-type: L(3/.).n
+        Standard: D.w LD.w D.k LD.k D.yr1980 D.yr1981 D.yr1982 D.yr1983
+                  D.yr1984 D.year
+Instruments for level equation
+        GMM-type: L2D.n
+        Standard: _cons
+</code></pre>
+<p>The estimate of the coefficient on <code>L.n</code> is now 0.96. Blundell, Bond, and Windmeijer (2000, 63–65) showthat the moment conditions in the system estimator remain informative as the true coefficient on <code>L.n</code> approaches unity. Holtz-Eakin, Newey, and Rosen (1988) show that because the large-sample distribution of the estimator is derived for fixed number of periods and a growing number of individuals there is no “unit-root” problem.</p>
+<div class="sourceCode" id="cb992"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb992-1"><a href="12.6-arellano-bond-estimator.html#cb992-1" tabindex="-1"></a>. <span class="kw">estat</span> sargan</span>
+<span id="cb992-2"><a href="12.6-arellano-bond-estimator.html#cb992-2" tabindex="-1"></a></span>
+<span id="cb992-3"><a href="12.6-arellano-bond-estimator.html#cb992-3" tabindex="-1"></a>Sargan <span class="kw">test</span> <span class="kw">of</span> overidentifying restrictions</span>
+<span id="cb992-4"><a href="12.6-arellano-bond-estimator.html#cb992-4" tabindex="-1"></a>H0: Overidentifying restrictions are valid</span>
+<span id="cb992-5"><a href="12.6-arellano-bond-estimator.html#cb992-5" tabindex="-1"></a>        <span class="fu">chi2</span>(24)     =  27.22585</span>
+<span id="cb992-6"><a href="12.6-arellano-bond-estimator.html#cb992-6" tabindex="-1"></a>        Prob &gt; <span class="fu">chi2</span>  =    0.2940</span></code></pre></div>
+<p>The results from <code>estat sargan</code> no longer reject the null hypothesis that the overidentifying restrictions are valid.</p>
+
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="ref-Arellano1991" class="csl-entry">
+Arellano, Manuel, and Stephen Bond. 1991. <span>“<span class="nocase">Some Tests of Specification for Panel Carlo Application to Data: Monte Carlo Evidence and an Application to Employment Equations</span>.”</span> <em>Review of Economic Studies</em> 58: 277–97.
+</div>
+<div id="ref-Bruno2005" class="csl-entry">
+Bruno, Giovanni S. F. 2005. <span>“Estimation and Inference in Dynamic Unbalanced Panel-Data Models with a Small Number of Individuals.”</span> <em>The Stata Journal</em> 5: 473–500. <a href="https://www.stata-journal.com/article.html?article=st0091">https://www.stata-journal.com/article.html?article=st0091</a>.
+</div>
+<div id="ref-Judson1999" class="csl-entry">
+Judson, Ruth A., and Ann L. Owen. 1999. <span>“Estimating Dynamic Panel Data Models: A Guide for Macroeconomists.”</span> <em>Economics Letters</em> 65 (October): 9–15. <a href="https://doi.org/10.1016/S0165-1765(99)00130-5">https://doi.org/10.1016/S0165-1765(99)00130-5</a>.
+</div>
+<div id="ref-Nickell1981" class="csl-entry">
+Nickell, Stephen. 1981. <span>“<span>Biases In Dynamic Models With Fixed Effects</span>.”</span> <em>Econometrica</em> 49 (6): 1417–26.
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="12.5-panel-1.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="12.7-common-correlated-effects-models.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+  "sharing": {
+    "github": true,
+    "facebook": true,
+    "twitter": true,
+    "linkedin": false,
+    "weibo": false,
+    "instapaper": false,
+    "vk": false,
+    "whatsapp": false,
+    "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+  },
+  "fontsettings": {
+    "theme": "night",
+    "family": "sans",
+    "size": 3
+  },
+  "edit": {
+    "link": "https://github.com/my1396/R-Notes/edit/main/1103-Stata-AB-Estimator.Rmd",
+    "text": "Edit"
+  },
+  "history": {
+    "link": null,
+    "text": null
+  },
+  "view": {
+    "link": null,
+    "text": null
+  },
+  "download": ["_main.pdf", "_main.epub", "https://github.com/my1396/R-Notes/raw/main/1103-Stata-AB-Estimator.Rmd"],
+  "search": {
+    "engine": "fuse",
+    "options": null
+  },
+  "toc": {
+    "collapse": "section",
+    "scroll_highlight": true
+  },
+  "toc_depth": 3,
+  "toc_float": true,
+  "enableEmoji": true
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>
