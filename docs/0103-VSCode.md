@@ -242,7 +242,10 @@ options(
   - `[ins]`: insert mode
   - `[nav]`: normal mode
 
+--------------------------------------------------------------------------------
 
+Q: How to restart Radian?  
+A: Run `rstudioapi::restartSession()` in the R terminal.
 
 
 --------------------------------------------------------------------------------
