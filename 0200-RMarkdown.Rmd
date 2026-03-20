@@ -964,23 +964,43 @@ Here is a template I often use:
 
 ````md
 ```{r, label="setup", include=FALSE}`r ''`
-# set default chunk options
+# Set default chunk options
 knitr::opts_chunk$set(
+  # display options
   echo = TRUE,
   message = FALSE,
   warning = FALSE,
   fig.align = "center",
   fig.pos = "H"
   )
-# set default kable options
+
+# Set default kable options
 opts <- options(knitr.kable.NA = "")
+
+# Load packages
+library(tidyverse)
+library(knitr)
+library(kableExtra)
 ```
 ````
 
 - For demonstration purposes, use `echo = TRUE` to show the source code in the output document.
-- For production documents, you may want to set `echo = FALSE` to hide the source code.
+- For production documents, e.g., share results with coauthors, you may want to set `echo = FALSE` to hide the source code.
   - This way, the output will show.
   - If you want to further hide the output, use `include = FALSE`. This hides both the source code and the output, but the code is still evaluated, and plots are generated.
+- You can put this snippet in a separate file, e.g., `setup.R`, and then include it in the first chunk of your Rmd via `source("setup.R")`.
+  
+  In your `.Rmd` file:
+  
+  ````md
+  ```{r, include=FALSE}`r ''`
+  source("setup.R")
+  ```
+  ````
+
+  - `include=FALSE` is used so that in your output document, you won't see `source("setup.R")` and its output. ✅
+  - If you use `echo=FALSE`, you won't see `source("setup.R")` but you will see the output of the code in `setup.R`, such as loading packages information.
+
 
 --------------------------------------------------------------------------------
 
@@ -1095,7 +1115,7 @@ You may use `knitr::opts_chunk$set()` to change the default values of chunk opti
 
 <span style='color: #00CC66'>`results='markup' | 'asis' | 'hold' | 'hide'`</span>  note plural form for result**s**.
 
-- `results='markup'`: Defaults to `` `markup` ``. Mark up text output with the appropriate environments depending on the output format. 
+- <span style="color: #00CC66;">`results='markup'`</span>: Defaults to `` `markup` ``. Mark up text output with the appropriate environments depending on the output format. 
 
   `results='markup'` means to put the text output in fenced code blocks (```` ``` ````), treat output **verbatim**. → Not interpreted as Markdown.
 
@@ -1109,10 +1129,10 @@ You may use `knitr::opts_chunk$set()` to change the default values of chunk opti
   ```
   ~~~
 
-  Ex2
+  **Ex2**
 
   ````markdown
-  ```{r, results='asis'}`r ''`
+  ```{r, results='markup'}`r ''`
   cat("I'm raw **Markdown** content.\n")
   ```
   ````
@@ -1127,7 +1147,9 @@ You may use `knitr::opts_chunk$set()` to change the default values of chunk opti
 
   Any markdown format like `**` will not be rendenered as bold; will be printed as plain source code output. 
 
-- `results='asis'`: Write text output as-is, i.e., write the raw text results directly into the output document without any markups. → Output is interpreted as Markdown.
+  <hr>
+
+- <span style="color: #00CC66;">`results='asis'`</span>: Write text output as-is, i.e., <span style="color: #00CC66;">write the raw text results directly into the output document without any markups.</span> → Output is interpreted as Markdown.
 
   Useful when you want to genrates Markdown that will be rendered directly.
 
@@ -1208,6 +1230,20 @@ You may use `knitr::opts_chunk$set()` to change the default values of chunk opti
 
   - specify `results="asis"` in code chunks.
 
+  <hr>
+
+  You can use `results='asis'` to <span style="color: #00CC66;">read `.txt` files and include them</span> in the output document as-is. 
+
+  ````markdown
+  ```{r, results='asis'}`r ''`
+  cat("<pre style='white-space: pre-wrap;'>", paste(readLines("data_description.txt"), collapse = "\n"), "</pre>")
+  ```
+  ````
+
+  This will read the content of `data_description.txt` and include it in the output document without any additional formatting, preserving the original formatting of the text file.
+
+  Note: In Quarto, you need to use `output="asis"` in the chunk header, as Quarto uses `output` instead of `results` to control text output.
+
 - <span style="color: #00CC66;">`results='hold'`</span>: Hold all pieces of text output in a chunk and flush them to the end of the chunk.
   
   This is useful when you want to group all text output together, rather than interspersed with the source code.
@@ -1253,16 +1289,18 @@ Two options if you want to read external scripts:
 - Source `.R` scripts
 
   ````markdown
-  ```{r}`r ''`
+  ```{r include=FALSE}`r ''`
   source("setup.R")
   ```
   ````
+
+  `include=FALSE` prevents the source code and its output from being included in the output document. This makes the output cleaner.
 
   You will NOT be able to see the source code by default. You can use `source(..., echo = TRUE)`, but the source code will NOT be properly syntax highlighted.
 
 - Use the `file` option of a chunk.
 
-  This method allows you to see the source code, and it has proper syntax highlighting.
+  This method allows you to <span class="env-green">see the source code</span>, and it has proper syntax highlighting.
 
   ````markdown
   ```{r file='setup.R'}`r ''`
