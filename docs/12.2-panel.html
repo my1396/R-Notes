@@ -480,7 +480,7 @@ div.csl-indent {
 <ul>
 <li class="chapter" data-level="4.11.1" data-path="4.11-tables-1.html"><a href="4.11-tables-1.html#knitrkable"><i class="fa fa-check"></i><b>4.11.1</b> <code>knitr::kable</code></a></li>
 <li class="chapter" data-level="4.11.2" data-path="4.11-tables-1.html"><a href="4.11-tables-1.html#data-frame-printing"><i class="fa fa-check"></i><b>4.11.2</b> Data frame printing</a></li>
-<li class="chapter" data-level="4.11.3" data-path="4.11-tables-1.html"><a href="4.11-tables-1.html#stargazer"><i class="fa fa-check"></i><b>4.11.3</b> Stargazer</a></li>
+<li class="chapter" data-level="4.11.3" data-path="4.11-tables-1.html"><a href="4.11-tables-1.html#stargazer-tables"><i class="fa fa-check"></i><b>4.11.3</b> Stargazer</a></li>
 <li class="chapter" data-level="4.11.4" data-path="4.11-tables-1.html"><a href="4.11-tables-1.html#xtable"><i class="fa fa-check"></i><b>4.11.4</b> <code>xtable</code></a></li>
 <li class="chapter" data-level="4.11.5" data-path="4.11-tables-1.html"><a href="4.11-tables-1.html#kableextra"><i class="fa fa-check"></i><b>4.11.5</b> <code>kableExtra</code></a></li>
 <li class="chapter" data-level="4.11.6" data-path="4.11-tables-1.html"><a href="4.11-tables-1.html#huxtable"><i class="fa fa-check"></i><b>4.11.6</b> huxtable</a></li>
@@ -767,7 +767,8 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="12.2" data-path="12.2-panel.html"><a href="12.2-panel.html"><i class="fa fa-check"></i><b>12.2</b> Panel</a>
 <ul>
-<li class="chapter" data-level="12.2.1" data-path="12.2-panel.html"><a href="12.2-panel.html#dynamic-panel"><i class="fa fa-check"></i><b>12.2.1</b> Dynamic Panel</a></li>
+<li class="chapter" data-level="12.2.1" data-path="12.2-panel.html"><a href="12.2-panel.html#two-way-fixed-effects"><i class="fa fa-check"></i><b>12.2.1</b> Two-way fixed effects</a></li>
+<li class="chapter" data-level="12.2.2" data-path="12.2-panel.html"><a href="12.2-panel.html#dynamic-panel"><i class="fa fa-check"></i><b>12.2.2</b> Dynamic Panel</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="13" data-path="13-machine-learning.html"><a href="13-machine-learning.html"><i class="fa fa-check"></i><b>13</b> Machine Learning</a>
@@ -930,6 +931,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <div id="panel" class="section level2 hasAnchor" number="12.2">
 <h2><span class="header-section-number">12.2</span> Panel<a href="12.2-panel.html#panel" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p><code>make.pbalanced(x, balance.type = "fill")</code> is useful to make a panel balanced by filling missing time periods with NA values. This is useful when you include individual specific time trends in the model.</p>
+<p><code>plm::plm()</code> is the horse force for panel data estimation.</p>
 <p><code>plm::plm(formula, data, effect = c("individual", "time", "twoways", "nested"), model = c("within", "random", "ht", "between", "pooling", "fd"), index = NULL )</code></p>
 <ul>
 <li><p><code>index</code> the index attribute that describes <strong>individual</strong> and <strong>time</strong> dimensions; has to be the exact order, i.e. <strong>entity first</strong>, can’t reverse;</p>
@@ -941,18 +943,25 @@ document.addEventListener('DOMContentLoaded', function() {
 <li><p>an integer, the number of individuals. In this case, the data need to be a <strong>balanced panel</strong> and be organized as a stacked time series (successive blocks of individuals, each block being a time series for the respective individual) assuming consecutive and ascending time periods in the order of the original data. Two new variables are added: “id” and “time” which contain the individual and the time indexes.</p></li>
 </ul></li>
 </ul>
+<div id="two-way-fixed-effects" class="section level3 hasAnchor" number="12.2.1">
+<h3><span class="header-section-number">12.2.1</span> Two-way fixed effects<a href="12.2-panel.html#two-way-fixed-effects" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>With <code>effect = "twoways"</code>, the model includes both firm FE and year FE. The year fixed effects absorb all variation that is common across firms within a year — which is exactly what these macro variables capture. They are perfectly collinear with the year dummies, so plm silently drops them.</p>
+<blockquote>
+<p>In a two-way FE panel, you cannot separately identify time-invariant cross-sectional variables (absorbed by firm FE) or cross-sectionally invariant time-series variables (absorbed by year FE).</p>
+</blockquote>
 <hr />
-<div id="dynamic-panel" class="section level3 hasAnchor" number="12.2.1">
-<h3><span class="header-section-number">12.2.1</span> Dynamic Panel<a href="12.2-panel.html#dynamic-panel" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<div class="sourceCode" id="cb871"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb871-1"><a href="12.2-panel.html#cb871-1" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;EmplUK&quot;</span>, <span class="at">package =</span> <span class="st">&quot;plm&quot;</span>)</span>
-<span id="cb871-2"><a href="12.2-panel.html#cb871-2" tabindex="-1"></a>form <span class="ot">&lt;-</span> <span class="fu">log</span>(emp) <span class="sc">~</span> <span class="fu">log</span>(wage) <span class="sc">+</span> <span class="fu">log</span>(capital) <span class="sc">+</span> <span class="fu">log</span>(output)</span>
-<span id="cb871-3"><a href="12.2-panel.html#cb871-3" tabindex="-1"></a><span class="co"># Arellano and Bond (1991), table 4, col. b </span></span>
-<span id="cb871-4"><a href="12.2-panel.html#cb871-4" tabindex="-1"></a>empl_ab <span class="ot">&lt;-</span> <span class="fu">pgmm</span>(</span>
-<span id="cb871-5"><a href="12.2-panel.html#cb871-5" tabindex="-1"></a>    <span class="fu">dynformula</span>(form, <span class="fu">list</span>(<span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>)),</span>
-<span id="cb871-6"><a href="12.2-panel.html#cb871-6" tabindex="-1"></a>    <span class="at">data =</span> EmplUK, <span class="at">index =</span> <span class="fu">c</span>(<span class="st">&quot;firm&quot;</span>, <span class="st">&quot;year&quot;</span>),</span>
-<span id="cb871-7"><a href="12.2-panel.html#cb871-7" tabindex="-1"></a>    <span class="at">effect =</span> <span class="st">&quot;twoways&quot;</span>, <span class="at">model =</span> <span class="st">&quot;twosteps&quot;</span>,</span>
-<span id="cb871-8"><a href="12.2-panel.html#cb871-8" tabindex="-1"></a>    <span class="at">gmm.inst =</span> <span class="sc">~</span> <span class="fu">log</span>(emp), <span class="at">lag.gmm =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">99</span>)) </span>
-<span id="cb871-9"><a href="12.2-panel.html#cb871-9" tabindex="-1"></a>    )</span></code></pre></div>
+</div>
+<div id="dynamic-panel" class="section level3 hasAnchor" number="12.2.2">
+<h3><span class="header-section-number">12.2.2</span> Dynamic Panel<a href="12.2-panel.html#dynamic-panel" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div class="sourceCode" id="cb872"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb872-1"><a href="12.2-panel.html#cb872-1" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;EmplUK&quot;</span>, <span class="at">package =</span> <span class="st">&quot;plm&quot;</span>)</span>
+<span id="cb872-2"><a href="12.2-panel.html#cb872-2" tabindex="-1"></a>form <span class="ot">&lt;-</span> <span class="fu">log</span>(emp) <span class="sc">~</span> <span class="fu">log</span>(wage) <span class="sc">+</span> <span class="fu">log</span>(capital) <span class="sc">+</span> <span class="fu">log</span>(output)</span>
+<span id="cb872-3"><a href="12.2-panel.html#cb872-3" tabindex="-1"></a><span class="co"># Arellano and Bond (1991), table 4, col. b </span></span>
+<span id="cb872-4"><a href="12.2-panel.html#cb872-4" tabindex="-1"></a>empl_ab <span class="ot">&lt;-</span> <span class="fu">pgmm</span>(</span>
+<span id="cb872-5"><a href="12.2-panel.html#cb872-5" tabindex="-1"></a>    <span class="fu">dynformula</span>(form, <span class="fu">list</span>(<span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>)),</span>
+<span id="cb872-6"><a href="12.2-panel.html#cb872-6" tabindex="-1"></a>    <span class="at">data =</span> EmplUK, <span class="at">index =</span> <span class="fu">c</span>(<span class="st">&quot;firm&quot;</span>, <span class="st">&quot;year&quot;</span>),</span>
+<span id="cb872-7"><a href="12.2-panel.html#cb872-7" tabindex="-1"></a>    <span class="at">effect =</span> <span class="st">&quot;twoways&quot;</span>, <span class="at">model =</span> <span class="st">&quot;twosteps&quot;</span>,</span>
+<span id="cb872-8"><a href="12.2-panel.html#cb872-8" tabindex="-1"></a>    <span class="at">gmm.inst =</span> <span class="sc">~</span> <span class="fu">log</span>(emp), <span class="at">lag.gmm =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">99</span>)) </span>
+<span id="cb872-9"><a href="12.2-panel.html#cb872-9" tabindex="-1"></a>    )</span></code></pre></div>
 <p><span class="math display">\[
 \boldsymbol \Gamma_n = \begin {pmatrix}
 \gamma_0 &amp; \gamma_1 &amp; \gamma_2 &amp; \cdots &amp; \gamma_{n - 1} \\ \gamma_1 &amp; \gamma_0 &amp; \gamma_1 &amp; \cdots &amp; \gamma_{n - 2} \\ \gamma_2 &amp; \gamma_1 &amp; \gamma_0 &amp; \cdots &amp; \gamma_{n - 3} \\ \vdots &amp; \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\ \gamma_{n - 1} &amp; \gamma_{n - 2} &amp; \gamma_{n - 3} &amp; \cdots &amp; \gamma_0 \end {pmatrix}

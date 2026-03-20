@@ -2,6 +2,8 @@
 
 `make.pbalanced(x, balance.type = "fill")` is useful to make a panel balanced by filling missing time periods with NA values. This is useful when you include individual specific time trends in the model.
 
+`plm::plm()` is the horse force for panel data estimation.
+
 `plm::plm(formula, data, effect = c("individual", "time", "twoways", "nested"), model = c("within", "random", "ht", "between", "pooling", "fd"), index = NULL )`
 
 - `index` 	the index attribute that describes **individual** and **time** dimensions; has to be the exact order, i.e. **entity first**, can't reverse;
@@ -15,6 +17,15 @@
   - a character string which is the name of the **individual** index variable. In this case, the time index is created automatically and a new variable called "time" is added, assuming consecutive and ascending time periods in the order of the original data;
 
   - an integer, the number of individuals. In this case, the data need to be a **balanced panel** and be organized as a stacked time series (successive blocks of individuals, each block being a time series for the respective individual) assuming consecutive and ascending time periods in the order of the original data. Two new variables are added: "id" and "time" which contain the individual and the time indexes.
+
+
+### Two-way fixed effects
+
+With `effect = "twoways"`, the model includes both firm FE and year FE. The year fixed effects absorb all variation that is common across firms within a year — which is exactly what these macro variables capture. They are perfectly collinear with the year dummies, so plm silently drops them.
+
+> In a two-way FE panel, you cannot separately identify time-invariant cross-sectional variables (absorbed by firm FE) or cross-sectionally invariant time-series variables (absorbed by year FE).
+
+
 
 --------------------------------------------------------------------------------
 

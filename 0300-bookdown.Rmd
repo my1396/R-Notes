@@ -1,5 +1,9 @@
 # bookdown
 
+**Useful resources:**
+
+- [Authoring Books with R Markdown](https://bookdown.org/yihui/bookdown/)
+
 
 **[Bookdown](https://bookdown.org/yihui/rmarkdown/bookdown-start.html)** is an extra package for R Markdown that is particularly useful for long documents.
 

@@ -1207,7 +1207,9 @@ You may use `knitr::opts_chunk$set()` to change the default values of chunk opti
     - `Species`
     ```
 
-  - Use `stargazer` to generate LaTeX tables.
+  - Use `stargazer` to generate LaTeX tables. 
+    
+    See Section \@ref(stargazer-tables) for more details about [`stargazer`](#stargazer-tables).
 
     ````markdown
     ```{r, include=TRUE, results='asis'}
@@ -1241,6 +1243,8 @@ You may use `knitr::opts_chunk$set()` to change the default values of chunk opti
   ````
 
   This will read the content of `data_description.txt` and include it in the output document without any additional formatting, preserving the original formatting of the text file.
+
+  Note: In Quarto, you need to use `output="asis"` in the chunk header, as Quarto uses `output` instead of `results` to control text output.
 
 - <span style="color: #00CC66;">`results='hold'`</span>: Hold all pieces of text output in a chunk and flush them to the end of the chunk.
   

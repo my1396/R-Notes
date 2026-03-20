@@ -23,20 +23,51 @@ You can number and refer to an equation by adding `\begin{equation}` along with 
 
     General syntax for other environments: `\@ref(type:label)`  where `type` is the environment being referenced, and  `label` is the chunk label.
 
-    | Element         | ID$^{[1]}$                                   | How to cite$^{[4]}$ |
-    | --------------- | -------------------------------------------- | ------------------- |
-    | Figure$^{[2]}$  | `any-id`                                     | `\@ref(fig:any-id)` |
-    | Table           | `any-id`                                     | `\@ref(tab:any-id)` |
-    | Equation        | `any-id`                                     | `\@ref(eq:any-id)`  |
-    | Section$^{[3]}$ | add `{#any-id}` to the end of section header | `\@ref(any-id)`     |
+    <table>
+    <thead>
+      <tr>
+        <th>Element</th>
+        <th>ID<sup>[1]</sup></th>
+        <th style="width:70%;">How to cite<sup>[4]</sup></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Figure<sup>[2]</sup></td>
+        <td><code>any-id</code></td>
+        <td><code>\\&#64;ref(fig:any-id)</code></td>
+      </tr>
+      <tr>
+        <td>Table</td>
+        <td><code>any-id</code></td>
+        <td><code>\\&#64;ref(tab:any-id)</code></td>
+      </tr>
+      <tr>
+        <td>Equation</td>
+        <td><code>any-id</code></td>
+        <td><code>\\&#64;ref(eq:any-id)</code></td>
+      </tr>
+      <tr>
+        <td>Section<sup>[3]</sup></td>
+        <td>add <code>{#any-id}</code> to the end of section header</td>
+        <td>
+          <ul>
+            <li><code>Section \\&#64;ref(any-id)</code> (show number)</li>
+            <li><code>&#91;Section&#93;(#any-id)</code> (text based link)</li>
+          </ul>
+        </td>
+      </tr>
+    </tbody>
+    </table>
 
-    $^{[1]}$ For figures, tables, and equations, you can assign any ID you like. No type is needed. When you render your file, labels will be <span class="env-green">automatically prefixed</span> with `fig:`, `tab:`, or `eq:` respectively.
 
-    $^{[2]}$ **A caption to your figure (or table) must be specified**: Figures without a caption will be included directly as images and will therefore not be a numbered figure.
+    <sup>[1]</sup> For figures, tables, and equations, you can assign any ID you like. No type is needed. When you render your file, labels will be <span class="env-green">automatically prefixed</span> with `fig:`, `tab:`, or `eq:` respectively.
+
+    <sup>[2]</sup> **A caption to your figure (or table) must be specified**: Figures without a caption will be included directly as images and will therefore not be a numbered figure.
     
-    $^{[3]}$ For [sections](https://bookdown.org/yihui/bookdown/cross-references.html), you need to add `{#any-id}` (note the `#`) to the end of section header.
+    <sup>[3]</sup> For [sections](https://bookdown.org/yihui/bookdown/cross-references.html), it is suggested to create a custom label so that the cross reference won't break when you change section names. You can add `{#any-id}` (note the `#`) at the end of section header. <span style="color: #00CC66;">Note that **cross references between documents** are supported by bookdown.</span>
     
-    $^{[4]}$ Do not forget the leading backslash `\`! And also note the parentheses `()` after `ref`; they are NOT curly braces `{}`, which is used in LaTeX cross-reference syntax.
+    <sup>[4]</sup> Do not forget the leading backslash `\`! And also note the parentheses `()` after `ref`; they are NOT curly braces `{}`, which is used in LaTeX cross-reference syntax.
 
 ```latex
 This is an equation redered using bookdown
@@ -116,27 +147,30 @@ $$
 
 
 
-#### Headers {-}
+#### Headers
 
 ```latex
 # Introduction {#intro}
 
-This is Chapter \@ref(intro)
+Refer to Chapter \@ref(intro) for details.
+
+This is a text-based link to the introduction section [Introduction][#intro].
 ```
+
 The above is the [bookdown syntax](https://bookdown.org/yihui/bookdown/cross-references.html) for cross-referencing headers. `\@ref(intro)` creates a link to the **header numbering** with the ID `intro`.
 
 Sometimes you want to create a **text-based link**.  
 You can use the markdown syntax `[link text][#ID]`. It will create a link to `link text` that points to the header with ID `ID`.
 Refer to [Markdown: cross references](https://my1396.github.io/Econ-Study/2023/10/04/Markdown.html#cross-references) for more examples.
 
-Note that **cross references between documents** are supported by bookdown. Don't need to specify the file name, just use the ID of the header in the other document. Bookdown will automatically link to the correct document.
+<span style="color: #00CC66;">Note that **cross references between documents** are supported by bookdown.</span> Don't need to specify the file name, just use the ID of the header in the other document. Bookdown will automatically link to the correct document.
 
 **More about Section IDs:**
 
 By default, Pandoc will generate an ID for all section headers, e.g., a section `# Hello World` will have an ID `hello-world`. However, we recommend you to **manually assign an ID** to a section header to make sure you do not forget to update the reference label after you change the section header. To assign an ID to a section header, simply add `{#id}` to the end of the section header. Further attributes of section headers can be set using standard [Pandoc syntax](http://pandoc.org/MANUAL.html#heading-identifiers).
 
 
-#### Figures {-}
+#### Figures
 
 We can make cross-references within the text using the syntax `\@ref(type:label)`, where `label` is the chunk label and `type` is the environment being referenced (e.g. `tab`, `fig`, or `eq`).
 
@@ -150,7 +184,7 @@ plot(cars)  # a scatterplot
 ```
 ~~~
 
-#### Tables {-}
+#### Tables
 
 ~~~latex
 See Table \@ref(tab:mtcars)
@@ -160,7 +194,7 @@ knitr::kable(mtcars[1:5, 1:5], caption = "A caption")
 ```
 ~~~
 
-#### Theorems {-}
+#### Theorems
 
 ~~~latex
 See Theorem \@ref(thm:boring)
@@ -170,7 +204,7 @@ Here is my theorem.
 ```
 ~~~
 
-#### Equations {-}
+#### Equations
 
 ```latex
 See equation \@ref(eq:linear)
