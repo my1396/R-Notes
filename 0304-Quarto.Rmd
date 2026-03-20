@@ -587,12 +587,23 @@ title: "My Document"
 format:
   html: 
     theme: cosmo
-    fontsize: 1.1em
+    fontsize: 14pt
     linestretch: 1.7
+    toc: true
+    css: /Users/menghan/Library/CloudStorage/OneDrive-Norduniversitet/_shared-resources/custom-style.css
+    self-contained: true
+    html-math-method: mathjax
+    include-in-header: /Users/menghan/Library/CloudStorage/OneDrive-Norduniversitet/_shared-resources/mathjax.html
+    grid:
+      body-width: 1000px
 ```
 
 `fontsize`: set base font size. Can be set in absolute units like `16px`, `14pt`, or relative units like `1.2em`, `120%`.
 See [HERE](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/font-size) for an overview of CSS font-size units.
+
+`gird/body-width`: set the max width of the page content. By default, Quarto uses 800px. If you want to use the full width of the page, use `page-layout: full` instead.
+
+--------------------------------------------------------------------------------
 
 Enable **dark and light** modes
 

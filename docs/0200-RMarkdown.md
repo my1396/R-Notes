@@ -952,9 +952,27 @@ knitr::opts_chunk$set(
 ```
 ````
 
-Chunk options are written in the form `tag=value`. A special chunk option is the chunk label (e.g., `setup` in the above example). Only the chunk label does not need a tag (i.e., you can only provide the value). If you prefer the form `tag=value`, you could also use the chunk option label explicitly, e.g., `label="setup"`.
+Chunk options are written in the form `tag=value`, options are separated by comma. 
 
-The settings will apply to every chunk in your file as a default. You can overwrite them in individual chunk headers.
+A special chunk option is the <span style="color: #00CC66;">chunk label</span> (e.g., `setup` in the above example). Only the chunk label does not need a tag (i.e., you can only provide the value). If you prefer the form `tag=value`, you could also use the chunk option label explicitly, e.g., `label="setup"`.
+
+
+The <span style="color: #00CC66;">**chunk label**</span> for each chunk is assumed to be unique within the document. This is especially important for cache and plot filenames, because these filenames are based on chunk labels. Chunks without labels will be assigned labels like `unnamed-chunk-i`, where `i` is an incremental number.
+
+- Chunk label doesn't need a `tag`, i.e., you only provide the `value`. 
+
+- The comma after the language name is <span style="color: #00CC66;">optional</span> if the chunk label is the first option. Otherwise, if the first option is NOT the chunk label, you need to put a comma after the language name, e.g., `{r, echo=FALSE}`.
+
+- If you prefer the form `tag=value`, you could also use the chunk option `label` explicitly, e.g., 
+
+  ````md
+  ```{r, label='my-chunk'}
+  # one code chunk example
+  ```
+  ````
+
+
+The settings in `knitr::opts_chunk$set()` will apply to every chunk in your file as a default. You can overwrite them in individual chunk headers.
 
 Full list of chunk options: <https://yihui.org/knitr/options/>
 
@@ -1066,19 +1084,7 @@ print(sys.version)
 - If the output is html, you can write in html syntax. 
 
 
-
-The **chunk label** for each chunk is assumed to be unique within the document. This is especially important for cache and plot filenames, because these filenames are based on chunk labels. Chunks without labels will be assigned labels like `unnamed-chunk-i`, where `i` is an incremental number.
-
-- Chunk label doesn't need a `tag`, i.e., you only provide the `value`. 
-
-- If you prefer the form `tag=value`, you could also use the chunk option `label` explicitly, e.g., 
-
-  ````md
-  ```{r, label='my-chunk'}
-  # one code chunk example
-  ```
-  ````
-
+--------------------------------------------------------------------------------
 
 **Tips about chunk options:** [↩︎](https://yihui.org/knitr/options)
 
