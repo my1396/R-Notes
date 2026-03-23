@@ -649,6 +649,8 @@ Ref:
 
 Tex style and package loading can also put in `header-includes`.
 
+List all supporting packages under `header-includes` as follows:
+
 Ex.1
 
 ```yml

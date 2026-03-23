@@ -1,13 +1,18 @@
 # Quarto
 
-Quarto Guide (quick tutorial): <https://quarto.org/docs/guide/>
 
-Quarto Reference (detailed documentation): <https://quarto.org/docs/reference/>
+**Useful resources:**
 
-Quarto Tutorial: <https://jmjung.quarto.pub/m02-advanced-literate-programming/#learning-outcomes>
+- Quarto Tutorial: 
 
-Run Quarto in VS Code: <https://quarto.org/docs/tools/vscode/index.html>
+  - [Quarto Guide: Official Documentation](https://quarto.org/docs/guide/)
+  - [Advanced Literate Programming with Quarto](https://jmjung.quarto.pub/m02-advanced-literate-programming/#learning-outcomes)
+  - [Quarto: The Practical Guide](https://quarto-tdg.org)
 
+- [YAML Options Reference](https://quarto.org/docs/reference/)
+- [Render Quarto in VS Code](https://quarto.org/docs/tools/vscode/index.html)
+
+--------------------------------------------------------------------------------
 
 Quarto is based on **Pandoc** and uses its variation of markdown as its underlying document syntax. See the full documentation of [Pandoc's Markdown](https://pandoc.org/MANUAL.html#pandocs-markdown) for more in-depth documentation.
 
@@ -19,6 +24,118 @@ Quarto is based on **Pandoc** and uses its variation of markdown as its underlyi
 | Run Current Cell and Jump to Next Cell | ⇧ + Enter         |
 | Run Selected Line(s)                   | ⌘ + Enter         |
 | <span class="env-green">Run All Cells</span>       | ⌥ + ⌘ + R         |
+
+--------------------------------------------------------------------------------
+
+### Projects {.unnumbered .unlisted}
+
+If you have multiple .qmd files in one directory, it's a good practice to create a project for them.
+
+**Benefits of creating a project:** [↩](https://quarto.org/docs/projects/quarto-projects.html)
+
+- Share YAML configuration across multiple .qmd files. 
+  
+  Sometimes yaml gets very long. Put shared yaml in `_quarto.yml` file and it will apply to all .qmd files in the same directory. This makes your .qmd files more clean.
+
+- Redirect output to a specific folder.
+- Freeze rendered output, so that only changed files will be re-rendered
+
+**Types of projects:**
+
+- `default`: default type; plain project, no linking between files. 
+  
+   This is useful if you just want to render multiple .qmd files in the same directory.
+  
+   If the file `_quarto.yml` is empty, or if `type` is unspecified, the `type` is assumed to be `default`. 
+
+- `book`: enforce chapters, build everything together
+- `website`: create navigation, expect `index.qmd` as the homepage.
+- `blog`
+- `manuscript` and `confluence`
+
+--------------------------------------------------------------------------------
+
+#### Create a project
+
+In terminal, run `quarto create project` and follow the prompts to create a new project. 
+
+You can also define the type and name as arguments in the command, e.g., `quarto create project <type> <name>`.
+
+```bash
+quarto create project default project-name project-title
+```
+
+Quarto will then create the folder, e.g. project-name and populate it with `_quarto.yml` and a Quarto document with the same name as the project title, `project-title.qmd`:
+
+```
+temp-dirs/project-name
+├── _quarto.yml
+└── project-title.qmd
+```
+
+The file `_quarto.yml` is also populated with the project title:
+
+```yaml
+project:
+  title: "project-title"
+```
+
+--------------------------------------------------------------------------------
+
+You can <span class="env-green">manually create a project by creating a `_quarto.yml` file</span> in the directory. The presence of `_quarto.yml`, even if empty, signals to Quarto this is a project, and allows you to render without specifying a file. 
+
+When you run `quarto render`, Quarto will render all Quarto documents in the project.
+
+
+--------------------------------------------------------------------------------
+
+Put project metadata in `_quarto.yml` file. Any document rendered within the project directory will automatically inherit the metadata defined at the project level. Here is an example of what the `_quarto.yml` file might look like
+
+```yaml
+project:
+  type: default
+
+from: markdown+tex_math_single_backslash
+bibliography: bibli.bib
+
+format:
+  html:
+    theme:
+      light: [flatly, themes/light.scss]
+      dark: [darkly, themes/dark.scss]
+    respect-user-color-scheme: true
+    toc: true
+    css: 
+      - ~/Library/CloudStorage/OneDrive-Norduniversitet/_shared-resources/custom-style.css
+    self-contained: true
+    html-math-method: mathjax
+    include-in-header: 
+      - ~/Library/CloudStorage/OneDrive-Norduniversitet/_shared-resources/mathjax.html
+    fontsize: 14pt
+    grid:
+      body-width: 1000px
+```
+
+
+Some YAML options accepts multiple values, you can specify using the block style with dashes `-` or the inline style with square brackets `[]`.
+
+For example, the `include-in-header` option accepts multiple values. You can specify it in block style as follows:
+
+```yaml
+include-in-header:
+  - mathjax.html
+  - custom-style.css
+```
+Or you can specify it in inline style as follows:
+
+```yaml
+include-in-header: [mathjax.html, custom-style.css]
+```
+
+- [`include-in-header`](https://quarto.org/docs/output-formats/html-basics.html#includes): Include contents of *file*, verbatim, at the end of the header. This can be used, for example, to include special CSS or JavaScript in HTML documents or to inject commands into the LaTeX preamble.
+  
+  `css` official option can also be used to include CSS files in HTML documents. 
+
 
 --------------------------------------------------------------------------------
 
@@ -43,7 +160,7 @@ touch .nojekyll
 
 --------------------------------------------------------------------------------
 
-### Only re-render changed files
+### Only re-render changed files {.unnumbered .unlisted}
 
 You can add the following to your `_quarto.yml` file to only re-render changed files:
 
@@ -2044,6 +2161,8 @@ ref:
 - <https://jadeyryan.quarto.pub/cascadia-quarto/4-conditionals/>
 - meta variables: <https://quarto.org/docs/authoring/variables.html>
 
+--------------------------------------------------------------------------------
+
 ## FAQ
 
 Q: How to add comments in Quarto markdown?  
@@ -2056,6 +2175,76 @@ Multiline comment:
 your comment goes here
 -->
 ```
+
+--------------------------------------------------------------------------------
+
+Q: How to put shared chunk options setup in one file?  
+A: Put your shared chunk options in a separate file, e.g., `_setup.qmd`, then include it in your .qmd files using [`{{< include >}}`](https://quarto.org/docs/authoring/includes.html) shortcode:
+
+```markdown
+{{< include _setup.qmd >}}
+```
+
+The undersore in the file name indicates that it is a helper file that is not meant to be rendered on its own. 
+It is just a nice convention for the included files.
+You should always use an underscore prefix with included files so that they are automatically ignored (i.e. not treated as standalone files) by a `quarto render` of a project.
+
+I think this is the most concise way to include shared chunk options. Other options: put the shared chunk options in a separate `.R` file and source it in the setup chunk of your `.qmd` file:
+
+````markdown 
+```{r setup, include=FALSE} `r ''`
+source("_setup.R")
+```
+````
+
+Note that you cannot use `{{< include >}}` shortcode to execute an `.R` file. 
+
+If you have
+
+```markdown
+{{< include _setup.R >}}
+```
+
+the `_setup.R` will <span class="env-orange">NOT be executed it NOT inserted</span>. For inserting the content of an `.R` file, you need to quote the shortcode with triple backticks as follows.
+
+--------------------------------------------------------------------------------
+
+Another common use for `{{< include >}}` shortcode is to print verbatim content from an external file. For example, you can use it to include a code snippet from an external file:
+
+````markdown
+```r `r ''`
+{{< include _demo.R >}}
+```
+````
+
+You can use other language tags, e.g., `python`, 
+
+````markdown
+```python `r ''`
+{{< include _demo.py >}}
+```
+````
+
+The source code blocks ensure that the code is included as non-executed examples.
+
+--------------------------------------------------------------------------------
+
+Load `.txt` files as verbatim text:
+
+```markdown
+<pre style='white-space: pre-wrap;'>
+{{< include ../output/data_description.txt >}}
+</pre>
+```
+
+This is equivalent to 
+
+````markdown
+```{r, output="asis"} `r ''`
+f_name <- file.path(out_dir, "0-0_data_description.txt")
+cat("<pre style='white-space: pre-wrap;'>", paste(readLines(f_name), collapse = "\n"), "</pre>")
+```
+````
 
 --------------------------------------------------------------------------------
 

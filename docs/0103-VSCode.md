@@ -32,9 +32,14 @@ Command Palette, type "**R: Interrupt R**" to interrupt the current R session.
 --------------------------------------------------------------------------------
 
 Q: How to run R code interactively? \
-A: Create an R terminal via command **R: Create R Terminal** in the Command Palette. Once an R terminal is ready, you could either select the code or put the cursor at the beginning or ending of the code you want to run, press (<kbd>Ctrl</kbd> + <kbd>Enter</kbd>), and then code will be sent to the active R terminal. 
+A: Create an R terminal via command **R: Create R Terminal** in the Command Palette. Once an R terminal is ready, you could either select the code or put the cursor at the beginning or ending of the code you want to run, press (<kbd class="env-green">Cmd</kbd> + <kbd class="env-green">Enter</kbd>), and then code will be sent to the active R terminal. 
 
-If you want to run an entire R file, open the file in the editor, and press <kbd>Ctrl+Shift+S</kbd> and the file will be sourced in the active R terminal.
+If you want to run an entire R file, open the file in the editor, and press <kbd>Cmd+Shift+S</kbd> and the file will be sourced in the active R terminal. Alternatively, open Command Palette and type "**R: Run Source**".
+
+You can use `# %%` to create code cells in R scripts, mimicking the behavior of Jupyter notebooks. 
+Use <kbd class="env-green">Shift</kbd> + <kbd class="env-green">Cmd</kbd> + <kbd class="env-green">Enter</kbd> to run the current cell. 
+Refer to [Run R in Interactive Window](https://my1396.github.io/Econ-Study/2026/02/01/Python-VSCode.html#run-r-in-interactive-window) for more details.
+
 
 --------------------------------------------------------------------------------
 
@@ -300,6 +305,10 @@ A: Run `hgd()` in R and get the url to the viewer. Use the command palette to ru
 - `hgd_browse` Open the plot viewer in your browser, can be internal or external.
 
   ```r
+  > hgd()
+  httpgd server running at:
+    http://127.0.0.1:58118/live?token=Ka9j9ziG
+  
   > hgd_browse()
   Browsing http://127.0.0.1:58118/live?token=Ka9j9ziG
   ```
@@ -317,6 +326,9 @@ A: Run `hgd()` in R and get the url to the viewer. Use the command palette to ru
   ```r
   # Stop the browser server with:
   dev.off()
+  
+  # If you have multiple devices open, close all devices with:
+  graphics.off()
   ```
 
 - <span class="env-green">`hgd_close()`</span> will clear all plots.

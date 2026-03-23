@@ -40,8 +40,18 @@ Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
 Hence we write our own summary functions `quick_summary` that return tidy data frames.
 
 ```r
-quick_summary <- function(x) {
+quick_summary <- function(x, na.rm = TRUE) {
     # Function to compute basic descriptive statistics
+    
+    # Count and remove NA values
+    n_na <- sum(is.na(x))
+    if (na.rm) {
+        if (n_na > 0) {
+            message(sprintf("Removed %d NA value(s)", n_na))
+            x <- x[!is.na(x)]
+        }
+    }
+    
     data.frame(
         n = length(x),
         min = min(x),
@@ -51,9 +61,9 @@ quick_summary <- function(x) {
         sd = sd(x),
         skewness = moments::skewness(x),
         kurtosis = moments::kurtosis(x)
-        # row.names = NULL
     )
 }
+
 # use example
 > quick_summary(iris$Sepal.Length) %>% round(2)
     n min mean median max   sd skewness kurtosis

@@ -4,13 +4,13 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>3.5 R Debugger | R Notes</title>
+  <title>11.4 Portfolio Return | R Notes</title>
   <meta name="description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
 set in the _output.yml file.</p>" />
   <meta name="generator" content="bookdown 0.45 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="3.5 R Debugger | R Notes" />
+  <meta property="og:title" content="11.4 Portfolio Return | R Notes" />
   <meta property="og:type" content="book" />
   
   <meta property="og:description" content="<p>This is a minimal example of using the bookdown package to write a book.
@@ -19,7 +19,7 @@ set in the _output.yml file.</p>" />
   <meta name="github-repo" content="my1396/R-Notes" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="3.5 R Debugger | R Notes" />
+  <meta name="twitter:title" content="11.4 Portfolio Return | R Notes" />
   
   <meta name="twitter:description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
@@ -35,8 +35,8 @@ set in the _output.yml file.</p>" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   <link rel="shortcut icon" href="images/r-project-favicon.ico" type="image/x-icon" />
-<link rel="prev" href="3.4-plot-viewer.html"/>
-<link rel="next" href="3.6-emulating-rstudioapi-functions.html"/>
+<link rel="prev" href="11.3-process-data.html"/>
+<link rel="next" href="11.5-plot-ts.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -928,22 +928,70 @@ document.addEventListener('DOMContentLoaded', function() {
 .book-summary ul.summary li.chapter.auto-open ul { display: block !important; }
 .book-summary ul.summary li.chapter.auto-open > a { font-weight: 700; }
 </style>
-<div id="r-debugger" class="section level2 hasAnchor" number="3.5">
-<h2><span class="header-section-number">3.5</span> R Debugger<a href="3.5-r-debugger.html#r-debugger" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>To be added …</p>
-<p>ref:</p>
+<div id="portfolio-return" class="section level2 hasAnchor" number="11.4">
+<h2><span class="header-section-number">11.4</span> Portfolio Return<a href="11.4-portfolio-return.html#portfolio-return" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb849"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb849-1"><a href="11.4-portfolio-return.html#cb849-1" tabindex="-1"></a>w <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.25</span>, <span class="fl">0.25</span>, <span class="fl">0.20</span>, <span class="fl">0.20</span>, <span class="fl">0.10</span>)</span>
+<span id="cb849-2"><a href="11.4-portfolio-return.html#cb849-2" tabindex="-1"></a></span>
+<span id="cb849-3"><a href="11.4-portfolio-return.html#cb849-3" tabindex="-1"></a>portfolio_returns_xts_rebalanced_monthly <span class="ot">&lt;-</span> </span>
+<span id="cb849-4"><a href="11.4-portfolio-return.html#cb849-4" tabindex="-1"></a>  <span class="fu">Return.portfolio</span>(asset_returns_xts, <span class="at">weights =</span> w, <span class="at">rebalance_on =</span> <span class="st">&quot;months&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb849-5"><a href="11.4-portfolio-return.html#cb849-5" tabindex="-1"></a>  <span class="st">`</span><span class="at">colnames&lt;-</span><span class="st">`</span>(<span class="st">&quot;returns&quot;</span>) </span></code></pre></div>
+<p><code>PerformanceAnalytics::Return.portfolio(R=Return_xts, weights=NULL, rebalance_on, verbose=FALSE)</code> Using a time series of returns and any regular or irregular time series of weights for each asset, this function calculates the returns of a portfolio with the same periodicity of the returns data. Returns a time series of returns weighted by the <code>weights</code> parameter, or a list that includes intermediate calculations</p>
 <ul>
-<li><a href="https://renkun.me/2020/09/13/debugging-r-in-vscode/">Debugging R in VSCode, @Kun Ren</a></li>
+<li><p><code>R</code> An xts, vector, matrix, data frame, timeSeries or zoo object of <strong>asset returns</strong>.</p></li>
+<li><p><code>weights</code> A time series or single-row matrix/vector containing asset weights, as decimal percentages, treated as beginning of period (BOP) weights.</p>
+<ul>
+<li><p>If the user does not specify weights, an equal weight portfolio is assumed.</p></li>
+<li><p>if <code>weights</code> is an <code>xts</code> object, then any value passed to <code>rebalance_on</code> is ignored.</p>
+<p>This is useful when you have varying assets across time.</p>
+<p>The <code>weights</code> index specifies the rebalancing dates, therefore a regular rebalancing frequency provided via <code>rebalance_on</code> is not needed and ignored.</p>
+<p>Note that <code>weights</code> and <code>R</code> should be matched by period.</p></li>
+<li><p><strong>Irregular rebalancing</strong> can be done by specifying a time series of weights. The function uses the date index of the weights for xts-style subsetting of rebalancing periods.</p></li>
+</ul></li>
+<li><p><code>rebalance_on</code> Default “none”; alternatively “daily” “weekly” “monthly” “annual” to specify calendar-period rebalancing supported by <code>endpoints</code>.</p>
+<ul>
+<li>Ignored if <code>weights</code> is an xts object that specifies the rebalancing dates.</li>
+</ul></li>
+<li><p><code>verboase</code> If verbose is TRUE, return a list of intermediary calculations, such as asset contribution and asset value through time.</p>
+<ul>
+<li>The resultant list contains <code>$returns</code>, <code>$contributions</code>, <code>$BOP.Weight</code>, <code>$EOP.Weight</code>, <code>$BOP.Value</code>, and <code>$EOP.Value</code>.</li>
+</ul></li>
 </ul>
-<hr />
+<p><code>chartSeries</code> plot an OHLC object.</p>
+<div class="sourceCode" id="cb850"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb850-1"><a href="11.4-portfolio-return.html#cb850-1" tabindex="-1"></a><span class="fu">chartSeries</span>(AMZN, <span class="at">type=</span><span class="st">&quot;candlesticks&quot;</span>, <span class="at">subset=</span><span class="st">&#39;2016-05-18::2017-01-30&#39;</span>, <span class="at">theme =</span> <span class="fu">chartTheme</span>(<span class="st">&#39;white&#39;</span>, <span class="at">up.col=</span><span class="st">&#39;green&#39;</span>, <span class="at">dn.col=</span><span class="st">&#39;red&#39;</span>))</span></code></pre></div>
+<ul>
+<li><p><code>type="candlesticks"</code> can be <code>line</code>, <code>bar</code>, default to <code>candlesticks</code>.</p>
+<ul>
+<li><p>A candle has four points of data:</p>
+<ol style="list-style-type: decimal">
+<li><strong>Open</strong> – the first trade during the period specified by the candle</li>
+<li><strong>High</strong> – the highest traded price</li>
+<li><strong>Low</strong> – the lowest traded price</li>
+<li><strong>Close</strong> – the last trade during the period specified by the candle</li>
+</ol>
+<p><img src="https://drive.google.com/thumbnail?id=1d5d3Q2PShsNiPF4rUU2Gk4P-2sUAaDmW&sz=w1000" alt="candle" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" /></p>
+<p>A candle has three parts: body (open/close prices), upper shadow (high price), and lower shadow (low price).</p>
+<p>The color of the body can tell them if the stock price is rising or falling. Usually, red stands for falling and green stands for rising.</p></li>
+</ul></li>
+<li><p><code>theme = chartTheme("black")</code> defaults to black theme.</p>
+<ul>
+<li><code>up.col</code> up bar/candle color</li>
+<li><code>dn.col</code> down bar/candle color</li>
+</ul></li>
+</ul>
+<p><code>charts.RollingPerformance(R, width=12)</code> creates a rolling annualized returns chart, rolling annualized standard deviation chart, and a rolling annualized sharpe ratio chart.</p>
+<p>Note that if your portfolio return is on a daily basis, first <span class="env-green">convert to monthly</span>, then run the rolling function. Otherwise, daily rolling frequency can be too computaionally intensive.</p>
+<p>Rolling window</p>
+<p><img src="https://drive.google.com/thumbnail?id=1eOCGGKfxXJsuExtpVqPS0_NVKQ7RvY6I&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" /></p>
+<p>Rolling window estimation</p>
+<p><img src="https://drive.google.com/thumbnail?id=1qy1FaxutGBxwkXIhGeUVp6JfT69xrmBV&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" /></p>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-<a href="3.4-plot-viewer.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="3.6-emulating-rstudioapi-functions.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="11.3-process-data.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="11.5-plot-ts.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -974,7 +1022,7 @@ gitbook.start({
     "size": 3
   },
   "edit": {
-    "link": "https://github.com/my1396/R-Notes/edit/main/0103-VSCode.Rmd",
+    "link": "https://github.com/my1396/R-Notes/edit/main/0700-Time-Series.Rmd",
     "text": "Edit"
   },
   "history": {
@@ -985,7 +1033,7 @@ gitbook.start({
     "link": null,
     "text": null
   },
-  "download": ["_main.pdf", "_main.epub", "https://github.com/my1396/R-Notes/raw/main/0103-VSCode.Rmd"],
+  "download": ["_main.pdf", "_main.epub", "https://github.com/my1396/R-Notes/raw/main/0700-Time-Series.Rmd"],
   "search": {
     "engine": "fuse",
     "options": null

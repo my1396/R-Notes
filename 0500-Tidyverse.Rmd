@@ -4,6 +4,21 @@
 
 The tidyverse also includes many other packages with more specialized usage. They are not loaded automatically with `library(tidyverse)`, so you’ll need to load each one with its own call to `library()`.
 
+
+Resolve conflict commands
+
+```r
+lag <- dplyr::lag           # conflict with stats::lag
+between <- dplyr::between
+select <- dplyr::select
+count <- plyr::count        # conflict with dplyr::count
+summarise <- dplyr::summarise
+rename <- dplyr::rename
+TeX <- latex2exp::TeX
+margin <- ggplot2::margin
+```
+
+
 --------------------------------------------------------------------------------
 
 <span style="font-size: 1.5em; font-weight: bold;">`tibble` Package</span> 

@@ -25,6 +25,25 @@ With `effect = "twoways"`, the model includes both firm FE and year FE. The year
 
 > In a two-way FE panel, you cannot separately identify time-invariant cross-sectional variables (absorbed by firm FE) or cross-sectionally invariant time-series variables (absorbed by year FE).
 
+Q: Do I have to convert the data to a panel data frame with `pdata.frame()` before using `plm()`?  
+A: Not necessarily. You have two options: 
+
+1. Convert to `pdata.frame()` and estimate with `plm()`. 
+2. Use `plm()` directly on a regular data frame, specifying the `index` argument to indicate the panel structure.
+
+```r
+# Option 1: Convert to pdata.frame
+library(plm)
+data("Grunfeld", package = "plm")
+grunfeld_pdata <- pdata.frame(Grunfeld, index = c("firm", "year"))
+model_fe <- plm(inv ~ value + capital, data = grunfeld_pdata, effect = "twoways", model = "within")
+
+# Option 2: Use plm directly on regular data frame
+model_fe_direct <- plm(inv ~ value + capital, data = Grunfeld, effect = "twoways", model = "within", index = c("firm", "year"))
+```
+
+Note that `ggplot2` accepts regular data frames only. 
+If you want to plot the data with `ggplot2`, it is suggested to save a panel data frame version of the data (`grunfeld_pdata`) for estimation and use the original data frame (`grunfeld`) for plotting.
 
 
 --------------------------------------------------------------------------------
