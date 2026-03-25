@@ -48,6 +48,30 @@ If you want to plot the data with `ggplot2`, it is suggested to save a panel dat
 
 --------------------------------------------------------------------------------
 
+Robust standard errors for panel data models can be computed with the `vcovHC()` function from the `sandwich` package.
+
+```r
+# clustered by firm
+coeftest(model_fe, vcov = vcovHC(model_fe, type = "HC1", cluster = "group"))
+# clustered by year
+coeftest(model_fe, vcov = vcovHC(model_fe, type = "HC1", cluster = "time"))
+```
+
+**Firm- vs. Year-level clustering**
+
+
+|                       | Firm-level clustering (`cluster = "group"`) | Year-level clustering (`cluster = "time"`) |
+| --------------------- | -------------------------------------------- | ------------------------------- |
+| Correlation structure | Allows within-firm correlation of errors across years | Allows within-year correlation of errors across firms |
+| What it accounts for  | Firm-specific shocks that persist over time           | Common shocks affecting all firms in the same year    |
+| When to use           | Default choice for panel data with many firms and multiple observations per firm | Appropriate when aggregate macro shocks dominate (e.g., COVID, financial crisis, policy changes) |
+| Example               | Firm culture, management quality, industry-specific trends affecting the same firm over time | All firms affected by the same Fed rate change, recession, or regulatory change in a given year  |
+
+
+
+
+--------------------------------------------------------------------------------
+
 
 ### Dynamic Panel
 

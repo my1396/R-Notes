@@ -34,12 +34,26 @@ ggsave(grab, filename = f_name, width=10.9, height=5.82)
 ### Save PNG
 
 ```r
-plot_png <- function(p, f_name, width, height, ppi=300){
-    # a plot wrapper
-    png(f_name, width=width*ppi, height=height*ppi, res=ppi)
-    print (p)
-    dev.off()
+plot_png <- function(p, fn, width = 5.5, height = 4, ppi = 300) {
+    #' A wrapper function to save a plot as a PNG file.
+    #' If p is a function, call it to generate the plot; → This is useful for functions 
+    #' that directly draw to the current device (e.g., corrplot), and does not return a plot object.
+    #' If p is a static plot object, print it directly.
+    #' @param p A plot object or a function that generates a plot when called.
+    #' @param fn File name to save the image.
+    
+    png(fn, width = width * ppi, height = height * ppi, res = ppi)
+    if (is.function(p)) p() else print(p)
+    invisible(dev.off())
 }
+# Example usage:
+scatter_p <- plot(1:10, 1:10)
+plot_png(scatter_p, "scatter_plot.png", 5.5, 4)
+# For a function that generates a plot directly:
+plot_png(p = function() plot(1:10, 1:10), fn = "example_plot.png", width = 5.5, height = 4)
+plot_png(function() {
+    grid.arrange(p1, p2, p3, p4, ncol = 2)
+}, f_name, width = 8.8, height = 6.54)
 ```
 
 - Sometimes the title got cut off. You can change `oma` to add more top margin. 

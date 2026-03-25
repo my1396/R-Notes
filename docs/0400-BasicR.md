@@ -336,6 +336,7 @@ Save data in `uft8` encoding with special language characters
 - `row.names` whether to write row names of `x`. Defaults to `TRUE`.
 
 
+--------------------------------------------------------------------------------
 
 #### `flextable` {.unnumbered} 
 
@@ -347,8 +348,38 @@ The package provides a set of functions to easily create some tables from others
 
 The `as_flextable()` function is used to transform specific objects into `flextable` objects. For example, you can transform a crosstab produced with the ‘tables’ package into a flextable which can then be formatted, annotated or augmented with footnotes.
 
+--------------------------------------------------------------------------------
 
-## Functions
+#### Prevent Accidentally Overwriting Files
+
+When you do data cleaning, you want to be explicit about if you have saved the data. The code snippet below prompts the user to confirm before overwriting an existing file. It you enter `1`, the file will be overwritten; if you enter `0` or any other value, the file will not be saved.
+
+```r
+f_name <- file.path(data_dir, "US_fundamental_macro_cleaned_V2.csv")
+message(glue("Dataset dimension: ({nrow(fundamental_df)}, {ncol(fundamental_df)})"))
+message(glue("Target file: {f_name}"))
+cat("Overwrite data? [1 = Yes, 0 = No]: ")
+flush.console() # forces immediate display of the prompt
+user_input <- as.integer(readLines("stdin", n = 1))
+
+if (!is.na(user_input) && user_input == 1) {
+    write_csv(fundamental_df, f_name)
+    message(glue("✓ Dataset saved to: {f_name}"))
+} else {
+    message("✗ Data not saved")
+}
+```
+
+`flush.console()` forces the output to be displayed immediately, which is important for interactive prompts.
+Without it, the whole cell will run before the prompt is shown, leading to errors.
+
+It looks like the following in the console:
+
+<img src="https://drive.google.com/thumbnail?id=1aq5GWlU2RZuH9y4pDhShjXn-MkPL2uWN&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
+
+
+
+## Functions Overview
 
 Function arguments fall into two sets:
 
@@ -458,7 +489,7 @@ Every operation in R is a function call, whether or not it looks like one. This 
 
 ### Inspecting Object Types and Structure
 
-`str(x)`, `class(x)`, and `typeof(x)`
+`str(x)`, <span class="env-green">`class(x)`</span>, and `typeof(x)`
 
 `str(x)` 	focus on the **str**ucture not the contents. The output of the `str()` will vary depending on the type of R object you are passing it. 
 

@@ -41,6 +41,15 @@ Use <kbd class="env-green">Shift</kbd> + <kbd class="env-green">Cmd</kbd> + <kbd
 Refer to [Run R in Interactive Window](https://my1396.github.io/Econ-Study/2026/02/01/Python-VSCode.html#run-r-in-interactive-window) for more details.
 
 
+When you run the whole code cell, output will be shown after the whole cell is executed. If you want to see the output immediately after each line of code, you can add the following to `settings.json`:
+
+```json
+// Run code line-by-line in the terminal
+"r.bracketedPaste": false,
+```
+
+But the output will look cluttered as the code and output are mixed together. So I prefer to keep `r.bracketedPaste` to `true` and to see the output after each cell is executed.
+
 --------------------------------------------------------------------------------
 
 Q: Why using VS Code for R programming instead of RStudio? \
@@ -254,37 +263,61 @@ options(
 Q: How to restart Radian?  
 A: Run `rstudioapi::restartSession()` in the R terminal.
 
-
 --------------------------------------------------------------------------------
-
 
 ## Plot Viewer
 
-[`httpgd`](https://nx10.github.io/httpgd/): A graphics device for R that is accessible via network protocols. This package was created to make it easier to embed live R graphics in integrated development environments and other applications. `httpgd` is required by the interactive plot viewer of the R extension for VS Code.
-
-[Plot viewer project Wiki](https://github.com/REditorSupport/vscode-R/wiki/Plot-viewer)
-
-Enable `r.plot.useHttpgd` in VS Code settings.
-
-```json
-{
-  "r.plot.useHttpgd": true
-}
-```
-- `r.plot.useHttpgd`: use the httpgd-based plot viewer instead of the base VSCode-R plot viewer
-
-This will allow you to view plots in a separate window or in the browser, which is useful for interactive visualizations.
-
-The `httpgd` plot viewer supports 
-
-- auto-resizing, 
-- light/dark theme mode,
-- plot history, 
-- hiding and zooming.
+VS Code has a built-in plot viewer that looks like this: [↩](https://nx10.dev/httpgd/articles/b01_vscode.html)
 
 <img src="https://drive.google.com/thumbnail?id=1vMoXU2U1SCsjgpK750ri_TPUMvWJjoM8&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
 
-Getting started with `httpgd`
+What I don't like about the built-in plot viewer
+
+- Weird aspect ratio and zoom, labels look very small
+- auto-resize is bad
+
+[`httpgd`](https://nx10.github.io/httpgd/): A graphics device for R that is accessible via HTTP and WebSockets. This package was created to make it easier to embed live R graphics in integrated development environments and other applications. `httpgd` is required by the interactive plot viewer of the R extension for VS Code.
+
+A preview of `httpgd` plot viewer in VS Code:
+
+<img src="https://user-images.githubusercontent.com/33600480/113182768-92eeda80-9253-11eb-9505-79de107024f7.gif" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
+
+Benefits of `httpgd` plot viewer:
+
+- Auto-resizing is good
+- Interactive
+- History plots, save, delete, clear
+
+**Useful resources:**
+
+- [Plot viewer project Wiki](https://github.com/REditorSupport/vscode-R/wiki/Plot-viewer)
+- [Using httpgd in VSCode: A web-based SVG graphics device](https://renkun.me/2020/06/16/using-httpgd-in-vscode-a-web-based-svg-graphics-device/)
+
+--------------------------------------------------------------------------------
+
+**Setup `httpgd` in VS Code**
+
+1. Install `httpgd` package in R
+   
+   ```r
+    install.packages("httpgd")
+    ```
+
+2. Enable `r.plot.useHttpgd` in VS Code settings.
+
+   ```json
+   {
+     "r.plot.useHttpgd": true
+   }
+   ```
+
+   - `r.plot.useHttpgd`: use the httpgd-based plot viewer instead of the base VSCode-R plot viewer
+
+   This will allow you to view plots in a separate window or in the browser, which is useful for interactive visualizations.
+
+--------------------------------------------------------------------------------
+
+### Quick Start with `httpgd`
 
 ```r
 library(httpgd)
@@ -302,9 +335,14 @@ plot(x, sin(x), type = "l")
 Q: Plot viewer is missing. \
 A: Run `hgd()` in R and get the url to the viewer. Use the command palette to run "**R Plot: Open httpgd Url**". It will let you enter the url address, fill it in and hit Enter to open the plot viewer. Alternatively, if you want to view in external browser, you can copy the url and paste it in your browser.
 
+--------------------------------------------------------------------------------
 
-- `hgd` Initialize device and start server.
-- `hgd_browse` Open the plot viewer in your browser, can be internal or external.
+**Functions in `httpgd`:** [↩](https://nx10.dev/httpgd/reference/index.html)
+
+- `hgd()` Initialize device and start server.
+- `hgd_browse()` Open the plot viewer in your browser, can be internal or external.
+
+  `hgd_browse()` is equivalent to running "R Plot: Open Httpgd Url" in the command palette.
 
   ```r
   > hgd()
@@ -321,21 +359,25 @@ A: Run `hgd()` in R and get the url to the viewer. Use the command palette to ru
 
   <img src="https://drive.google.com/thumbnail?id=1yu1XGUUaCcqfmtiszAuc3W2aSVke-5h1&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
   
-  There is an url in the tab header to indicate it is a web browser. When you hover over the image, the menu bar will show up. You can choose to download, copy, clear all plots, etc.
+  There is an url in the tab header to indicate it is a web browser. When you hover over the image, the menu bar will show up. You can choose to download, copy, <span class="env-green">clear all plots</span>, etc.
+
+  Click <i class="codicon codicon-refresh" aria-hidden="true" style="font-size:1.5em; vertical-align: middle;"></i> in the tool bar to refresh the viewer.
 
   <img src="https://drive.google.com/thumbnail?id=1cbH_p8_u9isUHGjgLo5OQRm3yMmdy5Yg&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
 
   ```r
   # Stop the browser server with:
-  dev.off()
+  dev.off(which = dev.cur())
   
   # If you have multiple devices open, close all devices with:
   graphics.off()
   ```
 
-- <span class="env-green">`hgd_close()`</span> will clear all plots.
+- <span class="env-green">`hgd_close()`</span> will close the httpgd device.
   
-  Note that this will <span class="env-orange">**NOT**</span> close the viewer automatically for you. You can close the viewer manually by clicking the "x" button on the top right corner of the viewer window.
+  Equivalent to `dev.off()`.
+  
+  Note that this will <span class="env-orange">**NOT**</span> close the viewer window automatically for you. You can close the viewer manually by clicking the "x" button on the top right corner of the viewer window.
 
   By the next time you call `plot`, you will see all historical plots are gone.
   
@@ -345,15 +387,62 @@ A: Run `hgd()` in R and get the url to the viewer. Use the command palette to ru
 
   Otherwise, if you click the "x" button directly, the viewer will be closed, but all historical plots are still there. You can call `plot` again to see the previous plots.
 
-- Keyboard shortcut in the WebView
-  - ←/→/↑/↓: navigate through the plot history
-  - `+`/`-`: zoom in/out
-  - `0`: reset zoom
-  - `s`/`p`: save the current plot as SVG/PNG
-    
-     Not recommended to save as PNG as the resolution is low.
+- `hgd_url()` will return the url of the viewer. You can copy and paste the url to your external browser.
 
-     Use `ggsave("plot.png", dpi = 300)` instead to save high-resolution plots.
+--------------------------------------------------------------------------------
+
+**Keyboard shortcut** in the WebView
+
+- ←/→/↑/↓: navigate through the plot history
+  
+  Use ←/→ to navigate to the last/next plot. ✅
+  
+  ↑/↓ is strange as ↑ goes to next while ↓ goes to last... ❌
+
+- `+`/`-`: zoom in/out
+- `0`: reset zoom
+- `s`/`p`: save the current plot as SVG/PNG
+  
+   Not recommended to save as PNG as the resolution is low.
+
+   Use `ggsave("plot.png", dpi = 300)` instead to save high-resolution plots.
+
+--------------------------------------------------------------------------------
+
+### Configuration
+
+Nice settings to make the plot viewer run more smoothly: make `httpgd` the default plot viewer in VS Code and open the viewer in a new tab beside the editor.
+
+Add to `.Rprofile`
+
+```r
+if (interactive() && Sys.getenv("TERM_PROGRAM") == "vscode") {
+  if ("httpgd" %in% .packages(all.available = TRUE)) {
+    options(vsc.plot = FALSE)
+    options(device = function(...) {
+      httpgd::hgd(silent = TRUE)
+      .vsc.browser(httpgd::hgd_url(), viewer = "Beside")
+    })
+  }
+}
+```
+
+It disables the original simple plot watcher provided by vscode-R session watcher (which replays user graphics into a png file) and use httpgd as the graphics device and opens a new WebView tab in VSCode to show the graphics.
+
+--------------------------------------------------------------------------------
+
+Useful **shortcuts** for the plot viewer: Open current `httpgd` window if closed (<kbd>ctrl</kbd> + <kbd>opt</kbd> + <kbd>p</kbd>).
+
+```json
+{
+  "key": "ctrl+alt+p",
+  "command": "r.runCommand",
+  "when": "editorTextFocus && editorLangId == 'r'",
+  "args": ".vsc.browser(httpgd::hgd_url(), viewer = \"Beside\")"
+}
+```
+
+
 
 --------------------------------------------------------------------------------
 
