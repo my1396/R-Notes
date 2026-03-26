@@ -9,7 +9,7 @@ Command Palette: shift+cmd+P, all shortcuts can be accessed via the Command Pale
 | opt + \_ | insert assignment operator `<-` |
 | ESC or ctrl + C | exit `+` prompt |
 | shift + cmd + M | Add magrittr's pipe operator "%\>%"<br />After R4.1, you can set this too native pipe `|>` |
-| [ctrl + `[`/`]`]{style="color:#008B45FF"} | indent or unindent |
+| [ctrl + `[`/`]`]{class="env-green"} | indent or unindent |
 | cmd + D | delete one row |
 | cmd + 1 | move cursor to console window |
 | cmd + 2 | move cursor to editor window |
@@ -20,16 +20,16 @@ Command Palette: shift+cmd+P, all shortcuts can be accessed via the Command Pale
 | shift + $\uparrow$ / $\downarrow$ | select one line up/down |
 | fn + F2 | `view()` an object, don't select the object |
 | cmd + shift + 1 | activate X11() window |
-| [ctrl (+ shift) + tab]{style="color:#008B45FF"} | next (last) tab in scriptor (this applies to all apps); <br />hit ctrl first, then shift if necessary, last tab |
+| [ctrl (+ shift) + tab]{class="env-green"} | next (last) tab in scriptor (this applies to all apps); <br />hit ctrl first, then shift if necessary, last tab |
 
-[**Source**]{style="color:#008B45FF"}
+[**Source**]{class="env-green"}
 
 | keyboard combination | function                                            |
 |----------------------|-------------------------------------------------|
 | cmd + return         | Run current line/selection                          |
 | opt + return         | Run current line/selection (retain cursor position) |
 
-[**`Rmd` related**]{style="color:#008B45FF"}
+[**`Rmd` related**]{class="env-green"}
 
 | keyboard combination | function |
 |---------------------|---------------------------------------------------|
@@ -91,7 +91,7 @@ A: There are several options (only work for html output):
 
 ------------------------------------------------------------------------
 
-#### Set working directory
+### Set working directory {- .unlisted}
 
 `getwd()` to get the current working directory.
 
@@ -101,26 +101,130 @@ dir_folder <- dirname(rstudioapi::getSourceEditorContext()$path)
 setwd(dir_folder) # set as working dir
 ```
 
+A caveat of `setwd()` is that it relies on a hard coded path that must be changed if anyone else uses the code or if the file is moved on the host machine.
+
+An alternative is to use the [`here` package](https://cran.r-project.org/web/packages/here/index.html), which is flexible across machines and does not require other users to change the path if they are running the script from the same project directory. 
+
+```
+project  
+    ├── 0_get_data.R
+    ├── 1_preprocess_data.R
+    ├── README.md
+    ├── .gitignore
+    ├── .Rprofile
+    ├── data
+    │   ├── raw
+    │   └── processed
+    ├── doc
+    ├── figs
+    ├── output
+    └── src
+```
+
+#### Use `here` with projects
+
+Load `here` package after `plyr` to avoid function name conflict. Or specify namespace when calling `here()`, i.e., `here::here()`.
+
+`here::here()` return the path to the current project directory. You can also use `here(...)` to construct relative paths to files within the project. Put path components in `...`. 
+
+Q: How does `here()` determine the project root?   
+A: It looks for a file that signals the project root, such as `.here`, `.git`, `DESCRIPTION`, `Rproj`, etc. 
+
+
+`here::i_am(0_get_data.R)` displays the top-level directory of the current project.
+
+Add a call to `here::i_am("<project-relative path>.<ext>")` at the top of your R script or in the first chunk of your rmarkdown document. This ensures that the project root is set up correctly: subsequent calls to `here()` will refer to the implied project root.
+
+
+**Use project-relative paths**
+
+`here("data", "my_data.csv")` constructs a path to `my_data.csv` in the `data` subdirectory of the current project, regardless of the current working directory.
+
+This is equivalent to `file.path("data", "my_data.csv")`. 
+
+```r
+> here::here("data", "my_data.csv")
+# "/Users/you/project/data/my_data.csv"
+
+> here::here("my_data.csv")
+# "/Users/you/project/my_data.csv"
+
+> file.path("data", "my_data.csv")
+# "data/my_data.csv"
+```
+
+The benefit of `here()` is that it will always be relative to your project root. 
+By contrast, `file.path()` fust concatenates paths safely, does not know where your project root is.
+In short, `here()` is more robust to changes in the working directory. 
+In case of you accidentally change the working directory, `here()` will still point to the correct file, while `file.path()` will break.
+
+
+```r
+# Common flow of using here() in a project
+library(here)
+source(here("fun_script.R"))
+
+data_dir <- "data"
+f_name <- here(data_dir, "my_data.csv")
+my_data <- read.csv(f_name)
+```
+
+ref:
+
+- [`here` package vignette](https://cran.r-project.org/web/packages/here/vignettes/here.html)
+- [Project-oriented workflow, @Jenny Bryan](https://tidyverse.org/blog/2017/12/workflow-vs-script/)
+
+#### `conflicted` pkg
+
+The `conflicted` package provides a way to handle function name conflicts between packages. When you load multiple packages that have functions with the same name, `conflicted` will throw an error and ask you to specify which function you want to use.
+
+Refer to [Resolve conflict commands](#conflicts) for more details.
+
+
+--------------------------------------------------------------------------------
+
+### R projects {- .unlisted}
+
 RStudio projects are associated with R working directories. You can create an RStudio project:
 
 -   In a brand new directory
 -   In an existing directory where you already have R code and data
 -   By cloning a version control (Git or Subversion) repository
 
-Why using R projects:
+**Why using R projects:**
 
 1.  I don't need to use `setwd` at the start of each script, and if I move the base project folder it will still work.
 2.  I have a personal package with a custom project, which creates my folders just the way I like them. This makes it so that the basic locations for data, outputs and analysis is the same across my work.
 
 Double-click on a `.Rproj` file to open a fresh instance of RStudio, with the working directory and file browser pointed at the project folder.
 
-Q: What is an **R session**? And when do I use it?
-
+Q: What is an **R session**? And when do I use it?  
 A: Multiple concurrent sessions can be useful when you want to:
 
 -   Run multiple analyses in parallel
 -   Keep multiple sessions open indefinitely
 -   Participate in one or more [shared projects](https://support.posit.co/hc/en-us/articles/211659737)
+
+
+#### Good practices
+
+- Load libraries in each script such that each script is self-contained and can be run independently. 
+
+- Do NOT save `.RData` when you quit R. 
+  
+  RStudio save your workspace by default when you quit R. You can disable this by unchecking `Restore .RData into workspace at startup` and set `Save workspace to .RData on exit` to `Never` or `Ask`. 
+
+  <img src="https://drive.google.com/thumbnail?id=1IHyD6t89xKFPk3rD-VGo2P9yxhrXbL1B&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
+
+- Restart R very often and re-run your under-development script from the top.
+  - In RStudio, you can use `Session` \> `Restart R` 
+  - In VS Code, run `rstudioapi::restartSession()` in the console.
+    
+    See [VS Code: Radian](#restart-radian) for details.
+
+- `rm(list = ls())` is controversial. It removes all objects but does NOT clear loaded packages.
+
+- It is a good idea to break data analysis into logical, isolated pieces.
 
 ------------------------------------------------------------------------
 
@@ -140,7 +244,7 @@ rstudioapi::terminalExecute("open -n /Applications/RStudio.app", show = FALSE)
 -   `env` Vector of name=value strings to set environment variables
 -   `show` If FALSE, terminal won't be brought to front
 
-The [`rstudioapi`]{style="color:#008B45FF"} package provides an interface for interacting with the RStudio IDE with R code. Using`rstudioapi`, you can:
+The [`rstudioapi`]{class="env-green"} package provides an interface for interacting with the RStudio IDE with R code. Using`rstudioapi`, you can:
 
 -   Examine, manipulate, and save the contents of documents currently open in RStudio,
 -   Create, open, or re-open RStudio projects,
@@ -213,7 +317,7 @@ The shortcuts I use are:
 
 ------------------------------------------------------------------------
 
-**Tips and Tricks**
+### Tips and Tricks {- .unlisted}
 
 - In `Rmd` files, send the R code chunk output to the console. \
 By default, RStudio enables inline output (Notebook mode) on all R Markdown documents. You can disable notebook mode by clicking the gear button in the editor toolbar, and choosing `Chunk Output in Console`.

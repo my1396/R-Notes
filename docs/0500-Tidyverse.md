@@ -4,8 +4,13 @@
 
 The tidyverse also includes many other packages with more specialized usage. They are not loaded automatically with `library(tidyverse)`, so you’ll need to load each one with its own call to `library()`.
 
+<a id="conflicts"></a>
+<span class="env-green">**Resolve conflict commands**</span>
 
-Resolve conflict commands
+When there are conflicts between packages, R gives precedence to the most recently loaded package by default.
+This can make it hard to detect conflicts, particularly when introduced by an update to an existing package.
+
+To address this issue, you can either specify the namespace when calling a function (e.g., `dplyr::lag()`), or use the [`conflicted` package](https://conflicted.r-lib.org).
 
 ```r
 lag <- dplyr::lag           # conflict with stats::lag
@@ -16,6 +21,51 @@ summarise <- dplyr::summarise
 rename <- dplyr::rename
 TeX <- latex2exp::TeX
 margin <- ggplot2::margin
+```
+
+`conflicted` package will throw an error when there is a conflict, and forces you to explicitly choose which function to use when there are conflicts between packages. 
+
+```r
+# Install conflicted
+# devtools::install_github("r-lib/conflicted")
+
+# Use example
+library(conflicted)
+library(dplyr)
+filter(mtcars, cyl == 8)
+#> Error:
+#> ! [conflicted] filter found in 2 packages.
+#> Either pick the one you want with `::`:
+#> • dplyr::filter
+#> • stats::filter
+#> Or declare a preference with `conflicts_prefer()`:
+#> • `conflicts_prefer(dplyr::filter)`
+#> • `conflicts_prefer(stats::filter)`
+```
+
+Declare a session-wide preference with `conflicts_prefer()`:
+
+```r
+# conflicts_prefer is faster and easier to use
+conflicts_prefer(dplyr::filter())
+#> [conflicted] Will prefer dplyr::filter over any other package.
+
+# you can also use `conflict_prefer()`, which provide more precise control
+conflict_prefer("filter", "dplyr")
+
+filter(mtcars, am & cyl == 8)
+#>                 mpg cyl disp  hp drat   wt qsec vs am gear carb
+#> Ford Pantera L 15.8   8  351 264 4.22 3.17 14.5  0  1    5    4
+#> Maserati Bora  15.0   8  301 335 3.54 3.57 14.6  0  1    5    8
+```
+
+Report any conflicts in the current session with `conflict_scout()`:
+
+```r
+conflict_scout()
+#> 2 conflicts
+#> • `filter()`: dplyr
+#> • `lag()`: dplyr and stats
 ```
 
 

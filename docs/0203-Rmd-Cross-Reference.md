@@ -57,6 +57,11 @@ You can number and refer to an equation by adding `\begin{equation}` along with 
           </ul>
         </td>
       </tr>
+      <tr>
+        <td>Any where</td>
+        <td><code>&#x3C;a id="any-id"&#x3E;&#x3C;/a&#x3E;</code></td>
+        <td><code>&#91;Section&#93;(#any-id)</code></td>
+      </tr>
     </tbody>
     </table>
 

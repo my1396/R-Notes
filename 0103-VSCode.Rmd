@@ -260,8 +260,32 @@ options(
 
 --------------------------------------------------------------------------------
 
-Q: How to restart Radian?  
+<a id="restart-radian"></a>
+Q: How to **restart Radian**?  
 A: Run `rstudioapi::restartSession()` in the R terminal.
+
+You can define a function to restart Radian. 
+
+In `.Rprofile`, add the following function definition:
+
+```r
+# restart function, convenient in radian
+restart <- function() {
+    getOption("rchitect.py_tools")$attach()
+    os <- import("os")
+    sys <- import("sys")
+    os$execv(sys$executable, c("sys$executable", "-m", "radian"))
+}
+```
+
+This snippet use Python to use `os.execv()` to replace the current process with a new instance of Radian. When you call `restart()`, it will effectively restart Radian without needing to close and reopen the terminal manually.
+
+This is more robust than `rstudioapi::restartSession()`.
+
+Issue: the `restart()` function, cannot use `rstudioapi::` functions.
+
+Workaround: Close R and create a new R terminal manually or use `rstudioapi::restartSession()`.
+
 
 --------------------------------------------------------------------------------
 
@@ -291,7 +315,7 @@ Benefits of `httpgd` plot viewer:
 **Useful resources:**
 
 - [Plot viewer project Wiki](https://github.com/REditorSupport/vscode-R/wiki/Plot-viewer)
-- [Using httpgd in VSCode: A web-based SVG graphics device](https://renkun.me/2020/06/16/using-httpgd-in-vscode-a-web-based-svg-graphics-device/)
+- [Using httpgd in VSCode: A web-based SVG graphics device, \@Kun Ren](https://renkun.me/2020/06/16/using-httpgd-in-vscode-a-web-based-svg-graphics-device/)
 
 --------------------------------------------------------------------------------
 
@@ -454,9 +478,6 @@ Universal graphics device (`unigd`) is a package that provides a set of function
 
 - `unigd::ugd_remove(page = 2)` Remove the second page.
 
-Ref:
-
-- [Using httpgd in VSCode: A web-based SVG graphics device, \@Kun Ren](https://renkun.me/2020/06/16/using-httpgd-in-vscode-a-web-based-svg-graphics-device/)
 
 --------------------------------------------------------------------------------
 

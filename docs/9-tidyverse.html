@@ -936,19 +936,56 @@ document.addEventListener('DOMContentLoaded', function() {
 <h1><span class="header-section-number">Chapter 9</span> Tidyverse<a href="9-tidyverse.html#tidyverse" class="anchor-section" aria-label="Anchor link to header"></a></h1>
 <p><code>tidyverse</code> is a collection of packages for data analyses. This package is designed to make it easy to install and load multiple <code>tidyverse</code> packages in a single step. The following packages are included in the core tidyverse: <code>ggplot2</code>, <code>dplyr</code>, <code>tidyr</code>, <code>readr</code>, <code>purrr</code>, <code>tibble</code>, <code>stringr</code>, <code>forcats</code>, <code>lubridate</code>.</p>
 <p>The tidyverse also includes many other packages with more specialized usage. They are not loaded automatically with <code>library(tidyverse)</code>, so you’ll need to load each one with its own call to <code>library()</code>.</p>
-<p>Resolve conflict commands</p>
-<div class="sourceCode" id="cb607"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb607-1"><a href="9-tidyverse.html#cb607-1" tabindex="-1"></a>lag <span class="ot">&lt;-</span> dplyr<span class="sc">::</span>lag           <span class="co"># conflict with stats::lag</span></span>
-<span id="cb607-2"><a href="9-tidyverse.html#cb607-2" tabindex="-1"></a>between <span class="ot">&lt;-</span> dplyr<span class="sc">::</span>between</span>
-<span id="cb607-3"><a href="9-tidyverse.html#cb607-3" tabindex="-1"></a>select <span class="ot">&lt;-</span> dplyr<span class="sc">::</span>select</span>
-<span id="cb607-4"><a href="9-tidyverse.html#cb607-4" tabindex="-1"></a>count <span class="ot">&lt;-</span> plyr<span class="sc">::</span>count        <span class="co"># conflict with dplyr::count</span></span>
-<span id="cb607-5"><a href="9-tidyverse.html#cb607-5" tabindex="-1"></a>summarise <span class="ot">&lt;-</span> dplyr<span class="sc">::</span>summarise</span>
-<span id="cb607-6"><a href="9-tidyverse.html#cb607-6" tabindex="-1"></a>rename <span class="ot">&lt;-</span> dplyr<span class="sc">::</span>rename</span>
-<span id="cb607-7"><a href="9-tidyverse.html#cb607-7" tabindex="-1"></a>TeX <span class="ot">&lt;-</span> latex2exp<span class="sc">::</span>TeX</span>
-<span id="cb607-8"><a href="9-tidyverse.html#cb607-8" tabindex="-1"></a>margin <span class="ot">&lt;-</span> ggplot2<span class="sc">::</span>margin</span></code></pre></div>
+<p><a id="conflicts"></a>
+<span class="env-green"><strong>Resolve conflict commands</strong></span></p>
+<p>When there are conflicts between packages, R gives precedence to the most recently loaded package by default.
+This can make it hard to detect conflicts, particularly when introduced by an update to an existing package.</p>
+<p>To address this issue, you can either specify the namespace when calling a function (e.g., <code>dplyr::lag()</code>), or use the <a href="https://conflicted.r-lib.org"><code>conflicted</code> package</a>.</p>
+<div class="sourceCode" id="cb611"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb611-1"><a href="9-tidyverse.html#cb611-1" tabindex="-1"></a>lag <span class="ot">&lt;-</span> dplyr<span class="sc">::</span>lag           <span class="co"># conflict with stats::lag</span></span>
+<span id="cb611-2"><a href="9-tidyverse.html#cb611-2" tabindex="-1"></a>between <span class="ot">&lt;-</span> dplyr<span class="sc">::</span>between</span>
+<span id="cb611-3"><a href="9-tidyverse.html#cb611-3" tabindex="-1"></a>select <span class="ot">&lt;-</span> dplyr<span class="sc">::</span>select</span>
+<span id="cb611-4"><a href="9-tidyverse.html#cb611-4" tabindex="-1"></a>count <span class="ot">&lt;-</span> plyr<span class="sc">::</span>count        <span class="co"># conflict with dplyr::count</span></span>
+<span id="cb611-5"><a href="9-tidyverse.html#cb611-5" tabindex="-1"></a>summarise <span class="ot">&lt;-</span> dplyr<span class="sc">::</span>summarise</span>
+<span id="cb611-6"><a href="9-tidyverse.html#cb611-6" tabindex="-1"></a>rename <span class="ot">&lt;-</span> dplyr<span class="sc">::</span>rename</span>
+<span id="cb611-7"><a href="9-tidyverse.html#cb611-7" tabindex="-1"></a>TeX <span class="ot">&lt;-</span> latex2exp<span class="sc">::</span>TeX</span>
+<span id="cb611-8"><a href="9-tidyverse.html#cb611-8" tabindex="-1"></a>margin <span class="ot">&lt;-</span> ggplot2<span class="sc">::</span>margin</span></code></pre></div>
+<p><code>conflicted</code> package will throw an error when there is a conflict, and forces you to explicitly choose which function to use when there are conflicts between packages.</p>
+<div class="sourceCode" id="cb612"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb612-1"><a href="9-tidyverse.html#cb612-1" tabindex="-1"></a><span class="co"># Install conflicted</span></span>
+<span id="cb612-2"><a href="9-tidyverse.html#cb612-2" tabindex="-1"></a><span class="co"># devtools::install_github(&quot;r-lib/conflicted&quot;)</span></span>
+<span id="cb612-3"><a href="9-tidyverse.html#cb612-3" tabindex="-1"></a></span>
+<span id="cb612-4"><a href="9-tidyverse.html#cb612-4" tabindex="-1"></a><span class="co"># Use example</span></span>
+<span id="cb612-5"><a href="9-tidyverse.html#cb612-5" tabindex="-1"></a><span class="fu">library</span>(conflicted)</span>
+<span id="cb612-6"><a href="9-tidyverse.html#cb612-6" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb612-7"><a href="9-tidyverse.html#cb612-7" tabindex="-1"></a><span class="fu">filter</span>(mtcars, cyl <span class="sc">==</span> <span class="dv">8</span>)</span>
+<span id="cb612-8"><a href="9-tidyverse.html#cb612-8" tabindex="-1"></a><span class="co">#&gt; Error:</span></span>
+<span id="cb612-9"><a href="9-tidyverse.html#cb612-9" tabindex="-1"></a><span class="co">#&gt; ! [conflicted] filter found in 2 packages.</span></span>
+<span id="cb612-10"><a href="9-tidyverse.html#cb612-10" tabindex="-1"></a><span class="co">#&gt; Either pick the one you want with `::`:</span></span>
+<span id="cb612-11"><a href="9-tidyverse.html#cb612-11" tabindex="-1"></a><span class="co">#&gt; • dplyr::filter</span></span>
+<span id="cb612-12"><a href="9-tidyverse.html#cb612-12" tabindex="-1"></a><span class="co">#&gt; • stats::filter</span></span>
+<span id="cb612-13"><a href="9-tidyverse.html#cb612-13" tabindex="-1"></a><span class="co">#&gt; Or declare a preference with `conflicts_prefer()`:</span></span>
+<span id="cb612-14"><a href="9-tidyverse.html#cb612-14" tabindex="-1"></a><span class="co">#&gt; • `conflicts_prefer(dplyr::filter)`</span></span>
+<span id="cb612-15"><a href="9-tidyverse.html#cb612-15" tabindex="-1"></a><span class="co">#&gt; • `conflicts_prefer(stats::filter)`</span></span></code></pre></div>
+<p>Declare a session-wide preference with <code>conflicts_prefer()</code>:</p>
+<div class="sourceCode" id="cb613"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb613-1"><a href="9-tidyverse.html#cb613-1" tabindex="-1"></a><span class="co"># conflicts_prefer is faster and easier to use</span></span>
+<span id="cb613-2"><a href="9-tidyverse.html#cb613-2" tabindex="-1"></a><span class="fu">conflicts_prefer</span>(dplyr<span class="sc">::</span><span class="fu">filter</span>())</span>
+<span id="cb613-3"><a href="9-tidyverse.html#cb613-3" tabindex="-1"></a><span class="co">#&gt; [conflicted] Will prefer dplyr::filter over any other package.</span></span>
+<span id="cb613-4"><a href="9-tidyverse.html#cb613-4" tabindex="-1"></a></span>
+<span id="cb613-5"><a href="9-tidyverse.html#cb613-5" tabindex="-1"></a><span class="co"># you can also use `conflict_prefer()`, which provide more precise control</span></span>
+<span id="cb613-6"><a href="9-tidyverse.html#cb613-6" tabindex="-1"></a><span class="fu">conflict_prefer</span>(<span class="st">&quot;filter&quot;</span>, <span class="st">&quot;dplyr&quot;</span>)</span>
+<span id="cb613-7"><a href="9-tidyverse.html#cb613-7" tabindex="-1"></a></span>
+<span id="cb613-8"><a href="9-tidyverse.html#cb613-8" tabindex="-1"></a><span class="fu">filter</span>(mtcars, am <span class="sc">&amp;</span> cyl <span class="sc">==</span> <span class="dv">8</span>)</span>
+<span id="cb613-9"><a href="9-tidyverse.html#cb613-9" tabindex="-1"></a><span class="co">#&gt;                 mpg cyl disp  hp drat   wt qsec vs am gear carb</span></span>
+<span id="cb613-10"><a href="9-tidyverse.html#cb613-10" tabindex="-1"></a><span class="co">#&gt; Ford Pantera L 15.8   8  351 264 4.22 3.17 14.5  0  1    5    4</span></span>
+<span id="cb613-11"><a href="9-tidyverse.html#cb613-11" tabindex="-1"></a><span class="co">#&gt; Maserati Bora  15.0   8  301 335 3.54 3.57 14.6  0  1    5    8</span></span></code></pre></div>
+<p>Report any conflicts in the current session with <code>conflict_scout()</code>:</p>
+<div class="sourceCode" id="cb614"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb614-1"><a href="9-tidyverse.html#cb614-1" tabindex="-1"></a><span class="fu">conflict_scout</span>()</span>
+<span id="cb614-2"><a href="9-tidyverse.html#cb614-2" tabindex="-1"></a><span class="co">#&gt; 2 conflicts</span></span>
+<span id="cb614-3"><a href="9-tidyverse.html#cb614-3" tabindex="-1"></a><span class="co">#&gt; • `filter()`: dplyr</span></span>
+<span id="cb614-4"><a href="9-tidyverse.html#cb614-4" tabindex="-1"></a><span class="co">#&gt; • `lag()`: dplyr and stats</span></span></code></pre></div>
 <hr />
 <p><span style="font-size: 1.5em; font-weight: bold;"><code>tibble</code> Package</span></p>
 <p>Create a <code>tibble</code>, just the same way as <code>data.fram</code>, only that without row names.</p>
-<div class="sourceCode" id="cb608"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb608-1"><a href="9-tidyverse.html#cb608-1" tabindex="-1"></a><span class="fu">tibble</span>(<span class="at">x =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="at">y =</span> <span class="dv">1</span>, <span class="at">z =</span> x <span class="sc">^</span> <span class="dv">2</span> <span class="sc">+</span> y)</span></code></pre></div>
+<div class="sourceCode" id="cb615"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb615-1"><a href="9-tidyverse.html#cb615-1" tabindex="-1"></a><span class="fu">tibble</span>(<span class="at">x =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="at">y =</span> <span class="dv">1</span>, <span class="at">z =</span> x <span class="sc">^</span> <span class="dv">2</span> <span class="sc">+</span> y)</span></code></pre></div>
 <p><code>tibble()</code> does much less than <code>data.frame()</code>: it never changes the type of the inputs (e.g. it never converts strings to factors!), it never changes the names of variables, it only recycles inputs of length 1, and it never creates <code>row.names()</code>.</p>
 <p><code>as_tibble()</code> vs <code>tibble()</code>:</p>
 <ul>
@@ -957,17 +994,17 @@ document.addEventListener('DOMContentLoaded', function() {
 <p>If using <code>tibble()</code> on a whole data frame, it would generate a one column <code>tibble</code> in which the column contains the data frame.</p>
 <p><code>tibble</code> columns are versatile, can be lists, matrices, tibbles, etc.</p></li>
 </ul>
-<div class="sourceCode" id="cb609"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb609-1"><a href="9-tidyverse.html#cb609-1" tabindex="-1"></a><span class="fu">tibble</span>(</span>
-<span id="cb609-2"><a href="9-tidyverse.html#cb609-2" tabindex="-1"></a>  <span class="at">a =</span> <span class="fu">list</span>(</span>
-<span id="cb609-3"><a href="9-tidyverse.html#cb609-3" tabindex="-1"></a>    <span class="at">c =</span> <span class="st">&quot;three&quot;</span>, </span>
-<span id="cb609-4"><a href="9-tidyverse.html#cb609-4" tabindex="-1"></a>    <span class="at">d =</span> <span class="fu">list</span>(<span class="dv">4</span><span class="sc">:</span><span class="dv">5</span>)</span>
-<span id="cb609-5"><a href="9-tidyverse.html#cb609-5" tabindex="-1"></a>    )</span>
-<span id="cb609-6"><a href="9-tidyverse.html#cb609-6" tabindex="-1"></a>)</span>
-<span id="cb609-7"><a href="9-tidyverse.html#cb609-7" tabindex="-1"></a><span class="co">#&gt; # A tibble: 2 × 1</span></span>
-<span id="cb609-8"><a href="9-tidyverse.html#cb609-8" tabindex="-1"></a><span class="co">#&gt;   a        </span></span>
-<span id="cb609-9"><a href="9-tidyverse.html#cb609-9" tabindex="-1"></a><span class="co">#&gt;   &lt;named list&gt;</span></span>
-<span id="cb609-10"><a href="9-tidyverse.html#cb609-10" tabindex="-1"></a><span class="co">#&gt; 1 &lt;chr [1]&gt;   </span></span>
-<span id="cb609-11"><a href="9-tidyverse.html#cb609-11" tabindex="-1"></a><span class="co">#&gt; 2 &lt;list [1]&gt; </span></span></code></pre></div>
+<div class="sourceCode" id="cb616"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb616-1"><a href="9-tidyverse.html#cb616-1" tabindex="-1"></a><span class="fu">tibble</span>(</span>
+<span id="cb616-2"><a href="9-tidyverse.html#cb616-2" tabindex="-1"></a>  <span class="at">a =</span> <span class="fu">list</span>(</span>
+<span id="cb616-3"><a href="9-tidyverse.html#cb616-3" tabindex="-1"></a>    <span class="at">c =</span> <span class="st">&quot;three&quot;</span>, </span>
+<span id="cb616-4"><a href="9-tidyverse.html#cb616-4" tabindex="-1"></a>    <span class="at">d =</span> <span class="fu">list</span>(<span class="dv">4</span><span class="sc">:</span><span class="dv">5</span>)</span>
+<span id="cb616-5"><a href="9-tidyverse.html#cb616-5" tabindex="-1"></a>    )</span>
+<span id="cb616-6"><a href="9-tidyverse.html#cb616-6" tabindex="-1"></a>)</span>
+<span id="cb616-7"><a href="9-tidyverse.html#cb616-7" tabindex="-1"></a><span class="co">#&gt; # A tibble: 2 × 1</span></span>
+<span id="cb616-8"><a href="9-tidyverse.html#cb616-8" tabindex="-1"></a><span class="co">#&gt;   a        </span></span>
+<span id="cb616-9"><a href="9-tidyverse.html#cb616-9" tabindex="-1"></a><span class="co">#&gt;   &lt;named list&gt;</span></span>
+<span id="cb616-10"><a href="9-tidyverse.html#cb616-10" tabindex="-1"></a><span class="co">#&gt; 1 &lt;chr [1]&gt;   </span></span>
+<span id="cb616-11"><a href="9-tidyverse.html#cb616-11" tabindex="-1"></a><span class="co">#&gt; 2 &lt;list [1]&gt; </span></span></code></pre></div>
 <div id="print-tibbles" class="section level4 unnumbered unlisted hasAnchor">
 <h4>Print tibbles<a href="9-tidyverse.html#print-tibbles" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p><code>tbl_df %&gt;% print(n = Inf)</code> print all rows. <code>print.tbl_df</code> is useful in terms of explicitly and setting arguments like <code>n</code> and <code>width</code>.</p>
@@ -985,22 +1022,22 @@ document.addEventListener('DOMContentLoaded', function() {
 <li><code>print.data.table</code> gives you a feeling of the data structure without using <code>head</code> and <code>tail</code> functions twice. See below.</li>
 <li><code>?print.data.table</code> for help page. See printing options for a data.table.</li>
 </ul>
-<div class="sourceCode" id="cb610"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb610-1"><a href="9-tidyverse.html#cb610-1" tabindex="-1"></a><span class="fu">library</span>(data.table)</span>
-<span id="cb610-2"><a href="9-tidyverse.html#cb610-2" tabindex="-1"></a>DT <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">a =</span> <span class="fu">rnorm</span>(<span class="dv">1000</span>), <span class="at">b =</span> <span class="fu">rnorm</span>(<span class="dv">1000</span>)) <span class="sc">%&gt;%</span> <span class="fu">as.data.table</span>()</span>
-<span id="cb610-3"><a href="9-tidyverse.html#cb610-3" tabindex="-1"></a>DT <span class="sc">%&gt;%</span> </span>
-<span id="cb610-4"><a href="9-tidyverse.html#cb610-4" tabindex="-1"></a>  <span class="fu">print</span>(<span class="at">topn =</span> <span class="dv">4</span>)</span>
-<span id="cb610-5"><a href="9-tidyverse.html#cb610-5" tabindex="-1"></a></span>
-<span id="cb610-6"><a href="9-tidyverse.html#cb610-6" tabindex="-1"></a>                a            b</span>
-<span id="cb610-7"><a href="9-tidyverse.html#cb610-7" tabindex="-1"></a>            <span class="sc">&lt;</span>num<span class="sc">&gt;</span>        <span class="er">&lt;</span>num<span class="sc">&gt;</span></span>
-<span id="cb610-8"><a href="9-tidyverse.html#cb610-8" tabindex="-1"></a>   <span class="dv">1</span><span class="sc">:</span>  <span class="fl">1.32712276</span> <span class="sc">-</span><span class="fl">0.778009241</span></span>
-<span id="cb610-9"><a href="9-tidyverse.html#cb610-9" tabindex="-1"></a>   <span class="dv">2</span><span class="sc">:</span>  <span class="fl">1.71029980</span>  <span class="fl">1.507805184</span></span>
-<span id="cb610-10"><a href="9-tidyverse.html#cb610-10" tabindex="-1"></a>   <span class="dv">3</span><span class="sc">:</span> <span class="sc">-</span><span class="fl">0.41397245</span>  <span class="fl">0.816250538</span></span>
-<span id="cb610-11"><a href="9-tidyverse.html#cb610-11" tabindex="-1"></a>   <span class="dv">4</span><span class="sc">:</span>  <span class="fl">0.51490112</span>  <span class="fl">0.499563882</span></span>
-<span id="cb610-12"><a href="9-tidyverse.html#cb610-12" tabindex="-1"></a>  <span class="sc">---</span>                         </span>
-<span id="cb610-13"><a href="9-tidyverse.html#cb610-13" tabindex="-1"></a> <span class="dv">997</span><span class="sc">:</span> <span class="sc">-</span><span class="fl">0.06823802</span>  <span class="fl">0.541311448</span></span>
-<span id="cb610-14"><a href="9-tidyverse.html#cb610-14" tabindex="-1"></a> <span class="dv">998</span><span class="sc">:</span> <span class="sc">-</span><span class="fl">1.48304667</span> <span class="sc">-</span><span class="fl">2.293768686</span></span>
-<span id="cb610-15"><a href="9-tidyverse.html#cb610-15" tabindex="-1"></a> <span class="dv">999</span><span class="sc">:</span>  <span class="fl">0.94170427</span>  <span class="fl">1.363411322</span></span>
-<span id="cb610-16"><a href="9-tidyverse.html#cb610-16" tabindex="-1"></a><span class="dv">1000</span><span class="sc">:</span> <span class="sc">-</span><span class="fl">0.45273759</span> <span class="sc">-</span><span class="fl">0.006411937</span></span></code></pre></div>
+<div class="sourceCode" id="cb617"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb617-1"><a href="9-tidyverse.html#cb617-1" tabindex="-1"></a><span class="fu">library</span>(data.table)</span>
+<span id="cb617-2"><a href="9-tidyverse.html#cb617-2" tabindex="-1"></a>DT <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">a =</span> <span class="fu">rnorm</span>(<span class="dv">1000</span>), <span class="at">b =</span> <span class="fu">rnorm</span>(<span class="dv">1000</span>)) <span class="sc">%&gt;%</span> <span class="fu">as.data.table</span>()</span>
+<span id="cb617-3"><a href="9-tidyverse.html#cb617-3" tabindex="-1"></a>DT <span class="sc">%&gt;%</span> </span>
+<span id="cb617-4"><a href="9-tidyverse.html#cb617-4" tabindex="-1"></a>  <span class="fu">print</span>(<span class="at">topn =</span> <span class="dv">4</span>)</span>
+<span id="cb617-5"><a href="9-tidyverse.html#cb617-5" tabindex="-1"></a></span>
+<span id="cb617-6"><a href="9-tidyverse.html#cb617-6" tabindex="-1"></a>                a            b</span>
+<span id="cb617-7"><a href="9-tidyverse.html#cb617-7" tabindex="-1"></a>            <span class="sc">&lt;</span>num<span class="sc">&gt;</span>        <span class="er">&lt;</span>num<span class="sc">&gt;</span></span>
+<span id="cb617-8"><a href="9-tidyverse.html#cb617-8" tabindex="-1"></a>   <span class="dv">1</span><span class="sc">:</span>  <span class="fl">1.32712276</span> <span class="sc">-</span><span class="fl">0.778009241</span></span>
+<span id="cb617-9"><a href="9-tidyverse.html#cb617-9" tabindex="-1"></a>   <span class="dv">2</span><span class="sc">:</span>  <span class="fl">1.71029980</span>  <span class="fl">1.507805184</span></span>
+<span id="cb617-10"><a href="9-tidyverse.html#cb617-10" tabindex="-1"></a>   <span class="dv">3</span><span class="sc">:</span> <span class="sc">-</span><span class="fl">0.41397245</span>  <span class="fl">0.816250538</span></span>
+<span id="cb617-11"><a href="9-tidyverse.html#cb617-11" tabindex="-1"></a>   <span class="dv">4</span><span class="sc">:</span>  <span class="fl">0.51490112</span>  <span class="fl">0.499563882</span></span>
+<span id="cb617-12"><a href="9-tidyverse.html#cb617-12" tabindex="-1"></a>  <span class="sc">---</span>                         </span>
+<span id="cb617-13"><a href="9-tidyverse.html#cb617-13" tabindex="-1"></a> <span class="dv">997</span><span class="sc">:</span> <span class="sc">-</span><span class="fl">0.06823802</span>  <span class="fl">0.541311448</span></span>
+<span id="cb617-14"><a href="9-tidyverse.html#cb617-14" tabindex="-1"></a> <span class="dv">998</span><span class="sc">:</span> <span class="sc">-</span><span class="fl">1.48304667</span> <span class="sc">-</span><span class="fl">2.293768686</span></span>
+<span id="cb617-15"><a href="9-tidyverse.html#cb617-15" tabindex="-1"></a> <span class="dv">999</span><span class="sc">:</span>  <span class="fl">0.94170427</span>  <span class="fl">1.363411322</span></span>
+<span id="cb617-16"><a href="9-tidyverse.html#cb617-16" tabindex="-1"></a><span class="dv">1000</span><span class="sc">:</span> <span class="sc">-</span><span class="fl">0.45273759</span> <span class="sc">-</span><span class="fl">0.006411937</span></span></code></pre></div>
 <p><code>print.data.table(x, topn = 5)</code></p>
 <table>
 <colgroup>
@@ -1048,61 +1085,61 @@ document.addEventListener('DOMContentLoaded', function() {
 </ul>
 <p><code>enframe</code> and <code>deframe</code> convert <strong>vectors</strong> to tibbles and vice verse.</p>
 <p>Example Usage:</p>
-<div class="sourceCode" id="cb611"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb611-1"><a href="9-tidyverse.html#cb611-1" tabindex="-1"></a><span class="fu">enframe</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>)</span>
-<span id="cb611-2"><a href="9-tidyverse.html#cb611-2" tabindex="-1"></a><span class="co">#&gt; # A tibble: 3 × 2</span></span>
-<span id="cb611-3"><a href="9-tidyverse.html#cb611-3" tabindex="-1"></a><span class="co">#&gt;    name value</span></span>
-<span id="cb611-4"><a href="9-tidyverse.html#cb611-4" tabindex="-1"></a><span class="co">#&gt;   &lt;int&gt; &lt;int&gt;</span></span>
-<span id="cb611-5"><a href="9-tidyverse.html#cb611-5" tabindex="-1"></a><span class="co">#&gt; 1     1     1</span></span>
-<span id="cb611-6"><a href="9-tidyverse.html#cb611-6" tabindex="-1"></a><span class="co">#&gt; 2     2     2</span></span>
-<span id="cb611-7"><a href="9-tidyverse.html#cb611-7" tabindex="-1"></a><span class="co">#&gt; 3     3     3</span></span>
-<span id="cb611-8"><a href="9-tidyverse.html#cb611-8" tabindex="-1"></a><span class="fu">enframe</span>(<span class="fu">c</span>(<span class="at">a =</span> <span class="dv">5</span>, <span class="at">b =</span> <span class="dv">7</span>))</span>
-<span id="cb611-9"><a href="9-tidyverse.html#cb611-9" tabindex="-1"></a><span class="co">#&gt; # A tibble: 2 × 2</span></span>
-<span id="cb611-10"><a href="9-tidyverse.html#cb611-10" tabindex="-1"></a><span class="co">#&gt;   name  value</span></span>
-<span id="cb611-11"><a href="9-tidyverse.html#cb611-11" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt; &lt;dbl&gt;</span></span>
-<span id="cb611-12"><a href="9-tidyverse.html#cb611-12" tabindex="-1"></a><span class="co">#&gt; 1 a         5</span></span>
-<span id="cb611-13"><a href="9-tidyverse.html#cb611-13" tabindex="-1"></a><span class="co">#&gt; 2 b         7</span></span>
-<span id="cb611-14"><a href="9-tidyverse.html#cb611-14" tabindex="-1"></a><span class="fu">enframe</span>(<span class="fu">list</span>(<span class="at">one =</span> <span class="dv">1</span>, <span class="at">two =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">3</span>, <span class="at">three =</span> <span class="dv">4</span><span class="sc">:</span><span class="dv">6</span>))</span>
-<span id="cb611-15"><a href="9-tidyverse.html#cb611-15" tabindex="-1"></a><span class="co">#&gt; # A tibble: 3 × 2</span></span>
-<span id="cb611-16"><a href="9-tidyverse.html#cb611-16" tabindex="-1"></a><span class="co">#&gt;   name  value    </span></span>
-<span id="cb611-17"><a href="9-tidyverse.html#cb611-17" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt; &lt;list&gt;   </span></span>
-<span id="cb611-18"><a href="9-tidyverse.html#cb611-18" tabindex="-1"></a><span class="co">#&gt; 1 one   &lt;dbl [1]&gt;</span></span>
-<span id="cb611-19"><a href="9-tidyverse.html#cb611-19" tabindex="-1"></a><span class="co">#&gt; 2 two   &lt;int [2]&gt;</span></span>
-<span id="cb611-20"><a href="9-tidyverse.html#cb611-20" tabindex="-1"></a><span class="co">#&gt; 3 three &lt;int [3]&gt;</span></span>
-<span id="cb611-21"><a href="9-tidyverse.html#cb611-21" tabindex="-1"></a><span class="fu">deframe</span>(<span class="fu">enframe</span>(<span class="dv">3</span><span class="sc">:</span><span class="dv">1</span>))</span>
-<span id="cb611-22"><a href="9-tidyverse.html#cb611-22" tabindex="-1"></a><span class="co">#&gt; 1 2 3 </span></span>
-<span id="cb611-23"><a href="9-tidyverse.html#cb611-23" tabindex="-1"></a><span class="co">#&gt; 3 2 1 </span></span>
-<span id="cb611-24"><a href="9-tidyverse.html#cb611-24" tabindex="-1"></a><span class="fu">deframe</span>(<span class="fu">tibble</span>(<span class="at">a =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>))</span>
-<span id="cb611-25"><a href="9-tidyverse.html#cb611-25" tabindex="-1"></a><span class="co">#&gt; [1] 1 2 3</span></span>
-<span id="cb611-26"><a href="9-tidyverse.html#cb611-26" tabindex="-1"></a><span class="fu">deframe</span>(<span class="fu">tibble</span>(<span class="at">a =</span> <span class="fu">as.list</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>)))</span>
-<span id="cb611-27"><a href="9-tidyverse.html#cb611-27" tabindex="-1"></a><span class="co">#&gt; [[1]]</span></span>
-<span id="cb611-28"><a href="9-tidyverse.html#cb611-28" tabindex="-1"></a><span class="co">#&gt; [1] 1</span></span>
-<span id="cb611-29"><a href="9-tidyverse.html#cb611-29" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb611-30"><a href="9-tidyverse.html#cb611-30" tabindex="-1"></a><span class="co">#&gt; [[2]]</span></span>
-<span id="cb611-31"><a href="9-tidyverse.html#cb611-31" tabindex="-1"></a><span class="co">#&gt; [1] 2</span></span>
-<span id="cb611-32"><a href="9-tidyverse.html#cb611-32" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb611-33"><a href="9-tidyverse.html#cb611-33" tabindex="-1"></a><span class="co">#&gt; [[3]]</span></span>
-<span id="cb611-34"><a href="9-tidyverse.html#cb611-34" tabindex="-1"></a><span class="co">#&gt; [1] 3</span></span></code></pre></div>
+<div class="sourceCode" id="cb618"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb618-1"><a href="9-tidyverse.html#cb618-1" tabindex="-1"></a><span class="fu">enframe</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>)</span>
+<span id="cb618-2"><a href="9-tidyverse.html#cb618-2" tabindex="-1"></a><span class="co">#&gt; # A tibble: 3 × 2</span></span>
+<span id="cb618-3"><a href="9-tidyverse.html#cb618-3" tabindex="-1"></a><span class="co">#&gt;    name value</span></span>
+<span id="cb618-4"><a href="9-tidyverse.html#cb618-4" tabindex="-1"></a><span class="co">#&gt;   &lt;int&gt; &lt;int&gt;</span></span>
+<span id="cb618-5"><a href="9-tidyverse.html#cb618-5" tabindex="-1"></a><span class="co">#&gt; 1     1     1</span></span>
+<span id="cb618-6"><a href="9-tidyverse.html#cb618-6" tabindex="-1"></a><span class="co">#&gt; 2     2     2</span></span>
+<span id="cb618-7"><a href="9-tidyverse.html#cb618-7" tabindex="-1"></a><span class="co">#&gt; 3     3     3</span></span>
+<span id="cb618-8"><a href="9-tidyverse.html#cb618-8" tabindex="-1"></a><span class="fu">enframe</span>(<span class="fu">c</span>(<span class="at">a =</span> <span class="dv">5</span>, <span class="at">b =</span> <span class="dv">7</span>))</span>
+<span id="cb618-9"><a href="9-tidyverse.html#cb618-9" tabindex="-1"></a><span class="co">#&gt; # A tibble: 2 × 2</span></span>
+<span id="cb618-10"><a href="9-tidyverse.html#cb618-10" tabindex="-1"></a><span class="co">#&gt;   name  value</span></span>
+<span id="cb618-11"><a href="9-tidyverse.html#cb618-11" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt; &lt;dbl&gt;</span></span>
+<span id="cb618-12"><a href="9-tidyverse.html#cb618-12" tabindex="-1"></a><span class="co">#&gt; 1 a         5</span></span>
+<span id="cb618-13"><a href="9-tidyverse.html#cb618-13" tabindex="-1"></a><span class="co">#&gt; 2 b         7</span></span>
+<span id="cb618-14"><a href="9-tidyverse.html#cb618-14" tabindex="-1"></a><span class="fu">enframe</span>(<span class="fu">list</span>(<span class="at">one =</span> <span class="dv">1</span>, <span class="at">two =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">3</span>, <span class="at">three =</span> <span class="dv">4</span><span class="sc">:</span><span class="dv">6</span>))</span>
+<span id="cb618-15"><a href="9-tidyverse.html#cb618-15" tabindex="-1"></a><span class="co">#&gt; # A tibble: 3 × 2</span></span>
+<span id="cb618-16"><a href="9-tidyverse.html#cb618-16" tabindex="-1"></a><span class="co">#&gt;   name  value    </span></span>
+<span id="cb618-17"><a href="9-tidyverse.html#cb618-17" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt; &lt;list&gt;   </span></span>
+<span id="cb618-18"><a href="9-tidyverse.html#cb618-18" tabindex="-1"></a><span class="co">#&gt; 1 one   &lt;dbl [1]&gt;</span></span>
+<span id="cb618-19"><a href="9-tidyverse.html#cb618-19" tabindex="-1"></a><span class="co">#&gt; 2 two   &lt;int [2]&gt;</span></span>
+<span id="cb618-20"><a href="9-tidyverse.html#cb618-20" tabindex="-1"></a><span class="co">#&gt; 3 three &lt;int [3]&gt;</span></span>
+<span id="cb618-21"><a href="9-tidyverse.html#cb618-21" tabindex="-1"></a><span class="fu">deframe</span>(<span class="fu">enframe</span>(<span class="dv">3</span><span class="sc">:</span><span class="dv">1</span>))</span>
+<span id="cb618-22"><a href="9-tidyverse.html#cb618-22" tabindex="-1"></a><span class="co">#&gt; 1 2 3 </span></span>
+<span id="cb618-23"><a href="9-tidyverse.html#cb618-23" tabindex="-1"></a><span class="co">#&gt; 3 2 1 </span></span>
+<span id="cb618-24"><a href="9-tidyverse.html#cb618-24" tabindex="-1"></a><span class="fu">deframe</span>(<span class="fu">tibble</span>(<span class="at">a =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>))</span>
+<span id="cb618-25"><a href="9-tidyverse.html#cb618-25" tabindex="-1"></a><span class="co">#&gt; [1] 1 2 3</span></span>
+<span id="cb618-26"><a href="9-tidyverse.html#cb618-26" tabindex="-1"></a><span class="fu">deframe</span>(<span class="fu">tibble</span>(<span class="at">a =</span> <span class="fu">as.list</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>)))</span>
+<span id="cb618-27"><a href="9-tidyverse.html#cb618-27" tabindex="-1"></a><span class="co">#&gt; [[1]]</span></span>
+<span id="cb618-28"><a href="9-tidyverse.html#cb618-28" tabindex="-1"></a><span class="co">#&gt; [1] 1</span></span>
+<span id="cb618-29"><a href="9-tidyverse.html#cb618-29" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb618-30"><a href="9-tidyverse.html#cb618-30" tabindex="-1"></a><span class="co">#&gt; [[2]]</span></span>
+<span id="cb618-31"><a href="9-tidyverse.html#cb618-31" tabindex="-1"></a><span class="co">#&gt; [1] 2</span></span>
+<span id="cb618-32"><a href="9-tidyverse.html#cb618-32" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb618-33"><a href="9-tidyverse.html#cb618-33" tabindex="-1"></a><span class="co">#&gt; [[3]]</span></span>
+<span id="cb618-34"><a href="9-tidyverse.html#cb618-34" tabindex="-1"></a><span class="co">#&gt; [1] 3</span></span></code></pre></div>
 <hr />
 <div id="concatenate-list-elements-into-a-table" class="section level4 unnumbered unlisted hasAnchor">
 <h4>Concatenate list elements into a table<a href="9-tidyverse.html#concatenate-list-elements-into-a-table" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <ul>
 <li><p>Use <code>magrittr</code>’s pipe operator</p>
-<div class="sourceCode" id="cb612"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb612-1"><a href="9-tidyverse.html#cb612-1" tabindex="-1"></a>myList <span class="sc">%&gt;%</span> <span class="fu">do.call</span>(<span class="st">&quot;rbind&quot;</span>, .)</span></code></pre></div>
+<div class="sourceCode" id="cb619"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb619-1"><a href="9-tidyverse.html#cb619-1" tabindex="-1"></a>myList <span class="sc">%&gt;%</span> <span class="fu">do.call</span>(<span class="st">&quot;rbind&quot;</span>, .)</span></code></pre></div>
 <p>But using the new base/native pipe (<code>|&gt;</code>) leads to errors performing the same operation:</p>
-<div class="sourceCode" id="cb613"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb613-1"><a href="9-tidyverse.html#cb613-1" tabindex="-1"></a>myList <span class="sc">|&gt;</span> <span class="fu">do.call</span>(<span class="st">&quot;rbind&quot;</span>, .)</span>
-<span id="cb613-2"><a href="9-tidyverse.html#cb613-2" tabindex="-1"></a><span class="co">#&gt; Error in do.call(myList, &quot;rbind&quot;, .) : </span></span>
-<span id="cb613-3"><a href="9-tidyverse.html#cb613-3" tabindex="-1"></a><span class="co">#&gt;  second argument must be a list</span></span></code></pre></div>
+<div class="sourceCode" id="cb620"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb620-1"><a href="9-tidyverse.html#cb620-1" tabindex="-1"></a>myList <span class="sc">|&gt;</span> <span class="fu">do.call</span>(<span class="st">&quot;rbind&quot;</span>, .)</span>
+<span id="cb620-2"><a href="9-tidyverse.html#cb620-2" tabindex="-1"></a><span class="co">#&gt; Error in do.call(myList, &quot;rbind&quot;, .) : </span></span>
+<span id="cb620-3"><a href="9-tidyverse.html#cb620-3" tabindex="-1"></a><span class="co">#&gt;  second argument must be a list</span></span></code></pre></div>
 <p>The error happens because <span style="color:#FF9900"><code>|&gt;</code> always inserts into the first argument and does NOT support dot</span>. A workaround is to use <strong>named arguements</strong>:</p>
-<div class="sourceCode" id="cb614"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb614-1"><a href="9-tidyverse.html#cb614-1" tabindex="-1"></a>myList <span class="sc">|&gt;</span> <span class="fu">do.call</span>(<span class="at">what =</span> <span class="st">&quot;rbind&quot;</span>)</span></code></pre></div></li>
+<div class="sourceCode" id="cb621"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb621-1"><a href="9-tidyverse.html#cb621-1" tabindex="-1"></a>myList <span class="sc">|&gt;</span> <span class="fu">do.call</span>(<span class="at">what =</span> <span class="st">&quot;rbind&quot;</span>)</span></code></pre></div></li>
 <li><p>Use <code>bind_rows</code> from <code>dplyr</code> or <code>rbindlist</code> from <code>data.table</code>:</p>
-<div class="sourceCode" id="cb615"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb615-1"><a href="9-tidyverse.html#cb615-1" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb615-2"><a href="9-tidyverse.html#cb615-2" tabindex="-1"></a>myList <span class="sc">|&gt;</span> <span class="fu">bind_rows</span>()</span>
-<span id="cb615-3"><a href="9-tidyverse.html#cb615-3" tabindex="-1"></a></span>
-<span id="cb615-4"><a href="9-tidyverse.html#cb615-4" tabindex="-1"></a><span class="fu">library</span>(data.table)</span>
-<span id="cb615-5"><a href="9-tidyverse.html#cb615-5" tabindex="-1"></a>myList <span class="sc">|&gt;</span> <span class="fu">rbindlist</span>()</span></code></pre></div></li>
+<div class="sourceCode" id="cb622"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb622-1"><a href="9-tidyverse.html#cb622-1" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb622-2"><a href="9-tidyverse.html#cb622-2" tabindex="-1"></a>myList <span class="sc">|&gt;</span> <span class="fu">bind_rows</span>()</span>
+<span id="cb622-3"><a href="9-tidyverse.html#cb622-3" tabindex="-1"></a></span>
+<span id="cb622-4"><a href="9-tidyverse.html#cb622-4" tabindex="-1"></a><span class="fu">library</span>(data.table)</span>
+<span id="cb622-5"><a href="9-tidyverse.html#cb622-5" tabindex="-1"></a>myList <span class="sc">|&gt;</span> <span class="fu">rbindlist</span>()</span></code></pre></div></li>
 <li><p>Use <span style="color: #008B45;"><code>reduce</code></span> from <code>purrr</code></p>
-<div class="sourceCode" id="cb616"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb616-1"><a href="9-tidyverse.html#cb616-1" tabindex="-1"></a><span class="fu">library</span>(purrr)</span>
-<span id="cb616-2"><a href="9-tidyverse.html#cb616-2" tabindex="-1"></a>myList <span class="sc">|&gt;</span> <span class="fu">reduce</span>(rbind)</span></code></pre></div></li>
+<div class="sourceCode" id="cb623"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb623-1"><a href="9-tidyverse.html#cb623-1" tabindex="-1"></a><span class="fu">library</span>(purrr)</span>
+<span id="cb623-2"><a href="9-tidyverse.html#cb623-2" tabindex="-1"></a>myList <span class="sc">|&gt;</span> <span class="fu">reduce</span>(rbind)</span></code></pre></div></li>
 </ul>
 <hr />
 </div>
