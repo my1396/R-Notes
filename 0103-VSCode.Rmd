@@ -15,12 +15,13 @@ Command Palette, type "**R: Interrupt R**" to interrupt the current R session.
 ## Keyboard shortcuts
 
 |                      Shortcuts                       |               Function                |
-| :-------------------------------------------------- | :----------------------------------- |
+| :--------------------------------------------------- | :------------------------------------ |
 |                     `cmd` + `/`                      |                comment                |
 | `shift` + `cmd`  + `M` or <br>`shift` + `ctrl` + `M` | In script editor: user defined; `%>%` |
 |   <span style='color:#00CC66'>`ctrl` + `P`</span>    |    In Radian: user defined; `%>%`     |
 |                     `opt` + `-`                      |          user defined; `<-`           |
 |                   `ctrl` + `` ` ``                   |    toggle btw editor and terminal     |
+| `cmd` + `1`/`2`                                      | toggle between editors                |
 
 - For commonly used general keyboard shortcuts (not limited to R), see [HERE](https://my1396.github.io/Econ-Study/2024/08/12/Productivity-Tools.html#keyboard-shortcuts).
 
@@ -43,7 +44,7 @@ Refer to [Run R in Interactive Window](https://my1396.github.io/Econ-Study/2026/
 
 When you run the whole code cell, output will be shown after the whole cell is executed. If you want to see the output immediately after each line of code, you can add the following to `settings.json`:
 
-```json
+```yaml
 // Run code line-by-line in the terminal
 "r.bracketedPaste": false,
 ```

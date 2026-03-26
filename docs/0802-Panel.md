@@ -68,6 +68,15 @@ coeftest(model_fe, vcov = vcovHC(model_fe, type = "HC1", cluster = "time"))
 | Example               | Firm culture, management quality, industry-specific trends affecting the same firm over time | All firms affected by the same Fed rate change, recession, or regulatory change in a given year  |
 
 
+#### `fixest` package
+
+It is a better alternative to `plm` for panel data estimation. 
+
+
+**ref:**
+
+- [Fixed-Effects Estimation in R With the `fixest` Package](https://www.tilburgsciencehub.com/topics/analyze/causal-inference/panel-data/fixest/)
+- [CRAN Documentation for `fixest`](https://mirror.clientvps.com/CRAN/web/packages/fixest/fixest.pdf)
 
 
 --------------------------------------------------------------------------------

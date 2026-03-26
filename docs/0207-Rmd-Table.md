@@ -269,7 +269,7 @@ To show the `tibble` information (number of row/columns, and group information) 
 ```yaml
 ---
 title: "Use caption with df_print set to page"
-date: "2026-03-25"
+date: "2026-03-26"
 output:
   bookdown::html_document2:
     df_print: paged
@@ -558,6 +558,8 @@ ___
   
     This is useful to denote different regressions, informing the name/nature of the model, instead of using numbers to identify them.
 
+    <span class="env-orange">Do NOT include underscores (`_`) in the column labels or title</span>, as they will be interpreted as subscript in LaTeX. Use `\\_` instead to print underscores.
+
     When you add custom column labels, you may want to use: <span class="env-green">`model.numbers = FALSE`</span> to suppress the default model numbers (1) (2)...
 
 - <span class="env-green">`covariate.labels`</span>  labels for covariates in the regression tables.
@@ -771,7 +773,7 @@ print(xtab, type = "html", include.rownames = TRUE)
 ```
 
 <!-- html table generated in R 4.5.1 by xtable 1.8-4 package -->
-<!-- Wed Mar 25 13:26:38 2026 -->
+<!-- Thu Mar 26 14:50:39 2026 -->
 <table border=1>
 <caption align="bottom"> Asset Parameters </caption>
 <tr> <th>  </th> <th> Asset </th> <th> Mu </th> <th> Sigma </th>  </tr>
@@ -791,7 +793,7 @@ print(xtab_model, type = "html", digits = 3)
 ```
 
 <!-- html table generated in R 4.5.1 by xtable 1.8-4 package -->
-<!-- Wed Mar 25 13:26:38 2026 -->
+<!-- Thu Mar 26 14:50:39 2026 -->
 <table border=1>
 <caption align="bottom"> Regression of mpg on hp and wt </caption>
 <tr> <th>  </th> <th> Estimate </th> <th> Std. Error </th> <th> t value </th> <th> Pr(&gt;|t|) </th>  </tr>

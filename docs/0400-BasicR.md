@@ -378,6 +378,51 @@ It looks like the following in the console:
 <img src="https://drive.google.com/thumbnail?id=1aq5GWlU2RZuH9y4pDhShjXn-MkPL2uWN&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
 
 
+Wrap the code above in a function to make it reusable.
+
+```r
+save_with_prompt <- function(df, f_name) {
+    #' Prompts the user to confirm before saving a data frame or text output to a file.
+    #' Prevents accidental overwriting of files
+    #' @param df The data frame or text output to be saved.
+    #' @param f_name The file name (including path) where the data should be saved to.
+    
+    message(glue("Target file: {f_name}"))
+    cat("Overwrite data? [1 = Yes, 0 = No]: ")
+    flush.console()
+    user_input <- as.integer(readLines("stdin", n = 1))
+
+    if (!is.na(user_input) && user_input == 1) {
+        if (inherits(df, c("data.frame", "tbl_df", "tbl"))) {
+            write_csv(df, f_name)
+        } else {
+            log_to_file(f_name, cat(df))
+        }
+        message(glue("✓ Dataset saved to: {f_name}"))
+    } else {
+        message("✗ Data not saved")
+    }
+}
+# csv files
+df <- tibble(year = 1:20, values = letters[1:20])
+f_name <- here(out_dir, "my_table.csv")
+save_with_prompt(df, f_name)
+
+# txt files
+res <- glue("
+    === Data Description ===
+    Period: {min(fundamental_complete$year)} – {max(fundamental_complete$year)}
+    Firm-year observations: {nrow(fundamental_complete)}
+    Unique firms: {n_distinct(fundamental_complete$fsym_id)}
+    Missing market value: {sum(is.na(fundamental_complete$ff_mkt_val))}
+    Missing Tobins Q (lagged): {sum(is.na(fundamental_complete$tobin_q_lag1))}
+    Sectors ({n_distinct(fundamental_complete$l1_name)}): {paste(sort(unique(fundamental_complete$l1_name)), collapse = ', ')}
+")
+res
+f_name <- here(out_dir, "my_table.txt")
+save_with_prompt(res, f_name)
+```
+
 
 ## Functions Overview
 

@@ -322,6 +322,111 @@ You can rename `dplyr::lag()` to `lag()` to avoid typing `dplyr::` every time.
 lag <- dplyr::lag
 ```
 
+### Unbalanced panel
+
+When you have unbalanced panel data, for instance, you have missing values for some time periods for some units, `dplyr::lag()` will ignore the time structure and just lag the values by row. This can lead to incorrect lagged values.
+
+To deal with time gaps in unbalanced panel data, you can first make a balanced panel by filling in the missing time periods with `NA` values, and then apply `dplyr::lag()` to get the correct lagged values. 
+
+```r
+# Create an unbalanced panel data frame
+df <- tibble(
+  firm = c(rep("A", 3), rep("B", 4)),
+  year = c(2018, 2019, 2021, 2018, 2019, 2020, 2021),
+  value = c(10, 12, 20, seq(1,4))
+)
+df
+# A tibble: 7 × 3
+  firm   year value
+  <chr> <dbl> <dbl>
+1 A      2018    10
+2 A      2019    12
+3 A      2021    20
+4 B      2018     1
+5 B      2019     2
+6 B      2020     3
+7 B      2021     4
+
+df_wrong <- df %>%
+  arrange(firm, year) %>%
+  group_by(firm) %>%
+  mutate(lag_value = dplyr::lag(value)) %>% 
+  ungroup()
+df_wrong
+# A tibble: 7 × 4
+  firm   year value lag_value
+  <chr> <dbl> <dbl>     <dbl>
+1 A      2018    10        NA
+2 A      2019    12        10
+3 A      2021    20        12
+4 B      2018     1        NA
+5 B      2019     2         1
+6 B      2020     3         2
+7 B      2021     4         3
+```
+
+Firm A has a missing value for 2020, so the lagged value for 2021 is incorrect because it is lagging from 2019 instead of 2020.
+
+To fix this, we create a balanced panel first
+
+```r
+library(plm)
+df_balanced <- df %>%
+  pdata.frame(index = c("firm", "year")) %>%
+  make.pbalanced() 
+df_balanced
+#        firm year value
+# A-2018    A 2018    10
+# A-2019    A 2019    12
+# A-2020    A 2020    NA
+# A-2021    A 2021    20
+# B-2018    B 2018     1
+# B-2019    B 2019     2
+# B-2020    B 2020     3
+# B-2021    B 2021     4
+```
+
+Now we can apply `dplyr::lag()` to the balanced panel to get the correct lagged values. 
+
+```r
+df_balanced <- df_balanced %>%
+  group_by(firm) %>%
+  mutate(lag_value = dplyr::lag(value)) %>% 
+  ungroup()
+df_balanced
+# A tibble: 8 × 4
+  firm  year  value lag_value
+  <fct> <fct> <dbl>     <dbl>
+1 A     2018     10        NA
+2 A     2019     12        10
+3 A     2020     NA        12
+4 A     2021     20        NA
+5 B     2018      1        NA
+6 B     2019      2         1
+7 B     2020      3         2
+8 B     2021      4         3
+```
+
+Notice that `year` becomes a factor variable after using `pdata.frame()`. You can convert it back to numeric if needed. 
+
+```r
+# convert year to numeric
+df_balanced %>% 
+  mutate(year = as.numeric(as.character(year)))
+# A tibble: 8 × 4
+  firm   year value lag_value
+  <fct> <dbl> <dbl>     <dbl>
+1 A      2018    10        NA
+2 A      2019    12        10
+3 A      2020    NA        12
+4 A      2021    20        NA
+5 B      2018     1        NA
+6 B      2019     2         1
+7 B      2020     3         2
+8 B      2021     4         3
+```
+
+
 --------------------------------------------------------------------------------
 
 ## Process Data
