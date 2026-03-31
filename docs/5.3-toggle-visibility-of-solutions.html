@@ -654,8 +654,8 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="8.8" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html"><i class="fa fa-check"></i><b>8.8</b> Data Frame Operations</a>
 <ul>
-<li class="chapter" data-level="" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#columnrow-wise-operations"><i class="fa fa-check"></i>Column/Row-wise Operations</a></li>
-<li class="chapter" data-level="8.8.1" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#process-na-values"><i class="fa fa-check"></i><b>8.8.1</b> <span class="env-green"><strong>Process <code>NA</code> values</strong></span></a></li>
+<li class="chapter" data-level="8.8.1" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#columnrow-wise-operations"><i class="fa fa-check"></i><b>8.8.1</b> Column/Row-wise Operations</a></li>
+<li class="chapter" data-level="8.8.2" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#process-na-values"><i class="fa fa-check"></i><b>8.8.2</b> <span class="env-green"><strong>Process <code>NA</code> values</strong></span></a></li>
 </ul></li>
 <li class="chapter" data-level="8.9" data-path="8.9-matrix-multiplication.html"><a href="8.9-matrix-multiplication.html"><i class="fa fa-check"></i><b>8.9</b> Matrix multiplication</a></li>
 <li class="chapter" data-level="8.10" data-path="8.10-string-operations.html"><a href="8.10-string-operations.html"><i class="fa fa-check"></i><b>8.10</b> String Operations</a></li>
@@ -868,17 +868,47 @@ function myFunction(id) {
   x.style.display = (x.style.display === 'none') ? 'block' : 'none';
 }
 
-// Auto-expand active top-level section so its level 2/3 items are visible
+// Auto-expand active section and keep all siblings within the same level 1 section open
 document.addEventListener('DOMContentLoaded', function() {
   try {
     var summary = document.querySelector('.book-summary ul.summary');
     if (!summary) return;
 
     function applyAutoOpen() {
-      // Clear previous
-      summary.querySelectorAll('li.chapter.auto-open').forEach(function(li){ li.classList.remove('auto-open'); });
+      // Find the active item (could be level 1, 2, or 3)
       var active = summary.querySelector('li.chapter.active');
-      if (active) active.classList.add('auto-open');
+      if (!active) return;
+      
+      // Find the top-level (level 1) chapter containing the active item
+      var topLevelChapter = active.closest('ul.summary > li.chapter');
+      if (!topLevelChapter) return;
+      
+      // Collapse all other top-level chapters
+      summary.querySelectorAll('ul.summary > li.chapter').forEach(function(chapter) {
+        if (chapter !== topLevelChapter) {
+          chapter.classList.remove('auto-open');
+          // Collapse all nested items in other chapters
+          chapter.querySelectorAll('li.chapter').forEach(function(nested) {
+            nested.classList.remove('auto-open');
+          });
+        }
+      });
+      
+      // Expand the active top-level chapter
+      topLevelChapter.classList.add('auto-open');
+      
+      // Expand ALL level 2 and level 3 items within this top-level chapter
+      topLevelChapter.querySelectorAll('li.chapter').forEach(function(nested) {
+        nested.classList.add('auto-open');
+      });
+      
+      // Scroll the active TOC item to the center of the TOC panel
+      setTimeout(function() {
+        var activeLink = active.querySelector('a');
+        if (activeLink) {
+          activeLink.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
     }
 
     applyAutoOpen();
@@ -894,14 +924,14 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-// Toggle collapse: clicking an expanded section collapses it
+// Toggle collapse: clicking level 1 heading expands/collapses all sublevels
 document.addEventListener('DOMContentLoaded', function() {
   try {
     var summary = document.querySelector('.book-summary ul.summary');
     if (!summary) return;
 
-    // Add click handlers to chapter links with children
-    summary.querySelectorAll('li.chapter').forEach(function(chapter) {
+    // Add click handlers only to top-level chapter links with children
+    summary.querySelectorAll('ul.summary > li.chapter').forEach(function(chapter) {
       var sublist = chapter.querySelector('ul');
       if (!sublist) return; // Only chapters with subsections
 
@@ -913,15 +943,28 @@ document.addEventListener('DOMContentLoaded', function() {
         var isExpanded = chapter.classList.contains('auto-open');
         
         if (isExpanded) {
-          // Collapse it
+          // Collapse it and all nested items
           e.preventDefault();
           chapter.classList.remove('auto-open');
+          // Also collapse all level 2 and level 3 items
+          chapter.querySelectorAll('li.chapter.auto-open').forEach(function(nested) {
+            nested.classList.remove('auto-open');
+          });
         } else {
-          // Expand it (remove auto-open from others first)
-          summary.querySelectorAll('li.chapter.auto-open').forEach(function(li) {
-            if (li !== chapter) li.classList.remove('auto-open');
+          // Expand it (collapse other top-level chapters first)
+          summary.querySelectorAll('ul.summary > li.chapter.auto-open').forEach(function(li) {
+            if (li !== chapter) {
+              li.classList.remove('auto-open');
+              li.querySelectorAll('li.chapter.auto-open').forEach(function(nested) {
+                nested.classList.remove('auto-open');
+              });
+            }
           });
           chapter.classList.add('auto-open');
+          // Expand all level 2 items within this chapter
+          chapter.querySelectorAll('ul > li.chapter').forEach(function(level2) {
+            level2.classList.add('auto-open');
+          });
         }
       });
     });
@@ -931,9 +974,26 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 <style>
-/* Show nested UL of active chapter when collapse=section */
-.book-summary ul.summary li.chapter.auto-open ul { display: block !important; }
-.book-summary ul.summary li.chapter.auto-open > a { font-weight: 700; }
+/* Show all nested UL of chapters marked as auto-open */
+.book-summary ul.summary li.chapter.auto-open > ul { 
+  display: block !important; 
+}
+
+/* Make parent level headings bold when expanded */
+.book-summary ul.summary li.chapter.auto-open > a { 
+  font-weight: 700; 
+}
+
+/* Highlight the actual active item with color and bold */
+.book-summary ul.summary li.chapter.active > a { 
+  font-weight: 700 !important;
+  color: #0078D4 !important;
+}
+
+/* Ensure proper indentation for nested levels */
+.book-summary ul.summary li.chapter ul li.chapter { 
+  padding-left: 0; 
+}
 </style>
 <div id="toggle-visibility-of-solutions" class="section level2 hasAnchor" number="5.3">
 <h2><span class="header-section-number">5.3</span> Toggle Visibility of Solutions<a href="5.3-toggle-visibility-of-solutions.html#toggle-visibility-of-solutions" class="anchor-section" aria-label="Anchor link to header"></a></h2>
@@ -942,13 +1002,13 @@ document.addEventListener('DOMContentLoaded', function() {
 <ul>
 <li>Advantage is that it does not need to define any java function.</li>
 </ul>
-<div class="sourceCode" id="cb332"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb332-1"><a href="5.3-toggle-visibility-of-solutions.html#cb332-1" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">button</span><span class="ot"> class</span><span class="op">=</span><span class="st">&quot;button&quot;</span><span class="ot"> onclick</span><span class="op">=</span><span class="st">&quot;$(&#39;#target2&#39;).toggle();&quot;</span><span class="dt">&gt;</span></span>
-<span id="cb332-2"><a href="5.3-toggle-visibility-of-solutions.html#cb332-2" tabindex="-1"></a>    Show/Hide</span>
-<span id="cb332-3"><a href="5.3-toggle-visibility-of-solutions.html#cb332-3" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">button</span><span class="dt">&gt;</span></span>
-<span id="cb332-4"><a href="5.3-toggle-visibility-of-solutions.html#cb332-4" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">div</span><span class="ot"> id</span><span class="op">=</span><span class="st">&quot;target2&quot;</span><span class="ot"> style</span><span class="op">=</span><span class="st">&quot;display: none&quot;</span><span class="dt">&gt;</span></span>
-<span id="cb332-5"><a href="5.3-toggle-visibility-of-solutions.html#cb332-5" tabindex="-1"></a>    Solution:</span>
-<span id="cb332-6"><a href="5.3-toggle-visibility-of-solutions.html#cb332-6" tabindex="-1"></a>    $P(\textrm{A wins or B wins}) = P\big(\{\textrm{A wins}\} \cup \{\textrm{B wins}\}\big)$</span>
-<span id="cb332-7"><a href="5.3-toggle-visibility-of-solutions.html#cb332-7" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb334"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb334-1"><a href="5.3-toggle-visibility-of-solutions.html#cb334-1" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">button</span><span class="ot"> class</span><span class="op">=</span><span class="st">&quot;button&quot;</span><span class="ot"> onclick</span><span class="op">=</span><span class="st">&quot;$(&#39;#target2&#39;).toggle();&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb334-2"><a href="5.3-toggle-visibility-of-solutions.html#cb334-2" tabindex="-1"></a>    Show/Hide</span>
+<span id="cb334-3"><a href="5.3-toggle-visibility-of-solutions.html#cb334-3" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">button</span><span class="dt">&gt;</span></span>
+<span id="cb334-4"><a href="5.3-toggle-visibility-of-solutions.html#cb334-4" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">div</span><span class="ot"> id</span><span class="op">=</span><span class="st">&quot;target2&quot;</span><span class="ot"> style</span><span class="op">=</span><span class="st">&quot;display: none&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb334-5"><a href="5.3-toggle-visibility-of-solutions.html#cb334-5" tabindex="-1"></a>    Solution:</span>
+<span id="cb334-6"><a href="5.3-toggle-visibility-of-solutions.html#cb334-6" tabindex="-1"></a>    $P(\textrm{A wins or B wins}) = P\big(\{\textrm{A wins}\} \cup \{\textrm{B wins}\}\big)$</span>
+<span id="cb334-7"><a href="5.3-toggle-visibility-of-solutions.html#cb334-7" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span></span></code></pre></div>
 <p>Example:</p>
 <button class="button" onclick="$(&#39;#target2&#39;).toggle();">
 Show/Hide
@@ -963,23 +1023,23 @@ $P(\textrm{A wins or B wins}) = P\big(\{\textrm{A wins}\} \cup \{\textrm{B wins}
 <p>Able to show math equations properly ✅</p>
 <ol style="list-style-type: decimal">
 <li><p>Put the following codes in the Rmd <span style="color:#00CC66">header</span>. This defines the button action <code>myFunction</code>.</p>
-<div class="sourceCode" id="cb334"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb334-1"><a href="5.3-toggle-visibility-of-solutions.html#cb334-1" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">script</span><span class="dt">&gt;</span> </span>
-<span id="cb334-2"><a href="5.3-toggle-visibility-of-solutions.html#cb334-2" tabindex="-1"></a>    <span class="kw">function</span> <span class="fu">myFunction</span>(id) {</span>
-<span id="cb334-3"><a href="5.3-toggle-visibility-of-solutions.html#cb334-3" tabindex="-1"></a>      <span class="kw">var</span> x <span class="op">=</span> <span class="bu">document</span><span class="op">.</span><span class="fu">getElementById</span>(id)<span class="op">;</span> </span>
-<span id="cb334-4"><a href="5.3-toggle-visibility-of-solutions.html#cb334-4" tabindex="-1"></a>      <span class="cf">if</span> (x<span class="op">.</span><span class="at">style</span><span class="op">.</span><span class="at">display</span> <span class="op">===</span> <span class="st">&quot;none&quot;</span>) {</span>
-<span id="cb334-5"><a href="5.3-toggle-visibility-of-solutions.html#cb334-5" tabindex="-1"></a>        x<span class="op">.</span><span class="at">style</span><span class="op">.</span><span class="at">display</span> <span class="op">=</span> <span class="st">&quot;block&quot;</span><span class="op">;</span></span>
-<span id="cb334-6"><a href="5.3-toggle-visibility-of-solutions.html#cb334-6" tabindex="-1"></a>      } <span class="cf">else</span> {</span>
-<span id="cb334-7"><a href="5.3-toggle-visibility-of-solutions.html#cb334-7" tabindex="-1"></a>        x<span class="op">.</span><span class="at">style</span><span class="op">.</span><span class="at">display</span> <span class="op">=</span> <span class="st">&quot;none&quot;</span><span class="op">;</span></span>
-<span id="cb334-8"><a href="5.3-toggle-visibility-of-solutions.html#cb334-8" tabindex="-1"></a>      }</span>
-<span id="cb334-9"><a href="5.3-toggle-visibility-of-solutions.html#cb334-9" tabindex="-1"></a>    }</span>
-<span id="cb334-10"><a href="5.3-toggle-visibility-of-solutions.html#cb334-10" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">script</span><span class="dt">&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb336"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb336-1"><a href="5.3-toggle-visibility-of-solutions.html#cb336-1" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">script</span><span class="dt">&gt;</span> </span>
+<span id="cb336-2"><a href="5.3-toggle-visibility-of-solutions.html#cb336-2" tabindex="-1"></a>    <span class="kw">function</span> <span class="fu">myFunction</span>(id) {</span>
+<span id="cb336-3"><a href="5.3-toggle-visibility-of-solutions.html#cb336-3" tabindex="-1"></a>      <span class="kw">var</span> x <span class="op">=</span> <span class="bu">document</span><span class="op">.</span><span class="fu">getElementById</span>(id)<span class="op">;</span> </span>
+<span id="cb336-4"><a href="5.3-toggle-visibility-of-solutions.html#cb336-4" tabindex="-1"></a>      <span class="cf">if</span> (x<span class="op">.</span><span class="at">style</span><span class="op">.</span><span class="at">display</span> <span class="op">===</span> <span class="st">&quot;none&quot;</span>) {</span>
+<span id="cb336-5"><a href="5.3-toggle-visibility-of-solutions.html#cb336-5" tabindex="-1"></a>        x<span class="op">.</span><span class="at">style</span><span class="op">.</span><span class="at">display</span> <span class="op">=</span> <span class="st">&quot;block&quot;</span><span class="op">;</span></span>
+<span id="cb336-6"><a href="5.3-toggle-visibility-of-solutions.html#cb336-6" tabindex="-1"></a>      } <span class="cf">else</span> {</span>
+<span id="cb336-7"><a href="5.3-toggle-visibility-of-solutions.html#cb336-7" tabindex="-1"></a>        x<span class="op">.</span><span class="at">style</span><span class="op">.</span><span class="at">display</span> <span class="op">=</span> <span class="st">&quot;none&quot;</span><span class="op">;</span></span>
+<span id="cb336-8"><a href="5.3-toggle-visibility-of-solutions.html#cb336-8" tabindex="-1"></a>      }</span>
+<span id="cb336-9"><a href="5.3-toggle-visibility-of-solutions.html#cb336-9" tabindex="-1"></a>    }</span>
+<span id="cb336-10"><a href="5.3-toggle-visibility-of-solutions.html#cb336-10" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">script</span><span class="dt">&gt;</span></span></code></pre></div>
 <p>In case of <code>bookdown</code>, put the JavaScript in <code>script.hhml</code>, which will be loaded into the header of all your html files via <code>_output.yml</code>.</p>
-<div class="sourceCode" id="cb335"><pre class="sourceCode yml"><code class="sourceCode yaml"><span id="cb335-1"><a href="5.3-toggle-visibility-of-solutions.html#cb335-1" tabindex="-1"></a><span class="at">bookdown:</span><span class="fu">:gitbook</span><span class="kw">:</span></span>
-<span id="cb335-2"><a href="5.3-toggle-visibility-of-solutions.html#cb335-2" tabindex="-1"></a><span class="at">  </span><span class="fu">css</span><span class="kw">:</span><span class="at"> assets/styling/style.css</span></span>
-<span id="cb335-3"><a href="5.3-toggle-visibility-of-solutions.html#cb335-3" tabindex="-1"></a><span class="at">  </span><span class="fu">includes</span><span class="kw">:</span></span>
-<span id="cb335-4"><a href="5.3-toggle-visibility-of-solutions.html#cb335-4" tabindex="-1"></a><span class="at">    </span><span class="fu">in_header</span><span class="kw">:</span><span class="at"> assets/styling/head.html</span></span>
-<span id="cb335-5"><a href="5.3-toggle-visibility-of-solutions.html#cb335-5" tabindex="-1"></a><span class="at">    </span><span class="fu">after_body</span><span class="kw">:</span><span class="at"> assets/styling/scripts.html</span></span>
-<span id="cb335-6"><a href="5.3-toggle-visibility-of-solutions.html#cb335-6" tabindex="-1"></a><span class="co">  # ...</span></span></code></pre></div></li>
+<div class="sourceCode" id="cb337"><pre class="sourceCode yml"><code class="sourceCode yaml"><span id="cb337-1"><a href="5.3-toggle-visibility-of-solutions.html#cb337-1" tabindex="-1"></a><span class="at">bookdown:</span><span class="fu">:gitbook</span><span class="kw">:</span></span>
+<span id="cb337-2"><a href="5.3-toggle-visibility-of-solutions.html#cb337-2" tabindex="-1"></a><span class="at">  </span><span class="fu">css</span><span class="kw">:</span><span class="at"> assets/styling/style.css</span></span>
+<span id="cb337-3"><a href="5.3-toggle-visibility-of-solutions.html#cb337-3" tabindex="-1"></a><span class="at">  </span><span class="fu">includes</span><span class="kw">:</span></span>
+<span id="cb337-4"><a href="5.3-toggle-visibility-of-solutions.html#cb337-4" tabindex="-1"></a><span class="at">    </span><span class="fu">in_header</span><span class="kw">:</span><span class="at"> assets/styling/head.html</span></span>
+<span id="cb337-5"><a href="5.3-toggle-visibility-of-solutions.html#cb337-5" tabindex="-1"></a><span class="at">    </span><span class="fu">after_body</span><span class="kw">:</span><span class="at"> assets/styling/scripts.html</span></span>
+<span id="cb337-6"><a href="5.3-toggle-visibility-of-solutions.html#cb337-6" tabindex="-1"></a><span class="co">  # ...</span></span></code></pre></div></li>
 <li><p>When you want to create a solution division, use the following codes.</p>
 <ul>
 <li>Change the <span style="color:#00CC66">function argument <code>myDIV</code></span>, which is the <code>id</code> of the element. <code>id</code> must be unique in one file.</li>
@@ -987,29 +1047,29 @@ $P(\textrm{A wins or B wins}) = P\big(\{\textrm{A wins}\} \cup \{\textrm{B wins}
 <li>Put your solution inside the <code>&lt;div id=myDIV&gt;</code> tag, where <code>id</code> is what you specified in the function argument.</li>
 </ul></li>
 </ol>
-<div class="sourceCode" id="cb336"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb336-1"><a href="5.3-toggle-visibility-of-solutions.html#cb336-1" tabindex="-1"></a>```{example, ex1}</span>
-<span id="cb336-2"><a href="5.3-toggle-visibility-of-solutions.html#cb336-2" tabindex="-1"></a>Let $Y=g(X)=\mu+\sigma X$ where $\sigma&gt;0$. Representing the CDF of $Y$ using $F_X(x)$.</span>
-<span id="cb336-3"><a href="5.3-toggle-visibility-of-solutions.html#cb336-3" tabindex="-1"></a>```</span>
-<span id="cb336-4"><a href="5.3-toggle-visibility-of-solutions.html#cb336-4" tabindex="-1"></a></span>
-<span id="cb336-5"><a href="5.3-toggle-visibility-of-solutions.html#cb336-5" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">button</span><span class="ot"> onclick</span><span class="op">=</span><span class="st">&quot;myFunction(&#39;myDIV&#39;)&quot;</span><span class="dt">&gt;</span>Solution1<span class="dt">&lt;/</span><span class="kw">button</span><span class="dt">&gt;</span></span>
-<span id="cb336-6"><a href="5.3-toggle-visibility-of-solutions.html#cb336-6" tabindex="-1"></a></span>
-<span id="cb336-7"><a href="5.3-toggle-visibility-of-solutions.html#cb336-7" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">div</span><span class="ot"> id</span><span class="op">=</span><span class="st">&quot;myDIV&quot;</span><span class="ot"> style</span><span class="op">=</span><span class="st">&quot;display: none; color: blue;&quot;</span><span class="dt">&gt;</span></span>
-<span id="cb336-8"><a href="5.3-toggle-visibility-of-solutions.html#cb336-8" tabindex="-1"></a>  $P(\textrm{A wins or B wins}) = P\big(\{\textrm{A wins}\} \cup \{\textrm{B wins}\}\big)$</span>
-<span id="cb336-9"><a href="5.3-toggle-visibility-of-solutions.html#cb336-9" tabindex="-1"></a>  solution1</span>
-<span id="cb336-10"><a href="5.3-toggle-visibility-of-solutions.html#cb336-10" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span></span>
-<span id="cb336-11"><a href="5.3-toggle-visibility-of-solutions.html#cb336-11" tabindex="-1"></a></span>
-<span id="cb336-12"><a href="5.3-toggle-visibility-of-solutions.html#cb336-12" tabindex="-1"></a>```{example, ex2}</span>
-<span id="cb336-13"><a href="5.3-toggle-visibility-of-solutions.html#cb336-13" tabindex="-1"></a>Let $X\sim N(0,1)$ and $Y=\mu+\sigma X$. Calculate $\mathbb{E}(Y)$.</span>
-<span id="cb336-14"><a href="5.3-toggle-visibility-of-solutions.html#cb336-14" tabindex="-1"></a>```</span>
-<span id="cb336-15"><a href="5.3-toggle-visibility-of-solutions.html#cb336-15" tabindex="-1"></a></span>
-<span id="cb336-16"><a href="5.3-toggle-visibility-of-solutions.html#cb336-16" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">button</span><span class="ot"> onclick</span><span class="op">=</span><span class="st">&quot;myFunction(&#39;myDIV2&#39;)&quot;</span><span class="dt">&gt;</span>Solution2<span class="dt">&lt;/</span><span class="kw">button</span><span class="dt">&gt;</span></span>
-<span id="cb336-17"><a href="5.3-toggle-visibility-of-solutions.html#cb336-17" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">div</span><span class="ot"> id</span><span class="op">=</span><span class="st">&quot;myDIV2&quot;</span><span class="ot"> style</span><span class="op">=</span><span class="st">&quot;display: none; color: blue;&quot;</span><span class="dt">&gt;</span></span>
-<span id="cb336-18"><a href="5.3-toggle-visibility-of-solutions.html#cb336-18" tabindex="-1"></a>  $P(\textrm{A wins or B wins}) = P\big(\{\textrm{A wins}\} \cup \{\textrm{B wins}\}\big)$</span>
-<span id="cb336-19"><a href="5.3-toggle-visibility-of-solutions.html#cb336-19" tabindex="-1"></a>  solution2 </span>
-<span id="cb336-20"><a href="5.3-toggle-visibility-of-solutions.html#cb336-20" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span></span>
-<span id="cb336-21"><a href="5.3-toggle-visibility-of-solutions.html#cb336-21" tabindex="-1"></a></span>
-<span id="cb336-22"><a href="5.3-toggle-visibility-of-solutions.html#cb336-22" tabindex="-1"></a>blabla ...</span>
-<span id="cb336-23"><a href="5.3-toggle-visibility-of-solutions.html#cb336-23" tabindex="-1"></a>blabla ...</span></code></pre></div>
+<div class="sourceCode" id="cb338"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb338-1"><a href="5.3-toggle-visibility-of-solutions.html#cb338-1" tabindex="-1"></a>```{example, ex1}</span>
+<span id="cb338-2"><a href="5.3-toggle-visibility-of-solutions.html#cb338-2" tabindex="-1"></a>Let $Y=g(X)=\mu+\sigma X$ where $\sigma&gt;0$. Representing the CDF of $Y$ using $F_X(x)$.</span>
+<span id="cb338-3"><a href="5.3-toggle-visibility-of-solutions.html#cb338-3" tabindex="-1"></a>```</span>
+<span id="cb338-4"><a href="5.3-toggle-visibility-of-solutions.html#cb338-4" tabindex="-1"></a></span>
+<span id="cb338-5"><a href="5.3-toggle-visibility-of-solutions.html#cb338-5" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">button</span><span class="ot"> onclick</span><span class="op">=</span><span class="st">&quot;myFunction(&#39;myDIV&#39;)&quot;</span><span class="dt">&gt;</span>Solution1<span class="dt">&lt;/</span><span class="kw">button</span><span class="dt">&gt;</span></span>
+<span id="cb338-6"><a href="5.3-toggle-visibility-of-solutions.html#cb338-6" tabindex="-1"></a></span>
+<span id="cb338-7"><a href="5.3-toggle-visibility-of-solutions.html#cb338-7" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">div</span><span class="ot"> id</span><span class="op">=</span><span class="st">&quot;myDIV&quot;</span><span class="ot"> style</span><span class="op">=</span><span class="st">&quot;display: none; color: blue;&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb338-8"><a href="5.3-toggle-visibility-of-solutions.html#cb338-8" tabindex="-1"></a>  $P(\textrm{A wins or B wins}) = P\big(\{\textrm{A wins}\} \cup \{\textrm{B wins}\}\big)$</span>
+<span id="cb338-9"><a href="5.3-toggle-visibility-of-solutions.html#cb338-9" tabindex="-1"></a>  solution1</span>
+<span id="cb338-10"><a href="5.3-toggle-visibility-of-solutions.html#cb338-10" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span></span>
+<span id="cb338-11"><a href="5.3-toggle-visibility-of-solutions.html#cb338-11" tabindex="-1"></a></span>
+<span id="cb338-12"><a href="5.3-toggle-visibility-of-solutions.html#cb338-12" tabindex="-1"></a>```{example, ex2}</span>
+<span id="cb338-13"><a href="5.3-toggle-visibility-of-solutions.html#cb338-13" tabindex="-1"></a>Let $X\sim N(0,1)$ and $Y=\mu+\sigma X$. Calculate $\mathbb{E}(Y)$.</span>
+<span id="cb338-14"><a href="5.3-toggle-visibility-of-solutions.html#cb338-14" tabindex="-1"></a>```</span>
+<span id="cb338-15"><a href="5.3-toggle-visibility-of-solutions.html#cb338-15" tabindex="-1"></a></span>
+<span id="cb338-16"><a href="5.3-toggle-visibility-of-solutions.html#cb338-16" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">button</span><span class="ot"> onclick</span><span class="op">=</span><span class="st">&quot;myFunction(&#39;myDIV2&#39;)&quot;</span><span class="dt">&gt;</span>Solution2<span class="dt">&lt;/</span><span class="kw">button</span><span class="dt">&gt;</span></span>
+<span id="cb338-17"><a href="5.3-toggle-visibility-of-solutions.html#cb338-17" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">div</span><span class="ot"> id</span><span class="op">=</span><span class="st">&quot;myDIV2&quot;</span><span class="ot"> style</span><span class="op">=</span><span class="st">&quot;display: none; color: blue;&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb338-18"><a href="5.3-toggle-visibility-of-solutions.html#cb338-18" tabindex="-1"></a>  $P(\textrm{A wins or B wins}) = P\big(\{\textrm{A wins}\} \cup \{\textrm{B wins}\}\big)$</span>
+<span id="cb338-19"><a href="5.3-toggle-visibility-of-solutions.html#cb338-19" tabindex="-1"></a>  solution2 </span>
+<span id="cb338-20"><a href="5.3-toggle-visibility-of-solutions.html#cb338-20" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span></span>
+<span id="cb338-21"><a href="5.3-toggle-visibility-of-solutions.html#cb338-21" tabindex="-1"></a></span>
+<span id="cb338-22"><a href="5.3-toggle-visibility-of-solutions.html#cb338-22" tabindex="-1"></a>blabla ...</span>
+<span id="cb338-23"><a href="5.3-toggle-visibility-of-solutions.html#cb338-23" tabindex="-1"></a>blabla ...</span></code></pre></div>
 <div class="example">
 <p><span id="exm:ex1" class="example"><strong>Example 5.1  </strong></span>Let <span class="math inline">\(Y=g(X)=\mu+\sigma X\)</span> where <span class="math inline">\(\sigma&gt;0\)</span>. Representing the CDF of <span class="math inline">\(Y\)</span> using <span class="math inline">\(F_X(x)\)</span>.</p>
 </div>

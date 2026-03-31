@@ -38,7 +38,7 @@
   
 
 
-### Column/Row-wise Operations {-}
+### Column/Row-wise Operations 
 
 `sweep(data, MARGIN, STATS, FUN='-')` 	Return an array obtained from an input array by sweeping out a summary statistic; useful in <span class="env-green">**standardizing data**</span>, eg., center or scale columns.
 
@@ -102,9 +102,13 @@ ref: [Missing Values in R](https://rstudio-pubs-static.s3.amazonaws.com/261838_7
 -   `x` 	could be vectors, matrices, and data frames; 
     -   if `x` is a data frame, remove rows with NA values;
 
-#### Find NA values {-}
+--------------------------------------------------------------------------------
 
-`complete.cases(x)` 	return a logical vector indicating which cases/<u>rows</u> are complete.
+#### Find NA values
+
+`complete.cases(x)` return a logical vector indicating which cases/<u>rows</u> are complete.
+
+N.B.: Distinguish from [`tidyr::complete()`](#balanced_panel) which is used to complete missing combinations of data.
 
 ```r
 # count number of rows with NA values
@@ -115,7 +119,7 @@ data %>% negate(complete.cases)() %>% sum()
 
 - R is case-sensitive.
 
-`(!is.na(x)) %>% colSums() %>% sort()`  returns a vector of the number of non-NA values per column, column names as vector name.
+`(!is.na(x)) %>% colSums() %>% sort()` returns a vector of the number of non-NA values per column, column names as vector name.
 
 When you have a long list of columns, vector is hard to read, use `as_tibble_row() %>% t()` to convert to a tibble column.
 
@@ -133,11 +137,11 @@ miss_per_col[41:77, ] %>% t() %>% t()
 
 
 
-`(!is.na(x)) %>% rowSums() %>% sort()`  calculate the number of non-NA values per row
+`(!is.na(x)) %>% rowSums() %>% sort()` calculate the number of non-NA values per row
 
-`tidyr::drop_na(x, any_of(vars))` 	allow you to specify which columns you want to eliminate NA values from; it doesn't have to be the whole columns;
+`tidyr::drop_na(x, any_of(vars))` allow you to specify which columns you want to eliminate NA values from; it doesn't have to be the whole columns;
 
--   `x` 	must be a data frame.
+- `x` must be a data frame.
 
 
 `which(is.na(data))` returns positions of omitted missing values
@@ -173,14 +177,15 @@ User_Table %>%
   distinct(User_ID, .keep_all = TRUE)   # keep first row per User_ID only
 ```
 
+--------------------------------------------------------------------------------
 
-#### Fill missing values {-}
+#### Fill missing values
 
-**Forward/Backward filling**
+**Forward / Backward filling**
 
 `tidyr::fill(data, ..., .direction = c("down", "up", "downup", "updown"))` Fill missing values in selected columns using the next or previous entry. This is useful in the common output format where values are not repeated, and are only recorded when they change.
 
--   `...` 	Columns to fill.
+-   `...` Columns to fill.
 -   `.direction` Direction in which to fill missing values. Default: "down".
 
 Alternatively, you can use `zoo::na.locf`
@@ -197,7 +202,7 @@ na.locf(x, fromLast = TRUE)
 
 --------------------------------------------------------------------------------
 
-Replace with specific values
+**Replace with specific values**
 
 `dplyr::na_if(x, y)` 	that replaces any values in `x` that are equal to `y` with `NA`. It is useful if you want to convert an annoying value to `NA`.
 
@@ -231,3 +236,58 @@ Replace with specific values
     df$y %>% replace_na("unknown")
     ```
   
+
+--------------------------------------------------------------------------------
+
+**Make data balanced**
+
+When you create lags or leads, it is essential to have a balanced panel. Otherwise, you will have wrong lags or leads for gapped time periods. 
+
+
+<a name="balanced_panel"></a>
+To make a balanced panel, you can use `complete(data, ...)` to complete missing combinations of data.
+
+- `...` columns to expand.
+
+- `complete(df, firm, year)` will find all possible combinations of `firm` and `year` in the data frame `df` (regardless whether or not they appear in the data), and fill missing combinations with `NA` values.
+
+
+```r
+df <- tibble(
+  firm = c(rep("A", 3), rep("B", 2)),
+  year = c(2010, 2011, 2013, 2010, 2012),
+  value = c(10, 15, 20, 5, 8)
+)
+df
+# A tibble: 5 × 3
+  firm   year value
+  <chr> <dbl> <dbl>
+1 A      2010    10
+2 A      2011    15
+3 A      2013    20
+4 B      2010     5
+5 B      2012     8
+
+df %>% complete(firm, year)
+# A tibble: 8 × 3
+  firm   year value
+  <chr> <dbl> <dbl>
+1 A      2010    10
+2 A      2011    15
+3 A      2012    NA
+4 A      2013    20
+5 B      2010     5
+6 B      2011    NA
+7 B      2012     8
+8 B      2013    NA
+
+# Alternatively, you can group by `firm` first, then complete `year` within each firm.
+df %>% 
+  group_by(firm) %>%
+  complete(year = unique(df$year)) %>% 
+  ungroup()
+```
+
+ref:
+
+- [Complete a data frame with missing combinations of data](https://tidyr.tidyverse.org/reference/complete.html)

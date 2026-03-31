@@ -654,8 +654,8 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="8.8" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html"><i class="fa fa-check"></i><b>8.8</b> Data Frame Operations</a>
 <ul>
-<li class="chapter" data-level="" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#columnrow-wise-operations"><i class="fa fa-check"></i>Column/Row-wise Operations</a></li>
-<li class="chapter" data-level="8.8.1" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#process-na-values"><i class="fa fa-check"></i><b>8.8.1</b> <span class="env-green"><strong>Process <code>NA</code> values</strong></span></a></li>
+<li class="chapter" data-level="8.8.1" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#columnrow-wise-operations"><i class="fa fa-check"></i><b>8.8.1</b> Column/Row-wise Operations</a></li>
+<li class="chapter" data-level="8.8.2" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#process-na-values"><i class="fa fa-check"></i><b>8.8.2</b> <span class="env-green"><strong>Process <code>NA</code> values</strong></span></a></li>
 </ul></li>
 <li class="chapter" data-level="8.9" data-path="8.9-matrix-multiplication.html"><a href="8.9-matrix-multiplication.html"><i class="fa fa-check"></i><b>8.9</b> Matrix multiplication</a></li>
 <li class="chapter" data-level="8.10" data-path="8.10-string-operations.html"><a href="8.10-string-operations.html"><i class="fa fa-check"></i><b>8.10</b> String Operations</a></li>
@@ -868,17 +868,47 @@ function myFunction(id) {
   x.style.display = (x.style.display === 'none') ? 'block' : 'none';
 }
 
-// Auto-expand active top-level section so its level 2/3 items are visible
+// Auto-expand active section and keep all siblings within the same level 1 section open
 document.addEventListener('DOMContentLoaded', function() {
   try {
     var summary = document.querySelector('.book-summary ul.summary');
     if (!summary) return;
 
     function applyAutoOpen() {
-      // Clear previous
-      summary.querySelectorAll('li.chapter.auto-open').forEach(function(li){ li.classList.remove('auto-open'); });
+      // Find the active item (could be level 1, 2, or 3)
       var active = summary.querySelector('li.chapter.active');
-      if (active) active.classList.add('auto-open');
+      if (!active) return;
+      
+      // Find the top-level (level 1) chapter containing the active item
+      var topLevelChapter = active.closest('ul.summary > li.chapter');
+      if (!topLevelChapter) return;
+      
+      // Collapse all other top-level chapters
+      summary.querySelectorAll('ul.summary > li.chapter').forEach(function(chapter) {
+        if (chapter !== topLevelChapter) {
+          chapter.classList.remove('auto-open');
+          // Collapse all nested items in other chapters
+          chapter.querySelectorAll('li.chapter').forEach(function(nested) {
+            nested.classList.remove('auto-open');
+          });
+        }
+      });
+      
+      // Expand the active top-level chapter
+      topLevelChapter.classList.add('auto-open');
+      
+      // Expand ALL level 2 and level 3 items within this top-level chapter
+      topLevelChapter.querySelectorAll('li.chapter').forEach(function(nested) {
+        nested.classList.add('auto-open');
+      });
+      
+      // Scroll the active TOC item to the center of the TOC panel
+      setTimeout(function() {
+        var activeLink = active.querySelector('a');
+        if (activeLink) {
+          activeLink.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
     }
 
     applyAutoOpen();
@@ -894,14 +924,14 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-// Toggle collapse: clicking an expanded section collapses it
+// Toggle collapse: clicking level 1 heading expands/collapses all sublevels
 document.addEventListener('DOMContentLoaded', function() {
   try {
     var summary = document.querySelector('.book-summary ul.summary');
     if (!summary) return;
 
-    // Add click handlers to chapter links with children
-    summary.querySelectorAll('li.chapter').forEach(function(chapter) {
+    // Add click handlers only to top-level chapter links with children
+    summary.querySelectorAll('ul.summary > li.chapter').forEach(function(chapter) {
       var sublist = chapter.querySelector('ul');
       if (!sublist) return; // Only chapters with subsections
 
@@ -913,15 +943,28 @@ document.addEventListener('DOMContentLoaded', function() {
         var isExpanded = chapter.classList.contains('auto-open');
         
         if (isExpanded) {
-          // Collapse it
+          // Collapse it and all nested items
           e.preventDefault();
           chapter.classList.remove('auto-open');
+          // Also collapse all level 2 and level 3 items
+          chapter.querySelectorAll('li.chapter.auto-open').forEach(function(nested) {
+            nested.classList.remove('auto-open');
+          });
         } else {
-          // Expand it (remove auto-open from others first)
-          summary.querySelectorAll('li.chapter.auto-open').forEach(function(li) {
-            if (li !== chapter) li.classList.remove('auto-open');
+          // Expand it (collapse other top-level chapters first)
+          summary.querySelectorAll('ul.summary > li.chapter.auto-open').forEach(function(li) {
+            if (li !== chapter) {
+              li.classList.remove('auto-open');
+              li.querySelectorAll('li.chapter.auto-open').forEach(function(nested) {
+                nested.classList.remove('auto-open');
+              });
+            }
           });
           chapter.classList.add('auto-open');
+          // Expand all level 2 items within this chapter
+          chapter.querySelectorAll('ul > li.chapter').forEach(function(level2) {
+            level2.classList.add('auto-open');
+          });
         }
       });
     });
@@ -931,9 +974,26 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 <style>
-/* Show nested UL of active chapter when collapse=section */
-.book-summary ul.summary li.chapter.auto-open ul { display: block !important; }
-.book-summary ul.summary li.chapter.auto-open > a { font-weight: 700; }
+/* Show all nested UL of chapters marked as auto-open */
+.book-summary ul.summary li.chapter.auto-open > ul { 
+  display: block !important; 
+}
+
+/* Make parent level headings bold when expanded */
+.book-summary ul.summary li.chapter.auto-open > a { 
+  font-weight: 700; 
+}
+
+/* Highlight the actual active item with color and bold */
+.book-summary ul.summary li.chapter.active > a { 
+  font-weight: 700 !important;
+  color: #0078D4 !important;
+}
+
+/* Ensure proper indentation for nested levels */
+.book-summary ul.summary li.chapter ul li.chapter { 
+  padding-left: 0; 
+}
 </style>
 <div id="divs-and-spans" class="section level2 hasAnchor" number="6.11">
 <h2><span class="header-section-number">6.11</span> Divs and Spans<a href="6.11-divs-and-spans.html#divs-and-spans" class="anchor-section" aria-label="Anchor link to header"></a></h2>
@@ -958,54 +1018,54 @@ document.addEventListener('DOMContentLoaded', function() {
 <h3><span class="header-section-number">6.11.1</span> Block Attributes<a href="6.11-divs-and-spans.html#block-attributes" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Apply attributes to a block of content, such as a paragraph, list, or code block.</p>
 <p><strong>Div example:</strong></p>
-<div class="sourceCode" id="cb394"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb394-1"><a href="6.11-divs-and-spans.html#cb394-1" tabindex="-1"></a>::: {.border} </span>
-<span id="cb394-2"><a href="6.11-divs-and-spans.html#cb394-2" tabindex="-1"></a>This content can be styled with a border </span>
-<span id="cb394-3"><a href="6.11-divs-and-spans.html#cb394-3" tabindex="-1"></a>:::</span></code></pre></div>
+<div class="sourceCode" id="cb396"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb396-1"><a href="6.11-divs-and-spans.html#cb396-1" tabindex="-1"></a>::: {.border} </span>
+<span id="cb396-2"><a href="6.11-divs-and-spans.html#cb396-2" tabindex="-1"></a>This content can be styled with a border </span>
+<span id="cb396-3"><a href="6.11-divs-and-spans.html#cb396-3" tabindex="-1"></a>:::</span></code></pre></div>
 <p>Once rendered to HTML, Quarto will translate the markdown into:</p>
-<div class="sourceCode" id="cb395"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb395-1"><a href="6.11-divs-and-spans.html#cb395-1" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">div</span><span class="ot"> class</span><span class="op">=</span><span class="st">&quot;border&quot;</span><span class="dt">&gt;</span>   </span>
-<span id="cb395-2"><a href="6.11-divs-and-spans.html#cb395-2" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">p</span><span class="dt">&gt;</span>This content can be styled with a border<span class="dt">&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span> </span>
-<span id="cb395-3"><a href="6.11-divs-and-spans.html#cb395-3" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb397"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb397-1"><a href="6.11-divs-and-spans.html#cb397-1" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">div</span><span class="ot"> class</span><span class="op">=</span><span class="st">&quot;border&quot;</span><span class="dt">&gt;</span>   </span>
+<span id="cb397-2"><a href="6.11-divs-and-spans.html#cb397-2" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">p</span><span class="dt">&gt;</span>This content can be styled with a border<span class="dt">&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span> </span>
+<span id="cb397-3"><a href="6.11-divs-and-spans.html#cb397-3" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span></span></code></pre></div>
 <p>Note that:</p>
 <ul>
 <li><p>The Div should be separated by blank lines from preceding and following blocks.</p></li>
 <li><p>Fenced divs can be nested.</p>
 <p>For example</p>
-<div class="sourceCode" id="cb396"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb396-1"><a href="6.11-divs-and-spans.html#cb396-1" tabindex="-1"></a>::::: {#special .sidebar}</span>
-<span id="cb396-2"><a href="6.11-divs-and-spans.html#cb396-2" tabindex="-1"></a></span>
-<span id="cb396-3"><a href="6.11-divs-and-spans.html#cb396-3" tabindex="-1"></a>::: {.warning}</span>
-<span id="cb396-4"><a href="6.11-divs-and-spans.html#cb396-4" tabindex="-1"></a>Here is a warning.</span>
-<span id="cb396-5"><a href="6.11-divs-and-spans.html#cb396-5" tabindex="-1"></a>:::</span>
-<span id="cb396-6"><a href="6.11-divs-and-spans.html#cb396-6" tabindex="-1"></a></span>
-<span id="cb396-7"><a href="6.11-divs-and-spans.html#cb396-7" tabindex="-1"></a>More content.</span>
-<span id="cb396-8"><a href="6.11-divs-and-spans.html#cb396-8" tabindex="-1"></a>:::::</span></code></pre></div>
+<div class="sourceCode" id="cb398"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb398-1"><a href="6.11-divs-and-spans.html#cb398-1" tabindex="-1"></a>::::: {#special .sidebar}</span>
+<span id="cb398-2"><a href="6.11-divs-and-spans.html#cb398-2" tabindex="-1"></a></span>
+<span id="cb398-3"><a href="6.11-divs-and-spans.html#cb398-3" tabindex="-1"></a>::: {.warning}</span>
+<span id="cb398-4"><a href="6.11-divs-and-spans.html#cb398-4" tabindex="-1"></a>Here is a warning.</span>
+<span id="cb398-5"><a href="6.11-divs-and-spans.html#cb398-5" tabindex="-1"></a>:::</span>
+<span id="cb398-6"><a href="6.11-divs-and-spans.html#cb398-6" tabindex="-1"></a></span>
+<span id="cb398-7"><a href="6.11-divs-and-spans.html#cb398-7" tabindex="-1"></a>More content.</span>
+<span id="cb398-8"><a href="6.11-divs-and-spans.html#cb398-8" tabindex="-1"></a>:::::</span></code></pre></div>
 <p>will be rendered to</p>
-<div class="sourceCode" id="cb397"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb397-1"><a href="6.11-divs-and-spans.html#cb397-1" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">div</span><span class="ot"> id</span><span class="op">=</span><span class="st">&quot;special&quot;</span><span class="ot"> class</span><span class="op">=</span><span class="st">&quot;sidebar&quot;</span><span class="dt">&gt;</span></span>
-<span id="cb397-2"><a href="6.11-divs-and-spans.html#cb397-2" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">div</span><span class="ot"> class</span><span class="op">=</span><span class="st">&quot;warning&quot;</span><span class="dt">&gt;</span></span>
-<span id="cb397-3"><a href="6.11-divs-and-spans.html#cb397-3" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">p</span><span class="dt">&gt;</span>Here is a warning.<span class="dt">&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span></span>
-<span id="cb397-4"><a href="6.11-divs-and-spans.html#cb397-4" tabindex="-1"></a>  <span class="dt">&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span></span>
-<span id="cb397-5"><a href="6.11-divs-and-spans.html#cb397-5" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">p</span><span class="dt">&gt;</span>More content.<span class="dt">&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span></span>
-<span id="cb397-6"><a href="6.11-divs-and-spans.html#cb397-6" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span></span></code></pre></div></li>
+<div class="sourceCode" id="cb399"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb399-1"><a href="6.11-divs-and-spans.html#cb399-1" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">div</span><span class="ot"> id</span><span class="op">=</span><span class="st">&quot;special&quot;</span><span class="ot"> class</span><span class="op">=</span><span class="st">&quot;sidebar&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb399-2"><a href="6.11-divs-and-spans.html#cb399-2" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">div</span><span class="ot"> class</span><span class="op">=</span><span class="st">&quot;warning&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb399-3"><a href="6.11-divs-and-spans.html#cb399-3" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">p</span><span class="dt">&gt;</span>Here is a warning.<span class="dt">&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span></span>
+<span id="cb399-4"><a href="6.11-divs-and-spans.html#cb399-4" tabindex="-1"></a>  <span class="dt">&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span></span>
+<span id="cb399-5"><a href="6.11-divs-and-spans.html#cb399-5" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">p</span><span class="dt">&gt;</span>More content.<span class="dt">&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span></span>
+<span id="cb399-6"><a href="6.11-divs-and-spans.html#cb399-6" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span></span></code></pre></div></li>
 </ul>
 <p><strong>More examples</strong></p>
 <ul>
 <li><p><strong>Headings with attributes</strong></p>
-<div class="sourceCode" id="cb398"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb398-1"><a href="6.11-divs-and-spans.html#cb398-1" tabindex="-1"></a><span class="fu">## Data Analysis {.highlight #analysis}</span></span></code></pre></div>
+<div class="sourceCode" id="cb400"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb400-1"><a href="6.11-divs-and-spans.html#cb400-1" tabindex="-1"></a><span class="fu">## Data Analysis {.highlight #analysis}</span></span></code></pre></div>
 <p>renders to:</p>
-<div class="sourceCode" id="cb399"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb399-1"><a href="6.11-divs-and-spans.html#cb399-1" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">h2</span><span class="ot"> id</span><span class="op">=</span><span class="st">&quot;analysis&quot;</span><span class="ot"> class</span><span class="op">=</span><span class="st">&quot;highlight&quot;</span><span class="dt">&gt;</span>Data Analysis<span class="dt">&lt;/</span><span class="kw">h2</span><span class="dt">&gt;</span></span></code></pre></div></li>
+<div class="sourceCode" id="cb401"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb401-1"><a href="6.11-divs-and-spans.html#cb401-1" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">h2</span><span class="ot"> id</span><span class="op">=</span><span class="st">&quot;analysis&quot;</span><span class="ot"> class</span><span class="op">=</span><span class="st">&quot;highlight&quot;</span><span class="dt">&gt;</span>Data Analysis<span class="dt">&lt;/</span><span class="kw">h2</span><span class="dt">&gt;</span></span></code></pre></div></li>
 <li><p><strong>List with attributes</strong></p>
-<div class="sourceCode" id="cb400"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb400-1"><a href="6.11-divs-and-spans.html#cb400-1" tabindex="-1"></a><span class="ss">- </span>Item 1</span>
-<span id="cb400-2"><a href="6.11-divs-and-spans.html#cb400-2" tabindex="-1"></a><span class="ss">- </span>Item 2</span>
-<span id="cb400-3"><a href="6.11-divs-and-spans.html#cb400-3" tabindex="-1"></a>{.fancy-list}</span></code></pre></div>
+<div class="sourceCode" id="cb402"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb402-1"><a href="6.11-divs-and-spans.html#cb402-1" tabindex="-1"></a><span class="ss">- </span>Item 1</span>
+<span id="cb402-2"><a href="6.11-divs-and-spans.html#cb402-2" tabindex="-1"></a><span class="ss">- </span>Item 2</span>
+<span id="cb402-3"><a href="6.11-divs-and-spans.html#cb402-3" tabindex="-1"></a>{.fancy-list}</span></code></pre></div>
 <p>renders to:</p>
-<div class="sourceCode" id="cb401"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb401-1"><a href="6.11-divs-and-spans.html#cb401-1" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">ul</span><span class="ot"> class</span><span class="op">=</span><span class="st">&quot;fancy-list&quot;</span><span class="dt">&gt;</span></span>
-<span id="cb401-2"><a href="6.11-divs-and-spans.html#cb401-2" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">li</span><span class="dt">&gt;</span>Item 1<span class="dt">&lt;/</span><span class="kw">li</span><span class="dt">&gt;</span></span>
-<span id="cb401-3"><a href="6.11-divs-and-spans.html#cb401-3" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">li</span><span class="dt">&gt;</span>Item 2<span class="dt">&lt;/</span><span class="kw">li</span><span class="dt">&gt;</span></span>
-<span id="cb401-4"><a href="6.11-divs-and-spans.html#cb401-4" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">ul</span><span class="dt">&gt;</span></span></code></pre></div></li>
+<div class="sourceCode" id="cb403"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb403-1"><a href="6.11-divs-and-spans.html#cb403-1" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">ul</span><span class="ot"> class</span><span class="op">=</span><span class="st">&quot;fancy-list&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb403-2"><a href="6.11-divs-and-spans.html#cb403-2" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">li</span><span class="dt">&gt;</span>Item 1<span class="dt">&lt;/</span><span class="kw">li</span><span class="dt">&gt;</span></span>
+<span id="cb403-3"><a href="6.11-divs-and-spans.html#cb403-3" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">li</span><span class="dt">&gt;</span>Item 2<span class="dt">&lt;/</span><span class="kw">li</span><span class="dt">&gt;</span></span>
+<span id="cb403-4"><a href="6.11-divs-and-spans.html#cb403-4" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">ul</span><span class="dt">&gt;</span></span></code></pre></div></li>
 <li><p><strong>Paragrphs with attributes</strong></p>
-<div class="sourceCode" id="cb402"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb402-1"><a href="6.11-divs-and-spans.html#cb402-1" tabindex="-1"></a>This is a paragraph with a yellow background.</span>
-<span id="cb402-2"><a href="6.11-divs-and-spans.html#cb402-2" tabindex="-1"></a>{.yellow-bg}</span></code></pre></div>
+<div class="sourceCode" id="cb404"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb404-1"><a href="6.11-divs-and-spans.html#cb404-1" tabindex="-1"></a>This is a paragraph with a yellow background.</span>
+<span id="cb404-2"><a href="6.11-divs-and-spans.html#cb404-2" tabindex="-1"></a>{.yellow-bg}</span></code></pre></div>
 <p>renders to:</p>
-<div class="sourceCode" id="cb403"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb403-1"><a href="6.11-divs-and-spans.html#cb403-1" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">p</span><span class="ot"> class</span><span class="op">=</span><span class="st">&quot;yellow-bg&quot;</span><span class="dt">&gt;</span>This is a paragraph with a yellow background.<span class="dt">&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span></span></code></pre></div></li>
+<div class="sourceCode" id="cb405"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb405-1"><a href="6.11-divs-and-spans.html#cb405-1" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">p</span><span class="ot"> class</span><span class="op">=</span><span class="st">&quot;yellow-bg&quot;</span><span class="dt">&gt;</span>This is a paragraph with a yellow background.<span class="dt">&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span></span></code></pre></div></li>
 </ul>
 <hr />
 </div>
@@ -1014,11 +1074,11 @@ document.addEventListener('DOMContentLoaded', function() {
 <p>Apply attributes to inline text, such as selected words within a paragraph.</p>
 <p>A bracketed sequence of inlines <code>[text here]</code> (as one would use to begin a link) will be treated as a <code>&lt;span&gt;</code> with attributes if it is followed immediately by attributes <code>{attributes here}</code>.</p>
 <p><strong>Syntax for inline attributes:</strong></p>
-<div class="sourceCode" id="cb404"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb404-1"><a href="6.11-divs-and-spans.html#cb404-1" tabindex="-1"></a><span class="co">[</span><span class="ot">This is *some text*</span><span class="co">]</span>{.class key=&quot;val&quot;}</span></code></pre></div>
+<div class="sourceCode" id="cb406"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb406-1"><a href="6.11-divs-and-spans.html#cb406-1" tabindex="-1"></a><span class="co">[</span><span class="ot">This is *some text*</span><span class="co">]</span>{.class key=&quot;val&quot;}</span></code></pre></div>
 <p>Once rendered to HTML, Quarto will translate the markdown into</p>
-<div class="sourceCode" id="cb405"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb405-1"><a href="6.11-divs-and-spans.html#cb405-1" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">span</span><span class="ot"> class</span><span class="op">=</span><span class="st">&quot;class&quot;</span><span class="ot"> data-key</span><span class="op">=</span><span class="st">&quot;val&quot;</span><span class="dt">&gt;</span></span>
-<span id="cb405-2"><a href="6.11-divs-and-spans.html#cb405-2" tabindex="-1"></a>  This is <span class="dt">&lt;</span><span class="kw">em</span><span class="dt">&gt;</span>some text<span class="dt">&lt;/</span><span class="kw">em</span><span class="dt">&gt;</span></span>
-<span id="cb405-3"><a href="6.11-divs-and-spans.html#cb405-3" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">span</span><span class="dt">&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb407"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb407-1"><a href="6.11-divs-and-spans.html#cb407-1" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">span</span><span class="ot"> class</span><span class="op">=</span><span class="st">&quot;class&quot;</span><span class="ot"> data-key</span><span class="op">=</span><span class="st">&quot;val&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb407-2"><a href="6.11-divs-and-spans.html#cb407-2" tabindex="-1"></a>  This is <span class="dt">&lt;</span><span class="kw">em</span><span class="dt">&gt;</span>some text<span class="dt">&lt;/</span><span class="kw">em</span><span class="dt">&gt;</span></span>
+<span id="cb407-3"><a href="6.11-divs-and-spans.html#cb407-3" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">span</span><span class="dt">&gt;</span></span></code></pre></div>
 <p>Note that:</p>
 <ul>
 <li><p>No space between <code>]</code> and <code>{</code>.</p></li>
@@ -1026,14 +1086,14 @@ document.addEventListener('DOMContentLoaded', function() {
 <p><code>#id</code> comes first then <code>.class</code> then <code>key="val"</code>.</p>
 <p>Any of these can be omitted, but must follow that order if they are provided.</p>
 <p>Valid example:</p>
-<div class="sourceCode" id="cb406"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb406-1"><a href="6.11-divs-and-spans.html#cb406-1" tabindex="-1"></a><span class="co">[</span><span class="ot">This is good</span><span class="co">]</span>{#id .class key1=&quot;val1&quot; key2=&quot;val2&quot;}</span></code></pre></div>
+<div class="sourceCode" id="cb408"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb408-1"><a href="6.11-divs-and-spans.html#cb408-1" tabindex="-1"></a><span class="co">[</span><span class="ot">This is good</span><span class="co">]</span>{#id .class key1=&quot;val1&quot; key2=&quot;val2&quot;}</span></code></pre></div>
 <p>Invalid example:</p>
-<div class="sourceCode" id="cb407"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb407-1"><a href="6.11-divs-and-spans.html#cb407-1" tabindex="-1"></a><span class="co">[</span><span class="ot">This does *not* work!</span><span class="co">]</span>{.class key=&quot;val&quot; #id}</span></code></pre></div></li>
+<div class="sourceCode" id="cb409"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb409-1"><a href="6.11-divs-and-spans.html#cb409-1" tabindex="-1"></a><span class="co">[</span><span class="ot">This does *not* work!</span><span class="co">]</span>{.class key=&quot;val&quot; #id}</span></code></pre></div></li>
 </ul>
 <p><strong>Use example:</strong></p>
-<div class="sourceCode" id="cb408"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb408-1"><a href="6.11-divs-and-spans.html#cb408-1" tabindex="-1"></a>This is a <span class="co">[</span><span class="ot">highlighted word</span><span class="co">]</span>{.red} in the text.</span></code></pre></div>
+<div class="sourceCode" id="cb410"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb410-1"><a href="6.11-divs-and-spans.html#cb410-1" tabindex="-1"></a>This is a <span class="co">[</span><span class="ot">highlighted word</span><span class="co">]</span>{.red} in the text.</span></code></pre></div>
 <p>renders to:</p>
-<div class="sourceCode" id="cb409"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb409-1"><a href="6.11-divs-and-spans.html#cb409-1" tabindex="-1"></a>This is a <span class="dt">&lt;</span><span class="kw">span</span><span class="ot"> class</span><span class="op">=</span><span class="st">&quot;red&quot;</span><span class="dt">&gt;</span>highlighted word<span class="dt">&lt;/</span><span class="kw">span</span><span class="dt">&gt;</span> in the text.</span></code></pre></div>
+<div class="sourceCode" id="cb411"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb411-1"><a href="6.11-divs-and-spans.html#cb411-1" tabindex="-1"></a>This is a <span class="dt">&lt;</span><span class="kw">span</span><span class="ot"> class</span><span class="op">=</span><span class="st">&quot;red&quot;</span><span class="dt">&gt;</span>highlighted word<span class="dt">&lt;/</span><span class="kw">span</span><span class="dt">&gt;</span> in the text.</span></code></pre></div>
 <hr />
 </div>
 </div>

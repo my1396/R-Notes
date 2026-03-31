@@ -654,8 +654,8 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="8.8" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html"><i class="fa fa-check"></i><b>8.8</b> Data Frame Operations</a>
 <ul>
-<li class="chapter" data-level="" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#columnrow-wise-operations"><i class="fa fa-check"></i>Column/Row-wise Operations</a></li>
-<li class="chapter" data-level="8.8.1" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#process-na-values"><i class="fa fa-check"></i><b>8.8.1</b> <span class="env-green"><strong>Process <code>NA</code> values</strong></span></a></li>
+<li class="chapter" data-level="8.8.1" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#columnrow-wise-operations"><i class="fa fa-check"></i><b>8.8.1</b> Column/Row-wise Operations</a></li>
+<li class="chapter" data-level="8.8.2" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#process-na-values"><i class="fa fa-check"></i><b>8.8.2</b> <span class="env-green"><strong>Process <code>NA</code> values</strong></span></a></li>
 </ul></li>
 <li class="chapter" data-level="8.9" data-path="8.9-matrix-multiplication.html"><a href="8.9-matrix-multiplication.html"><i class="fa fa-check"></i><b>8.9</b> Matrix multiplication</a></li>
 <li class="chapter" data-level="8.10" data-path="8.10-string-operations.html"><a href="8.10-string-operations.html"><i class="fa fa-check"></i><b>8.10</b> String Operations</a></li>
@@ -868,17 +868,47 @@ function myFunction(id) {
   x.style.display = (x.style.display === 'none') ? 'block' : 'none';
 }
 
-// Auto-expand active top-level section so its level 2/3 items are visible
+// Auto-expand active section and keep all siblings within the same level 1 section open
 document.addEventListener('DOMContentLoaded', function() {
   try {
     var summary = document.querySelector('.book-summary ul.summary');
     if (!summary) return;
 
     function applyAutoOpen() {
-      // Clear previous
-      summary.querySelectorAll('li.chapter.auto-open').forEach(function(li){ li.classList.remove('auto-open'); });
+      // Find the active item (could be level 1, 2, or 3)
       var active = summary.querySelector('li.chapter.active');
-      if (active) active.classList.add('auto-open');
+      if (!active) return;
+      
+      // Find the top-level (level 1) chapter containing the active item
+      var topLevelChapter = active.closest('ul.summary > li.chapter');
+      if (!topLevelChapter) return;
+      
+      // Collapse all other top-level chapters
+      summary.querySelectorAll('ul.summary > li.chapter').forEach(function(chapter) {
+        if (chapter !== topLevelChapter) {
+          chapter.classList.remove('auto-open');
+          // Collapse all nested items in other chapters
+          chapter.querySelectorAll('li.chapter').forEach(function(nested) {
+            nested.classList.remove('auto-open');
+          });
+        }
+      });
+      
+      // Expand the active top-level chapter
+      topLevelChapter.classList.add('auto-open');
+      
+      // Expand ALL level 2 and level 3 items within this top-level chapter
+      topLevelChapter.querySelectorAll('li.chapter').forEach(function(nested) {
+        nested.classList.add('auto-open');
+      });
+      
+      // Scroll the active TOC item to the center of the TOC panel
+      setTimeout(function() {
+        var activeLink = active.querySelector('a');
+        if (activeLink) {
+          activeLink.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
     }
 
     applyAutoOpen();
@@ -894,14 +924,14 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-// Toggle collapse: clicking an expanded section collapses it
+// Toggle collapse: clicking level 1 heading expands/collapses all sublevels
 document.addEventListener('DOMContentLoaded', function() {
   try {
     var summary = document.querySelector('.book-summary ul.summary');
     if (!summary) return;
 
-    // Add click handlers to chapter links with children
-    summary.querySelectorAll('li.chapter').forEach(function(chapter) {
+    // Add click handlers only to top-level chapter links with children
+    summary.querySelectorAll('ul.summary > li.chapter').forEach(function(chapter) {
       var sublist = chapter.querySelector('ul');
       if (!sublist) return; // Only chapters with subsections
 
@@ -913,15 +943,28 @@ document.addEventListener('DOMContentLoaded', function() {
         var isExpanded = chapter.classList.contains('auto-open');
         
         if (isExpanded) {
-          // Collapse it
+          // Collapse it and all nested items
           e.preventDefault();
           chapter.classList.remove('auto-open');
+          // Also collapse all level 2 and level 3 items
+          chapter.querySelectorAll('li.chapter.auto-open').forEach(function(nested) {
+            nested.classList.remove('auto-open');
+          });
         } else {
-          // Expand it (remove auto-open from others first)
-          summary.querySelectorAll('li.chapter.auto-open').forEach(function(li) {
-            if (li !== chapter) li.classList.remove('auto-open');
+          // Expand it (collapse other top-level chapters first)
+          summary.querySelectorAll('ul.summary > li.chapter.auto-open').forEach(function(li) {
+            if (li !== chapter) {
+              li.classList.remove('auto-open');
+              li.querySelectorAll('li.chapter.auto-open').forEach(function(nested) {
+                nested.classList.remove('auto-open');
+              });
+            }
           });
           chapter.classList.add('auto-open');
+          // Expand all level 2 items within this chapter
+          chapter.querySelectorAll('ul > li.chapter').forEach(function(level2) {
+            level2.classList.add('auto-open');
+          });
         }
       });
     });
@@ -931,25 +974,42 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 <style>
-/* Show nested UL of active chapter when collapse=section */
-.book-summary ul.summary li.chapter.auto-open ul { display: block !important; }
-.book-summary ul.summary li.chapter.auto-open > a { font-weight: 700; }
+/* Show all nested UL of chapters marked as auto-open */
+.book-summary ul.summary li.chapter.auto-open > ul { 
+  display: block !important; 
+}
+
+/* Make parent level headings bold when expanded */
+.book-summary ul.summary li.chapter.auto-open > a { 
+  font-weight: 700; 
+}
+
+/* Highlight the actual active item with color and bold */
+.book-summary ul.summary li.chapter.active > a { 
+  font-weight: 700 !important;
+  color: #0078D4 !important;
+}
+
+/* Ensure proper indentation for nested levels */
+.book-summary ul.summary li.chapter ul li.chapter { 
+  padding-left: 0; 
+}
 </style>
 <div id="code-chunks" class="section level2 hasAnchor" number="6.3">
 <h2><span class="header-section-number">6.3</span> Code chunks<a href="6.3-code-chunks.html#code-chunks" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Both R markdown and Quarto can use the following ways to specify chunk options:</p>
 <p>Use <code>tag=value</code> in the chunk header <code>```{r}</code>.</p>
-<div class="sourceCode" id="cb350"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb350-1"><a href="6.3-code-chunks.html#cb350-1" tabindex="-1"></a><span class="in">```{r my-label, fig.cap = caption}</span></span>
-<span id="cb350-2"><a href="6.3-code-chunks.html#cb350-2" tabindex="-1"></a></span>
-<span id="cb350-3"><a href="6.3-code-chunks.html#cb350-3" tabindex="-1"></a><span class="in"># R code</span></span>
-<span id="cb350-4"><a href="6.3-code-chunks.html#cb350-4" tabindex="-1"></a><span class="in">```</span></span></code></pre></div>
+<div class="sourceCode" id="cb352"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb352-1"><a href="6.3-code-chunks.html#cb352-1" tabindex="-1"></a><span class="in">```{r my-label, fig.cap = caption}</span></span>
+<span id="cb352-2"><a href="6.3-code-chunks.html#cb352-2" tabindex="-1"></a></span>
+<span id="cb352-3"><a href="6.3-code-chunks.html#cb352-3" tabindex="-1"></a><span class="in"># R code</span></span>
+<span id="cb352-4"><a href="6.3-code-chunks.html#cb352-4" tabindex="-1"></a><span class="in">```</span></span></code></pre></div>
 <p>Alternatively, you can write chunk options in the body of a code chunk after <span class="env-green"><code>#|</code></span>, e.g.,</p>
-<div class="sourceCode" id="cb351"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb351-1"><a href="6.3-code-chunks.html#cb351-1" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb351-2"><a href="6.3-code-chunks.html#cb351-2" tabindex="-1"></a><span class="in">#| label: fig-my-label</span></span>
-<span id="cb351-3"><a href="6.3-code-chunks.html#cb351-3" tabindex="-1"></a><span class="in">#| fig-cap: caption </span></span>
-<span id="cb351-4"><a href="6.3-code-chunks.html#cb351-4" tabindex="-1"></a></span>
-<span id="cb351-5"><a href="6.3-code-chunks.html#cb351-5" tabindex="-1"></a><span class="in"># R code</span></span>
-<span id="cb351-6"><a href="6.3-code-chunks.html#cb351-6" tabindex="-1"></a><span class="in">```</span></span></code></pre></div>
+<div class="sourceCode" id="cb353"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb353-1"><a href="6.3-code-chunks.html#cb353-1" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb353-2"><a href="6.3-code-chunks.html#cb353-2" tabindex="-1"></a><span class="in">#| label: fig-my-label</span></span>
+<span id="cb353-3"><a href="6.3-code-chunks.html#cb353-3" tabindex="-1"></a><span class="in">#| fig-cap: caption </span></span>
+<span id="cb353-4"><a href="6.3-code-chunks.html#cb353-4" tabindex="-1"></a></span>
+<span id="cb353-5"><a href="6.3-code-chunks.html#cb353-5" tabindex="-1"></a><span class="in"># R code</span></span>
+<span id="cb353-6"><a href="6.3-code-chunks.html#cb353-6" tabindex="-1"></a><span class="in">```</span></span></code></pre></div>
 <p><code>tag: value</code> is the YAML syntax.</p>
 <p><strong>Options format:</strong></p>
 <ul>
@@ -961,10 +1021,10 @@ document.addEventListener('DOMContentLoaded', function() {
 </ul></li>
 </ul>
 <p>Note that <span class="env-green">Quarto accepts Rmd’s way of specifying chunk options</span>. The <strong>difference</strong> is that <span class="env-green">Quarto’s label for figures</span> must start with <code>fig-</code>, while Rmd accepts any labels.</p>
-<div class="sourceCode" id="cb352"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb352-1"><a href="6.3-code-chunks.html#cb352-1" tabindex="-1"></a><span class="in">```{r label = &quot;fig-my-label&quot;, fig.cap = caption}</span></span>
-<span id="cb352-2"><a href="6.3-code-chunks.html#cb352-2" tabindex="-1"></a></span>
-<span id="cb352-3"><a href="6.3-code-chunks.html#cb352-3" tabindex="-1"></a><span class="in"># R code</span></span>
-<span id="cb352-4"><a href="6.3-code-chunks.html#cb352-4" tabindex="-1"></a><span class="in">```</span></span></code></pre></div>
+<div class="sourceCode" id="cb354"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb354-1"><a href="6.3-code-chunks.html#cb354-1" tabindex="-1"></a><span class="in">```{r label = &quot;fig-my-label&quot;, fig.cap = caption}</span></span>
+<span id="cb354-2"><a href="6.3-code-chunks.html#cb354-2" tabindex="-1"></a></span>
+<span id="cb354-3"><a href="6.3-code-chunks.html#cb354-3" tabindex="-1"></a><span class="in"># R code</span></span>
+<span id="cb354-4"><a href="6.3-code-chunks.html#cb354-4" tabindex="-1"></a><span class="in">```</span></span></code></pre></div>
 <p>❗️ Note that NOT all Rmd chunk options are supported in Quarto. See <a href="https://quarto.org/docs/computations/execution-options.html">Quarto Chunk Options</a> for all available options.</p>
 <p><strong>Quarto chunk options available for customizing output include:</strong></p>
 <table>

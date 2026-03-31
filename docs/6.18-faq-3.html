@@ -654,8 +654,8 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="8.8" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html"><i class="fa fa-check"></i><b>8.8</b> Data Frame Operations</a>
 <ul>
-<li class="chapter" data-level="" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#columnrow-wise-operations"><i class="fa fa-check"></i>Column/Row-wise Operations</a></li>
-<li class="chapter" data-level="8.8.1" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#process-na-values"><i class="fa fa-check"></i><b>8.8.1</b> <span class="env-green"><strong>Process <code>NA</code> values</strong></span></a></li>
+<li class="chapter" data-level="8.8.1" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#columnrow-wise-operations"><i class="fa fa-check"></i><b>8.8.1</b> Column/Row-wise Operations</a></li>
+<li class="chapter" data-level="8.8.2" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#process-na-values"><i class="fa fa-check"></i><b>8.8.2</b> <span class="env-green"><strong>Process <code>NA</code> values</strong></span></a></li>
 </ul></li>
 <li class="chapter" data-level="8.9" data-path="8.9-matrix-multiplication.html"><a href="8.9-matrix-multiplication.html"><i class="fa fa-check"></i><b>8.9</b> Matrix multiplication</a></li>
 <li class="chapter" data-level="8.10" data-path="8.10-string-operations.html"><a href="8.10-string-operations.html"><i class="fa fa-check"></i><b>8.10</b> String Operations</a></li>
@@ -868,17 +868,47 @@ function myFunction(id) {
   x.style.display = (x.style.display === 'none') ? 'block' : 'none';
 }
 
-// Auto-expand active top-level section so its level 2/3 items are visible
+// Auto-expand active section and keep all siblings within the same level 1 section open
 document.addEventListener('DOMContentLoaded', function() {
   try {
     var summary = document.querySelector('.book-summary ul.summary');
     if (!summary) return;
 
     function applyAutoOpen() {
-      // Clear previous
-      summary.querySelectorAll('li.chapter.auto-open').forEach(function(li){ li.classList.remove('auto-open'); });
+      // Find the active item (could be level 1, 2, or 3)
       var active = summary.querySelector('li.chapter.active');
-      if (active) active.classList.add('auto-open');
+      if (!active) return;
+      
+      // Find the top-level (level 1) chapter containing the active item
+      var topLevelChapter = active.closest('ul.summary > li.chapter');
+      if (!topLevelChapter) return;
+      
+      // Collapse all other top-level chapters
+      summary.querySelectorAll('ul.summary > li.chapter').forEach(function(chapter) {
+        if (chapter !== topLevelChapter) {
+          chapter.classList.remove('auto-open');
+          // Collapse all nested items in other chapters
+          chapter.querySelectorAll('li.chapter').forEach(function(nested) {
+            nested.classList.remove('auto-open');
+          });
+        }
+      });
+      
+      // Expand the active top-level chapter
+      topLevelChapter.classList.add('auto-open');
+      
+      // Expand ALL level 2 and level 3 items within this top-level chapter
+      topLevelChapter.querySelectorAll('li.chapter').forEach(function(nested) {
+        nested.classList.add('auto-open');
+      });
+      
+      // Scroll the active TOC item to the center of the TOC panel
+      setTimeout(function() {
+        var activeLink = active.querySelector('a');
+        if (activeLink) {
+          activeLink.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
     }
 
     applyAutoOpen();
@@ -894,14 +924,14 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-// Toggle collapse: clicking an expanded section collapses it
+// Toggle collapse: clicking level 1 heading expands/collapses all sublevels
 document.addEventListener('DOMContentLoaded', function() {
   try {
     var summary = document.querySelector('.book-summary ul.summary');
     if (!summary) return;
 
-    // Add click handlers to chapter links with children
-    summary.querySelectorAll('li.chapter').forEach(function(chapter) {
+    // Add click handlers only to top-level chapter links with children
+    summary.querySelectorAll('ul.summary > li.chapter').forEach(function(chapter) {
       var sublist = chapter.querySelector('ul');
       if (!sublist) return; // Only chapters with subsections
 
@@ -913,15 +943,28 @@ document.addEventListener('DOMContentLoaded', function() {
         var isExpanded = chapter.classList.contains('auto-open');
         
         if (isExpanded) {
-          // Collapse it
+          // Collapse it and all nested items
           e.preventDefault();
           chapter.classList.remove('auto-open');
+          // Also collapse all level 2 and level 3 items
+          chapter.querySelectorAll('li.chapter.auto-open').forEach(function(nested) {
+            nested.classList.remove('auto-open');
+          });
         } else {
-          // Expand it (remove auto-open from others first)
-          summary.querySelectorAll('li.chapter.auto-open').forEach(function(li) {
-            if (li !== chapter) li.classList.remove('auto-open');
+          // Expand it (collapse other top-level chapters first)
+          summary.querySelectorAll('ul.summary > li.chapter.auto-open').forEach(function(li) {
+            if (li !== chapter) {
+              li.classList.remove('auto-open');
+              li.querySelectorAll('li.chapter.auto-open').forEach(function(nested) {
+                nested.classList.remove('auto-open');
+              });
+            }
           });
           chapter.classList.add('auto-open');
+          // Expand all level 2 items within this chapter
+          chapter.querySelectorAll('ul > li.chapter').forEach(function(level2) {
+            level2.classList.add('auto-open');
+          });
         }
       });
     });
@@ -931,53 +974,70 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 <style>
-/* Show nested UL of active chapter when collapse=section */
-.book-summary ul.summary li.chapter.auto-open ul { display: block !important; }
-.book-summary ul.summary li.chapter.auto-open > a { font-weight: 700; }
+/* Show all nested UL of chapters marked as auto-open */
+.book-summary ul.summary li.chapter.auto-open > ul { 
+  display: block !important; 
+}
+
+/* Make parent level headings bold when expanded */
+.book-summary ul.summary li.chapter.auto-open > a { 
+  font-weight: 700; 
+}
+
+/* Highlight the actual active item with color and bold */
+.book-summary ul.summary li.chapter.active > a { 
+  font-weight: 700 !important;
+  color: #0078D4 !important;
+}
+
+/* Ensure proper indentation for nested levels */
+.book-summary ul.summary li.chapter ul li.chapter { 
+  padding-left: 0; 
+}
 </style>
 <div id="faq-3" class="section level2 hasAnchor" number="6.18">
 <h2><span class="header-section-number">6.18</span> FAQ<a href="6.18-faq-3.html#faq-3" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Q: How to add comments in Quarto markdown?<br />
 A: Use HTML comment syntax: <code>&lt;!-- This is a comment --&gt;</code></p>
 <p>Multiline comment:</p>
-<div class="sourceCode" id="cb439"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb439-1"><a href="6.18-faq-3.html#cb439-1" tabindex="-1"></a><span class="co">&lt;!--</span></span>
-<span id="cb439-2"><a href="6.18-faq-3.html#cb439-2" tabindex="-1"></a><span class="co">your comment goes here</span></span>
-<span id="cb439-3"><a href="6.18-faq-3.html#cb439-3" tabindex="-1"></a><span class="co">--&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb441"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb441-1"><a href="6.18-faq-3.html#cb441-1" tabindex="-1"></a><span class="co">&lt;!--</span></span>
+<span id="cb441-2"><a href="6.18-faq-3.html#cb441-2" tabindex="-1"></a><span class="co">your comment goes here</span></span>
+<span id="cb441-3"><a href="6.18-faq-3.html#cb441-3" tabindex="-1"></a><span class="co">--&gt;</span></span></code></pre></div>
 <hr />
 <p>Q: How to put shared chunk options setup in one file?<br />
 A: Put your shared chunk options in a separate file, e.g., <code>_setup.qmd</code>, then include it in your .qmd files using <a href="https://quarto.org/docs/authoring/includes.html"><code>{{&lt; include &gt;}}</code></a> shortcode:</p>
-<div class="sourceCode" id="cb440"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb440-1"><a href="6.18-faq-3.html#cb440-1" tabindex="-1"></a>{{&lt; include _setup.qmd &gt;}}</span></code></pre></div>
+<div class="sourceCode" id="cb442"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb442-1"><a href="6.18-faq-3.html#cb442-1" tabindex="-1"></a>{{&lt; include _setup.qmd &gt;}}</span></code></pre></div>
 <p>The undersore in the file name indicates that it is a helper file that is not meant to be rendered on its own.
 It is just a nice convention for the included files.
 You should always use an underscore prefix with included files so that they are automatically ignored (i.e. not treated as standalone files) by a <code>quarto render</code> of a project.</p>
 <p>I think this is the most concise way to include shared chunk options. Other options: put the shared chunk options in a separate <code>.R</code> file and source it in the setup chunk of your <code>.qmd</code> file:</p>
-<div class="sourceCode" id="cb441"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb441-1"><a href="6.18-faq-3.html#cb441-1" tabindex="-1"></a><span class="in">```{r setup, include=FALSE} </span></span>
-<span id="cb441-2"><a href="6.18-faq-3.html#cb441-2" tabindex="-1"></a><span class="in">source(&quot;_setup.R&quot;)</span></span>
-<span id="cb441-3"><a href="6.18-faq-3.html#cb441-3" tabindex="-1"></a><span class="in">```</span></span></code></pre></div>
+<div class="sourceCode" id="cb443"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb443-1"><a href="6.18-faq-3.html#cb443-1" tabindex="-1"></a><span class="in">```{r setup, include=FALSE} </span></span>
+<span id="cb443-2"><a href="6.18-faq-3.html#cb443-2" tabindex="-1"></a><span class="in">source(&quot;_setup.R&quot;)</span></span>
+<span id="cb443-3"><a href="6.18-faq-3.html#cb443-3" tabindex="-1"></a><span class="in">```</span></span></code></pre></div>
 <p>Note that you cannot use <code>{{&lt; include &gt;}}</code> shortcode to execute an <code>.R</code> file.</p>
 <p>If you have</p>
-<div class="sourceCode" id="cb442"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb442-1"><a href="6.18-faq-3.html#cb442-1" tabindex="-1"></a>{{&lt; include _setup.R &gt;}}</span></code></pre></div>
+<div class="sourceCode" id="cb444"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb444-1"><a href="6.18-faq-3.html#cb444-1" tabindex="-1"></a>{{&lt; include _setup.R &gt;}}</span></code></pre></div>
 <p>the <code>_setup.R</code> will <span class="env-orange">NOT be executed it NOT inserted</span>. For inserting the content of an <code>.R</code> file, you need to quote the shortcode with triple backticks as follows.</p>
 <hr />
 <p>Another common use for <code>{{&lt; include &gt;}}</code> shortcode is to print verbatim content from an external file. For example, you can use it to include a code snippet from an external file:</p>
-<div class="sourceCode" id="cb443"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb443-1"><a href="6.18-faq-3.html#cb443-1" tabindex="-1"></a><span class="in">```r </span></span>
-<span id="cb443-2"><a href="6.18-faq-3.html#cb443-2" tabindex="-1"></a>{{<span class="sc">&lt;</span> include _demo.R <span class="sc">&gt;</span>}}</span>
-<span id="cb443-3"><a href="6.18-faq-3.html#cb443-3" tabindex="-1"></a><span class="in">```</span></span></code></pre></div>
+<div class="sourceCode" id="cb445"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb445-1"><a href="6.18-faq-3.html#cb445-1" tabindex="-1"></a><span class="in">```r </span></span>
+<span id="cb445-2"><a href="6.18-faq-3.html#cb445-2" tabindex="-1"></a>{{<span class="sc">&lt;</span> include _demo.R <span class="sc">&gt;</span>}}</span>
+<span id="cb445-3"><a href="6.18-faq-3.html#cb445-3" tabindex="-1"></a><span class="in">```</span></span></code></pre></div>
 <p>You can use other language tags, e.g., <code>python</code>,</p>
-<div class="sourceCode" id="cb444"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb444-1"><a href="6.18-faq-3.html#cb444-1" tabindex="-1"></a><span class="in">```python </span></span>
-<span id="cb444-2"><a href="6.18-faq-3.html#cb444-2" tabindex="-1"></a>{{<span class="op">&lt;</span> include _demo.py <span class="op">&gt;</span>}}</span>
-<span id="cb444-3"><a href="6.18-faq-3.html#cb444-3" tabindex="-1"></a><span class="in">```</span></span></code></pre></div>
+<div class="sourceCode" id="cb446"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb446-1"><a href="6.18-faq-3.html#cb446-1" tabindex="-1"></a><span class="in">```python </span></span>
+<span id="cb446-2"><a href="6.18-faq-3.html#cb446-2" tabindex="-1"></a>{{<span class="op">&lt;</span> include _demo.py <span class="op">&gt;</span>}}</span>
+<span id="cb446-3"><a href="6.18-faq-3.html#cb446-3" tabindex="-1"></a><span class="in">```</span></span></code></pre></div>
 <p>The source code blocks ensure that the code is included as non-executed examples.</p>
 <hr />
 <p>Load <code>.txt</code> files as verbatim text:</p>
-<div class="sourceCode" id="cb445"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb445-1"><a href="6.18-faq-3.html#cb445-1" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">pre</span><span class="ot"> style</span><span class="op">=</span><span class="st">&#39;white-space: pre-wrap;&#39;</span><span class="dt">&gt;</span></span>
-<span id="cb445-2"><a href="6.18-faq-3.html#cb445-2" tabindex="-1"></a>{{&lt; include ../output/data_description.txt &gt;}}</span>
-<span id="cb445-3"><a href="6.18-faq-3.html#cb445-3" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">pre</span><span class="dt">&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb447"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb447-1"><a href="6.18-faq-3.html#cb447-1" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">pre</span><span class="ot"> style</span><span class="op">=</span><span class="st">&#39;white-space: pre-wrap;&#39;</span><span class="dt">&gt;</span></span>
+<span id="cb447-2"><a href="6.18-faq-3.html#cb447-2" tabindex="-1"></a>{{&lt; include ../output/data_description.txt &gt;}}</span>
+<span id="cb447-3"><a href="6.18-faq-3.html#cb447-3" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">pre</span><span class="dt">&gt;</span></span></code></pre></div>
 <p>This is equivalent to</p>
-<div class="sourceCode" id="cb446"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb446-1"><a href="6.18-faq-3.html#cb446-1" tabindex="-1"></a><span class="in">```{r, output=&quot;asis&quot;} </span></span>
-<span id="cb446-2"><a href="6.18-faq-3.html#cb446-2" tabindex="-1"></a><span class="in">f_name &lt;- file.path(out_dir, &quot;0-0_data_description.txt&quot;)</span></span>
-<span id="cb446-3"><a href="6.18-faq-3.html#cb446-3" tabindex="-1"></a><span class="in">cat(&quot;&lt;pre style=&#39;white-space: pre-wrap;&#39;&gt;&quot;, paste(readLines(f_name), collapse = &quot;\n&quot;), &quot;&lt;/pre&gt;&quot;)</span></span>
-<span id="cb446-4"><a href="6.18-faq-3.html#cb446-4" tabindex="-1"></a><span class="in">```</span></span></code></pre></div>
+<div class="sourceCode" id="cb448"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb448-1"><a href="6.18-faq-3.html#cb448-1" tabindex="-1"></a><span class="in">```{r, output=&quot;asis&quot;} </span></span>
+<span id="cb448-2"><a href="6.18-faq-3.html#cb448-2" tabindex="-1"></a><span class="in">f_name &lt;- file.path(out_dir, &quot;0-0_data_description.txt&quot;)</span></span>
+<span id="cb448-3"><a href="6.18-faq-3.html#cb448-3" tabindex="-1"></a><span class="in">cat(&quot;&lt;pre style=&#39;white-space: pre-wrap;&#39;&gt;&quot;, paste(readLines(f_name), collapse = &quot;\n&quot;), &quot;&lt;/pre&gt;&quot;)</span></span>
+<span id="cb448-4"><a href="6.18-faq-3.html#cb448-4" tabindex="-1"></a><span class="in">```</span></span></code></pre></div>
 <hr />
 <p><strong>References</strong>:</p>
 <ul>

@@ -654,8 +654,8 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="8.8" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html"><i class="fa fa-check"></i><b>8.8</b> Data Frame Operations</a>
 <ul>
-<li class="chapter" data-level="" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#columnrow-wise-operations"><i class="fa fa-check"></i>Column/Row-wise Operations</a></li>
-<li class="chapter" data-level="8.8.1" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#process-na-values"><i class="fa fa-check"></i><b>8.8.1</b> <span class="env-green"><strong>Process <code>NA</code> values</strong></span></a></li>
+<li class="chapter" data-level="8.8.1" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#columnrow-wise-operations"><i class="fa fa-check"></i><b>8.8.1</b> Column/Row-wise Operations</a></li>
+<li class="chapter" data-level="8.8.2" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#process-na-values"><i class="fa fa-check"></i><b>8.8.2</b> <span class="env-green"><strong>Process <code>NA</code> values</strong></span></a></li>
 </ul></li>
 <li class="chapter" data-level="8.9" data-path="8.9-matrix-multiplication.html"><a href="8.9-matrix-multiplication.html"><i class="fa fa-check"></i><b>8.9</b> Matrix multiplication</a></li>
 <li class="chapter" data-level="8.10" data-path="8.10-string-operations.html"><a href="8.10-string-operations.html"><i class="fa fa-check"></i><b>8.10</b> String Operations</a></li>
@@ -868,17 +868,47 @@ function myFunction(id) {
   x.style.display = (x.style.display === 'none') ? 'block' : 'none';
 }
 
-// Auto-expand active top-level section so its level 2/3 items are visible
+// Auto-expand active section and keep all siblings within the same level 1 section open
 document.addEventListener('DOMContentLoaded', function() {
   try {
     var summary = document.querySelector('.book-summary ul.summary');
     if (!summary) return;
 
     function applyAutoOpen() {
-      // Clear previous
-      summary.querySelectorAll('li.chapter.auto-open').forEach(function(li){ li.classList.remove('auto-open'); });
+      // Find the active item (could be level 1, 2, or 3)
       var active = summary.querySelector('li.chapter.active');
-      if (active) active.classList.add('auto-open');
+      if (!active) return;
+      
+      // Find the top-level (level 1) chapter containing the active item
+      var topLevelChapter = active.closest('ul.summary > li.chapter');
+      if (!topLevelChapter) return;
+      
+      // Collapse all other top-level chapters
+      summary.querySelectorAll('ul.summary > li.chapter').forEach(function(chapter) {
+        if (chapter !== topLevelChapter) {
+          chapter.classList.remove('auto-open');
+          // Collapse all nested items in other chapters
+          chapter.querySelectorAll('li.chapter').forEach(function(nested) {
+            nested.classList.remove('auto-open');
+          });
+        }
+      });
+      
+      // Expand the active top-level chapter
+      topLevelChapter.classList.add('auto-open');
+      
+      // Expand ALL level 2 and level 3 items within this top-level chapter
+      topLevelChapter.querySelectorAll('li.chapter').forEach(function(nested) {
+        nested.classList.add('auto-open');
+      });
+      
+      // Scroll the active TOC item to the center of the TOC panel
+      setTimeout(function() {
+        var activeLink = active.querySelector('a');
+        if (activeLink) {
+          activeLink.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
     }
 
     applyAutoOpen();
@@ -894,14 +924,14 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-// Toggle collapse: clicking an expanded section collapses it
+// Toggle collapse: clicking level 1 heading expands/collapses all sublevels
 document.addEventListener('DOMContentLoaded', function() {
   try {
     var summary = document.querySelector('.book-summary ul.summary');
     if (!summary) return;
 
-    // Add click handlers to chapter links with children
-    summary.querySelectorAll('li.chapter').forEach(function(chapter) {
+    // Add click handlers only to top-level chapter links with children
+    summary.querySelectorAll('ul.summary > li.chapter').forEach(function(chapter) {
       var sublist = chapter.querySelector('ul');
       if (!sublist) return; // Only chapters with subsections
 
@@ -913,15 +943,28 @@ document.addEventListener('DOMContentLoaded', function() {
         var isExpanded = chapter.classList.contains('auto-open');
         
         if (isExpanded) {
-          // Collapse it
+          // Collapse it and all nested items
           e.preventDefault();
           chapter.classList.remove('auto-open');
+          // Also collapse all level 2 and level 3 items
+          chapter.querySelectorAll('li.chapter.auto-open').forEach(function(nested) {
+            nested.classList.remove('auto-open');
+          });
         } else {
-          // Expand it (remove auto-open from others first)
-          summary.querySelectorAll('li.chapter.auto-open').forEach(function(li) {
-            if (li !== chapter) li.classList.remove('auto-open');
+          // Expand it (collapse other top-level chapters first)
+          summary.querySelectorAll('ul.summary > li.chapter.auto-open').forEach(function(li) {
+            if (li !== chapter) {
+              li.classList.remove('auto-open');
+              li.querySelectorAll('li.chapter.auto-open').forEach(function(nested) {
+                nested.classList.remove('auto-open');
+              });
+            }
           });
           chapter.classList.add('auto-open');
+          // Expand all level 2 items within this chapter
+          chapter.querySelectorAll('ul > li.chapter').forEach(function(level2) {
+            level2.classList.add('auto-open');
+          });
         }
       });
     });
@@ -931,32 +974,49 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 <style>
-/* Show nested UL of active chapter when collapse=section */
-.book-summary ul.summary li.chapter.auto-open ul { display: block !important; }
-.book-summary ul.summary li.chapter.auto-open > a { font-weight: 700; }
+/* Show all nested UL of chapters marked as auto-open */
+.book-summary ul.summary li.chapter.auto-open > ul { 
+  display: block !important; 
+}
+
+/* Make parent level headings bold when expanded */
+.book-summary ul.summary li.chapter.auto-open > a { 
+  font-weight: 700; 
+}
+
+/* Highlight the actual active item with color and bold */
+.book-summary ul.summary li.chapter.active > a { 
+  font-weight: 700 !important;
+  color: #0078D4 !important;
+}
+
+/* Ensure proper indentation for nested levels */
+.book-summary ul.summary li.chapter ul li.chapter { 
+  padding-left: 0; 
+}
 </style>
 <div id="data-input-output" class="section level2 hasAnchor" number="8.1">
 <h2><span class="header-section-number">8.1</span> Data Input &amp; Output<a href="8.1-data-input-output.html#data-input-output" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>File names</p>
 <p><code>file.path(...)</code> constructs file paths in a platform-independent way. <code>...</code> are character vectors, which are concatenated together with <code>\</code> on Windows and <code>/</code> on Unix-alikes (Mac) as the path separator.</p>
 <p>On Windows, the path separator is <code>\</code>, but in R you need to use <code>\\</code> to represent a single backslash because <code>\</code> is an escape character in R strings.</p>
-<div class="sourceCode" id="cb486"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb486-1"><a href="8.1-data-input-output.html#cb486-1" tabindex="-1"></a><span class="co"># define file path</span></span>
-<span id="cb486-2"><a href="8.1-data-input-output.html#cb486-2" tabindex="-1"></a>path <span class="ot">&lt;-</span> <span class="fu">file.path</span>(<span class="st">&quot;C:&quot;</span>, <span class="st">&quot;Users&quot;</span>, <span class="st">&quot;bob&quot;</span>, <span class="st">&quot;Data_Science_Documents&quot;</span>)</span>
-<span id="cb486-3"><a href="8.1-data-input-output.html#cb486-3" tabindex="-1"></a></span>
-<span id="cb486-4"><a href="8.1-data-input-output.html#cb486-4" tabindex="-1"></a><span class="co"># view file path</span></span>
-<span id="cb486-5"><a href="8.1-data-input-output.html#cb486-5" tabindex="-1"></a>path</span>
-<span id="cb486-6"><a href="8.1-data-input-output.html#cb486-6" tabindex="-1"></a>[<span class="dv">1</span>] <span class="st">&quot;C:</span><span class="sc">\\</span><span class="st">Users</span><span class="sc">\\</span><span class="st">bob</span><span class="sc">\\</span><span class="st">Data_Science_Documents&quot;</span></span>
-<span id="cb486-7"><a href="8.1-data-input-output.html#cb486-7" tabindex="-1"></a></span>
-<span id="cb486-8"><a href="8.1-data-input-output.html#cb486-8" tabindex="-1"></a><span class="co"># set path as working directory</span></span>
-<span id="cb486-9"><a href="8.1-data-input-output.html#cb486-9" tabindex="-1"></a><span class="fu">setwd</span>(path)</span></code></pre></div>
+<div class="sourceCode" id="cb488"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb488-1"><a href="8.1-data-input-output.html#cb488-1" tabindex="-1"></a><span class="co"># define file path</span></span>
+<span id="cb488-2"><a href="8.1-data-input-output.html#cb488-2" tabindex="-1"></a>path <span class="ot">&lt;-</span> <span class="fu">file.path</span>(<span class="st">&quot;C:&quot;</span>, <span class="st">&quot;Users&quot;</span>, <span class="st">&quot;bob&quot;</span>, <span class="st">&quot;Data_Science_Documents&quot;</span>)</span>
+<span id="cb488-3"><a href="8.1-data-input-output.html#cb488-3" tabindex="-1"></a></span>
+<span id="cb488-4"><a href="8.1-data-input-output.html#cb488-4" tabindex="-1"></a><span class="co"># view file path</span></span>
+<span id="cb488-5"><a href="8.1-data-input-output.html#cb488-5" tabindex="-1"></a>path</span>
+<span id="cb488-6"><a href="8.1-data-input-output.html#cb488-6" tabindex="-1"></a>[<span class="dv">1</span>] <span class="st">&quot;C:</span><span class="sc">\\</span><span class="st">Users</span><span class="sc">\\</span><span class="st">bob</span><span class="sc">\\</span><span class="st">Data_Science_Documents&quot;</span></span>
+<span id="cb488-7"><a href="8.1-data-input-output.html#cb488-7" tabindex="-1"></a></span>
+<span id="cb488-8"><a href="8.1-data-input-output.html#cb488-8" tabindex="-1"></a><span class="co"># set path as working directory</span></span>
+<span id="cb488-9"><a href="8.1-data-input-output.html#cb488-9" tabindex="-1"></a><span class="fu">setwd</span>(path)</span></code></pre></div>
 <p>The working directory is now set to the following location: <code>C:\Users\bob\Data_Science_Documents</code>.</p>
 <hr />
 <p>On Mac,</p>
-<div class="sourceCode" id="cb487"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb487-1"><a href="8.1-data-input-output.html#cb487-1" tabindex="-1"></a>path <span class="ot">&lt;-</span> <span class="fu">file.path</span>(<span class="st">&quot;data&quot;</span>, <span class="st">&quot;my_data.csv&quot;</span>)</span>
-<span id="cb487-2"><a href="8.1-data-input-output.html#cb487-2" tabindex="-1"></a></span>
-<span id="cb487-3"><a href="8.1-data-input-output.html#cb487-3" tabindex="-1"></a><span class="co"># view file path</span></span>
-<span id="cb487-4"><a href="8.1-data-input-output.html#cb487-4" tabindex="-1"></a>path</span>
-<span id="cb487-5"><a href="8.1-data-input-output.html#cb487-5" tabindex="-1"></a>[<span class="dv">1</span>] <span class="st">&quot;data/my_data.csv&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb489"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb489-1"><a href="8.1-data-input-output.html#cb489-1" tabindex="-1"></a>path <span class="ot">&lt;-</span> <span class="fu">file.path</span>(<span class="st">&quot;data&quot;</span>, <span class="st">&quot;my_data.csv&quot;</span>)</span>
+<span id="cb489-2"><a href="8.1-data-input-output.html#cb489-2" tabindex="-1"></a></span>
+<span id="cb489-3"><a href="8.1-data-input-output.html#cb489-3" tabindex="-1"></a><span class="co"># view file path</span></span>
+<span id="cb489-4"><a href="8.1-data-input-output.html#cb489-4" tabindex="-1"></a>path</span>
+<span id="cb489-5"><a href="8.1-data-input-output.html#cb489-5" tabindex="-1"></a>[<span class="dv">1</span>] <span class="st">&quot;data/my_data.csv&quot;</span></span></code></pre></div>
 <div id="read-data" class="section level3 hasAnchor" number="8.1.1">
 <h3><span class="header-section-number">8.1.1</span> Read Data<a href="8.1-data-input-output.html#read-data" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p><strong>Read Fortran</strong></p>
@@ -966,17 +1026,17 @@ document.addEventListener('DOMContentLoaded', function() {
 </ul>
 <p><strong>Read <code>dta</code></strong></p>
 <p><code>haven::read_dta()</code> read Stata data file.</p>
-<div class="sourceCode" id="cb488"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb488-1"><a href="8.1-data-input-output.html#cb488-1" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">read_dta</span>(<span class="st">&quot;climate_health_2406yl.dta&quot;</span>)</span>
-<span id="cb488-2"><a href="8.1-data-input-output.html#cb488-2" tabindex="-1"></a><span class="co"># retrieve variable labels/definitions</span></span>
-<span id="cb488-3"><a href="8.1-data-input-output.html#cb488-3" tabindex="-1"></a>var_dict <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb488-4"><a href="8.1-data-input-output.html#cb488-4" tabindex="-1"></a>  <span class="st">&quot;name&quot;</span> <span class="ot">=</span> <span class="fu">colnames</span>(data),</span>
-<span id="cb488-5"><a href="8.1-data-input-output.html#cb488-5" tabindex="-1"></a>  <span class="st">&quot;label&quot;</span> <span class="ot">=</span> <span class="fu">sapply</span>(data, <span class="cf">function</span>(x) <span class="fu">attr</span>(x, <span class="st">&quot;label&quot;</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb488-6"><a href="8.1-data-input-output.html#cb488-6" tabindex="-1"></a>  <span class="fu">as.character</span>()</span>
-<span id="cb488-7"><a href="8.1-data-input-output.html#cb488-7" tabindex="-1"></a>  )</span>
-<span id="cb488-8"><a href="8.1-data-input-output.html#cb488-8" tabindex="-1"></a>var_dict</span>
-<span id="cb488-9"><a href="8.1-data-input-output.html#cb488-9" tabindex="-1"></a>                   </span>
-<span id="cb488-10"><a href="8.1-data-input-output.html#cb488-10" tabindex="-1"></a><span class="fu">var_label</span>(data<span class="sc">$</span>gor) <span class="co"># get variable label</span></span>
-<span id="cb488-11"><a href="8.1-data-input-output.html#cb488-11" tabindex="-1"></a><span class="fu">val_labels</span>(data<span class="sc">$</span>gor) <span class="co"># get value labels </span></span></code></pre></div>
+<div class="sourceCode" id="cb490"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb490-1"><a href="8.1-data-input-output.html#cb490-1" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">read_dta</span>(<span class="st">&quot;climate_health_2406yl.dta&quot;</span>)</span>
+<span id="cb490-2"><a href="8.1-data-input-output.html#cb490-2" tabindex="-1"></a><span class="co"># retrieve variable labels/definitions</span></span>
+<span id="cb490-3"><a href="8.1-data-input-output.html#cb490-3" tabindex="-1"></a>var_dict <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb490-4"><a href="8.1-data-input-output.html#cb490-4" tabindex="-1"></a>  <span class="st">&quot;name&quot;</span> <span class="ot">=</span> <span class="fu">colnames</span>(data),</span>
+<span id="cb490-5"><a href="8.1-data-input-output.html#cb490-5" tabindex="-1"></a>  <span class="st">&quot;label&quot;</span> <span class="ot">=</span> <span class="fu">sapply</span>(data, <span class="cf">function</span>(x) <span class="fu">attr</span>(x, <span class="st">&quot;label&quot;</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb490-6"><a href="8.1-data-input-output.html#cb490-6" tabindex="-1"></a>  <span class="fu">as.character</span>()</span>
+<span id="cb490-7"><a href="8.1-data-input-output.html#cb490-7" tabindex="-1"></a>  )</span>
+<span id="cb490-8"><a href="8.1-data-input-output.html#cb490-8" tabindex="-1"></a>var_dict</span>
+<span id="cb490-9"><a href="8.1-data-input-output.html#cb490-9" tabindex="-1"></a>                   </span>
+<span id="cb490-10"><a href="8.1-data-input-output.html#cb490-10" tabindex="-1"></a><span class="fu">var_label</span>(data<span class="sc">$</span>gor) <span class="co"># get variable label</span></span>
+<span id="cb490-11"><a href="8.1-data-input-output.html#cb490-11" tabindex="-1"></a><span class="fu">val_labels</span>(data<span class="sc">$</span>gor) <span class="co"># get value labels </span></span></code></pre></div>
 <p><strong>Read fixed width text files</strong></p>
 <div id="base-r-functions" class="section level4 hasAnchor" number="8.1.1.1">
 <h4><span class="header-section-number">8.1.1.1</span> Base R functions<a href="8.1-data-input-output.html#base-r-functions" class="anchor-section" aria-label="Anchor link to header"></a></h4>
@@ -1021,15 +1081,15 @@ document.addEventListener('DOMContentLoaded', function() {
 <p><img src="https://drive.google.com/thumbnail?id=192sslQpCtgW2NvJV-SBMZe_eUleYpjY9&sz=w1000" alt="github raw data" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" /></p>
 <p><code>read.table(filename, header=FALSE, sep="")</code> is more versatile than <code>read.csv</code>. Useful when you have a data file saved as txt.
 Default separator is “white space” for <code>read.table</code>, i.e., one or more spaces, tabs, newlines or carriage returns.</p>
-<div class="sourceCode" id="cb489"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb489-1"><a href="8.1-data-input-output.html#cb489-1" tabindex="-1"></a><span class="co"># read.table can be used to read txt and csv. Need to specify sep=&#39;,&#39; when reading csv.</span></span>
-<span id="cb489-2"><a href="8.1-data-input-output.html#cb489-2" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">read.table</span>(<span class="st">&quot;https://raw.githubusercontent.com/my1396/course_dataset/refs/heads/main/bonedensity.txt&quot;</span>, <span class="at">header=</span><span class="cn">TRUE</span>)</span>
-<span id="cb489-3"><a href="8.1-data-input-output.html#cb489-3" tabindex="-1"></a>data</span>
-<span id="cb489-4"><a href="8.1-data-input-output.html#cb489-4" tabindex="-1"></a></span>
-<span id="cb489-5"><a href="8.1-data-input-output.html#cb489-5" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">read.table</span>(<span class="st">&quot;https://raw.githubusercontent.com/my1396/course_dataset/refs/heads/main/bonedensity.csv&quot;</span>, <span class="at">header=</span><span class="cn">TRUE</span>, <span class="at">sep=</span><span class="st">&quot;,&quot;</span>)</span>
-<span id="cb489-6"><a href="8.1-data-input-output.html#cb489-6" tabindex="-1"></a></span>
-<span id="cb489-7"><a href="8.1-data-input-output.html#cb489-7" tabindex="-1"></a><span class="co"># Alternatively, can use read_csv or read.csv directly</span></span>
-<span id="cb489-8"><a href="8.1-data-input-output.html#cb489-8" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;https://raw.githubusercontent.com/my1396/course_dataset/refs/heads/main/bonedensity.csv&quot;</span>)</span>
-<span id="cb489-9"><a href="8.1-data-input-output.html#cb489-9" tabindex="-1"></a>data</span></code></pre></div>
+<div class="sourceCode" id="cb491"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb491-1"><a href="8.1-data-input-output.html#cb491-1" tabindex="-1"></a><span class="co"># read.table can be used to read txt and csv. Need to specify sep=&#39;,&#39; when reading csv.</span></span>
+<span id="cb491-2"><a href="8.1-data-input-output.html#cb491-2" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">read.table</span>(<span class="st">&quot;https://raw.githubusercontent.com/my1396/course_dataset/refs/heads/main/bonedensity.txt&quot;</span>, <span class="at">header=</span><span class="cn">TRUE</span>)</span>
+<span id="cb491-3"><a href="8.1-data-input-output.html#cb491-3" tabindex="-1"></a>data</span>
+<span id="cb491-4"><a href="8.1-data-input-output.html#cb491-4" tabindex="-1"></a></span>
+<span id="cb491-5"><a href="8.1-data-input-output.html#cb491-5" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">read.table</span>(<span class="st">&quot;https://raw.githubusercontent.com/my1396/course_dataset/refs/heads/main/bonedensity.csv&quot;</span>, <span class="at">header=</span><span class="cn">TRUE</span>, <span class="at">sep=</span><span class="st">&quot;,&quot;</span>)</span>
+<span id="cb491-6"><a href="8.1-data-input-output.html#cb491-6" tabindex="-1"></a></span>
+<span id="cb491-7"><a href="8.1-data-input-output.html#cb491-7" tabindex="-1"></a><span class="co"># Alternatively, can use read_csv or read.csv directly</span></span>
+<span id="cb491-8"><a href="8.1-data-input-output.html#cb491-8" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;https://raw.githubusercontent.com/my1396/course_dataset/refs/heads/main/bonedensity.csv&quot;</span>)</span>
+<span id="cb491-9"><a href="8.1-data-input-output.html#cb491-9" tabindex="-1"></a>data</span></code></pre></div>
 <hr />
 </div>
 <div id="readr" class="section level4 hasAnchor" number="8.1.1.2">
@@ -1044,12 +1104,12 @@ Default separator is “white space” for <code>read.table</code>, i.e., one or
 <p><code>read_tsv()</code> read <span style="color:#00CC66">tab separated values</span>.</p>
 <hr />
 <p>Read <span style="color:#00CC66">comma separated values</span>.</p>
-<div class="sourceCode" id="cb490"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb490-1"><a href="8.1-data-input-output.html#cb490-1" tabindex="-1"></a>readr<span class="sc">::</span><span class="fu">read_csv</span>(</span>
-<span id="cb490-2"><a href="8.1-data-input-output.html#cb490-2" tabindex="-1"></a>  f_name,</span>
-<span id="cb490-3"><a href="8.1-data-input-output.html#cb490-3" tabindex="-1"></a>  <span class="at">na =</span> <span class="fu">c</span>(<span class="st">&quot;..&quot;</span>, <span class="cn">NA</span>, <span class="st">&quot;&quot;</span>),</span>
-<span id="cb490-4"><a href="8.1-data-input-output.html#cb490-4" tabindex="-1"></a>  <span class="at">locale =</span> <span class="fu">locale</span>(<span class="at">encoding =</span> <span class="st">&quot;UTF-8&quot;</span>),</span>
-<span id="cb490-5"><a href="8.1-data-input-output.html#cb490-5" tabindex="-1"></a>  <span class="at">col_types =</span> <span class="fu">cols</span>(<span class="at">Date =</span> <span class="fu">col_date</span>(<span class="at">format =</span> <span class="st">&quot;%m/%d/%y&quot;</span>))</span>
-<span id="cb490-6"><a href="8.1-data-input-output.html#cb490-6" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb492"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb492-1"><a href="8.1-data-input-output.html#cb492-1" tabindex="-1"></a>readr<span class="sc">::</span><span class="fu">read_csv</span>(</span>
+<span id="cb492-2"><a href="8.1-data-input-output.html#cb492-2" tabindex="-1"></a>  f_name,</span>
+<span id="cb492-3"><a href="8.1-data-input-output.html#cb492-3" tabindex="-1"></a>  <span class="at">na =</span> <span class="fu">c</span>(<span class="st">&quot;..&quot;</span>, <span class="cn">NA</span>, <span class="st">&quot;&quot;</span>),</span>
+<span id="cb492-4"><a href="8.1-data-input-output.html#cb492-4" tabindex="-1"></a>  <span class="at">locale =</span> <span class="fu">locale</span>(<span class="at">encoding =</span> <span class="st">&quot;UTF-8&quot;</span>),</span>
+<span id="cb492-5"><a href="8.1-data-input-output.html#cb492-5" tabindex="-1"></a>  <span class="at">col_types =</span> <span class="fu">cols</span>(<span class="at">Date =</span> <span class="fu">col_date</span>(<span class="at">format =</span> <span class="st">&quot;%m/%d/%y&quot;</span>))</span>
+<span id="cb492-6"><a href="8.1-data-input-output.html#cb492-6" tabindex="-1"></a>)</span></code></pre></div>
 <ul>
 <li><p><code>col_types</code> specify column types. Could be created by <code>list()</code> or <code>cols()</code>.</p>
 <p><code>read_csv</code> will automatically guess, if you don’t explicitly specify column types. You can override column types by providing the argument <code>col_types</code>. You don’t need to provide all column types, just the ones you want to override.</p></li>
@@ -1080,8 +1140,8 @@ Default separator is “white space” for <code>read.table</code>, i.e., one or
 <li><p><code>x</code> a matrix or data frame. If not one of the types, it is attempted to coerce <code>x</code> to a data frame.</p>
 <ul>
 <li><p><code>write_csv(x)</code> <code>x</code> can only be data frame or tibble. Doesn’t support matrix.</p>
-<div class="sourceCode" id="cb491"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb491-1"><a href="8.1-data-input-output.html#cb491-1" tabindex="-1"></a>mat <span class="sc">%&gt;%</span> <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;rowname&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">write_csv</span>(<span class="st">&quot;mat.csv&quot;</span>)</span>
-<span id="cb491-2"><a href="8.1-data-input-output.html#cb491-2" tabindex="-1"></a>mat <span class="sc">%&gt;%</span> <span class="fu">write.csv</span>(<span class="st">&quot;mat.csv&quot;</span>)</span></code></pre></div></li>
+<div class="sourceCode" id="cb493"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb493-1"><a href="8.1-data-input-output.html#cb493-1" tabindex="-1"></a>mat <span class="sc">%&gt;%</span> <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;rowname&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">write_csv</span>(<span class="st">&quot;mat.csv&quot;</span>)</span>
+<span id="cb493-2"><a href="8.1-data-input-output.html#cb493-2" tabindex="-1"></a>mat <span class="sc">%&gt;%</span> <span class="fu">write.csv</span>(<span class="st">&quot;mat.csv&quot;</span>)</span></code></pre></div></li>
 </ul></li>
 <li><p><code>row.names</code> whether to write row names of <code>x</code>. Defaults to <code>TRUE</code>.</p></li>
 </ul>
@@ -1097,64 +1157,64 @@ Default separator is “white space” for <code>read.table</code>, i.e., one or
 <div id="prevent-accidentally-overwriting-files" class="section level4 hasAnchor" number="8.1.2.1">
 <h4><span class="header-section-number">8.1.2.1</span> Prevent Accidentally Overwriting Files<a href="8.1-data-input-output.html#prevent-accidentally-overwriting-files" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>When you do data cleaning, you want to be explicit about if you have saved the data. The code snippet below prompts the user to confirm before overwriting an existing file. It you enter <code>1</code>, the file will be overwritten; if you enter <code>0</code> or any other value, the file will not be saved.</p>
-<div class="sourceCode" id="cb492"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb492-1"><a href="8.1-data-input-output.html#cb492-1" tabindex="-1"></a>f_name <span class="ot">&lt;-</span> <span class="fu">file.path</span>(data_dir, <span class="st">&quot;US_fundamental_macro_cleaned_V2.csv&quot;</span>)</span>
-<span id="cb492-2"><a href="8.1-data-input-output.html#cb492-2" tabindex="-1"></a><span class="fu">message</span>(<span class="fu">glue</span>(<span class="st">&quot;Dataset dimension: ({nrow(fundamental_df)}, {ncol(fundamental_df)})&quot;</span>))</span>
-<span id="cb492-3"><a href="8.1-data-input-output.html#cb492-3" tabindex="-1"></a><span class="fu">message</span>(<span class="fu">glue</span>(<span class="st">&quot;Target file: {f_name}&quot;</span>))</span>
-<span id="cb492-4"><a href="8.1-data-input-output.html#cb492-4" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Overwrite data? [1 = Yes, 0 = No]: &quot;</span>)</span>
-<span id="cb492-5"><a href="8.1-data-input-output.html#cb492-5" tabindex="-1"></a><span class="fu">flush.console</span>() <span class="co"># forces immediate display of the prompt</span></span>
-<span id="cb492-6"><a href="8.1-data-input-output.html#cb492-6" tabindex="-1"></a>user_input <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(<span class="fu">readLines</span>(<span class="st">&quot;stdin&quot;</span>, <span class="at">n =</span> <span class="dv">1</span>))</span>
-<span id="cb492-7"><a href="8.1-data-input-output.html#cb492-7" tabindex="-1"></a></span>
-<span id="cb492-8"><a href="8.1-data-input-output.html#cb492-8" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.na</span>(user_input) <span class="sc">&amp;&amp;</span> user_input <span class="sc">==</span> <span class="dv">1</span>) {</span>
-<span id="cb492-9"><a href="8.1-data-input-output.html#cb492-9" tabindex="-1"></a>    <span class="fu">write_csv</span>(fundamental_df, f_name)</span>
-<span id="cb492-10"><a href="8.1-data-input-output.html#cb492-10" tabindex="-1"></a>    <span class="fu">message</span>(<span class="fu">glue</span>(<span class="st">&quot;✓ Dataset saved to: {f_name}&quot;</span>))</span>
-<span id="cb492-11"><a href="8.1-data-input-output.html#cb492-11" tabindex="-1"></a>} <span class="cf">else</span> {</span>
-<span id="cb492-12"><a href="8.1-data-input-output.html#cb492-12" tabindex="-1"></a>    <span class="fu">message</span>(<span class="st">&quot;✗ Data not saved&quot;</span>)</span>
-<span id="cb492-13"><a href="8.1-data-input-output.html#cb492-13" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb494"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb494-1"><a href="8.1-data-input-output.html#cb494-1" tabindex="-1"></a>f_name <span class="ot">&lt;-</span> <span class="fu">file.path</span>(data_dir, <span class="st">&quot;US_fundamental_macro_cleaned_V2.csv&quot;</span>)</span>
+<span id="cb494-2"><a href="8.1-data-input-output.html#cb494-2" tabindex="-1"></a><span class="fu">message</span>(<span class="fu">glue</span>(<span class="st">&quot;Dataset dimension: ({nrow(fundamental_df)}, {ncol(fundamental_df)})&quot;</span>))</span>
+<span id="cb494-3"><a href="8.1-data-input-output.html#cb494-3" tabindex="-1"></a><span class="fu">message</span>(<span class="fu">glue</span>(<span class="st">&quot;Target file: {f_name}&quot;</span>))</span>
+<span id="cb494-4"><a href="8.1-data-input-output.html#cb494-4" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Overwrite data? [1 = Yes, 0 = No]: &quot;</span>)</span>
+<span id="cb494-5"><a href="8.1-data-input-output.html#cb494-5" tabindex="-1"></a><span class="fu">flush.console</span>() <span class="co"># forces immediate display of the prompt</span></span>
+<span id="cb494-6"><a href="8.1-data-input-output.html#cb494-6" tabindex="-1"></a>user_input <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(<span class="fu">readLines</span>(<span class="st">&quot;stdin&quot;</span>, <span class="at">n =</span> <span class="dv">1</span>))</span>
+<span id="cb494-7"><a href="8.1-data-input-output.html#cb494-7" tabindex="-1"></a></span>
+<span id="cb494-8"><a href="8.1-data-input-output.html#cb494-8" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.na</span>(user_input) <span class="sc">&amp;&amp;</span> user_input <span class="sc">==</span> <span class="dv">1</span>) {</span>
+<span id="cb494-9"><a href="8.1-data-input-output.html#cb494-9" tabindex="-1"></a>    <span class="fu">write_csv</span>(fundamental_df, f_name)</span>
+<span id="cb494-10"><a href="8.1-data-input-output.html#cb494-10" tabindex="-1"></a>    <span class="fu">message</span>(<span class="fu">glue</span>(<span class="st">&quot;✓ Dataset saved to: {f_name}&quot;</span>))</span>
+<span id="cb494-11"><a href="8.1-data-input-output.html#cb494-11" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb494-12"><a href="8.1-data-input-output.html#cb494-12" tabindex="-1"></a>    <span class="fu">message</span>(<span class="st">&quot;✗ Data not saved&quot;</span>)</span>
+<span id="cb494-13"><a href="8.1-data-input-output.html#cb494-13" tabindex="-1"></a>}</span></code></pre></div>
 <p><code>flush.console()</code> forces the output to be displayed immediately, which is important for interactive prompts.
 Without it, the whole cell will run before the prompt is shown, leading to errors.</p>
 <p>It looks like the following in the console:</p>
 <p><img src="https://drive.google.com/thumbnail?id=1aq5GWlU2RZuH9y4pDhShjXn-MkPL2uWN&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" /></p>
 <p>Wrap the code above in a function to make it reusable.</p>
-<div class="sourceCode" id="cb493"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb493-1"><a href="8.1-data-input-output.html#cb493-1" tabindex="-1"></a>save_with_prompt <span class="ot">&lt;-</span> <span class="cf">function</span>(df, f_name) {</span>
-<span id="cb493-2"><a href="8.1-data-input-output.html#cb493-2" tabindex="-1"></a>    <span class="co">#&#39; Prompts the user to confirm before saving a data frame or text output to a file.</span></span>
-<span id="cb493-3"><a href="8.1-data-input-output.html#cb493-3" tabindex="-1"></a>    <span class="co">#&#39; Prevents accidental overwriting of files</span></span>
-<span id="cb493-4"><a href="8.1-data-input-output.html#cb493-4" tabindex="-1"></a>    <span class="co">#&#39; @param df The data frame or text output to be saved.</span></span>
-<span id="cb493-5"><a href="8.1-data-input-output.html#cb493-5" tabindex="-1"></a>    <span class="co">#&#39; @param f_name The file name (including path) where the data should be saved to.</span></span>
-<span id="cb493-6"><a href="8.1-data-input-output.html#cb493-6" tabindex="-1"></a>    </span>
-<span id="cb493-7"><a href="8.1-data-input-output.html#cb493-7" tabindex="-1"></a>    <span class="fu">message</span>(<span class="fu">glue</span>(<span class="st">&quot;Target file: {f_name}&quot;</span>))</span>
-<span id="cb493-8"><a href="8.1-data-input-output.html#cb493-8" tabindex="-1"></a>    <span class="fu">cat</span>(<span class="st">&quot;Overwrite data? [1 = Yes, 0 = No]: &quot;</span>)</span>
-<span id="cb493-9"><a href="8.1-data-input-output.html#cb493-9" tabindex="-1"></a>    <span class="fu">flush.console</span>()</span>
-<span id="cb493-10"><a href="8.1-data-input-output.html#cb493-10" tabindex="-1"></a>    user_input <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(<span class="fu">readLines</span>(<span class="st">&quot;stdin&quot;</span>, <span class="at">n =</span> <span class="dv">1</span>))</span>
-<span id="cb493-11"><a href="8.1-data-input-output.html#cb493-11" tabindex="-1"></a></span>
-<span id="cb493-12"><a href="8.1-data-input-output.html#cb493-12" tabindex="-1"></a>    <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.na</span>(user_input) <span class="sc">&amp;&amp;</span> user_input <span class="sc">==</span> <span class="dv">1</span>) {</span>
-<span id="cb493-13"><a href="8.1-data-input-output.html#cb493-13" tabindex="-1"></a>        <span class="cf">if</span> (<span class="fu">inherits</span>(df, <span class="fu">c</span>(<span class="st">&quot;data.frame&quot;</span>, <span class="st">&quot;tbl_df&quot;</span>, <span class="st">&quot;tbl&quot;</span>))) {</span>
-<span id="cb493-14"><a href="8.1-data-input-output.html#cb493-14" tabindex="-1"></a>            <span class="fu">write_csv</span>(df, f_name)</span>
-<span id="cb493-15"><a href="8.1-data-input-output.html#cb493-15" tabindex="-1"></a>        } <span class="cf">else</span> {</span>
-<span id="cb493-16"><a href="8.1-data-input-output.html#cb493-16" tabindex="-1"></a>            <span class="fu">log_to_file</span>(f_name, <span class="fu">cat</span>(df))</span>
-<span id="cb493-17"><a href="8.1-data-input-output.html#cb493-17" tabindex="-1"></a>        }</span>
-<span id="cb493-18"><a href="8.1-data-input-output.html#cb493-18" tabindex="-1"></a>        <span class="fu">message</span>(<span class="fu">glue</span>(<span class="st">&quot;✓ Dataset saved to: {f_name}&quot;</span>))</span>
-<span id="cb493-19"><a href="8.1-data-input-output.html#cb493-19" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
-<span id="cb493-20"><a href="8.1-data-input-output.html#cb493-20" tabindex="-1"></a>        <span class="fu">message</span>(<span class="st">&quot;✗ Data not saved&quot;</span>)</span>
-<span id="cb493-21"><a href="8.1-data-input-output.html#cb493-21" tabindex="-1"></a>    }</span>
-<span id="cb493-22"><a href="8.1-data-input-output.html#cb493-22" tabindex="-1"></a>}</span>
-<span id="cb493-23"><a href="8.1-data-input-output.html#cb493-23" tabindex="-1"></a><span class="co"># csv files</span></span>
-<span id="cb493-24"><a href="8.1-data-input-output.html#cb493-24" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">year =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">20</span>, <span class="at">values =</span> letters[<span class="dv">1</span><span class="sc">:</span><span class="dv">20</span>])</span>
-<span id="cb493-25"><a href="8.1-data-input-output.html#cb493-25" tabindex="-1"></a>f_name <span class="ot">&lt;-</span> <span class="fu">here</span>(out_dir, <span class="st">&quot;my_table.csv&quot;</span>)</span>
-<span id="cb493-26"><a href="8.1-data-input-output.html#cb493-26" tabindex="-1"></a><span class="fu">save_with_prompt</span>(df, f_name)</span>
-<span id="cb493-27"><a href="8.1-data-input-output.html#cb493-27" tabindex="-1"></a></span>
-<span id="cb493-28"><a href="8.1-data-input-output.html#cb493-28" tabindex="-1"></a><span class="co"># txt files</span></span>
-<span id="cb493-29"><a href="8.1-data-input-output.html#cb493-29" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">glue</span>(<span class="st">&quot;</span></span>
-<span id="cb493-30"><a href="8.1-data-input-output.html#cb493-30" tabindex="-1"></a><span class="st">    === Data Description ===</span></span>
-<span id="cb493-31"><a href="8.1-data-input-output.html#cb493-31" tabindex="-1"></a><span class="st">    Period: {min(fundamental_complete$year)} – {max(fundamental_complete$year)}</span></span>
-<span id="cb493-32"><a href="8.1-data-input-output.html#cb493-32" tabindex="-1"></a><span class="st">    Firm-year observations: {nrow(fundamental_complete)}</span></span>
-<span id="cb493-33"><a href="8.1-data-input-output.html#cb493-33" tabindex="-1"></a><span class="st">    Unique firms: {n_distinct(fundamental_complete$fsym_id)}</span></span>
-<span id="cb493-34"><a href="8.1-data-input-output.html#cb493-34" tabindex="-1"></a><span class="st">    Missing market value: {sum(is.na(fundamental_complete$ff_mkt_val))}</span></span>
-<span id="cb493-35"><a href="8.1-data-input-output.html#cb493-35" tabindex="-1"></a><span class="st">    Missing Tobins Q (lagged): {sum(is.na(fundamental_complete$tobin_q_lag1))}</span></span>
-<span id="cb493-36"><a href="8.1-data-input-output.html#cb493-36" tabindex="-1"></a><span class="st">    Sectors ({n_distinct(fundamental_complete$l1_name)}): {paste(sort(unique(fundamental_complete$l1_name)), collapse = &#39;, &#39;)}</span></span>
-<span id="cb493-37"><a href="8.1-data-input-output.html#cb493-37" tabindex="-1"></a><span class="st">&quot;</span>)</span>
-<span id="cb493-38"><a href="8.1-data-input-output.html#cb493-38" tabindex="-1"></a>res</span>
-<span id="cb493-39"><a href="8.1-data-input-output.html#cb493-39" tabindex="-1"></a>f_name <span class="ot">&lt;-</span> <span class="fu">here</span>(out_dir, <span class="st">&quot;my_table.txt&quot;</span>)</span>
-<span id="cb493-40"><a href="8.1-data-input-output.html#cb493-40" tabindex="-1"></a><span class="fu">save_with_prompt</span>(res, f_name)</span></code></pre></div>
+<div class="sourceCode" id="cb495"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb495-1"><a href="8.1-data-input-output.html#cb495-1" tabindex="-1"></a>save_with_prompt <span class="ot">&lt;-</span> <span class="cf">function</span>(df, f_name) {</span>
+<span id="cb495-2"><a href="8.1-data-input-output.html#cb495-2" tabindex="-1"></a>    <span class="co">#&#39; Prompts the user to confirm before saving a data frame or text output to a file.</span></span>
+<span id="cb495-3"><a href="8.1-data-input-output.html#cb495-3" tabindex="-1"></a>    <span class="co">#&#39; Prevents accidental overwriting of files</span></span>
+<span id="cb495-4"><a href="8.1-data-input-output.html#cb495-4" tabindex="-1"></a>    <span class="co">#&#39; @param df The data frame or text output to be saved.</span></span>
+<span id="cb495-5"><a href="8.1-data-input-output.html#cb495-5" tabindex="-1"></a>    <span class="co">#&#39; @param f_name The file name (including path) where the data should be saved to.</span></span>
+<span id="cb495-6"><a href="8.1-data-input-output.html#cb495-6" tabindex="-1"></a>    </span>
+<span id="cb495-7"><a href="8.1-data-input-output.html#cb495-7" tabindex="-1"></a>    <span class="fu">message</span>(<span class="fu">glue</span>(<span class="st">&quot;Target file: {f_name}&quot;</span>))</span>
+<span id="cb495-8"><a href="8.1-data-input-output.html#cb495-8" tabindex="-1"></a>    <span class="fu">cat</span>(<span class="st">&quot;Overwrite data? [1 = Yes, 0 = No]: &quot;</span>)</span>
+<span id="cb495-9"><a href="8.1-data-input-output.html#cb495-9" tabindex="-1"></a>    <span class="fu">flush.console</span>()</span>
+<span id="cb495-10"><a href="8.1-data-input-output.html#cb495-10" tabindex="-1"></a>    user_input <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(<span class="fu">readLines</span>(<span class="st">&quot;stdin&quot;</span>, <span class="at">n =</span> <span class="dv">1</span>))</span>
+<span id="cb495-11"><a href="8.1-data-input-output.html#cb495-11" tabindex="-1"></a></span>
+<span id="cb495-12"><a href="8.1-data-input-output.html#cb495-12" tabindex="-1"></a>    <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.na</span>(user_input) <span class="sc">&amp;&amp;</span> user_input <span class="sc">==</span> <span class="dv">1</span>) {</span>
+<span id="cb495-13"><a href="8.1-data-input-output.html#cb495-13" tabindex="-1"></a>        <span class="cf">if</span> (<span class="fu">inherits</span>(df, <span class="fu">c</span>(<span class="st">&quot;data.frame&quot;</span>, <span class="st">&quot;tbl_df&quot;</span>, <span class="st">&quot;tbl&quot;</span>))) {</span>
+<span id="cb495-14"><a href="8.1-data-input-output.html#cb495-14" tabindex="-1"></a>            <span class="fu">write_csv</span>(df, f_name)</span>
+<span id="cb495-15"><a href="8.1-data-input-output.html#cb495-15" tabindex="-1"></a>        } <span class="cf">else</span> {</span>
+<span id="cb495-16"><a href="8.1-data-input-output.html#cb495-16" tabindex="-1"></a>            <span class="fu">log_to_file</span>(f_name, <span class="fu">cat</span>(df))</span>
+<span id="cb495-17"><a href="8.1-data-input-output.html#cb495-17" tabindex="-1"></a>        }</span>
+<span id="cb495-18"><a href="8.1-data-input-output.html#cb495-18" tabindex="-1"></a>        <span class="fu">message</span>(<span class="fu">glue</span>(<span class="st">&quot;✓ Dataset saved to: {f_name}&quot;</span>))</span>
+<span id="cb495-19"><a href="8.1-data-input-output.html#cb495-19" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb495-20"><a href="8.1-data-input-output.html#cb495-20" tabindex="-1"></a>        <span class="fu">message</span>(<span class="st">&quot;✗ Data not saved&quot;</span>)</span>
+<span id="cb495-21"><a href="8.1-data-input-output.html#cb495-21" tabindex="-1"></a>    }</span>
+<span id="cb495-22"><a href="8.1-data-input-output.html#cb495-22" tabindex="-1"></a>}</span>
+<span id="cb495-23"><a href="8.1-data-input-output.html#cb495-23" tabindex="-1"></a><span class="co"># csv files</span></span>
+<span id="cb495-24"><a href="8.1-data-input-output.html#cb495-24" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">year =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">20</span>, <span class="at">values =</span> letters[<span class="dv">1</span><span class="sc">:</span><span class="dv">20</span>])</span>
+<span id="cb495-25"><a href="8.1-data-input-output.html#cb495-25" tabindex="-1"></a>f_name <span class="ot">&lt;-</span> <span class="fu">here</span>(out_dir, <span class="st">&quot;my_table.csv&quot;</span>)</span>
+<span id="cb495-26"><a href="8.1-data-input-output.html#cb495-26" tabindex="-1"></a><span class="fu">save_with_prompt</span>(df, f_name)</span>
+<span id="cb495-27"><a href="8.1-data-input-output.html#cb495-27" tabindex="-1"></a></span>
+<span id="cb495-28"><a href="8.1-data-input-output.html#cb495-28" tabindex="-1"></a><span class="co"># txt files</span></span>
+<span id="cb495-29"><a href="8.1-data-input-output.html#cb495-29" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">glue</span>(<span class="st">&quot;</span></span>
+<span id="cb495-30"><a href="8.1-data-input-output.html#cb495-30" tabindex="-1"></a><span class="st">    === Data Description ===</span></span>
+<span id="cb495-31"><a href="8.1-data-input-output.html#cb495-31" tabindex="-1"></a><span class="st">    Period: {min(fundamental_complete$year)} – {max(fundamental_complete$year)}</span></span>
+<span id="cb495-32"><a href="8.1-data-input-output.html#cb495-32" tabindex="-1"></a><span class="st">    Firm-year observations: {nrow(fundamental_complete)}</span></span>
+<span id="cb495-33"><a href="8.1-data-input-output.html#cb495-33" tabindex="-1"></a><span class="st">    Unique firms: {n_distinct(fundamental_complete$fsym_id)}</span></span>
+<span id="cb495-34"><a href="8.1-data-input-output.html#cb495-34" tabindex="-1"></a><span class="st">    Missing market value: {sum(is.na(fundamental_complete$ff_mkt_val))}</span></span>
+<span id="cb495-35"><a href="8.1-data-input-output.html#cb495-35" tabindex="-1"></a><span class="st">    Missing Tobins Q (lagged): {sum(is.na(fundamental_complete$tobin_q_lag1))}</span></span>
+<span id="cb495-36"><a href="8.1-data-input-output.html#cb495-36" tabindex="-1"></a><span class="st">    Sectors ({n_distinct(fundamental_complete$l1_name)}): {paste(sort(unique(fundamental_complete$l1_name)), collapse = &#39;, &#39;)}</span></span>
+<span id="cb495-37"><a href="8.1-data-input-output.html#cb495-37" tabindex="-1"></a><span class="st">&quot;</span>)</span>
+<span id="cb495-38"><a href="8.1-data-input-output.html#cb495-38" tabindex="-1"></a>res</span>
+<span id="cb495-39"><a href="8.1-data-input-output.html#cb495-39" tabindex="-1"></a>f_name <span class="ot">&lt;-</span> <span class="fu">here</span>(out_dir, <span class="st">&quot;my_table.txt&quot;</span>)</span>
+<span id="cb495-40"><a href="8.1-data-input-output.html#cb495-40" tabindex="-1"></a><span class="fu">save_with_prompt</span>(res, f_name)</span></code></pre></div>
 </div>
 </div>
 </div>

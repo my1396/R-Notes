@@ -654,8 +654,8 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="8.8" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html"><i class="fa fa-check"></i><b>8.8</b> Data Frame Operations</a>
 <ul>
-<li class="chapter" data-level="" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#columnrow-wise-operations"><i class="fa fa-check"></i>Column/Row-wise Operations</a></li>
-<li class="chapter" data-level="8.8.1" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#process-na-values"><i class="fa fa-check"></i><b>8.8.1</b> <span class="env-green"><strong>Process <code>NA</code> values</strong></span></a></li>
+<li class="chapter" data-level="8.8.1" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#columnrow-wise-operations"><i class="fa fa-check"></i><b>8.8.1</b> Column/Row-wise Operations</a></li>
+<li class="chapter" data-level="8.8.2" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#process-na-values"><i class="fa fa-check"></i><b>8.8.2</b> <span class="env-green"><strong>Process <code>NA</code> values</strong></span></a></li>
 </ul></li>
 <li class="chapter" data-level="8.9" data-path="8.9-matrix-multiplication.html"><a href="8.9-matrix-multiplication.html"><i class="fa fa-check"></i><b>8.9</b> Matrix multiplication</a></li>
 <li class="chapter" data-level="8.10" data-path="8.10-string-operations.html"><a href="8.10-string-operations.html"><i class="fa fa-check"></i><b>8.10</b> String Operations</a></li>
@@ -868,17 +868,47 @@ function myFunction(id) {
   x.style.display = (x.style.display === 'none') ? 'block' : 'none';
 }
 
-// Auto-expand active top-level section so its level 2/3 items are visible
+// Auto-expand active section and keep all siblings within the same level 1 section open
 document.addEventListener('DOMContentLoaded', function() {
   try {
     var summary = document.querySelector('.book-summary ul.summary');
     if (!summary) return;
 
     function applyAutoOpen() {
-      // Clear previous
-      summary.querySelectorAll('li.chapter.auto-open').forEach(function(li){ li.classList.remove('auto-open'); });
+      // Find the active item (could be level 1, 2, or 3)
       var active = summary.querySelector('li.chapter.active');
-      if (active) active.classList.add('auto-open');
+      if (!active) return;
+      
+      // Find the top-level (level 1) chapter containing the active item
+      var topLevelChapter = active.closest('ul.summary > li.chapter');
+      if (!topLevelChapter) return;
+      
+      // Collapse all other top-level chapters
+      summary.querySelectorAll('ul.summary > li.chapter').forEach(function(chapter) {
+        if (chapter !== topLevelChapter) {
+          chapter.classList.remove('auto-open');
+          // Collapse all nested items in other chapters
+          chapter.querySelectorAll('li.chapter').forEach(function(nested) {
+            nested.classList.remove('auto-open');
+          });
+        }
+      });
+      
+      // Expand the active top-level chapter
+      topLevelChapter.classList.add('auto-open');
+      
+      // Expand ALL level 2 and level 3 items within this top-level chapter
+      topLevelChapter.querySelectorAll('li.chapter').forEach(function(nested) {
+        nested.classList.add('auto-open');
+      });
+      
+      // Scroll the active TOC item to the center of the TOC panel
+      setTimeout(function() {
+        var activeLink = active.querySelector('a');
+        if (activeLink) {
+          activeLink.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
     }
 
     applyAutoOpen();
@@ -894,14 +924,14 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-// Toggle collapse: clicking an expanded section collapses it
+// Toggle collapse: clicking level 1 heading expands/collapses all sublevels
 document.addEventListener('DOMContentLoaded', function() {
   try {
     var summary = document.querySelector('.book-summary ul.summary');
     if (!summary) return;
 
-    // Add click handlers to chapter links with children
-    summary.querySelectorAll('li.chapter').forEach(function(chapter) {
+    // Add click handlers only to top-level chapter links with children
+    summary.querySelectorAll('ul.summary > li.chapter').forEach(function(chapter) {
       var sublist = chapter.querySelector('ul');
       if (!sublist) return; // Only chapters with subsections
 
@@ -913,15 +943,28 @@ document.addEventListener('DOMContentLoaded', function() {
         var isExpanded = chapter.classList.contains('auto-open');
         
         if (isExpanded) {
-          // Collapse it
+          // Collapse it and all nested items
           e.preventDefault();
           chapter.classList.remove('auto-open');
+          // Also collapse all level 2 and level 3 items
+          chapter.querySelectorAll('li.chapter.auto-open').forEach(function(nested) {
+            nested.classList.remove('auto-open');
+          });
         } else {
-          // Expand it (remove auto-open from others first)
-          summary.querySelectorAll('li.chapter.auto-open').forEach(function(li) {
-            if (li !== chapter) li.classList.remove('auto-open');
+          // Expand it (collapse other top-level chapters first)
+          summary.querySelectorAll('ul.summary > li.chapter.auto-open').forEach(function(li) {
+            if (li !== chapter) {
+              li.classList.remove('auto-open');
+              li.querySelectorAll('li.chapter.auto-open').forEach(function(nested) {
+                nested.classList.remove('auto-open');
+              });
+            }
           });
           chapter.classList.add('auto-open');
+          // Expand all level 2 items within this chapter
+          chapter.querySelectorAll('ul > li.chapter').forEach(function(level2) {
+            level2.classList.add('auto-open');
+          });
         }
       });
     });
@@ -931,9 +974,26 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 <style>
-/* Show nested UL of active chapter when collapse=section */
-.book-summary ul.summary li.chapter.auto-open ul { display: block !important; }
-.book-summary ul.summary li.chapter.auto-open > a { font-weight: 700; }
+/* Show all nested UL of chapters marked as auto-open */
+.book-summary ul.summary li.chapter.auto-open > ul { 
+  display: block !important; 
+}
+
+/* Make parent level headings bold when expanded */
+.book-summary ul.summary li.chapter.auto-open > a { 
+  font-weight: 700; 
+}
+
+/* Highlight the actual active item with color and bold */
+.book-summary ul.summary li.chapter.active > a { 
+  font-weight: 700 !important;
+  color: #0078D4 !important;
+}
+
+/* Ensure proper indentation for nested levels */
+.book-summary ul.summary li.chapter ul li.chapter { 
+  padding-left: 0; 
+}
 </style>
 <div id="xaringan-presentation" class="section level1 hasAnchor" number="7">
 <h1><span class="header-section-number">Chapter 7</span> xaringan Presentation<a href="7-xaringan-presentation.html#xaringan-presentation" class="anchor-section" aria-label="Anchor link to header"></a></h1>
@@ -965,29 +1025,29 @@ I cannot agree more. 🤣</p>
 </ul>
 <p>When you decide to use <code>xaringan</code>, read tutorials <a href="https://bookdown.org/yihui/rmarkdown/xaringan.html">HERE</a>.</p>
 <p>To create a new xaringan presentation, you simply create a new R Markdown document and use the following YAML header:</p>
-<div class="sourceCode" id="cb447"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb447-1"><a href="7-xaringan-presentation.html#cb447-1" tabindex="-1"></a><span class="pp">---</span></span>
-<span id="cb447-2"><a href="7-xaringan-presentation.html#cb447-2" tabindex="-1"></a><span class="fu">title</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Presentation Ninja&quot;</span></span>
-<span id="cb447-3"><a href="7-xaringan-presentation.html#cb447-3" tabindex="-1"></a><span class="fu">subtitle</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;with xaringan&quot;</span></span>
-<span id="cb447-4"><a href="7-xaringan-presentation.html#cb447-4" tabindex="-1"></a><span class="fu">author</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Yihui Xie&quot;</span></span>
-<span id="cb447-5"><a href="7-xaringan-presentation.html#cb447-5" tabindex="-1"></a><span class="fu">date</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;2016/12/12&quot;</span></span>
-<span id="cb447-6"><a href="7-xaringan-presentation.html#cb447-6" tabindex="-1"></a><span class="fu">output</span><span class="kw">:</span></span>
-<span id="cb447-7"><a href="7-xaringan-presentation.html#cb447-7" tabindex="-1"></a><span class="at">  xaringan:</span><span class="fu">:moon_reader</span><span class="kw">:</span></span>
-<span id="cb447-8"><a href="7-xaringan-presentation.html#cb447-8" tabindex="-1"></a><span class="at">    </span><span class="fu">css</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="st">&quot;xaringan-themer.css&quot;</span><span class="kw">,</span><span class="at"> </span><span class="st">&quot;custom.css&quot;</span><span class="kw">]</span></span>
-<span id="cb447-9"><a href="7-xaringan-presentation.html#cb447-9" tabindex="-1"></a><span class="at">    </span><span class="fu">lib_dir</span><span class="kw">:</span><span class="at"> libs</span></span>
-<span id="cb447-10"><a href="7-xaringan-presentation.html#cb447-10" tabindex="-1"></a><span class="at">    </span><span class="fu">include</span><span class="kw">:</span></span>
-<span id="cb447-11"><a href="7-xaringan-presentation.html#cb447-11" tabindex="-1"></a><span class="at">      </span><span class="fu">in_header</span><span class="kw">:</span><span class="at"> libs/mathjax.html</span></span>
-<span id="cb447-12"><a href="7-xaringan-presentation.html#cb447-12" tabindex="-1"></a><span class="at">    </span><span class="fu">nature</span><span class="kw">:</span></span>
-<span id="cb447-13"><a href="7-xaringan-presentation.html#cb447-13" tabindex="-1"></a><span class="at">      </span><span class="fu">highlightStyle</span><span class="kw">:</span><span class="at"> github</span></span>
-<span id="cb447-14"><a href="7-xaringan-presentation.html#cb447-14" tabindex="-1"></a><span class="at">      </span><span class="fu">highlightLines</span><span class="kw">:</span><span class="at"> </span><span class="ch">yes</span></span>
-<span id="cb447-15"><a href="7-xaringan-presentation.html#cb447-15" tabindex="-1"></a><span class="at">      </span><span class="fu">countIncrementalSlides</span><span class="kw">:</span><span class="at"> </span><span class="ch">false</span></span>
-<span id="cb447-16"><a href="7-xaringan-presentation.html#cb447-16" tabindex="-1"></a><span class="at">      </span><span class="fu">ratio</span><span class="kw">:</span><span class="at"> </span><span class="st">&#39;16:9&#39;</span></span>
-<span id="cb447-17"><a href="7-xaringan-presentation.html#cb447-17" tabindex="-1"></a><span class="pp">---</span></span>
-<span id="cb447-18"><a href="7-xaringan-presentation.html#cb447-18" tabindex="-1"></a></span>
-<span id="cb447-19"><a href="7-xaringan-presentation.html#cb447-19" tabindex="-1"></a><span class="at">One slide.</span></span>
-<span id="cb447-20"><a href="7-xaringan-presentation.html#cb447-20" tabindex="-1"></a></span>
-<span id="cb447-21"><a href="7-xaringan-presentation.html#cb447-21" tabindex="-1"></a><span class="pp">---</span></span>
-<span id="cb447-22"><a href="7-xaringan-presentation.html#cb447-22" tabindex="-1"></a></span>
-<span id="cb447-23"><a href="7-xaringan-presentation.html#cb447-23" tabindex="-1"></a><span class="at">Another slide.</span></span></code></pre></div>
+<div class="sourceCode" id="cb449"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb449-1"><a href="7-xaringan-presentation.html#cb449-1" tabindex="-1"></a><span class="pp">---</span></span>
+<span id="cb449-2"><a href="7-xaringan-presentation.html#cb449-2" tabindex="-1"></a><span class="fu">title</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Presentation Ninja&quot;</span></span>
+<span id="cb449-3"><a href="7-xaringan-presentation.html#cb449-3" tabindex="-1"></a><span class="fu">subtitle</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;with xaringan&quot;</span></span>
+<span id="cb449-4"><a href="7-xaringan-presentation.html#cb449-4" tabindex="-1"></a><span class="fu">author</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Yihui Xie&quot;</span></span>
+<span id="cb449-5"><a href="7-xaringan-presentation.html#cb449-5" tabindex="-1"></a><span class="fu">date</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;2016/12/12&quot;</span></span>
+<span id="cb449-6"><a href="7-xaringan-presentation.html#cb449-6" tabindex="-1"></a><span class="fu">output</span><span class="kw">:</span></span>
+<span id="cb449-7"><a href="7-xaringan-presentation.html#cb449-7" tabindex="-1"></a><span class="at">  xaringan:</span><span class="fu">:moon_reader</span><span class="kw">:</span></span>
+<span id="cb449-8"><a href="7-xaringan-presentation.html#cb449-8" tabindex="-1"></a><span class="at">    </span><span class="fu">css</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="st">&quot;xaringan-themer.css&quot;</span><span class="kw">,</span><span class="at"> </span><span class="st">&quot;custom.css&quot;</span><span class="kw">]</span></span>
+<span id="cb449-9"><a href="7-xaringan-presentation.html#cb449-9" tabindex="-1"></a><span class="at">    </span><span class="fu">lib_dir</span><span class="kw">:</span><span class="at"> libs</span></span>
+<span id="cb449-10"><a href="7-xaringan-presentation.html#cb449-10" tabindex="-1"></a><span class="at">    </span><span class="fu">include</span><span class="kw">:</span></span>
+<span id="cb449-11"><a href="7-xaringan-presentation.html#cb449-11" tabindex="-1"></a><span class="at">      </span><span class="fu">in_header</span><span class="kw">:</span><span class="at"> libs/mathjax.html</span></span>
+<span id="cb449-12"><a href="7-xaringan-presentation.html#cb449-12" tabindex="-1"></a><span class="at">    </span><span class="fu">nature</span><span class="kw">:</span></span>
+<span id="cb449-13"><a href="7-xaringan-presentation.html#cb449-13" tabindex="-1"></a><span class="at">      </span><span class="fu">highlightStyle</span><span class="kw">:</span><span class="at"> github</span></span>
+<span id="cb449-14"><a href="7-xaringan-presentation.html#cb449-14" tabindex="-1"></a><span class="at">      </span><span class="fu">highlightLines</span><span class="kw">:</span><span class="at"> </span><span class="ch">yes</span></span>
+<span id="cb449-15"><a href="7-xaringan-presentation.html#cb449-15" tabindex="-1"></a><span class="at">      </span><span class="fu">countIncrementalSlides</span><span class="kw">:</span><span class="at"> </span><span class="ch">false</span></span>
+<span id="cb449-16"><a href="7-xaringan-presentation.html#cb449-16" tabindex="-1"></a><span class="at">      </span><span class="fu">ratio</span><span class="kw">:</span><span class="at"> </span><span class="st">&#39;16:9&#39;</span></span>
+<span id="cb449-17"><a href="7-xaringan-presentation.html#cb449-17" tabindex="-1"></a><span class="pp">---</span></span>
+<span id="cb449-18"><a href="7-xaringan-presentation.html#cb449-18" tabindex="-1"></a></span>
+<span id="cb449-19"><a href="7-xaringan-presentation.html#cb449-19" tabindex="-1"></a><span class="at">One slide.</span></span>
+<span id="cb449-20"><a href="7-xaringan-presentation.html#cb449-20" tabindex="-1"></a></span>
+<span id="cb449-21"><a href="7-xaringan-presentation.html#cb449-21" tabindex="-1"></a><span class="pp">---</span></span>
+<span id="cb449-22"><a href="7-xaringan-presentation.html#cb449-22" tabindex="-1"></a></span>
+<span id="cb449-23"><a href="7-xaringan-presentation.html#cb449-23" tabindex="-1"></a><span class="at">Another slide.</span></span></code></pre></div>
 <p><code>xaringan::moon_reader</code> is the main R Markdown output format in the <code>xaringan</code> package.</p>
 <p>See the R help page <code>?xaringan::moon_reader</code> for all possible configurations.</p>
 <p><strong>Configurations:</strong></p>
@@ -1005,17 +1065,17 @@ I cannot agree more. 🤣</p>
 <li><code>after_body</code>: Vector of file paths h to be included immediately before the closing <code>&lt;/body&gt;</code> tag.</li>
 </ul>
 <p>Include multiple files by passing a vector of file paths.</p>
-<div class="sourceCode" id="cb448"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb448-1"><a href="7-xaringan-presentation.html#cb448-1" tabindex="-1"></a><span class="fu">includes</span><span class="kw">:</span></span>
-<span id="cb448-2"><a href="7-xaringan-presentation.html#cb448-2" tabindex="-1"></a><span class="at">  </span><span class="fu">in_header</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="st">&quot;libs/mathjax.html&quot;</span><span class="kw">,</span><span class="at"> </span><span class="st">&quot;libs/in_header.html&quot;</span><span class="kw">]</span></span>
-<span id="cb448-3"><a href="7-xaringan-presentation.html#cb448-3" tabindex="-1"></a><span class="at">  </span><span class="fu">after_body</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="st">&quot;theme/example-numbering.html&quot;</span><span class="kw">,</span><span class="at"> </span><span class="st">&quot;libs/after_body.html&quot;</span><span class="kw">]</span></span></code></pre></div>
+<div class="sourceCode" id="cb450"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb450-1"><a href="7-xaringan-presentation.html#cb450-1" tabindex="-1"></a><span class="fu">includes</span><span class="kw">:</span></span>
+<span id="cb450-2"><a href="7-xaringan-presentation.html#cb450-2" tabindex="-1"></a><span class="at">  </span><span class="fu">in_header</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="st">&quot;libs/mathjax.html&quot;</span><span class="kw">,</span><span class="at"> </span><span class="st">&quot;libs/in_header.html&quot;</span><span class="kw">]</span></span>
+<span id="cb450-3"><a href="7-xaringan-presentation.html#cb450-3" tabindex="-1"></a><span class="at">  </span><span class="fu">after_body</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="st">&quot;theme/example-numbering.html&quot;</span><span class="kw">,</span><span class="at"> </span><span class="st">&quot;libs/after_body.html&quot;</span><span class="kw">]</span></span></code></pre></div>
 <p>Alternatively, use YAML list indentation with <code>-</code> for each file:</p>
-<div class="sourceCode" id="cb449"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb449-1"><a href="7-xaringan-presentation.html#cb449-1" tabindex="-1"></a><span class="fu">includes</span><span class="kw">:</span></span>
-<span id="cb449-2"><a href="7-xaringan-presentation.html#cb449-2" tabindex="-1"></a><span class="at">  </span><span class="fu">in_header</span><span class="kw">:</span><span class="at"> </span></span>
-<span id="cb449-3"><a href="7-xaringan-presentation.html#cb449-3" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> libs/mathjax.html</span></span>
-<span id="cb449-4"><a href="7-xaringan-presentation.html#cb449-4" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> libs/in_header.html</span></span>
-<span id="cb449-5"><a href="7-xaringan-presentation.html#cb449-5" tabindex="-1"></a><span class="at">  </span><span class="fu">after_body</span><span class="kw">:</span><span class="at"> </span></span>
-<span id="cb449-6"><a href="7-xaringan-presentation.html#cb449-6" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> theme/example-numbering.html</span></span>
-<span id="cb449-7"><a href="7-xaringan-presentation.html#cb449-7" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> libs/after_body.html</span></span></code></pre></div>
+<div class="sourceCode" id="cb451"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb451-1"><a href="7-xaringan-presentation.html#cb451-1" tabindex="-1"></a><span class="fu">includes</span><span class="kw">:</span></span>
+<span id="cb451-2"><a href="7-xaringan-presentation.html#cb451-2" tabindex="-1"></a><span class="at">  </span><span class="fu">in_header</span><span class="kw">:</span><span class="at"> </span></span>
+<span id="cb451-3"><a href="7-xaringan-presentation.html#cb451-3" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> libs/mathjax.html</span></span>
+<span id="cb451-4"><a href="7-xaringan-presentation.html#cb451-4" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> libs/in_header.html</span></span>
+<span id="cb451-5"><a href="7-xaringan-presentation.html#cb451-5" tabindex="-1"></a><span class="at">  </span><span class="fu">after_body</span><span class="kw">:</span><span class="at"> </span></span>
+<span id="cb451-6"><a href="7-xaringan-presentation.html#cb451-6" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> theme/example-numbering.html</span></span>
+<span id="cb451-7"><a href="7-xaringan-presentation.html#cb451-7" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> libs/after_body.html</span></span></code></pre></div>
 <p>Each list item is treated as a separate file path.</p>
 <p>ref: <a href="https://stackoverflow.com/a/45261469" class="uri">https://stackoverflow.com/a/45261469</a></p></li>
 <li><p><code>nature</code>: (Nature transformation) A list of configurations to be passed to <code>remark.create()</code>, e.g. <code>list(ratio = '16:9', navigation = list(click = TRUE))</code>.</p>

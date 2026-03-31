@@ -654,8 +654,8 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="8.8" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html"><i class="fa fa-check"></i><b>8.8</b> Data Frame Operations</a>
 <ul>
-<li class="chapter" data-level="" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#columnrow-wise-operations"><i class="fa fa-check"></i>Column/Row-wise Operations</a></li>
-<li class="chapter" data-level="8.8.1" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#process-na-values"><i class="fa fa-check"></i><b>8.8.1</b> <span class="env-green"><strong>Process <code>NA</code> values</strong></span></a></li>
+<li class="chapter" data-level="8.8.1" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#columnrow-wise-operations"><i class="fa fa-check"></i><b>8.8.1</b> Column/Row-wise Operations</a></li>
+<li class="chapter" data-level="8.8.2" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#process-na-values"><i class="fa fa-check"></i><b>8.8.2</b> <span class="env-green"><strong>Process <code>NA</code> values</strong></span></a></li>
 </ul></li>
 <li class="chapter" data-level="8.9" data-path="8.9-matrix-multiplication.html"><a href="8.9-matrix-multiplication.html"><i class="fa fa-check"></i><b>8.9</b> Matrix multiplication</a></li>
 <li class="chapter" data-level="8.10" data-path="8.10-string-operations.html"><a href="8.10-string-operations.html"><i class="fa fa-check"></i><b>8.10</b> String Operations</a></li>
@@ -868,17 +868,47 @@ function myFunction(id) {
   x.style.display = (x.style.display === 'none') ? 'block' : 'none';
 }
 
-// Auto-expand active top-level section so its level 2/3 items are visible
+// Auto-expand active section and keep all siblings within the same level 1 section open
 document.addEventListener('DOMContentLoaded', function() {
   try {
     var summary = document.querySelector('.book-summary ul.summary');
     if (!summary) return;
 
     function applyAutoOpen() {
-      // Clear previous
-      summary.querySelectorAll('li.chapter.auto-open').forEach(function(li){ li.classList.remove('auto-open'); });
+      // Find the active item (could be level 1, 2, or 3)
       var active = summary.querySelector('li.chapter.active');
-      if (active) active.classList.add('auto-open');
+      if (!active) return;
+      
+      // Find the top-level (level 1) chapter containing the active item
+      var topLevelChapter = active.closest('ul.summary > li.chapter');
+      if (!topLevelChapter) return;
+      
+      // Collapse all other top-level chapters
+      summary.querySelectorAll('ul.summary > li.chapter').forEach(function(chapter) {
+        if (chapter !== topLevelChapter) {
+          chapter.classList.remove('auto-open');
+          // Collapse all nested items in other chapters
+          chapter.querySelectorAll('li.chapter').forEach(function(nested) {
+            nested.classList.remove('auto-open');
+          });
+        }
+      });
+      
+      // Expand the active top-level chapter
+      topLevelChapter.classList.add('auto-open');
+      
+      // Expand ALL level 2 and level 3 items within this top-level chapter
+      topLevelChapter.querySelectorAll('li.chapter').forEach(function(nested) {
+        nested.classList.add('auto-open');
+      });
+      
+      // Scroll the active TOC item to the center of the TOC panel
+      setTimeout(function() {
+        var activeLink = active.querySelector('a');
+        if (activeLink) {
+          activeLink.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
     }
 
     applyAutoOpen();
@@ -894,14 +924,14 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-// Toggle collapse: clicking an expanded section collapses it
+// Toggle collapse: clicking level 1 heading expands/collapses all sublevels
 document.addEventListener('DOMContentLoaded', function() {
   try {
     var summary = document.querySelector('.book-summary ul.summary');
     if (!summary) return;
 
-    // Add click handlers to chapter links with children
-    summary.querySelectorAll('li.chapter').forEach(function(chapter) {
+    // Add click handlers only to top-level chapter links with children
+    summary.querySelectorAll('ul.summary > li.chapter').forEach(function(chapter) {
       var sublist = chapter.querySelector('ul');
       if (!sublist) return; // Only chapters with subsections
 
@@ -913,15 +943,28 @@ document.addEventListener('DOMContentLoaded', function() {
         var isExpanded = chapter.classList.contains('auto-open');
         
         if (isExpanded) {
-          // Collapse it
+          // Collapse it and all nested items
           e.preventDefault();
           chapter.classList.remove('auto-open');
+          // Also collapse all level 2 and level 3 items
+          chapter.querySelectorAll('li.chapter.auto-open').forEach(function(nested) {
+            nested.classList.remove('auto-open');
+          });
         } else {
-          // Expand it (remove auto-open from others first)
-          summary.querySelectorAll('li.chapter.auto-open').forEach(function(li) {
-            if (li !== chapter) li.classList.remove('auto-open');
+          // Expand it (collapse other top-level chapters first)
+          summary.querySelectorAll('ul.summary > li.chapter.auto-open').forEach(function(li) {
+            if (li !== chapter) {
+              li.classList.remove('auto-open');
+              li.querySelectorAll('li.chapter.auto-open').forEach(function(nested) {
+                nested.classList.remove('auto-open');
+              });
+            }
           });
           chapter.classList.add('auto-open');
+          // Expand all level 2 items within this chapter
+          chapter.querySelectorAll('ul > li.chapter').forEach(function(level2) {
+            level2.classList.add('auto-open');
+          });
         }
       });
     });
@@ -931,9 +974,26 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 <style>
-/* Show nested UL of active chapter when collapse=section */
-.book-summary ul.summary li.chapter.auto-open ul { display: block !important; }
-.book-summary ul.summary li.chapter.auto-open > a { font-weight: 700; }
+/* Show all nested UL of chapters marked as auto-open */
+.book-summary ul.summary li.chapter.auto-open > ul { 
+  display: block !important; 
+}
+
+/* Make parent level headings bold when expanded */
+.book-summary ul.summary li.chapter.auto-open > a { 
+  font-weight: 700; 
+}
+
+/* Highlight the actual active item with color and bold */
+.book-summary ul.summary li.chapter.active > a { 
+  font-weight: 700 !important;
+  color: #0078D4 !important;
+}
+
+/* Ensure proper indentation for nested levels */
+.book-summary ul.summary li.chapter ul li.chapter { 
+  padding-left: 0; 
+}
 </style>
 <div id="extensions-1" class="section level2 hasAnchor" number="6.10">
 <h2><span class="header-section-number">6.10</span> Extensions<a href="6.10-extensions-1.html#extensions-1" class="anchor-section" aria-label="Anchor link to header"></a></h2>
@@ -963,31 +1023,31 @@ document.addEventListener('DOMContentLoaded', function() {
 <p><strong>Use example</strong></p>
 <ol style="list-style-type: decimal">
 <li><p>In the yaml header of your <code>qmd</code> file, add the following line to reference the local filter:</p>
-<div class="sourceCode" id="cb388"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb388-1"><a href="6.10-extensions-1.html#cb388-1" tabindex="-1"></a><span class="pp">---</span></span>
-<span id="cb388-2"><a href="6.10-extensions-1.html#cb388-2" tabindex="-1"></a><span class="fu">title</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Quiz: Linear Regression and Hypothesis Testing (p2)&quot;</span></span>
-<span id="cb388-3"><a href="6.10-extensions-1.html#cb388-3" tabindex="-1"></a><span class="fu">from</span><span class="kw">:</span><span class="at"> markdown+tex_math_single_backslash</span></span>
-<span id="cb388-4"><a href="6.10-extensions-1.html#cb388-4" tabindex="-1"></a><span class="fu">params</span><span class="kw">:</span></span>
-<span id="cb388-5"><a href="6.10-extensions-1.html#cb388-5" tabindex="-1"></a><span class="co">  # solution: false</span></span>
-<span id="cb388-6"><a href="6.10-extensions-1.html#cb388-6" tabindex="-1"></a><span class="at">  </span><span class="fu">solution</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
-<span id="cb388-7"><a href="6.10-extensions-1.html#cb388-7" tabindex="-1"></a><span class="fu">filters</span><span class="kw">:</span></span>
-<span id="cb388-8"><a href="6.10-extensions-1.html#cb388-8" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> _extensions/color-text/color-text.lua</span></span>
-<span id="cb388-9"><a href="6.10-extensions-1.html#cb388-9" tabindex="-1"></a><span class="fu">format</span><span class="kw">:</span></span>
-<span id="cb388-10"><a href="6.10-extensions-1.html#cb388-10" tabindex="-1"></a><span class="at">  </span><span class="fu">pdf</span><span class="kw">:</span></span>
-<span id="cb388-11"><a href="6.10-extensions-1.html#cb388-11" tabindex="-1"></a><span class="at">    </span><span class="fu">include-in-header</span><span class="kw">:</span><span class="at"> ../latex/preamble.tex</span></span>
-<span id="cb388-12"><a href="6.10-extensions-1.html#cb388-12" tabindex="-1"></a><span class="at">    </span><span class="fu">fontsize</span><span class="kw">:</span><span class="at"> 12pt</span></span>
-<span id="cb388-13"><a href="6.10-extensions-1.html#cb388-13" tabindex="-1"></a><span class="pp">---</span></span></code></pre></div></li>
+<div class="sourceCode" id="cb390"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb390-1"><a href="6.10-extensions-1.html#cb390-1" tabindex="-1"></a><span class="pp">---</span></span>
+<span id="cb390-2"><a href="6.10-extensions-1.html#cb390-2" tabindex="-1"></a><span class="fu">title</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Quiz: Linear Regression and Hypothesis Testing (p2)&quot;</span></span>
+<span id="cb390-3"><a href="6.10-extensions-1.html#cb390-3" tabindex="-1"></a><span class="fu">from</span><span class="kw">:</span><span class="at"> markdown+tex_math_single_backslash</span></span>
+<span id="cb390-4"><a href="6.10-extensions-1.html#cb390-4" tabindex="-1"></a><span class="fu">params</span><span class="kw">:</span></span>
+<span id="cb390-5"><a href="6.10-extensions-1.html#cb390-5" tabindex="-1"></a><span class="co">  # solution: false</span></span>
+<span id="cb390-6"><a href="6.10-extensions-1.html#cb390-6" tabindex="-1"></a><span class="at">  </span><span class="fu">solution</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb390-7"><a href="6.10-extensions-1.html#cb390-7" tabindex="-1"></a><span class="fu">filters</span><span class="kw">:</span></span>
+<span id="cb390-8"><a href="6.10-extensions-1.html#cb390-8" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> _extensions/color-text/color-text.lua</span></span>
+<span id="cb390-9"><a href="6.10-extensions-1.html#cb390-9" tabindex="-1"></a><span class="fu">format</span><span class="kw">:</span></span>
+<span id="cb390-10"><a href="6.10-extensions-1.html#cb390-10" tabindex="-1"></a><span class="at">  </span><span class="fu">pdf</span><span class="kw">:</span></span>
+<span id="cb390-11"><a href="6.10-extensions-1.html#cb390-11" tabindex="-1"></a><span class="at">    </span><span class="fu">include-in-header</span><span class="kw">:</span><span class="at"> ../latex/preamble.tex</span></span>
+<span id="cb390-12"><a href="6.10-extensions-1.html#cb390-12" tabindex="-1"></a><span class="at">    </span><span class="fu">fontsize</span><span class="kw">:</span><span class="at"> 12pt</span></span>
+<span id="cb390-13"><a href="6.10-extensions-1.html#cb390-13" tabindex="-1"></a><span class="pp">---</span></span></code></pre></div></li>
 <li><p>Use the <code>.blue</code> class in your markdown content:</p>
-<div class="sourceCode" id="cb389"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb389-1"><a href="6.10-extensions-1.html#cb389-1" tabindex="-1"></a>::: {.content-visible when-meta=&quot;params.solution&quot;}</span>
-<span id="cb389-2"><a href="6.10-extensions-1.html#cb389-2" tabindex="-1"></a>::: {.blue}</span>
-<span id="cb389-3"><a href="6.10-extensions-1.html#cb389-3" tabindex="-1"></a>**Solutions**</span>
-<span id="cb389-4"><a href="6.10-extensions-1.html#cb389-4" tabindex="-1"></a>(a) The 95% confidence interval for $\beta_1$ is given by</span>
-<span id="cb389-5"><a href="6.10-extensions-1.html#cb389-5" tabindex="-1"></a>  $$</span>
-<span id="cb389-6"><a href="6.10-extensions-1.html#cb389-6" tabindex="-1"></a>  \hat{\beta}_1 \pm t_{0.975, n-2} \cdot SE(\hat{\beta}_1)</span>
-<span id="cb389-7"><a href="6.10-extensions-1.html#cb389-7" tabindex="-1"></a>  $$</span>
-<span id="cb389-8"><a href="6.10-extensions-1.html#cb389-8" tabindex="-1"></a>  Degrees of freedom: $df = n-2 = 50-2 = 48$</span>
-<span id="cb389-9"><a href="6.10-extensions-1.html#cb389-9" tabindex="-1"></a>(b)</span>
-<span id="cb389-10"><a href="6.10-extensions-1.html#cb389-10" tabindex="-1"></a>:::</span>
-<span id="cb389-11"><a href="6.10-extensions-1.html#cb389-11" tabindex="-1"></a>:::</span></code></pre></div></li>
+<div class="sourceCode" id="cb391"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb391-1"><a href="6.10-extensions-1.html#cb391-1" tabindex="-1"></a>::: {.content-visible when-meta=&quot;params.solution&quot;}</span>
+<span id="cb391-2"><a href="6.10-extensions-1.html#cb391-2" tabindex="-1"></a>::: {.blue}</span>
+<span id="cb391-3"><a href="6.10-extensions-1.html#cb391-3" tabindex="-1"></a>**Solutions**</span>
+<span id="cb391-4"><a href="6.10-extensions-1.html#cb391-4" tabindex="-1"></a>(a) The 95% confidence interval for $\beta_1$ is given by</span>
+<span id="cb391-5"><a href="6.10-extensions-1.html#cb391-5" tabindex="-1"></a>  $$</span>
+<span id="cb391-6"><a href="6.10-extensions-1.html#cb391-6" tabindex="-1"></a>  \hat{\beta}_1 \pm t_{0.975, n-2} \cdot SE(\hat{\beta}_1)</span>
+<span id="cb391-7"><a href="6.10-extensions-1.html#cb391-7" tabindex="-1"></a>  $$</span>
+<span id="cb391-8"><a href="6.10-extensions-1.html#cb391-8" tabindex="-1"></a>  Degrees of freedom: $df = n-2 = 50-2 = 48$</span>
+<span id="cb391-9"><a href="6.10-extensions-1.html#cb391-9" tabindex="-1"></a>(b)</span>
+<span id="cb391-10"><a href="6.10-extensions-1.html#cb391-10" tabindex="-1"></a>:::</span>
+<span id="cb391-11"><a href="6.10-extensions-1.html#cb391-11" tabindex="-1"></a>:::</span></code></pre></div></li>
 </ol>
 <ul>
 <li><a href="https://m.canouil.dev/quarto-highlight-text/">Highlight-text Quarto Extension</a></li>
@@ -996,10 +1056,10 @@ document.addEventListener('DOMContentLoaded', function() {
 <div id="emoji" class="section level3 hasAnchor" number="6.10.2">
 <h3><span class="header-section-number">6.10.2</span> Emoji<a href="6.10-extensions-1.html#emoji" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>In the yaml, add the <code>emoji</code> extension to the <code>from</code> option in document metadata.</p>
-<div class="sourceCode" id="cb390"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb390-1"><a href="6.10-extensions-1.html#cb390-1" tabindex="-1"></a><span class="pp">---</span></span>
-<span id="cb390-2"><a href="6.10-extensions-1.html#cb390-2" tabindex="-1"></a><span class="fu">title</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;My Document&quot;</span></span>
-<span id="cb390-3"><a href="6.10-extensions-1.html#cb390-3" tabindex="-1"></a><span class="fu">from</span><span class="kw">:</span><span class="at"> markdown+emoji</span></span>
-<span id="cb390-4"><a href="6.10-extensions-1.html#cb390-4" tabindex="-1"></a><span class="pp">---</span></span></code></pre></div>
+<div class="sourceCode" id="cb392"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb392-1"><a href="6.10-extensions-1.html#cb392-1" tabindex="-1"></a><span class="pp">---</span></span>
+<span id="cb392-2"><a href="6.10-extensions-1.html#cb392-2" tabindex="-1"></a><span class="fu">title</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;My Document&quot;</span></span>
+<span id="cb392-3"><a href="6.10-extensions-1.html#cb392-3" tabindex="-1"></a><span class="fu">from</span><span class="kw">:</span><span class="at"> markdown+emoji</span></span>
+<span id="cb392-4"><a href="6.10-extensions-1.html#cb392-4" tabindex="-1"></a><span class="pp">---</span></span></code></pre></div>
 <p>For markdown formats that support text representations of emojis 😁 (e.g. <code>:grinning:</code>), the text version will be written. For other formats the literal emoji character will be written. Currently, the <a href="https://quarto.org/docs/output-formats/gfm.html">gfm</a> and <a href="https://quarto.org/docs/output-formats/hugo.html">hugo</a> (with <code>enableEmoji = true</code> in the site config) formats both support text representation of emojis.</p>
 <p>Note: This does <span class="env-orange"><strong>NOT</strong></span> work for quarto pdf. Use the <code>twemoji</code> approach instead. See below.</p>
 <hr />
@@ -1011,26 +1071,26 @@ document.addEventListener('DOMContentLoaded', function() {
 <li>Example: <code>"1f44d": ["👍", ":thumbsup:"]</code></li>
 </ul>
 <p>How to find the code points of an emoji:</p>
-<div class="sourceCode" id="cb391"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb391-1"><a href="6.10-extensions-1.html#cb391-1" tabindex="-1"></a><span class="ex">node</span> <span class="at">-e</span> <span class="st">&#39;const s=process.argv[1]; const codes=[...s].map(ch=&gt;ch.codePointAt(0).toString(16)); console.log(codes.join(&quot;-&quot;))&#39;</span> <span class="st">&#39;⚠️&#39;</span></span>
-<span id="cb391-2"><a href="6.10-extensions-1.html#cb391-2" tabindex="-1"></a><span class="co"># Prints: 26a0-fe0f  → Twemoji file: assets/72x72/26a0-fe0f.png (often 26a0.png also exists)</span></span></code></pre></div></li>
+<div class="sourceCode" id="cb393"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb393-1"><a href="6.10-extensions-1.html#cb393-1" tabindex="-1"></a><span class="ex">node</span> <span class="at">-e</span> <span class="st">&#39;const s=process.argv[1]; const codes=[...s].map(ch=&gt;ch.codePointAt(0).toString(16)); console.log(codes.join(&quot;-&quot;))&#39;</span> <span class="st">&#39;⚠️&#39;</span></span>
+<span id="cb393-2"><a href="6.10-extensions-1.html#cb393-2" tabindex="-1"></a><span class="co"># Prints: 26a0-fe0f  → Twemoji file: assets/72x72/26a0-fe0f.png (often 26a0.png also exists)</span></span></code></pre></div></li>
 <li><p>Run the fetcher again:</p>
 <ul>
 <li><a href="vscode-file://vscode-app/Applications/Visual%20Studio%20Code.app/Contents/Resources/app/out/vs/code/electron-browser/workbench/workbench.html">fetch_twemoji.sh</a></li>
 </ul>
 <p>Within the project directory:</p>
-<div class="sourceCode" id="cb392"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb392-1"><a href="6.10-extensions-1.html#cb392-1" tabindex="-1"></a><span class="ex">$./emoji/fetch_twemoji.sh</span></span></code></pre></div>
+<div class="sourceCode" id="cb394"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb394-1"><a href="6.10-extensions-1.html#cb394-1" tabindex="-1"></a><span class="ex">$./emoji/fetch_twemoji.sh</span></span></code></pre></div>
 <p>From anywhere:</p>
-<div class="sourceCode" id="cb393"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb393-1"><a href="6.10-extensions-1.html#cb393-1" tabindex="-1"></a><span class="st">$&#39;/Users/menghan/Documents/language/norsk/norskprøver/B2/exam notes/emoji/fetch_twemoji.sh&#39;</span></span>
-<span id="cb393-2"><a href="6.10-extensions-1.html#cb393-2" tabindex="-1"></a><span class="ex">Exists:</span> 1f4a1.png</span>
-<span id="cb393-3"><a href="6.10-extensions-1.html#cb393-3" tabindex="-1"></a><span class="ex">Exists:</span> 1f4c8.png</span>
-<span id="cb393-4"><a href="6.10-extensions-1.html#cb393-4" tabindex="-1"></a><span class="ex">Exists:</span> 1f4dd.png</span>
-<span id="cb393-5"><a href="6.10-extensions-1.html#cb393-5" tabindex="-1"></a><span class="ex">Exists:</span> 1f539.png</span>
-<span id="cb393-6"><a href="6.10-extensions-1.html#cb393-6" tabindex="-1"></a><span class="ex">Exists:</span> 1f600.png</span>
-<span id="cb393-7"><a href="6.10-extensions-1.html#cb393-7" tabindex="-1"></a><span class="ex">Exists:</span> 1f604.png</span>
-<span id="cb393-8"><a href="6.10-extensions-1.html#cb393-8" tabindex="-1"></a><span class="ex">Exists:</span> 1f680.png</span>
-<span id="cb393-9"><a href="6.10-extensions-1.html#cb393-9" tabindex="-1"></a><span class="ex">Exists:</span> 26a0.png</span>
-<span id="cb393-10"><a href="6.10-extensions-1.html#cb393-10" tabindex="-1"></a><span class="ex">Downloading:</span> 2705.png</span>
-<span id="cb393-11"><a href="6.10-extensions-1.html#cb393-11" tabindex="-1"></a><span class="ex">Done.</span> Files saved in ~/Documents/language/norsk/norskprøver/B2/exam notes/emoji. Map to filter names as needed <span class="er">(</span><span class="ex">already</span> matching<span class="kw">)</span><span class="bu">.</span></span></code></pre></div>
+<div class="sourceCode" id="cb395"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb395-1"><a href="6.10-extensions-1.html#cb395-1" tabindex="-1"></a><span class="st">$&#39;/Users/menghan/Documents/language/norsk/norskprøver/B2/exam notes/emoji/fetch_twemoji.sh&#39;</span></span>
+<span id="cb395-2"><a href="6.10-extensions-1.html#cb395-2" tabindex="-1"></a><span class="ex">Exists:</span> 1f4a1.png</span>
+<span id="cb395-3"><a href="6.10-extensions-1.html#cb395-3" tabindex="-1"></a><span class="ex">Exists:</span> 1f4c8.png</span>
+<span id="cb395-4"><a href="6.10-extensions-1.html#cb395-4" tabindex="-1"></a><span class="ex">Exists:</span> 1f4dd.png</span>
+<span id="cb395-5"><a href="6.10-extensions-1.html#cb395-5" tabindex="-1"></a><span class="ex">Exists:</span> 1f539.png</span>
+<span id="cb395-6"><a href="6.10-extensions-1.html#cb395-6" tabindex="-1"></a><span class="ex">Exists:</span> 1f600.png</span>
+<span id="cb395-7"><a href="6.10-extensions-1.html#cb395-7" tabindex="-1"></a><span class="ex">Exists:</span> 1f604.png</span>
+<span id="cb395-8"><a href="6.10-extensions-1.html#cb395-8" tabindex="-1"></a><span class="ex">Exists:</span> 1f680.png</span>
+<span id="cb395-9"><a href="6.10-extensions-1.html#cb395-9" tabindex="-1"></a><span class="ex">Exists:</span> 26a0.png</span>
+<span id="cb395-10"><a href="6.10-extensions-1.html#cb395-10" tabindex="-1"></a><span class="ex">Downloading:</span> 2705.png</span>
+<span id="cb395-11"><a href="6.10-extensions-1.html#cb395-11" tabindex="-1"></a><span class="ex">Done.</span> Files saved in ~/Documents/language/norsk/norskprøver/B2/exam notes/emoji. Map to filter names as needed <span class="er">(</span><span class="ex">already</span> matching<span class="kw">)</span><span class="bu">.</span></span></code></pre></div>
 <p>The script downloads only missing PNGs. If you add more codes to <code>twemoji_manifest.json</code>, just run it again.</p>
 <p>To refresh files, delete specific PNGs (or all) in emoji and rerun.</p></li>
 <li><p>Add to <code>unicode_map</code> in <code>emoji.lua</code> to point to the same filename.</p>

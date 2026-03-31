@@ -654,8 +654,8 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="8.8" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html"><i class="fa fa-check"></i><b>8.8</b> Data Frame Operations</a>
 <ul>
-<li class="chapter" data-level="" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#columnrow-wise-operations"><i class="fa fa-check"></i>Column/Row-wise Operations</a></li>
-<li class="chapter" data-level="8.8.1" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#process-na-values"><i class="fa fa-check"></i><b>8.8.1</b> <span class="env-green"><strong>Process <code>NA</code> values</strong></span></a></li>
+<li class="chapter" data-level="8.8.1" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#columnrow-wise-operations"><i class="fa fa-check"></i><b>8.8.1</b> Column/Row-wise Operations</a></li>
+<li class="chapter" data-level="8.8.2" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#process-na-values"><i class="fa fa-check"></i><b>8.8.2</b> <span class="env-green"><strong>Process <code>NA</code> values</strong></span></a></li>
 </ul></li>
 <li class="chapter" data-level="8.9" data-path="8.9-matrix-multiplication.html"><a href="8.9-matrix-multiplication.html"><i class="fa fa-check"></i><b>8.9</b> Matrix multiplication</a></li>
 <li class="chapter" data-level="8.10" data-path="8.10-string-operations.html"><a href="8.10-string-operations.html"><i class="fa fa-check"></i><b>8.10</b> String Operations</a></li>
@@ -868,17 +868,47 @@ function myFunction(id) {
   x.style.display = (x.style.display === 'none') ? 'block' : 'none';
 }
 
-// Auto-expand active top-level section so its level 2/3 items are visible
+// Auto-expand active section and keep all siblings within the same level 1 section open
 document.addEventListener('DOMContentLoaded', function() {
   try {
     var summary = document.querySelector('.book-summary ul.summary');
     if (!summary) return;
 
     function applyAutoOpen() {
-      // Clear previous
-      summary.querySelectorAll('li.chapter.auto-open').forEach(function(li){ li.classList.remove('auto-open'); });
+      // Find the active item (could be level 1, 2, or 3)
       var active = summary.querySelector('li.chapter.active');
-      if (active) active.classList.add('auto-open');
+      if (!active) return;
+      
+      // Find the top-level (level 1) chapter containing the active item
+      var topLevelChapter = active.closest('ul.summary > li.chapter');
+      if (!topLevelChapter) return;
+      
+      // Collapse all other top-level chapters
+      summary.querySelectorAll('ul.summary > li.chapter').forEach(function(chapter) {
+        if (chapter !== topLevelChapter) {
+          chapter.classList.remove('auto-open');
+          // Collapse all nested items in other chapters
+          chapter.querySelectorAll('li.chapter').forEach(function(nested) {
+            nested.classList.remove('auto-open');
+          });
+        }
+      });
+      
+      // Expand the active top-level chapter
+      topLevelChapter.classList.add('auto-open');
+      
+      // Expand ALL level 2 and level 3 items within this top-level chapter
+      topLevelChapter.querySelectorAll('li.chapter').forEach(function(nested) {
+        nested.classList.add('auto-open');
+      });
+      
+      // Scroll the active TOC item to the center of the TOC panel
+      setTimeout(function() {
+        var activeLink = active.querySelector('a');
+        if (activeLink) {
+          activeLink.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
     }
 
     applyAutoOpen();
@@ -894,14 +924,14 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-// Toggle collapse: clicking an expanded section collapses it
+// Toggle collapse: clicking level 1 heading expands/collapses all sublevels
 document.addEventListener('DOMContentLoaded', function() {
   try {
     var summary = document.querySelector('.book-summary ul.summary');
     if (!summary) return;
 
-    // Add click handlers to chapter links with children
-    summary.querySelectorAll('li.chapter').forEach(function(chapter) {
+    // Add click handlers only to top-level chapter links with children
+    summary.querySelectorAll('ul.summary > li.chapter').forEach(function(chapter) {
       var sublist = chapter.querySelector('ul');
       if (!sublist) return; // Only chapters with subsections
 
@@ -913,15 +943,28 @@ document.addEventListener('DOMContentLoaded', function() {
         var isExpanded = chapter.classList.contains('auto-open');
         
         if (isExpanded) {
-          // Collapse it
+          // Collapse it and all nested items
           e.preventDefault();
           chapter.classList.remove('auto-open');
+          // Also collapse all level 2 and level 3 items
+          chapter.querySelectorAll('li.chapter.auto-open').forEach(function(nested) {
+            nested.classList.remove('auto-open');
+          });
         } else {
-          // Expand it (remove auto-open from others first)
-          summary.querySelectorAll('li.chapter.auto-open').forEach(function(li) {
-            if (li !== chapter) li.classList.remove('auto-open');
+          // Expand it (collapse other top-level chapters first)
+          summary.querySelectorAll('ul.summary > li.chapter.auto-open').forEach(function(li) {
+            if (li !== chapter) {
+              li.classList.remove('auto-open');
+              li.querySelectorAll('li.chapter.auto-open').forEach(function(nested) {
+                nested.classList.remove('auto-open');
+              });
+            }
           });
           chapter.classList.add('auto-open');
+          // Expand all level 2 items within this chapter
+          chapter.querySelectorAll('ul > li.chapter').forEach(function(level2) {
+            level2.classList.add('auto-open');
+          });
         }
       });
     });
@@ -931,21 +974,38 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 <style>
-/* Show nested UL of active chapter when collapse=section */
-.book-summary ul.summary li.chapter.auto-open ul { display: block !important; }
-.book-summary ul.summary li.chapter.auto-open > a { font-weight: 700; }
+/* Show all nested UL of chapters marked as auto-open */
+.book-summary ul.summary li.chapter.auto-open > ul { 
+  display: block !important; 
+}
+
+/* Make parent level headings bold when expanded */
+.book-summary ul.summary li.chapter.auto-open > a { 
+  font-weight: 700; 
+}
+
+/* Highlight the actual active item with color and bold */
+.book-summary ul.summary li.chapter.active > a { 
+  font-weight: 700 !important;
+  color: #0078D4 !important;
+}
+
+/* Ensure proper indentation for nested levels */
+.book-summary ul.summary li.chapter ul li.chapter { 
+  padding-left: 0; 
+}
 </style>
 <div id="regression" class="section level1 hasAnchor" number="12">
 <h1><span class="header-section-number">Chapter 12</span> Regression<a href="12-regression.html#regression" class="anchor-section" aria-label="Anchor link to header"></a></h1>
 <p>Use example:</p>
-<div class="sourceCode" id="cb882"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb882-1"><a href="12-regression.html#cb882-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb882-2"><a href="12-regression.html#cb882-2" tabindex="-1"></a>reg_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;https://raw.githubusercontent.com/my1396/course_dataset/refs/heads/main/META_monthly_factor_model_2014-2024.csv&quot;</span>)</span>
-<span id="cb882-3"><a href="12-regression.html#cb882-3" tabindex="-1"></a>reg_data <span class="ot">&lt;-</span> reg_data <span class="sc">%&gt;%</span> </span>
-<span id="cb882-4"><a href="12-regression.html#cb882-4" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">return =</span> adjusted<span class="sc">/</span><span class="fu">lag</span>(adjusted)<span class="sc">-</span><span class="dv">1</span>,</span>
-<span id="cb882-5"><a href="12-regression.html#cb882-5" tabindex="-1"></a>           <span class="at">eRi =</span> return<span class="sc">-</span>RF)</span>
-<span id="cb882-6"><a href="12-regression.html#cb882-6" tabindex="-1"></a><span class="do">## CAPM</span></span>
-<span id="cb882-7"><a href="12-regression.html#cb882-7" tabindex="-1"></a>capm_ml <span class="ot">&lt;-</span> <span class="fu">lm</span>(eRi<span class="sc">~</span>rmrf, <span class="at">data=</span>reg_data)</span>
-<span id="cb882-8"><a href="12-regression.html#cb882-8" tabindex="-1"></a><span class="fu">summary</span>(capm_ml)</span></code></pre></div>
+<div class="sourceCode" id="cb885"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb885-1"><a href="12-regression.html#cb885-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb885-2"><a href="12-regression.html#cb885-2" tabindex="-1"></a>reg_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;https://raw.githubusercontent.com/my1396/course_dataset/refs/heads/main/META_monthly_factor_model_2014-2024.csv&quot;</span>)</span>
+<span id="cb885-3"><a href="12-regression.html#cb885-3" tabindex="-1"></a>reg_data <span class="ot">&lt;-</span> reg_data <span class="sc">%&gt;%</span> </span>
+<span id="cb885-4"><a href="12-regression.html#cb885-4" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">return =</span> adjusted<span class="sc">/</span><span class="fu">lag</span>(adjusted)<span class="sc">-</span><span class="dv">1</span>,</span>
+<span id="cb885-5"><a href="12-regression.html#cb885-5" tabindex="-1"></a>           <span class="at">eRi =</span> return<span class="sc">-</span>RF)</span>
+<span id="cb885-6"><a href="12-regression.html#cb885-6" tabindex="-1"></a><span class="do">## CAPM</span></span>
+<span id="cb885-7"><a href="12-regression.html#cb885-7" tabindex="-1"></a>capm_ml <span class="ot">&lt;-</span> <span class="fu">lm</span>(eRi<span class="sc">~</span>rmrf, <span class="at">data=</span>reg_data)</span>
+<span id="cb885-8"><a href="12-regression.html#cb885-8" tabindex="-1"></a><span class="fu">summary</span>(capm_ml)</span></code></pre></div>
 <pre><code>## 
 ## Call:
 ## lm(formula = eRi ~ rmrf, data = reg_data)
@@ -966,35 +1026,35 @@ document.addEventListener('DOMContentLoaded', function() {
 ## Multiple R-squared:  0.2504, Adjusted R-squared:  0.2444 
 ## F-statistic:  41.1 on 1 and 123 DF,  p-value: 2.801e-09</code></pre>
 <p>Get the <strong>coefficient table</strong> with <code>broom::tidy</code>.</p>
-<div class="sourceCode" id="cb884"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb884-1"><a href="12-regression.html#cb884-1" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
-<span id="cb884-2"><a href="12-regression.html#cb884-2" tabindex="-1"></a><span class="fu">tidy</span>(capm_ml)</span></code></pre></div>
+<div class="sourceCode" id="cb887"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb887-1"><a href="12-regression.html#cb887-1" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
+<span id="cb887-2"><a href="12-regression.html#cb887-2" tabindex="-1"></a><span class="fu">tidy</span>(capm_ml)</span></code></pre></div>
 <pre><code>## # A tibble: 2 × 5
 ##   term        estimate std.error statistic       p.value
 ##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;         &lt;dbl&gt;
 ## 1 (Intercept)  0.00975   0.00764      1.27 0.205        
 ## 2 rmrf         1.07      0.166        6.41 0.00000000280</code></pre>
 <p>Get the <strong>variance-covariance matrix</strong> with <code>vcov</code>.</p>
-<div class="sourceCode" id="cb886"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb886-1"><a href="12-regression.html#cb886-1" tabindex="-1"></a><span class="fu">vcov</span>(capm_ml)</span></code></pre></div>
+<div class="sourceCode" id="cb889"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb889-1"><a href="12-regression.html#cb889-1" tabindex="-1"></a><span class="fu">vcov</span>(capm_ml)</span></code></pre></div>
 <pre><code>##               (Intercept)          rmrf
 ## (Intercept)  5.843866e-05 -0.0002760605
 ## rmrf        -2.760605e-04  0.0276835643</code></pre>
-<div class="sourceCode" id="cb888"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb888-1"><a href="12-regression.html#cb888-1" tabindex="-1"></a><span class="co"># verify using coef table</span></span>
-<span id="cb888-2"><a href="12-regression.html#cb888-2" tabindex="-1"></a>capm_ml <span class="sc">%&gt;%</span> </span>
-<span id="cb888-3"><a href="12-regression.html#cb888-3" tabindex="-1"></a>    <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb888-4"><a href="12-regression.html#cb888-4" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">variance=</span>std.error<span class="sc">^</span><span class="dv">2</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb891"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb891-1"><a href="12-regression.html#cb891-1" tabindex="-1"></a><span class="co"># verify using coef table</span></span>
+<span id="cb891-2"><a href="12-regression.html#cb891-2" tabindex="-1"></a>capm_ml <span class="sc">%&gt;%</span> </span>
+<span id="cb891-3"><a href="12-regression.html#cb891-3" tabindex="-1"></a>    <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb891-4"><a href="12-regression.html#cb891-4" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">variance=</span>std.error<span class="sc">^</span><span class="dv">2</span>)</span></code></pre></div>
 <pre><code>## # A tibble: 2 × 6
 ##   term        estimate std.error statistic       p.value  variance
 ##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;         &lt;dbl&gt;     &lt;dbl&gt;
 ## 1 (Intercept)  0.00975   0.00764      1.27 0.205         0.0000584
 ## 2 rmrf         1.07      0.166        6.41 0.00000000280 0.0277</code></pre>
 <p>We can manually calculate as</p>
-<div class="sourceCode" id="cb890"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb890-1"><a href="12-regression.html#cb890-1" tabindex="-1"></a>df <span class="ot">&lt;-</span> (<span class="fu">nrow</span>(capm_ml<span class="sc">$</span>model)<span class="sc">-</span><span class="dv">2</span>)  <span class="co"># degree of freedom</span></span>
-<span id="cb890-2"><a href="12-regression.html#cb890-2" tabindex="-1"></a>sigma2 <span class="ot">&lt;-</span> <span class="fu">sum</span>(capm_ml<span class="sc">$</span>residuals<span class="sc">^</span><span class="dv">2</span>)<span class="sc">/</span>df  <span class="co"># residual variance</span></span>
-<span id="cb890-3"><a href="12-regression.html#cb890-3" tabindex="-1"></a><span class="co"># 1st column of lm$model is the depend. var.</span></span>
-<span id="cb890-4"><a href="12-regression.html#cb890-4" tabindex="-1"></a>X <span class="ot">&lt;-</span> capm_ml<span class="sc">$</span>model[, <span class="dv">2</span>, drop<span class="ot">=</span><span class="cn">FALSE</span>] <span class="sc">%&gt;%</span> <span class="fu">as.matrix</span>()</span>
-<span id="cb890-5"><a href="12-regression.html#cb890-5" tabindex="-1"></a>X <span class="ot">&lt;-</span> <span class="fu">cbind</span>(<span class="dv">1</span>, X)  <span class="co"># add intercept</span></span>
-<span id="cb890-6"><a href="12-regression.html#cb890-6" tabindex="-1"></a>V <span class="ot">&lt;-</span> <span class="fu">solve</span>(<span class="fu">t</span>(X) <span class="sc">%*%</span> X) <span class="sc">*</span> sigma2</span>
-<span id="cb890-7"><a href="12-regression.html#cb890-7" tabindex="-1"></a>V</span></code></pre></div>
+<div class="sourceCode" id="cb893"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb893-1"><a href="12-regression.html#cb893-1" tabindex="-1"></a>df <span class="ot">&lt;-</span> (<span class="fu">nrow</span>(capm_ml<span class="sc">$</span>model)<span class="sc">-</span><span class="dv">2</span>)  <span class="co"># degree of freedom</span></span>
+<span id="cb893-2"><a href="12-regression.html#cb893-2" tabindex="-1"></a>sigma2 <span class="ot">&lt;-</span> <span class="fu">sum</span>(capm_ml<span class="sc">$</span>residuals<span class="sc">^</span><span class="dv">2</span>)<span class="sc">/</span>df  <span class="co"># residual variance</span></span>
+<span id="cb893-3"><a href="12-regression.html#cb893-3" tabindex="-1"></a><span class="co"># 1st column of lm$model is the depend. var.</span></span>
+<span id="cb893-4"><a href="12-regression.html#cb893-4" tabindex="-1"></a>X <span class="ot">&lt;-</span> capm_ml<span class="sc">$</span>model[, <span class="dv">2</span>, drop<span class="ot">=</span><span class="cn">FALSE</span>] <span class="sc">%&gt;%</span> <span class="fu">as.matrix</span>()</span>
+<span id="cb893-5"><a href="12-regression.html#cb893-5" tabindex="-1"></a>X <span class="ot">&lt;-</span> <span class="fu">cbind</span>(<span class="dv">1</span>, X)  <span class="co"># add intercept</span></span>
+<span id="cb893-6"><a href="12-regression.html#cb893-6" tabindex="-1"></a>V <span class="ot">&lt;-</span> <span class="fu">solve</span>(<span class="fu">t</span>(X) <span class="sc">%*%</span> X) <span class="sc">*</span> sigma2</span>
+<span id="cb893-7"><a href="12-regression.html#cb893-7" tabindex="-1"></a>V</span></code></pre></div>
 <pre><code>##                             rmrf
 ##       5.843866e-05 -0.0002760605
 ## rmrf -2.760605e-04  0.0276835643</code></pre>
@@ -1002,17 +1062,17 @@ document.addEventListener('DOMContentLoaded', function() {
 <ul>
 <li>To get estimated covariance matrix for the coefficients, you need to multiply <code>cov.unscaled</code> by the estimate of the error variance.</li>
 </ul>
-<div class="sourceCode" id="cb892"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb892-1"><a href="12-regression.html#cb892-1" tabindex="-1"></a><span class="fu">solve</span>(<span class="fu">t</span>(X) <span class="sc">%*%</span> X)</span></code></pre></div>
+<div class="sourceCode" id="cb895"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb895-1"><a href="12-regression.html#cb895-1" tabindex="-1"></a><span class="fu">solve</span>(<span class="fu">t</span>(X) <span class="sc">%*%</span> X)</span></code></pre></div>
 <pre><code>##                          rmrf
 ##       0.008395487 -0.03965975
 ## rmrf -0.039659745  3.97711043</code></pre>
-<div class="sourceCode" id="cb894"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb894-1"><a href="12-regression.html#cb894-1" tabindex="-1"></a><span class="fu">summary</span>(capm_ml)<span class="sc">$</span>cov.unscaled</span></code></pre></div>
+<div class="sourceCode" id="cb897"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb897-1"><a href="12-regression.html#cb897-1" tabindex="-1"></a><span class="fu">summary</span>(capm_ml)<span class="sc">$</span>cov.unscaled</span></code></pre></div>
 <pre><code>##              (Intercept)        rmrf
 ## (Intercept)  0.008395487 -0.03965975
 ## rmrf        -0.039659745  3.97711043</code></pre>
-<div class="sourceCode" id="cb896"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb896-1"><a href="12-regression.html#cb896-1" tabindex="-1"></a><span class="fu">all.equal</span>(<span class="fu">solve</span>(<span class="fu">t</span>(X) <span class="sc">%*%</span> X), </span>
-<span id="cb896-2"><a href="12-regression.html#cb896-2" tabindex="-1"></a>          <span class="fu">summary</span>(capm_ml)<span class="sc">$</span>cov.unscaled, </span>
-<span id="cb896-3"><a href="12-regression.html#cb896-3" tabindex="-1"></a>          <span class="at">check.attributes =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb899"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb899-1"><a href="12-regression.html#cb899-1" tabindex="-1"></a><span class="fu">all.equal</span>(<span class="fu">solve</span>(<span class="fu">t</span>(X) <span class="sc">%*%</span> X), </span>
+<span id="cb899-2"><a href="12-regression.html#cb899-2" tabindex="-1"></a>          <span class="fu">summary</span>(capm_ml)<span class="sc">$</span>cov.unscaled, </span>
+<span id="cb899-3"><a href="12-regression.html#cb899-3" tabindex="-1"></a>          <span class="at">check.attributes =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <pre><code>## [1] TRUE</code></pre>
 <p><strong>References</strong>:</p>
 <ul>

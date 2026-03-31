@@ -391,7 +391,7 @@ world %>%
 
 Note that <span class="env-orange">`add_column()` does NOT support data-masking</span>, so you cannot refer to other columns when creating new columns. 
 
-→ Use `mutate()` instead.
+→ Use [`mutate()`](#mutate) instead.
 
 - `df`: Data frame to append to;
 - `...`:  Name-value pairs to insert;
@@ -439,10 +439,14 @@ Error: object 'b' not found
 
 --------------------------------------------------------------------------------
 
+<a id="mutate"></a>
+`mutate(.data, ..., .before, .after)` create, modify, and delete columns.
+
+`muate(del_col = NULL)` deletes column `del_col`.
 
 `data %>% mutate(column = .[[2]] - .[[1]])` subset by column positions.
 
-- Here the dot notation in  `.[[2]]` refers to `data`, the variable you pipe into `mutate`. Dot is extra useful here because it allows you to use `data` multiple times. We use it twice in this example.
+- Here the dot notation in `.[[2]]` refers to `data`, the variable you pipe into `mutate`. Dot is extra useful here because it allows you to use `data` multiple times. We use it twice in this example.
 
 - Alternatively, `data %>% mutate(column = unlist(pick(2) - pick(1)))`  `unlist` here transform the list generated from `pick(2)-pick(1)` to a vector.
 

@@ -654,8 +654,8 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="8.8" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html"><i class="fa fa-check"></i><b>8.8</b> Data Frame Operations</a>
 <ul>
-<li class="chapter" data-level="" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#columnrow-wise-operations"><i class="fa fa-check"></i>Column/Row-wise Operations</a></li>
-<li class="chapter" data-level="8.8.1" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#process-na-values"><i class="fa fa-check"></i><b>8.8.1</b> <span class="env-green"><strong>Process <code>NA</code> values</strong></span></a></li>
+<li class="chapter" data-level="8.8.1" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#columnrow-wise-operations"><i class="fa fa-check"></i><b>8.8.1</b> Column/Row-wise Operations</a></li>
+<li class="chapter" data-level="8.8.2" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#process-na-values"><i class="fa fa-check"></i><b>8.8.2</b> <span class="env-green"><strong>Process <code>NA</code> values</strong></span></a></li>
 </ul></li>
 <li class="chapter" data-level="8.9" data-path="8.9-matrix-multiplication.html"><a href="8.9-matrix-multiplication.html"><i class="fa fa-check"></i><b>8.9</b> Matrix multiplication</a></li>
 <li class="chapter" data-level="8.10" data-path="8.10-string-operations.html"><a href="8.10-string-operations.html"><i class="fa fa-check"></i><b>8.10</b> String Operations</a></li>
@@ -868,17 +868,47 @@ function myFunction(id) {
   x.style.display = (x.style.display === 'none') ? 'block' : 'none';
 }
 
-// Auto-expand active top-level section so its level 2/3 items are visible
+// Auto-expand active section and keep all siblings within the same level 1 section open
 document.addEventListener('DOMContentLoaded', function() {
   try {
     var summary = document.querySelector('.book-summary ul.summary');
     if (!summary) return;
 
     function applyAutoOpen() {
-      // Clear previous
-      summary.querySelectorAll('li.chapter.auto-open').forEach(function(li){ li.classList.remove('auto-open'); });
+      // Find the active item (could be level 1, 2, or 3)
       var active = summary.querySelector('li.chapter.active');
-      if (active) active.classList.add('auto-open');
+      if (!active) return;
+      
+      // Find the top-level (level 1) chapter containing the active item
+      var topLevelChapter = active.closest('ul.summary > li.chapter');
+      if (!topLevelChapter) return;
+      
+      // Collapse all other top-level chapters
+      summary.querySelectorAll('ul.summary > li.chapter').forEach(function(chapter) {
+        if (chapter !== topLevelChapter) {
+          chapter.classList.remove('auto-open');
+          // Collapse all nested items in other chapters
+          chapter.querySelectorAll('li.chapter').forEach(function(nested) {
+            nested.classList.remove('auto-open');
+          });
+        }
+      });
+      
+      // Expand the active top-level chapter
+      topLevelChapter.classList.add('auto-open');
+      
+      // Expand ALL level 2 and level 3 items within this top-level chapter
+      topLevelChapter.querySelectorAll('li.chapter').forEach(function(nested) {
+        nested.classList.add('auto-open');
+      });
+      
+      // Scroll the active TOC item to the center of the TOC panel
+      setTimeout(function() {
+        var activeLink = active.querySelector('a');
+        if (activeLink) {
+          activeLink.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
     }
 
     applyAutoOpen();
@@ -894,14 +924,14 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-// Toggle collapse: clicking an expanded section collapses it
+// Toggle collapse: clicking level 1 heading expands/collapses all sublevels
 document.addEventListener('DOMContentLoaded', function() {
   try {
     var summary = document.querySelector('.book-summary ul.summary');
     if (!summary) return;
 
-    // Add click handlers to chapter links with children
-    summary.querySelectorAll('li.chapter').forEach(function(chapter) {
+    // Add click handlers only to top-level chapter links with children
+    summary.querySelectorAll('ul.summary > li.chapter').forEach(function(chapter) {
       var sublist = chapter.querySelector('ul');
       if (!sublist) return; // Only chapters with subsections
 
@@ -913,15 +943,28 @@ document.addEventListener('DOMContentLoaded', function() {
         var isExpanded = chapter.classList.contains('auto-open');
         
         if (isExpanded) {
-          // Collapse it
+          // Collapse it and all nested items
           e.preventDefault();
           chapter.classList.remove('auto-open');
+          // Also collapse all level 2 and level 3 items
+          chapter.querySelectorAll('li.chapter.auto-open').forEach(function(nested) {
+            nested.classList.remove('auto-open');
+          });
         } else {
-          // Expand it (remove auto-open from others first)
-          summary.querySelectorAll('li.chapter.auto-open').forEach(function(li) {
-            if (li !== chapter) li.classList.remove('auto-open');
+          // Expand it (collapse other top-level chapters first)
+          summary.querySelectorAll('ul.summary > li.chapter.auto-open').forEach(function(li) {
+            if (li !== chapter) {
+              li.classList.remove('auto-open');
+              li.querySelectorAll('li.chapter.auto-open').forEach(function(nested) {
+                nested.classList.remove('auto-open');
+              });
+            }
           });
           chapter.classList.add('auto-open');
+          // Expand all level 2 items within this chapter
+          chapter.querySelectorAll('ul > li.chapter').forEach(function(level2) {
+            level2.classList.add('auto-open');
+          });
         }
       });
     });
@@ -931,9 +974,26 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 <style>
-/* Show nested UL of active chapter when collapse=section */
-.book-summary ul.summary li.chapter.auto-open ul { display: block !important; }
-.book-summary ul.summary li.chapter.auto-open > a { font-weight: 700; }
+/* Show all nested UL of chapters marked as auto-open */
+.book-summary ul.summary li.chapter.auto-open > ul { 
+  display: block !important; 
+}
+
+/* Make parent level headings bold when expanded */
+.book-summary ul.summary li.chapter.auto-open > a { 
+  font-weight: 700; 
+}
+
+/* Highlight the actual active item with color and bold */
+.book-summary ul.summary li.chapter.active > a { 
+  font-weight: 700 !important;
+  color: #0078D4 !important;
+}
+
+/* Ensure proper indentation for nested levels */
+.book-summary ul.summary li.chapter ul li.chapter { 
+  padding-left: 0; 
+}
 </style>
 <div id="callouts" class="section level2 hasAnchor" number="6.16">
 <h2><span class="header-section-number">6.16</span> Callouts<a href="6.16-callouts.html#callouts" class="anchor-section" aria-label="Anchor link to header"></a></h2>
@@ -946,22 +1006,22 @@ document.addEventListener('DOMContentLoaded', function() {
 <li>caution (orange)</li>
 </ul>
 <p>The color and icon will be different depending upon the type that you select.</p>
-<div class="sourceCode" id="cb425"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb425-1"><a href="6.16-callouts.html#cb425-1" tabindex="-1"></a>::: {.callout-note}</span>
-<span id="cb425-2"><a href="6.16-callouts.html#cb425-2" tabindex="-1"></a>Note that there are five types of callouts, including:</span>
-<span id="cb425-3"><a href="6.16-callouts.html#cb425-3" tabindex="-1"></a><span class="in">`note`</span>, <span class="in">`warning`</span>, <span class="in">`important`</span>, <span class="in">`tip`</span>, and <span class="in">`caution`</span>.</span>
-<span id="cb425-4"><a href="6.16-callouts.html#cb425-4" tabindex="-1"></a>:::</span>
-<span id="cb425-5"><a href="6.16-callouts.html#cb425-5" tabindex="-1"></a></span>
-<span id="cb425-6"><a href="6.16-callouts.html#cb425-6" tabindex="-1"></a>::: {.callout-tip}</span>
-<span id="cb425-7"><a href="6.16-callouts.html#cb425-7" tabindex="-1"></a><span class="fu">## Tip with Title</span></span>
-<span id="cb425-8"><a href="6.16-callouts.html#cb425-8" tabindex="-1"></a></span>
-<span id="cb425-9"><a href="6.16-callouts.html#cb425-9" tabindex="-1"></a>This is an example of a callout with a title.</span>
-<span id="cb425-10"><a href="6.16-callouts.html#cb425-10" tabindex="-1"></a>:::</span>
-<span id="cb425-11"><a href="6.16-callouts.html#cb425-11" tabindex="-1"></a></span>
-<span id="cb425-12"><a href="6.16-callouts.html#cb425-12" tabindex="-1"></a>::: {.callout-caution collapse=&quot;true&quot;}</span>
-<span id="cb425-13"><a href="6.16-callouts.html#cb425-13" tabindex="-1"></a><span class="fu">## Expand To Learn About Collapse</span></span>
-<span id="cb425-14"><a href="6.16-callouts.html#cb425-14" tabindex="-1"></a></span>
-<span id="cb425-15"><a href="6.16-callouts.html#cb425-15" tabindex="-1"></a>This is an example of a &#39;folded&#39; caution callout that can be expanded by the user. You can use <span class="in">`collapse=&quot;true&quot;`</span> to collapse it by default or <span class="in">`collapse=&quot;false&quot;`</span> to make a collapsible callout that is expanded by default.</span>
-<span id="cb425-16"><a href="6.16-callouts.html#cb425-16" tabindex="-1"></a>:::</span></code></pre></div>
+<div class="sourceCode" id="cb427"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb427-1"><a href="6.16-callouts.html#cb427-1" tabindex="-1"></a>::: {.callout-note}</span>
+<span id="cb427-2"><a href="6.16-callouts.html#cb427-2" tabindex="-1"></a>Note that there are five types of callouts, including:</span>
+<span id="cb427-3"><a href="6.16-callouts.html#cb427-3" tabindex="-1"></a><span class="in">`note`</span>, <span class="in">`warning`</span>, <span class="in">`important`</span>, <span class="in">`tip`</span>, and <span class="in">`caution`</span>.</span>
+<span id="cb427-4"><a href="6.16-callouts.html#cb427-4" tabindex="-1"></a>:::</span>
+<span id="cb427-5"><a href="6.16-callouts.html#cb427-5" tabindex="-1"></a></span>
+<span id="cb427-6"><a href="6.16-callouts.html#cb427-6" tabindex="-1"></a>::: {.callout-tip}</span>
+<span id="cb427-7"><a href="6.16-callouts.html#cb427-7" tabindex="-1"></a><span class="fu">## Tip with Title</span></span>
+<span id="cb427-8"><a href="6.16-callouts.html#cb427-8" tabindex="-1"></a></span>
+<span id="cb427-9"><a href="6.16-callouts.html#cb427-9" tabindex="-1"></a>This is an example of a callout with a title.</span>
+<span id="cb427-10"><a href="6.16-callouts.html#cb427-10" tabindex="-1"></a>:::</span>
+<span id="cb427-11"><a href="6.16-callouts.html#cb427-11" tabindex="-1"></a></span>
+<span id="cb427-12"><a href="6.16-callouts.html#cb427-12" tabindex="-1"></a>::: {.callout-caution collapse=&quot;true&quot;}</span>
+<span id="cb427-13"><a href="6.16-callouts.html#cb427-13" tabindex="-1"></a><span class="fu">## Expand To Learn About Collapse</span></span>
+<span id="cb427-14"><a href="6.16-callouts.html#cb427-14" tabindex="-1"></a></span>
+<span id="cb427-15"><a href="6.16-callouts.html#cb427-15" tabindex="-1"></a>This is an example of a &#39;folded&#39; caution callout that can be expanded by the user. You can use <span class="in">`collapse=&quot;true&quot;`</span> to collapse it by default or <span class="in">`collapse=&quot;false&quot;`</span> to make a collapsible callout that is expanded by default.</span>
+<span id="cb427-16"><a href="6.16-callouts.html#cb427-16" tabindex="-1"></a>:::</span></code></pre></div>
 <p>Here are what the various types look like in HTML output:</p>
 <p><img src="https://drive.google.com/thumbnail?id=1WVMOAJyHE_09EYkH05KREhKE3A6r1vMj&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" /></p>
 <ul>
@@ -982,37 +1042,37 @@ document.addEventListener('DOMContentLoaded', function() {
 </ul></li>
 </ul>
 <p>You can style callouts using CSS. For example, the change font size and alignment of text, you can use the following CSS:</p>
-<div class="sourceCode" id="cb426"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb426-1"><a href="6.16-callouts.html#cb426-1" tabindex="-1"></a>::: {.callout-important appearance=&quot;minimal&quot;}</span>
-<span id="cb426-2"><a href="6.16-callouts.html#cb426-2" tabindex="-1"></a><span class="fu">## Research Question</span></span>
-<span id="cb426-3"><a href="6.16-callouts.html#cb426-3" tabindex="-1"></a></span>
-<span id="cb426-4"><a href="6.16-callouts.html#cb426-4" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">center</span><span class="ot"> style</span><span class="op">=</span><span class="st">&quot;font-size: 1.5em; font-weight: bold;&quot;</span><span class="dt">&gt;</span></span>
-<span id="cb426-5"><a href="6.16-callouts.html#cb426-5" tabindex="-1"></a>Does expenditure per student affect student performance \</span>
-<span id="cb426-6"><a href="6.16-callouts.html#cb426-6" tabindex="-1"></a>in elementary school education?</span>
-<span id="cb426-7"><a href="6.16-callouts.html#cb426-7" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">center</span><span class="dt">&gt;</span></span>
-<span id="cb426-8"><a href="6.16-callouts.html#cb426-8" tabindex="-1"></a>:::</span></code></pre></div>
+<div class="sourceCode" id="cb428"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb428-1"><a href="6.16-callouts.html#cb428-1" tabindex="-1"></a>::: {.callout-important appearance=&quot;minimal&quot;}</span>
+<span id="cb428-2"><a href="6.16-callouts.html#cb428-2" tabindex="-1"></a><span class="fu">## Research Question</span></span>
+<span id="cb428-3"><a href="6.16-callouts.html#cb428-3" tabindex="-1"></a></span>
+<span id="cb428-4"><a href="6.16-callouts.html#cb428-4" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">center</span><span class="ot"> style</span><span class="op">=</span><span class="st">&quot;font-size: 1.5em; font-weight: bold;&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb428-5"><a href="6.16-callouts.html#cb428-5" tabindex="-1"></a>Does expenditure per student affect student performance \</span>
+<span id="cb428-6"><a href="6.16-callouts.html#cb428-6" tabindex="-1"></a>in elementary school education?</span>
+<span id="cb428-7"><a href="6.16-callouts.html#cb428-7" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">center</span><span class="dt">&gt;</span></span>
+<span id="cb428-8"><a href="6.16-callouts.html#cb428-8" tabindex="-1"></a>:::</span></code></pre></div>
 <div id="nested-callouts" class="section level3 hasAnchor" number="6.16.1">
 <h3><span class="header-section-number">6.16.1</span> Nested Callouts<a href="6.16-callouts.html#nested-callouts" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>You can nest callouts within other callouts. For example:</p>
-<div class="sourceCode" id="cb427"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb427-1"><a href="6.16-callouts.html#cb427-1" tabindex="-1"></a>::: {.callout-warning}</span>
-<span id="cb427-2"><a href="6.16-callouts.html#cb427-2" tabindex="-1"></a><span class="fu">## Warning with Nested Callout</span></span>
-<span id="cb427-3"><a href="6.16-callouts.html#cb427-3" tabindex="-1"></a>This is an example of a warning callout that contains a nested note callout.</span>
-<span id="cb427-4"><a href="6.16-callouts.html#cb427-4" tabindex="-1"></a></span>
-<span id="cb427-5"><a href="6.16-callouts.html#cb427-5" tabindex="-1"></a>::: {.callout-note}</span>
-<span id="cb427-6"><a href="6.16-callouts.html#cb427-6" tabindex="-1"></a>This is a nested note callout.</span>
-<span id="cb427-7"><a href="6.16-callouts.html#cb427-7" tabindex="-1"></a>:::</span>
-<span id="cb427-8"><a href="6.16-callouts.html#cb427-8" tabindex="-1"></a></span>
-<span id="cb427-9"><a href="6.16-callouts.html#cb427-9" tabindex="-1"></a>:::</span></code></pre></div>
+<div class="sourceCode" id="cb429"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb429-1"><a href="6.16-callouts.html#cb429-1" tabindex="-1"></a>::: {.callout-warning}</span>
+<span id="cb429-2"><a href="6.16-callouts.html#cb429-2" tabindex="-1"></a><span class="fu">## Warning with Nested Callout</span></span>
+<span id="cb429-3"><a href="6.16-callouts.html#cb429-3" tabindex="-1"></a>This is an example of a warning callout that contains a nested note callout.</span>
+<span id="cb429-4"><a href="6.16-callouts.html#cb429-4" tabindex="-1"></a></span>
+<span id="cb429-5"><a href="6.16-callouts.html#cb429-5" tabindex="-1"></a>::: {.callout-note}</span>
+<span id="cb429-6"><a href="6.16-callouts.html#cb429-6" tabindex="-1"></a>This is a nested note callout.</span>
+<span id="cb429-7"><a href="6.16-callouts.html#cb429-7" tabindex="-1"></a>:::</span>
+<span id="cb429-8"><a href="6.16-callouts.html#cb429-8" tabindex="-1"></a></span>
+<span id="cb429-9"><a href="6.16-callouts.html#cb429-9" tabindex="-1"></a>:::</span></code></pre></div>
 <p>Note that you need to put a <span class="env-green">blank line before and after</span> the nested callout to ensure proper rendering.</p>
 <p><img src="https://drive.google.com/thumbnail?id=1edismznA-TVkDcwK8TeLatGmMOMI7Ci_&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" /></p>
 </div>
 <div id="cross-reference-callouts" class="section level3 hasAnchor" number="6.16.2">
 <h3><span class="header-section-number">6.16.2</span> Cross-reference Callouts<a href="6.16-callouts.html#cross-reference-callouts" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>To cross-reference a callout, add an ID attribute that starts with the appropriate callout prefix (see <a href="https://quarto.org/docs/authoring/callouts.html#tbl-callout-prefixes">Table blow</a>). You can then reference the callout using the usual <code>@</code> syntax. For example, here we add the ID <code>#tip-example</code> to the callout, and then refer back to it:</p>
-<div class="sourceCode" id="cb428"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb428-1"><a href="6.16-callouts.html#cb428-1" tabindex="-1"></a>::: {#tip-example .callout-tip}</span>
-<span id="cb428-2"><a href="6.16-callouts.html#cb428-2" tabindex="-1"></a><span class="fu">## Cross-Referencing a Tip</span></span>
-<span id="cb428-3"><a href="6.16-callouts.html#cb428-3" tabindex="-1"></a>Add an ID starting with <span class="in">`#tip-`</span> to reference a tip.</span>
-<span id="cb428-4"><a href="6.16-callouts.html#cb428-4" tabindex="-1"></a>:::</span>
-<span id="cb428-5"><a href="6.16-callouts.html#cb428-5" tabindex="-1"></a>See @tip-example...</span></code></pre></div>
+<div class="sourceCode" id="cb430"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb430-1"><a href="6.16-callouts.html#cb430-1" tabindex="-1"></a>::: {#tip-example .callout-tip}</span>
+<span id="cb430-2"><a href="6.16-callouts.html#cb430-2" tabindex="-1"></a><span class="fu">## Cross-Referencing a Tip</span></span>
+<span id="cb430-3"><a href="6.16-callouts.html#cb430-3" tabindex="-1"></a>Add an ID starting with <span class="in">`#tip-`</span> to reference a tip.</span>
+<span id="cb430-4"><a href="6.16-callouts.html#cb430-4" tabindex="-1"></a>:::</span>
+<span id="cb430-5"><a href="6.16-callouts.html#cb430-5" tabindex="-1"></a>See @tip-example...</span></code></pre></div>
 <ul>
 <li><p>Note that the ID attribute must come first, before the class attribute.</p>
 <p>This follows the general rule for Divs and Spans that IDs must come before classes.</p></li>

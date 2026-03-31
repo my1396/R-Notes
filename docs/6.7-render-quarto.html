@@ -654,8 +654,8 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="8.8" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html"><i class="fa fa-check"></i><b>8.8</b> Data Frame Operations</a>
 <ul>
-<li class="chapter" data-level="" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#columnrow-wise-operations"><i class="fa fa-check"></i>Column/Row-wise Operations</a></li>
-<li class="chapter" data-level="8.8.1" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#process-na-values"><i class="fa fa-check"></i><b>8.8.1</b> <span class="env-green"><strong>Process <code>NA</code> values</strong></span></a></li>
+<li class="chapter" data-level="8.8.1" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#columnrow-wise-operations"><i class="fa fa-check"></i><b>8.8.1</b> Column/Row-wise Operations</a></li>
+<li class="chapter" data-level="8.8.2" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#process-na-values"><i class="fa fa-check"></i><b>8.8.2</b> <span class="env-green"><strong>Process <code>NA</code> values</strong></span></a></li>
 </ul></li>
 <li class="chapter" data-level="8.9" data-path="8.9-matrix-multiplication.html"><a href="8.9-matrix-multiplication.html"><i class="fa fa-check"></i><b>8.9</b> Matrix multiplication</a></li>
 <li class="chapter" data-level="8.10" data-path="8.10-string-operations.html"><a href="8.10-string-operations.html"><i class="fa fa-check"></i><b>8.10</b> String Operations</a></li>
@@ -868,17 +868,47 @@ function myFunction(id) {
   x.style.display = (x.style.display === 'none') ? 'block' : 'none';
 }
 
-// Auto-expand active top-level section so its level 2/3 items are visible
+// Auto-expand active section and keep all siblings within the same level 1 section open
 document.addEventListener('DOMContentLoaded', function() {
   try {
     var summary = document.querySelector('.book-summary ul.summary');
     if (!summary) return;
 
     function applyAutoOpen() {
-      // Clear previous
-      summary.querySelectorAll('li.chapter.auto-open').forEach(function(li){ li.classList.remove('auto-open'); });
+      // Find the active item (could be level 1, 2, or 3)
       var active = summary.querySelector('li.chapter.active');
-      if (active) active.classList.add('auto-open');
+      if (!active) return;
+      
+      // Find the top-level (level 1) chapter containing the active item
+      var topLevelChapter = active.closest('ul.summary > li.chapter');
+      if (!topLevelChapter) return;
+      
+      // Collapse all other top-level chapters
+      summary.querySelectorAll('ul.summary > li.chapter').forEach(function(chapter) {
+        if (chapter !== topLevelChapter) {
+          chapter.classList.remove('auto-open');
+          // Collapse all nested items in other chapters
+          chapter.querySelectorAll('li.chapter').forEach(function(nested) {
+            nested.classList.remove('auto-open');
+          });
+        }
+      });
+      
+      // Expand the active top-level chapter
+      topLevelChapter.classList.add('auto-open');
+      
+      // Expand ALL level 2 and level 3 items within this top-level chapter
+      topLevelChapter.querySelectorAll('li.chapter').forEach(function(nested) {
+        nested.classList.add('auto-open');
+      });
+      
+      // Scroll the active TOC item to the center of the TOC panel
+      setTimeout(function() {
+        var activeLink = active.querySelector('a');
+        if (activeLink) {
+          activeLink.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
     }
 
     applyAutoOpen();
@@ -894,14 +924,14 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-// Toggle collapse: clicking an expanded section collapses it
+// Toggle collapse: clicking level 1 heading expands/collapses all sublevels
 document.addEventListener('DOMContentLoaded', function() {
   try {
     var summary = document.querySelector('.book-summary ul.summary');
     if (!summary) return;
 
-    // Add click handlers to chapter links with children
-    summary.querySelectorAll('li.chapter').forEach(function(chapter) {
+    // Add click handlers only to top-level chapter links with children
+    summary.querySelectorAll('ul.summary > li.chapter').forEach(function(chapter) {
       var sublist = chapter.querySelector('ul');
       if (!sublist) return; // Only chapters with subsections
 
@@ -913,15 +943,28 @@ document.addEventListener('DOMContentLoaded', function() {
         var isExpanded = chapter.classList.contains('auto-open');
         
         if (isExpanded) {
-          // Collapse it
+          // Collapse it and all nested items
           e.preventDefault();
           chapter.classList.remove('auto-open');
+          // Also collapse all level 2 and level 3 items
+          chapter.querySelectorAll('li.chapter.auto-open').forEach(function(nested) {
+            nested.classList.remove('auto-open');
+          });
         } else {
-          // Expand it (remove auto-open from others first)
-          summary.querySelectorAll('li.chapter.auto-open').forEach(function(li) {
-            if (li !== chapter) li.classList.remove('auto-open');
+          // Expand it (collapse other top-level chapters first)
+          summary.querySelectorAll('ul.summary > li.chapter.auto-open').forEach(function(li) {
+            if (li !== chapter) {
+              li.classList.remove('auto-open');
+              li.querySelectorAll('li.chapter.auto-open').forEach(function(nested) {
+                nested.classList.remove('auto-open');
+              });
+            }
           });
           chapter.classList.add('auto-open');
+          // Expand all level 2 items within this chapter
+          chapter.querySelectorAll('ul > li.chapter').forEach(function(level2) {
+            level2.classList.add('auto-open');
+          });
         }
       });
     });
@@ -931,9 +974,26 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 <style>
-/* Show nested UL of active chapter when collapse=section */
-.book-summary ul.summary li.chapter.auto-open ul { display: block !important; }
-.book-summary ul.summary li.chapter.auto-open > a { font-weight: 700; }
+/* Show all nested UL of chapters marked as auto-open */
+.book-summary ul.summary li.chapter.auto-open > ul { 
+  display: block !important; 
+}
+
+/* Make parent level headings bold when expanded */
+.book-summary ul.summary li.chapter.auto-open > a { 
+  font-weight: 700; 
+}
+
+/* Highlight the actual active item with color and bold */
+.book-summary ul.summary li.chapter.active > a { 
+  font-weight: 700 !important;
+  color: #0078D4 !important;
+}
+
+/* Ensure proper indentation for nested levels */
+.book-summary ul.summary li.chapter ul li.chapter { 
+  padding-left: 0; 
+}
 </style>
 <div id="render-quarto" class="section level2 hasAnchor" number="6.7">
 <h2><span class="header-section-number">6.7</span> Render Quarto<a href="6.7-render-quarto.html#render-quarto" class="anchor-section" aria-label="Anchor link to header"></a></h2>
@@ -951,16 +1011,16 @@ document.addEventListener('DOMContentLoaded', function() {
 <p>This will provide live preview of the document in your web browser. Newest changes will be reflected while you edit the document. ✅</p>
 <ul>
 <li><p>Render a Quarto document to HTML using the command line:</p>
-<div class="sourceCode" id="cb367"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb367-1"><a href="6.7-render-quarto.html#cb367-1" tabindex="-1"></a><span class="va">$quarto</span> render 0304-Quarto.Rmd <span class="at">--to</span> html</span></code></pre></div></li>
+<div class="sourceCode" id="cb369"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb369-1"><a href="6.7-render-quarto.html#cb369-1" tabindex="-1"></a><span class="va">$quarto</span> render 0304-Quarto.Rmd <span class="at">--to</span> html</span></code></pre></div></li>
 <li><p><span class="env-green">Quarto Preview</span>: display output in the <strong>external web browser</strong>.</p>
-<div class="sourceCode" id="cb368"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb368-1"><a href="6.7-render-quarto.html#cb368-1" tabindex="-1"></a><span class="ex">$</span> quarto preview 0304-Quarto.Rmd <span class="co"># all formats</span></span>
-<span id="cb368-2"><a href="6.7-render-quarto.html#cb368-2" tabindex="-1"></a><span class="ex">$</span> quarto preview 0304-Quarto.Rmd <span class="at">--to</span> html <span class="co"># specific format</span></span></code></pre></div>
+<div class="sourceCode" id="cb370"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb370-1"><a href="6.7-render-quarto.html#cb370-1" tabindex="-1"></a><span class="ex">$</span> quarto preview 0304-Quarto.Rmd <span class="co"># all formats</span></span>
+<span id="cb370-2"><a href="6.7-render-quarto.html#cb370-2" tabindex="-1"></a><span class="ex">$</span> quarto preview 0304-Quarto.Rmd <span class="at">--to</span> html <span class="co"># specific format</span></span></code></pre></div>
 <ul>
 <li>Note that <code>quarto render</code> can be used to Rmd files too.</li>
 <li>Run <code>quarto preview help</code> to see its complete syntax.</li>
 </ul></li>
 <li><p>You can also render a Quarto project using:</p>
-<div class="sourceCode" id="cb369"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb369-1"><a href="6.7-render-quarto.html#cb369-1" tabindex="-1"></a><span class="va">$quarto</span> render <span class="at">--to</span> html</span></code></pre></div></li>
+<div class="sourceCode" id="cb371"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb371-1"><a href="6.7-render-quarto.html#cb371-1" tabindex="-1"></a><span class="va">$quarto</span> render <span class="at">--to</span> html</span></code></pre></div></li>
 </ul>
 <p><code>quarto preview [file] [args]</code> first provide file name, then additional arguments.</p>
 <p>Supported arguments:</p>
@@ -996,15 +1056,15 @@ document.addEventListener('DOMContentLoaded', function() {
 <p>This will show a preview of the project in the internal browser.</p>
 <p>However, you can configure the Quarto extension to automatically render whenever you save. In settings, set <a href="https://quarto.org/docs/tools/vscode/index.html#render-on-save"><code>quarto.renderOnSave</code></a> to <code>true</code>.</p>
 <p>You might also want to control this behavior on a per-document or per-project basis. If you include the <span class="env-green"><code>editor: render-on-save</code></span> option in your document or project YAML it will supersede whatever your VS Code setting is. This works on a per-document basis. For example:</p>
-<div class="sourceCode" id="cb370"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb370-1"><a href="6.7-render-quarto.html#cb370-1" tabindex="-1"></a><span class="pp">---</span></span>
-<span id="cb370-2"><a href="6.7-render-quarto.html#cb370-2" tabindex="-1"></a><span class="fu">editor</span><span class="kw">:</span></span>
-<span id="cb370-3"><a href="6.7-render-quarto.html#cb370-3" tabindex="-1"></a><span class="at">  </span><span class="fu">render-on-save</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
-<span id="cb370-4"><a href="6.7-render-quarto.html#cb370-4" tabindex="-1"></a><span class="pp">---</span></span></code></pre></div>
+<div class="sourceCode" id="cb372"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb372-1"><a href="6.7-render-quarto.html#cb372-1" tabindex="-1"></a><span class="pp">---</span></span>
+<span id="cb372-2"><a href="6.7-render-quarto.html#cb372-2" tabindex="-1"></a><span class="fu">editor</span><span class="kw">:</span></span>
+<span id="cb372-3"><a href="6.7-render-quarto.html#cb372-3" tabindex="-1"></a><span class="at">  </span><span class="fu">render-on-save</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb372-4"><a href="6.7-render-quarto.html#cb372-4" tabindex="-1"></a><span class="pp">---</span></span></code></pre></div>
 <p>Alternatively, you can set it globally in VS Code settings:</p>
-<div class="sourceCode" id="cb371"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb371-1"><a href="6.7-render-quarto.html#cb371-1" tabindex="-1"></a><span class="fu">&quot;quarto.render.renderOnSave&quot;</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span></code></pre></div>
+<div class="sourceCode" id="cb373"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb373-1"><a href="6.7-render-quarto.html#cb373-1" tabindex="-1"></a><span class="fu">&quot;quarto.render.renderOnSave&quot;</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span></code></pre></div>
 <p>After you enable <code>render-on-save</code>, when you save your <code>qmd</code> file, the preview will be updated in time.
 It is suggested to configure how often the file is saved in VS Code settings:</p>
-<div class="sourceCode" id="cb372"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb372-1"><a href="6.7-render-quarto.html#cb372-1" tabindex="-1"></a><span class="fu">&quot;files.autoSave&quot;</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;onFocusChange&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb374"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb374-1"><a href="6.7-render-quarto.html#cb374-1" tabindex="-1"></a><span class="fu">&quot;files.autoSave&quot;</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;onFocusChange&quot;</span></span></code></pre></div>
 <p>The file will be saved when focus changes.</p>
 <p><strong>Options for <code>files.autoSave</code>:</strong></p>
 <table>
@@ -1042,7 +1102,7 @@ It is suggested to configure how often the file is saved in VS Code settings:</p
 <p>Q: Quarto Preview pane not refreshing and updating changes.<br />
 A: The issue seems to come from the <code>--no-watch-inputs</code> option to the preview command, preventing the live update. <a href="https://github.com/quarto-dev/quarto-cli/discussions/10745#discussioncomment-10990779">↩︎</a></p>
 <p>Use the following command in terminal to enable live preview:</p>
-<div class="sourceCode" id="cb373"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb373-1"><a href="6.7-render-quarto.html#cb373-1" tabindex="-1"></a><span class="ex">quarto</span> preview <span class="st">&quot;path-to-file/file-name.qmd&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb375"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb375-1"><a href="6.7-render-quarto.html#cb375-1" tabindex="-1"></a><span class="ex">quarto</span> preview <span class="st">&quot;path-to-file/file-name.qmd&quot;</span></span></code></pre></div>
 <p>Copy and paste the url to the internal browser in VS Code. The command supports live preview. When you make changes to your <code>qmd</code> file and save, the preview will be updated in time.</p>
 <hr />
 </div>
@@ -1056,14 +1116,14 @@ A: The issue seems to come from the <code>--no-watch-inputs</code> option to the
 <li><code>output_format = "all"</code> will render all formats specified in the <code>_quarto.yml</code> file.</li>
 </ul></li>
 </ul>
-<div class="sourceCode" id="cb374"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb374-1"><a href="6.7-render-quarto.html#cb374-1" tabindex="-1"></a><span class="co"># Render a Quarto document to HTML</span></span>
-<span id="cb374-2"><a href="6.7-render-quarto.html#cb374-2" tabindex="-1"></a>quarto<span class="sc">::</span><span class="fu">quarto_render</span>(<span class="st">&quot;0304-Quarto.Rmd&quot;</span>, <span class="at">output_format =</span> <span class="st">&quot;html&quot;</span>)</span>
-<span id="cb374-3"><a href="6.7-render-quarto.html#cb374-3" tabindex="-1"></a><span class="co"># Render a Quarto project to HTML</span></span>
-<span id="cb374-4"><a href="6.7-render-quarto.html#cb374-4" tabindex="-1"></a>quarto<span class="sc">::</span><span class="fu">quarto_render</span>(<span class="at">output_format =</span> <span class="st">&quot;html&quot;</span>)</span></code></pre></div>
-<div class="sourceCode" id="cb375"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb375-1"><a href="6.7-render-quarto.html#cb375-1" tabindex="-1"></a><span class="co"># Render a Quarto document to PDF</span></span>
-<span id="cb375-2"><a href="6.7-render-quarto.html#cb375-2" tabindex="-1"></a>quarto<span class="sc">::</span><span class="fu">quarto_render</span>(<span class="st">&quot;0304-Quarto.Rmd&quot;</span>, <span class="at">output_format =</span> <span class="st">&quot;pdf&quot;</span>)</span>
-<span id="cb375-3"><a href="6.7-render-quarto.html#cb375-3" tabindex="-1"></a><span class="co"># Render a Quarto project to PDF</span></span>
-<span id="cb375-4"><a href="6.7-render-quarto.html#cb375-4" tabindex="-1"></a>quarto<span class="sc">::</span><span class="fu">quarto_render</span>(<span class="at">output_format =</span> <span class="st">&quot;pdf&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb376"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb376-1"><a href="6.7-render-quarto.html#cb376-1" tabindex="-1"></a><span class="co"># Render a Quarto document to HTML</span></span>
+<span id="cb376-2"><a href="6.7-render-quarto.html#cb376-2" tabindex="-1"></a>quarto<span class="sc">::</span><span class="fu">quarto_render</span>(<span class="st">&quot;0304-Quarto.Rmd&quot;</span>, <span class="at">output_format =</span> <span class="st">&quot;html&quot;</span>)</span>
+<span id="cb376-3"><a href="6.7-render-quarto.html#cb376-3" tabindex="-1"></a><span class="co"># Render a Quarto project to HTML</span></span>
+<span id="cb376-4"><a href="6.7-render-quarto.html#cb376-4" tabindex="-1"></a>quarto<span class="sc">::</span><span class="fu">quarto_render</span>(<span class="at">output_format =</span> <span class="st">&quot;html&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb377"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb377-1"><a href="6.7-render-quarto.html#cb377-1" tabindex="-1"></a><span class="co"># Render a Quarto document to PDF</span></span>
+<span id="cb377-2"><a href="6.7-render-quarto.html#cb377-2" tabindex="-1"></a>quarto<span class="sc">::</span><span class="fu">quarto_render</span>(<span class="st">&quot;0304-Quarto.Rmd&quot;</span>, <span class="at">output_format =</span> <span class="st">&quot;pdf&quot;</span>)</span>
+<span id="cb377-3"><a href="6.7-render-quarto.html#cb377-3" tabindex="-1"></a><span class="co"># Render a Quarto project to PDF</span></span>
+<span id="cb377-4"><a href="6.7-render-quarto.html#cb377-4" tabindex="-1"></a>quarto<span class="sc">::</span><span class="fu">quarto_render</span>(<span class="at">output_format =</span> <span class="st">&quot;pdf&quot;</span>)</span></code></pre></div>
 <p>Alternatively, you can use the <strong>Render</strong> button in RStudio. The Render button will render the first format listed in the document YAML. If no format is specified, then it will render to HTML.</p>
 <hr />
 </div>

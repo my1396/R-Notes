@@ -654,8 +654,8 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="8.8" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html"><i class="fa fa-check"></i><b>8.8</b> Data Frame Operations</a>
 <ul>
-<li class="chapter" data-level="" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#columnrow-wise-operations"><i class="fa fa-check"></i>Column/Row-wise Operations</a></li>
-<li class="chapter" data-level="8.8.1" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#process-na-values"><i class="fa fa-check"></i><b>8.8.1</b> <span class="env-green"><strong>Process <code>NA</code> values</strong></span></a></li>
+<li class="chapter" data-level="8.8.1" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#columnrow-wise-operations"><i class="fa fa-check"></i><b>8.8.1</b> Column/Row-wise Operations</a></li>
+<li class="chapter" data-level="8.8.2" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#process-na-values"><i class="fa fa-check"></i><b>8.8.2</b> <span class="env-green"><strong>Process <code>NA</code> values</strong></span></a></li>
 </ul></li>
 <li class="chapter" data-level="8.9" data-path="8.9-matrix-multiplication.html"><a href="8.9-matrix-multiplication.html"><i class="fa fa-check"></i><b>8.9</b> Matrix multiplication</a></li>
 <li class="chapter" data-level="8.10" data-path="8.10-string-operations.html"><a href="8.10-string-operations.html"><i class="fa fa-check"></i><b>8.10</b> String Operations</a></li>
@@ -868,17 +868,47 @@ function myFunction(id) {
   x.style.display = (x.style.display === 'none') ? 'block' : 'none';
 }
 
-// Auto-expand active top-level section so its level 2/3 items are visible
+// Auto-expand active section and keep all siblings within the same level 1 section open
 document.addEventListener('DOMContentLoaded', function() {
   try {
     var summary = document.querySelector('.book-summary ul.summary');
     if (!summary) return;
 
     function applyAutoOpen() {
-      // Clear previous
-      summary.querySelectorAll('li.chapter.auto-open').forEach(function(li){ li.classList.remove('auto-open'); });
+      // Find the active item (could be level 1, 2, or 3)
       var active = summary.querySelector('li.chapter.active');
-      if (active) active.classList.add('auto-open');
+      if (!active) return;
+      
+      // Find the top-level (level 1) chapter containing the active item
+      var topLevelChapter = active.closest('ul.summary > li.chapter');
+      if (!topLevelChapter) return;
+      
+      // Collapse all other top-level chapters
+      summary.querySelectorAll('ul.summary > li.chapter').forEach(function(chapter) {
+        if (chapter !== topLevelChapter) {
+          chapter.classList.remove('auto-open');
+          // Collapse all nested items in other chapters
+          chapter.querySelectorAll('li.chapter').forEach(function(nested) {
+            nested.classList.remove('auto-open');
+          });
+        }
+      });
+      
+      // Expand the active top-level chapter
+      topLevelChapter.classList.add('auto-open');
+      
+      // Expand ALL level 2 and level 3 items within this top-level chapter
+      topLevelChapter.querySelectorAll('li.chapter').forEach(function(nested) {
+        nested.classList.add('auto-open');
+      });
+      
+      // Scroll the active TOC item to the center of the TOC panel
+      setTimeout(function() {
+        var activeLink = active.querySelector('a');
+        if (activeLink) {
+          activeLink.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
     }
 
     applyAutoOpen();
@@ -894,14 +924,14 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-// Toggle collapse: clicking an expanded section collapses it
+// Toggle collapse: clicking level 1 heading expands/collapses all sublevels
 document.addEventListener('DOMContentLoaded', function() {
   try {
     var summary = document.querySelector('.book-summary ul.summary');
     if (!summary) return;
 
-    // Add click handlers to chapter links with children
-    summary.querySelectorAll('li.chapter').forEach(function(chapter) {
+    // Add click handlers only to top-level chapter links with children
+    summary.querySelectorAll('ul.summary > li.chapter').forEach(function(chapter) {
       var sublist = chapter.querySelector('ul');
       if (!sublist) return; // Only chapters with subsections
 
@@ -913,15 +943,28 @@ document.addEventListener('DOMContentLoaded', function() {
         var isExpanded = chapter.classList.contains('auto-open');
         
         if (isExpanded) {
-          // Collapse it
+          // Collapse it and all nested items
           e.preventDefault();
           chapter.classList.remove('auto-open');
+          // Also collapse all level 2 and level 3 items
+          chapter.querySelectorAll('li.chapter.auto-open').forEach(function(nested) {
+            nested.classList.remove('auto-open');
+          });
         } else {
-          // Expand it (remove auto-open from others first)
-          summary.querySelectorAll('li.chapter.auto-open').forEach(function(li) {
-            if (li !== chapter) li.classList.remove('auto-open');
+          // Expand it (collapse other top-level chapters first)
+          summary.querySelectorAll('ul.summary > li.chapter.auto-open').forEach(function(li) {
+            if (li !== chapter) {
+              li.classList.remove('auto-open');
+              li.querySelectorAll('li.chapter.auto-open').forEach(function(nested) {
+                nested.classList.remove('auto-open');
+              });
+            }
           });
           chapter.classList.add('auto-open');
+          // Expand all level 2 items within this chapter
+          chapter.querySelectorAll('ul > li.chapter').forEach(function(level2) {
+            level2.classList.add('auto-open');
+          });
         }
       });
     });
@@ -931,9 +974,26 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 <style>
-/* Show nested UL of active chapter when collapse=section */
-.book-summary ul.summary li.chapter.auto-open ul { display: block !important; }
-.book-summary ul.summary li.chapter.auto-open > a { font-weight: 700; }
+/* Show all nested UL of chapters marked as auto-open */
+.book-summary ul.summary li.chapter.auto-open > ul { 
+  display: block !important; 
+}
+
+/* Make parent level headings bold when expanded */
+.book-summary ul.summary li.chapter.auto-open > a { 
+  font-weight: 700; 
+}
+
+/* Highlight the actual active item with color and bold */
+.book-summary ul.summary li.chapter.active > a { 
+  font-weight: 700 !important;
+  color: #0078D4 !important;
+}
+
+/* Ensure proper indentation for nested levels */
+.book-summary ul.summary li.chapter ul li.chapter { 
+  padding-left: 0; 
+}
 </style>
 <div id="math-expression-in-figures" class="section level2 hasAnchor" number="10.3">
 <h2><span class="header-section-number">10.3</span> Math Expression in Figures<a href="10.3-math-expression-in-figures.html#math-expression-in-figures" class="anchor-section" aria-label="Anchor link to header"></a></h2>
@@ -947,13 +1007,13 @@ document.addEventListener('DOMContentLoaded', function() {
 <li><p><code>^</code> for <span class="env-green"><strong>superscript</strong></span></p>
 <p>Superscript is “started” by the caret <code>^</code> character. Anything after <code>^</code> is superscript. The superscript continues <strong>until you use a <code>*</code> or <code>~</code> character</strong>.</p>
 <p>If you want more text as superscript, then enclose it in quotes.</p>
-<div class="sourceCode" id="cb740"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb740-1"><a href="10.3-math-expression-in-figures.html#cb740-1" tabindex="-1"></a><span class="fu">expression</span>(Super<span class="sc">^</span>script<span class="sc">~</span>text)  <span class="co"># superscript ends at the space</span></span></code></pre></div>
+<div class="sourceCode" id="cb743"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb743-1"><a href="10.3-math-expression-in-figures.html#cb743-1" tabindex="-1"></a><span class="fu">expression</span>(Super<span class="sc">^</span>script<span class="sc">~</span>text)  <span class="co"># superscript ends at the space</span></span></code></pre></div>
 <p>renders as <span class="math inline">\(Super^{script} text\)</span>.</p>
-<div class="sourceCode" id="cb741"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb741-1"><a href="10.3-math-expression-in-figures.html#cb741-1" tabindex="-1"></a><span class="fu">expression</span>(Super<span class="sc">^</span><span class="st">&quot;script text&quot;</span>) <span class="co"># superscript continues until the closing quote</span></span></code></pre></div>
+<div class="sourceCode" id="cb744"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb744-1"><a href="10.3-math-expression-in-figures.html#cb744-1" tabindex="-1"></a><span class="fu">expression</span>(Super<span class="sc">^</span><span class="st">&quot;script text&quot;</span>) <span class="co"># superscript continues until the closing quote</span></span></code></pre></div>
 <p>renders as <span class="math inline">\(Super^{script text}\)</span>.</p></li>
 <li><p><code>[]</code> for <span class="env-green"><strong>subscript</strong></span></p>
-<div class="sourceCode" id="cb742"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb742-1"><a href="10.3-math-expression-in-figures.html#cb742-1" tabindex="-1"></a><span class="fu">plot</span>(<span class="dv">1</span>,<span class="dv">1</span>, <span class="at">main=</span><span class="fu">expression</span>(<span class="st">&#39;title&#39;</span><span class="sc">^</span><span class="dv">2</span>))   <span class="co"># superscript</span></span>
-<span id="cb742-2"><a href="10.3-math-expression-in-figures.html#cb742-2" tabindex="-1"></a><span class="fu">plot</span>(<span class="dv">1</span>,<span class="dv">1</span>, <span class="at">main=</span><span class="fu">expression</span>(<span class="st">&#39;title&#39;</span>[<span class="dv">2</span>]))  <span class="co"># subscript</span></span></code></pre></div></li>
+<div class="sourceCode" id="cb745"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb745-1"><a href="10.3-math-expression-in-figures.html#cb745-1" tabindex="-1"></a><span class="fu">plot</span>(<span class="dv">1</span>,<span class="dv">1</span>, <span class="at">main=</span><span class="fu">expression</span>(<span class="st">&#39;title&#39;</span><span class="sc">^</span><span class="dv">2</span>))   <span class="co"># superscript</span></span>
+<span id="cb745-2"><a href="10.3-math-expression-in-figures.html#cb745-2" tabindex="-1"></a><span class="fu">plot</span>(<span class="dv">1</span>,<span class="dv">1</span>, <span class="at">main=</span><span class="fu">expression</span>(<span class="st">&#39;title&#39;</span>[<span class="dv">2</span>]))  <span class="co"># subscript</span></span></code></pre></div></li>
 <li><p>Use <code>~</code> for spacing in math mode.</p>
 <p>When you type an <code>expression()</code> any spaces you type are ignored.</p></li>
 <li><p>Use <code>*</code> for tight concatenation (no space).</p></li>
@@ -1010,11 +1070,11 @@ document.addEventListener('DOMContentLoaded', function() {
 <p><code>r"( ... )"</code> → everything inside is taken <strong>literally</strong> (no escaping). It means “take everything literally, don’t treat <code>\</code> as escape characters.” <code>...</code> can contain any character sequence, including <code>\</code>.</p>
 <p>See <code>?Quotes</code> for raw string literal syntax.</p></li>
 </ul>
-<div class="sourceCode" id="cb743"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb743-1"><a href="10.3-math-expression-in-figures.html#cb743-1" tabindex="-1"></a><span class="fu">library</span>(latex2exp)</span>
-<span id="cb743-2"><a href="10.3-math-expression-in-figures.html#cb743-2" tabindex="-1"></a></span>
-<span id="cb743-3"><a href="10.3-math-expression-in-figures.html#cb743-3" tabindex="-1"></a><span class="fu">TeX</span>(r<span class="st">&quot;(</span><span class="sc">\a</span><span class="st">lpha)&quot;</span>)       <span class="co"># raw string</span></span>
-<span id="cb743-4"><a href="10.3-math-expression-in-figures.html#cb743-4" tabindex="-1"></a><span class="fu">TeX</span>(<span class="st">&quot;</span><span class="sc">\\</span><span class="st">alpha&quot;</span>)         <span class="co"># same, but escaped</span></span>
-<span id="cb743-5"><a href="10.3-math-expression-in-figures.html#cb743-5" tabindex="-1"></a><span class="fu">expression</span>(alpha)      <span class="co"># equivalent</span></span></code></pre></div>
+<div class="sourceCode" id="cb746"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb746-1"><a href="10.3-math-expression-in-figures.html#cb746-1" tabindex="-1"></a><span class="fu">library</span>(latex2exp)</span>
+<span id="cb746-2"><a href="10.3-math-expression-in-figures.html#cb746-2" tabindex="-1"></a></span>
+<span id="cb746-3"><a href="10.3-math-expression-in-figures.html#cb746-3" tabindex="-1"></a><span class="fu">TeX</span>(r<span class="st">&quot;(</span><span class="sc">\a</span><span class="st">lpha)&quot;</span>)       <span class="co"># raw string</span></span>
+<span id="cb746-4"><a href="10.3-math-expression-in-figures.html#cb746-4" tabindex="-1"></a><span class="fu">TeX</span>(<span class="st">&quot;</span><span class="sc">\\</span><span class="st">alpha&quot;</span>)         <span class="co"># same, but escaped</span></span>
+<span id="cb746-5"><a href="10.3-math-expression-in-figures.html#cb746-5" tabindex="-1"></a><span class="fu">expression</span>(alpha)      <span class="co"># equivalent</span></span></code></pre></div>
 <p>All three produce the symbol α.</p></li>
 <li><p>Put math needs to be rendered between <code>$...$</code> and regular text outside <code>$...$</code>.</p></li>
 </ul>
@@ -1028,14 +1088,14 @@ document.addEventListener('DOMContentLoaded', function() {
 </ul></li>
 </ul></li>
 </ol>
-<div class="sourceCode" id="cb744"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb744-1"><a href="10.3-math-expression-in-figures.html#cb744-1" tabindex="-1"></a><span class="co"># There is an R package called latex2exp which may be helpful. It has function TeX which accepts some LaTeX expressions enclosed with dollar sign $ as in this example:</span></span>
-<span id="cb744-2"><a href="10.3-math-expression-in-figures.html#cb744-2" tabindex="-1"></a></span>
-<span id="cb744-3"><a href="10.3-math-expression-in-figures.html#cb744-3" tabindex="-1"></a><span class="fu">library</span>(latex2exp)</span>
-<span id="cb744-4"><a href="10.3-math-expression-in-figures.html#cb744-4" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb744-5"><a href="10.3-math-expression-in-figures.html#cb744-5" tabindex="-1"></a></span>
-<span id="cb744-6"><a href="10.3-math-expression-in-figures.html#cb744-6" tabindex="-1"></a><span class="fu">qplot</span>(<span class="dv">1</span>, <span class="st">&quot;A&quot;</span>)<span class="sc">+</span></span>
-<span id="cb744-7"><a href="10.3-math-expression-in-figures.html#cb744-7" tabindex="-1"></a>     <span class="fu">ylab</span>(<span class="fu">TeX</span>(<span class="st">&quot;Formula: $</span><span class="sc">\\</span><span class="st">frac{2hc^2}{</span><span class="sc">\\</span><span class="st">lambda^</span><span class="sc">\\</span><span class="st">beta}$&quot;</span>))<span class="sc">+</span></span>
-<span id="cb744-8"><a href="10.3-math-expression-in-figures.html#cb744-8" tabindex="-1"></a>     <span class="fu">xlab</span>(<span class="fu">TeX</span>(<span class="st">&quot;$</span><span class="sc">\\</span><span class="st">alpha$&quot;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb747"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb747-1"><a href="10.3-math-expression-in-figures.html#cb747-1" tabindex="-1"></a><span class="co"># There is an R package called latex2exp which may be helpful. It has function TeX which accepts some LaTeX expressions enclosed with dollar sign $ as in this example:</span></span>
+<span id="cb747-2"><a href="10.3-math-expression-in-figures.html#cb747-2" tabindex="-1"></a></span>
+<span id="cb747-3"><a href="10.3-math-expression-in-figures.html#cb747-3" tabindex="-1"></a><span class="fu">library</span>(latex2exp)</span>
+<span id="cb747-4"><a href="10.3-math-expression-in-figures.html#cb747-4" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb747-5"><a href="10.3-math-expression-in-figures.html#cb747-5" tabindex="-1"></a></span>
+<span id="cb747-6"><a href="10.3-math-expression-in-figures.html#cb747-6" tabindex="-1"></a><span class="fu">qplot</span>(<span class="dv">1</span>, <span class="st">&quot;A&quot;</span>)<span class="sc">+</span></span>
+<span id="cb747-7"><a href="10.3-math-expression-in-figures.html#cb747-7" tabindex="-1"></a>     <span class="fu">ylab</span>(<span class="fu">TeX</span>(<span class="st">&quot;Formula: $</span><span class="sc">\\</span><span class="st">frac{2hc^2}{</span><span class="sc">\\</span><span class="st">lambda^</span><span class="sc">\\</span><span class="st">beta}$&quot;</span>))<span class="sc">+</span></span>
+<span id="cb747-8"><a href="10.3-math-expression-in-figures.html#cb747-8" tabindex="-1"></a>     <span class="fu">xlab</span>(<span class="fu">TeX</span>(<span class="st">&quot;$</span><span class="sc">\\</span><span class="st">alpha$&quot;</span>))</span></code></pre></div>
 <p><img src="https://drive.google.com/thumbnail?id=1R7I0KimEVf4i_JI1XW0oaxWAlSuqRLQC&sz=w1000" alt="Tex" style="zoom:75%;" /></p>
 <p><code>TeX</code> only put the part that needs <u>latex interpretation</u> between <code>$...$</code>, and there are several escape characters that needs to be carefully treated.</p>
 <table>
@@ -1068,8 +1128,8 @@ document.addEventListener('DOMContentLoaded', function() {
 </ul>
 <hr />
 <p><code>TeX</code> in <u>legend scales</u>, the use of <code>unname()</code> is necessary:</p>
-<div class="sourceCode" id="cb745"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb745-1"><a href="10.3-math-expression-in-figures.html#cb745-1" tabindex="-1"></a><span class="co"># have to use unname(TeX(&quot;$...$&quot;))</span></span>
-<span id="cb745-2"><a href="10.3-math-expression-in-figures.html#cb745-2" tabindex="-1"></a>labels<span class="ot">=</span><span class="fu">c</span>(<span class="st">&quot;CRU&quot;</span>, <span class="fu">unname</span>( <span class="fu">TeX</span>(<span class="st">&quot;$Burke </span><span class="sc">\\</span><span class="st">times 10$&quot;</span>) ) ) </span></code></pre></div>
+<div class="sourceCode" id="cb748"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb748-1"><a href="10.3-math-expression-in-figures.html#cb748-1" tabindex="-1"></a><span class="co"># have to use unname(TeX(&quot;$...$&quot;))</span></span>
+<span id="cb748-2"><a href="10.3-math-expression-in-figures.html#cb748-2" tabindex="-1"></a>labels<span class="ot">=</span><span class="fu">c</span>(<span class="st">&quot;CRU&quot;</span>, <span class="fu">unname</span>( <span class="fu">TeX</span>(<span class="st">&quot;$Burke </span><span class="sc">\\</span><span class="st">times 10$&quot;</span>) ) ) </span></code></pre></div>
 <p>When using <code>TeX</code> inside <code>geom_text(aes(x, y, label=TeX("", output = "character") ), parse=TRUE )</code>,</p>
 <ul>
 <li><p>specifying the output of <code>TeX()</code> as character, although “character” is not one of the values that the <code>output</code> argument can take, and</p></li>
@@ -1086,15 +1146,15 @@ document.addEventListener('DOMContentLoaded', function() {
 <li><p>It will <span class="env-green"><strong>escape special characters</strong></span> that are otherwise reserved or illegal; equivalent to <code>'target_v'</code></p></li>
 </ul></li>
 </ul>
-<div class="sourceCode" id="cb746"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb746-1"><a href="10.3-math-expression-in-figures.html#cb746-1" tabindex="-1"></a>target_v <span class="ot">&lt;-</span> <span class="st">&quot;#Obs&quot;</span></span>
-<span id="cb746-2"><a href="10.3-math-expression-in-figures.html#cb746-2" tabindex="-1"></a><span class="fu">aes_string</span>(<span class="at">x=</span><span class="st">&quot;TCS_reported&quot;</span>, <span class="at">y=</span><span class="fu">as.name</span>(target_v))</span>
-<span id="cb746-3"><a href="10.3-math-expression-in-figures.html#cb746-3" tabindex="-1"></a></span>
-<span id="cb746-4"><a href="10.3-math-expression-in-figures.html#cb746-4" tabindex="-1"></a><span class="co"># or equivalently replace `as.name()` with backticks ``</span></span>
-<span id="cb746-5"><a href="10.3-math-expression-in-figures.html#cb746-5" tabindex="-1"></a>target_v <span class="ot">&lt;-</span> <span class="st">&quot;`#Obs`&quot;</span></span>
-<span id="cb746-6"><a href="10.3-math-expression-in-figures.html#cb746-6" tabindex="-1"></a><span class="fu">aes_string</span>(<span class="at">x=</span><span class="st">&quot;TCS_reported&quot;</span>, <span class="at">y=</span>target_v)</span>
-<span id="cb746-7"><a href="10.3-math-expression-in-figures.html#cb746-7" tabindex="-1"></a></span>
-<span id="cb746-8"><a href="10.3-math-expression-in-figures.html#cb746-8" tabindex="-1"></a><span class="co"># or using get()</span></span>
-<span id="cb746-9"><a href="10.3-math-expression-in-figures.html#cb746-9" tabindex="-1"></a><span class="fu">aes</span>(<span class="at">x=</span>TCS_reported, <span class="at">y=</span><span class="fu">get</span>(target_v))</span></code></pre></div>
+<div class="sourceCode" id="cb749"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb749-1"><a href="10.3-math-expression-in-figures.html#cb749-1" tabindex="-1"></a>target_v <span class="ot">&lt;-</span> <span class="st">&quot;#Obs&quot;</span></span>
+<span id="cb749-2"><a href="10.3-math-expression-in-figures.html#cb749-2" tabindex="-1"></a><span class="fu">aes_string</span>(<span class="at">x=</span><span class="st">&quot;TCS_reported&quot;</span>, <span class="at">y=</span><span class="fu">as.name</span>(target_v))</span>
+<span id="cb749-3"><a href="10.3-math-expression-in-figures.html#cb749-3" tabindex="-1"></a></span>
+<span id="cb749-4"><a href="10.3-math-expression-in-figures.html#cb749-4" tabindex="-1"></a><span class="co"># or equivalently replace `as.name()` with backticks ``</span></span>
+<span id="cb749-5"><a href="10.3-math-expression-in-figures.html#cb749-5" tabindex="-1"></a>target_v <span class="ot">&lt;-</span> <span class="st">&quot;`#Obs`&quot;</span></span>
+<span id="cb749-6"><a href="10.3-math-expression-in-figures.html#cb749-6" tabindex="-1"></a><span class="fu">aes_string</span>(<span class="at">x=</span><span class="st">&quot;TCS_reported&quot;</span>, <span class="at">y=</span>target_v)</span>
+<span id="cb749-7"><a href="10.3-math-expression-in-figures.html#cb749-7" tabindex="-1"></a></span>
+<span id="cb749-8"><a href="10.3-math-expression-in-figures.html#cb749-8" tabindex="-1"></a><span class="co"># or using get()</span></span>
+<span id="cb749-9"><a href="10.3-math-expression-in-figures.html#cb749-9" tabindex="-1"></a><span class="fu">aes</span>(<span class="at">x=</span>TCS_reported, <span class="at">y=</span><span class="fu">get</span>(target_v))</span></code></pre></div>
 
 </div>
             </section>

@@ -654,8 +654,8 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="8.8" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html"><i class="fa fa-check"></i><b>8.8</b> Data Frame Operations</a>
 <ul>
-<li class="chapter" data-level="" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#columnrow-wise-operations"><i class="fa fa-check"></i>Column/Row-wise Operations</a></li>
-<li class="chapter" data-level="8.8.1" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#process-na-values"><i class="fa fa-check"></i><b>8.8.1</b> <span class="env-green"><strong>Process <code>NA</code> values</strong></span></a></li>
+<li class="chapter" data-level="8.8.1" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#columnrow-wise-operations"><i class="fa fa-check"></i><b>8.8.1</b> Column/Row-wise Operations</a></li>
+<li class="chapter" data-level="8.8.2" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#process-na-values"><i class="fa fa-check"></i><b>8.8.2</b> <span class="env-green"><strong>Process <code>NA</code> values</strong></span></a></li>
 </ul></li>
 <li class="chapter" data-level="8.9" data-path="8.9-matrix-multiplication.html"><a href="8.9-matrix-multiplication.html"><i class="fa fa-check"></i><b>8.9</b> Matrix multiplication</a></li>
 <li class="chapter" data-level="8.10" data-path="8.10-string-operations.html"><a href="8.10-string-operations.html"><i class="fa fa-check"></i><b>8.10</b> String Operations</a></li>
@@ -868,17 +868,47 @@ function myFunction(id) {
   x.style.display = (x.style.display === 'none') ? 'block' : 'none';
 }
 
-// Auto-expand active top-level section so its level 2/3 items are visible
+// Auto-expand active section and keep all siblings within the same level 1 section open
 document.addEventListener('DOMContentLoaded', function() {
   try {
     var summary = document.querySelector('.book-summary ul.summary');
     if (!summary) return;
 
     function applyAutoOpen() {
-      // Clear previous
-      summary.querySelectorAll('li.chapter.auto-open').forEach(function(li){ li.classList.remove('auto-open'); });
+      // Find the active item (could be level 1, 2, or 3)
       var active = summary.querySelector('li.chapter.active');
-      if (active) active.classList.add('auto-open');
+      if (!active) return;
+      
+      // Find the top-level (level 1) chapter containing the active item
+      var topLevelChapter = active.closest('ul.summary > li.chapter');
+      if (!topLevelChapter) return;
+      
+      // Collapse all other top-level chapters
+      summary.querySelectorAll('ul.summary > li.chapter').forEach(function(chapter) {
+        if (chapter !== topLevelChapter) {
+          chapter.classList.remove('auto-open');
+          // Collapse all nested items in other chapters
+          chapter.querySelectorAll('li.chapter').forEach(function(nested) {
+            nested.classList.remove('auto-open');
+          });
+        }
+      });
+      
+      // Expand the active top-level chapter
+      topLevelChapter.classList.add('auto-open');
+      
+      // Expand ALL level 2 and level 3 items within this top-level chapter
+      topLevelChapter.querySelectorAll('li.chapter').forEach(function(nested) {
+        nested.classList.add('auto-open');
+      });
+      
+      // Scroll the active TOC item to the center of the TOC panel
+      setTimeout(function() {
+        var activeLink = active.querySelector('a');
+        if (activeLink) {
+          activeLink.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
     }
 
     applyAutoOpen();
@@ -894,14 +924,14 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-// Toggle collapse: clicking an expanded section collapses it
+// Toggle collapse: clicking level 1 heading expands/collapses all sublevels
 document.addEventListener('DOMContentLoaded', function() {
   try {
     var summary = document.querySelector('.book-summary ul.summary');
     if (!summary) return;
 
-    // Add click handlers to chapter links with children
-    summary.querySelectorAll('li.chapter').forEach(function(chapter) {
+    // Add click handlers only to top-level chapter links with children
+    summary.querySelectorAll('ul.summary > li.chapter').forEach(function(chapter) {
       var sublist = chapter.querySelector('ul');
       if (!sublist) return; // Only chapters with subsections
 
@@ -913,15 +943,28 @@ document.addEventListener('DOMContentLoaded', function() {
         var isExpanded = chapter.classList.contains('auto-open');
         
         if (isExpanded) {
-          // Collapse it
+          // Collapse it and all nested items
           e.preventDefault();
           chapter.classList.remove('auto-open');
+          // Also collapse all level 2 and level 3 items
+          chapter.querySelectorAll('li.chapter.auto-open').forEach(function(nested) {
+            nested.classList.remove('auto-open');
+          });
         } else {
-          // Expand it (remove auto-open from others first)
-          summary.querySelectorAll('li.chapter.auto-open').forEach(function(li) {
-            if (li !== chapter) li.classList.remove('auto-open');
+          // Expand it (collapse other top-level chapters first)
+          summary.querySelectorAll('ul.summary > li.chapter.auto-open').forEach(function(li) {
+            if (li !== chapter) {
+              li.classList.remove('auto-open');
+              li.querySelectorAll('li.chapter.auto-open').forEach(function(nested) {
+                nested.classList.remove('auto-open');
+              });
+            }
           });
           chapter.classList.add('auto-open');
+          // Expand all level 2 items within this chapter
+          chapter.querySelectorAll('ul > li.chapter').forEach(function(level2) {
+            level2.classList.add('auto-open');
+          });
         }
       });
     });
@@ -931,24 +974,41 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 <style>
-/* Show nested UL of active chapter when collapse=section */
-.book-summary ul.summary li.chapter.auto-open ul { display: block !important; }
-.book-summary ul.summary li.chapter.auto-open > a { font-weight: 700; }
+/* Show all nested UL of chapters marked as auto-open */
+.book-summary ul.summary li.chapter.auto-open > ul { 
+  display: block !important; 
+}
+
+/* Make parent level headings bold when expanded */
+.book-summary ul.summary li.chapter.auto-open > a { 
+  font-weight: 700; 
+}
+
+/* Highlight the actual active item with color and bold */
+.book-summary ul.summary li.chapter.active > a { 
+  font-weight: 700 !important;
+  color: #0078D4 !important;
+}
+
+/* Ensure proper indentation for nested levels */
+.book-summary ul.summary li.chapter ul li.chapter { 
+  padding-left: 0; 
+}
 </style>
 <div id="categorical-variables" class="section level2 hasAnchor" number="9.3">
 <h2><span class="header-section-number">9.3</span> Categorical Variables<a href="9.3-categorical-variables.html#categorical-variables" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <div id="manipulate-string-columns" class="section level3 hasAnchor" number="9.3.1">
 <h3><span class="header-section-number">9.3.1</span> Manipulate String Columns<a href="9.3-categorical-variables.html#manipulate-string-columns" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p><code>reg_dict %&gt;% mutate(def = sapply(strsplit(def,"\\."), "[[", 2) )</code> split a string column and select the 2nd item.</p>
-<div class="sourceCode" id="cb666"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb666-1"><a href="9.3-categorical-variables.html#cb666-1" tabindex="-1"></a><span class="co"># alternatively, use separate(def, into, sep, remove=TRUE)</span></span>
-<span id="cb666-2"><a href="9.3-categorical-variables.html#cb666-2" tabindex="-1"></a>reg_dict <span class="sc">%&gt;%</span> <span class="fu">separate</span>(def, <span class="fu">c</span>(<span class="st">&quot;cli_key&quot;</span>, <span class="st">&quot;yr_key&quot;</span>), <span class="st">&quot;.&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb669"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb669-1"><a href="9.3-categorical-variables.html#cb669-1" tabindex="-1"></a><span class="co"># alternatively, use separate(def, into, sep, remove=TRUE)</span></span>
+<span id="cb669-2"><a href="9.3-categorical-variables.html#cb669-2" tabindex="-1"></a>reg_dict <span class="sc">%&gt;%</span> <span class="fu">separate</span>(def, <span class="fu">c</span>(<span class="st">&quot;cli_key&quot;</span>, <span class="st">&quot;yr_key&quot;</span>), <span class="st">&quot;.&quot;</span>)</span></code></pre></div>
 <p><code>separate()</code> function does the opposite of <code>unite()</code>: it splits one column into multiple columns using either a regular expression or character positions.</p>
-<div class="sourceCode" id="cb667"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb667-1"><a href="9.3-categorical-variables.html#cb667-1" tabindex="-1"></a>world_separate <span class="ot">=</span> world_unite <span class="sc">%&gt;%</span> </span>
-<span id="cb667-2"><a href="9.3-categorical-variables.html#cb667-2" tabindex="-1"></a>  <span class="fu">separate</span>(con_reg, <span class="fu">c</span>(<span class="st">&quot;continent&quot;</span>, <span class="st">&quot;region_un&quot;</span>), <span class="at">sep =</span> <span class="st">&quot;:&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb670"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb670-1"><a href="9.3-categorical-variables.html#cb670-1" tabindex="-1"></a>world_separate <span class="ot">=</span> world_unite <span class="sc">%&gt;%</span> </span>
+<span id="cb670-2"><a href="9.3-categorical-variables.html#cb670-2" tabindex="-1"></a>  <span class="fu">separate</span>(con_reg, <span class="fu">c</span>(<span class="st">&quot;continent&quot;</span>, <span class="st">&quot;region_un&quot;</span>), <span class="at">sep =</span> <span class="st">&quot;:&quot;</span>)</span></code></pre></div>
 <p><code>unite()</code> <span class="env-green">pastes</span> together existing string columns.</p>
-<div class="sourceCode" id="cb668"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb668-1"><a href="9.3-categorical-variables.html#cb668-1" tabindex="-1"></a>world_unite <span class="ot">=</span> world <span class="sc">%&gt;%</span></span>
-<span id="cb668-2"><a href="9.3-categorical-variables.html#cb668-2" tabindex="-1"></a>  <span class="fu">unite</span>(<span class="st">&quot;con_reg&quot;</span>, continent<span class="sc">:</span>region_un, <span class="at">sep =</span> <span class="st">&quot;:&quot;</span>, <span class="at">remove =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb668-3"><a href="9.3-categorical-variables.html#cb668-3" tabindex="-1"></a><span class="co"># remove indicates if the original columns should be removed</span></span></code></pre></div>
+<div class="sourceCode" id="cb671"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb671-1"><a href="9.3-categorical-variables.html#cb671-1" tabindex="-1"></a>world_unite <span class="ot">=</span> world <span class="sc">%&gt;%</span></span>
+<span id="cb671-2"><a href="9.3-categorical-variables.html#cb671-2" tabindex="-1"></a>  <span class="fu">unite</span>(<span class="st">&quot;con_reg&quot;</span>, continent<span class="sc">:</span>region_un, <span class="at">sep =</span> <span class="st">&quot;:&quot;</span>, <span class="at">remove =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb671-3"><a href="9.3-categorical-variables.html#cb671-3" tabindex="-1"></a><span class="co"># remove indicates if the original columns should be removed</span></span></code></pre></div>
 <hr />
 </div>
 <div id="factors" class="section level3 hasAnchor" number="9.3.2">
@@ -965,35 +1025,35 @@ document.addEventListener('DOMContentLoaded', function() {
 <li><code>...</code> additional levels to add to the factor.</li>
 <li><code>after</code> position to place the new level(s).</li>
 </ul>
-<div class="sourceCode" id="cb669"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb669-1"><a href="9.3-categorical-variables.html#cb669-1" tabindex="-1"></a>f <span class="ot">&lt;-</span> <span class="fu">factor</span>(<span class="fu">sample</span>(letters[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>], <span class="dv">20</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>))</span>
-<span id="cb669-2"><a href="9.3-categorical-variables.html#cb669-2" tabindex="-1"></a>f</span>
-<span id="cb669-3"><a href="9.3-categorical-variables.html#cb669-3" tabindex="-1"></a><span class="co">#&gt;  [1] c a b a b b a c c b b b b c c c a b b c</span></span>
-<span id="cb669-4"><a href="9.3-categorical-variables.html#cb669-4" tabindex="-1"></a><span class="co">#&gt; Levels: a b c</span></span>
-<span id="cb669-5"><a href="9.3-categorical-variables.html#cb669-5" tabindex="-1"></a><span class="fu">fct_expand</span>(f, <span class="st">&quot;d&quot;</span>, <span class="st">&quot;e&quot;</span>, <span class="st">&quot;f&quot;</span>)</span>
-<span id="cb669-6"><a href="9.3-categorical-variables.html#cb669-6" tabindex="-1"></a><span class="co">#&gt;  [1] c a b a b b a c c b b b b c c c a b b c</span></span>
-<span id="cb669-7"><a href="9.3-categorical-variables.html#cb669-7" tabindex="-1"></a><span class="co">#&gt; Levels: a b c d e f</span></span>
-<span id="cb669-8"><a href="9.3-categorical-variables.html#cb669-8" tabindex="-1"></a><span class="fu">fct_expand</span>(f, letters[<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>])</span>
-<span id="cb669-9"><a href="9.3-categorical-variables.html#cb669-9" tabindex="-1"></a><span class="co">#&gt;  [1] c a b a b b a c c b b b b c c c a b b c</span></span>
-<span id="cb669-10"><a href="9.3-categorical-variables.html#cb669-10" tabindex="-1"></a><span class="co">#&gt; Levels: a b c d e f</span></span>
-<span id="cb669-11"><a href="9.3-categorical-variables.html#cb669-11" tabindex="-1"></a><span class="fu">fct_expand</span>(f, <span class="st">&quot;Z&quot;</span>, <span class="at">after =</span> <span class="dv">0</span>)</span>
-<span id="cb669-12"><a href="9.3-categorical-variables.html#cb669-12" tabindex="-1"></a><span class="co">#&gt;  [1] c a b a b b a c c b b b b c c c a b b c</span></span>
-<span id="cb669-13"><a href="9.3-categorical-variables.html#cb669-13" tabindex="-1"></a><span class="co">#&gt; Levels: Z a b c</span></span></code></pre></div>
+<div class="sourceCode" id="cb672"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb672-1"><a href="9.3-categorical-variables.html#cb672-1" tabindex="-1"></a>f <span class="ot">&lt;-</span> <span class="fu">factor</span>(<span class="fu">sample</span>(letters[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>], <span class="dv">20</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb672-2"><a href="9.3-categorical-variables.html#cb672-2" tabindex="-1"></a>f</span>
+<span id="cb672-3"><a href="9.3-categorical-variables.html#cb672-3" tabindex="-1"></a><span class="co">#&gt;  [1] c a b a b b a c c b b b b c c c a b b c</span></span>
+<span id="cb672-4"><a href="9.3-categorical-variables.html#cb672-4" tabindex="-1"></a><span class="co">#&gt; Levels: a b c</span></span>
+<span id="cb672-5"><a href="9.3-categorical-variables.html#cb672-5" tabindex="-1"></a><span class="fu">fct_expand</span>(f, <span class="st">&quot;d&quot;</span>, <span class="st">&quot;e&quot;</span>, <span class="st">&quot;f&quot;</span>)</span>
+<span id="cb672-6"><a href="9.3-categorical-variables.html#cb672-6" tabindex="-1"></a><span class="co">#&gt;  [1] c a b a b b a c c b b b b c c c a b b c</span></span>
+<span id="cb672-7"><a href="9.3-categorical-variables.html#cb672-7" tabindex="-1"></a><span class="co">#&gt; Levels: a b c d e f</span></span>
+<span id="cb672-8"><a href="9.3-categorical-variables.html#cb672-8" tabindex="-1"></a><span class="fu">fct_expand</span>(f, letters[<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>])</span>
+<span id="cb672-9"><a href="9.3-categorical-variables.html#cb672-9" tabindex="-1"></a><span class="co">#&gt;  [1] c a b a b b a c c b b b b c c c a b b c</span></span>
+<span id="cb672-10"><a href="9.3-categorical-variables.html#cb672-10" tabindex="-1"></a><span class="co">#&gt; Levels: a b c d e f</span></span>
+<span id="cb672-11"><a href="9.3-categorical-variables.html#cb672-11" tabindex="-1"></a><span class="fu">fct_expand</span>(f, <span class="st">&quot;Z&quot;</span>, <span class="at">after =</span> <span class="dv">0</span>)</span>
+<span id="cb672-12"><a href="9.3-categorical-variables.html#cb672-12" tabindex="-1"></a><span class="co">#&gt;  [1] c a b a b b a c c b b b b c c c a b b c</span></span>
+<span id="cb672-13"><a href="9.3-categorical-variables.html#cb672-13" tabindex="-1"></a><span class="co">#&gt; Levels: Z a b c</span></span></code></pre></div>
 <p><code>fct_drop(f, only = NULL)</code> drop unused levels.</p>
-<div class="sourceCode" id="cb670"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb670-1"><a href="9.3-categorical-variables.html#cb670-1" tabindex="-1"></a>f <span class="ot">&lt;-</span> <span class="fu">factor</span>(<span class="fu">c</span>(<span class="st">&quot;a&quot;</span>, <span class="st">&quot;b&quot;</span>), <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;a&quot;</span>, <span class="st">&quot;b&quot;</span>, <span class="st">&quot;c&quot;</span>))</span>
-<span id="cb670-2"><a href="9.3-categorical-variables.html#cb670-2" tabindex="-1"></a>f</span>
-<span id="cb670-3"><a href="9.3-categorical-variables.html#cb670-3" tabindex="-1"></a><span class="co">#&gt; [1] a b</span></span>
-<span id="cb670-4"><a href="9.3-categorical-variables.html#cb670-4" tabindex="-1"></a><span class="co">#&gt; Levels: a b c</span></span>
-<span id="cb670-5"><a href="9.3-categorical-variables.html#cb670-5" tabindex="-1"></a><span class="fu">fct_drop</span>(f)</span>
-<span id="cb670-6"><a href="9.3-categorical-variables.html#cb670-6" tabindex="-1"></a><span class="co">#&gt; [1] a b</span></span>
-<span id="cb670-7"><a href="9.3-categorical-variables.html#cb670-7" tabindex="-1"></a><span class="co">#&gt; Levels: a b</span></span>
-<span id="cb670-8"><a href="9.3-categorical-variables.html#cb670-8" tabindex="-1"></a></span>
-<span id="cb670-9"><a href="9.3-categorical-variables.html#cb670-9" tabindex="-1"></a><span class="co"># Set only to restrict which levels to drop</span></span>
-<span id="cb670-10"><a href="9.3-categorical-variables.html#cb670-10" tabindex="-1"></a><span class="fu">fct_drop</span>(f, <span class="at">only =</span> <span class="st">&quot;a&quot;</span>)</span>
-<span id="cb670-11"><a href="9.3-categorical-variables.html#cb670-11" tabindex="-1"></a><span class="co">#&gt; [1] a b</span></span>
-<span id="cb670-12"><a href="9.3-categorical-variables.html#cb670-12" tabindex="-1"></a><span class="co">#&gt; Levels: a b c</span></span>
-<span id="cb670-13"><a href="9.3-categorical-variables.html#cb670-13" tabindex="-1"></a><span class="fu">fct_drop</span>(f, <span class="at">only =</span> <span class="st">&quot;c&quot;</span>)</span>
-<span id="cb670-14"><a href="9.3-categorical-variables.html#cb670-14" tabindex="-1"></a><span class="co">#&gt; [1] a b</span></span>
-<span id="cb670-15"><a href="9.3-categorical-variables.html#cb670-15" tabindex="-1"></a><span class="co">#&gt; Levels: a b</span></span></code></pre></div>
+<div class="sourceCode" id="cb673"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb673-1"><a href="9.3-categorical-variables.html#cb673-1" tabindex="-1"></a>f <span class="ot">&lt;-</span> <span class="fu">factor</span>(<span class="fu">c</span>(<span class="st">&quot;a&quot;</span>, <span class="st">&quot;b&quot;</span>), <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;a&quot;</span>, <span class="st">&quot;b&quot;</span>, <span class="st">&quot;c&quot;</span>))</span>
+<span id="cb673-2"><a href="9.3-categorical-variables.html#cb673-2" tabindex="-1"></a>f</span>
+<span id="cb673-3"><a href="9.3-categorical-variables.html#cb673-3" tabindex="-1"></a><span class="co">#&gt; [1] a b</span></span>
+<span id="cb673-4"><a href="9.3-categorical-variables.html#cb673-4" tabindex="-1"></a><span class="co">#&gt; Levels: a b c</span></span>
+<span id="cb673-5"><a href="9.3-categorical-variables.html#cb673-5" tabindex="-1"></a><span class="fu">fct_drop</span>(f)</span>
+<span id="cb673-6"><a href="9.3-categorical-variables.html#cb673-6" tabindex="-1"></a><span class="co">#&gt; [1] a b</span></span>
+<span id="cb673-7"><a href="9.3-categorical-variables.html#cb673-7" tabindex="-1"></a><span class="co">#&gt; Levels: a b</span></span>
+<span id="cb673-8"><a href="9.3-categorical-variables.html#cb673-8" tabindex="-1"></a></span>
+<span id="cb673-9"><a href="9.3-categorical-variables.html#cb673-9" tabindex="-1"></a><span class="co"># Set only to restrict which levels to drop</span></span>
+<span id="cb673-10"><a href="9.3-categorical-variables.html#cb673-10" tabindex="-1"></a><span class="fu">fct_drop</span>(f, <span class="at">only =</span> <span class="st">&quot;a&quot;</span>)</span>
+<span id="cb673-11"><a href="9.3-categorical-variables.html#cb673-11" tabindex="-1"></a><span class="co">#&gt; [1] a b</span></span>
+<span id="cb673-12"><a href="9.3-categorical-variables.html#cb673-12" tabindex="-1"></a><span class="co">#&gt; Levels: a b c</span></span>
+<span id="cb673-13"><a href="9.3-categorical-variables.html#cb673-13" tabindex="-1"></a><span class="fu">fct_drop</span>(f, <span class="at">only =</span> <span class="st">&quot;c&quot;</span>)</span>
+<span id="cb673-14"><a href="9.3-categorical-variables.html#cb673-14" tabindex="-1"></a><span class="co">#&gt; [1] a b</span></span>
+<span id="cb673-15"><a href="9.3-categorical-variables.html#cb673-15" tabindex="-1"></a><span class="co">#&gt; Levels: a b</span></span></code></pre></div>
 
 </div>
 </div>

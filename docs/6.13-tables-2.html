@@ -654,8 +654,8 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="8.8" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html"><i class="fa fa-check"></i><b>8.8</b> Data Frame Operations</a>
 <ul>
-<li class="chapter" data-level="" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#columnrow-wise-operations"><i class="fa fa-check"></i>Column/Row-wise Operations</a></li>
-<li class="chapter" data-level="8.8.1" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#process-na-values"><i class="fa fa-check"></i><b>8.8.1</b> <span class="env-green"><strong>Process <code>NA</code> values</strong></span></a></li>
+<li class="chapter" data-level="8.8.1" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#columnrow-wise-operations"><i class="fa fa-check"></i><b>8.8.1</b> Column/Row-wise Operations</a></li>
+<li class="chapter" data-level="8.8.2" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#process-na-values"><i class="fa fa-check"></i><b>8.8.2</b> <span class="env-green"><strong>Process <code>NA</code> values</strong></span></a></li>
 </ul></li>
 <li class="chapter" data-level="8.9" data-path="8.9-matrix-multiplication.html"><a href="8.9-matrix-multiplication.html"><i class="fa fa-check"></i><b>8.9</b> Matrix multiplication</a></li>
 <li class="chapter" data-level="8.10" data-path="8.10-string-operations.html"><a href="8.10-string-operations.html"><i class="fa fa-check"></i><b>8.10</b> String Operations</a></li>
@@ -868,17 +868,47 @@ function myFunction(id) {
   x.style.display = (x.style.display === 'none') ? 'block' : 'none';
 }
 
-// Auto-expand active top-level section so its level 2/3 items are visible
+// Auto-expand active section and keep all siblings within the same level 1 section open
 document.addEventListener('DOMContentLoaded', function() {
   try {
     var summary = document.querySelector('.book-summary ul.summary');
     if (!summary) return;
 
     function applyAutoOpen() {
-      // Clear previous
-      summary.querySelectorAll('li.chapter.auto-open').forEach(function(li){ li.classList.remove('auto-open'); });
+      // Find the active item (could be level 1, 2, or 3)
       var active = summary.querySelector('li.chapter.active');
-      if (active) active.classList.add('auto-open');
+      if (!active) return;
+      
+      // Find the top-level (level 1) chapter containing the active item
+      var topLevelChapter = active.closest('ul.summary > li.chapter');
+      if (!topLevelChapter) return;
+      
+      // Collapse all other top-level chapters
+      summary.querySelectorAll('ul.summary > li.chapter').forEach(function(chapter) {
+        if (chapter !== topLevelChapter) {
+          chapter.classList.remove('auto-open');
+          // Collapse all nested items in other chapters
+          chapter.querySelectorAll('li.chapter').forEach(function(nested) {
+            nested.classList.remove('auto-open');
+          });
+        }
+      });
+      
+      // Expand the active top-level chapter
+      topLevelChapter.classList.add('auto-open');
+      
+      // Expand ALL level 2 and level 3 items within this top-level chapter
+      topLevelChapter.querySelectorAll('li.chapter').forEach(function(nested) {
+        nested.classList.add('auto-open');
+      });
+      
+      // Scroll the active TOC item to the center of the TOC panel
+      setTimeout(function() {
+        var activeLink = active.querySelector('a');
+        if (activeLink) {
+          activeLink.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
     }
 
     applyAutoOpen();
@@ -894,14 +924,14 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-// Toggle collapse: clicking an expanded section collapses it
+// Toggle collapse: clicking level 1 heading expands/collapses all sublevels
 document.addEventListener('DOMContentLoaded', function() {
   try {
     var summary = document.querySelector('.book-summary ul.summary');
     if (!summary) return;
 
-    // Add click handlers to chapter links with children
-    summary.querySelectorAll('li.chapter').forEach(function(chapter) {
+    // Add click handlers only to top-level chapter links with children
+    summary.querySelectorAll('ul.summary > li.chapter').forEach(function(chapter) {
       var sublist = chapter.querySelector('ul');
       if (!sublist) return; // Only chapters with subsections
 
@@ -913,15 +943,28 @@ document.addEventListener('DOMContentLoaded', function() {
         var isExpanded = chapter.classList.contains('auto-open');
         
         if (isExpanded) {
-          // Collapse it
+          // Collapse it and all nested items
           e.preventDefault();
           chapter.classList.remove('auto-open');
+          // Also collapse all level 2 and level 3 items
+          chapter.querySelectorAll('li.chapter.auto-open').forEach(function(nested) {
+            nested.classList.remove('auto-open');
+          });
         } else {
-          // Expand it (remove auto-open from others first)
-          summary.querySelectorAll('li.chapter.auto-open').forEach(function(li) {
-            if (li !== chapter) li.classList.remove('auto-open');
+          // Expand it (collapse other top-level chapters first)
+          summary.querySelectorAll('ul.summary > li.chapter.auto-open').forEach(function(li) {
+            if (li !== chapter) {
+              li.classList.remove('auto-open');
+              li.querySelectorAll('li.chapter.auto-open').forEach(function(nested) {
+                nested.classList.remove('auto-open');
+              });
+            }
           });
           chapter.classList.add('auto-open');
+          // Expand all level 2 items within this chapter
+          chapter.querySelectorAll('ul > li.chapter').forEach(function(level2) {
+            level2.classList.add('auto-open');
+          });
         }
       });
     });
@@ -931,9 +974,26 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 <style>
-/* Show nested UL of active chapter when collapse=section */
-.book-summary ul.summary li.chapter.auto-open ul { display: block !important; }
-.book-summary ul.summary li.chapter.auto-open > a { font-weight: 700; }
+/* Show all nested UL of chapters marked as auto-open */
+.book-summary ul.summary li.chapter.auto-open > ul { 
+  display: block !important; 
+}
+
+/* Make parent level headings bold when expanded */
+.book-summary ul.summary li.chapter.auto-open > a { 
+  font-weight: 700; 
+}
+
+/* Highlight the actual active item with color and bold */
+.book-summary ul.summary li.chapter.active > a { 
+  font-weight: 700 !important;
+  color: #0078D4 !important;
+}
+
+/* Ensure proper indentation for nested levels */
+.book-summary ul.summary li.chapter ul li.chapter { 
+  padding-left: 0; 
+}
 </style>
 <div id="tables-2" class="section level2 hasAnchor" number="6.13">
 <h2><span class="header-section-number">6.13</span> Tables<a href="6.13-tables-2.html#tables-2" class="anchor-section" aria-label="Anchor link to header"></a></h2>
@@ -947,56 +1007,56 @@ document.addEventListener('DOMContentLoaded', function() {
 <li>Refer to the table using <code>@tbl-xxx</code>.</li>
 <li>The table lable must begin with <code>tbl-</code> no matter whether you use div or latex approach for cross-references.</li>
 </ul>
-<div class="sourceCode" id="cb413"><pre class="sourceCode latex"><code class="sourceCode latex"><span id="cb413-1"><a href="6.13-tables-2.html#cb413-1" tabindex="-1"></a>::: {#tbl-1}</span>
-<span id="cb413-2"><a href="6.13-tables-2.html#cb413-2" tabindex="-1"></a></span>
-<span id="cb413-3"><a href="6.13-tables-2.html#cb413-3" tabindex="-1"></a>```{=latex} </span>
-<span id="cb413-4"><a href="6.13-tables-2.html#cb413-4" tabindex="-1"></a><span class="co">% Or whatever actual you want, includegraphics, whatever. </span></span>
-<span id="cb413-5"><a href="6.13-tables-2.html#cb413-5" tabindex="-1"></a><span class="co">% (_not_ \begin{table}, just the content of it)</span></span>
-<span id="cb413-6"><a href="6.13-tables-2.html#cb413-6" tabindex="-1"></a><span class="kw">\begin</span>{<span class="ex">tabular</span>}{l c r}</span>
-<span id="cb413-7"><a href="6.13-tables-2.html#cb413-7" tabindex="-1"></a><span class="fu">\hline</span></span>
-<span id="cb413-8"><a href="6.13-tables-2.html#cb413-8" tabindex="-1"></a>Header 1 <span class="op">&amp;</span> Header 2 <span class="op">&amp;</span> Header 3 <span class="fu">\\</span></span>
-<span id="cb413-9"><a href="6.13-tables-2.html#cb413-9" tabindex="-1"></a><span class="fu">\hline</span></span>
-<span id="cb413-10"><a href="6.13-tables-2.html#cb413-10" tabindex="-1"></a>Row 1 Col 1 <span class="op">&amp;</span> Row 1 Col 2 <span class="op">&amp;</span> Row 1 Col 3 <span class="fu">\\</span></span>
-<span id="cb413-11"><a href="6.13-tables-2.html#cb413-11" tabindex="-1"></a>Row 2 Col 1 <span class="op">&amp;</span> Row 2 Col 2 <span class="op">&amp;</span> Row 2 Col 3 <span class="fu">\\</span></span>
-<span id="cb413-12"><a href="6.13-tables-2.html#cb413-12" tabindex="-1"></a><span class="fu">\hline</span></span>
-<span id="cb413-13"><a href="6.13-tables-2.html#cb413-13" tabindex="-1"></a><span class="kw">\end</span>{<span class="ex">tabular</span>}</span>
-<span id="cb413-14"><a href="6.13-tables-2.html#cb413-14" tabindex="-1"></a>```</span>
-<span id="cb413-15"><a href="6.13-tables-2.html#cb413-15" tabindex="-1"></a></span>
-<span id="cb413-16"><a href="6.13-tables-2.html#cb413-16" tabindex="-1"></a>This is a table caption.</span>
-<span id="cb413-17"><a href="6.13-tables-2.html#cb413-17" tabindex="-1"></a></span>
-<span id="cb413-18"><a href="6.13-tables-2.html#cb413-18" tabindex="-1"></a>:::</span>
-<span id="cb413-19"><a href="6.13-tables-2.html#cb413-19" tabindex="-1"></a></span>
-<span id="cb413-20"><a href="6.13-tables-2.html#cb413-20" tabindex="-1"></a>For cross-reference: See @tbl-1.</span></code></pre></div>
+<div class="sourceCode" id="cb415"><pre class="sourceCode latex"><code class="sourceCode latex"><span id="cb415-1"><a href="6.13-tables-2.html#cb415-1" tabindex="-1"></a>::: {#tbl-1}</span>
+<span id="cb415-2"><a href="6.13-tables-2.html#cb415-2" tabindex="-1"></a></span>
+<span id="cb415-3"><a href="6.13-tables-2.html#cb415-3" tabindex="-1"></a>```{=latex} </span>
+<span id="cb415-4"><a href="6.13-tables-2.html#cb415-4" tabindex="-1"></a><span class="co">% Or whatever actual you want, includegraphics, whatever. </span></span>
+<span id="cb415-5"><a href="6.13-tables-2.html#cb415-5" tabindex="-1"></a><span class="co">% (_not_ \begin{table}, just the content of it)</span></span>
+<span id="cb415-6"><a href="6.13-tables-2.html#cb415-6" tabindex="-1"></a><span class="kw">\begin</span>{<span class="ex">tabular</span>}{l c r}</span>
+<span id="cb415-7"><a href="6.13-tables-2.html#cb415-7" tabindex="-1"></a><span class="fu">\hline</span></span>
+<span id="cb415-8"><a href="6.13-tables-2.html#cb415-8" tabindex="-1"></a>Header 1 <span class="op">&amp;</span> Header 2 <span class="op">&amp;</span> Header 3 <span class="fu">\\</span></span>
+<span id="cb415-9"><a href="6.13-tables-2.html#cb415-9" tabindex="-1"></a><span class="fu">\hline</span></span>
+<span id="cb415-10"><a href="6.13-tables-2.html#cb415-10" tabindex="-1"></a>Row 1 Col 1 <span class="op">&amp;</span> Row 1 Col 2 <span class="op">&amp;</span> Row 1 Col 3 <span class="fu">\\</span></span>
+<span id="cb415-11"><a href="6.13-tables-2.html#cb415-11" tabindex="-1"></a>Row 2 Col 1 <span class="op">&amp;</span> Row 2 Col 2 <span class="op">&amp;</span> Row 2 Col 3 <span class="fu">\\</span></span>
+<span id="cb415-12"><a href="6.13-tables-2.html#cb415-12" tabindex="-1"></a><span class="fu">\hline</span></span>
+<span id="cb415-13"><a href="6.13-tables-2.html#cb415-13" tabindex="-1"></a><span class="kw">\end</span>{<span class="ex">tabular</span>}</span>
+<span id="cb415-14"><a href="6.13-tables-2.html#cb415-14" tabindex="-1"></a>```</span>
+<span id="cb415-15"><a href="6.13-tables-2.html#cb415-15" tabindex="-1"></a></span>
+<span id="cb415-16"><a href="6.13-tables-2.html#cb415-16" tabindex="-1"></a>This is a table caption.</span>
+<span id="cb415-17"><a href="6.13-tables-2.html#cb415-17" tabindex="-1"></a></span>
+<span id="cb415-18"><a href="6.13-tables-2.html#cb415-18" tabindex="-1"></a>:::</span>
+<span id="cb415-19"><a href="6.13-tables-2.html#cb415-19" tabindex="-1"></a></span>
+<span id="cb415-20"><a href="6.13-tables-2.html#cb415-20" tabindex="-1"></a>For cross-reference: See @tbl-1.</span></code></pre></div>
 <p><strong>Alternatively</strong>, use LaTeX syntax entirely as follows.</p>
-<div class="sourceCode" id="cb414"><pre class="sourceCode latex"><code class="sourceCode latex"><span id="cb414-1"><a href="6.13-tables-2.html#cb414-1" tabindex="-1"></a>The regression results are summarized in Table <span class="kw">\ref</span>{<span class="ex">tbl-regression-results</span>}.</span>
-<span id="cb414-2"><a href="6.13-tables-2.html#cb414-2" tabindex="-1"></a></span>
-<span id="cb414-3"><a href="6.13-tables-2.html#cb414-3" tabindex="-1"></a>```{=latex} </span>
-<span id="cb414-4"><a href="6.13-tables-2.html#cb414-4" tabindex="-1"></a><span class="kw">\begin</span>{<span class="ex">table</span>}</span>
-<span id="cb414-5"><a href="6.13-tables-2.html#cb414-5" tabindex="-1"></a><span class="fu">\centering</span></span>
-<span id="cb414-6"><a href="6.13-tables-2.html#cb414-6" tabindex="-1"></a><span class="fu">\caption</span>{Regression Results: CAPM vs. Fama-French 3-Factor Model}</span>
-<span id="cb414-7"><a href="6.13-tables-2.html#cb414-7" tabindex="-1"></a><span class="kw">\label</span>{<span class="ex">tbl-regression-results</span>}</span>
-<span id="cb414-8"><a href="6.13-tables-2.html#cb414-8" tabindex="-1"></a><span class="kw">\begin</span>{<span class="ex">tabular</span>}{l c r}</span>
-<span id="cb414-9"><a href="6.13-tables-2.html#cb414-9" tabindex="-1"></a><span class="fu">\hline</span></span>
-<span id="cb414-10"><a href="6.13-tables-2.html#cb414-10" tabindex="-1"></a>Header 1 <span class="op">&amp;</span> Header 2 <span class="op">&amp;</span> Header 3 <span class="fu">\\</span></span>
-<span id="cb414-11"><a href="6.13-tables-2.html#cb414-11" tabindex="-1"></a><span class="fu">\hline</span></span>
-<span id="cb414-12"><a href="6.13-tables-2.html#cb414-12" tabindex="-1"></a>Row 1 Col 1 <span class="op">&amp;</span> Row 1 Col 2 <span class="op">&amp;</span> Row 1 Col 3 <span class="fu">\\</span></span>
-<span id="cb414-13"><a href="6.13-tables-2.html#cb414-13" tabindex="-1"></a>Row 2 Col 1 <span class="op">&amp;</span> Row 2 Col 2 <span class="op">&amp;</span> Row 2 Col 3 <span class="fu">\\</span></span>
-<span id="cb414-14"><a href="6.13-tables-2.html#cb414-14" tabindex="-1"></a><span class="fu">\hline</span></span>
-<span id="cb414-15"><a href="6.13-tables-2.html#cb414-15" tabindex="-1"></a><span class="kw">\end</span>{<span class="ex">tabular</span>}</span>
-<span id="cb414-16"><a href="6.13-tables-2.html#cb414-16" tabindex="-1"></a><span class="kw">\end</span>{<span class="ex">table</span>}</span>
-<span id="cb414-17"><a href="6.13-tables-2.html#cb414-17" tabindex="-1"></a>```</span></code></pre></div>
+<div class="sourceCode" id="cb416"><pre class="sourceCode latex"><code class="sourceCode latex"><span id="cb416-1"><a href="6.13-tables-2.html#cb416-1" tabindex="-1"></a>The regression results are summarized in Table <span class="kw">\ref</span>{<span class="ex">tbl-regression-results</span>}.</span>
+<span id="cb416-2"><a href="6.13-tables-2.html#cb416-2" tabindex="-1"></a></span>
+<span id="cb416-3"><a href="6.13-tables-2.html#cb416-3" tabindex="-1"></a>```{=latex} </span>
+<span id="cb416-4"><a href="6.13-tables-2.html#cb416-4" tabindex="-1"></a><span class="kw">\begin</span>{<span class="ex">table</span>}</span>
+<span id="cb416-5"><a href="6.13-tables-2.html#cb416-5" tabindex="-1"></a><span class="fu">\centering</span></span>
+<span id="cb416-6"><a href="6.13-tables-2.html#cb416-6" tabindex="-1"></a><span class="fu">\caption</span>{Regression Results: CAPM vs. Fama-French 3-Factor Model}</span>
+<span id="cb416-7"><a href="6.13-tables-2.html#cb416-7" tabindex="-1"></a><span class="kw">\label</span>{<span class="ex">tbl-regression-results</span>}</span>
+<span id="cb416-8"><a href="6.13-tables-2.html#cb416-8" tabindex="-1"></a><span class="kw">\begin</span>{<span class="ex">tabular</span>}{l c r}</span>
+<span id="cb416-9"><a href="6.13-tables-2.html#cb416-9" tabindex="-1"></a><span class="fu">\hline</span></span>
+<span id="cb416-10"><a href="6.13-tables-2.html#cb416-10" tabindex="-1"></a>Header 1 <span class="op">&amp;</span> Header 2 <span class="op">&amp;</span> Header 3 <span class="fu">\\</span></span>
+<span id="cb416-11"><a href="6.13-tables-2.html#cb416-11" tabindex="-1"></a><span class="fu">\hline</span></span>
+<span id="cb416-12"><a href="6.13-tables-2.html#cb416-12" tabindex="-1"></a>Row 1 Col 1 <span class="op">&amp;</span> Row 1 Col 2 <span class="op">&amp;</span> Row 1 Col 3 <span class="fu">\\</span></span>
+<span id="cb416-13"><a href="6.13-tables-2.html#cb416-13" tabindex="-1"></a>Row 2 Col 1 <span class="op">&amp;</span> Row 2 Col 2 <span class="op">&amp;</span> Row 2 Col 3 <span class="fu">\\</span></span>
+<span id="cb416-14"><a href="6.13-tables-2.html#cb416-14" tabindex="-1"></a><span class="fu">\hline</span></span>
+<span id="cb416-15"><a href="6.13-tables-2.html#cb416-15" tabindex="-1"></a><span class="kw">\end</span>{<span class="ex">tabular</span>}</span>
+<span id="cb416-16"><a href="6.13-tables-2.html#cb416-16" tabindex="-1"></a><span class="kw">\end</span>{<span class="ex">table</span>}</span>
+<span id="cb416-17"><a href="6.13-tables-2.html#cb416-17" tabindex="-1"></a>```</span></code></pre></div>
 <p>Q: How to use <code>[H]</code> to force table placement in qmd?<br />
 A: Add the following to the preamble file:</p>
-<div class="sourceCode" id="cb415"><pre class="sourceCode latex"><code class="sourceCode latex"><span id="cb415-1"><a href="6.13-tables-2.html#cb415-1" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">float</span>} <span class="co">% for [H] placement specifier</span></span>
-<span id="cb415-2"><a href="6.13-tables-2.html#cb415-2" tabindex="-1"></a></span>
-<span id="cb415-3"><a href="6.13-tables-2.html#cb415-3" tabindex="-1"></a><span class="co">% Make all tables use [H] placement by default</span></span>
-<span id="cb415-4"><a href="6.13-tables-2.html#cb415-4" tabindex="-1"></a><span class="fu">\makeatletter</span></span>
-<span id="cb415-5"><a href="6.13-tables-2.html#cb415-5" tabindex="-1"></a><span class="fu">\renewenvironment</span>{table}[1][H]{<span class="co">%</span></span>
-<span id="cb415-6"><a href="6.13-tables-2.html#cb415-6" tabindex="-1"></a>  <span class="fu">\@float</span>{table}[#1]<span class="co">%</span></span>
-<span id="cb415-7"><a href="6.13-tables-2.html#cb415-7" tabindex="-1"></a>}{<span class="co">%</span></span>
-<span id="cb415-8"><a href="6.13-tables-2.html#cb415-8" tabindex="-1"></a>  <span class="kw">\end</span>@float</span>
-<span id="cb415-9"><a href="6.13-tables-2.html#cb415-9" tabindex="-1"></a>}</span>
-<span id="cb415-10"><a href="6.13-tables-2.html#cb415-10" tabindex="-1"></a><span class="fu">\makeatother</span></span></code></pre></div>
+<div class="sourceCode" id="cb417"><pre class="sourceCode latex"><code class="sourceCode latex"><span id="cb417-1"><a href="6.13-tables-2.html#cb417-1" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">float</span>} <span class="co">% for [H] placement specifier</span></span>
+<span id="cb417-2"><a href="6.13-tables-2.html#cb417-2" tabindex="-1"></a></span>
+<span id="cb417-3"><a href="6.13-tables-2.html#cb417-3" tabindex="-1"></a><span class="co">% Make all tables use [H] placement by default</span></span>
+<span id="cb417-4"><a href="6.13-tables-2.html#cb417-4" tabindex="-1"></a><span class="fu">\makeatletter</span></span>
+<span id="cb417-5"><a href="6.13-tables-2.html#cb417-5" tabindex="-1"></a><span class="fu">\renewenvironment</span>{table}[1][H]{<span class="co">%</span></span>
+<span id="cb417-6"><a href="6.13-tables-2.html#cb417-6" tabindex="-1"></a>  <span class="fu">\@float</span>{table}[#1]<span class="co">%</span></span>
+<span id="cb417-7"><a href="6.13-tables-2.html#cb417-7" tabindex="-1"></a>}{<span class="co">%</span></span>
+<span id="cb417-8"><a href="6.13-tables-2.html#cb417-8" tabindex="-1"></a>  <span class="kw">\end</span>@float</span>
+<span id="cb417-9"><a href="6.13-tables-2.html#cb417-9" tabindex="-1"></a>}</span>
+<span id="cb417-10"><a href="6.13-tables-2.html#cb417-10" tabindex="-1"></a><span class="fu">\makeatother</span></span></code></pre></div>
 <p>ref: <a href="https://github.com/quarto-dev/quarto-cli/discussions/6734#discussioncomment-6919437" class="uri">https://github.com/quarto-dev/quarto-cli/discussions/6734#discussioncomment-6919437</a></p>
 <hr />
 <p><strong>Tables in Markdown</strong></p>

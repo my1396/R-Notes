@@ -55,6 +55,13 @@ Load data.
 
 ``` r
 library(quantmod)
+```
+
+```
+## Warning: package 'xts' was built under R version 4.5.2
+```
+
+``` r
 aapl <- getSymbols("AAPL", 
            src = 'yahoo', 
            from = "2014-08-01", 

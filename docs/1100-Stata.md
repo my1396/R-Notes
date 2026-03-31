@@ -11,6 +11,10 @@
 
 <span class="env-green">`help <cmd_name>`</span>: Get help for a command in Stata console.
 
+For instance, type `help estimates` to get help for `estimates` command in Stata. If there are official documentation for the command, you will see "View complete PDF manual entry" hyperlink at the top of the help page. Click on it to view the complete PDF manual.
+
+<img src="images/stata help page.png" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:60%;" />
+
 Overview of [Documentation](https://www.stata.com/features/documentation/):
 
 - [U] User's Guide: is divided into three sections: Stata basics, Elements of Stata, and Advice.
@@ -971,7 +975,7 @@ A: Once estimation results are stored (`estimates store`), you can use other `es
 --------------------------------------------------------------------------------
 
 Q: How to print the original regression output again after storing the results? \
-A: Use `estimates replay model_name`. This will show the original output as it appeared when the model was first estimated.
+A: Use <span class="env-green">`estimates replay model_name`</span>. This will show the original output as it appeared when the model was first estimated.
 
 
 
@@ -1151,23 +1155,29 @@ esttab [ namelist ] [ using filename ] [, options estout_options ]
   
   If namelist is omitted, esttab tabulates the estimation sets stored by `eststo`. If no such estimates exist, `esttab` tabulates the most recent estimation results.
 
+
+
 --------------------------------------------------------------------------------
 
 `eststo` stores a copy of the active estimation results for later tabulation. If name is provided, the estimation set is stored under name. If name is not provided, the estimation set is stored under `est#`, where `#` is a counter for the number of stored estimation sets.
 
 
-`eststo` may be used in two ways: Either after fitting a model as in
+`eststo` may be used in two ways: 
 
-```
-. regress y x
-. eststo
-```
+- Either after fitting a model as in
 
-or as a prefix command:
+  ```
+  . regress y x
+  . eststo
+  ```
 
-```
-. eststo: regress y x
-```
+  The model is stored under the name `est1` or `est2`, etc., depending on how many models have been stored so far.
+
+- or as a prefix command:
+
+  ```
+  . eststo: regress y x
+  ```
 
 Add name to model using `eststo model_name`.
 
@@ -1195,9 +1205,9 @@ _cons           -6.707353     27.44963
 --------------------------------------
 ```
 
+`estout` will automatically pick up models stored by `eststo` and display the results in a table. 
 
-
-Alternatively, use `estimates store model_name` to store estimation results.
+Alternatively, use Stata's official <span class="env-green">`estimates store model_name`</span> to store estimation results.
 
 
 --------------------------------------------------------------------------------
@@ -1227,18 +1237,20 @@ t statistics in parentheses
 * p<0.05, ** p<0.01, *** p<0.001
 ```
 
-The default of esttab is to display raw point estimates along with t-statistics and to print the number of observations in the table footer. 
+`eststo` vs. `esttab`: `esttab` produces a fully formatted table.
 
+The default of `esttab` is to display raw point estimates along with $t$-statistics and to print the number of observations (`N`) in the table footer. 
+You can customize the test statistics and summary statistics to be displayed in the table using options as follows.
 
 
 <span class="env-green">**Parameter statistics options:**</span>
 
-You can replace the **t-statistics** with standard errors by using the `se` option.
+You can replace the **t-statistics** with standard errors by using the <span class="env-green">`se`</span> option.
 
 The t-statistics can also be replaced by p-values (option `p`), confidence intervals (option `ci`), or any parameter statistics contained in the estimates (see the `aux()` option). 
 
 
-If you want to include multiple parameter statistics, you can make use of the `cells()` option. E.g., `cells("b(fmt(%9.4f)) se(fmt(%9.4f) par) t(fmt(%9.2f)) p(fmt(%9.3f) star)")` will display the point estimates, standard errors, t-statistics, and p-values in the specified formats. Note that the significance star will be added to the p-values. By doing so, you can perform calculations using the coefficients.
+If you want to include **multiple parameter statistics** (for later use), you can make use of the `cells()` option. E.g., `cells("b(fmt(%9.4f)) se(fmt(%9.4f) par) t(fmt(%9.2f)) p(fmt(%9.3f) star)")` will display the point estimates, standard errors, t-statistics, and p-values in the specified formats. Note that the significance star will be added to the p-values. By doing so, you can perform calculations using the coefficients.
 
 Use [`help estout`](https://repec.sowi.unibe.ch/stata/estout/help-estout.html#stlog-1-cells) for more details about the `cells(element[(subopts)])` option.
 
@@ -1254,7 +1266,7 @@ Use [`help estout`](https://repec.sowi.unibe.ch/stata/estout/help-estout.html#st
 - `par` enclose the statistic in parentheses
 
 
-<span class="env-green">**N.B.**</span> By default, multiple statistics are stacked vertically (i.e., one statistic per line). If you want to display them side by side, enclose the elements in quotes or parentheses, e.g., `cells("b se t p")` or `cells((b se t p))`. You can add suboptions to each element as needed.
+<span class="env-green">**N.B.**</span> By default, multiple statistics are **stacked vertically** (i.e., one statistic per line). If you want to display them side by side, enclose the elements in quotes or parentheses, e.g., `cells("b se t p")` or `cells((b se t p))`. You can add suboptions to each element as needed.
 See the [wide table](#wide_table) below for more details.
 
 --------------------------------------------------------------------------------
@@ -1262,7 +1274,7 @@ See the [wide table](#wide_table) below for more details.
 
 **Summary statistics options:** 
 
-Adjusted R-squared (option `ar2`), pseudo R-squared (option `pr2`),  Akaike's or Schwarz's information criterion (options `aic` and `sic`).
+R-squared (option `r2`), Adjusted R-squared (option `ar2`), pseudo R-squared (option `pr2`),  Akaike's or Schwarz's information criterion (options `aic` and `sic`).
 
 --------------------------------------------------------------------------------
 
@@ -1365,15 +1377,80 @@ _cons           -5853.696     3376.987    -1.733408     .0874262
 ```
 
 
-- `mtitles[(list)]` specifies model titles to be printed as the table header. If `list` is omitted, the names of the stored estimation results are used as model titles.
+- `mtitles[(list)]` specifies model titles to be printed as the table header.
+  
+  If `list` is omitted, the names of the stored estimation results are used as model titles.
+
+  `mtitles("static model" "dynamic model")` will set the model titles to "static model" and "dynamic model", respectively.
+
+  ```
+  ----------------------------------------------------
+                                  (1)               (2)
+                          static model    dynamic model
+  ----------------------------------------------------
+  Weight (lbs.)              1.747**         3.465***
+                            (2.72)          (5.49)   
+
+  Mileage (mpg)             -49.51           21.85   
+                           (-0.57)          (0.29)   
+
+  Car type                                  3673.1***
+                                            (5.37)   
+
+  Constant                  1946.1         -5853.7   
+                            (0.54)         (-1.73)   
+  ----------------------------------------------------
+  Observations                   74              74   
+  ----------------------------------------------------
+  ```
 
 
 **Output options:**
 
 - `replace` allows Stata to overwrite existing files.
+- `order` specifies the order of the covariates in the table.
+   
+   ```stata
+   * specify the order of controls here
+   local controls leverage size profitability
+   
+   * show the main variables of interest first, then controls
+   esttab model1 model2, order(d_rate hike cut `controls')
+   ```
+
+- `addnotes` adds custom notes to the bottom of the table. You can use this to add a note about the SEs, e.g., 
+   
+    ```stata
+    esttab model1 model2, addnotes("Standard errors clustered at firm level.")
+    ```
+
+If your variable namess got cut off, you can use 
+
+- `noabbrev` to prevent variable names from being abbreviated, or
+- `varwidth(#)` to specify the width of variable names in the table. 
+- `modelwidth(#)` to specify the width of model names in the table. 
+  
+  If you want to add extra space between columns, use `modelwidth()` to increase the width of model names.
 
 
-ref: [`estout` package documentation](https://repec.sowi.unibe.ch/stata/estout/esttab.html)
+--------------------------------------------------------------------------------
+
+**Save to .csv**
+
+```stata
+local main weight
+local controls mpg foreign
+
+esttab static dynamic using "output/S2_xtabond2.txt", replace se star(* 0.10 ** 0.05 *** 0.01) label noabbrev order(`main' `controls') mtitles("Baseline" "Dynamic") varwidth(20) modelwidth(15)
+```
+
+This will save `static` and `dynamic` side by side in `output/S2_xtabond2.txt`.
+
+`replace` allows Stata to overwrite existing files.
+
+**ref:**
+
+- [`estout` package documentation](https://repec.sowi.unibe.ch/stata/estout/esttab.html)
 
 --------------------------------------------------------------------------------
 

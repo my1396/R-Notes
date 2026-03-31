@@ -654,8 +654,8 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="8.8" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html"><i class="fa fa-check"></i><b>8.8</b> Data Frame Operations</a>
 <ul>
-<li class="chapter" data-level="" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#columnrow-wise-operations"><i class="fa fa-check"></i>Column/Row-wise Operations</a></li>
-<li class="chapter" data-level="8.8.1" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#process-na-values"><i class="fa fa-check"></i><b>8.8.1</b> <span class="env-green"><strong>Process <code>NA</code> values</strong></span></a></li>
+<li class="chapter" data-level="8.8.1" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#columnrow-wise-operations"><i class="fa fa-check"></i><b>8.8.1</b> Column/Row-wise Operations</a></li>
+<li class="chapter" data-level="8.8.2" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#process-na-values"><i class="fa fa-check"></i><b>8.8.2</b> <span class="env-green"><strong>Process <code>NA</code> values</strong></span></a></li>
 </ul></li>
 <li class="chapter" data-level="8.9" data-path="8.9-matrix-multiplication.html"><a href="8.9-matrix-multiplication.html"><i class="fa fa-check"></i><b>8.9</b> Matrix multiplication</a></li>
 <li class="chapter" data-level="8.10" data-path="8.10-string-operations.html"><a href="8.10-string-operations.html"><i class="fa fa-check"></i><b>8.10</b> String Operations</a></li>
@@ -868,17 +868,47 @@ function myFunction(id) {
   x.style.display = (x.style.display === 'none') ? 'block' : 'none';
 }
 
-// Auto-expand active top-level section so its level 2/3 items are visible
+// Auto-expand active section and keep all siblings within the same level 1 section open
 document.addEventListener('DOMContentLoaded', function() {
   try {
     var summary = document.querySelector('.book-summary ul.summary');
     if (!summary) return;
 
     function applyAutoOpen() {
-      // Clear previous
-      summary.querySelectorAll('li.chapter.auto-open').forEach(function(li){ li.classList.remove('auto-open'); });
+      // Find the active item (could be level 1, 2, or 3)
       var active = summary.querySelector('li.chapter.active');
-      if (active) active.classList.add('auto-open');
+      if (!active) return;
+      
+      // Find the top-level (level 1) chapter containing the active item
+      var topLevelChapter = active.closest('ul.summary > li.chapter');
+      if (!topLevelChapter) return;
+      
+      // Collapse all other top-level chapters
+      summary.querySelectorAll('ul.summary > li.chapter').forEach(function(chapter) {
+        if (chapter !== topLevelChapter) {
+          chapter.classList.remove('auto-open');
+          // Collapse all nested items in other chapters
+          chapter.querySelectorAll('li.chapter').forEach(function(nested) {
+            nested.classList.remove('auto-open');
+          });
+        }
+      });
+      
+      // Expand the active top-level chapter
+      topLevelChapter.classList.add('auto-open');
+      
+      // Expand ALL level 2 and level 3 items within this top-level chapter
+      topLevelChapter.querySelectorAll('li.chapter').forEach(function(nested) {
+        nested.classList.add('auto-open');
+      });
+      
+      // Scroll the active TOC item to the center of the TOC panel
+      setTimeout(function() {
+        var activeLink = active.querySelector('a');
+        if (activeLink) {
+          activeLink.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
     }
 
     applyAutoOpen();
@@ -894,14 +924,14 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-// Toggle collapse: clicking an expanded section collapses it
+// Toggle collapse: clicking level 1 heading expands/collapses all sublevels
 document.addEventListener('DOMContentLoaded', function() {
   try {
     var summary = document.querySelector('.book-summary ul.summary');
     if (!summary) return;
 
-    // Add click handlers to chapter links with children
-    summary.querySelectorAll('li.chapter').forEach(function(chapter) {
+    // Add click handlers only to top-level chapter links with children
+    summary.querySelectorAll('ul.summary > li.chapter').forEach(function(chapter) {
       var sublist = chapter.querySelector('ul');
       if (!sublist) return; // Only chapters with subsections
 
@@ -913,15 +943,28 @@ document.addEventListener('DOMContentLoaded', function() {
         var isExpanded = chapter.classList.contains('auto-open');
         
         if (isExpanded) {
-          // Collapse it
+          // Collapse it and all nested items
           e.preventDefault();
           chapter.classList.remove('auto-open');
+          // Also collapse all level 2 and level 3 items
+          chapter.querySelectorAll('li.chapter.auto-open').forEach(function(nested) {
+            nested.classList.remove('auto-open');
+          });
         } else {
-          // Expand it (remove auto-open from others first)
-          summary.querySelectorAll('li.chapter.auto-open').forEach(function(li) {
-            if (li !== chapter) li.classList.remove('auto-open');
+          // Expand it (collapse other top-level chapters first)
+          summary.querySelectorAll('ul.summary > li.chapter.auto-open').forEach(function(li) {
+            if (li !== chapter) {
+              li.classList.remove('auto-open');
+              li.querySelectorAll('li.chapter.auto-open').forEach(function(nested) {
+                nested.classList.remove('auto-open');
+              });
+            }
           });
           chapter.classList.add('auto-open');
+          // Expand all level 2 items within this chapter
+          chapter.querySelectorAll('ul > li.chapter').forEach(function(level2) {
+            level2.classList.add('auto-open');
+          });
         }
       });
     });
@@ -931,18 +974,35 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 <style>
-/* Show nested UL of active chapter when collapse=section */
-.book-summary ul.summary li.chapter.auto-open ul { display: block !important; }
-.book-summary ul.summary li.chapter.auto-open > a { font-weight: 700; }
+/* Show all nested UL of chapters marked as auto-open */
+.book-summary ul.summary li.chapter.auto-open > ul { 
+  display: block !important; 
+}
+
+/* Make parent level headings bold when expanded */
+.book-summary ul.summary li.chapter.auto-open > a { 
+  font-weight: 700; 
+}
+
+/* Highlight the actual active item with color and bold */
+.book-summary ul.summary li.chapter.active > a { 
+  font-weight: 700 !important;
+  color: #0078D4 !important;
+}
+
+/* Ensure proper indentation for nested levels */
+.book-summary ul.summary li.chapter ul li.chapter { 
+  padding-left: 0; 
+}
 </style>
 <div id="common-correlated-effects-models" class="section level2 hasAnchor" number="14.7">
 <h2><span class="header-section-number">14.7</span> Common Correlated Effects Models<a href="14.7-common-correlated-effects-models.html#common-correlated-effects-models" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>This section provides an overview of how Stata’s <code>xtdcce2</code> package implements Common Correlated Effects (CCE) models, which are useful for panel data analysis with heterogeneous coefficients and common correlated effects.</p>
 <p><strong>Environment setup</strong></p>
-<div class="sourceCode" id="cb1036"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb1036-1"><a href="14.7-common-correlated-effects-models.html#cb1036-1" tabindex="-1"></a><span class="kw">ssc</span> install xtdcce2</span>
-<span id="cb1036-2"><a href="14.7-common-correlated-effects-models.html#cb1036-2" tabindex="-1"></a><span class="co">// dependencies for xtdcce2</span></span>
-<span id="cb1036-3"><a href="14.7-common-correlated-effects-models.html#cb1036-3" tabindex="-1"></a><span class="kw">ssc</span> install moremata</span>
-<span id="cb1036-4"><a href="14.7-common-correlated-effects-models.html#cb1036-4" tabindex="-1"></a><span class="kw">ssc</span> install xtcd2</span></code></pre></div>
+<div class="sourceCode" id="cb1043"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb1043-1"><a href="14.7-common-correlated-effects-models.html#cb1043-1" tabindex="-1"></a><span class="kw">ssc</span> install xtdcce2</span>
+<span id="cb1043-2"><a href="14.7-common-correlated-effects-models.html#cb1043-2" tabindex="-1"></a><span class="co">// dependencies for xtdcce2</span></span>
+<span id="cb1043-3"><a href="14.7-common-correlated-effects-models.html#cb1043-3" tabindex="-1"></a><span class="kw">ssc</span> install moremata</span>
+<span id="cb1043-4"><a href="14.7-common-correlated-effects-models.html#cb1043-4" tabindex="-1"></a><span class="kw">ssc</span> install xtcd2</span></code></pre></div>
 <ul>
 <li>Data has to be <code>xtset</code> before using <code>xtdcce2</code>.</li>
 </ul>
@@ -991,7 +1051,7 @@ y(i,t) = b0(i) + b2(i)*x(i,t) + d(i)*z(i,t) + e(i,t). \tag{14.3}
 <li><p>Important to notice is, that <code>b1(i)</code> is set to zero.</p></li>
 </ul>
 <p><strong>Example</strong></p>
-<div class="sourceCode" id="cb1037"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb1037-1"><a href="14.7-common-correlated-effects-models.html#cb1037-1" tabindex="-1"></a>xtdcce2 <span class="kw">d</span>.log_rgdpo log_hc log_ck log_ngd , <span class="kw">cr</span>(<span class="dt">_all</span>) reportc</span></code></pre></div>
+<div class="sourceCode" id="cb1044"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb1044-1"><a href="14.7-common-correlated-effects-models.html#cb1044-1" tabindex="-1"></a>xtdcce2 <span class="kw">d</span>.log_rgdpo log_hc log_ck log_ngd , <span class="kw">cr</span>(<span class="dt">_all</span>) reportc</span></code></pre></div>
 <ul>
 <li><p><code>cr(_all)</code> means that all variables are included in the cross sectional means.</p>
 <p>It is equivalent to <code>crosssectional(log_rgdpo log_hc log_ck log_ngd)</code>.</p></li>
@@ -1023,8 +1083,8 @@ y(i,t) = b0(i) + b2(i)*x(i,t) + d(i)*z(i,t) + e(i,t). \tag{14.3}
 <li><code>z(i,s)</code> is the cross sectional average of the variables defined in <code>crosssectional()</code>.</li>
 </ul>
 <p><strong>Example</strong></p>
-<div class="sourceCode" id="cb1038"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb1038-1"><a href="14.7-common-correlated-effects-models.html#cb1038-1" tabindex="-1"></a>xtdcce2 <span class="kw">d</span>.log_rgdpo L.log_rgdpo log_hc log_ck log_ngd , <span class="co">///</span></span>
-<span id="cb1038-2"><a href="14.7-common-correlated-effects-models.html#cb1038-2" tabindex="-1"></a>    reportc <span class="kw">cr</span>(log_rgdpo  log_hc log_ck log_ngd) cr_lags(3)</span></code></pre></div>
+<div class="sourceCode" id="cb1045"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb1045-1"><a href="14.7-common-correlated-effects-models.html#cb1045-1" tabindex="-1"></a>xtdcce2 <span class="kw">d</span>.log_rgdpo L.log_rgdpo log_hc log_ck log_ngd , <span class="co">///</span></span>
+<span id="cb1045-2"><a href="14.7-common-correlated-effects-models.html#cb1045-2" tabindex="-1"></a>    reportc <span class="kw">cr</span>(log_rgdpo  log_hc log_ck log_ngd) cr_lags(3)</span></code></pre></div>
 <ul>
 <li><code>cr_lags(3)</code> the number of lags is set to 3.</li>
 </ul>
@@ -1061,9 +1121,9 @@ y(i,t) = b0 + b1*y(i,t-1) + b2*x(i,t) + \sum_{s=t}^{t-pT} [d(i)*z(i,s)] + e(i,t)
 The constant is pooled by using the option <code>pooledconstant</code>.</p>
 <p>In case of a pooled estimation, the standard errors are obtained from a mean group regression.</p>
 <p><strong>Example</strong></p>
-<div class="sourceCode" id="cb1039"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb1039-1"><a href="14.7-common-correlated-effects-models.html#cb1039-1" tabindex="-1"></a>xtdcce2 <span class="kw">d</span>.log_rgdpo L.log_rgdpo log_hc log_ck log_ngd , <span class="co">///</span></span>
-<span id="cb1039-2"><a href="14.7-common-correlated-effects-models.html#cb1039-2" tabindex="-1"></a>    reportc <span class="kw">cr</span>(log_rgdpo  log_hc log_ck log_ngd) <span class="co">///</span></span>
-<span id="cb1039-3"><a href="14.7-common-correlated-effects-models.html#cb1039-3" tabindex="-1"></a>    pooled(L.log_rgdpo  log_hc log_ck log_ngd) cr_lags(3) pooledconstant</span></code></pre></div>
+<div class="sourceCode" id="cb1046"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb1046-1"><a href="14.7-common-correlated-effects-models.html#cb1046-1" tabindex="-1"></a>xtdcce2 <span class="kw">d</span>.log_rgdpo L.log_rgdpo log_hc log_ck log_ngd , <span class="co">///</span></span>
+<span id="cb1046-2"><a href="14.7-common-correlated-effects-models.html#cb1046-2" tabindex="-1"></a>    reportc <span class="kw">cr</span>(log_rgdpo  log_hc log_ck log_ngd) <span class="co">///</span></span>
+<span id="cb1046-3"><a href="14.7-common-correlated-effects-models.html#cb1046-3" tabindex="-1"></a>    pooled(L.log_rgdpo  log_hc log_ck log_ngd) cr_lags(3) pooledconstant</span></code></pre></div>
 <ul>
 <li><code>pooled(L.log_rgdpo  log_hc log_ck log_ngd)</code> means all coefficients should be pooled.</li>
 <li><code>pooledconstant</code> means the constant is pooled.</li>

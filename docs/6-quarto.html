@@ -654,8 +654,8 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="8.8" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html"><i class="fa fa-check"></i><b>8.8</b> Data Frame Operations</a>
 <ul>
-<li class="chapter" data-level="" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#columnrow-wise-operations"><i class="fa fa-check"></i>Column/Row-wise Operations</a></li>
-<li class="chapter" data-level="8.8.1" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#process-na-values"><i class="fa fa-check"></i><b>8.8.1</b> <span class="env-green"><strong>Process <code>NA</code> values</strong></span></a></li>
+<li class="chapter" data-level="8.8.1" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#columnrow-wise-operations"><i class="fa fa-check"></i><b>8.8.1</b> Column/Row-wise Operations</a></li>
+<li class="chapter" data-level="8.8.2" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#process-na-values"><i class="fa fa-check"></i><b>8.8.2</b> <span class="env-green"><strong>Process <code>NA</code> values</strong></span></a></li>
 </ul></li>
 <li class="chapter" data-level="8.9" data-path="8.9-matrix-multiplication.html"><a href="8.9-matrix-multiplication.html"><i class="fa fa-check"></i><b>8.9</b> Matrix multiplication</a></li>
 <li class="chapter" data-level="8.10" data-path="8.10-string-operations.html"><a href="8.10-string-operations.html"><i class="fa fa-check"></i><b>8.10</b> String Operations</a></li>
@@ -868,17 +868,47 @@ function myFunction(id) {
   x.style.display = (x.style.display === 'none') ? 'block' : 'none';
 }
 
-// Auto-expand active top-level section so its level 2/3 items are visible
+// Auto-expand active section and keep all siblings within the same level 1 section open
 document.addEventListener('DOMContentLoaded', function() {
   try {
     var summary = document.querySelector('.book-summary ul.summary');
     if (!summary) return;
 
     function applyAutoOpen() {
-      // Clear previous
-      summary.querySelectorAll('li.chapter.auto-open').forEach(function(li){ li.classList.remove('auto-open'); });
+      // Find the active item (could be level 1, 2, or 3)
       var active = summary.querySelector('li.chapter.active');
-      if (active) active.classList.add('auto-open');
+      if (!active) return;
+      
+      // Find the top-level (level 1) chapter containing the active item
+      var topLevelChapter = active.closest('ul.summary > li.chapter');
+      if (!topLevelChapter) return;
+      
+      // Collapse all other top-level chapters
+      summary.querySelectorAll('ul.summary > li.chapter').forEach(function(chapter) {
+        if (chapter !== topLevelChapter) {
+          chapter.classList.remove('auto-open');
+          // Collapse all nested items in other chapters
+          chapter.querySelectorAll('li.chapter').forEach(function(nested) {
+            nested.classList.remove('auto-open');
+          });
+        }
+      });
+      
+      // Expand the active top-level chapter
+      topLevelChapter.classList.add('auto-open');
+      
+      // Expand ALL level 2 and level 3 items within this top-level chapter
+      topLevelChapter.querySelectorAll('li.chapter').forEach(function(nested) {
+        nested.classList.add('auto-open');
+      });
+      
+      // Scroll the active TOC item to the center of the TOC panel
+      setTimeout(function() {
+        var activeLink = active.querySelector('a');
+        if (activeLink) {
+          activeLink.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
     }
 
     applyAutoOpen();
@@ -894,14 +924,14 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-// Toggle collapse: clicking an expanded section collapses it
+// Toggle collapse: clicking level 1 heading expands/collapses all sublevels
 document.addEventListener('DOMContentLoaded', function() {
   try {
     var summary = document.querySelector('.book-summary ul.summary');
     if (!summary) return;
 
-    // Add click handlers to chapter links with children
-    summary.querySelectorAll('li.chapter').forEach(function(chapter) {
+    // Add click handlers only to top-level chapter links with children
+    summary.querySelectorAll('ul.summary > li.chapter').forEach(function(chapter) {
       var sublist = chapter.querySelector('ul');
       if (!sublist) return; // Only chapters with subsections
 
@@ -913,15 +943,28 @@ document.addEventListener('DOMContentLoaded', function() {
         var isExpanded = chapter.classList.contains('auto-open');
         
         if (isExpanded) {
-          // Collapse it
+          // Collapse it and all nested items
           e.preventDefault();
           chapter.classList.remove('auto-open');
+          // Also collapse all level 2 and level 3 items
+          chapter.querySelectorAll('li.chapter.auto-open').forEach(function(nested) {
+            nested.classList.remove('auto-open');
+          });
         } else {
-          // Expand it (remove auto-open from others first)
-          summary.querySelectorAll('li.chapter.auto-open').forEach(function(li) {
-            if (li !== chapter) li.classList.remove('auto-open');
+          // Expand it (collapse other top-level chapters first)
+          summary.querySelectorAll('ul.summary > li.chapter.auto-open').forEach(function(li) {
+            if (li !== chapter) {
+              li.classList.remove('auto-open');
+              li.querySelectorAll('li.chapter.auto-open').forEach(function(nested) {
+                nested.classList.remove('auto-open');
+              });
+            }
           });
           chapter.classList.add('auto-open');
+          // Expand all level 2 items within this chapter
+          chapter.querySelectorAll('ul > li.chapter').forEach(function(level2) {
+            level2.classList.add('auto-open');
+          });
         }
       });
     });
@@ -931,9 +974,26 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 <style>
-/* Show nested UL of active chapter when collapse=section */
-.book-summary ul.summary li.chapter.auto-open ul { display: block !important; }
-.book-summary ul.summary li.chapter.auto-open > a { font-weight: 700; }
+/* Show all nested UL of chapters marked as auto-open */
+.book-summary ul.summary li.chapter.auto-open > ul { 
+  display: block !important; 
+}
+
+/* Make parent level headings bold when expanded */
+.book-summary ul.summary li.chapter.auto-open > a { 
+  font-weight: 700; 
+}
+
+/* Highlight the actual active item with color and bold */
+.book-summary ul.summary li.chapter.active > a { 
+  font-weight: 700 !important;
+  color: #0078D4 !important;
+}
+
+/* Ensure proper indentation for nested levels */
+.book-summary ul.summary li.chapter ul li.chapter { 
+  padding-left: 0; 
+}
 </style>
 <div id="quarto" class="section level1 hasAnchor" number="6">
 <h1><span class="header-section-number">Chapter 6</span> Quarto<a href="6-quarto.html#quarto" class="anchor-section" aria-label="Anchor link to header"></a></h1>
@@ -1007,48 +1067,48 @@ document.addEventListener('DOMContentLoaded', function() {
 <h4><span class="header-section-number">6.0.0.1</span> Create a project<a href="6-quarto.html#create-a-project" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>In terminal, run <code>quarto create project</code> and follow the prompts to create a new project.</p>
 <p>You can also define the type and name as arguments in the command, e.g., <code>quarto create project &lt;type&gt; &lt;name&gt;</code>.</p>
-<div class="sourceCode" id="cb337"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb337-1"><a href="6-quarto.html#cb337-1" tabindex="-1"></a><span class="ex">quarto</span> create project default project-name project-title</span></code></pre></div>
+<div class="sourceCode" id="cb339"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb339-1"><a href="6-quarto.html#cb339-1" tabindex="-1"></a><span class="ex">quarto</span> create project default project-name project-title</span></code></pre></div>
 <p>Quarto will then create the folder, e.g. project-name and populate it with <code>_quarto.yml</code> and a Quarto document with the same name as the project title, <code>project-title.qmd</code>:</p>
 <pre><code>temp-dirs/project-name
 ├── _quarto.yml
 └── project-title.qmd</code></pre>
 <p>The file <code>_quarto.yml</code> is also populated with the project title:</p>
-<div class="sourceCode" id="cb339"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb339-1"><a href="6-quarto.html#cb339-1" tabindex="-1"></a><span class="fu">project</span><span class="kw">:</span></span>
-<span id="cb339-2"><a href="6-quarto.html#cb339-2" tabindex="-1"></a><span class="at">  </span><span class="fu">title</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;project-title&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb341"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb341-1"><a href="6-quarto.html#cb341-1" tabindex="-1"></a><span class="fu">project</span><span class="kw">:</span></span>
+<span id="cb341-2"><a href="6-quarto.html#cb341-2" tabindex="-1"></a><span class="at">  </span><span class="fu">title</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;project-title&quot;</span></span></code></pre></div>
 <hr />
 <p>You can <span class="env-green">manually create a project by creating a <code>_quarto.yml</code> file</span> in the directory. The presence of <code>_quarto.yml</code>, even if empty, signals to Quarto this is a project, and allows you to render without specifying a file.</p>
 <p>When you run <code>quarto render</code>, Quarto will render all Quarto documents in the project.</p>
 <hr />
 <p>Put project metadata in <code>_quarto.yml</code> file. Any document rendered within the project directory will automatically inherit the metadata defined at the project level. Here is an example of what the <code>_quarto.yml</code> file might look like</p>
-<div class="sourceCode" id="cb340"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb340-1"><a href="6-quarto.html#cb340-1" tabindex="-1"></a><span class="fu">project</span><span class="kw">:</span></span>
-<span id="cb340-2"><a href="6-quarto.html#cb340-2" tabindex="-1"></a><span class="at">  </span><span class="fu">type</span><span class="kw">:</span><span class="at"> default</span></span>
-<span id="cb340-3"><a href="6-quarto.html#cb340-3" tabindex="-1"></a></span>
-<span id="cb340-4"><a href="6-quarto.html#cb340-4" tabindex="-1"></a><span class="fu">from</span><span class="kw">:</span><span class="at"> markdown+tex_math_single_backslash</span></span>
-<span id="cb340-5"><a href="6-quarto.html#cb340-5" tabindex="-1"></a><span class="fu">bibliography</span><span class="kw">:</span><span class="at"> bibli.bib</span></span>
-<span id="cb340-6"><a href="6-quarto.html#cb340-6" tabindex="-1"></a></span>
-<span id="cb340-7"><a href="6-quarto.html#cb340-7" tabindex="-1"></a><span class="fu">format</span><span class="kw">:</span></span>
-<span id="cb340-8"><a href="6-quarto.html#cb340-8" tabindex="-1"></a><span class="at">  </span><span class="fu">html</span><span class="kw">:</span></span>
-<span id="cb340-9"><a href="6-quarto.html#cb340-9" tabindex="-1"></a><span class="at">    </span><span class="fu">theme</span><span class="kw">:</span></span>
-<span id="cb340-10"><a href="6-quarto.html#cb340-10" tabindex="-1"></a><span class="at">      </span><span class="fu">light</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">flatly</span><span class="kw">,</span><span class="at"> themes/light.scss</span><span class="kw">]</span></span>
-<span id="cb340-11"><a href="6-quarto.html#cb340-11" tabindex="-1"></a><span class="at">      </span><span class="fu">dark</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">darkly</span><span class="kw">,</span><span class="at"> themes/dark.scss</span><span class="kw">]</span></span>
-<span id="cb340-12"><a href="6-quarto.html#cb340-12" tabindex="-1"></a><span class="at">    </span><span class="fu">respect-user-color-scheme</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
-<span id="cb340-13"><a href="6-quarto.html#cb340-13" tabindex="-1"></a><span class="at">    </span><span class="fu">toc</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
-<span id="cb340-14"><a href="6-quarto.html#cb340-14" tabindex="-1"></a><span class="at">    </span><span class="fu">css</span><span class="kw">:</span><span class="at"> </span></span>
-<span id="cb340-15"><a href="6-quarto.html#cb340-15" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> ~/Library/CloudStorage/OneDrive-Norduniversitet/_shared-resources/custom-style.css</span></span>
-<span id="cb340-16"><a href="6-quarto.html#cb340-16" tabindex="-1"></a><span class="at">    </span><span class="fu">self-contained</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
-<span id="cb340-17"><a href="6-quarto.html#cb340-17" tabindex="-1"></a><span class="at">    </span><span class="fu">html-math-method</span><span class="kw">:</span><span class="at"> mathjax</span></span>
-<span id="cb340-18"><a href="6-quarto.html#cb340-18" tabindex="-1"></a><span class="at">    </span><span class="fu">include-in-header</span><span class="kw">:</span><span class="at"> </span></span>
-<span id="cb340-19"><a href="6-quarto.html#cb340-19" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> ~/Library/CloudStorage/OneDrive-Norduniversitet/_shared-resources/mathjax.html</span></span>
-<span id="cb340-20"><a href="6-quarto.html#cb340-20" tabindex="-1"></a><span class="at">    </span><span class="fu">fontsize</span><span class="kw">:</span><span class="at"> 14pt</span></span>
-<span id="cb340-21"><a href="6-quarto.html#cb340-21" tabindex="-1"></a><span class="at">    </span><span class="fu">grid</span><span class="kw">:</span></span>
-<span id="cb340-22"><a href="6-quarto.html#cb340-22" tabindex="-1"></a><span class="at">      </span><span class="fu">body-width</span><span class="kw">:</span><span class="at"> 1000px</span></span></code></pre></div>
+<div class="sourceCode" id="cb342"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb342-1"><a href="6-quarto.html#cb342-1" tabindex="-1"></a><span class="fu">project</span><span class="kw">:</span></span>
+<span id="cb342-2"><a href="6-quarto.html#cb342-2" tabindex="-1"></a><span class="at">  </span><span class="fu">type</span><span class="kw">:</span><span class="at"> default</span></span>
+<span id="cb342-3"><a href="6-quarto.html#cb342-3" tabindex="-1"></a></span>
+<span id="cb342-4"><a href="6-quarto.html#cb342-4" tabindex="-1"></a><span class="fu">from</span><span class="kw">:</span><span class="at"> markdown+tex_math_single_backslash</span></span>
+<span id="cb342-5"><a href="6-quarto.html#cb342-5" tabindex="-1"></a><span class="fu">bibliography</span><span class="kw">:</span><span class="at"> bibli.bib</span></span>
+<span id="cb342-6"><a href="6-quarto.html#cb342-6" tabindex="-1"></a></span>
+<span id="cb342-7"><a href="6-quarto.html#cb342-7" tabindex="-1"></a><span class="fu">format</span><span class="kw">:</span></span>
+<span id="cb342-8"><a href="6-quarto.html#cb342-8" tabindex="-1"></a><span class="at">  </span><span class="fu">html</span><span class="kw">:</span></span>
+<span id="cb342-9"><a href="6-quarto.html#cb342-9" tabindex="-1"></a><span class="at">    </span><span class="fu">theme</span><span class="kw">:</span></span>
+<span id="cb342-10"><a href="6-quarto.html#cb342-10" tabindex="-1"></a><span class="at">      </span><span class="fu">light</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">flatly</span><span class="kw">,</span><span class="at"> themes/light.scss</span><span class="kw">]</span></span>
+<span id="cb342-11"><a href="6-quarto.html#cb342-11" tabindex="-1"></a><span class="at">      </span><span class="fu">dark</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">darkly</span><span class="kw">,</span><span class="at"> themes/dark.scss</span><span class="kw">]</span></span>
+<span id="cb342-12"><a href="6-quarto.html#cb342-12" tabindex="-1"></a><span class="at">    </span><span class="fu">respect-user-color-scheme</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb342-13"><a href="6-quarto.html#cb342-13" tabindex="-1"></a><span class="at">    </span><span class="fu">toc</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb342-14"><a href="6-quarto.html#cb342-14" tabindex="-1"></a><span class="at">    </span><span class="fu">css</span><span class="kw">:</span><span class="at"> </span></span>
+<span id="cb342-15"><a href="6-quarto.html#cb342-15" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> ~/Library/CloudStorage/OneDrive-Norduniversitet/_shared-resources/custom-style.css</span></span>
+<span id="cb342-16"><a href="6-quarto.html#cb342-16" tabindex="-1"></a><span class="at">    </span><span class="fu">self-contained</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb342-17"><a href="6-quarto.html#cb342-17" tabindex="-1"></a><span class="at">    </span><span class="fu">html-math-method</span><span class="kw">:</span><span class="at"> mathjax</span></span>
+<span id="cb342-18"><a href="6-quarto.html#cb342-18" tabindex="-1"></a><span class="at">    </span><span class="fu">include-in-header</span><span class="kw">:</span><span class="at"> </span></span>
+<span id="cb342-19"><a href="6-quarto.html#cb342-19" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> ~/Library/CloudStorage/OneDrive-Norduniversitet/_shared-resources/mathjax.html</span></span>
+<span id="cb342-20"><a href="6-quarto.html#cb342-20" tabindex="-1"></a><span class="at">    </span><span class="fu">fontsize</span><span class="kw">:</span><span class="at"> 14pt</span></span>
+<span id="cb342-21"><a href="6-quarto.html#cb342-21" tabindex="-1"></a><span class="at">    </span><span class="fu">grid</span><span class="kw">:</span></span>
+<span id="cb342-22"><a href="6-quarto.html#cb342-22" tabindex="-1"></a><span class="at">      </span><span class="fu">body-width</span><span class="kw">:</span><span class="at"> 1000px</span></span></code></pre></div>
 <p>Some YAML options accepts multiple values, you can specify using the block style with dashes <code>-</code> or the inline style with square brackets <code>[]</code>.</p>
 <p>For example, the <code>include-in-header</code> option accepts multiple values. You can specify it in block style as follows:</p>
-<div class="sourceCode" id="cb341"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb341-1"><a href="6-quarto.html#cb341-1" tabindex="-1"></a><span class="fu">include-in-header</span><span class="kw">:</span></span>
-<span id="cb341-2"><a href="6-quarto.html#cb341-2" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> mathjax.html</span></span>
-<span id="cb341-3"><a href="6-quarto.html#cb341-3" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> custom-style.css</span></span></code></pre></div>
+<div class="sourceCode" id="cb343"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb343-1"><a href="6-quarto.html#cb343-1" tabindex="-1"></a><span class="fu">include-in-header</span><span class="kw">:</span></span>
+<span id="cb343-2"><a href="6-quarto.html#cb343-2" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> mathjax.html</span></span>
+<span id="cb343-3"><a href="6-quarto.html#cb343-3" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> custom-style.css</span></span></code></pre></div>
 <p>Or you can specify it in inline style as follows:</p>
-<div class="sourceCode" id="cb342"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb342-1"><a href="6-quarto.html#cb342-1" tabindex="-1"></a><span class="fu">include-in-header</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">mathjax.html</span><span class="kw">,</span><span class="at"> custom-style.css</span><span class="kw">]</span></span></code></pre></div>
+<div class="sourceCode" id="cb344"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb344-1"><a href="6-quarto.html#cb344-1" tabindex="-1"></a><span class="fu">include-in-header</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">mathjax.html</span><span class="kw">,</span><span class="at"> custom-style.css</span><span class="kw">]</span></span></code></pre></div>
 <ul>
 <li><p><a href="https://quarto.org/docs/output-formats/html-basics.html#includes"><code>include-in-header</code></a>: Include contents of <em>file</em>, verbatim, at the end of the header. This can be used, for example, to include special CSS or JavaScript in HTML documents or to inject commands into the LaTeX preamble.</p>
 <p><code>css</code> official option can also be used to include CSS files in HTML documents.</p></li>
@@ -1056,11 +1116,11 @@ document.addEventListener('DOMContentLoaded', function() {
 <hr />
 <p>Host Quarto on <a href="https://quarto.org/docs/publishing/github-pages.html">GitHub Pages</a>.</p>
 <p>To get started, change your project configuration <code>_quarto.yml</code> to use <code>docs</code> as the <code>output-dir</code>.</p>
-<div class="sourceCode" id="cb343"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb343-1"><a href="6-quarto.html#cb343-1" tabindex="-1"></a><span class="fu">project</span><span class="kw">:</span></span>
-<span id="cb343-2"><a href="6-quarto.html#cb343-2" tabindex="-1"></a><span class="at">  </span><span class="fu">type</span><span class="kw">:</span><span class="at"> book</span></span>
-<span id="cb343-3"><a href="6-quarto.html#cb343-3" tabindex="-1"></a><span class="at">  </span><span class="fu">output-dir</span><span class="kw">:</span><span class="at"> docs</span></span></code></pre></div>
+<div class="sourceCode" id="cb345"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb345-1"><a href="6-quarto.html#cb345-1" tabindex="-1"></a><span class="fu">project</span><span class="kw">:</span></span>
+<span id="cb345-2"><a href="6-quarto.html#cb345-2" tabindex="-1"></a><span class="at">  </span><span class="fu">type</span><span class="kw">:</span><span class="at"> book</span></span>
+<span id="cb345-3"><a href="6-quarto.html#cb345-3" tabindex="-1"></a><span class="at">  </span><span class="fu">output-dir</span><span class="kw">:</span><span class="at"> docs</span></span></code></pre></div>
 <p>Then, add a <code>.nojekyll</code> file to the <strong>root of your repository</strong> that tells GitHub Pages not to do additional processing of your published site using Jekyll (the GitHub default site generation tool):</p>
-<div class="sourceCode" id="cb344"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb344-1"><a href="6-quarto.html#cb344-1" tabindex="-1"></a><span class="fu">touch</span> .nojekyll</span></code></pre></div>
+<div class="sourceCode" id="cb346"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb346-1"><a href="6-quarto.html#cb346-1" tabindex="-1"></a><span class="fu">touch</span> .nojekyll</span></code></pre></div>
 <ul>
 <li>Note that <code>.nojekyll</code>’s location is different than that of <code>bookdown</code>, which is at <code>/docs</code> folder.</li>
 </ul>
@@ -1070,8 +1130,8 @@ document.addEventListener('DOMContentLoaded', function() {
 <div id="only-re-render-changed-files" class="section level3 unnumbered unlisted hasAnchor">
 <h3>Only re-render changed files<a href="6-quarto.html#only-re-render-changed-files" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>You can add the following to your <code>_quarto.yml</code> file to only re-render changed files:</p>
-<div class="sourceCode" id="cb345"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb345-1"><a href="6-quarto.html#cb345-1" tabindex="-1"></a><span class="fu">execute</span><span class="kw">:</span><span class="at"> </span></span>
-<span id="cb345-2"><a href="6-quarto.html#cb345-2" tabindex="-1"></a><span class="at">  </span><span class="fu">freeze</span><span class="kw">:</span><span class="at"> auto</span></span></code></pre></div>
+<div class="sourceCode" id="cb347"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb347-1"><a href="6-quarto.html#cb347-1" tabindex="-1"></a><span class="fu">execute</span><span class="kw">:</span><span class="at"> </span></span>
+<span id="cb347-2"><a href="6-quarto.html#cb347-2" tabindex="-1"></a><span class="at">  </span><span class="fu">freeze</span><span class="kw">:</span><span class="at"> auto</span></span></code></pre></div>
 <p>When <code>freeze: auto</code> is enabled, Quarto checks for modifications in the source files of your computational documents. If no changes are detected, Quarto will utilize the cached results from previous computations, skipping the re-execution of code chunks.</p>
 <p>This <span class="env-green">significantly speeds up rendering times</span>, especially for large projects with many computational documents. ✅</p>
 <p>There are drawbacks: some files may not be updated in time.</p>
@@ -1098,9 +1158,9 @@ document.addEventListener('DOMContentLoaded', function() {
 <p><code>Bookdown</code> is reliable. Don’t need <code>yaml</code> in single <code>Rmd</code>, website theme will apply automatically.</p></li>
 <li><p>Not support <code>rstudioapi</code> functions. E.g., the following is often used to set working directory to the folder where the current script is located.</p>
 <p><span class="env-orange">But it does <strong>NOT</strong> work in Quarto.</span></p>
-<div class="sourceCode" id="cb346"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb346-1"><a href="6-quarto.html#cb346-1" tabindex="-1"></a><span class="co"># set working dir, return error in Quarto</span></span>
-<span id="cb346-2"><a href="6-quarto.html#cb346-2" tabindex="-1"></a>dir_folder <span class="ot">&lt;-</span> <span class="fu">dirname</span>(rstudioapi<span class="sc">::</span><span class="fu">getSourceEditorContext</span>()<span class="sc">$</span>path)</span>
-<span id="cb346-3"><a href="6-quarto.html#cb346-3" tabindex="-1"></a><span class="fu">setwd</span>(dir_folder)</span></code></pre></div></li>
+<div class="sourceCode" id="cb348"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb348-1"><a href="6-quarto.html#cb348-1" tabindex="-1"></a><span class="co"># set working dir, return error in Quarto</span></span>
+<span id="cb348-2"><a href="6-quarto.html#cb348-2" tabindex="-1"></a>dir_folder <span class="ot">&lt;-</span> <span class="fu">dirname</span>(rstudioapi<span class="sc">::</span><span class="fu">getSourceEditorContext</span>()<span class="sc">$</span>path)</span>
+<span id="cb348-3"><a href="6-quarto.html#cb348-3" tabindex="-1"></a><span class="fu">setwd</span>(dir_folder)</span></code></pre></div></li>
 </ul>
 <hr />
 </div>

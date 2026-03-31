@@ -654,8 +654,8 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="8.8" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html"><i class="fa fa-check"></i><b>8.8</b> Data Frame Operations</a>
 <ul>
-<li class="chapter" data-level="" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#columnrow-wise-operations"><i class="fa fa-check"></i>Column/Row-wise Operations</a></li>
-<li class="chapter" data-level="8.8.1" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#process-na-values"><i class="fa fa-check"></i><b>8.8.1</b> <span class="env-green"><strong>Process <code>NA</code> values</strong></span></a></li>
+<li class="chapter" data-level="8.8.1" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#columnrow-wise-operations"><i class="fa fa-check"></i><b>8.8.1</b> Column/Row-wise Operations</a></li>
+<li class="chapter" data-level="8.8.2" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#process-na-values"><i class="fa fa-check"></i><b>8.8.2</b> <span class="env-green"><strong>Process <code>NA</code> values</strong></span></a></li>
 </ul></li>
 <li class="chapter" data-level="8.9" data-path="8.9-matrix-multiplication.html"><a href="8.9-matrix-multiplication.html"><i class="fa fa-check"></i><b>8.9</b> Matrix multiplication</a></li>
 <li class="chapter" data-level="8.10" data-path="8.10-string-operations.html"><a href="8.10-string-operations.html"><i class="fa fa-check"></i><b>8.10</b> String Operations</a></li>
@@ -868,17 +868,47 @@ function myFunction(id) {
   x.style.display = (x.style.display === 'none') ? 'block' : 'none';
 }
 
-// Auto-expand active top-level section so its level 2/3 items are visible
+// Auto-expand active section and keep all siblings within the same level 1 section open
 document.addEventListener('DOMContentLoaded', function() {
   try {
     var summary = document.querySelector('.book-summary ul.summary');
     if (!summary) return;
 
     function applyAutoOpen() {
-      // Clear previous
-      summary.querySelectorAll('li.chapter.auto-open').forEach(function(li){ li.classList.remove('auto-open'); });
+      // Find the active item (could be level 1, 2, or 3)
       var active = summary.querySelector('li.chapter.active');
-      if (active) active.classList.add('auto-open');
+      if (!active) return;
+      
+      // Find the top-level (level 1) chapter containing the active item
+      var topLevelChapter = active.closest('ul.summary > li.chapter');
+      if (!topLevelChapter) return;
+      
+      // Collapse all other top-level chapters
+      summary.querySelectorAll('ul.summary > li.chapter').forEach(function(chapter) {
+        if (chapter !== topLevelChapter) {
+          chapter.classList.remove('auto-open');
+          // Collapse all nested items in other chapters
+          chapter.querySelectorAll('li.chapter').forEach(function(nested) {
+            nested.classList.remove('auto-open');
+          });
+        }
+      });
+      
+      // Expand the active top-level chapter
+      topLevelChapter.classList.add('auto-open');
+      
+      // Expand ALL level 2 and level 3 items within this top-level chapter
+      topLevelChapter.querySelectorAll('li.chapter').forEach(function(nested) {
+        nested.classList.add('auto-open');
+      });
+      
+      // Scroll the active TOC item to the center of the TOC panel
+      setTimeout(function() {
+        var activeLink = active.querySelector('a');
+        if (activeLink) {
+          activeLink.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
     }
 
     applyAutoOpen();
@@ -894,14 +924,14 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-// Toggle collapse: clicking an expanded section collapses it
+// Toggle collapse: clicking level 1 heading expands/collapses all sublevels
 document.addEventListener('DOMContentLoaded', function() {
   try {
     var summary = document.querySelector('.book-summary ul.summary');
     if (!summary) return;
 
-    // Add click handlers to chapter links with children
-    summary.querySelectorAll('li.chapter').forEach(function(chapter) {
+    // Add click handlers only to top-level chapter links with children
+    summary.querySelectorAll('ul.summary > li.chapter').forEach(function(chapter) {
       var sublist = chapter.querySelector('ul');
       if (!sublist) return; // Only chapters with subsections
 
@@ -913,15 +943,28 @@ document.addEventListener('DOMContentLoaded', function() {
         var isExpanded = chapter.classList.contains('auto-open');
         
         if (isExpanded) {
-          // Collapse it
+          // Collapse it and all nested items
           e.preventDefault();
           chapter.classList.remove('auto-open');
+          // Also collapse all level 2 and level 3 items
+          chapter.querySelectorAll('li.chapter.auto-open').forEach(function(nested) {
+            nested.classList.remove('auto-open');
+          });
         } else {
-          // Expand it (remove auto-open from others first)
-          summary.querySelectorAll('li.chapter.auto-open').forEach(function(li) {
-            if (li !== chapter) li.classList.remove('auto-open');
+          // Expand it (collapse other top-level chapters first)
+          summary.querySelectorAll('ul.summary > li.chapter.auto-open').forEach(function(li) {
+            if (li !== chapter) {
+              li.classList.remove('auto-open');
+              li.querySelectorAll('li.chapter.auto-open').forEach(function(nested) {
+                nested.classList.remove('auto-open');
+              });
+            }
           });
           chapter.classList.add('auto-open');
+          // Expand all level 2 items within this chapter
+          chapter.querySelectorAll('ul > li.chapter').forEach(function(level2) {
+            level2.classList.add('auto-open');
+          });
         }
       });
     });
@@ -931,44 +974,61 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 <style>
-/* Show nested UL of active chapter when collapse=section */
-.book-summary ul.summary li.chapter.auto-open ul { display: block !important; }
-.book-summary ul.summary li.chapter.auto-open > a { font-weight: 700; }
+/* Show all nested UL of chapters marked as auto-open */
+.book-summary ul.summary li.chapter.auto-open > ul { 
+  display: block !important; 
+}
+
+/* Make parent level headings bold when expanded */
+.book-summary ul.summary li.chapter.auto-open > a { 
+  font-weight: 700; 
+}
+
+/* Highlight the actual active item with color and bold */
+.book-summary ul.summary li.chapter.active > a { 
+  font-weight: 700 !important;
+  color: #0078D4 !important;
+}
+
+/* Ensure proper indentation for nested levels */
+.book-summary ul.summary li.chapter ul li.chapter { 
+  padding-left: 0; 
+}
 </style>
 <div id="book-structure" class="section level2 hasAnchor" number="6.1">
 <h2><span class="header-section-number">6.1</span> Book Structure<a href="6.1-book-structure.html#book-structure" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<div class="sourceCode" id="cb347"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb347-1"><a href="6.1-book-structure.html#cb347-1" tabindex="-1"></a><span class="fu">book</span><span class="kw">:</span></span>
-<span id="cb347-2"><a href="6.1-book-structure.html#cb347-2" tabindex="-1"></a><span class="at">  </span><span class="fu">chapters</span><span class="kw">:</span></span>
-<span id="cb347-3"><a href="6.1-book-structure.html#cb347-3" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> index.qmd</span></span>
-<span id="cb347-4"><a href="6.1-book-structure.html#cb347-4" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> preface.qmd</span></span>
-<span id="cb347-5"><a href="6.1-book-structure.html#cb347-5" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> </span><span class="fu">part</span><span class="kw">:</span><span class="at"> dice.qmd</span></span>
-<span id="cb347-6"><a href="6.1-book-structure.html#cb347-6" tabindex="-1"></a><span class="at">      </span><span class="fu">chapters</span><span class="kw">:</span><span class="at"> </span></span>
-<span id="cb347-7"><a href="6.1-book-structure.html#cb347-7" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> basics.qmd</span></span>
-<span id="cb347-8"><a href="6.1-book-structure.html#cb347-8" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> packages.qmd</span></span>
-<span id="cb347-9"><a href="6.1-book-structure.html#cb347-9" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> </span><span class="fu">part</span><span class="kw">:</span><span class="at"> cards.qmd</span></span>
-<span id="cb347-10"><a href="6.1-book-structure.html#cb347-10" tabindex="-1"></a><span class="at">      </span><span class="fu">chapters</span><span class="kw">:</span></span>
-<span id="cb347-11"><a href="6.1-book-structure.html#cb347-11" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> objects.qmd</span></span>
-<span id="cb347-12"><a href="6.1-book-structure.html#cb347-12" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> notation.qmd</span></span>
-<span id="cb347-13"><a href="6.1-book-structure.html#cb347-13" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> modifying.qmd</span></span>
-<span id="cb347-14"><a href="6.1-book-structure.html#cb347-14" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> environments.qmd</span></span>
-<span id="cb347-15"><a href="6.1-book-structure.html#cb347-15" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> references.qmd</span></span>
-<span id="cb347-16"><a href="6.1-book-structure.html#cb347-16" tabindex="-1"></a><span class="at">  </span><span class="fu">appendices</span><span class="kw">:</span></span>
-<span id="cb347-17"><a href="6.1-book-structure.html#cb347-17" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> tools.qmd</span></span>
-<span id="cb347-18"><a href="6.1-book-structure.html#cb347-18" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> resources.qmd</span></span></code></pre></div>
+<div class="sourceCode" id="cb349"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb349-1"><a href="6.1-book-structure.html#cb349-1" tabindex="-1"></a><span class="fu">book</span><span class="kw">:</span></span>
+<span id="cb349-2"><a href="6.1-book-structure.html#cb349-2" tabindex="-1"></a><span class="at">  </span><span class="fu">chapters</span><span class="kw">:</span></span>
+<span id="cb349-3"><a href="6.1-book-structure.html#cb349-3" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> index.qmd</span></span>
+<span id="cb349-4"><a href="6.1-book-structure.html#cb349-4" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> preface.qmd</span></span>
+<span id="cb349-5"><a href="6.1-book-structure.html#cb349-5" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> </span><span class="fu">part</span><span class="kw">:</span><span class="at"> dice.qmd</span></span>
+<span id="cb349-6"><a href="6.1-book-structure.html#cb349-6" tabindex="-1"></a><span class="at">      </span><span class="fu">chapters</span><span class="kw">:</span><span class="at"> </span></span>
+<span id="cb349-7"><a href="6.1-book-structure.html#cb349-7" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> basics.qmd</span></span>
+<span id="cb349-8"><a href="6.1-book-structure.html#cb349-8" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> packages.qmd</span></span>
+<span id="cb349-9"><a href="6.1-book-structure.html#cb349-9" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> </span><span class="fu">part</span><span class="kw">:</span><span class="at"> cards.qmd</span></span>
+<span id="cb349-10"><a href="6.1-book-structure.html#cb349-10" tabindex="-1"></a><span class="at">      </span><span class="fu">chapters</span><span class="kw">:</span></span>
+<span id="cb349-11"><a href="6.1-book-structure.html#cb349-11" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> objects.qmd</span></span>
+<span id="cb349-12"><a href="6.1-book-structure.html#cb349-12" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> notation.qmd</span></span>
+<span id="cb349-13"><a href="6.1-book-structure.html#cb349-13" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> modifying.qmd</span></span>
+<span id="cb349-14"><a href="6.1-book-structure.html#cb349-14" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> environments.qmd</span></span>
+<span id="cb349-15"><a href="6.1-book-structure.html#cb349-15" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> references.qmd</span></span>
+<span id="cb349-16"><a href="6.1-book-structure.html#cb349-16" tabindex="-1"></a><span class="at">  </span><span class="fu">appendices</span><span class="kw">:</span></span>
+<span id="cb349-17"><a href="6.1-book-structure.html#cb349-17" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> tools.qmd</span></span>
+<span id="cb349-18"><a href="6.1-book-structure.html#cb349-18" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> resources.qmd</span></span></code></pre></div>
 <ul>
 <li><p>The <code>index.qmd</code> file is required (because Quarto books also produce a website in HTML format). This page should include the preface, acknowledgements, etc.</p></li>
 <li><p>The remainder of <code>chapters</code> includes one or more book chapters.</p>
 <p>You can divide your book into parts using <code>part</code> within the book <code>chapters</code>.</p>
 <p>Note that the markdown files <code>dice.qmd</code> and <code>cards.qmd</code> contain the part title (as a level one heading) as well as some introductory content for the part.</p>
 <p>If you just need a part title then you can alternatively use this syntax:</p>
-<div class="sourceCode" id="cb348"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb348-1"><a href="6.1-book-structure.html#cb348-1" tabindex="-1"></a><span class="fu">book</span><span class="kw">:</span></span>
-<span id="cb348-2"><a href="6.1-book-structure.html#cb348-2" tabindex="-1"></a><span class="at">  </span><span class="fu">chapters</span><span class="kw">:</span></span>
-<span id="cb348-3"><a href="6.1-book-structure.html#cb348-3" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> index.qmd</span></span>
-<span id="cb348-4"><a href="6.1-book-structure.html#cb348-4" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> preface.qmd</span></span>
-<span id="cb348-5"><a href="6.1-book-structure.html#cb348-5" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> </span><span class="fu">part</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Dice&quot;</span></span>
-<span id="cb348-6"><a href="6.1-book-structure.html#cb348-6" tabindex="-1"></a><span class="at">      </span><span class="fu">chapters</span><span class="kw">:</span><span class="at"> </span></span>
-<span id="cb348-7"><a href="6.1-book-structure.html#cb348-7" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> basics.qmd</span></span>
-<span id="cb348-8"><a href="6.1-book-structure.html#cb348-8" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> packages.qmd</span></span></code></pre></div></li>
+<div class="sourceCode" id="cb350"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb350-1"><a href="6.1-book-structure.html#cb350-1" tabindex="-1"></a><span class="fu">book</span><span class="kw">:</span></span>
+<span id="cb350-2"><a href="6.1-book-structure.html#cb350-2" tabindex="-1"></a><span class="at">  </span><span class="fu">chapters</span><span class="kw">:</span></span>
+<span id="cb350-3"><a href="6.1-book-structure.html#cb350-3" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> index.qmd</span></span>
+<span id="cb350-4"><a href="6.1-book-structure.html#cb350-4" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> preface.qmd</span></span>
+<span id="cb350-5"><a href="6.1-book-structure.html#cb350-5" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> </span><span class="fu">part</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Dice&quot;</span></span>
+<span id="cb350-6"><a href="6.1-book-structure.html#cb350-6" tabindex="-1"></a><span class="at">      </span><span class="fu">chapters</span><span class="kw">:</span><span class="at"> </span></span>
+<span id="cb350-7"><a href="6.1-book-structure.html#cb350-7" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> basics.qmd</span></span>
+<span id="cb350-8"><a href="6.1-book-structure.html#cb350-8" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> packages.qmd</span></span></code></pre></div></li>
 <li><p>The <code>references.qmd</code> file will include the generated bibliography (see <a href="https://quarto.org/docs/books/book-structure.html#references">References</a> below for details).</p></li>
 </ul>
 </div>

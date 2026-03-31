@@ -654,8 +654,8 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="8.8" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html"><i class="fa fa-check"></i><b>8.8</b> Data Frame Operations</a>
 <ul>
-<li class="chapter" data-level="" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#columnrow-wise-operations"><i class="fa fa-check"></i>Column/Row-wise Operations</a></li>
-<li class="chapter" data-level="8.8.1" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#process-na-values"><i class="fa fa-check"></i><b>8.8.1</b> <span class="env-green"><strong>Process <code>NA</code> values</strong></span></a></li>
+<li class="chapter" data-level="8.8.1" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#columnrow-wise-operations"><i class="fa fa-check"></i><b>8.8.1</b> Column/Row-wise Operations</a></li>
+<li class="chapter" data-level="8.8.2" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#process-na-values"><i class="fa fa-check"></i><b>8.8.2</b> <span class="env-green"><strong>Process <code>NA</code> values</strong></span></a></li>
 </ul></li>
 <li class="chapter" data-level="8.9" data-path="8.9-matrix-multiplication.html"><a href="8.9-matrix-multiplication.html"><i class="fa fa-check"></i><b>8.9</b> Matrix multiplication</a></li>
 <li class="chapter" data-level="8.10" data-path="8.10-string-operations.html"><a href="8.10-string-operations.html"><i class="fa fa-check"></i><b>8.10</b> String Operations</a></li>
@@ -868,17 +868,47 @@ function myFunction(id) {
   x.style.display = (x.style.display === 'none') ? 'block' : 'none';
 }
 
-// Auto-expand active top-level section so its level 2/3 items are visible
+// Auto-expand active section and keep all siblings within the same level 1 section open
 document.addEventListener('DOMContentLoaded', function() {
   try {
     var summary = document.querySelector('.book-summary ul.summary');
     if (!summary) return;
 
     function applyAutoOpen() {
-      // Clear previous
-      summary.querySelectorAll('li.chapter.auto-open').forEach(function(li){ li.classList.remove('auto-open'); });
+      // Find the active item (could be level 1, 2, or 3)
       var active = summary.querySelector('li.chapter.active');
-      if (active) active.classList.add('auto-open');
+      if (!active) return;
+      
+      // Find the top-level (level 1) chapter containing the active item
+      var topLevelChapter = active.closest('ul.summary > li.chapter');
+      if (!topLevelChapter) return;
+      
+      // Collapse all other top-level chapters
+      summary.querySelectorAll('ul.summary > li.chapter').forEach(function(chapter) {
+        if (chapter !== topLevelChapter) {
+          chapter.classList.remove('auto-open');
+          // Collapse all nested items in other chapters
+          chapter.querySelectorAll('li.chapter').forEach(function(nested) {
+            nested.classList.remove('auto-open');
+          });
+        }
+      });
+      
+      // Expand the active top-level chapter
+      topLevelChapter.classList.add('auto-open');
+      
+      // Expand ALL level 2 and level 3 items within this top-level chapter
+      topLevelChapter.querySelectorAll('li.chapter').forEach(function(nested) {
+        nested.classList.add('auto-open');
+      });
+      
+      // Scroll the active TOC item to the center of the TOC panel
+      setTimeout(function() {
+        var activeLink = active.querySelector('a');
+        if (activeLink) {
+          activeLink.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
     }
 
     applyAutoOpen();
@@ -894,14 +924,14 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-// Toggle collapse: clicking an expanded section collapses it
+// Toggle collapse: clicking level 1 heading expands/collapses all sublevels
 document.addEventListener('DOMContentLoaded', function() {
   try {
     var summary = document.querySelector('.book-summary ul.summary');
     if (!summary) return;
 
-    // Add click handlers to chapter links with children
-    summary.querySelectorAll('li.chapter').forEach(function(chapter) {
+    // Add click handlers only to top-level chapter links with children
+    summary.querySelectorAll('ul.summary > li.chapter').forEach(function(chapter) {
       var sublist = chapter.querySelector('ul');
       if (!sublist) return; // Only chapters with subsections
 
@@ -913,15 +943,28 @@ document.addEventListener('DOMContentLoaded', function() {
         var isExpanded = chapter.classList.contains('auto-open');
         
         if (isExpanded) {
-          // Collapse it
+          // Collapse it and all nested items
           e.preventDefault();
           chapter.classList.remove('auto-open');
+          // Also collapse all level 2 and level 3 items
+          chapter.querySelectorAll('li.chapter.auto-open').forEach(function(nested) {
+            nested.classList.remove('auto-open');
+          });
         } else {
-          // Expand it (remove auto-open from others first)
-          summary.querySelectorAll('li.chapter.auto-open').forEach(function(li) {
-            if (li !== chapter) li.classList.remove('auto-open');
+          // Expand it (collapse other top-level chapters first)
+          summary.querySelectorAll('ul.summary > li.chapter.auto-open').forEach(function(li) {
+            if (li !== chapter) {
+              li.classList.remove('auto-open');
+              li.querySelectorAll('li.chapter.auto-open').forEach(function(nested) {
+                nested.classList.remove('auto-open');
+              });
+            }
           });
           chapter.classList.add('auto-open');
+          // Expand all level 2 items within this chapter
+          chapter.querySelectorAll('ul > li.chapter').forEach(function(level2) {
+            level2.classList.add('auto-open');
+          });
         }
       });
     });
@@ -931,48 +974,65 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 <style>
-/* Show nested UL of active chapter when collapse=section */
-.book-summary ul.summary li.chapter.auto-open ul { display: block !important; }
-.book-summary ul.summary li.chapter.auto-open > a { font-weight: 700; }
+/* Show all nested UL of chapters marked as auto-open */
+.book-summary ul.summary li.chapter.auto-open > ul { 
+  display: block !important; 
+}
+
+/* Make parent level headings bold when expanded */
+.book-summary ul.summary li.chapter.auto-open > a { 
+  font-weight: 700; 
+}
+
+/* Highlight the actual active item with color and bold */
+.book-summary ul.summary li.chapter.active > a { 
+  font-weight: 700 !important;
+  color: #0078D4 !important;
+}
+
+/* Ensure proper indentation for nested levels */
+.book-summary ul.summary li.chapter ul li.chapter { 
+  padding-left: 0; 
+}
 </style>
 <div id="conditional-content" class="section level2 hasAnchor" number="6.17">
 <h2><span class="header-section-number">6.17</span> Conditional Content<a href="6.17-conditional-content.html#conditional-content" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>In some cases you may want to create content that only displays for a given output format (or only displays when <em>not</em> rendering to a format). You can accomplish this by creating divs, spans and code blocks with the <code>.content-visible</code> and <code>.content-hidden</code> classes.</p>
 <p>E.g., you have a home assignment file and you want to have two versions of it: one for questions only, and the other for questions and solutions.</p>
 <p>You can set a metadata variable in yaml, e.g., <code>solutions: true</code> or <code>solutions: false</code>.</p>
-<div class="sourceCode" id="cb429"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb429-1"><a href="6.17-conditional-content.html#cb429-1" tabindex="-1"></a><span class="pp">---</span></span>
-<span id="cb429-2"><a href="6.17-conditional-content.html#cb429-2" tabindex="-1"></a><span class="fu">title</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Quiz: Linear Regression and Hypothesis Testing (p1)&quot;</span></span>
-<span id="cb429-3"><a href="6.17-conditional-content.html#cb429-3" tabindex="-1"></a><span class="fu">from</span><span class="kw">:</span><span class="at"> markdown+tex_math_single_backslash</span></span>
-<span id="cb429-4"><a href="6.17-conditional-content.html#cb429-4" tabindex="-1"></a><span class="fu">solution</span><span class="kw">:</span><span class="at"> </span><span class="ch">false</span></span>
-<span id="cb429-5"><a href="6.17-conditional-content.html#cb429-5" tabindex="-1"></a><span class="co"># solution: true</span></span>
-<span id="cb429-6"><a href="6.17-conditional-content.html#cb429-6" tabindex="-1"></a><span class="fu">format</span><span class="kw">:</span></span>
-<span id="cb429-7"><a href="6.17-conditional-content.html#cb429-7" tabindex="-1"></a><span class="at">  </span><span class="fu">pdf</span><span class="kw">:</span></span>
-<span id="cb429-8"><a href="6.17-conditional-content.html#cb429-8" tabindex="-1"></a><span class="at">    </span><span class="fu">include-in-header</span><span class="kw">:</span><span class="at"> ../latex/preamble.tex</span></span>
-<span id="cb429-9"><a href="6.17-conditional-content.html#cb429-9" tabindex="-1"></a><span class="at">    </span><span class="fu">fontsize</span><span class="kw">:</span><span class="at"> 12pt</span></span>
-<span id="cb429-10"><a href="6.17-conditional-content.html#cb429-10" tabindex="-1"></a><span class="pp">---</span></span></code></pre></div>
+<div class="sourceCode" id="cb431"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb431-1"><a href="6.17-conditional-content.html#cb431-1" tabindex="-1"></a><span class="pp">---</span></span>
+<span id="cb431-2"><a href="6.17-conditional-content.html#cb431-2" tabindex="-1"></a><span class="fu">title</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Quiz: Linear Regression and Hypothesis Testing (p1)&quot;</span></span>
+<span id="cb431-3"><a href="6.17-conditional-content.html#cb431-3" tabindex="-1"></a><span class="fu">from</span><span class="kw">:</span><span class="at"> markdown+tex_math_single_backslash</span></span>
+<span id="cb431-4"><a href="6.17-conditional-content.html#cb431-4" tabindex="-1"></a><span class="fu">solution</span><span class="kw">:</span><span class="at"> </span><span class="ch">false</span></span>
+<span id="cb431-5"><a href="6.17-conditional-content.html#cb431-5" tabindex="-1"></a><span class="co"># solution: true</span></span>
+<span id="cb431-6"><a href="6.17-conditional-content.html#cb431-6" tabindex="-1"></a><span class="fu">format</span><span class="kw">:</span></span>
+<span id="cb431-7"><a href="6.17-conditional-content.html#cb431-7" tabindex="-1"></a><span class="at">  </span><span class="fu">pdf</span><span class="kw">:</span></span>
+<span id="cb431-8"><a href="6.17-conditional-content.html#cb431-8" tabindex="-1"></a><span class="at">    </span><span class="fu">include-in-header</span><span class="kw">:</span><span class="at"> ../latex/preamble.tex</span></span>
+<span id="cb431-9"><a href="6.17-conditional-content.html#cb431-9" tabindex="-1"></a><span class="at">    </span><span class="fu">fontsize</span><span class="kw">:</span><span class="at"> 12pt</span></span>
+<span id="cb431-10"><a href="6.17-conditional-content.html#cb431-10" tabindex="-1"></a><span class="pp">---</span></span></code></pre></div>
 <p>Then, in the body of your document, you can use the following syntax to conditionally include or exclude content based on the value of the <code>solutions</code> variable.</p>
-<div class="sourceCode" id="cb430"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb430-1"><a href="6.17-conditional-content.html#cb430-1" tabindex="-1"></a>::: {.content-visible when-meta=&quot;solutions&quot;}</span>
-<span id="cb430-2"><a href="6.17-conditional-content.html#cb430-2" tabindex="-1"></a>This content will only be visible if <span class="in">`solutions`</span> is set to <span class="in">`true`</span>.</span>
-<span id="cb430-3"><a href="6.17-conditional-content.html#cb430-3" tabindex="-1"></a></span>
-<span id="cb430-4"><a href="6.17-conditional-content.html#cb430-4" tabindex="-1"></a>Put your solutions here.</span>
-<span id="cb430-5"><a href="6.17-conditional-content.html#cb430-5" tabindex="-1"></a>:::</span></code></pre></div>
+<div class="sourceCode" id="cb432"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb432-1"><a href="6.17-conditional-content.html#cb432-1" tabindex="-1"></a>::: {.content-visible when-meta=&quot;solutions&quot;}</span>
+<span id="cb432-2"><a href="6.17-conditional-content.html#cb432-2" tabindex="-1"></a>This content will only be visible if <span class="in">`solutions`</span> is set to <span class="in">`true`</span>.</span>
+<span id="cb432-3"><a href="6.17-conditional-content.html#cb432-3" tabindex="-1"></a></span>
+<span id="cb432-4"><a href="6.17-conditional-content.html#cb432-4" tabindex="-1"></a>Put your solutions here.</span>
+<span id="cb432-5"><a href="6.17-conditional-content.html#cb432-5" tabindex="-1"></a>:::</span></code></pre></div>
 <p>Expected behavior:</p>
 <ul>
 <li>If <code>solutions: true</code>, the content will be displayed.</li>
 <li>If <code>solutions: false</code>, the content will be hidden.</li>
 </ul>
 <p>You can use multiple levels of metadata keys separated by periods. For example,</p>
-<div class="sourceCode" id="cb431"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb431-1"><a href="6.17-conditional-content.html#cb431-1" tabindex="-1"></a>::: {.content-hidden unless-meta=&quot;path.to.metadata&quot;}</span>
-<span id="cb431-2"><a href="6.17-conditional-content.html#cb431-2" tabindex="-1"></a></span>
-<span id="cb431-3"><a href="6.17-conditional-content.html#cb431-3" tabindex="-1"></a>This content will be hidden unless there exists a metadata entry like such:</span>
-<span id="cb431-4"><a href="6.17-conditional-content.html#cb431-4" tabindex="-1"></a></span>
-<span id="cb431-5"><a href="6.17-conditional-content.html#cb431-5" tabindex="-1"></a><span class="in">```yml</span></span>
-<span id="cb431-6"><a href="6.17-conditional-content.html#cb431-6" tabindex="-1"></a><span class="fu">path</span><span class="kw">:</span></span>
-<span id="cb431-7"><a href="6.17-conditional-content.html#cb431-7" tabindex="-1"></a><span class="at">  </span><span class="fu">to</span><span class="kw">:</span></span>
-<span id="cb431-8"><a href="6.17-conditional-content.html#cb431-8" tabindex="-1"></a><span class="at">    </span><span class="fu">metadata</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
-<span id="cb431-9"><a href="6.17-conditional-content.html#cb431-9" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb431-10"><a href="6.17-conditional-content.html#cb431-10" tabindex="-1"></a></span>
-<span id="cb431-11"><a href="6.17-conditional-content.html#cb431-11" tabindex="-1"></a>:::</span></code></pre></div>
+<div class="sourceCode" id="cb433"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb433-1"><a href="6.17-conditional-content.html#cb433-1" tabindex="-1"></a>::: {.content-hidden unless-meta=&quot;path.to.metadata&quot;}</span>
+<span id="cb433-2"><a href="6.17-conditional-content.html#cb433-2" tabindex="-1"></a></span>
+<span id="cb433-3"><a href="6.17-conditional-content.html#cb433-3" tabindex="-1"></a>This content will be hidden unless there exists a metadata entry like such:</span>
+<span id="cb433-4"><a href="6.17-conditional-content.html#cb433-4" tabindex="-1"></a></span>
+<span id="cb433-5"><a href="6.17-conditional-content.html#cb433-5" tabindex="-1"></a><span class="in">```yml</span></span>
+<span id="cb433-6"><a href="6.17-conditional-content.html#cb433-6" tabindex="-1"></a><span class="fu">path</span><span class="kw">:</span></span>
+<span id="cb433-7"><a href="6.17-conditional-content.html#cb433-7" tabindex="-1"></a><span class="at">  </span><span class="fu">to</span><span class="kw">:</span></span>
+<span id="cb433-8"><a href="6.17-conditional-content.html#cb433-8" tabindex="-1"></a><span class="at">    </span><span class="fu">metadata</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb433-9"><a href="6.17-conditional-content.html#cb433-9" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb433-10"><a href="6.17-conditional-content.html#cb433-10" tabindex="-1"></a></span>
+<span id="cb433-11"><a href="6.17-conditional-content.html#cb433-11" tabindex="-1"></a>:::</span></code></pre></div>
 <p>You need to use <code>unless-meta="path.to.metadata"</code> to refer to your
 user defined metadata key.</p>
 <p>Change file name based on metadata:</p>
@@ -991,24 +1051,24 @@ user defined metadata key.</p>
 <div id="set-up-multiple-profiles" class="section level3 hasAnchor" number="6.17.1">
 <h3><span class="header-section-number">6.17.1</span> Set up multiple profiles<a href="6.17-conditional-content.html#set-up-multiple-profiles" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>You can also set up multiple profiles in <code>_quarto.yml</code>, so you can just run <code>quarto render --profile with-solutions</code> / <code>--profile no-solutions</code> in terminal to render the document with or without solutions.</p>
-<div class="sourceCode" id="cb432"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb432-1"><a href="6.17-conditional-content.html#cb432-1" tabindex="-1"></a><span class="fu">project</span><span class="kw">:</span></span>
-<span id="cb432-2"><a href="6.17-conditional-content.html#cb432-2" tabindex="-1"></a><span class="at">  </span><span class="fu">type</span><span class="kw">:</span><span class="at"> book</span></span>
-<span id="cb432-3"><a href="6.17-conditional-content.html#cb432-3" tabindex="-1"></a><span class="at">  </span><span class="fu">output-dir</span><span class="kw">:</span><span class="at"> docs</span></span>
-<span id="cb432-4"><a href="6.17-conditional-content.html#cb432-4" tabindex="-1"></a></span>
-<span id="cb432-5"><a href="6.17-conditional-content.html#cb432-5" tabindex="-1"></a><span class="fu">profiles</span><span class="kw">:</span></span>
-<span id="cb432-6"><a href="6.17-conditional-content.html#cb432-6" tabindex="-1"></a><span class="at">  </span><span class="fu">with-solutions</span><span class="kw">:</span></span>
-<span id="cb432-7"><a href="6.17-conditional-content.html#cb432-7" tabindex="-1"></a><span class="at">    </span><span class="fu">metadata</span><span class="kw">:</span></span>
-<span id="cb432-8"><a href="6.17-conditional-content.html#cb432-8" tabindex="-1"></a><span class="at">      </span><span class="fu">solutions</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
-<span id="cb432-9"><a href="6.17-conditional-content.html#cb432-9" tabindex="-1"></a><span class="at">  </span></span>
-<span id="cb432-10"><a href="6.17-conditional-content.html#cb432-10" tabindex="-1"></a><span class="at">  </span><span class="fu">no-solutions</span><span class="kw">:</span></span>
-<span id="cb432-11"><a href="6.17-conditional-content.html#cb432-11" tabindex="-1"></a><span class="at">    </span><span class="fu">metadata</span><span class="kw">:</span></span>
-<span id="cb432-12"><a href="6.17-conditional-content.html#cb432-12" tabindex="-1"></a><span class="at">      </span><span class="fu">solutions</span><span class="kw">:</span><span class="at"> </span><span class="ch">false</span></span></code></pre></div>
+<div class="sourceCode" id="cb434"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb434-1"><a href="6.17-conditional-content.html#cb434-1" tabindex="-1"></a><span class="fu">project</span><span class="kw">:</span></span>
+<span id="cb434-2"><a href="6.17-conditional-content.html#cb434-2" tabindex="-1"></a><span class="at">  </span><span class="fu">type</span><span class="kw">:</span><span class="at"> book</span></span>
+<span id="cb434-3"><a href="6.17-conditional-content.html#cb434-3" tabindex="-1"></a><span class="at">  </span><span class="fu">output-dir</span><span class="kw">:</span><span class="at"> docs</span></span>
+<span id="cb434-4"><a href="6.17-conditional-content.html#cb434-4" tabindex="-1"></a></span>
+<span id="cb434-5"><a href="6.17-conditional-content.html#cb434-5" tabindex="-1"></a><span class="fu">profiles</span><span class="kw">:</span></span>
+<span id="cb434-6"><a href="6.17-conditional-content.html#cb434-6" tabindex="-1"></a><span class="at">  </span><span class="fu">with-solutions</span><span class="kw">:</span></span>
+<span id="cb434-7"><a href="6.17-conditional-content.html#cb434-7" tabindex="-1"></a><span class="at">    </span><span class="fu">metadata</span><span class="kw">:</span></span>
+<span id="cb434-8"><a href="6.17-conditional-content.html#cb434-8" tabindex="-1"></a><span class="at">      </span><span class="fu">solutions</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb434-9"><a href="6.17-conditional-content.html#cb434-9" tabindex="-1"></a><span class="at">  </span></span>
+<span id="cb434-10"><a href="6.17-conditional-content.html#cb434-10" tabindex="-1"></a><span class="at">  </span><span class="fu">no-solutions</span><span class="kw">:</span></span>
+<span id="cb434-11"><a href="6.17-conditional-content.html#cb434-11" tabindex="-1"></a><span class="at">    </span><span class="fu">metadata</span><span class="kw">:</span></span>
+<span id="cb434-12"><a href="6.17-conditional-content.html#cb434-12" tabindex="-1"></a><span class="at">      </span><span class="fu">solutions</span><span class="kw">:</span><span class="at"> </span><span class="ch">false</span></span></code></pre></div>
 <p>You can then render the document with solutions using <code>--profile</code> argument:</p>
-<div class="sourceCode" id="cb433"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb433-1"><a href="6.17-conditional-content.html#cb433-1" tabindex="-1"></a><span class="ex">quarto</span> render <span class="at">--profile</span> with-solutions</span></code></pre></div>
+<div class="sourceCode" id="cb435"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb435-1"><a href="6.17-conditional-content.html#cb435-1" tabindex="-1"></a><span class="ex">quarto</span> render <span class="at">--profile</span> with-solutions</span></code></pre></div>
 <p><strong>Default profile</strong></p>
 <p>To define a default profile, add a <code>default</code> option to the <code>profile</code> key. For example, to make the <code>with-solutions</code> profile the default, you can use the following configuration:</p>
-<div class="sourceCode" id="cb434"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb434-1"><a href="6.17-conditional-content.html#cb434-1" tabindex="-1"></a><span class="fu">profile</span><span class="kw">:</span></span>
-<span id="cb434-2"><a href="6.17-conditional-content.html#cb434-2" tabindex="-1"></a><span class="at">  </span><span class="fu">default</span><span class="kw">:</span><span class="at"> with-solutions</span></span></code></pre></div>
+<div class="sourceCode" id="cb436"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb436-1"><a href="6.17-conditional-content.html#cb436-1" tabindex="-1"></a><span class="fu">profile</span><span class="kw">:</span></span>
+<span id="cb436-2"><a href="6.17-conditional-content.html#cb436-2" tabindex="-1"></a><span class="at">  </span><span class="fu">default</span><span class="kw">:</span><span class="at"> with-solutions</span></span></code></pre></div>
 <p>Then, you can simply run <code>quarto render</code> without specifying a profile, and it will use the <code>with-solutions</code> profile by default.</p>
 <hr />
 </div>
@@ -1019,26 +1079,26 @@ user defined metadata key.</p>
 <p><span class="env-green">Solution: Use params in rmarkdown.</span></p>
 <ol style="list-style-type: decimal">
 <li><p>In the YAML header, define a parameter <code>solution</code> with a default value of <code>false</code>.</p>
-<div class="sourceCode" id="cb435"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb435-1"><a href="6.17-conditional-content.html#cb435-1" tabindex="-1"></a><span class="pp">---</span></span>
-<span id="cb435-2"><a href="6.17-conditional-content.html#cb435-2" tabindex="-1"></a><span class="fu">title</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Home Assignment&quot;</span></span>
-<span id="cb435-3"><a href="6.17-conditional-content.html#cb435-3" tabindex="-1"></a><span class="fu">from</span><span class="kw">:</span><span class="at"> markdown+tex_math_single_backslash</span></span>
-<span id="cb435-4"><a href="6.17-conditional-content.html#cb435-4" tabindex="-1"></a><span class="fu">params</span><span class="kw">:</span></span>
-<span id="cb435-5"><a href="6.17-conditional-content.html#cb435-5" tabindex="-1"></a><span class="at">  </span><span class="fu">solution</span><span class="kw">:</span><span class="at"> </span><span class="ch">false</span></span>
-<span id="cb435-6"><a href="6.17-conditional-content.html#cb435-6" tabindex="-1"></a><span class="co">  # solution: true</span></span>
-<span id="cb435-7"><a href="6.17-conditional-content.html#cb435-7" tabindex="-1"></a><span class="pp">---</span></span></code></pre></div>
+<div class="sourceCode" id="cb437"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb437-1"><a href="6.17-conditional-content.html#cb437-1" tabindex="-1"></a><span class="pp">---</span></span>
+<span id="cb437-2"><a href="6.17-conditional-content.html#cb437-2" tabindex="-1"></a><span class="fu">title</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Home Assignment&quot;</span></span>
+<span id="cb437-3"><a href="6.17-conditional-content.html#cb437-3" tabindex="-1"></a><span class="fu">from</span><span class="kw">:</span><span class="at"> markdown+tex_math_single_backslash</span></span>
+<span id="cb437-4"><a href="6.17-conditional-content.html#cb437-4" tabindex="-1"></a><span class="fu">params</span><span class="kw">:</span></span>
+<span id="cb437-5"><a href="6.17-conditional-content.html#cb437-5" tabindex="-1"></a><span class="at">  </span><span class="fu">solution</span><span class="kw">:</span><span class="at"> </span><span class="ch">false</span></span>
+<span id="cb437-6"><a href="6.17-conditional-content.html#cb437-6" tabindex="-1"></a><span class="co">  # solution: true</span></span>
+<span id="cb437-7"><a href="6.17-conditional-content.html#cb437-7" tabindex="-1"></a><span class="pp">---</span></span></code></pre></div>
 <ul>
 <li><code>solution: false</code> means do not show solutions by default.</li>
 <li><code>solution: true</code> means show solutions.</li>
 </ul></li>
 <li><p>Using a code chunk to get the value of the parameter. Put it at the beginning of the document as part of a global setup.</p>
-<div class="sourceCode" id="cb436"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb436-1"><a href="6.17-conditional-content.html#cb436-1" tabindex="-1"></a><span class="in">```{r echo=FALSE} </span></span>
-<span id="cb436-2"><a href="6.17-conditional-content.html#cb436-2" tabindex="-1"></a><span class="in">.solution &lt;- params$solution</span></span>
-<span id="cb436-3"><a href="6.17-conditional-content.html#cb436-3" tabindex="-1"></a><span class="in">```</span></span></code></pre></div></li>
+<div class="sourceCode" id="cb438"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb438-1"><a href="6.17-conditional-content.html#cb438-1" tabindex="-1"></a><span class="in">```{r echo=FALSE} </span></span>
+<span id="cb438-2"><a href="6.17-conditional-content.html#cb438-2" tabindex="-1"></a><span class="in">.solution &lt;- params$solution</span></span>
+<span id="cb438-3"><a href="6.17-conditional-content.html#cb438-3" tabindex="-1"></a><span class="in">```</span></span></code></pre></div></li>
 <li><p>For following <span class="env-green"><strong>code chunks</strong></span>, you can use <code>eval=.solution, include=.solution</code> to control whether to evaluate and include the chunk based on the value of <code>.solution</code>.</p>
-<div class="sourceCode" id="cb437"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb437-1"><a href="6.17-conditional-content.html#cb437-1" tabindex="-1"></a><span class="in">```{r eval=.solution, include=.solution} </span></span>
-<span id="cb437-2"><a href="6.17-conditional-content.html#cb437-2" tabindex="-1"></a><span class="in"># R code for solution</span></span>
-<span id="cb437-3"><a href="6.17-conditional-content.html#cb437-3" tabindex="-1"></a><span class="in">summary(cars)</span></span>
-<span id="cb437-4"><a href="6.17-conditional-content.html#cb437-4" tabindex="-1"></a><span class="in">```</span></span></code></pre></div>
+<div class="sourceCode" id="cb439"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb439-1"><a href="6.17-conditional-content.html#cb439-1" tabindex="-1"></a><span class="in">```{r eval=.solution, include=.solution} </span></span>
+<span id="cb439-2"><a href="6.17-conditional-content.html#cb439-2" tabindex="-1"></a><span class="in"># R code for solution</span></span>
+<span id="cb439-3"><a href="6.17-conditional-content.html#cb439-3" tabindex="-1"></a><span class="in">summary(cars)</span></span>
+<span id="cb439-4"><a href="6.17-conditional-content.html#cb439-4" tabindex="-1"></a><span class="in">```</span></span></code></pre></div>
 <ul>
 <li>When <code>.solution</code> is <code>TRUE</code>, the chunk will be evaluated and included in the output.
 <ul>
@@ -1047,11 +1107,11 @@ user defined metadata key.</p>
 <li>when <code>.solution</code> is <code>FALSE</code>, the chunk will not be evaluated or included in the output.</li>
 </ul></li>
 <li><p>For <span class="env-green"><strong>regular text</strong></span>, use fenced divs with <code>.content-visible</code> and <code>when-meta="solution"</code> to conditionally include or exclude content based on the value of the <code>solution</code> parameter.</p>
-<div class="sourceCode" id="cb438"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb438-1"><a href="6.17-conditional-content.html#cb438-1" tabindex="-1"></a>::: {.content-visible when-meta=&quot;params.solution&quot;}</span>
-<span id="cb438-2"><a href="6.17-conditional-content.html#cb438-2" tabindex="-1"></a>This content will only be visible if <span class="in">`solution`</span> is set to <span class="in">`true`</span>.</span>
-<span id="cb438-3"><a href="6.17-conditional-content.html#cb438-3" tabindex="-1"></a></span>
-<span id="cb438-4"><a href="6.17-conditional-content.html#cb438-4" tabindex="-1"></a>Put your solutions here.</span>
-<span id="cb438-5"><a href="6.17-conditional-content.html#cb438-5" tabindex="-1"></a>:::</span></code></pre></div>
+<div class="sourceCode" id="cb440"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb440-1"><a href="6.17-conditional-content.html#cb440-1" tabindex="-1"></a>::: {.content-visible when-meta=&quot;params.solution&quot;}</span>
+<span id="cb440-2"><a href="6.17-conditional-content.html#cb440-2" tabindex="-1"></a>This content will only be visible if <span class="in">`solution`</span> is set to <span class="in">`true`</span>.</span>
+<span id="cb440-3"><a href="6.17-conditional-content.html#cb440-3" tabindex="-1"></a></span>
+<span id="cb440-4"><a href="6.17-conditional-content.html#cb440-4" tabindex="-1"></a>Put your solutions here.</span>
+<span id="cb440-5"><a href="6.17-conditional-content.html#cb440-5" tabindex="-1"></a>:::</span></code></pre></div>
 <ul>
 <li>Use the attributes <code>unless-meta</code> and <code>when-meta</code>, and use periods <code>.</code> to separate metadata keys.</li>
 <li><code>solution</code> is a second-level key under <code>params</code>, so you need to use <code>params.solution</code> to refer to it.</li>

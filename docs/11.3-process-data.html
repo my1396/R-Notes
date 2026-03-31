@@ -654,8 +654,8 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="8.8" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html"><i class="fa fa-check"></i><b>8.8</b> Data Frame Operations</a>
 <ul>
-<li class="chapter" data-level="" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#columnrow-wise-operations"><i class="fa fa-check"></i>Column/Row-wise Operations</a></li>
-<li class="chapter" data-level="8.8.1" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#process-na-values"><i class="fa fa-check"></i><b>8.8.1</b> <span class="env-green"><strong>Process <code>NA</code> values</strong></span></a></li>
+<li class="chapter" data-level="8.8.1" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#columnrow-wise-operations"><i class="fa fa-check"></i><b>8.8.1</b> Column/Row-wise Operations</a></li>
+<li class="chapter" data-level="8.8.2" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#process-na-values"><i class="fa fa-check"></i><b>8.8.2</b> <span class="env-green"><strong>Process <code>NA</code> values</strong></span></a></li>
 </ul></li>
 <li class="chapter" data-level="8.9" data-path="8.9-matrix-multiplication.html"><a href="8.9-matrix-multiplication.html"><i class="fa fa-check"></i><b>8.9</b> Matrix multiplication</a></li>
 <li class="chapter" data-level="8.10" data-path="8.10-string-operations.html"><a href="8.10-string-operations.html"><i class="fa fa-check"></i><b>8.10</b> String Operations</a></li>
@@ -868,17 +868,47 @@ function myFunction(id) {
   x.style.display = (x.style.display === 'none') ? 'block' : 'none';
 }
 
-// Auto-expand active top-level section so its level 2/3 items are visible
+// Auto-expand active section and keep all siblings within the same level 1 section open
 document.addEventListener('DOMContentLoaded', function() {
   try {
     var summary = document.querySelector('.book-summary ul.summary');
     if (!summary) return;
 
     function applyAutoOpen() {
-      // Clear previous
-      summary.querySelectorAll('li.chapter.auto-open').forEach(function(li){ li.classList.remove('auto-open'); });
+      // Find the active item (could be level 1, 2, or 3)
       var active = summary.querySelector('li.chapter.active');
-      if (active) active.classList.add('auto-open');
+      if (!active) return;
+      
+      // Find the top-level (level 1) chapter containing the active item
+      var topLevelChapter = active.closest('ul.summary > li.chapter');
+      if (!topLevelChapter) return;
+      
+      // Collapse all other top-level chapters
+      summary.querySelectorAll('ul.summary > li.chapter').forEach(function(chapter) {
+        if (chapter !== topLevelChapter) {
+          chapter.classList.remove('auto-open');
+          // Collapse all nested items in other chapters
+          chapter.querySelectorAll('li.chapter').forEach(function(nested) {
+            nested.classList.remove('auto-open');
+          });
+        }
+      });
+      
+      // Expand the active top-level chapter
+      topLevelChapter.classList.add('auto-open');
+      
+      // Expand ALL level 2 and level 3 items within this top-level chapter
+      topLevelChapter.querySelectorAll('li.chapter').forEach(function(nested) {
+        nested.classList.add('auto-open');
+      });
+      
+      // Scroll the active TOC item to the center of the TOC panel
+      setTimeout(function() {
+        var activeLink = active.querySelector('a');
+        if (activeLink) {
+          activeLink.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
     }
 
     applyAutoOpen();
@@ -894,14 +924,14 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-// Toggle collapse: clicking an expanded section collapses it
+// Toggle collapse: clicking level 1 heading expands/collapses all sublevels
 document.addEventListener('DOMContentLoaded', function() {
   try {
     var summary = document.querySelector('.book-summary ul.summary');
     if (!summary) return;
 
-    // Add click handlers to chapter links with children
-    summary.querySelectorAll('li.chapter').forEach(function(chapter) {
+    // Add click handlers only to top-level chapter links with children
+    summary.querySelectorAll('ul.summary > li.chapter').forEach(function(chapter) {
       var sublist = chapter.querySelector('ul');
       if (!sublist) return; // Only chapters with subsections
 
@@ -913,15 +943,28 @@ document.addEventListener('DOMContentLoaded', function() {
         var isExpanded = chapter.classList.contains('auto-open');
         
         if (isExpanded) {
-          // Collapse it
+          // Collapse it and all nested items
           e.preventDefault();
           chapter.classList.remove('auto-open');
+          // Also collapse all level 2 and level 3 items
+          chapter.querySelectorAll('li.chapter.auto-open').forEach(function(nested) {
+            nested.classList.remove('auto-open');
+          });
         } else {
-          // Expand it (remove auto-open from others first)
-          summary.querySelectorAll('li.chapter.auto-open').forEach(function(li) {
-            if (li !== chapter) li.classList.remove('auto-open');
+          // Expand it (collapse other top-level chapters first)
+          summary.querySelectorAll('ul.summary > li.chapter.auto-open').forEach(function(li) {
+            if (li !== chapter) {
+              li.classList.remove('auto-open');
+              li.querySelectorAll('li.chapter.auto-open').forEach(function(nested) {
+                nested.classList.remove('auto-open');
+              });
+            }
           });
           chapter.classList.add('auto-open');
+          // Expand all level 2 items within this chapter
+          chapter.querySelectorAll('ul > li.chapter').forEach(function(level2) {
+            level2.classList.add('auto-open');
+          });
         }
       });
     });
@@ -931,9 +974,26 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 <style>
-/* Show nested UL of active chapter when collapse=section */
-.book-summary ul.summary li.chapter.auto-open ul { display: block !important; }
-.book-summary ul.summary li.chapter.auto-open > a { font-weight: 700; }
+/* Show all nested UL of chapters marked as auto-open */
+.book-summary ul.summary li.chapter.auto-open > ul { 
+  display: block !important; 
+}
+
+/* Make parent level headings bold when expanded */
+.book-summary ul.summary li.chapter.auto-open > a { 
+  font-weight: 700; 
+}
+
+/* Highlight the actual active item with color and bold */
+.book-summary ul.summary li.chapter.active > a { 
+  font-weight: 700 !important;
+  color: #0078D4 !important;
+}
+
+/* Ensure proper indentation for nested levels */
+.book-summary ul.summary li.chapter ul li.chapter { 
+  padding-left: 0; 
+}
 </style>
 <div id="process-data" class="section level2 hasAnchor" number="11.3">
 <h2><span class="header-section-number">11.3</span> Process Data<a href="11.3-process-data.html#process-data" class="anchor-section" aria-label="Anchor link to header"></a></h2>
@@ -941,39 +1001,39 @@ document.addEventListener('DOMContentLoaded', function() {
 <p><code>getSymbols</code> loads data in the current environment using the <strong>symbol/tick</strong> of the asset.</p>
 <p>Returned data will have column names <code>symbol.Open</code>, <code>symbol.High</code>, <code>symbol.Low</code>, <code>symbol.Close</code>, <code>symbol.Volume</code>, and <code>symbol.Adjusted</code>.</p>
 <p><img src="https://drive.google.com/thumbnail?id=1OXgxZ30KWTnKrLNI6Z82dupA0omyR0EW&sz=w1000" alt="getSymbols" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" /></p>
-<div class="sourceCode" id="cb838"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb838-1"><a href="11.3-process-data.html#cb838-1" tabindex="-1"></a><span class="co"># Stock prices</span></span>
-<span id="cb838-2"><a href="11.3-process-data.html#cb838-2" tabindex="-1"></a>stock_prices <span class="ot">&lt;-</span> <span class="fu">getSymbols</span>(<span class="fu">c</span>(<span class="st">&quot;SPY&quot;</span>, <span class="st">&quot;AAPL&quot;</span>), </span>
-<span id="cb838-3"><a href="11.3-process-data.html#cb838-3" tabindex="-1"></a>           <span class="at">src =</span> <span class="st">&#39;yahoo&#39;</span>, </span>
-<span id="cb838-4"><a href="11.3-process-data.html#cb838-4" tabindex="-1"></a>           <span class="at">from=</span><span class="st">&quot;2014-12-01&quot;</span>, <span class="co"># add an extra month before the start date such that </span></span>
-<span id="cb838-5"><a href="11.3-process-data.html#cb838-5" tabindex="-1"></a>           <span class="at">to=</span><span class="st">&quot;2023-12-31&quot;</span>,   <span class="co"># the 1st month has non-NA return data;</span></span>
-<span id="cb838-6"><a href="11.3-process-data.html#cb838-6" tabindex="-1"></a>                                <span class="co">#   Note: need to start from &quot;12-01&quot;;</span></span>
-<span id="cb838-7"><a href="11.3-process-data.html#cb838-7" tabindex="-1"></a>           <span class="at">auto.assign=</span><span class="cn">TRUE</span>   <span class="co"># return 2 &quot;xts&quot; object in the current env: &quot;SPY&quot; and &quot;AAPL&quot;</span></span>
-<span id="cb838-8"><a href="11.3-process-data.html#cb838-8" tabindex="-1"></a>           ) </span>
-<span id="cb838-9"><a href="11.3-process-data.html#cb838-9" tabindex="-1"></a><span class="sc">&gt;</span> stock_prices <span class="co"># returned value is a vector of tickers</span></span>
-<span id="cb838-10"><a href="11.3-process-data.html#cb838-10" tabindex="-1"></a>[<span class="dv">1</span>] <span class="st">&quot;SPY&quot;</span>  <span class="st">&quot;AAPL&quot;</span></span>
-<span id="cb838-11"><a href="11.3-process-data.html#cb838-11" tabindex="-1"></a></span>
-<span id="cb838-12"><a href="11.3-process-data.html#cb838-12" tabindex="-1"></a><span class="co"># Treasury Bill</span></span>
-<span id="cb838-13"><a href="11.3-process-data.html#cb838-13" tabindex="-1"></a>Tbill_1m <span class="ot">&lt;-</span> <span class="fu">getSymbols</span>(<span class="st">&quot;DGS1MO&quot;</span>, <span class="at">src=</span><span class="st">&quot;FRED&quot;</span>, <span class="at">auto.assign=</span><span class="cn">FALSE</span>)</span>
-<span id="cb838-14"><a href="11.3-process-data.html#cb838-14" tabindex="-1"></a></span>
-<span id="cb838-15"><a href="11.3-process-data.html#cb838-15" tabindex="-1"></a><span class="co"># Market index: OSEBX</span></span>
-<span id="cb838-16"><a href="11.3-process-data.html#cb838-16" tabindex="-1"></a>mkt_idx_prices <span class="ot">&lt;-</span> <span class="fu">getSymbols</span>(<span class="st">&quot;OSEBX.OL&quot;</span>, </span>
-<span id="cb838-17"><a href="11.3-process-data.html#cb838-17" tabindex="-1"></a>                             <span class="at">from=</span><span class="st">&quot;2014-12-01&quot;</span>, </span>
-<span id="cb838-18"><a href="11.3-process-data.html#cb838-18" tabindex="-1"></a>                             <span class="at">to=</span><span class="st">&quot;2023-12-31&quot;</span>, </span>
-<span id="cb838-19"><a href="11.3-process-data.html#cb838-19" tabindex="-1"></a>                             <span class="at">src=</span><span class="st">&quot;yahoo&quot;</span>,</span>
-<span id="cb838-20"><a href="11.3-process-data.html#cb838-20" tabindex="-1"></a>                             <span class="at">auto.assign =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb838-21"><a href="11.3-process-data.html#cb838-21" tabindex="-1"></a>mkt_idx_prices</span>
-<span id="cb838-22"><a href="11.3-process-data.html#cb838-22" tabindex="-1"></a><span class="co"># from xts to tibble or data.frame</span></span>
-<span id="cb838-23"><a href="11.3-process-data.html#cb838-23" tabindex="-1"></a>mkt_idx_prices <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(mkt_idx_prices) <span class="sc">%&gt;%</span> </span>
-<span id="cb838-24"><a href="11.3-process-data.html#cb838-24" tabindex="-1"></a>    <span class="fu">rownames_to_column</span>(<span class="at">var =</span> <span class="st">&quot;Date&quot;</span>) <span class="sc">%&gt;%</span> <span class="co"># this converts Date to a string</span></span>
-<span id="cb838-25"><a href="11.3-process-data.html#cb838-25" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">Date =</span> <span class="fu">ymd</span>(Date)) <span class="co"># convert back to Date type</span></span>
-<span id="cb838-26"><a href="11.3-process-data.html#cb838-26" tabindex="-1"></a>mkt_idx_prices <span class="sc">%&gt;%</span> <span class="fu">str</span>()</span>
-<span id="cb838-27"><a href="11.3-process-data.html#cb838-27" tabindex="-1"></a>mkt_idx_prices <span class="sc">%&gt;%</span> <span class="fu">head</span>()</span>
-<span id="cb838-28"><a href="11.3-process-data.html#cb838-28" tabindex="-1"></a>mkt_idx_prices <span class="sc">%&gt;%</span> <span class="fu">tail</span>()</span>
-<span id="cb838-29"><a href="11.3-process-data.html#cb838-29" tabindex="-1"></a><span class="co"># for index, adjusted is equal to closing prices</span></span>
-<span id="cb838-30"><a href="11.3-process-data.html#cb838-30" tabindex="-1"></a><span class="fu">with</span>(mkt_idx_prices, <span class="fu">all.equal</span>(OSEBX.OL.Adjusted, OSEBX.OL.Close)) </span>
-<span id="cb838-31"><a href="11.3-process-data.html#cb838-31" tabindex="-1"></a>f_name <span class="ot">&lt;-</span> <span class="st">&quot;data/market/OSEBX_prices_2015-2023_daily.csv&quot;</span></span>
-<span id="cb838-32"><a href="11.3-process-data.html#cb838-32" tabindex="-1"></a><span class="fu">write_csv</span>(mkt_idx_prices, f_name)</span>
-<span id="cb838-33"><a href="11.3-process-data.html#cb838-33" tabindex="-1"></a>mkt_idx_prices <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(f_name)</span></code></pre></div>
+<div class="sourceCode" id="cb841"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb841-1"><a href="11.3-process-data.html#cb841-1" tabindex="-1"></a><span class="co"># Stock prices</span></span>
+<span id="cb841-2"><a href="11.3-process-data.html#cb841-2" tabindex="-1"></a>stock_prices <span class="ot">&lt;-</span> <span class="fu">getSymbols</span>(<span class="fu">c</span>(<span class="st">&quot;SPY&quot;</span>, <span class="st">&quot;AAPL&quot;</span>), </span>
+<span id="cb841-3"><a href="11.3-process-data.html#cb841-3" tabindex="-1"></a>           <span class="at">src =</span> <span class="st">&#39;yahoo&#39;</span>, </span>
+<span id="cb841-4"><a href="11.3-process-data.html#cb841-4" tabindex="-1"></a>           <span class="at">from=</span><span class="st">&quot;2014-12-01&quot;</span>, <span class="co"># add an extra month before the start date such that </span></span>
+<span id="cb841-5"><a href="11.3-process-data.html#cb841-5" tabindex="-1"></a>           <span class="at">to=</span><span class="st">&quot;2023-12-31&quot;</span>,   <span class="co"># the 1st month has non-NA return data;</span></span>
+<span id="cb841-6"><a href="11.3-process-data.html#cb841-6" tabindex="-1"></a>                                <span class="co">#   Note: need to start from &quot;12-01&quot;;</span></span>
+<span id="cb841-7"><a href="11.3-process-data.html#cb841-7" tabindex="-1"></a>           <span class="at">auto.assign=</span><span class="cn">TRUE</span>   <span class="co"># return 2 &quot;xts&quot; object in the current env: &quot;SPY&quot; and &quot;AAPL&quot;</span></span>
+<span id="cb841-8"><a href="11.3-process-data.html#cb841-8" tabindex="-1"></a>           ) </span>
+<span id="cb841-9"><a href="11.3-process-data.html#cb841-9" tabindex="-1"></a><span class="sc">&gt;</span> stock_prices <span class="co"># returned value is a vector of tickers</span></span>
+<span id="cb841-10"><a href="11.3-process-data.html#cb841-10" tabindex="-1"></a>[<span class="dv">1</span>] <span class="st">&quot;SPY&quot;</span>  <span class="st">&quot;AAPL&quot;</span></span>
+<span id="cb841-11"><a href="11.3-process-data.html#cb841-11" tabindex="-1"></a></span>
+<span id="cb841-12"><a href="11.3-process-data.html#cb841-12" tabindex="-1"></a><span class="co"># Treasury Bill</span></span>
+<span id="cb841-13"><a href="11.3-process-data.html#cb841-13" tabindex="-1"></a>Tbill_1m <span class="ot">&lt;-</span> <span class="fu">getSymbols</span>(<span class="st">&quot;DGS1MO&quot;</span>, <span class="at">src=</span><span class="st">&quot;FRED&quot;</span>, <span class="at">auto.assign=</span><span class="cn">FALSE</span>)</span>
+<span id="cb841-14"><a href="11.3-process-data.html#cb841-14" tabindex="-1"></a></span>
+<span id="cb841-15"><a href="11.3-process-data.html#cb841-15" tabindex="-1"></a><span class="co"># Market index: OSEBX</span></span>
+<span id="cb841-16"><a href="11.3-process-data.html#cb841-16" tabindex="-1"></a>mkt_idx_prices <span class="ot">&lt;-</span> <span class="fu">getSymbols</span>(<span class="st">&quot;OSEBX.OL&quot;</span>, </span>
+<span id="cb841-17"><a href="11.3-process-data.html#cb841-17" tabindex="-1"></a>                             <span class="at">from=</span><span class="st">&quot;2014-12-01&quot;</span>, </span>
+<span id="cb841-18"><a href="11.3-process-data.html#cb841-18" tabindex="-1"></a>                             <span class="at">to=</span><span class="st">&quot;2023-12-31&quot;</span>, </span>
+<span id="cb841-19"><a href="11.3-process-data.html#cb841-19" tabindex="-1"></a>                             <span class="at">src=</span><span class="st">&quot;yahoo&quot;</span>,</span>
+<span id="cb841-20"><a href="11.3-process-data.html#cb841-20" tabindex="-1"></a>                             <span class="at">auto.assign =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb841-21"><a href="11.3-process-data.html#cb841-21" tabindex="-1"></a>mkt_idx_prices</span>
+<span id="cb841-22"><a href="11.3-process-data.html#cb841-22" tabindex="-1"></a><span class="co"># from xts to tibble or data.frame</span></span>
+<span id="cb841-23"><a href="11.3-process-data.html#cb841-23" tabindex="-1"></a>mkt_idx_prices <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(mkt_idx_prices) <span class="sc">%&gt;%</span> </span>
+<span id="cb841-24"><a href="11.3-process-data.html#cb841-24" tabindex="-1"></a>    <span class="fu">rownames_to_column</span>(<span class="at">var =</span> <span class="st">&quot;Date&quot;</span>) <span class="sc">%&gt;%</span> <span class="co"># this converts Date to a string</span></span>
+<span id="cb841-25"><a href="11.3-process-data.html#cb841-25" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">Date =</span> <span class="fu">ymd</span>(Date)) <span class="co"># convert back to Date type</span></span>
+<span id="cb841-26"><a href="11.3-process-data.html#cb841-26" tabindex="-1"></a>mkt_idx_prices <span class="sc">%&gt;%</span> <span class="fu">str</span>()</span>
+<span id="cb841-27"><a href="11.3-process-data.html#cb841-27" tabindex="-1"></a>mkt_idx_prices <span class="sc">%&gt;%</span> <span class="fu">head</span>()</span>
+<span id="cb841-28"><a href="11.3-process-data.html#cb841-28" tabindex="-1"></a>mkt_idx_prices <span class="sc">%&gt;%</span> <span class="fu">tail</span>()</span>
+<span id="cb841-29"><a href="11.3-process-data.html#cb841-29" tabindex="-1"></a><span class="co"># for index, adjusted is equal to closing prices</span></span>
+<span id="cb841-30"><a href="11.3-process-data.html#cb841-30" tabindex="-1"></a><span class="fu">with</span>(mkt_idx_prices, <span class="fu">all.equal</span>(OSEBX.OL.Adjusted, OSEBX.OL.Close)) </span>
+<span id="cb841-31"><a href="11.3-process-data.html#cb841-31" tabindex="-1"></a>f_name <span class="ot">&lt;-</span> <span class="st">&quot;data/market/OSEBX_prices_2015-2023_daily.csv&quot;</span></span>
+<span id="cb841-32"><a href="11.3-process-data.html#cb841-32" tabindex="-1"></a><span class="fu">write_csv</span>(mkt_idx_prices, f_name)</span>
+<span id="cb841-33"><a href="11.3-process-data.html#cb841-33" tabindex="-1"></a>mkt_idx_prices <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(f_name)</span></code></pre></div>
 <ul>
 <li><p><code>src</code> data sources. Options: <code>yahoo</code>, <code>google</code>, <code>MySQL</code>, <code>FRED</code>, <code>csv</code>, <code>RData</code>, and <code>Oanda</code>. Defaults to <code>yahoo</code>.</p>
 <ul>
@@ -1002,64 +1062,64 @@ document.addEventListener('DOMContentLoaded', function() {
 <li><p><code>env = globalenv()</code> where to create objects. Defaults to the global environment.</p>
 <p>Setting <code>env=NULL</code> is equal to <code>auto.assign=FALSE</code>.</p>
 <p>Alternatively, you can create a separate environment to store the downloaded data.</p>
-<div class="sourceCode" id="cb839"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb839-1"><a href="11.3-process-data.html#cb839-1" tabindex="-1"></a><span class="co"># create a new env called `sp500`</span></span>
-<span id="cb839-2"><a href="11.3-process-data.html#cb839-2" tabindex="-1"></a>sp500 <span class="ot">&lt;-</span> <span class="fu">new.env</span>()</span>
-<span id="cb839-3"><a href="11.3-process-data.html#cb839-3" tabindex="-1"></a><span class="co"># save the S&amp;P 500 (symbol:^GSPC) to `sp500`</span></span>
-<span id="cb839-4"><a href="11.3-process-data.html#cb839-4" tabindex="-1"></a><span class="fu">getSymbols</span>(<span class="st">&quot;^GSPC&quot;</span>, <span class="at">env =</span> sp500, <span class="at">src =</span> <span class="st">&quot;yahoo&quot;</span>,</span>
-<span id="cb839-5"><a href="11.3-process-data.html#cb839-5" tabindex="-1"></a>           <span class="at">from =</span> <span class="fu">as.Date</span>(<span class="st">&quot;1960-01-04&quot;</span>), <span class="at">to =</span> <span class="fu">as.Date</span>(<span class="st">&quot;2009-01-01&quot;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb842"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb842-1"><a href="11.3-process-data.html#cb842-1" tabindex="-1"></a><span class="co"># create a new env called `sp500`</span></span>
+<span id="cb842-2"><a href="11.3-process-data.html#cb842-2" tabindex="-1"></a>sp500 <span class="ot">&lt;-</span> <span class="fu">new.env</span>()</span>
+<span id="cb842-3"><a href="11.3-process-data.html#cb842-3" tabindex="-1"></a><span class="co"># save the S&amp;P 500 (symbol:^GSPC) to `sp500`</span></span>
+<span id="cb842-4"><a href="11.3-process-data.html#cb842-4" tabindex="-1"></a><span class="fu">getSymbols</span>(<span class="st">&quot;^GSPC&quot;</span>, <span class="at">env =</span> sp500, <span class="at">src =</span> <span class="st">&quot;yahoo&quot;</span>,</span>
+<span id="cb842-5"><a href="11.3-process-data.html#cb842-5" tabindex="-1"></a>           <span class="at">from =</span> <span class="fu">as.Date</span>(<span class="st">&quot;1960-01-04&quot;</span>), <span class="at">to =</span> <span class="fu">as.Date</span>(<span class="st">&quot;2009-01-01&quot;</span>))</span></code></pre></div>
 <p>To load the variable GSPC from the environment sp500 to a variable in the global environment (also known as the workspace), three options:</p>
-<div class="sourceCode" id="cb840"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb840-1"><a href="11.3-process-data.html#cb840-1" tabindex="-1"></a><span class="co"># opt 1</span></span>
-<span id="cb840-2"><a href="11.3-process-data.html#cb840-2" tabindex="-1"></a>GSPC <span class="ot">&lt;-</span> sp500<span class="sc">$</span>GSPC</span>
-<span id="cb840-3"><a href="11.3-process-data.html#cb840-3" tabindex="-1"></a><span class="co"># opt 2</span></span>
-<span id="cb840-4"><a href="11.3-process-data.html#cb840-4" tabindex="-1"></a>GSPC1 <span class="ot">&lt;-</span> <span class="fu">get</span>(<span class="st">&quot;GSPC&quot;</span>, <span class="at">envir =</span> sp500)</span>
-<span id="cb840-5"><a href="11.3-process-data.html#cb840-5" tabindex="-1"></a><span class="co"># opt 3</span></span>
-<span id="cb840-6"><a href="11.3-process-data.html#cb840-6" tabindex="-1"></a>GSPC2 <span class="ot">&lt;-</span> <span class="fu">with</span>(sp500, GSPC)</span></code></pre></div></li>
+<div class="sourceCode" id="cb843"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb843-1"><a href="11.3-process-data.html#cb843-1" tabindex="-1"></a><span class="co"># opt 1</span></span>
+<span id="cb843-2"><a href="11.3-process-data.html#cb843-2" tabindex="-1"></a>GSPC <span class="ot">&lt;-</span> sp500<span class="sc">$</span>GSPC</span>
+<span id="cb843-3"><a href="11.3-process-data.html#cb843-3" tabindex="-1"></a><span class="co"># opt 2</span></span>
+<span id="cb843-4"><a href="11.3-process-data.html#cb843-4" tabindex="-1"></a>GSPC1 <span class="ot">&lt;-</span> <span class="fu">get</span>(<span class="st">&quot;GSPC&quot;</span>, <span class="at">envir =</span> sp500)</span>
+<span id="cb843-5"><a href="11.3-process-data.html#cb843-5" tabindex="-1"></a><span class="co"># opt 3</span></span>
+<span id="cb843-6"><a href="11.3-process-data.html#cb843-6" tabindex="-1"></a>GSPC2 <span class="ot">&lt;-</span> <span class="fu">with</span>(sp500, GSPC)</span></code></pre></div></li>
 <li><p><code>periodicity="daily"</code> periodicity of data to query and return. Defaults to “daily”.</p>
 <p>Must be one of “daily”, “weekly”, “monthly”.</p>
-<div class="sourceCode" id="cb841"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb841-1"><a href="11.3-process-data.html#cb841-1" tabindex="-1"></a><span class="co"># this returns beginning of month data</span></span>
-<span id="cb841-2"><a href="11.3-process-data.html#cb841-2" tabindex="-1"></a><span class="fu">getSymbols</span>(<span class="at">Symbols =</span> <span class="st">&quot;AAPL&quot;</span>, <span class="at">from=</span><span class="st">&quot;2010-01-01&quot;</span>, <span class="at">to=</span><span class="st">&quot;2018-03-01&quot;</span>, <span class="at">periodicity=</span><span class="st">&quot;monthly&quot;</span>)</span></code></pre></div></li>
+<div class="sourceCode" id="cb844"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb844-1"><a href="11.3-process-data.html#cb844-1" tabindex="-1"></a><span class="co"># this returns beginning of month data</span></span>
+<span id="cb844-2"><a href="11.3-process-data.html#cb844-2" tabindex="-1"></a><span class="fu">getSymbols</span>(<span class="at">Symbols =</span> <span class="st">&quot;AAPL&quot;</span>, <span class="at">from=</span><span class="st">&quot;2010-01-01&quot;</span>, <span class="at">to=</span><span class="st">&quot;2018-03-01&quot;</span>, <span class="at">periodicity=</span><span class="st">&quot;monthly&quot;</span>)</span></code></pre></div></li>
 </ul>
 <p><strong>Download index components data</strong></p>
 <ol style="list-style-type: decimal">
 <li><p>download a csv file containing all company symbols and names.</p>
-<div class="sourceCode" id="cb842"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb842-1"><a href="11.3-process-data.html#cb842-1" tabindex="-1"></a>nasdaq100 <span class="ot">&lt;-</span></span>
-<span id="cb842-2"><a href="11.3-process-data.html#cb842-2" tabindex="-1"></a>     <span class="fu">read.csv</span>(<span class="st">&quot;nasdaq100list.csv&quot;</span>,</span>
-<span id="cb842-3"><a href="11.3-process-data.html#cb842-3" tabindex="-1"></a>              <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>, <span class="at">strip.white =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb842-4"><a href="11.3-process-data.html#cb842-4" tabindex="-1"></a><span class="fu">dim</span>(nasdaq100) <span class="co"># check dimension</span></span>
-<span id="cb842-5"><a href="11.3-process-data.html#cb842-5" tabindex="-1"></a>nasdaq100<span class="sc">$</span>Name[<span class="fu">duplicated</span>(nasdaq100<span class="sc">$</span>Name)] <span class="co"># remove duplicates</span></span></code></pre></div></li>
+<div class="sourceCode" id="cb845"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb845-1"><a href="11.3-process-data.html#cb845-1" tabindex="-1"></a>nasdaq100 <span class="ot">&lt;-</span></span>
+<span id="cb845-2"><a href="11.3-process-data.html#cb845-2" tabindex="-1"></a>     <span class="fu">read.csv</span>(<span class="st">&quot;nasdaq100list.csv&quot;</span>,</span>
+<span id="cb845-3"><a href="11.3-process-data.html#cb845-3" tabindex="-1"></a>              <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>, <span class="at">strip.white =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb845-4"><a href="11.3-process-data.html#cb845-4" tabindex="-1"></a><span class="fu">dim</span>(nasdaq100) <span class="co"># check dimension</span></span>
+<span id="cb845-5"><a href="11.3-process-data.html#cb845-5" tabindex="-1"></a>nasdaq100<span class="sc">$</span>Name[<span class="fu">duplicated</span>(nasdaq100<span class="sc">$</span>Name)] <span class="co"># remove duplicates</span></span></code></pre></div></li>
 <li><p>Download data</p>
 <p>By using the command <code>tryCatch</code> we handle unusual conditions, including errors and warnings.</p>
 <p>In this case, if the data from a company are not available from yahoo finance, the message <code>Symbol ... not downloadable!</code> is given.</p>
 <p>(For simplicity, we only download the symbols starting with <code>A</code>.)</p>
-<div class="sourceCode" id="cb843"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb843-1"><a href="11.3-process-data.html#cb843-1" tabindex="-1"></a>nasdaq <span class="ot">&lt;-</span> <span class="fu">new.env</span>()</span>
-<span id="cb843-2"><a href="11.3-process-data.html#cb843-2" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> nasdaq100<span class="sc">$</span>Symbol[<span class="fu">startsWith</span>(nasdaq100<span class="sc">$</span>Symbol, <span class="st">&quot;A&quot;</span>)]) {</span>
-<span id="cb843-3"><a href="11.3-process-data.html#cb843-3" tabindex="-1"></a>    <span class="fu">cat</span>(<span class="st">&quot;Downloading time series for symbol &#39;&quot;</span>, i, <span class="st">&quot;&#39; ...</span><span class="sc">\n</span><span class="st">&quot;</span>, <span class="at">sep =</span> <span class="st">&quot;&quot;</span>)</span>
-<span id="cb843-4"><a href="11.3-process-data.html#cb843-4" tabindex="-1"></a>    status <span class="ot">&lt;-</span> <span class="fu">tryCatch</span>(<span class="fu">getSymbols</span>(i, <span class="at">env =</span> nasdaq, <span class="at">src =</span> <span class="st">&quot;yahoo&quot;</span>,</span>
-<span id="cb843-5"><a href="11.3-process-data.html#cb843-5" tabindex="-1"></a>                                  <span class="at">from =</span> <span class="fu">as.Date</span>(<span class="st">&quot;2000-01-01&quot;</span>)),</span>
-<span id="cb843-6"><a href="11.3-process-data.html#cb843-6" tabindex="-1"></a>                       <span class="at">error =</span> identity)</span>
-<span id="cb843-7"><a href="11.3-process-data.html#cb843-7" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">inherits</span>(status, <span class="st">&quot;error&quot;</span>))</span>
-<span id="cb843-8"><a href="11.3-process-data.html#cb843-8" tabindex="-1"></a>    <span class="fu">cat</span>(<span class="st">&quot;Symbol &#39;&quot;</span>, i, <span class="st">&quot;&#39; not downloadable!</span><span class="sc">\n</span><span class="st">&quot;</span>, <span class="at">sep =</span> <span class="st">&quot;&quot;</span>)</span>
-<span id="cb843-9"><a href="11.3-process-data.html#cb843-9" tabindex="-1"></a>}</span>
-<span id="cb843-10"><a href="11.3-process-data.html#cb843-10" tabindex="-1"></a><span class="co"># check AAPL time series</span></span>
-<span id="cb843-11"><a href="11.3-process-data.html#cb843-11" tabindex="-1"></a><span class="fu">with</span>(nasdaq, <span class="fu">head</span>(AAPL))</span>
-<span id="cb843-12"><a href="11.3-process-data.html#cb843-12" tabindex="-1"></a><span class="co"># visualize</span></span>
-<span id="cb843-13"><a href="11.3-process-data.html#cb843-13" tabindex="-1"></a><span class="fu">chartSeries</span>(nasdaq<span class="sc">$</span>AAPL)</span></code></pre></div>
+<div class="sourceCode" id="cb846"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb846-1"><a href="11.3-process-data.html#cb846-1" tabindex="-1"></a>nasdaq <span class="ot">&lt;-</span> <span class="fu">new.env</span>()</span>
+<span id="cb846-2"><a href="11.3-process-data.html#cb846-2" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> nasdaq100<span class="sc">$</span>Symbol[<span class="fu">startsWith</span>(nasdaq100<span class="sc">$</span>Symbol, <span class="st">&quot;A&quot;</span>)]) {</span>
+<span id="cb846-3"><a href="11.3-process-data.html#cb846-3" tabindex="-1"></a>    <span class="fu">cat</span>(<span class="st">&quot;Downloading time series for symbol &#39;&quot;</span>, i, <span class="st">&quot;&#39; ...</span><span class="sc">\n</span><span class="st">&quot;</span>, <span class="at">sep =</span> <span class="st">&quot;&quot;</span>)</span>
+<span id="cb846-4"><a href="11.3-process-data.html#cb846-4" tabindex="-1"></a>    status <span class="ot">&lt;-</span> <span class="fu">tryCatch</span>(<span class="fu">getSymbols</span>(i, <span class="at">env =</span> nasdaq, <span class="at">src =</span> <span class="st">&quot;yahoo&quot;</span>,</span>
+<span id="cb846-5"><a href="11.3-process-data.html#cb846-5" tabindex="-1"></a>                                  <span class="at">from =</span> <span class="fu">as.Date</span>(<span class="st">&quot;2000-01-01&quot;</span>)),</span>
+<span id="cb846-6"><a href="11.3-process-data.html#cb846-6" tabindex="-1"></a>                       <span class="at">error =</span> identity)</span>
+<span id="cb846-7"><a href="11.3-process-data.html#cb846-7" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">inherits</span>(status, <span class="st">&quot;error&quot;</span>))</span>
+<span id="cb846-8"><a href="11.3-process-data.html#cb846-8" tabindex="-1"></a>    <span class="fu">cat</span>(<span class="st">&quot;Symbol &#39;&quot;</span>, i, <span class="st">&quot;&#39; not downloadable!</span><span class="sc">\n</span><span class="st">&quot;</span>, <span class="at">sep =</span> <span class="st">&quot;&quot;</span>)</span>
+<span id="cb846-9"><a href="11.3-process-data.html#cb846-9" tabindex="-1"></a>}</span>
+<span id="cb846-10"><a href="11.3-process-data.html#cb846-10" tabindex="-1"></a><span class="co"># check AAPL time series</span></span>
+<span id="cb846-11"><a href="11.3-process-data.html#cb846-11" tabindex="-1"></a><span class="fu">with</span>(nasdaq, <span class="fu">head</span>(AAPL))</span>
+<span id="cb846-12"><a href="11.3-process-data.html#cb846-12" tabindex="-1"></a><span class="co"># visualize</span></span>
+<span id="cb846-13"><a href="11.3-process-data.html#cb846-13" tabindex="-1"></a><span class="fu">chartSeries</span>(nasdaq<span class="sc">$</span>AAPL)</span></code></pre></div>
 <p>Have a look at the <code>quantmod</code> <a href="www.quantmod.com/examples/intro/">homepage</a> for further examples.</p>
 <p>See the <a href="https://www.quantmod.com/documentation/00Index.html">manual</a> of the <code>quantmod</code> package for the whole list of available plot and visualization functions.</p></li>
 </ol>
 <p><strong>Download only the close price</strong></p>
 <p>Use <code>getSymbols()[,4]</code> to subset the close price column.</p>
-<div class="sourceCode" id="cb844"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb844-1"><a href="11.3-process-data.html#cb844-1" tabindex="-1"></a>tickers <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;0011.HK&quot;</span>, <span class="st">&quot;1299.HK&quot;</span>, <span class="st">&quot;1083.HK&quot;</span>, <span class="st">&quot;0823.HK&quot;</span>, <span class="st">&quot;0669.HK&quot;</span>, <span class="st">&quot;0992.HK&quot;</span>)</span>
-<span id="cb844-2"><a href="11.3-process-data.html#cb844-2" tabindex="-1"></a></span>
-<span id="cb844-3"><a href="11.3-process-data.html#cb844-3" tabindex="-1"></a>portfolioPrices <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
-<span id="cb844-4"><a href="11.3-process-data.html#cb844-4" tabindex="-1"></a><span class="cf">for</span> (Ticker <span class="cf">in</span> tickers)</span>
-<span id="cb844-5"><a href="11.3-process-data.html#cb844-5" tabindex="-1"></a>  portfolioPrices <span class="ot">&lt;-</span> <span class="fu">cbind</span>(portfolioPrices,</span>
-<span id="cb844-6"><a href="11.3-process-data.html#cb844-6" tabindex="-1"></a>                           <span class="fu">getSymbols</span>(Ticker, <span class="at">from =</span> <span class="st">&quot;2012-09-01&quot;</span>, </span>
-<span id="cb844-7"><a href="11.3-process-data.html#cb844-7" tabindex="-1"></a>                                      <span class="at">to =</span> <span class="st">&quot;2022-08-31&quot;</span>, </span>
-<span id="cb844-8"><a href="11.3-process-data.html#cb844-8" tabindex="-1"></a>                                      <span class="at">periodicity =</span> <span class="st">&quot;weekly&quot;</span>, </span>
-<span id="cb844-9"><a href="11.3-process-data.html#cb844-9" tabindex="-1"></a>                                      <span class="at">auto.assign=</span><span class="cn">FALSE</span>)[, <span class="dv">4</span>])</span>
-<span id="cb844-10"><a href="11.3-process-data.html#cb844-10" tabindex="-1"></a><span class="fu">colnames</span>(portfolioPrices) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;HSBC&quot;</span>, <span class="st">&quot;AIA&quot;</span>, <span class="st">&quot;TG&quot;</span>, <span class="st">&quot;LinkReit&quot;</span>, <span class="st">&quot;Techronic&quot;</span>, <span class="st">&quot;Lenovo&quot;</span>)</span>
-<span id="cb844-11"><a href="11.3-process-data.html#cb844-11" tabindex="-1"></a>portfolioPrices</span></code></pre></div>
+<div class="sourceCode" id="cb847"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb847-1"><a href="11.3-process-data.html#cb847-1" tabindex="-1"></a>tickers <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;0011.HK&quot;</span>, <span class="st">&quot;1299.HK&quot;</span>, <span class="st">&quot;1083.HK&quot;</span>, <span class="st">&quot;0823.HK&quot;</span>, <span class="st">&quot;0669.HK&quot;</span>, <span class="st">&quot;0992.HK&quot;</span>)</span>
+<span id="cb847-2"><a href="11.3-process-data.html#cb847-2" tabindex="-1"></a></span>
+<span id="cb847-3"><a href="11.3-process-data.html#cb847-3" tabindex="-1"></a>portfolioPrices <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb847-4"><a href="11.3-process-data.html#cb847-4" tabindex="-1"></a><span class="cf">for</span> (Ticker <span class="cf">in</span> tickers)</span>
+<span id="cb847-5"><a href="11.3-process-data.html#cb847-5" tabindex="-1"></a>  portfolioPrices <span class="ot">&lt;-</span> <span class="fu">cbind</span>(portfolioPrices,</span>
+<span id="cb847-6"><a href="11.3-process-data.html#cb847-6" tabindex="-1"></a>                           <span class="fu">getSymbols</span>(Ticker, <span class="at">from =</span> <span class="st">&quot;2012-09-01&quot;</span>, </span>
+<span id="cb847-7"><a href="11.3-process-data.html#cb847-7" tabindex="-1"></a>                                      <span class="at">to =</span> <span class="st">&quot;2022-08-31&quot;</span>, </span>
+<span id="cb847-8"><a href="11.3-process-data.html#cb847-8" tabindex="-1"></a>                                      <span class="at">periodicity =</span> <span class="st">&quot;weekly&quot;</span>, </span>
+<span id="cb847-9"><a href="11.3-process-data.html#cb847-9" tabindex="-1"></a>                                      <span class="at">auto.assign=</span><span class="cn">FALSE</span>)[, <span class="dv">4</span>])</span>
+<span id="cb847-10"><a href="11.3-process-data.html#cb847-10" tabindex="-1"></a><span class="fu">colnames</span>(portfolioPrices) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;HSBC&quot;</span>, <span class="st">&quot;AIA&quot;</span>, <span class="st">&quot;TG&quot;</span>, <span class="st">&quot;LinkReit&quot;</span>, <span class="st">&quot;Techronic&quot;</span>, <span class="st">&quot;Lenovo&quot;</span>)</span>
+<span id="cb847-11"><a href="11.3-process-data.html#cb847-11" tabindex="-1"></a>portfolioPrices</span></code></pre></div>
 <p><strong>Technical Indicators</strong></p>
 <p><a href="https://bookdown.org/kochiuyu/technical-analysis-with-r-second-edition2/technical-indicators.html" class="uri">https://bookdown.org/kochiuyu/technical-analysis-with-r-second-edition2/technical-indicators.html</a></p>
 <hr />
@@ -1086,100 +1146,100 @@ document.addEventListener('DOMContentLoaded', function() {
 </ul></li>
 <li>Use <code>from</code> and <code>to</code> to specify the period of interest.</li>
 </ul>
-<div class="sourceCode" id="cb845"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb845-1"><a href="11.3-process-data.html#cb845-1" tabindex="-1"></a><span class="fu">tq_get</span>(<span class="st">&quot;AAPL&quot;</span>,<span class="at">get =</span> <span class="st">&quot;stock.prices&quot;</span>)</span>
-<span id="cb845-2"><a href="11.3-process-data.html#cb845-2" tabindex="-1"></a><span class="co"># A tibble: 2,687 × 8</span></span>
-<span id="cb845-3"><a href="11.3-process-data.html#cb845-3" tabindex="-1"></a>   symbol date        open  high   low close    volume adjusted</span>
-<span id="cb845-4"><a href="11.3-process-data.html#cb845-4" tabindex="-1"></a>   <span class="sc">&lt;</span>chr<span class="sc">&gt;</span>  <span class="er">&lt;</span>date<span class="sc">&gt;</span>     <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span>     <span class="er">&lt;</span>dbl<span class="sc">&gt;</span>    <span class="er">&lt;</span>dbl<span class="sc">&gt;</span></span>
-<span id="cb845-5"><a href="11.3-process-data.html#cb845-5" tabindex="-1"></a> <span class="dv">1</span> AAPL   <span class="dv">2014-01-02</span>  <span class="fl">19.8</span>  <span class="fl">19.9</span>  <span class="fl">19.7</span>  <span class="fl">19.8</span> <span class="dv">234684800</span>     <span class="fl">17.3</span></span>
-<span id="cb845-6"><a href="11.3-process-data.html#cb845-6" tabindex="-1"></a> <span class="dv">2</span> AAPL   <span class="dv">2014-01-03</span>  <span class="fl">19.7</span>  <span class="fl">19.8</span>  <span class="fl">19.3</span>  <span class="fl">19.3</span> <span class="dv">392467600</span>     <span class="fl">16.9</span></span>
-<span id="cb845-7"><a href="11.3-process-data.html#cb845-7" tabindex="-1"></a> <span class="dv">3</span> AAPL   <span class="dv">2014-01-06</span>  <span class="fl">19.2</span>  <span class="fl">19.5</span>  <span class="fl">19.1</span>  <span class="fl">19.4</span> <span class="dv">412610800</span>     <span class="fl">17.0</span></span>
-<span id="cb845-8"><a href="11.3-process-data.html#cb845-8" tabindex="-1"></a> <span class="dv">4</span> AAPL   <span class="dv">2014-01-07</span>  <span class="fl">19.4</span>  <span class="fl">19.5</span>  <span class="fl">19.2</span>  <span class="fl">19.3</span> <span class="dv">317209200</span>     <span class="fl">16.8</span></span>
-<span id="cb845-9"><a href="11.3-process-data.html#cb845-9" tabindex="-1"></a> <span class="dv">5</span> AAPL   <span class="dv">2014-01-08</span>  <span class="fl">19.2</span>  <span class="fl">19.5</span>  <span class="fl">19.2</span>  <span class="fl">19.4</span> <span class="dv">258529600</span>     <span class="fl">17.0</span></span>
-<span id="cb845-10"><a href="11.3-process-data.html#cb845-10" tabindex="-1"></a> <span class="dv">6</span> AAPL   <span class="dv">2014-01-09</span>  <span class="fl">19.5</span>  <span class="fl">19.5</span>  <span class="fl">19.1</span>  <span class="fl">19.2</span> <span class="dv">279148800</span>     <span class="fl">16.7</span></span>
-<span id="cb845-11"><a href="11.3-process-data.html#cb845-11" tabindex="-1"></a> <span class="dv">7</span> AAPL   <span class="dv">2014-01-10</span>  <span class="fl">19.3</span>  <span class="fl">19.3</span>  <span class="fl">19.0</span>  <span class="fl">19.0</span> <span class="dv">304976000</span>     <span class="fl">16.6</span></span>
-<span id="cb845-12"><a href="11.3-process-data.html#cb845-12" tabindex="-1"></a> <span class="dv">8</span> AAPL   <span class="dv">2014-01-13</span>  <span class="fl">18.9</span>  <span class="fl">19.4</span>  <span class="fl">18.9</span>  <span class="fl">19.1</span> <span class="dv">378492800</span>     <span class="fl">16.7</span></span>
-<span id="cb845-13"><a href="11.3-process-data.html#cb845-13" tabindex="-1"></a> <span class="dv">9</span> AAPL   <span class="dv">2014-01-14</span>  <span class="fl">19.2</span>  <span class="fl">19.5</span>  <span class="fl">19.2</span>  <span class="fl">19.5</span> <span class="dv">332561600</span>     <span class="fl">17.0</span></span>
-<span id="cb845-14"><a href="11.3-process-data.html#cb845-14" tabindex="-1"></a><span class="dv">10</span> AAPL   <span class="dv">2014-01-15</span>  <span class="fl">19.8</span>  <span class="fl">20.0</span>  <span class="fl">19.7</span>  <span class="fl">19.9</span> <span class="dv">391638800</span>     <span class="fl">17.4</span></span>
-<span id="cb845-15"><a href="11.3-process-data.html#cb845-15" tabindex="-1"></a><span class="co"># ℹ 2,677 more rows</span></span>
-<span id="cb845-16"><a href="11.3-process-data.html#cb845-16" tabindex="-1"></a><span class="co"># ℹ Use `print(n = ...)` to see more rows</span></span>
-<span id="cb845-17"><a href="11.3-process-data.html#cb845-17" tabindex="-1"></a></span>
-<span id="cb845-18"><a href="11.3-process-data.html#cb845-18" tabindex="-1"></a><span class="co"># get Facebook data for the past five years</span></span>
-<span id="cb845-19"><a href="11.3-process-data.html#cb845-19" tabindex="-1"></a>from <span class="ot">=</span> <span class="fu">today</span>() <span class="sc">-</span> <span class="fu">years</span>(<span class="dv">5</span>)</span>
-<span id="cb845-20"><a href="11.3-process-data.html#cb845-20" tabindex="-1"></a>Stocks <span class="ot">&lt;-</span> <span class="fu">tq_get</span>(<span class="st">&quot;FB&quot;</span>, <span class="at">get =</span> <span class="st">&quot;stock.prices&quot;</span>, <span class="at">from =</span> from)</span>
-<span id="cb845-21"><a href="11.3-process-data.html#cb845-21" tabindex="-1"></a>Stocks</span></code></pre></div>
+<div class="sourceCode" id="cb848"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb848-1"><a href="11.3-process-data.html#cb848-1" tabindex="-1"></a><span class="fu">tq_get</span>(<span class="st">&quot;AAPL&quot;</span>,<span class="at">get =</span> <span class="st">&quot;stock.prices&quot;</span>)</span>
+<span id="cb848-2"><a href="11.3-process-data.html#cb848-2" tabindex="-1"></a><span class="co"># A tibble: 2,687 × 8</span></span>
+<span id="cb848-3"><a href="11.3-process-data.html#cb848-3" tabindex="-1"></a>   symbol date        open  high   low close    volume adjusted</span>
+<span id="cb848-4"><a href="11.3-process-data.html#cb848-4" tabindex="-1"></a>   <span class="sc">&lt;</span>chr<span class="sc">&gt;</span>  <span class="er">&lt;</span>date<span class="sc">&gt;</span>     <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span>     <span class="er">&lt;</span>dbl<span class="sc">&gt;</span>    <span class="er">&lt;</span>dbl<span class="sc">&gt;</span></span>
+<span id="cb848-5"><a href="11.3-process-data.html#cb848-5" tabindex="-1"></a> <span class="dv">1</span> AAPL   <span class="dv">2014-01-02</span>  <span class="fl">19.8</span>  <span class="fl">19.9</span>  <span class="fl">19.7</span>  <span class="fl">19.8</span> <span class="dv">234684800</span>     <span class="fl">17.3</span></span>
+<span id="cb848-6"><a href="11.3-process-data.html#cb848-6" tabindex="-1"></a> <span class="dv">2</span> AAPL   <span class="dv">2014-01-03</span>  <span class="fl">19.7</span>  <span class="fl">19.8</span>  <span class="fl">19.3</span>  <span class="fl">19.3</span> <span class="dv">392467600</span>     <span class="fl">16.9</span></span>
+<span id="cb848-7"><a href="11.3-process-data.html#cb848-7" tabindex="-1"></a> <span class="dv">3</span> AAPL   <span class="dv">2014-01-06</span>  <span class="fl">19.2</span>  <span class="fl">19.5</span>  <span class="fl">19.1</span>  <span class="fl">19.4</span> <span class="dv">412610800</span>     <span class="fl">17.0</span></span>
+<span id="cb848-8"><a href="11.3-process-data.html#cb848-8" tabindex="-1"></a> <span class="dv">4</span> AAPL   <span class="dv">2014-01-07</span>  <span class="fl">19.4</span>  <span class="fl">19.5</span>  <span class="fl">19.2</span>  <span class="fl">19.3</span> <span class="dv">317209200</span>     <span class="fl">16.8</span></span>
+<span id="cb848-9"><a href="11.3-process-data.html#cb848-9" tabindex="-1"></a> <span class="dv">5</span> AAPL   <span class="dv">2014-01-08</span>  <span class="fl">19.2</span>  <span class="fl">19.5</span>  <span class="fl">19.2</span>  <span class="fl">19.4</span> <span class="dv">258529600</span>     <span class="fl">17.0</span></span>
+<span id="cb848-10"><a href="11.3-process-data.html#cb848-10" tabindex="-1"></a> <span class="dv">6</span> AAPL   <span class="dv">2014-01-09</span>  <span class="fl">19.5</span>  <span class="fl">19.5</span>  <span class="fl">19.1</span>  <span class="fl">19.2</span> <span class="dv">279148800</span>     <span class="fl">16.7</span></span>
+<span id="cb848-11"><a href="11.3-process-data.html#cb848-11" tabindex="-1"></a> <span class="dv">7</span> AAPL   <span class="dv">2014-01-10</span>  <span class="fl">19.3</span>  <span class="fl">19.3</span>  <span class="fl">19.0</span>  <span class="fl">19.0</span> <span class="dv">304976000</span>     <span class="fl">16.6</span></span>
+<span id="cb848-12"><a href="11.3-process-data.html#cb848-12" tabindex="-1"></a> <span class="dv">8</span> AAPL   <span class="dv">2014-01-13</span>  <span class="fl">18.9</span>  <span class="fl">19.4</span>  <span class="fl">18.9</span>  <span class="fl">19.1</span> <span class="dv">378492800</span>     <span class="fl">16.7</span></span>
+<span id="cb848-13"><a href="11.3-process-data.html#cb848-13" tabindex="-1"></a> <span class="dv">9</span> AAPL   <span class="dv">2014-01-14</span>  <span class="fl">19.2</span>  <span class="fl">19.5</span>  <span class="fl">19.2</span>  <span class="fl">19.5</span> <span class="dv">332561600</span>     <span class="fl">17.0</span></span>
+<span id="cb848-14"><a href="11.3-process-data.html#cb848-14" tabindex="-1"></a><span class="dv">10</span> AAPL   <span class="dv">2014-01-15</span>  <span class="fl">19.8</span>  <span class="fl">20.0</span>  <span class="fl">19.7</span>  <span class="fl">19.9</span> <span class="dv">391638800</span>     <span class="fl">17.4</span></span>
+<span id="cb848-15"><a href="11.3-process-data.html#cb848-15" tabindex="-1"></a><span class="co"># ℹ 2,677 more rows</span></span>
+<span id="cb848-16"><a href="11.3-process-data.html#cb848-16" tabindex="-1"></a><span class="co"># ℹ Use `print(n = ...)` to see more rows</span></span>
+<span id="cb848-17"><a href="11.3-process-data.html#cb848-17" tabindex="-1"></a></span>
+<span id="cb848-18"><a href="11.3-process-data.html#cb848-18" tabindex="-1"></a><span class="co"># get Facebook data for the past five years</span></span>
+<span id="cb848-19"><a href="11.3-process-data.html#cb848-19" tabindex="-1"></a>from <span class="ot">=</span> <span class="fu">today</span>() <span class="sc">-</span> <span class="fu">years</span>(<span class="dv">5</span>)</span>
+<span id="cb848-20"><a href="11.3-process-data.html#cb848-20" tabindex="-1"></a>Stocks <span class="ot">&lt;-</span> <span class="fu">tq_get</span>(<span class="st">&quot;FB&quot;</span>, <span class="at">get =</span> <span class="st">&quot;stock.prices&quot;</span>, <span class="at">from =</span> from)</span>
+<span id="cb848-21"><a href="11.3-process-data.html#cb848-21" tabindex="-1"></a>Stocks</span></code></pre></div>
 <p><span class="env-green"><strong>Mutiple stocks</strong></span></p>
-<div class="sourceCode" id="cb846"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb846-1"><a href="11.3-process-data.html#cb846-1" tabindex="-1"></a><span class="co"># get historical data for multiple stocks. e.g. GAFA</span></span>
-<span id="cb846-2"><a href="11.3-process-data.html#cb846-2" tabindex="-1"></a><span class="fu">tq_get</span>(<span class="fu">c</span>(<span class="st">&quot;GOOGL&quot;</span>,<span class="st">&quot;AMZN&quot;</span>,<span class="st">&quot;FB&quot;</span>,<span class="st">&quot;AAPL&quot;</span>), <span class="at">get=</span><span class="st">&quot;stock.prices&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb849"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb849-1"><a href="11.3-process-data.html#cb849-1" tabindex="-1"></a><span class="co"># get historical data for multiple stocks. e.g. GAFA</span></span>
+<span id="cb849-2"><a href="11.3-process-data.html#cb849-2" tabindex="-1"></a><span class="fu">tq_get</span>(<span class="fu">c</span>(<span class="st">&quot;GOOGL&quot;</span>,<span class="st">&quot;AMZN&quot;</span>,<span class="st">&quot;FB&quot;</span>,<span class="st">&quot;AAPL&quot;</span>), <span class="at">get=</span><span class="st">&quot;stock.prices&quot;</span>)</span></code></pre></div>
 <p><code>tq_index(x)</code> returns the stock symbols and various attributes for every stock in an index or exchange. Eighteen indexes and three exchanges are available.</p>
 <p><code>tq_index_options()</code> returns a list of stock indexes you can choose from.</p>
 <p><code>tq_exchange(x)</code> Get all stocks in a stock exchange in <code>tibble</code> format.</p>
 <p><code>tq_exchange_options()</code> returns a list of stock exchanges you can choose from. The options are <code>AMEX</code>, <code>NASDAQ</code> and <code>NYSE</code>.</p>
-<div class="sourceCode" id="cb847"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb847-1"><a href="11.3-process-data.html#cb847-1" tabindex="-1"></a><span class="fu">tq_index</span>(<span class="st">&quot;SP500&quot;</span>)</span>
-<span id="cb847-2"><a href="11.3-process-data.html#cb847-2" tabindex="-1"></a><span class="co"># A tibble: 504 × 8                                                                             </span></span>
-<span id="cb847-3"><a href="11.3-process-data.html#cb847-3" tabindex="-1"></a>   symbol company                     identifier sedol   weight sector shares_held local_currency</span>
-<span id="cb847-4"><a href="11.3-process-data.html#cb847-4" tabindex="-1"></a>   <span class="sc">&lt;</span>chr<span class="sc">&gt;</span>  <span class="er">&lt;</span>chr<span class="sc">&gt;</span>                       <span class="er">&lt;</span>chr<span class="sc">&gt;</span>      <span class="er">&lt;</span>chr<span class="sc">&gt;</span>    <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>chr<span class="sc">&gt;</span>        <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>chr<span class="sc">&gt;</span>         </span>
-<span id="cb847-5"><a href="11.3-process-data.html#cb847-5" tabindex="-1"></a> <span class="dv">1</span> AAPL   APPLE INC                   <span class="dv">037833100</span>  <span class="dv">2046251</span> <span class="fl">0.0686</span> <span class="sc">-</span>        <span class="dv">171416583</span> USD           </span>
-<span id="cb847-6"><a href="11.3-process-data.html#cb847-6" tabindex="-1"></a> <span class="dv">2</span> MSFT   MICROSOFT CORP              <span class="dv">594918104</span>  <span class="dv">2588173</span> <span class="fl">0.0654</span> <span class="sc">-</span>         <span class="dv">88389092</span> USD           </span>
-<span id="cb847-7"><a href="11.3-process-data.html#cb847-7" tabindex="-1"></a> <span class="dv">3</span> NVDA   NVIDIA CORP                 <span class="dv">67066</span>G104  <span class="dv">2379504</span> <span class="fl">0.0563</span> <span class="sc">-</span>        <span class="dv">292528720</span> USD           </span>
-<span id="cb847-8"><a href="11.3-process-data.html#cb847-8" tabindex="-1"></a> <span class="dv">4</span> AMZN   AMAZON.COM INC              <span class="dv">023135106</span>  <span class="dv">2000019</span> <span class="fl">0.0342</span> <span class="sc">-</span>        <span class="dv">108870351</span> USD           </span>
-<span id="cb847-9"><a href="11.3-process-data.html#cb847-9" tabindex="-1"></a> <span class="dv">5</span> META   META PLATFORMS INC CLASS A  <span class="dv">30303</span>M102  B7TL820 <span class="fl">0.0242</span> <span class="sc">-</span>         <span class="dv">26074570</span> USD           </span>
-<span id="cb847-10"><a href="11.3-process-data.html#cb847-10" tabindex="-1"></a> <span class="dv">6</span> GOOGL  ALPHABET INC CL A           <span class="dv">02079</span>K305  BYVY8G0 <span class="fl">0.0198</span> <span class="sc">-</span>         <span class="dv">69889995</span> USD           </span>
-<span id="cb847-11"><a href="11.3-process-data.html#cb847-11" tabindex="-1"></a> <span class="dv">7</span> BRK<span class="sc">-</span>B  BERKSHIRE HATHAWAY INC CL B <span class="dv">084670702</span>  <span class="dv">2073390</span> <span class="fl">0.0187</span> <span class="sc">-</span>         <span class="dv">21540450</span> USD           </span>
-<span id="cb847-12"><a href="11.3-process-data.html#cb847-12" tabindex="-1"></a> <span class="dv">8</span> GOOG   ALPHABET INC CL C           <span class="dv">02079</span>K107  BYY88Y7 <span class="fl">0.0166</span> <span class="sc">-</span>         <span class="dv">58143623</span> USD           </span>
-<span id="cb847-13"><a href="11.3-process-data.html#cb847-13" tabindex="-1"></a> <span class="dv">9</span> LLY    ELI LILLY <span class="sc">+</span> CO              <span class="dv">532457108</span>  <span class="dv">2516152</span> <span class="fl">0.0163</span> <span class="sc">-</span>          <span class="dv">9488573</span> USD           </span>
-<span id="cb847-14"><a href="11.3-process-data.html#cb847-14" tabindex="-1"></a><span class="dv">10</span> AVGO   BROADCOM INC                <span class="dv">11135</span>F101  BDZ78H9 <span class="fl">0.0145</span> <span class="sc">-</span>         <span class="dv">51827325</span> USD           </span>
-<span id="cb847-15"><a href="11.3-process-data.html#cb847-15" tabindex="-1"></a><span class="co"># ℹ 494 more rows</span></span>
-<span id="cb847-16"><a href="11.3-process-data.html#cb847-16" tabindex="-1"></a><span class="co"># ℹ Use `print(n = ...)` to see more rows</span></span>
-<span id="cb847-17"><a href="11.3-process-data.html#cb847-17" tabindex="-1"></a></span>
-<span id="cb847-18"><a href="11.3-process-data.html#cb847-18" tabindex="-1"></a><span class="do">## This takes forever to run ... </span></span>
-<span id="cb847-19"><a href="11.3-process-data.html#cb847-19" tabindex="-1"></a>sp_500 <span class="ot">&lt;-</span> <span class="fu">tq_index</span>(<span class="st">&quot;SP500&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb847-20"><a href="11.3-process-data.html#cb847-20" tabindex="-1"></a>  <span class="fu">tq_get</span>(<span class="at">get =</span> <span class="st">&quot;stock.prices&quot;</span>)</span>
-<span id="cb847-21"><a href="11.3-process-data.html#cb847-21" tabindex="-1"></a>sp_500</span>
-<span id="cb847-22"><a href="11.3-process-data.html#cb847-22" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">dim</span>(sp_500)</span>
-<span id="cb847-23"><a href="11.3-process-data.html#cb847-23" tabindex="-1"></a>[<span class="dv">1</span>] <span class="dv">1310963</span>      <span class="dv">15</span></span>
-<span id="cb847-24"><a href="11.3-process-data.html#cb847-24" tabindex="-1"></a><span class="co"># tq_index loads data for the last 10 years</span></span>
-<span id="cb847-25"><a href="11.3-process-data.html#cb847-25" tabindex="-1"></a>sp_500<span class="sc">$</span>date <span class="sc">%&gt;%</span> <span class="fu">unique</span>() <span class="sc">%&gt;%</span> <span class="fu">head</span>()</span>
-<span id="cb847-26"><a href="11.3-process-data.html#cb847-26" tabindex="-1"></a>[<span class="dv">1</span>] <span class="st">&quot;2014-01-02&quot;</span> <span class="st">&quot;2014-01-03&quot;</span> <span class="st">&quot;2014-01-06&quot;</span> <span class="st">&quot;2014-01-07&quot;</span> <span class="st">&quot;2014-01-08&quot;</span> <span class="st">&quot;2014-01-09&quot;</span></span>
-<span id="cb847-27"><a href="11.3-process-data.html#cb847-27" tabindex="-1"></a>sp_500<span class="sc">$</span>date <span class="sc">%&gt;%</span> <span class="fu">unique</span>() <span class="sc">%&gt;%</span> <span class="fu">tail</span>()</span>
-<span id="cb847-28"><a href="11.3-process-data.html#cb847-28" tabindex="-1"></a>[<span class="dv">1</span>] <span class="st">&quot;2024-08-28&quot;</span> <span class="st">&quot;2024-08-29&quot;</span> <span class="st">&quot;2024-08-30&quot;</span> <span class="st">&quot;2024-09-03&quot;</span> <span class="st">&quot;2024-09-04&quot;</span> <span class="st">&quot;2024-09-05&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb850"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb850-1"><a href="11.3-process-data.html#cb850-1" tabindex="-1"></a><span class="fu">tq_index</span>(<span class="st">&quot;SP500&quot;</span>)</span>
+<span id="cb850-2"><a href="11.3-process-data.html#cb850-2" tabindex="-1"></a><span class="co"># A tibble: 504 × 8                                                                             </span></span>
+<span id="cb850-3"><a href="11.3-process-data.html#cb850-3" tabindex="-1"></a>   symbol company                     identifier sedol   weight sector shares_held local_currency</span>
+<span id="cb850-4"><a href="11.3-process-data.html#cb850-4" tabindex="-1"></a>   <span class="sc">&lt;</span>chr<span class="sc">&gt;</span>  <span class="er">&lt;</span>chr<span class="sc">&gt;</span>                       <span class="er">&lt;</span>chr<span class="sc">&gt;</span>      <span class="er">&lt;</span>chr<span class="sc">&gt;</span>    <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>chr<span class="sc">&gt;</span>        <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>chr<span class="sc">&gt;</span>         </span>
+<span id="cb850-5"><a href="11.3-process-data.html#cb850-5" tabindex="-1"></a> <span class="dv">1</span> AAPL   APPLE INC                   <span class="dv">037833100</span>  <span class="dv">2046251</span> <span class="fl">0.0686</span> <span class="sc">-</span>        <span class="dv">171416583</span> USD           </span>
+<span id="cb850-6"><a href="11.3-process-data.html#cb850-6" tabindex="-1"></a> <span class="dv">2</span> MSFT   MICROSOFT CORP              <span class="dv">594918104</span>  <span class="dv">2588173</span> <span class="fl">0.0654</span> <span class="sc">-</span>         <span class="dv">88389092</span> USD           </span>
+<span id="cb850-7"><a href="11.3-process-data.html#cb850-7" tabindex="-1"></a> <span class="dv">3</span> NVDA   NVIDIA CORP                 <span class="dv">67066</span>G104  <span class="dv">2379504</span> <span class="fl">0.0563</span> <span class="sc">-</span>        <span class="dv">292528720</span> USD           </span>
+<span id="cb850-8"><a href="11.3-process-data.html#cb850-8" tabindex="-1"></a> <span class="dv">4</span> AMZN   AMAZON.COM INC              <span class="dv">023135106</span>  <span class="dv">2000019</span> <span class="fl">0.0342</span> <span class="sc">-</span>        <span class="dv">108870351</span> USD           </span>
+<span id="cb850-9"><a href="11.3-process-data.html#cb850-9" tabindex="-1"></a> <span class="dv">5</span> META   META PLATFORMS INC CLASS A  <span class="dv">30303</span>M102  B7TL820 <span class="fl">0.0242</span> <span class="sc">-</span>         <span class="dv">26074570</span> USD           </span>
+<span id="cb850-10"><a href="11.3-process-data.html#cb850-10" tabindex="-1"></a> <span class="dv">6</span> GOOGL  ALPHABET INC CL A           <span class="dv">02079</span>K305  BYVY8G0 <span class="fl">0.0198</span> <span class="sc">-</span>         <span class="dv">69889995</span> USD           </span>
+<span id="cb850-11"><a href="11.3-process-data.html#cb850-11" tabindex="-1"></a> <span class="dv">7</span> BRK<span class="sc">-</span>B  BERKSHIRE HATHAWAY INC CL B <span class="dv">084670702</span>  <span class="dv">2073390</span> <span class="fl">0.0187</span> <span class="sc">-</span>         <span class="dv">21540450</span> USD           </span>
+<span id="cb850-12"><a href="11.3-process-data.html#cb850-12" tabindex="-1"></a> <span class="dv">8</span> GOOG   ALPHABET INC CL C           <span class="dv">02079</span>K107  BYY88Y7 <span class="fl">0.0166</span> <span class="sc">-</span>         <span class="dv">58143623</span> USD           </span>
+<span id="cb850-13"><a href="11.3-process-data.html#cb850-13" tabindex="-1"></a> <span class="dv">9</span> LLY    ELI LILLY <span class="sc">+</span> CO              <span class="dv">532457108</span>  <span class="dv">2516152</span> <span class="fl">0.0163</span> <span class="sc">-</span>          <span class="dv">9488573</span> USD           </span>
+<span id="cb850-14"><a href="11.3-process-data.html#cb850-14" tabindex="-1"></a><span class="dv">10</span> AVGO   BROADCOM INC                <span class="dv">11135</span>F101  BDZ78H9 <span class="fl">0.0145</span> <span class="sc">-</span>         <span class="dv">51827325</span> USD           </span>
+<span id="cb850-15"><a href="11.3-process-data.html#cb850-15" tabindex="-1"></a><span class="co"># ℹ 494 more rows</span></span>
+<span id="cb850-16"><a href="11.3-process-data.html#cb850-16" tabindex="-1"></a><span class="co"># ℹ Use `print(n = ...)` to see more rows</span></span>
+<span id="cb850-17"><a href="11.3-process-data.html#cb850-17" tabindex="-1"></a></span>
+<span id="cb850-18"><a href="11.3-process-data.html#cb850-18" tabindex="-1"></a><span class="do">## This takes forever to run ... </span></span>
+<span id="cb850-19"><a href="11.3-process-data.html#cb850-19" tabindex="-1"></a>sp_500 <span class="ot">&lt;-</span> <span class="fu">tq_index</span>(<span class="st">&quot;SP500&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb850-20"><a href="11.3-process-data.html#cb850-20" tabindex="-1"></a>  <span class="fu">tq_get</span>(<span class="at">get =</span> <span class="st">&quot;stock.prices&quot;</span>)</span>
+<span id="cb850-21"><a href="11.3-process-data.html#cb850-21" tabindex="-1"></a>sp_500</span>
+<span id="cb850-22"><a href="11.3-process-data.html#cb850-22" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">dim</span>(sp_500)</span>
+<span id="cb850-23"><a href="11.3-process-data.html#cb850-23" tabindex="-1"></a>[<span class="dv">1</span>] <span class="dv">1310963</span>      <span class="dv">15</span></span>
+<span id="cb850-24"><a href="11.3-process-data.html#cb850-24" tabindex="-1"></a><span class="co"># tq_index loads data for the last 10 years</span></span>
+<span id="cb850-25"><a href="11.3-process-data.html#cb850-25" tabindex="-1"></a>sp_500<span class="sc">$</span>date <span class="sc">%&gt;%</span> <span class="fu">unique</span>() <span class="sc">%&gt;%</span> <span class="fu">head</span>()</span>
+<span id="cb850-26"><a href="11.3-process-data.html#cb850-26" tabindex="-1"></a>[<span class="dv">1</span>] <span class="st">&quot;2014-01-02&quot;</span> <span class="st">&quot;2014-01-03&quot;</span> <span class="st">&quot;2014-01-06&quot;</span> <span class="st">&quot;2014-01-07&quot;</span> <span class="st">&quot;2014-01-08&quot;</span> <span class="st">&quot;2014-01-09&quot;</span></span>
+<span id="cb850-27"><a href="11.3-process-data.html#cb850-27" tabindex="-1"></a>sp_500<span class="sc">$</span>date <span class="sc">%&gt;%</span> <span class="fu">unique</span>() <span class="sc">%&gt;%</span> <span class="fu">tail</span>()</span>
+<span id="cb850-28"><a href="11.3-process-data.html#cb850-28" tabindex="-1"></a>[<span class="dv">1</span>] <span class="st">&quot;2024-08-28&quot;</span> <span class="st">&quot;2024-08-29&quot;</span> <span class="st">&quot;2024-08-30&quot;</span> <span class="st">&quot;2024-09-03&quot;</span> <span class="st">&quot;2024-09-04&quot;</span> <span class="st">&quot;2024-09-05&quot;</span></span></code></pre></div>
 <p><img src="https://drive.google.com/thumbnail?id=1WZ_oNvKi6Rka_rLwcN9VXhWtWfkfKgzx&sz=w1000" alt="tq_index" style="display: block; margin-right: auto; margin-left: auto; zoom:100%;" /></p>
 <p><code>tq_transmute_fun_options()</code> to see which functions are available</p>
 <p>Calculate monthly return.</p>
-<div class="sourceCode" id="cb848"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb848-1"><a href="11.3-process-data.html#cb848-1" tabindex="-1"></a><span class="co"># calculate monthly return of single stock</span></span>
-<span id="cb848-2"><a href="11.3-process-data.html#cb848-2" tabindex="-1"></a><span class="fu">tq_get</span>(<span class="fu">c</span>(<span class="st">&quot;GOOGL&quot;</span>), <span class="at">get=</span><span class="st">&quot;stock.prices&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb848-3"><a href="11.3-process-data.html#cb848-3" tabindex="-1"></a>  <span class="fu">tq_transmute</span>(<span class="at">select =</span> adjusted,</span>
-<span id="cb848-4"><a href="11.3-process-data.html#cb848-4" tabindex="-1"></a>               <span class="at">mutate_fun =</span> periodReturn,</span>
-<span id="cb848-5"><a href="11.3-process-data.html#cb848-5" tabindex="-1"></a>               <span class="at">period =</span> <span class="st">&quot;monthly&quot;</span>,</span>
-<span id="cb848-6"><a href="11.3-process-data.html#cb848-6" tabindex="-1"></a>               <span class="at">col_rename =</span> <span class="st">&quot;monthly_return&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb851"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb851-1"><a href="11.3-process-data.html#cb851-1" tabindex="-1"></a><span class="co"># calculate monthly return of single stock</span></span>
+<span id="cb851-2"><a href="11.3-process-data.html#cb851-2" tabindex="-1"></a><span class="fu">tq_get</span>(<span class="fu">c</span>(<span class="st">&quot;GOOGL&quot;</span>), <span class="at">get=</span><span class="st">&quot;stock.prices&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb851-3"><a href="11.3-process-data.html#cb851-3" tabindex="-1"></a>  <span class="fu">tq_transmute</span>(<span class="at">select =</span> adjusted,</span>
+<span id="cb851-4"><a href="11.3-process-data.html#cb851-4" tabindex="-1"></a>               <span class="at">mutate_fun =</span> periodReturn,</span>
+<span id="cb851-5"><a href="11.3-process-data.html#cb851-5" tabindex="-1"></a>               <span class="at">period =</span> <span class="st">&quot;monthly&quot;</span>,</span>
+<span id="cb851-6"><a href="11.3-process-data.html#cb851-6" tabindex="-1"></a>               <span class="at">col_rename =</span> <span class="st">&quot;monthly_return&quot;</span>)</span></code></pre></div>
 <p>Plot closing price.</p>
-<div class="sourceCode" id="cb849"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb849-1"><a href="11.3-process-data.html#cb849-1" tabindex="-1"></a><span class="fu">tq_get</span>(<span class="fu">c</span>(<span class="st">&quot;GOOGL&quot;</span>), <span class="at">get=</span><span class="st">&quot;stock.prices&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb849-2"><a href="11.3-process-data.html#cb849-2" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(date, close)) <span class="sc">+</span></span>
-<span id="cb849-3"><a href="11.3-process-data.html#cb849-3" tabindex="-1"></a>  <span class="fu">geom_line</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb852"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb852-1"><a href="11.3-process-data.html#cb852-1" tabindex="-1"></a><span class="fu">tq_get</span>(<span class="fu">c</span>(<span class="st">&quot;GOOGL&quot;</span>), <span class="at">get=</span><span class="st">&quot;stock.prices&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb852-2"><a href="11.3-process-data.html#cb852-2" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(date, close)) <span class="sc">+</span></span>
+<span id="cb852-3"><a href="11.3-process-data.html#cb852-3" tabindex="-1"></a>  <span class="fu">geom_line</span>()</span></code></pre></div>
 <p><strong>Group by and perform operations on individual stocks</strong></p>
 <ul>
 <li><p>from daily to monthly data</p>
-<div class="sourceCode" id="cb850"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb850-1"><a href="11.3-process-data.html#cb850-1" tabindex="-1"></a>sp_500 <span class="sc">%&gt;%</span></span>
-<span id="cb850-2"><a href="11.3-process-data.html#cb850-2" tabindex="-1"></a>  <span class="fu">group_by</span>(symbol) <span class="sc">%&gt;%</span></span>
-<span id="cb850-3"><a href="11.3-process-data.html#cb850-3" tabindex="-1"></a>  <span class="fu">tq_transmute</span>(<span class="at">select =</span> adjusted, <span class="at">mutate_fun =</span> to.monthly, <span class="at">indexAt =</span> <span class="st">&quot;lastof&quot;</span>)</span></code></pre></div></li>
+<div class="sourceCode" id="cb853"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb853-1"><a href="11.3-process-data.html#cb853-1" tabindex="-1"></a>sp_500 <span class="sc">%&gt;%</span></span>
+<span id="cb853-2"><a href="11.3-process-data.html#cb853-2" tabindex="-1"></a>  <span class="fu">group_by</span>(symbol) <span class="sc">%&gt;%</span></span>
+<span id="cb853-3"><a href="11.3-process-data.html#cb853-3" tabindex="-1"></a>  <span class="fu">tq_transmute</span>(<span class="at">select =</span> adjusted, <span class="at">mutate_fun =</span> to.monthly, <span class="at">indexAt =</span> <span class="st">&quot;lastof&quot;</span>)</span></code></pre></div></li>
 <li><p>calculate monthly returns.</p>
-<div class="sourceCode" id="cb851"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb851-1"><a href="11.3-process-data.html#cb851-1" tabindex="-1"></a>sp_500 <span class="sc">%&gt;%</span></span>
-<span id="cb851-2"><a href="11.3-process-data.html#cb851-2" tabindex="-1"></a>  <span class="fu">group_by</span>(symbol) <span class="sc">%&gt;%</span></span>
-<span id="cb851-3"><a href="11.3-process-data.html#cb851-3" tabindex="-1"></a>  <span class="fu">tq_transmute</span>(adjusted, <span class="at">mutate_fun =</span> monthlyReturn)</span></code></pre></div></li>
+<div class="sourceCode" id="cb854"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb854-1"><a href="11.3-process-data.html#cb854-1" tabindex="-1"></a>sp_500 <span class="sc">%&gt;%</span></span>
+<span id="cb854-2"><a href="11.3-process-data.html#cb854-2" tabindex="-1"></a>  <span class="fu">group_by</span>(symbol) <span class="sc">%&gt;%</span></span>
+<span id="cb854-3"><a href="11.3-process-data.html#cb854-3" tabindex="-1"></a>  <span class="fu">tq_transmute</span>(adjusted, <span class="at">mutate_fun =</span> monthlyReturn)</span></code></pre></div></li>
 </ul>
 <hr />
 <p><code>stats::ts(data, start, frequency)</code> base R function for time series.</p>
-<div class="sourceCode" id="cb852"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb852-1"><a href="11.3-process-data.html#cb852-1" tabindex="-1"></a><span class="co"># quarterly data</span></span>
-<span id="cb852-2"><a href="11.3-process-data.html#cb852-2" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">ts</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="at">start =</span> <span class="fu">c</span>(<span class="dv">1959</span>, <span class="dv">2</span>), <span class="at">frequency =</span> <span class="dv">4</span>) <span class="co"># 2nd Quarter of 1959</span></span>
-<span id="cb852-3"><a href="11.3-process-data.html#cb852-3" tabindex="-1"></a>     Qtr1 Qtr2 Qtr3 Qtr4</span>
-<span id="cb852-4"><a href="11.3-process-data.html#cb852-4" tabindex="-1"></a><span class="dv">1959</span>         <span class="dv">1</span>    <span class="dv">2</span>    <span class="dv">3</span></span>
-<span id="cb852-5"><a href="11.3-process-data.html#cb852-5" tabindex="-1"></a><span class="dv">1960</span>    <span class="dv">4</span>    <span class="dv">5</span>    <span class="dv">6</span>    <span class="dv">7</span></span>
-<span id="cb852-6"><a href="11.3-process-data.html#cb852-6" tabindex="-1"></a><span class="dv">1961</span>    <span class="dv">8</span>    <span class="dv">9</span>   <span class="dv">10</span>   </span>
-<span id="cb852-7"><a href="11.3-process-data.html#cb852-7" tabindex="-1"></a></span>
-<span id="cb852-8"><a href="11.3-process-data.html#cb852-8" tabindex="-1"></a><span class="co"># monthly data</span></span>
-<span id="cb852-9"><a href="11.3-process-data.html#cb852-9" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">ts</span>(<span class="fu">cumsum</span>(<span class="dv">1</span> <span class="sc">+</span> <span class="fu">round</span>(<span class="fu">rnorm</span>(<span class="dv">18</span>), <span class="dv">2</span>)), <span class="at">start =</span> <span class="fu">c</span>(<span class="dv">1954</span>, <span class="dv">7</span>), <span class="at">frequency =</span> <span class="dv">12</span>)</span>
-<span id="cb852-10"><a href="11.3-process-data.html#cb852-10" tabindex="-1"></a>       Jan   Feb   Mar   Apr   May   Jun   Jul   Aug   Sep   Oct   Nov   Dec</span>
-<span id="cb852-11"><a href="11.3-process-data.html#cb852-11" tabindex="-1"></a><span class="dv">1954</span>                                      <span class="fl">1.63</span>  <span class="fl">2.67</span>  <span class="fl">3.21</span>  <span class="fl">4.42</span>  <span class="fl">4.80</span>  <span class="fl">6.56</span></span>
-<span id="cb852-12"><a href="11.3-process-data.html#cb852-12" tabindex="-1"></a><span class="dv">1955</span>  <span class="fl">7.51</span>  <span class="fl">8.53</span> <span class="fl">10.12</span> <span class="fl">10.81</span> <span class="fl">12.23</span> <span class="fl">12.52</span> <span class="fl">13.89</span> <span class="fl">13.90</span> <span class="fl">14.75</span> <span class="fl">15.58</span> <span class="fl">16.37</span> <span class="fl">19.34</span></span></code></pre></div>
+<div class="sourceCode" id="cb855"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb855-1"><a href="11.3-process-data.html#cb855-1" tabindex="-1"></a><span class="co"># quarterly data</span></span>
+<span id="cb855-2"><a href="11.3-process-data.html#cb855-2" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">ts</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="at">start =</span> <span class="fu">c</span>(<span class="dv">1959</span>, <span class="dv">2</span>), <span class="at">frequency =</span> <span class="dv">4</span>) <span class="co"># 2nd Quarter of 1959</span></span>
+<span id="cb855-3"><a href="11.3-process-data.html#cb855-3" tabindex="-1"></a>     Qtr1 Qtr2 Qtr3 Qtr4</span>
+<span id="cb855-4"><a href="11.3-process-data.html#cb855-4" tabindex="-1"></a><span class="dv">1959</span>         <span class="dv">1</span>    <span class="dv">2</span>    <span class="dv">3</span></span>
+<span id="cb855-5"><a href="11.3-process-data.html#cb855-5" tabindex="-1"></a><span class="dv">1960</span>    <span class="dv">4</span>    <span class="dv">5</span>    <span class="dv">6</span>    <span class="dv">7</span></span>
+<span id="cb855-6"><a href="11.3-process-data.html#cb855-6" tabindex="-1"></a><span class="dv">1961</span>    <span class="dv">8</span>    <span class="dv">9</span>   <span class="dv">10</span>   </span>
+<span id="cb855-7"><a href="11.3-process-data.html#cb855-7" tabindex="-1"></a></span>
+<span id="cb855-8"><a href="11.3-process-data.html#cb855-8" tabindex="-1"></a><span class="co"># monthly data</span></span>
+<span id="cb855-9"><a href="11.3-process-data.html#cb855-9" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">ts</span>(<span class="fu">cumsum</span>(<span class="dv">1</span> <span class="sc">+</span> <span class="fu">round</span>(<span class="fu">rnorm</span>(<span class="dv">18</span>), <span class="dv">2</span>)), <span class="at">start =</span> <span class="fu">c</span>(<span class="dv">1954</span>, <span class="dv">7</span>), <span class="at">frequency =</span> <span class="dv">12</span>)</span>
+<span id="cb855-10"><a href="11.3-process-data.html#cb855-10" tabindex="-1"></a>       Jan   Feb   Mar   Apr   May   Jun   Jul   Aug   Sep   Oct   Nov   Dec</span>
+<span id="cb855-11"><a href="11.3-process-data.html#cb855-11" tabindex="-1"></a><span class="dv">1954</span>                                      <span class="fl">1.63</span>  <span class="fl">2.67</span>  <span class="fl">3.21</span>  <span class="fl">4.42</span>  <span class="fl">4.80</span>  <span class="fl">6.56</span></span>
+<span id="cb855-12"><a href="11.3-process-data.html#cb855-12" tabindex="-1"></a><span class="dv">1955</span>  <span class="fl">7.51</span>  <span class="fl">8.53</span> <span class="fl">10.12</span> <span class="fl">10.81</span> <span class="fl">12.23</span> <span class="fl">12.52</span> <span class="fl">13.89</span> <span class="fl">13.90</span> <span class="fl">14.75</span> <span class="fl">15.58</span> <span class="fl">16.37</span> <span class="fl">19.34</span></span></code></pre></div>
 <p>Difference with <code>zoo</code></p>
 <ul>
 <li><code>ts</code> objects are regularly spaced and have numeric times and are good for months and quarters whereas <code>zoo</code> objects can be irregularly spaced and can use most common index classes.</li>
@@ -1189,55 +1249,55 @@ document.addEventListener('DOMContentLoaded', function() {
 <div id="from-tibble-to-xts" class="section level3 hasAnchor" number="11.3.2">
 <h3><span class="header-section-number">11.3.2</span> From tibble to <code>xts</code><a href="11.3-process-data.html#from-tibble-to-xts" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p><code>xts(x, order.by)</code> <code>x</code> can only contain values in a <em>matrix</em> or <em>atomic vector</em> which places constraints on the values that can be used (generally numeric, but necessarily all of a single mode, i.e., not a mix of numeric and character values)</p>
-<div class="sourceCode" id="cb853"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb853-1"><a href="11.3-process-data.html#cb853-1" tabindex="-1"></a><span class="fu">xts</span>(FF_factor, <span class="at">order.by =</span> FF_factor<span class="sc">$</span>Date)</span></code></pre></div>
+<div class="sourceCode" id="cb856"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb856-1"><a href="11.3-process-data.html#cb856-1" tabindex="-1"></a><span class="fu">xts</span>(FF_factor, <span class="at">order.by =</span> FF_factor<span class="sc">$</span>Date)</span></code></pre></div>
 <p>If <code>Date</code> is the 1st column</p>
-<div class="sourceCode" id="cb854"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb854-1"><a href="11.3-process-data.html#cb854-1" tabindex="-1"></a>FF_factor <span class="sc">%&gt;%</span> <span class="fu">xts</span>(<span class="at">x=</span>.[,<span class="sc">-</span><span class="dv">1</span>], <span class="at">order.by=</span>.[[<span class="dv">1</span>]])</span></code></pre></div>
+<div class="sourceCode" id="cb857"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb857-1"><a href="11.3-process-data.html#cb857-1" tabindex="-1"></a>FF_factor <span class="sc">%&gt;%</span> <span class="fu">xts</span>(<span class="at">x=</span>.[,<span class="sc">-</span><span class="dv">1</span>], <span class="at">order.by=</span>.[[<span class="dv">1</span>]])</span></code></pre></div>
 <p>From <code>xts</code> to tibble</p>
 <ol style="list-style-type: decimal">
 <li><p>using <code>data.frame</code>. <code>Date</code> will be converted to <code>chr</code> first, then need to convert back to <code>Date</code>.</p>
-<div class="sourceCode" id="cb855"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb855-1"><a href="11.3-process-data.html#cb855-1" tabindex="-1"></a><span class="fu">data.frame</span>(price_data) <span class="sc">%&gt;%</span> </span>
-<span id="cb855-2"><a href="11.3-process-data.html#cb855-2" tabindex="-1"></a>    <span class="fu">rownames_to_column</span>(<span class="at">var =</span> <span class="st">&quot;Date&quot;</span>) <span class="sc">%&gt;%</span> <span class="co"># this converts Date to a string</span></span>
-<span id="cb855-3"><a href="11.3-process-data.html#cb855-3" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">Date =</span> <span class="fu">ymd</span>(Date)) <span class="co"># convert back to Date type</span></span></code></pre></div></li>
+<div class="sourceCode" id="cb858"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb858-1"><a href="11.3-process-data.html#cb858-1" tabindex="-1"></a><span class="fu">data.frame</span>(price_data) <span class="sc">%&gt;%</span> </span>
+<span id="cb858-2"><a href="11.3-process-data.html#cb858-2" tabindex="-1"></a>    <span class="fu">rownames_to_column</span>(<span class="at">var =</span> <span class="st">&quot;Date&quot;</span>) <span class="sc">%&gt;%</span> <span class="co"># this converts Date to a string</span></span>
+<span id="cb858-3"><a href="11.3-process-data.html#cb858-3" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">Date =</span> <span class="fu">ymd</span>(Date)) <span class="co"># convert back to Date type</span></span></code></pre></div></li>
 <li><p>using <code>as_tibble()</code>. <code>Date</code> will remain to be <code>Date</code>.</p>
-<div class="sourceCode" id="cb856"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb856-1"><a href="11.3-process-data.html#cb856-1" tabindex="-1"></a>price_data <span class="sc">%&gt;%</span> </span>
-<span id="cb856-2"><a href="11.3-process-data.html#cb856-2" tabindex="-1"></a>    <span class="fu">as_tibble</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb856-3"><a href="11.3-process-data.html#cb856-3" tabindex="-1"></a>    <span class="fu">add_column</span>(<span class="at">Date=</span><span class="fu">index</span>(price_data), <span class="at">.before =</span> <span class="dv">1</span>)</span></code></pre></div></li>
+<div class="sourceCode" id="cb859"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb859-1"><a href="11.3-process-data.html#cb859-1" tabindex="-1"></a>price_data <span class="sc">%&gt;%</span> </span>
+<span id="cb859-2"><a href="11.3-process-data.html#cb859-2" tabindex="-1"></a>    <span class="fu">as_tibble</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb859-3"><a href="11.3-process-data.html#cb859-3" tabindex="-1"></a>    <span class="fu">add_column</span>(<span class="at">Date=</span><span class="fu">index</span>(price_data), <span class="at">.before =</span> <span class="dv">1</span>)</span></code></pre></div></li>
 <li><p><code>fortify.zoo</code> takes a zoo object and converts it into a data frame.</p>
-<div class="sourceCode" id="cb857"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb857-1"><a href="11.3-process-data.html#cb857-1" tabindex="-1"></a>price_data <span class="sc">%&gt;%</span> <span class="fu">fortify.zoo</span>()</span></code></pre></div></li>
+<div class="sourceCode" id="cb860"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb860-1"><a href="11.3-process-data.html#cb860-1" tabindex="-1"></a>price_data <span class="sc">%&gt;%</span> <span class="fu">fortify.zoo</span>()</span></code></pre></div></li>
 </ol>
 <p><strong>Fill missing values</strong></p>
 <p>It is very common for daily prices to have missing values. The common practice is to fill missing values using the last non-NA observation.</p>
-<div class="sourceCode" id="cb858"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb858-1"><a href="11.3-process-data.html#cb858-1" tabindex="-1"></a><span class="co"># Last obs. carried forward</span></span>
-<span id="cb858-2"><a href="11.3-process-data.html#cb858-2" tabindex="-1"></a><span class="fu">na.locf</span>(x)                </span>
-<span id="cb858-3"><a href="11.3-process-data.html#cb858-3" tabindex="-1"></a></span>
-<span id="cb858-4"><a href="11.3-process-data.html#cb858-4" tabindex="-1"></a><span class="co"># Next obs. carried backward</span></span>
-<span id="cb858-5"><a href="11.3-process-data.html#cb858-5" tabindex="-1"></a><span class="fu">na.locf</span>(x, <span class="at">fromLast =</span> <span class="cn">TRUE</span>) </span></code></pre></div>
+<div class="sourceCode" id="cb861"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb861-1"><a href="11.3-process-data.html#cb861-1" tabindex="-1"></a><span class="co"># Last obs. carried forward</span></span>
+<span id="cb861-2"><a href="11.3-process-data.html#cb861-2" tabindex="-1"></a><span class="fu">na.locf</span>(x)                </span>
+<span id="cb861-3"><a href="11.3-process-data.html#cb861-3" tabindex="-1"></a></span>
+<span id="cb861-4"><a href="11.3-process-data.html#cb861-4" tabindex="-1"></a><span class="co"># Next obs. carried backward</span></span>
+<span id="cb861-5"><a href="11.3-process-data.html#cb861-5" tabindex="-1"></a><span class="fu">na.locf</span>(x, <span class="at">fromLast =</span> <span class="cn">TRUE</span>) </span></code></pre></div>
 <p><strong>Subset a period</strong></p>
 <p><code>window(x, start='YYYY-MM-DD', end='YYYY-MM-DD')</code> extract a subperiod window.</p>
 <p><code>x[between(index(x), start=ymd('YYYY-MM-DD'), end=('YYYY-MM-DD') ), ]</code> can also be used to subset a subperiod.</p>
 <p>To get all observations in March 1970:</p>
-<div class="sourceCode" id="cb859"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb859-1"><a href="11.3-process-data.html#cb859-1" tabindex="-1"></a><span class="co"># GSPC is xts</span></span>
-<span id="cb859-2"><a href="11.3-process-data.html#cb859-2" tabindex="-1"></a>GSPC[<span class="st">&quot;1970-03&quot;</span>]</span></code></pre></div>
+<div class="sourceCode" id="cb862"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb862-1"><a href="11.3-process-data.html#cb862-1" tabindex="-1"></a><span class="co"># GSPC is xts</span></span>
+<span id="cb862-2"><a href="11.3-process-data.html#cb862-2" tabindex="-1"></a>GSPC[<span class="st">&quot;1970-03&quot;</span>]</span></code></pre></div>
 <p>It is also possible to specify a range of timestamps using ‘/’ as the range separator, where both endpoints are optional: e.g.,</p>
-<div class="sourceCode" id="cb860"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb860-1"><a href="11.3-process-data.html#cb860-1" tabindex="-1"></a><span class="co"># data before 1960-01-06</span></span>
-<span id="cb860-2"><a href="11.3-process-data.html#cb860-2" tabindex="-1"></a>GSPC[<span class="st">&quot;/1960-01-06&quot;</span>]</span>
-<span id="cb860-3"><a href="11.3-process-data.html#cb860-3" tabindex="-1"></a><span class="co"># data after 2008-12-25</span></span>
-<span id="cb860-4"><a href="11.3-process-data.html#cb860-4" tabindex="-1"></a>GSPC[<span class="st">&quot;2008-12-25/&quot;</span>]</span></code></pre></div>
+<div class="sourceCode" id="cb863"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb863-1"><a href="11.3-process-data.html#cb863-1" tabindex="-1"></a><span class="co"># data before 1960-01-06</span></span>
+<span id="cb863-2"><a href="11.3-process-data.html#cb863-2" tabindex="-1"></a>GSPC[<span class="st">&quot;/1960-01-06&quot;</span>]</span>
+<span id="cb863-3"><a href="11.3-process-data.html#cb863-3" tabindex="-1"></a><span class="co"># data after 2008-12-25</span></span>
+<span id="cb863-4"><a href="11.3-process-data.html#cb863-4" tabindex="-1"></a>GSPC[<span class="st">&quot;2008-12-25/&quot;</span>]</span></code></pre></div>
 <p><strong>Change column names</strong></p>
 <p>This can be done easily using either <code>names</code> , <code>colnames</code> , or <code>setNames</code> .</p>
-<div class="sourceCode" id="cb861"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb861-1"><a href="11.3-process-data.html#cb861-1" tabindex="-1"></a>my_xts <span class="ot">&lt;-</span> <span class="fu">with</span>(reg_data, <span class="fu">xts</span>(AdjustedPrice, <span class="at">order.by =</span> Date))</span>
-<span id="cb861-2"><a href="11.3-process-data.html#cb861-2" tabindex="-1"></a>my_xts</span>
-<span id="cb861-3"><a href="11.3-process-data.html#cb861-3" tabindex="-1"></a><span class="fu">colnames</span>(my_xts) <span class="ot">&lt;-</span> <span class="st">&quot;AdjustedPrice&quot;</span>                  <span class="co"># opt1</span></span>
-<span id="cb861-4"><a href="11.3-process-data.html#cb861-4" tabindex="-1"></a><span class="fu">names</span>(my_xts) <span class="ot">&lt;-</span> <span class="st">&quot;AdjustedPrice&quot;</span>                                     <span class="co"># opt2</span></span>
-<span id="cb861-5"><a href="11.3-process-data.html#cb861-5" tabindex="-1"></a>my_xts <span class="ot">&lt;-</span> my_xts <span class="sc">%&gt;%</span> <span class="fu">setNames</span>(<span class="st">&quot;AdjustedPrice&quot;</span>)           <span class="co"># opt3 can be used in a pipe sequence</span></span>
-<span id="cb861-6"><a href="11.3-process-data.html#cb861-6" tabindex="-1"></a>my_xts</span></code></pre></div>
+<div class="sourceCode" id="cb864"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb864-1"><a href="11.3-process-data.html#cb864-1" tabindex="-1"></a>my_xts <span class="ot">&lt;-</span> <span class="fu">with</span>(reg_data, <span class="fu">xts</span>(AdjustedPrice, <span class="at">order.by =</span> Date))</span>
+<span id="cb864-2"><a href="11.3-process-data.html#cb864-2" tabindex="-1"></a>my_xts</span>
+<span id="cb864-3"><a href="11.3-process-data.html#cb864-3" tabindex="-1"></a><span class="fu">colnames</span>(my_xts) <span class="ot">&lt;-</span> <span class="st">&quot;AdjustedPrice&quot;</span>                  <span class="co"># opt1</span></span>
+<span id="cb864-4"><a href="11.3-process-data.html#cb864-4" tabindex="-1"></a><span class="fu">names</span>(my_xts) <span class="ot">&lt;-</span> <span class="st">&quot;AdjustedPrice&quot;</span>                                     <span class="co"># opt2</span></span>
+<span id="cb864-5"><a href="11.3-process-data.html#cb864-5" tabindex="-1"></a>my_xts <span class="ot">&lt;-</span> my_xts <span class="sc">%&gt;%</span> <span class="fu">setNames</span>(<span class="st">&quot;AdjustedPrice&quot;</span>)           <span class="co"># opt3 can be used in a pipe sequence</span></span>
+<span id="cb864-6"><a href="11.3-process-data.html#cb864-6" tabindex="-1"></a>my_xts</span></code></pre></div>
 <p><code>apply.monthly(x, FUN=colSums)</code> apply one function periodically per column.</p>
 <ul>
 <li>Note that <code>colSums</code> is used when calculating the sum of observations per period.</li>
 <li>If <code>FUN=sum</code>, then <code>sum</code> is not only applied to each time window, but also the sum of all columns is calculated.</li>
 </ul>
-<div class="sourceCode" id="cb862"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb862-1"><a href="11.3-process-data.html#cb862-1" tabindex="-1"></a><span class="co"># from daily to monthly return</span></span>
-<span id="cb862-2"><a href="11.3-process-data.html#cb862-2" tabindex="-1"></a><span class="fu">apply.monthly</span>(R, Return.cumulative)</span></code></pre></div>
+<div class="sourceCode" id="cb865"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb865-1"><a href="11.3-process-data.html#cb865-1" tabindex="-1"></a><span class="co"># from daily to monthly return</span></span>
+<span id="cb865-2"><a href="11.3-process-data.html#cb865-2" tabindex="-1"></a><span class="fu">apply.monthly</span>(R, Return.cumulative)</span></code></pre></div>
 <p><strong>Add new column</strong> to <code>xts</code>: <code>xts$new_column &lt;- col_data</code>.</p>
 <p>Not convenient to do operations on <code>xts</code>. First convert to <code>data.frame</code>, then do operations as usual.</p>
 <p><code>to.monthly(x, indexAt='yearmon', name=NULL, OHLC = TRUE, ...)</code></p>
@@ -1279,20 +1339,20 @@ document.addEventListener('DOMContentLoaded', function() {
 </table></li>
 <li><p><code>OHLC</code> If an OHLC object should be returned.</p></li>
 </ul>
-<div class="sourceCode" id="cb863"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb863-1"><a href="11.3-process-data.html#cb863-1" tabindex="-1"></a>prices <span class="ot">&lt;-</span> prices <span class="sc">%&gt;%</span> <span class="fu">na.locf</span>() <span class="co"># fill missing values in daily prices</span></span>
-<span id="cb863-2"><a href="11.3-process-data.html#cb863-2" tabindex="-1"></a>prices_monthly <span class="ot">&lt;-</span> prices <span class="sc">%&gt;%</span> <span class="fu">to.monthly</span>(<span class="at">indexAt =</span> <span class="st">&quot;last&quot;</span>, <span class="at">OHLC =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb863-3"><a href="11.3-process-data.html#cb863-3" tabindex="-1"></a><span class="co"># alternative ways to achieve the same results as the last line</span></span>
-<span id="cb863-4"><a href="11.3-process-data.html#cb863-4" tabindex="-1"></a>prices_monthly <span class="ot">&lt;-</span> prices <span class="sc">%&gt;%</span> xts<span class="sc">::</span><span class="fu">apply.monthly</span>(last)</span>
-<span id="cb863-5"><a href="11.3-process-data.html#cb863-5" tabindex="-1"></a>prices_monthly <span class="ot">&lt;-</span> prices[xts<span class="sc">::</span><span class="fu">endpoints</span>(prices, <span class="at">on=</span><span class="st">&quot;months&quot;</span>), ] </span>
-<span id="cb863-6"><a href="11.3-process-data.html#cb863-6" tabindex="-1"></a></span>
-<span id="cb863-7"><a href="11.3-process-data.html#cb863-7" tabindex="-1"></a><span class="fu">head</span>(prices_monthly)</span>
-<span id="cb863-8"><a href="11.3-process-data.html#cb863-8" tabindex="-1"></a>                SPY      EFA      IJS      EEM      AGG</span>
-<span id="cb863-9"><a href="11.3-process-data.html#cb863-9" tabindex="-1"></a><span class="dv">2012-12-31</span> <span class="fl">127.7356</span> <span class="fl">48.20629</span> <span class="fl">74.81863</span> <span class="fl">39.63340</span> <span class="fl">97.98471</span></span>
-<span id="cb863-10"><a href="11.3-process-data.html#cb863-10" tabindex="-1"></a><span class="dv">2013-01-31</span> <span class="fl">134.2744</span> <span class="fl">50.00364</span> <span class="fl">78.82265</span> <span class="fl">39.51723</span> <span class="fl">97.37608</span></span>
-<span id="cb863-11"><a href="11.3-process-data.html#cb863-11" tabindex="-1"></a><span class="dv">2013-02-28</span> <span class="fl">135.9876</span> <span class="fl">49.35931</span> <span class="fl">80.10801</span> <span class="fl">38.61464</span> <span class="fl">97.95142</span></span>
-<span id="cb863-12"><a href="11.3-process-data.html#cb863-12" tabindex="-1"></a><span class="dv">2013-03-28</span> <span class="fl">141.1512</span> <span class="fl">50.00364</span> <span class="fl">83.39879</span> <span class="fl">38.22143</span> <span class="fl">98.04794</span></span>
-<span id="cb863-13"><a href="11.3-process-data.html#cb863-13" tabindex="-1"></a><span class="dv">2013-04-30</span> <span class="fl">143.8630</span> <span class="fl">52.51315</span> <span class="fl">83.50081</span> <span class="fl">38.68614</span> <span class="fl">98.99760</span></span>
-<span id="cb863-14"><a href="11.3-process-data.html#cb863-14" tabindex="-1"></a><span class="dv">2013-05-31</span> <span class="fl">147.2596</span> <span class="fl">50.92775</span> <span class="fl">87.08048</span> <span class="fl">36.81840</span> <span class="fl">97.01658</span></span></code></pre></div>
+<div class="sourceCode" id="cb866"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb866-1"><a href="11.3-process-data.html#cb866-1" tabindex="-1"></a>prices <span class="ot">&lt;-</span> prices <span class="sc">%&gt;%</span> <span class="fu">na.locf</span>() <span class="co"># fill missing values in daily prices</span></span>
+<span id="cb866-2"><a href="11.3-process-data.html#cb866-2" tabindex="-1"></a>prices_monthly <span class="ot">&lt;-</span> prices <span class="sc">%&gt;%</span> <span class="fu">to.monthly</span>(<span class="at">indexAt =</span> <span class="st">&quot;last&quot;</span>, <span class="at">OHLC =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb866-3"><a href="11.3-process-data.html#cb866-3" tabindex="-1"></a><span class="co"># alternative ways to achieve the same results as the last line</span></span>
+<span id="cb866-4"><a href="11.3-process-data.html#cb866-4" tabindex="-1"></a>prices_monthly <span class="ot">&lt;-</span> prices <span class="sc">%&gt;%</span> xts<span class="sc">::</span><span class="fu">apply.monthly</span>(last)</span>
+<span id="cb866-5"><a href="11.3-process-data.html#cb866-5" tabindex="-1"></a>prices_monthly <span class="ot">&lt;-</span> prices[xts<span class="sc">::</span><span class="fu">endpoints</span>(prices, <span class="at">on=</span><span class="st">&quot;months&quot;</span>), ] </span>
+<span id="cb866-6"><a href="11.3-process-data.html#cb866-6" tabindex="-1"></a></span>
+<span id="cb866-7"><a href="11.3-process-data.html#cb866-7" tabindex="-1"></a><span class="fu">head</span>(prices_monthly)</span>
+<span id="cb866-8"><a href="11.3-process-data.html#cb866-8" tabindex="-1"></a>                SPY      EFA      IJS      EEM      AGG</span>
+<span id="cb866-9"><a href="11.3-process-data.html#cb866-9" tabindex="-1"></a><span class="dv">2012-12-31</span> <span class="fl">127.7356</span> <span class="fl">48.20629</span> <span class="fl">74.81863</span> <span class="fl">39.63340</span> <span class="fl">97.98471</span></span>
+<span id="cb866-10"><a href="11.3-process-data.html#cb866-10" tabindex="-1"></a><span class="dv">2013-01-31</span> <span class="fl">134.2744</span> <span class="fl">50.00364</span> <span class="fl">78.82265</span> <span class="fl">39.51723</span> <span class="fl">97.37608</span></span>
+<span id="cb866-11"><a href="11.3-process-data.html#cb866-11" tabindex="-1"></a><span class="dv">2013-02-28</span> <span class="fl">135.9876</span> <span class="fl">49.35931</span> <span class="fl">80.10801</span> <span class="fl">38.61464</span> <span class="fl">97.95142</span></span>
+<span id="cb866-12"><a href="11.3-process-data.html#cb866-12" tabindex="-1"></a><span class="dv">2013-03-28</span> <span class="fl">141.1512</span> <span class="fl">50.00364</span> <span class="fl">83.39879</span> <span class="fl">38.22143</span> <span class="fl">98.04794</span></span>
+<span id="cb866-13"><a href="11.3-process-data.html#cb866-13" tabindex="-1"></a><span class="dv">2013-04-30</span> <span class="fl">143.8630</span> <span class="fl">52.51315</span> <span class="fl">83.50081</span> <span class="fl">38.68614</span> <span class="fl">98.99760</span></span>
+<span id="cb866-14"><a href="11.3-process-data.html#cb866-14" tabindex="-1"></a><span class="dv">2013-05-31</span> <span class="fl">147.2596</span> <span class="fl">50.92775</span> <span class="fl">87.08048</span> <span class="fl">36.81840</span> <span class="fl">97.01658</span></span></code></pre></div>
 <ul>
 <li>Note that <code>to.monthly</code> removes rows with missing values; be cautious with that.</li>
 </ul>
@@ -1322,16 +1382,16 @@ document.addEventListener('DOMContentLoaded', function() {
 \end{align*}
 \]</span></p></li>
 </ul>
-<div class="sourceCode" id="cb864"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb864-1"><a href="11.3-process-data.html#cb864-1" tabindex="-1"></a>asset_returns_xts <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(<span class="fu">Return.calculate</span>(prices_monthly, <span class="at">method =</span> <span class="st">&quot;log&quot;</span>))</span>
-<span id="cb864-2"><a href="11.3-process-data.html#cb864-2" tabindex="-1"></a></span>
-<span id="cb864-3"><a href="11.3-process-data.html#cb864-3" tabindex="-1"></a><span class="fu">head</span>(asset_returns_xts)</span>
-<span id="cb864-4"><a href="11.3-process-data.html#cb864-4" tabindex="-1"></a>                   SPY         EFA          IJS          EEM           AGG</span>
-<span id="cb864-5"><a href="11.3-process-data.html#cb864-5" tabindex="-1"></a><span class="dv">2013-01-31</span>  <span class="fl">0.04992311</span>  <span class="fl">0.03660641</span>  <span class="fl">0.052133484</span> <span class="sc">-</span><span class="fl">0.002935494</span> <span class="sc">-</span><span class="fl">0.0062309021</span></span>
-<span id="cb864-6"><a href="11.3-process-data.html#cb864-6" tabindex="-1"></a><span class="dv">2013-02-28</span>  <span class="fl">0.01267821</span> <span class="sc">-</span><span class="fl">0.01296938</span>  <span class="fl">0.016175381</span> <span class="sc">-</span><span class="fl">0.023105250</span>  <span class="fl">0.0058910464</span></span>
-<span id="cb864-7"><a href="11.3-process-data.html#cb864-7" tabindex="-1"></a><span class="dv">2013-03-28</span>  <span class="fl">0.03726766</span>  <span class="fl">0.01296938</span>  <span class="fl">0.040257940</span> <span class="sc">-</span><span class="fl">0.010235048</span>  <span class="fl">0.0009849727</span></span>
-<span id="cb864-8"><a href="11.3-process-data.html#cb864-8" tabindex="-1"></a><span class="dv">2013-04-30</span>  <span class="fl">0.01903006</span>  <span class="fl">0.04896773</span>  <span class="fl">0.001222544</span>  <span class="fl">0.012085043</span>  <span class="fl">0.0096390038</span></span>
-<span id="cb864-9"><a href="11.3-process-data.html#cb864-9" tabindex="-1"></a><span class="dv">2013-05-31</span>  <span class="fl">0.02333571</span> <span class="sc">-</span><span class="fl">0.03065563</span>  <span class="fl">0.041976371</span> <span class="sc">-</span><span class="fl">0.049483592</span> <span class="sc">-</span><span class="fl">0.0202136957</span></span>
-<span id="cb864-10"><a href="11.3-process-data.html#cb864-10" tabindex="-1"></a><span class="dv">2013-06-28</span> <span class="sc">-</span><span class="fl">0.01343432</span> <span class="sc">-</span><span class="fl">0.02715331</span> <span class="sc">-</span><span class="fl">0.001402974</span> <span class="sc">-</span><span class="fl">0.054739116</span> <span class="sc">-</span><span class="fl">0.0157787232</span></span></code></pre></div>
+<div class="sourceCode" id="cb867"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb867-1"><a href="11.3-process-data.html#cb867-1" tabindex="-1"></a>asset_returns_xts <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(<span class="fu">Return.calculate</span>(prices_monthly, <span class="at">method =</span> <span class="st">&quot;log&quot;</span>))</span>
+<span id="cb867-2"><a href="11.3-process-data.html#cb867-2" tabindex="-1"></a></span>
+<span id="cb867-3"><a href="11.3-process-data.html#cb867-3" tabindex="-1"></a><span class="fu">head</span>(asset_returns_xts)</span>
+<span id="cb867-4"><a href="11.3-process-data.html#cb867-4" tabindex="-1"></a>                   SPY         EFA          IJS          EEM           AGG</span>
+<span id="cb867-5"><a href="11.3-process-data.html#cb867-5" tabindex="-1"></a><span class="dv">2013-01-31</span>  <span class="fl">0.04992311</span>  <span class="fl">0.03660641</span>  <span class="fl">0.052133484</span> <span class="sc">-</span><span class="fl">0.002935494</span> <span class="sc">-</span><span class="fl">0.0062309021</span></span>
+<span id="cb867-6"><a href="11.3-process-data.html#cb867-6" tabindex="-1"></a><span class="dv">2013-02-28</span>  <span class="fl">0.01267821</span> <span class="sc">-</span><span class="fl">0.01296938</span>  <span class="fl">0.016175381</span> <span class="sc">-</span><span class="fl">0.023105250</span>  <span class="fl">0.0058910464</span></span>
+<span id="cb867-7"><a href="11.3-process-data.html#cb867-7" tabindex="-1"></a><span class="dv">2013-03-28</span>  <span class="fl">0.03726766</span>  <span class="fl">0.01296938</span>  <span class="fl">0.040257940</span> <span class="sc">-</span><span class="fl">0.010235048</span>  <span class="fl">0.0009849727</span></span>
+<span id="cb867-8"><a href="11.3-process-data.html#cb867-8" tabindex="-1"></a><span class="dv">2013-04-30</span>  <span class="fl">0.01903006</span>  <span class="fl">0.04896773</span>  <span class="fl">0.001222544</span>  <span class="fl">0.012085043</span>  <span class="fl">0.0096390038</span></span>
+<span id="cb867-9"><a href="11.3-process-data.html#cb867-9" tabindex="-1"></a><span class="dv">2013-05-31</span>  <span class="fl">0.02333571</span> <span class="sc">-</span><span class="fl">0.03065563</span>  <span class="fl">0.041976371</span> <span class="sc">-</span><span class="fl">0.049483592</span> <span class="sc">-</span><span class="fl">0.0202136957</span></span>
+<span id="cb867-10"><a href="11.3-process-data.html#cb867-10" tabindex="-1"></a><span class="dv">2013-06-28</span> <span class="sc">-</span><span class="fl">0.01343432</span> <span class="sc">-</span><span class="fl">0.02715331</span> <span class="sc">-</span><span class="fl">0.001402974</span> <span class="sc">-</span><span class="fl">0.054739116</span> <span class="sc">-</span><span class="fl">0.0157787232</span></span></code></pre></div>
 <p><code>prices[endpoints(prices, on="months"), ]</code> converts daily to monthly prices.</p>
 <p><code>endpoints(x, on="month")</code></p>
 <ul>
@@ -1339,15 +1399,15 @@ document.addEventListener('DOMContentLoaded', function() {
 <li><code>on</code> retrieve the last observation of each period. Supported periods include: “us” (microseconds), “microseconds”, “ms” (milliseconds), “milliseconds”, “secs” (seconds), “seconds”, “mins” (minutes), “minutes”, “hours”, “days”, “weeks”, “months”, “quarters”, and “years”.</li>
 </ul>
 <p><strong>Calculate returns by tidyverse</strong></p>
-<div class="sourceCode" id="cb865"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb865-1"><a href="11.3-process-data.html#cb865-1" tabindex="-1"></a>lag <span class="ot">&lt;-</span> dplyr<span class="sc">::</span>lag <span class="co"># have to use dplyr::lag, base R lag has problems</span></span>
-<span id="cb865-2"><a href="11.3-process-data.html#cb865-2" tabindex="-1"></a>returns <span class="ot">&lt;-</span> prices_monthly <span class="sc">%&gt;%</span> </span>
-<span id="cb865-3"><a href="11.3-process-data.html#cb865-3" tabindex="-1"></a>    <span class="fu">group_by</span>(ISIN) <span class="sc">%&gt;%</span> </span>
-<span id="cb865-4"><a href="11.3-process-data.html#cb865-4" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">delta.P =</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="fu">diff</span>(AdjustedPrice)), <span class="co"># fill the first obs with NA</span></span>
-<span id="cb865-5"><a href="11.3-process-data.html#cb865-5" tabindex="-1"></a>           <span class="at">lag.P =</span> <span class="fu">lag</span>(AdjustedPrice),</span>
-<span id="cb865-6"><a href="11.3-process-data.html#cb865-6" tabindex="-1"></a>           <span class="at">Return =</span> delta.P<span class="sc">/</span>lag.P,</span>
-<span id="cb865-7"><a href="11.3-process-data.html#cb865-7" tabindex="-1"></a>           <span class="at">Return2 =</span> AdjustedPrice<span class="sc">/</span><span class="fu">lag</span>(AdjustedPrice)<span class="sc">-</span><span class="dv">1</span>,</span>
-<span id="cb865-8"><a href="11.3-process-data.html#cb865-8" tabindex="-1"></a>           <span class="at">Return_log =</span> <span class="fu">log</span>(AdjustedPrice)<span class="sc">-</span><span class="fu">lag</span>(<span class="fu">log</span>(AdjustedPrice))</span>
-<span id="cb865-9"><a href="11.3-process-data.html#cb865-9" tabindex="-1"></a>           ) </span></code></pre></div>
+<div class="sourceCode" id="cb868"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb868-1"><a href="11.3-process-data.html#cb868-1" tabindex="-1"></a>lag <span class="ot">&lt;-</span> dplyr<span class="sc">::</span>lag <span class="co"># have to use dplyr::lag, base R lag has problems</span></span>
+<span id="cb868-2"><a href="11.3-process-data.html#cb868-2" tabindex="-1"></a>returns <span class="ot">&lt;-</span> prices_monthly <span class="sc">%&gt;%</span> </span>
+<span id="cb868-3"><a href="11.3-process-data.html#cb868-3" tabindex="-1"></a>    <span class="fu">group_by</span>(ISIN) <span class="sc">%&gt;%</span> </span>
+<span id="cb868-4"><a href="11.3-process-data.html#cb868-4" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">delta.P =</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="fu">diff</span>(AdjustedPrice)), <span class="co"># fill the first obs with NA</span></span>
+<span id="cb868-5"><a href="11.3-process-data.html#cb868-5" tabindex="-1"></a>           <span class="at">lag.P =</span> <span class="fu">lag</span>(AdjustedPrice),</span>
+<span id="cb868-6"><a href="11.3-process-data.html#cb868-6" tabindex="-1"></a>           <span class="at">Return =</span> delta.P<span class="sc">/</span>lag.P,</span>
+<span id="cb868-7"><a href="11.3-process-data.html#cb868-7" tabindex="-1"></a>           <span class="at">Return2 =</span> AdjustedPrice<span class="sc">/</span><span class="fu">lag</span>(AdjustedPrice)<span class="sc">-</span><span class="dv">1</span>,</span>
+<span id="cb868-8"><a href="11.3-process-data.html#cb868-8" tabindex="-1"></a>           <span class="at">Return_log =</span> <span class="fu">log</span>(AdjustedPrice)<span class="sc">-</span><span class="fu">lag</span>(<span class="fu">log</span>(AdjustedPrice))</span>
+<span id="cb868-9"><a href="11.3-process-data.html#cb868-9" tabindex="-1"></a>           ) </span></code></pre></div>
 <p><strong>Note</strong>:</p>
 <ul>
 <li>Base R <code>lag</code> and <code>diff</code> works perfect with <code>xts</code>, but not ideal for groupped tibbles in tidyverse.</li>

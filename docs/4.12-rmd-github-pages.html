@@ -654,8 +654,8 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="8.8" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html"><i class="fa fa-check"></i><b>8.8</b> Data Frame Operations</a>
 <ul>
-<li class="chapter" data-level="" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#columnrow-wise-operations"><i class="fa fa-check"></i>Column/Row-wise Operations</a></li>
-<li class="chapter" data-level="8.8.1" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#process-na-values"><i class="fa fa-check"></i><b>8.8.1</b> <span class="env-green"><strong>Process <code>NA</code> values</strong></span></a></li>
+<li class="chapter" data-level="8.8.1" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#columnrow-wise-operations"><i class="fa fa-check"></i><b>8.8.1</b> Column/Row-wise Operations</a></li>
+<li class="chapter" data-level="8.8.2" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#process-na-values"><i class="fa fa-check"></i><b>8.8.2</b> <span class="env-green"><strong>Process <code>NA</code> values</strong></span></a></li>
 </ul></li>
 <li class="chapter" data-level="8.9" data-path="8.9-matrix-multiplication.html"><a href="8.9-matrix-multiplication.html"><i class="fa fa-check"></i><b>8.9</b> Matrix multiplication</a></li>
 <li class="chapter" data-level="8.10" data-path="8.10-string-operations.html"><a href="8.10-string-operations.html"><i class="fa fa-check"></i><b>8.10</b> String Operations</a></li>
@@ -868,17 +868,47 @@ function myFunction(id) {
   x.style.display = (x.style.display === 'none') ? 'block' : 'none';
 }
 
-// Auto-expand active top-level section so its level 2/3 items are visible
+// Auto-expand active section and keep all siblings within the same level 1 section open
 document.addEventListener('DOMContentLoaded', function() {
   try {
     var summary = document.querySelector('.book-summary ul.summary');
     if (!summary) return;
 
     function applyAutoOpen() {
-      // Clear previous
-      summary.querySelectorAll('li.chapter.auto-open').forEach(function(li){ li.classList.remove('auto-open'); });
+      // Find the active item (could be level 1, 2, or 3)
       var active = summary.querySelector('li.chapter.active');
-      if (active) active.classList.add('auto-open');
+      if (!active) return;
+      
+      // Find the top-level (level 1) chapter containing the active item
+      var topLevelChapter = active.closest('ul.summary > li.chapter');
+      if (!topLevelChapter) return;
+      
+      // Collapse all other top-level chapters
+      summary.querySelectorAll('ul.summary > li.chapter').forEach(function(chapter) {
+        if (chapter !== topLevelChapter) {
+          chapter.classList.remove('auto-open');
+          // Collapse all nested items in other chapters
+          chapter.querySelectorAll('li.chapter').forEach(function(nested) {
+            nested.classList.remove('auto-open');
+          });
+        }
+      });
+      
+      // Expand the active top-level chapter
+      topLevelChapter.classList.add('auto-open');
+      
+      // Expand ALL level 2 and level 3 items within this top-level chapter
+      topLevelChapter.querySelectorAll('li.chapter').forEach(function(nested) {
+        nested.classList.add('auto-open');
+      });
+      
+      // Scroll the active TOC item to the center of the TOC panel
+      setTimeout(function() {
+        var activeLink = active.querySelector('a');
+        if (activeLink) {
+          activeLink.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
     }
 
     applyAutoOpen();
@@ -894,14 +924,14 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-// Toggle collapse: clicking an expanded section collapses it
+// Toggle collapse: clicking level 1 heading expands/collapses all sublevels
 document.addEventListener('DOMContentLoaded', function() {
   try {
     var summary = document.querySelector('.book-summary ul.summary');
     if (!summary) return;
 
-    // Add click handlers to chapter links with children
-    summary.querySelectorAll('li.chapter').forEach(function(chapter) {
+    // Add click handlers only to top-level chapter links with children
+    summary.querySelectorAll('ul.summary > li.chapter').forEach(function(chapter) {
       var sublist = chapter.querySelector('ul');
       if (!sublist) return; // Only chapters with subsections
 
@@ -913,15 +943,28 @@ document.addEventListener('DOMContentLoaded', function() {
         var isExpanded = chapter.classList.contains('auto-open');
         
         if (isExpanded) {
-          // Collapse it
+          // Collapse it and all nested items
           e.preventDefault();
           chapter.classList.remove('auto-open');
+          // Also collapse all level 2 and level 3 items
+          chapter.querySelectorAll('li.chapter.auto-open').forEach(function(nested) {
+            nested.classList.remove('auto-open');
+          });
         } else {
-          // Expand it (remove auto-open from others first)
-          summary.querySelectorAll('li.chapter.auto-open').forEach(function(li) {
-            if (li !== chapter) li.classList.remove('auto-open');
+          // Expand it (collapse other top-level chapters first)
+          summary.querySelectorAll('ul.summary > li.chapter.auto-open').forEach(function(li) {
+            if (li !== chapter) {
+              li.classList.remove('auto-open');
+              li.querySelectorAll('li.chapter.auto-open').forEach(function(nested) {
+                nested.classList.remove('auto-open');
+              });
+            }
           });
           chapter.classList.add('auto-open');
+          // Expand all level 2 items within this chapter
+          chapter.querySelectorAll('ul > li.chapter').forEach(function(level2) {
+            level2.classList.add('auto-open');
+          });
         }
       });
     });
@@ -931,9 +974,26 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 <style>
-/* Show nested UL of active chapter when collapse=section */
-.book-summary ul.summary li.chapter.auto-open ul { display: block !important; }
-.book-summary ul.summary li.chapter.auto-open > a { font-weight: 700; }
+/* Show all nested UL of chapters marked as auto-open */
+.book-summary ul.summary li.chapter.auto-open > ul { 
+  display: block !important; 
+}
+
+/* Make parent level headings bold when expanded */
+.book-summary ul.summary li.chapter.auto-open > a { 
+  font-weight: 700; 
+}
+
+/* Highlight the actual active item with color and bold */
+.book-summary ul.summary li.chapter.active > a { 
+  font-weight: 700 !important;
+  color: #0078D4 !important;
+}
+
+/* Ensure proper indentation for nested levels */
+.book-summary ul.summary li.chapter ul li.chapter { 
+  padding-left: 0; 
+}
 </style>
 <div id="rmd-github-pages" class="section level2 hasAnchor" number="4.12">
 <h2><span class="header-section-number">4.12</span> Rmd GitHub Pages<a href="4.12-rmd-github-pages.html#rmd-github-pages" class="anchor-section" aria-label="Anchor link to header"></a></h2>
@@ -974,11 +1034,11 @@ Figure 4.12: Minimal example of a R Markdown website.
 <p>Use <code>output_dir</code> (in <code>_site.yml</code>) to specify which directory to copy site content into.</p></li>
 </ol>
 <p>The HTML files within the output directory are now ready to deploy as a standalone static website.</p>
-<div class="sourceCode" id="cb292"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb292-1"><a href="4.12-rmd-github-pages.html#cb292-1" tabindex="-1"></a><span class="co"># render the entire site</span></span>
-<span id="cb292-2"><a href="4.12-rmd-github-pages.html#cb292-2" tabindex="-1"></a>rmarkdown<span class="sc">::</span><span class="fu">render_site</span>()</span>
-<span id="cb292-3"><a href="4.12-rmd-github-pages.html#cb292-3" tabindex="-1"></a></span>
-<span id="cb292-4"><a href="4.12-rmd-github-pages.html#cb292-4" tabindex="-1"></a><span class="co"># render a single file only</span></span>
-<span id="cb292-5"><a href="4.12-rmd-github-pages.html#cb292-5" tabindex="-1"></a>rmarkdown<span class="sc">::</span><span class="fu">render_site</span>(<span class="st">&quot;about.Rmd&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb294"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb294-1"><a href="4.12-rmd-github-pages.html#cb294-1" tabindex="-1"></a><span class="co"># render the entire site</span></span>
+<span id="cb294-2"><a href="4.12-rmd-github-pages.html#cb294-2" tabindex="-1"></a>rmarkdown<span class="sc">::</span><span class="fu">render_site</span>()</span>
+<span id="cb294-3"><a href="4.12-rmd-github-pages.html#cb294-3" tabindex="-1"></a></span>
+<span id="cb294-4"><a href="4.12-rmd-github-pages.html#cb294-4" tabindex="-1"></a><span class="co"># render a single file only</span></span>
+<span id="cb294-5"><a href="4.12-rmd-github-pages.html#cb294-5" tabindex="-1"></a>rmarkdown<span class="sc">::</span><span class="fu">render_site</span>(<span class="st">&quot;about.Rmd&quot;</span>)</span></code></pre></div>
 <p>ref: <a href="https://bookdown.org/yihui/rmarkdown/rmarkdown-site.html#rmarkdown-site">rmarkdown’s site generator, R Markdown: The Definitive Guide</a></p>
 <hr />
 <p><a id="site"></a></p>
@@ -990,17 +1050,17 @@ Figure 4.12: Minimal example of a R Markdown website.
 <p>It contains various common elements you want to apply to all pages (e.g., output options, CSS styles, header and footer elements, etc.).</p>
 <p><code>_site.yml</code> is equivalent to the combination of <code>_output.yml</code> and <code>_bookdown.yml</code> in <code>bookdown</code>.</p>
 <p>A <code>_site.yml</code> example:</p>
-<div class="sourceCode" id="cb293"><pre class="sourceCode yml"><code class="sourceCode yaml"><span id="cb293-1"><a href="4.12-rmd-github-pages.html#cb293-1" tabindex="-1"></a><span class="fu">name</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;my-website&quot;</span></span>
-<span id="cb293-2"><a href="4.12-rmd-github-pages.html#cb293-2" tabindex="-1"></a><span class="fu">output_dir</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;docs&quot;</span></span>
-<span id="cb293-3"><a href="4.12-rmd-github-pages.html#cb293-3" tabindex="-1"></a><span class="fu">include</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="st">&quot;import.R&quot;</span><span class="kw">]</span></span>
-<span id="cb293-4"><a href="4.12-rmd-github-pages.html#cb293-4" tabindex="-1"></a><span class="fu">exclude</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="st">&quot;docs.txt&quot;</span><span class="kw">,</span><span class="at"> </span><span class="st">&quot;*.csv&quot;</span><span class="kw">]</span></span>
-<span id="cb293-5"><a href="4.12-rmd-github-pages.html#cb293-5" tabindex="-1"></a><span class="fu">output</span><span class="kw">:</span></span>
-<span id="cb293-6"><a href="4.12-rmd-github-pages.html#cb293-6" tabindex="-1"></a><span class="at">  </span><span class="fu">html_document</span><span class="kw">:</span></span>
-<span id="cb293-7"><a href="4.12-rmd-github-pages.html#cb293-7" tabindex="-1"></a><span class="at">    </span><span class="fu">theme</span><span class="kw">:</span><span class="at"> cosmo</span></span>
-<span id="cb293-8"><a href="4.12-rmd-github-pages.html#cb293-8" tabindex="-1"></a><span class="at">    </span><span class="fu">highlight</span><span class="kw">:</span><span class="at"> textmate</span></span>
-<span id="cb293-9"><a href="4.12-rmd-github-pages.html#cb293-9" tabindex="-1"></a><span class="at">    </span><span class="fu">include</span><span class="kw">:</span></span>
-<span id="cb293-10"><a href="4.12-rmd-github-pages.html#cb293-10" tabindex="-1"></a><span class="at">      </span><span class="fu">after_body</span><span class="kw">:</span><span class="at"> footer.html</span></span>
-<span id="cb293-11"><a href="4.12-rmd-github-pages.html#cb293-11" tabindex="-1"></a><span class="at">    </span><span class="fu">css</span><span class="kw">:</span><span class="at"> styles.css</span></span></code></pre></div>
+<div class="sourceCode" id="cb295"><pre class="sourceCode yml"><code class="sourceCode yaml"><span id="cb295-1"><a href="4.12-rmd-github-pages.html#cb295-1" tabindex="-1"></a><span class="fu">name</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;my-website&quot;</span></span>
+<span id="cb295-2"><a href="4.12-rmd-github-pages.html#cb295-2" tabindex="-1"></a><span class="fu">output_dir</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;docs&quot;</span></span>
+<span id="cb295-3"><a href="4.12-rmd-github-pages.html#cb295-3" tabindex="-1"></a><span class="fu">include</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="st">&quot;import.R&quot;</span><span class="kw">]</span></span>
+<span id="cb295-4"><a href="4.12-rmd-github-pages.html#cb295-4" tabindex="-1"></a><span class="fu">exclude</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="st">&quot;docs.txt&quot;</span><span class="kw">,</span><span class="at"> </span><span class="st">&quot;*.csv&quot;</span><span class="kw">]</span></span>
+<span id="cb295-5"><a href="4.12-rmd-github-pages.html#cb295-5" tabindex="-1"></a><span class="fu">output</span><span class="kw">:</span></span>
+<span id="cb295-6"><a href="4.12-rmd-github-pages.html#cb295-6" tabindex="-1"></a><span class="at">  </span><span class="fu">html_document</span><span class="kw">:</span></span>
+<span id="cb295-7"><a href="4.12-rmd-github-pages.html#cb295-7" tabindex="-1"></a><span class="at">    </span><span class="fu">theme</span><span class="kw">:</span><span class="at"> cosmo</span></span>
+<span id="cb295-8"><a href="4.12-rmd-github-pages.html#cb295-8" tabindex="-1"></a><span class="at">    </span><span class="fu">highlight</span><span class="kw">:</span><span class="at"> textmate</span></span>
+<span id="cb295-9"><a href="4.12-rmd-github-pages.html#cb295-9" tabindex="-1"></a><span class="at">    </span><span class="fu">include</span><span class="kw">:</span></span>
+<span id="cb295-10"><a href="4.12-rmd-github-pages.html#cb295-10" tabindex="-1"></a><span class="at">      </span><span class="fu">after_body</span><span class="kw">:</span><span class="at"> footer.html</span></span>
+<span id="cb295-11"><a href="4.12-rmd-github-pages.html#cb295-11" tabindex="-1"></a><span class="at">    </span><span class="fu">css</span><span class="kw">:</span><span class="at"> styles.css</span></span></code></pre></div>
 <ul>
 <li><p><code>name</code> provides a suggested URL path for your website when it is published (by default this is just the name of the directory containing the site).</p></li>
 <li><p><code>output_dir</code> field indicates which directory to copy site content into.</p>
@@ -1024,11 +1084,11 @@ Figure 4.12: Minimal example of a R Markdown website.
    after-body: footer.html
 </code></p>
 <p>An example of <code>footer.thml</code>:</p>
-<div class="sourceCode" id="cb294"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb294-1"><a href="4.12-rmd-github-pages.html#cb294-1" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">p</span><span class="dt">&gt;</span>Copyright <span class="dv">&amp;copy;</span> 2016 Skynet, Inc. All rights reserved.<span class="dt">&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span></span></code></pre></div></li>
+<div class="sourceCode" id="cb296"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb296-1"><a href="4.12-rmd-github-pages.html#cb296-1" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">p</span><span class="dt">&gt;</span>Copyright <span class="dv">&amp;copy;</span> 2016 Skynet, Inc. All rights reserved.<span class="dt">&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span></span></code></pre></div></li>
 <li><p><code>style.css</code> is a CSS stylesheet.</p>
-<div class="sourceCode" id="cb295"><pre class="sourceCode css"><code class="sourceCode css"><span id="cb295-1"><a href="4.12-rmd-github-pages.html#cb295-1" tabindex="-1"></a>blockquote {</span>
-<span id="cb295-2"><a href="4.12-rmd-github-pages.html#cb295-2" tabindex="-1"></a>  <span class="kw">font-style</span><span class="ch">:</span> <span class="dv">italic</span></span>
-<span id="cb295-3"><a href="4.12-rmd-github-pages.html#cb295-3" tabindex="-1"></a>}</span></code></pre></div></li>
+<div class="sourceCode" id="cb297"><pre class="sourceCode css"><code class="sourceCode css"><span id="cb297-1"><a href="4.12-rmd-github-pages.html#cb297-1" tabindex="-1"></a>blockquote {</span>
+<span id="cb297-2"><a href="4.12-rmd-github-pages.html#cb297-2" tabindex="-1"></a>  <span class="kw">font-style</span><span class="ch">:</span> <span class="dv">italic</span></span>
+<span id="cb297-3"><a href="4.12-rmd-github-pages.html#cb297-3" tabindex="-1"></a>}</span></code></pre></div></li>
 </ul></li>
 </ul>
 <hr />
@@ -1038,22 +1098,22 @@ Figure 4.12: Minimal example of a R Markdown website.
 <h3><code>index.Rmd</code><a href="4.12-rmd-github-pages.html#index.rmd" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p><a href="https://bookdown.org/yihui/rmarkdown/rmarkdown-site.html#site-generator-function"><code>index.Rmd</code></a> provides the content for the home page of your website.</p>
 <p>A parsimonious example of <code>index.Rmd</code> which only includes the website title. This is useful if your home page only includes simple text.</p>
-<div class="sourceCode" id="cb296"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb296-1"><a href="4.12-rmd-github-pages.html#cb296-1" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb296-2"><a href="4.12-rmd-github-pages.html#cb296-2" tabindex="-1"></a><span class="an">title:</span><span class="co"> &quot;Lab Scripts for Course Example Demonstration&quot;</span></span>
-<span id="cb296-3"><a href="4.12-rmd-github-pages.html#cb296-3" tabindex="-1"></a><span class="co">---</span></span></code></pre></div>
+<div class="sourceCode" id="cb298"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb298-1"><a href="4.12-rmd-github-pages.html#cb298-1" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb298-2"><a href="4.12-rmd-github-pages.html#cb298-2" tabindex="-1"></a><span class="an">title:</span><span class="co"> &quot;Lab Scripts for Course Example Demonstration&quot;</span></span>
+<span id="cb298-3"><a href="4.12-rmd-github-pages.html#cb298-3" tabindex="-1"></a><span class="co">---</span></span></code></pre></div>
 <p>A full example of <code>index.Rmd</code>. You may use this when you want to write complex content in your home page.</p>
-<div class="sourceCode" id="cb297"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb297-1"><a href="4.12-rmd-github-pages.html#cb297-1" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb297-2"><a href="4.12-rmd-github-pages.html#cb297-2" tabindex="-1"></a><span class="an">title:</span><span class="co"> &quot;R Notes&quot;</span></span>
-<span id="cb297-3"><a href="4.12-rmd-github-pages.html#cb297-3" tabindex="-1"></a><span class="an">author:</span><span class="co"> &quot;Menghan Yuan&quot;</span></span>
-<span id="cb297-4"><a href="4.12-rmd-github-pages.html#cb297-4" tabindex="-1"></a><span class="an">date:</span><span class="co"> &quot;2026-03-26&quot;</span></span>
-<span id="cb297-5"><a href="4.12-rmd-github-pages.html#cb297-5" tabindex="-1"></a><span class="an">site:</span><span class="co"> rmarkdown::default_site</span></span>
-<span id="cb297-6"><a href="4.12-rmd-github-pages.html#cb297-6" tabindex="-1"></a><span class="an">documentclass:</span><span class="co"> book</span></span>
-<span id="cb297-7"><a href="4.12-rmd-github-pages.html#cb297-7" tabindex="-1"></a><span class="an">bibliography:</span><span class="co"> [book.bib, packages.bib]</span></span>
-<span id="cb297-8"><a href="4.12-rmd-github-pages.html#cb297-8" tabindex="-1"></a><span class="an">biblio-style:</span><span class="co"> apalike</span></span>
-<span id="cb297-9"><a href="4.12-rmd-github-pages.html#cb297-9" tabindex="-1"></a><span class="an">link-citations:</span><span class="co"> yes</span></span>
-<span id="cb297-10"><a href="4.12-rmd-github-pages.html#cb297-10" tabindex="-1"></a><span class="an">description:</span><span class="co"> &quot;This is a minimal example of using</span></span>
-<span id="cb297-11"><a href="4.12-rmd-github-pages.html#cb297-11" tabindex="-1"></a><span class="co">  the rmarkdown to write a book.&quot;</span></span>
-<span id="cb297-12"><a href="4.12-rmd-github-pages.html#cb297-12" tabindex="-1"></a><span class="co">---</span></span></code></pre></div>
+<div class="sourceCode" id="cb299"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb299-1"><a href="4.12-rmd-github-pages.html#cb299-1" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb299-2"><a href="4.12-rmd-github-pages.html#cb299-2" tabindex="-1"></a><span class="an">title:</span><span class="co"> &quot;R Notes&quot;</span></span>
+<span id="cb299-3"><a href="4.12-rmd-github-pages.html#cb299-3" tabindex="-1"></a><span class="an">author:</span><span class="co"> &quot;Menghan Yuan&quot;</span></span>
+<span id="cb299-4"><a href="4.12-rmd-github-pages.html#cb299-4" tabindex="-1"></a><span class="an">date:</span><span class="co"> &quot;2026-03-31&quot;</span></span>
+<span id="cb299-5"><a href="4.12-rmd-github-pages.html#cb299-5" tabindex="-1"></a><span class="an">site:</span><span class="co"> rmarkdown::default_site</span></span>
+<span id="cb299-6"><a href="4.12-rmd-github-pages.html#cb299-6" tabindex="-1"></a><span class="an">documentclass:</span><span class="co"> book</span></span>
+<span id="cb299-7"><a href="4.12-rmd-github-pages.html#cb299-7" tabindex="-1"></a><span class="an">bibliography:</span><span class="co"> [book.bib, packages.bib]</span></span>
+<span id="cb299-8"><a href="4.12-rmd-github-pages.html#cb299-8" tabindex="-1"></a><span class="an">biblio-style:</span><span class="co"> apalike</span></span>
+<span id="cb299-9"><a href="4.12-rmd-github-pages.html#cb299-9" tabindex="-1"></a><span class="an">link-citations:</span><span class="co"> yes</span></span>
+<span id="cb299-10"><a href="4.12-rmd-github-pages.html#cb299-10" tabindex="-1"></a><span class="an">description:</span><span class="co"> &quot;This is a minimal example of using</span></span>
+<span id="cb299-11"><a href="4.12-rmd-github-pages.html#cb299-11" tabindex="-1"></a><span class="co">  the rmarkdown to write a book.&quot;</span></span>
+<span id="cb299-12"><a href="4.12-rmd-github-pages.html#cb299-12" tabindex="-1"></a><span class="co">---</span></span></code></pre></div>
 <p><code>rmarkdown::default_site()</code> is the default site generation function. It is also possible to define a custom site generator that has alternate behaviors, e.g., <code>bookdown::bookdown_site</code>.</p>
 <p>Note that <code>index.Rmd</code> in the <code>rmarkdown</code> build-in site generator is different than <a href="https://bookdown.org/yihui/rmarkdown/bookdown-project.html#index-file">that of <code>bookdown</code></a>.</p>
 <p>In <code>bookdown</code> sites, you can specify global YAML that will apply to all pages in the website, but in the <code>rmarkdown</code> built-in site generator, each page has its own YAML.</p>
@@ -1097,35 +1157,35 @@ Figure 4.12: Minimal example of a R Markdown website.
 <div id="r-scripts" class="section level3 unnumbered hasAnchor">
 <h3>R scripts<a href="4.12-rmd-github-pages.html#r-scripts" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>If you have R code that you would like to share across multiple R Markdown documents within your site, you can create an R script (e.g., <code>utils.R</code>) and source it within your Rmd files. For example:</p>
-<div class="sourceCode" id="cb298"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb298-1"><a href="4.12-rmd-github-pages.html#cb298-1" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb298-2"><a href="4.12-rmd-github-pages.html#cb298-2" tabindex="-1"></a><span class="in">source(&quot;utils.R&quot;)</span></span>
-<span id="cb298-3"><a href="4.12-rmd-github-pages.html#cb298-3" tabindex="-1"></a><span class="in">```</span></span></code></pre></div>
+<div class="sourceCode" id="cb300"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb300-1"><a href="4.12-rmd-github-pages.html#cb300-1" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb300-2"><a href="4.12-rmd-github-pages.html#cb300-2" tabindex="-1"></a><span class="in">source(&quot;utils.R&quot;)</span></span>
+<span id="cb300-3"><a href="4.12-rmd-github-pages.html#cb300-3" tabindex="-1"></a><span class="in">```</span></span></code></pre></div>
 <p><strong>Shared Rmd snippets</strong></p>
 <p>You may have common fragments of R Markdown that you want to share across pages within your site. To share Rmd fragments, you should name them with a leading underscore (<code>_</code>), and then include them within their parent Rmd document using the <code>child</code> chunk option. For example:</p>
 <ul>
 <li><p><code>about.Rmd</code>:</p>
-<div class="sourceCode" id="cb299"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb299-1"><a href="4.12-rmd-github-pages.html#cb299-1" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb299-2"><a href="4.12-rmd-github-pages.html#cb299-2" tabindex="-1"></a><span class="an">title:</span><span class="co"> &quot;About This Website&quot;</span></span>
-<span id="cb299-3"><a href="4.12-rmd-github-pages.html#cb299-3" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb299-4"><a href="4.12-rmd-github-pages.html#cb299-4" tabindex="-1"></a></span>
-<span id="cb299-5"><a href="4.12-rmd-github-pages.html#cb299-5" tabindex="-1"></a>More about this website.</span>
-<span id="cb299-6"><a href="4.12-rmd-github-pages.html#cb299-6" tabindex="-1"></a></span>
-<span id="cb299-7"><a href="4.12-rmd-github-pages.html#cb299-7" tabindex="-1"></a><span class="in">```{r, child=&quot;_chunk-opt.Rmd&quot;, include=FALSE}</span></span>
-<span id="cb299-8"><a href="4.12-rmd-github-pages.html#cb299-8" tabindex="-1"></a><span class="in"># Load settings in &quot;_chunk-opt.Rmd&quot;</span></span>
-<span id="cb299-9"><a href="4.12-rmd-github-pages.html#cb299-9" tabindex="-1"></a><span class="in"># &quot;include=F&quot; disables printing the code in &quot;_chunk-opt.Rmd&quot;</span></span>
-<span id="cb299-10"><a href="4.12-rmd-github-pages.html#cb299-10" tabindex="-1"></a><span class="in"># into the current file</span></span>
-<span id="cb299-11"><a href="4.12-rmd-github-pages.html#cb299-11" tabindex="-1"></a><span class="in">```</span></span></code></pre></div></li>
+<div class="sourceCode" id="cb301"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb301-1"><a href="4.12-rmd-github-pages.html#cb301-1" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb301-2"><a href="4.12-rmd-github-pages.html#cb301-2" tabindex="-1"></a><span class="an">title:</span><span class="co"> &quot;About This Website&quot;</span></span>
+<span id="cb301-3"><a href="4.12-rmd-github-pages.html#cb301-3" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb301-4"><a href="4.12-rmd-github-pages.html#cb301-4" tabindex="-1"></a></span>
+<span id="cb301-5"><a href="4.12-rmd-github-pages.html#cb301-5" tabindex="-1"></a>More about this website.</span>
+<span id="cb301-6"><a href="4.12-rmd-github-pages.html#cb301-6" tabindex="-1"></a></span>
+<span id="cb301-7"><a href="4.12-rmd-github-pages.html#cb301-7" tabindex="-1"></a><span class="in">```{r, child=&quot;_chunk-opt.Rmd&quot;, include=FALSE}</span></span>
+<span id="cb301-8"><a href="4.12-rmd-github-pages.html#cb301-8" tabindex="-1"></a><span class="in"># Load settings in &quot;_chunk-opt.Rmd&quot;</span></span>
+<span id="cb301-9"><a href="4.12-rmd-github-pages.html#cb301-9" tabindex="-1"></a><span class="in"># &quot;include=F&quot; disables printing the code in &quot;_chunk-opt.Rmd&quot;</span></span>
+<span id="cb301-10"><a href="4.12-rmd-github-pages.html#cb301-10" tabindex="-1"></a><span class="in"># into the current file</span></span>
+<span id="cb301-11"><a href="4.12-rmd-github-pages.html#cb301-11" tabindex="-1"></a><span class="in">```</span></span></code></pre></div></li>
 <li><p><code>_chunk-opt.Rmd</code>:</p>
-<div class="sourceCode" id="cb300"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb300-1"><a href="4.12-rmd-github-pages.html#cb300-1" tabindex="-1"></a><span class="co">&lt;!-- Chunk option settings --&gt;</span> </span>
-<span id="cb300-2"><a href="4.12-rmd-github-pages.html#cb300-2" tabindex="-1"></a></span>
-<span id="cb300-3"><a href="4.12-rmd-github-pages.html#cb300-3" tabindex="-1"></a><span class="in">```{r chunk-opt, include=FALSE}</span></span>
-<span id="cb300-4"><a href="4.12-rmd-github-pages.html#cb300-4" tabindex="-1"></a><span class="in"># set default chunk options</span></span>
-<span id="cb300-5"><a href="4.12-rmd-github-pages.html#cb300-5" tabindex="-1"></a><span class="in">opts_chunk$set(echo = TRUE, message=FALSE, fig.align=&quot;center&quot;, fig.pos = &quot;H&quot;)</span></span>
-<span id="cb300-6"><a href="4.12-rmd-github-pages.html#cb300-6" tabindex="-1"></a><span class="in">opts &lt;- options(knitr.kable.NA = &quot;&quot;)</span></span>
-<span id="cb300-7"><a href="4.12-rmd-github-pages.html#cb300-7" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb300-8"><a href="4.12-rmd-github-pages.html#cb300-8" tabindex="-1"></a></span>
-<span id="cb300-9"><a href="4.12-rmd-github-pages.html#cb300-9" tabindex="-1"></a><span class="co">&lt;!-- Other shared Rmd snippets --&gt;</span> </span>
-<span id="cb300-10"><a href="4.12-rmd-github-pages.html#cb300-10" tabindex="-1"></a>...</span></code></pre></div>
+<div class="sourceCode" id="cb302"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb302-1"><a href="4.12-rmd-github-pages.html#cb302-1" tabindex="-1"></a><span class="co">&lt;!-- Chunk option settings --&gt;</span> </span>
+<span id="cb302-2"><a href="4.12-rmd-github-pages.html#cb302-2" tabindex="-1"></a></span>
+<span id="cb302-3"><a href="4.12-rmd-github-pages.html#cb302-3" tabindex="-1"></a><span class="in">```{r chunk-opt, include=FALSE}</span></span>
+<span id="cb302-4"><a href="4.12-rmd-github-pages.html#cb302-4" tabindex="-1"></a><span class="in"># set default chunk options</span></span>
+<span id="cb302-5"><a href="4.12-rmd-github-pages.html#cb302-5" tabindex="-1"></a><span class="in">opts_chunk$set(echo = TRUE, message=FALSE, fig.align=&quot;center&quot;, fig.pos = &quot;H&quot;)</span></span>
+<span id="cb302-6"><a href="4.12-rmd-github-pages.html#cb302-6" tabindex="-1"></a><span class="in">opts &lt;- options(knitr.kable.NA = &quot;&quot;)</span></span>
+<span id="cb302-7"><a href="4.12-rmd-github-pages.html#cb302-7" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb302-8"><a href="4.12-rmd-github-pages.html#cb302-8" tabindex="-1"></a></span>
+<span id="cb302-9"><a href="4.12-rmd-github-pages.html#cb302-9" tabindex="-1"></a><span class="co">&lt;!-- Other shared Rmd snippets --&gt;</span> </span>
+<span id="cb302-10"><a href="4.12-rmd-github-pages.html#cb302-10" tabindex="-1"></a>...</span></code></pre></div>
 <p>The leading underscore (<code>_</code>) is an indicator to the site generation engine that the Rmd is a partial document to be included in other documents, so it is not compiled as a standalone document during site rendering.</p></li>
 </ul>
 <hr />
@@ -1161,17 +1221,17 @@ Figure 4.3: Knit a single page of a website.
 </ul></li>
 <li><p>Note that if using <code>rmarkdown::render_site("0100-RStudio.Rmd")</code>, it will render <code>"0100-RStudio.Rmd"</code> and generate the html output in the <code>docs/</code> directory as specified in <code>_site.yml</code>.</p></li>
 </ul>
-<div class="sourceCode" id="cb301"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb301-1"><a href="4.12-rmd-github-pages.html#cb301-1" tabindex="-1"></a><span class="co"># render the entire site</span></span>
-<span id="cb301-2"><a href="4.12-rmd-github-pages.html#cb301-2" tabindex="-1"></a>rmarkdown<span class="sc">::</span><span class="fu">render_site</span>()</span>
-<span id="cb301-3"><a href="4.12-rmd-github-pages.html#cb301-3" tabindex="-1"></a></span>
-<span id="cb301-4"><a href="4.12-rmd-github-pages.html#cb301-4" tabindex="-1"></a><span class="co"># render a single file only</span></span>
-<span id="cb301-5"><a href="4.12-rmd-github-pages.html#cb301-5" tabindex="-1"></a>rmarkdown<span class="sc">::</span><span class="fu">render_site</span>(<span class="st">&quot;about.Rmd&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb303"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb303-1"><a href="4.12-rmd-github-pages.html#cb303-1" tabindex="-1"></a><span class="co"># render the entire site</span></span>
+<span id="cb303-2"><a href="4.12-rmd-github-pages.html#cb303-2" tabindex="-1"></a>rmarkdown<span class="sc">::</span><span class="fu">render_site</span>()</span>
+<span id="cb303-3"><a href="4.12-rmd-github-pages.html#cb303-3" tabindex="-1"></a></span>
+<span id="cb303-4"><a href="4.12-rmd-github-pages.html#cb303-4" tabindex="-1"></a><span class="co"># render a single file only</span></span>
+<span id="cb303-5"><a href="4.12-rmd-github-pages.html#cb303-5" tabindex="-1"></a>rmarkdown<span class="sc">::</span><span class="fu">render_site</span>(<span class="st">&quot;about.Rmd&quot;</span>)</span></code></pre></div>
 <p>To clean up all of the files generated via <code>render_site()</code>, you can call the <code>clean_site()</code> function, which will remove all files generated by rendering your site’s Markdown documents, including knitr’s <code>*_cache</code> directories. You can specify the <code>preview = TRUE</code> option to just list the files to be removed rather than actually removing them:</p>
-<div class="sourceCode" id="cb302"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb302-1"><a href="4.12-rmd-github-pages.html#cb302-1" tabindex="-1"></a><span class="co"># list which files will be removed</span></span>
-<span id="cb302-2"><a href="4.12-rmd-github-pages.html#cb302-2" tabindex="-1"></a>rmarkdown<span class="sc">::</span><span class="fu">clean_site</span>(<span class="at">preview =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb302-3"><a href="4.12-rmd-github-pages.html#cb302-3" tabindex="-1"></a></span>
-<span id="cb302-4"><a href="4.12-rmd-github-pages.html#cb302-4" tabindex="-1"></a><span class="co"># actually remove the files</span></span>
-<span id="cb302-5"><a href="4.12-rmd-github-pages.html#cb302-5" tabindex="-1"></a>rmarkdown<span class="sc">::</span><span class="fu">clean_site</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb304"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb304-1"><a href="4.12-rmd-github-pages.html#cb304-1" tabindex="-1"></a><span class="co"># list which files will be removed</span></span>
+<span id="cb304-2"><a href="4.12-rmd-github-pages.html#cb304-2" tabindex="-1"></a>rmarkdown<span class="sc">::</span><span class="fu">clean_site</span>(<span class="at">preview =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb304-3"><a href="4.12-rmd-github-pages.html#cb304-3" tabindex="-1"></a></span>
+<span id="cb304-4"><a href="4.12-rmd-github-pages.html#cb304-4" tabindex="-1"></a><span class="co"># actually remove the files</span></span>
+<span id="cb304-5"><a href="4.12-rmd-github-pages.html#cb304-5" tabindex="-1"></a>rmarkdown<span class="sc">::</span><span class="fu">clean_site</span>()</span></code></pre></div>
 <p>References:</p>
 <ul>
 <li><a href="https://bookdown.org/yihui/rmarkdown/rmarkdown-site.html#rstudio" class="uri">https://bookdown.org/yihui/rmarkdown/rmarkdown-site.html#rstudio</a></li>
@@ -1180,18 +1240,18 @@ Figure 4.3: Knit a single page of a website.
 <p><a href="https://bookdown.org/yihui/rmarkdown-cookbook/custom-knit.html"><strong>Customize the <code>Knit</code> button</strong></a></p>
 <p>It is possible to control the behavior of the <code>Knit</code> button by providing the <code>knit</code> field within the YAML frontmatter of your document.</p>
 <p>The field takes a function with the main argument <code>input</code> (the path to the input Rmd document) and other arguments that are currently ignored. You can either write the source code of the function directly in the <code>knit</code> field, or put the function elsewhere (e.g., in an R package) and call the function in the <code>knit</code> field.</p>
-<div class="sourceCode" id="cb303"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb303-1"><a href="4.12-rmd-github-pages.html#cb303-1" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb303-2"><a href="4.12-rmd-github-pages.html#cb303-2" tabindex="-1"></a><span class="an">knit:</span><span class="co"> |</span></span>
-<span id="cb303-3"><a href="4.12-rmd-github-pages.html#cb303-3" tabindex="-1"></a><span class="co">  (function(input, ...) {</span></span>
-<span id="cb303-4"><a href="4.12-rmd-github-pages.html#cb303-4" tabindex="-1"></a><span class="co">    rmarkdown::render(</span></span>
-<span id="cb303-5"><a href="4.12-rmd-github-pages.html#cb303-5" tabindex="-1"></a><span class="co">      input,</span></span>
-<span id="cb303-6"><a href="4.12-rmd-github-pages.html#cb303-6" tabindex="-1"></a><span class="co">      output_file = paste0(</span></span>
-<span id="cb303-7"><a href="4.12-rmd-github-pages.html#cb303-7" tabindex="-1"></a><span class="co">        xfun::sans_ext(input), &#39;-&#39;, Sys.Date(), &#39;.html&#39;</span></span>
-<span id="cb303-8"><a href="4.12-rmd-github-pages.html#cb303-8" tabindex="-1"></a><span class="co">      ),</span></span>
-<span id="cb303-9"><a href="4.12-rmd-github-pages.html#cb303-9" tabindex="-1"></a><span class="co">      envir = globalenv()</span></span>
-<span id="cb303-10"><a href="4.12-rmd-github-pages.html#cb303-10" tabindex="-1"></a><span class="co">    )</span></span>
-<span id="cb303-11"><a href="4.12-rmd-github-pages.html#cb303-11" tabindex="-1"></a><span class="co">  })</span></span>
-<span id="cb303-12"><a href="4.12-rmd-github-pages.html#cb303-12" tabindex="-1"></a><span class="co">---</span></span></code></pre></div>
+<div class="sourceCode" id="cb305"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb305-1"><a href="4.12-rmd-github-pages.html#cb305-1" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb305-2"><a href="4.12-rmd-github-pages.html#cb305-2" tabindex="-1"></a><span class="an">knit:</span><span class="co"> |</span></span>
+<span id="cb305-3"><a href="4.12-rmd-github-pages.html#cb305-3" tabindex="-1"></a><span class="co">  (function(input, ...) {</span></span>
+<span id="cb305-4"><a href="4.12-rmd-github-pages.html#cb305-4" tabindex="-1"></a><span class="co">    rmarkdown::render(</span></span>
+<span id="cb305-5"><a href="4.12-rmd-github-pages.html#cb305-5" tabindex="-1"></a><span class="co">      input,</span></span>
+<span id="cb305-6"><a href="4.12-rmd-github-pages.html#cb305-6" tabindex="-1"></a><span class="co">      output_file = paste0(</span></span>
+<span id="cb305-7"><a href="4.12-rmd-github-pages.html#cb305-7" tabindex="-1"></a><span class="co">        xfun::sans_ext(input), &#39;-&#39;, Sys.Date(), &#39;.html&#39;</span></span>
+<span id="cb305-8"><a href="4.12-rmd-github-pages.html#cb305-8" tabindex="-1"></a><span class="co">      ),</span></span>
+<span id="cb305-9"><a href="4.12-rmd-github-pages.html#cb305-9" tabindex="-1"></a><span class="co">      envir = globalenv()</span></span>
+<span id="cb305-10"><a href="4.12-rmd-github-pages.html#cb305-10" tabindex="-1"></a><span class="co">    )</span></span>
+<span id="cb305-11"><a href="4.12-rmd-github-pages.html#cb305-11" tabindex="-1"></a><span class="co">  })</span></span>
+<span id="cb305-12"><a href="4.12-rmd-github-pages.html#cb305-12" tabindex="-1"></a><span class="co">---</span></span></code></pre></div>
 <p>Further readings:</p>
 <ul>
 <li><a href="https://forum.posit.co/t/changing-default-behavior-of-knit-button/133874" class="uri">https://forum.posit.co/t/changing-default-behavior-of-knit-button/133874</a></li>
@@ -1202,17 +1262,17 @@ Figure 4.3: Knit a single page of a website.
 <li>When you click the <code>Knit</code> button of run <code>rmarkdown::render("0100-RStudio.Rmd")</code>, it will use the first output format. You need to specify the output format you want in the second argument, call <code>rmarkdown::render("0100-RStudio.Rmd", 'pdf_document')</code></li>
 <li>More options can be passed by:</li>
 </ul>
-<div class="sourceCode" id="cb304"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb304-1"><a href="4.12-rmd-github-pages.html#cb304-1" tabindex="-1"></a>rmarkdown<span class="sc">::</span><span class="fu">render</span>(<span class="st">&quot;0207-Rmd-Table.Rmd&quot;</span>, </span>
-<span id="cb304-2"><a href="4.12-rmd-github-pages.html#cb304-2" tabindex="-1"></a>  bookdown<span class="sc">::</span><span class="fu">pdf_document2</span>(</span>
-<span id="cb304-3"><a href="4.12-rmd-github-pages.html#cb304-3" tabindex="-1"></a>    <span class="at">latex_engine =</span> <span class="st">&quot;xelatex&quot;</span>,</span>
-<span id="cb304-4"><a href="4.12-rmd-github-pages.html#cb304-4" tabindex="-1"></a>    <span class="at">keep_tex =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb304-5"><a href="4.12-rmd-github-pages.html#cb304-5" tabindex="-1"></a>    <span class="at">includes =</span> <span class="fu">includes</span>(</span>
-<span id="cb304-6"><a href="4.12-rmd-github-pages.html#cb304-6" tabindex="-1"></a>       <span class="at">in_header =</span> <span class="st">&quot;latex/preamble.tex&quot;</span>,</span>
-<span id="cb304-7"><a href="4.12-rmd-github-pages.html#cb304-7" tabindex="-1"></a>       <span class="at">before_body=</span> <span class="st">&quot;latex/before_body.tex&quot;</span></span>
-<span id="cb304-8"><a href="4.12-rmd-github-pages.html#cb304-8" tabindex="-1"></a>       )</span>
-<span id="cb304-9"><a href="4.12-rmd-github-pages.html#cb304-9" tabindex="-1"></a>    )</span>
-<span id="cb304-10"><a href="4.12-rmd-github-pages.html#cb304-10" tabindex="-1"></a>  )</span>
-<span id="cb304-11"><a href="4.12-rmd-github-pages.html#cb304-11" tabindex="-1"></a><span class="co"># `output_options` is not compatible with output format function object</span></span></code></pre></div>
+<div class="sourceCode" id="cb306"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb306-1"><a href="4.12-rmd-github-pages.html#cb306-1" tabindex="-1"></a>rmarkdown<span class="sc">::</span><span class="fu">render</span>(<span class="st">&quot;0207-Rmd-Table.Rmd&quot;</span>, </span>
+<span id="cb306-2"><a href="4.12-rmd-github-pages.html#cb306-2" tabindex="-1"></a>  bookdown<span class="sc">::</span><span class="fu">pdf_document2</span>(</span>
+<span id="cb306-3"><a href="4.12-rmd-github-pages.html#cb306-3" tabindex="-1"></a>    <span class="at">latex_engine =</span> <span class="st">&quot;xelatex&quot;</span>,</span>
+<span id="cb306-4"><a href="4.12-rmd-github-pages.html#cb306-4" tabindex="-1"></a>    <span class="at">keep_tex =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb306-5"><a href="4.12-rmd-github-pages.html#cb306-5" tabindex="-1"></a>    <span class="at">includes =</span> <span class="fu">includes</span>(</span>
+<span id="cb306-6"><a href="4.12-rmd-github-pages.html#cb306-6" tabindex="-1"></a>       <span class="at">in_header =</span> <span class="st">&quot;latex/preamble.tex&quot;</span>,</span>
+<span id="cb306-7"><a href="4.12-rmd-github-pages.html#cb306-7" tabindex="-1"></a>       <span class="at">before_body=</span> <span class="st">&quot;latex/before_body.tex&quot;</span></span>
+<span id="cb306-8"><a href="4.12-rmd-github-pages.html#cb306-8" tabindex="-1"></a>       )</span>
+<span id="cb306-9"><a href="4.12-rmd-github-pages.html#cb306-9" tabindex="-1"></a>    )</span>
+<span id="cb306-10"><a href="4.12-rmd-github-pages.html#cb306-10" tabindex="-1"></a>  )</span>
+<span id="cb306-11"><a href="4.12-rmd-github-pages.html#cb306-11" tabindex="-1"></a><span class="co"># `output_options` is not compatible with output format function object</span></span></code></pre></div>
 <p>Note:</p>
 <ul>
 <li>Each time you run <code>rmarkdown::render_site()</code>, the <code>docs/</code> folder will be overwritten with updated HTML versions of your <code>.Rmd</code>s. This means DON’T EVER EDIT FILES IN THE <code>docs/</code> FOLDER! Nothing catastrophic will happen if you do, but you will overwrite and lose all your changes the next time you knit or <code>render_site()</code>.</li>
@@ -1229,48 +1289,48 @@ Figure 4.3: Knit a single page of a website.
 </div>
 <div id="css-style" class="section level3 unnumbered hasAnchor">
 <h3>CSS Style<a href="4.12-rmd-github-pages.html#css-style" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<div class="sourceCode" id="cb305"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb305-1"><a href="4.12-rmd-github-pages.html#cb305-1" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb305-2"><a href="4.12-rmd-github-pages.html#cb305-2" tabindex="-1"></a><span class="an">output:</span><span class="co"> </span></span>
-<span id="cb305-3"><a href="4.12-rmd-github-pages.html#cb305-3" tabindex="-1"></a><span class="co">  html_document:</span></span>
-<span id="cb305-4"><a href="4.12-rmd-github-pages.html#cb305-4" tabindex="-1"></a><span class="co">    theme: cosmo</span></span>
-<span id="cb305-5"><a href="4.12-rmd-github-pages.html#cb305-5" tabindex="-1"></a><span class="co">   # css: style.css # link to external CSS</span></span>
-<span id="cb305-6"><a href="4.12-rmd-github-pages.html#cb305-6" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb305-7"><a href="4.12-rmd-github-pages.html#cb305-7" tabindex="-1"></a></span>
-<span id="cb305-8"><a href="4.12-rmd-github-pages.html#cb305-8" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">style</span><span class="ot"> type </span><span class="op">=</span> <span class="st">&quot;text/css&quot;</span><span class="dt">&gt;</span> </span>
-<span id="cb305-9"><a href="4.12-rmd-github-pages.html#cb305-9" tabindex="-1"></a>h2 {</span>
-<span id="cb305-10"><a href="4.12-rmd-github-pages.html#cb305-10" tabindex="-1"></a>  <span class="kw">color</span><span class="ch">:</span> <span class="cn">red</span><span class="op">;</span> <span class="co">/* internal CSS */</span></span>
-<span id="cb305-11"><a href="4.12-rmd-github-pages.html#cb305-11" tabindex="-1"></a>}</span>
-<span id="cb305-12"><a href="4.12-rmd-github-pages.html#cb305-12" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">style</span><span class="dt">&gt;</span></span>
-<span id="cb305-13"><a href="4.12-rmd-github-pages.html#cb305-13" tabindex="-1"></a></span>
-<span id="cb305-14"><a href="4.12-rmd-github-pages.html#cb305-14" tabindex="-1"></a><span class="fu">## R Markdown</span></span></code></pre></div>
+<div class="sourceCode" id="cb307"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb307-1"><a href="4.12-rmd-github-pages.html#cb307-1" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb307-2"><a href="4.12-rmd-github-pages.html#cb307-2" tabindex="-1"></a><span class="an">output:</span><span class="co"> </span></span>
+<span id="cb307-3"><a href="4.12-rmd-github-pages.html#cb307-3" tabindex="-1"></a><span class="co">  html_document:</span></span>
+<span id="cb307-4"><a href="4.12-rmd-github-pages.html#cb307-4" tabindex="-1"></a><span class="co">    theme: cosmo</span></span>
+<span id="cb307-5"><a href="4.12-rmd-github-pages.html#cb307-5" tabindex="-1"></a><span class="co">   # css: style.css # link to external CSS</span></span>
+<span id="cb307-6"><a href="4.12-rmd-github-pages.html#cb307-6" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb307-7"><a href="4.12-rmd-github-pages.html#cb307-7" tabindex="-1"></a></span>
+<span id="cb307-8"><a href="4.12-rmd-github-pages.html#cb307-8" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">style</span><span class="ot"> type </span><span class="op">=</span> <span class="st">&quot;text/css&quot;</span><span class="dt">&gt;</span> </span>
+<span id="cb307-9"><a href="4.12-rmd-github-pages.html#cb307-9" tabindex="-1"></a>h2 {</span>
+<span id="cb307-10"><a href="4.12-rmd-github-pages.html#cb307-10" tabindex="-1"></a>  <span class="kw">color</span><span class="ch">:</span> <span class="cn">red</span><span class="op">;</span> <span class="co">/* internal CSS */</span></span>
+<span id="cb307-11"><a href="4.12-rmd-github-pages.html#cb307-11" tabindex="-1"></a>}</span>
+<span id="cb307-12"><a href="4.12-rmd-github-pages.html#cb307-12" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">style</span><span class="dt">&gt;</span></span>
+<span id="cb307-13"><a href="4.12-rmd-github-pages.html#cb307-13" tabindex="-1"></a></span>
+<span id="cb307-14"><a href="4.12-rmd-github-pages.html#cb307-14" tabindex="-1"></a><span class="fu">## R Markdown</span></span></code></pre></div>
 <p>When you want to change the style of certain element but don’t know where to start, open the html in Chrome, and go to <code>View</code> &gt; <code>Developer</code> &gt; <code>Inspect Element</code> to identify the corresponding elements.</p>
 <hr />
 <p><strong>Refer to your posts using relative links</strong></p>
 <p>If you have a Markdown file in your repository at <code>docs/project1.html</code>, and you want to link from that file to <code>docs/another-page.md</code>, you can do so with the following markup:</p>
-<div class="sourceCode" id="cb306"><pre class="sourceCode scss"><code class="sourceCode scss"><span id="cb306-1"><a href="4.12-rmd-github-pages.html#cb306-1" tabindex="-1"></a><span class="ex">[</span><span class="ss">a relative link</span><span class="ex">]</span><span class="in">(</span>project1<span class="fu">.html</span><span class="in">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb308"><pre class="sourceCode scss"><code class="sourceCode scss"><span id="cb308-1"><a href="4.12-rmd-github-pages.html#cb308-1" tabindex="-1"></a><span class="ex">[</span><span class="ss">a relative link</span><span class="ex">]</span><span class="in">(</span>project1<span class="fu">.html</span><span class="in">)</span></span></code></pre></div>
 <p>When you view the source file on GitHub.com, the relative link will continue to work, but now, when you publish that file using GitHub Pages, the link will be silently translated to <code>docs/another-page.html</code> to match the target page’s published URL.</p>
 <p>Link to another file</p>
-<div class="sourceCode" id="cb307"><pre class="sourceCode css"><code class="sourceCode css"><span id="cb307-1"><a href="4.12-rmd-github-pages.html#cb307-1" tabindex="-1"></a><span class="ex">[</span><span class="ss">download</span><span class="ex">]</span><span class="in">(</span>w1<span class="fu">.rmd</span><span class="in">)</span></span>
-<span id="cb307-2"><a href="4.12-rmd-github-pages.html#cb307-2" tabindex="-1"></a>&lt;a href=&quot;w1<span class="fu">.rmd</span>&quot;<span class="op">&gt;</span>Download File&lt;/a<span class="op">&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb309"><pre class="sourceCode css"><code class="sourceCode css"><span id="cb309-1"><a href="4.12-rmd-github-pages.html#cb309-1" tabindex="-1"></a><span class="ex">[</span><span class="ss">download</span><span class="ex">]</span><span class="in">(</span>w1<span class="fu">.rmd</span><span class="in">)</span></span>
+<span id="cb309-2"><a href="4.12-rmd-github-pages.html#cb309-2" tabindex="-1"></a>&lt;a href=&quot;w1<span class="fu">.rmd</span>&quot;<span class="op">&gt;</span>Download File&lt;/a<span class="op">&gt;</span></span></code></pre></div>
 <hr />
 <p><strong>TOC</strong> on home page:</p>
 <ul>
 <li>source code: <a href="https://github.com/lmullen/rmd-notebook/blob/master/index.Rmd" class="uri">https://github.com/lmullen/rmd-notebook/blob/master/index.Rmd</a></li>
 <li>webpage: <a href="https://lmullen.github.io/rmd-notebook/" class="uri">https://lmullen.github.io/rmd-notebook/</a></li>
 </ul>
-<div class="sourceCode" id="cb308"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb308-1"><a href="4.12-rmd-github-pages.html#cb308-1" tabindex="-1"></a><span class="co"># replacing with the following options</span></span>
-<span id="cb308-2"><a href="4.12-rmd-github-pages.html#cb308-2" tabindex="-1"></a><span class="co"># {r TOC, echo=FALSE, results=&#39;asis&#39;}</span></span>
-<span id="cb308-3"><a href="4.12-rmd-github-pages.html#cb308-3" tabindex="-1"></a>rmd <span class="ot">&lt;-</span> <span class="fu">Sys.glob</span>(<span class="st">&quot;*.[Rr]md&quot;</span>)</span>
-<span id="cb308-4"><a href="4.12-rmd-github-pages.html#cb308-4" tabindex="-1"></a>rmd <span class="ot">&lt;-</span> rmd[<span class="sc">!</span>rmd <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;index.Rmd&quot;</span>, <span class="st">&quot;about.Rmd&quot;</span>)]</span>
-<span id="cb308-5"><a href="4.12-rmd-github-pages.html#cb308-5" tabindex="-1"></a>html <span class="ot">&lt;-</span> <span class="fu">sub</span>(<span class="st">&quot;.Rmd&quot;</span>, <span class="st">&quot;.html&quot;</span>, rmd)</span>
-<span id="cb308-6"><a href="4.12-rmd-github-pages.html#cb308-6" tabindex="-1"></a>lines <span class="ot">&lt;-</span> <span class="fu">lapply</span>(rmd, readLines)</span>
-<span id="cb308-7"><a href="4.12-rmd-github-pages.html#cb308-7" tabindex="-1"></a>yaml <span class="ot">&lt;-</span> <span class="fu">lapply</span>(lines, rmarkdown<span class="sc">:::</span>parse_yaml_front_matter)</span>
-<span id="cb308-8"><a href="4.12-rmd-github-pages.html#cb308-8" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;&lt;ul&gt;&quot;</span>)</span>
-<span id="cb308-9"><a href="4.12-rmd-github-pages.html#cb308-9" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(rmd)) {</span>
-<span id="cb308-10"><a href="4.12-rmd-github-pages.html#cb308-10" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="fu">paste0</span>(<span class="st">&quot;&lt;li&gt;&lt;a href=&#39;&quot;</span>, html[i], <span class="st">&quot;&#39;&gt;&quot;</span>, yaml[[i]]<span class="sc">$</span>title, <span class="st">&quot;&lt;/a&gt;&lt;br/&gt;&quot;</span>,</span>
-<span id="cb308-11"><a href="4.12-rmd-github-pages.html#cb308-11" tabindex="-1"></a>             <span class="st">&quot;&lt;code&gt;&quot;</span>, rmd[i], <span class="st">&quot;&lt;/code&gt;&quot;</span>, <span class="st">&quot;&lt;/li&gt;&quot;</span>))</span>
-<span id="cb308-12"><a href="4.12-rmd-github-pages.html#cb308-12" tabindex="-1"></a>}</span>
-<span id="cb308-13"><a href="4.12-rmd-github-pages.html#cb308-13" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;&lt;/ul&gt;&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb310"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb310-1"><a href="4.12-rmd-github-pages.html#cb310-1" tabindex="-1"></a><span class="co"># replacing with the following options</span></span>
+<span id="cb310-2"><a href="4.12-rmd-github-pages.html#cb310-2" tabindex="-1"></a><span class="co"># {r TOC, echo=FALSE, results=&#39;asis&#39;}</span></span>
+<span id="cb310-3"><a href="4.12-rmd-github-pages.html#cb310-3" tabindex="-1"></a>rmd <span class="ot">&lt;-</span> <span class="fu">Sys.glob</span>(<span class="st">&quot;*.[Rr]md&quot;</span>)</span>
+<span id="cb310-4"><a href="4.12-rmd-github-pages.html#cb310-4" tabindex="-1"></a>rmd <span class="ot">&lt;-</span> rmd[<span class="sc">!</span>rmd <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;index.Rmd&quot;</span>, <span class="st">&quot;about.Rmd&quot;</span>)]</span>
+<span id="cb310-5"><a href="4.12-rmd-github-pages.html#cb310-5" tabindex="-1"></a>html <span class="ot">&lt;-</span> <span class="fu">sub</span>(<span class="st">&quot;.Rmd&quot;</span>, <span class="st">&quot;.html&quot;</span>, rmd)</span>
+<span id="cb310-6"><a href="4.12-rmd-github-pages.html#cb310-6" tabindex="-1"></a>lines <span class="ot">&lt;-</span> <span class="fu">lapply</span>(rmd, readLines)</span>
+<span id="cb310-7"><a href="4.12-rmd-github-pages.html#cb310-7" tabindex="-1"></a>yaml <span class="ot">&lt;-</span> <span class="fu">lapply</span>(lines, rmarkdown<span class="sc">:::</span>parse_yaml_front_matter)</span>
+<span id="cb310-8"><a href="4.12-rmd-github-pages.html#cb310-8" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;&lt;ul&gt;&quot;</span>)</span>
+<span id="cb310-9"><a href="4.12-rmd-github-pages.html#cb310-9" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(rmd)) {</span>
+<span id="cb310-10"><a href="4.12-rmd-github-pages.html#cb310-10" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="fu">paste0</span>(<span class="st">&quot;&lt;li&gt;&lt;a href=&#39;&quot;</span>, html[i], <span class="st">&quot;&#39;&gt;&quot;</span>, yaml[[i]]<span class="sc">$</span>title, <span class="st">&quot;&lt;/a&gt;&lt;br/&gt;&quot;</span>,</span>
+<span id="cb310-11"><a href="4.12-rmd-github-pages.html#cb310-11" tabindex="-1"></a>             <span class="st">&quot;&lt;code&gt;&quot;</span>, rmd[i], <span class="st">&quot;&lt;/code&gt;&quot;</span>, <span class="st">&quot;&lt;/li&gt;&quot;</span>))</span>
+<span id="cb310-12"><a href="4.12-rmd-github-pages.html#cb310-12" tabindex="-1"></a>}</span>
+<span id="cb310-13"><a href="4.12-rmd-github-pages.html#cb310-13" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;&lt;/ul&gt;&quot;</span>)</span></code></pre></div>
 <hr />
 <p><strong>Project website</strong>:</p>
 <ul>

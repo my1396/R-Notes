@@ -64,7 +64,7 @@ If you want to both remove all objects and unload all packages, you can restart 
 --------------------------------------------------------------------------------
 
 
-#### Load R objects {-}
+#### Load R objects
 
 `load(f_name)` to load .`rda` file.
 
@@ -118,7 +118,7 @@ REML score: 529.4881
 -----------------------------------------------------------------------------
 
 
-#### Save figures in a list  {-}
+#### Save figures in a list
 
 ```R
 p_list <- list(p_ano=p_ano, p_tr=p_tr)
@@ -663,7 +663,7 @@ The chief difference between atomic vectors and lists is that atomic vectors are
 <img src="https://r4ds.had.co.nz/diagrams/data-structures-overview.png" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:30%;" />
 
 
-#### Variable Coercion {-}
+#### Variable Coercion
 
 `as.logical` 	convert 0/1 to boolean values
 
@@ -674,7 +674,7 @@ reg_data[mask,]
 reg_data <- reg_data[!mask,]
 ```
 
-#### Dimension Reduction {-}
+#### Dimension Reduction
 
 Convert a data frame, tibble, list to an atomic vector
 

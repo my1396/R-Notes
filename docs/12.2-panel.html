@@ -654,8 +654,8 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="8.8" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html"><i class="fa fa-check"></i><b>8.8</b> Data Frame Operations</a>
 <ul>
-<li class="chapter" data-level="" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#columnrow-wise-operations"><i class="fa fa-check"></i>Column/Row-wise Operations</a></li>
-<li class="chapter" data-level="8.8.1" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#process-na-values"><i class="fa fa-check"></i><b>8.8.1</b> <span class="env-green"><strong>Process <code>NA</code> values</strong></span></a></li>
+<li class="chapter" data-level="8.8.1" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#columnrow-wise-operations"><i class="fa fa-check"></i><b>8.8.1</b> Column/Row-wise Operations</a></li>
+<li class="chapter" data-level="8.8.2" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#process-na-values"><i class="fa fa-check"></i><b>8.8.2</b> <span class="env-green"><strong>Process <code>NA</code> values</strong></span></a></li>
 </ul></li>
 <li class="chapter" data-level="8.9" data-path="8.9-matrix-multiplication.html"><a href="8.9-matrix-multiplication.html"><i class="fa fa-check"></i><b>8.9</b> Matrix multiplication</a></li>
 <li class="chapter" data-level="8.10" data-path="8.10-string-operations.html"><a href="8.10-string-operations.html"><i class="fa fa-check"></i><b>8.10</b> String Operations</a></li>
@@ -868,17 +868,47 @@ function myFunction(id) {
   x.style.display = (x.style.display === 'none') ? 'block' : 'none';
 }
 
-// Auto-expand active top-level section so its level 2/3 items are visible
+// Auto-expand active section and keep all siblings within the same level 1 section open
 document.addEventListener('DOMContentLoaded', function() {
   try {
     var summary = document.querySelector('.book-summary ul.summary');
     if (!summary) return;
 
     function applyAutoOpen() {
-      // Clear previous
-      summary.querySelectorAll('li.chapter.auto-open').forEach(function(li){ li.classList.remove('auto-open'); });
+      // Find the active item (could be level 1, 2, or 3)
       var active = summary.querySelector('li.chapter.active');
-      if (active) active.classList.add('auto-open');
+      if (!active) return;
+      
+      // Find the top-level (level 1) chapter containing the active item
+      var topLevelChapter = active.closest('ul.summary > li.chapter');
+      if (!topLevelChapter) return;
+      
+      // Collapse all other top-level chapters
+      summary.querySelectorAll('ul.summary > li.chapter').forEach(function(chapter) {
+        if (chapter !== topLevelChapter) {
+          chapter.classList.remove('auto-open');
+          // Collapse all nested items in other chapters
+          chapter.querySelectorAll('li.chapter').forEach(function(nested) {
+            nested.classList.remove('auto-open');
+          });
+        }
+      });
+      
+      // Expand the active top-level chapter
+      topLevelChapter.classList.add('auto-open');
+      
+      // Expand ALL level 2 and level 3 items within this top-level chapter
+      topLevelChapter.querySelectorAll('li.chapter').forEach(function(nested) {
+        nested.classList.add('auto-open');
+      });
+      
+      // Scroll the active TOC item to the center of the TOC panel
+      setTimeout(function() {
+        var activeLink = active.querySelector('a');
+        if (activeLink) {
+          activeLink.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
     }
 
     applyAutoOpen();
@@ -894,14 +924,14 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-// Toggle collapse: clicking an expanded section collapses it
+// Toggle collapse: clicking level 1 heading expands/collapses all sublevels
 document.addEventListener('DOMContentLoaded', function() {
   try {
     var summary = document.querySelector('.book-summary ul.summary');
     if (!summary) return;
 
-    // Add click handlers to chapter links with children
-    summary.querySelectorAll('li.chapter').forEach(function(chapter) {
+    // Add click handlers only to top-level chapter links with children
+    summary.querySelectorAll('ul.summary > li.chapter').forEach(function(chapter) {
       var sublist = chapter.querySelector('ul');
       if (!sublist) return; // Only chapters with subsections
 
@@ -913,15 +943,28 @@ document.addEventListener('DOMContentLoaded', function() {
         var isExpanded = chapter.classList.contains('auto-open');
         
         if (isExpanded) {
-          // Collapse it
+          // Collapse it and all nested items
           e.preventDefault();
           chapter.classList.remove('auto-open');
+          // Also collapse all level 2 and level 3 items
+          chapter.querySelectorAll('li.chapter.auto-open').forEach(function(nested) {
+            nested.classList.remove('auto-open');
+          });
         } else {
-          // Expand it (remove auto-open from others first)
-          summary.querySelectorAll('li.chapter.auto-open').forEach(function(li) {
-            if (li !== chapter) li.classList.remove('auto-open');
+          // Expand it (collapse other top-level chapters first)
+          summary.querySelectorAll('ul.summary > li.chapter.auto-open').forEach(function(li) {
+            if (li !== chapter) {
+              li.classList.remove('auto-open');
+              li.querySelectorAll('li.chapter.auto-open').forEach(function(nested) {
+                nested.classList.remove('auto-open');
+              });
+            }
           });
           chapter.classList.add('auto-open');
+          // Expand all level 2 items within this chapter
+          chapter.querySelectorAll('ul > li.chapter').forEach(function(level2) {
+            level2.classList.add('auto-open');
+          });
         }
       });
     });
@@ -931,9 +974,26 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 <style>
-/* Show nested UL of active chapter when collapse=section */
-.book-summary ul.summary li.chapter.auto-open ul { display: block !important; }
-.book-summary ul.summary li.chapter.auto-open > a { font-weight: 700; }
+/* Show all nested UL of chapters marked as auto-open */
+.book-summary ul.summary li.chapter.auto-open > ul { 
+  display: block !important; 
+}
+
+/* Make parent level headings bold when expanded */
+.book-summary ul.summary li.chapter.auto-open > a { 
+  font-weight: 700; 
+}
+
+/* Highlight the actual active item with color and bold */
+.book-summary ul.summary li.chapter.active > a { 
+  font-weight: 700 !important;
+  color: #0078D4 !important;
+}
+
+/* Ensure proper indentation for nested levels */
+.book-summary ul.summary li.chapter ul li.chapter { 
+  padding-left: 0; 
+}
 </style>
 <div id="panel" class="section level2 hasAnchor" number="12.2">
 <h2><span class="header-section-number">12.2</span> Panel<a href="12.2-panel.html#panel" class="anchor-section" aria-label="Anchor link to header"></a></h2>
@@ -962,22 +1022,22 @@ A: Not necessarily. You have two options:</p>
 <li>Convert to <code>pdata.frame()</code> and estimate with <code>plm()</code>.</li>
 <li>Use <code>plm()</code> directly on a regular data frame, specifying the <code>index</code> argument to indicate the panel structure.</li>
 </ol>
-<div class="sourceCode" id="cb909"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb909-1"><a href="12.2-panel.html#cb909-1" tabindex="-1"></a><span class="co"># Option 1: Convert to pdata.frame</span></span>
-<span id="cb909-2"><a href="12.2-panel.html#cb909-2" tabindex="-1"></a><span class="fu">library</span>(plm)</span>
-<span id="cb909-3"><a href="12.2-panel.html#cb909-3" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;Grunfeld&quot;</span>, <span class="at">package =</span> <span class="st">&quot;plm&quot;</span>)</span>
-<span id="cb909-4"><a href="12.2-panel.html#cb909-4" tabindex="-1"></a>grunfeld_pdata <span class="ot">&lt;-</span> <span class="fu">pdata.frame</span>(Grunfeld, <span class="at">index =</span> <span class="fu">c</span>(<span class="st">&quot;firm&quot;</span>, <span class="st">&quot;year&quot;</span>))</span>
-<span id="cb909-5"><a href="12.2-panel.html#cb909-5" tabindex="-1"></a>model_fe <span class="ot">&lt;-</span> <span class="fu">plm</span>(inv <span class="sc">~</span> value <span class="sc">+</span> capital, <span class="at">data =</span> grunfeld_pdata, <span class="at">effect =</span> <span class="st">&quot;twoways&quot;</span>, <span class="at">model =</span> <span class="st">&quot;within&quot;</span>)</span>
-<span id="cb909-6"><a href="12.2-panel.html#cb909-6" tabindex="-1"></a></span>
-<span id="cb909-7"><a href="12.2-panel.html#cb909-7" tabindex="-1"></a><span class="co"># Option 2: Use plm directly on regular data frame</span></span>
-<span id="cb909-8"><a href="12.2-panel.html#cb909-8" tabindex="-1"></a>model_fe_direct <span class="ot">&lt;-</span> <span class="fu">plm</span>(inv <span class="sc">~</span> value <span class="sc">+</span> capital, <span class="at">data =</span> Grunfeld, <span class="at">effect =</span> <span class="st">&quot;twoways&quot;</span>, <span class="at">model =</span> <span class="st">&quot;within&quot;</span>, <span class="at">index =</span> <span class="fu">c</span>(<span class="st">&quot;firm&quot;</span>, <span class="st">&quot;year&quot;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb912"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb912-1"><a href="12.2-panel.html#cb912-1" tabindex="-1"></a><span class="co"># Option 1: Convert to pdata.frame</span></span>
+<span id="cb912-2"><a href="12.2-panel.html#cb912-2" tabindex="-1"></a><span class="fu">library</span>(plm)</span>
+<span id="cb912-3"><a href="12.2-panel.html#cb912-3" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;Grunfeld&quot;</span>, <span class="at">package =</span> <span class="st">&quot;plm&quot;</span>)</span>
+<span id="cb912-4"><a href="12.2-panel.html#cb912-4" tabindex="-1"></a>grunfeld_pdata <span class="ot">&lt;-</span> <span class="fu">pdata.frame</span>(Grunfeld, <span class="at">index =</span> <span class="fu">c</span>(<span class="st">&quot;firm&quot;</span>, <span class="st">&quot;year&quot;</span>))</span>
+<span id="cb912-5"><a href="12.2-panel.html#cb912-5" tabindex="-1"></a>model_fe <span class="ot">&lt;-</span> <span class="fu">plm</span>(inv <span class="sc">~</span> value <span class="sc">+</span> capital, <span class="at">data =</span> grunfeld_pdata, <span class="at">effect =</span> <span class="st">&quot;twoways&quot;</span>, <span class="at">model =</span> <span class="st">&quot;within&quot;</span>)</span>
+<span id="cb912-6"><a href="12.2-panel.html#cb912-6" tabindex="-1"></a></span>
+<span id="cb912-7"><a href="12.2-panel.html#cb912-7" tabindex="-1"></a><span class="co"># Option 2: Use plm directly on regular data frame</span></span>
+<span id="cb912-8"><a href="12.2-panel.html#cb912-8" tabindex="-1"></a>model_fe_direct <span class="ot">&lt;-</span> <span class="fu">plm</span>(inv <span class="sc">~</span> value <span class="sc">+</span> capital, <span class="at">data =</span> Grunfeld, <span class="at">effect =</span> <span class="st">&quot;twoways&quot;</span>, <span class="at">model =</span> <span class="st">&quot;within&quot;</span>, <span class="at">index =</span> <span class="fu">c</span>(<span class="st">&quot;firm&quot;</span>, <span class="st">&quot;year&quot;</span>))</span></code></pre></div>
 <p>Note that <code>ggplot2</code> accepts regular data frames only.
 If you want to plot the data with <code>ggplot2</code>, it is suggested to save a panel data frame version of the data (<code>grunfeld_pdata</code>) for estimation and use the original data frame (<code>grunfeld</code>) for plotting.</p>
 <hr />
 <p>Robust standard errors for panel data models can be computed with the <code>vcovHC()</code> function from the <code>sandwich</code> package.</p>
-<div class="sourceCode" id="cb910"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb910-1"><a href="12.2-panel.html#cb910-1" tabindex="-1"></a><span class="co"># clustered by firm</span></span>
-<span id="cb910-2"><a href="12.2-panel.html#cb910-2" tabindex="-1"></a><span class="fu">coeftest</span>(model_fe, <span class="at">vcov =</span> <span class="fu">vcovHC</span>(model_fe, <span class="at">type =</span> <span class="st">&quot;HC1&quot;</span>, <span class="at">cluster =</span> <span class="st">&quot;group&quot;</span>))</span>
-<span id="cb910-3"><a href="12.2-panel.html#cb910-3" tabindex="-1"></a><span class="co"># clustered by year</span></span>
-<span id="cb910-4"><a href="12.2-panel.html#cb910-4" tabindex="-1"></a><span class="fu">coeftest</span>(model_fe, <span class="at">vcov =</span> <span class="fu">vcovHC</span>(model_fe, <span class="at">type =</span> <span class="st">&quot;HC1&quot;</span>, <span class="at">cluster =</span> <span class="st">&quot;time&quot;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb913"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb913-1"><a href="12.2-panel.html#cb913-1" tabindex="-1"></a><span class="co"># clustered by firm</span></span>
+<span id="cb913-2"><a href="12.2-panel.html#cb913-2" tabindex="-1"></a><span class="fu">coeftest</span>(model_fe, <span class="at">vcov =</span> <span class="fu">vcovHC</span>(model_fe, <span class="at">type =</span> <span class="st">&quot;HC1&quot;</span>, <span class="at">cluster =</span> <span class="st">&quot;group&quot;</span>))</span>
+<span id="cb913-3"><a href="12.2-panel.html#cb913-3" tabindex="-1"></a><span class="co"># clustered by year</span></span>
+<span id="cb913-4"><a href="12.2-panel.html#cb913-4" tabindex="-1"></a><span class="fu">coeftest</span>(model_fe, <span class="at">vcov =</span> <span class="fu">vcovHC</span>(model_fe, <span class="at">type =</span> <span class="st">&quot;HC1&quot;</span>, <span class="at">cluster =</span> <span class="st">&quot;time&quot;</span>))</span></code></pre></div>
 <p><strong>Firm- vs. Year-level clustering</strong></p>
 <table>
 <colgroup>
@@ -1028,15 +1088,15 @@ If you want to plot the data with <code>ggplot2</code>, it is suggested to save 
 </div>
 <div id="dynamic-panel" class="section level3 hasAnchor" number="12.2.2">
 <h3><span class="header-section-number">12.2.2</span> Dynamic Panel<a href="12.2-panel.html#dynamic-panel" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<div class="sourceCode" id="cb911"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb911-1"><a href="12.2-panel.html#cb911-1" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;EmplUK&quot;</span>, <span class="at">package =</span> <span class="st">&quot;plm&quot;</span>)</span>
-<span id="cb911-2"><a href="12.2-panel.html#cb911-2" tabindex="-1"></a>form <span class="ot">&lt;-</span> <span class="fu">log</span>(emp) <span class="sc">~</span> <span class="fu">log</span>(wage) <span class="sc">+</span> <span class="fu">log</span>(capital) <span class="sc">+</span> <span class="fu">log</span>(output)</span>
-<span id="cb911-3"><a href="12.2-panel.html#cb911-3" tabindex="-1"></a><span class="co"># Arellano and Bond (1991), table 4, col. b </span></span>
-<span id="cb911-4"><a href="12.2-panel.html#cb911-4" tabindex="-1"></a>empl_ab <span class="ot">&lt;-</span> <span class="fu">pgmm</span>(</span>
-<span id="cb911-5"><a href="12.2-panel.html#cb911-5" tabindex="-1"></a>    <span class="fu">dynformula</span>(form, <span class="fu">list</span>(<span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>)),</span>
-<span id="cb911-6"><a href="12.2-panel.html#cb911-6" tabindex="-1"></a>    <span class="at">data =</span> EmplUK, <span class="at">index =</span> <span class="fu">c</span>(<span class="st">&quot;firm&quot;</span>, <span class="st">&quot;year&quot;</span>),</span>
-<span id="cb911-7"><a href="12.2-panel.html#cb911-7" tabindex="-1"></a>    <span class="at">effect =</span> <span class="st">&quot;twoways&quot;</span>, <span class="at">model =</span> <span class="st">&quot;twosteps&quot;</span>,</span>
-<span id="cb911-8"><a href="12.2-panel.html#cb911-8" tabindex="-1"></a>    <span class="at">gmm.inst =</span> <span class="sc">~</span> <span class="fu">log</span>(emp), <span class="at">lag.gmm =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">99</span>)) </span>
-<span id="cb911-9"><a href="12.2-panel.html#cb911-9" tabindex="-1"></a>    )</span></code></pre></div>
+<div class="sourceCode" id="cb914"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb914-1"><a href="12.2-panel.html#cb914-1" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;EmplUK&quot;</span>, <span class="at">package =</span> <span class="st">&quot;plm&quot;</span>)</span>
+<span id="cb914-2"><a href="12.2-panel.html#cb914-2" tabindex="-1"></a>form <span class="ot">&lt;-</span> <span class="fu">log</span>(emp) <span class="sc">~</span> <span class="fu">log</span>(wage) <span class="sc">+</span> <span class="fu">log</span>(capital) <span class="sc">+</span> <span class="fu">log</span>(output)</span>
+<span id="cb914-3"><a href="12.2-panel.html#cb914-3" tabindex="-1"></a><span class="co"># Arellano and Bond (1991), table 4, col. b </span></span>
+<span id="cb914-4"><a href="12.2-panel.html#cb914-4" tabindex="-1"></a>empl_ab <span class="ot">&lt;-</span> <span class="fu">pgmm</span>(</span>
+<span id="cb914-5"><a href="12.2-panel.html#cb914-5" tabindex="-1"></a>    <span class="fu">dynformula</span>(form, <span class="fu">list</span>(<span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>)),</span>
+<span id="cb914-6"><a href="12.2-panel.html#cb914-6" tabindex="-1"></a>    <span class="at">data =</span> EmplUK, <span class="at">index =</span> <span class="fu">c</span>(<span class="st">&quot;firm&quot;</span>, <span class="st">&quot;year&quot;</span>),</span>
+<span id="cb914-7"><a href="12.2-panel.html#cb914-7" tabindex="-1"></a>    <span class="at">effect =</span> <span class="st">&quot;twoways&quot;</span>, <span class="at">model =</span> <span class="st">&quot;twosteps&quot;</span>,</span>
+<span id="cb914-8"><a href="12.2-panel.html#cb914-8" tabindex="-1"></a>    <span class="at">gmm.inst =</span> <span class="sc">~</span> <span class="fu">log</span>(emp), <span class="at">lag.gmm =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">99</span>)) </span>
+<span id="cb914-9"><a href="12.2-panel.html#cb914-9" tabindex="-1"></a>    )</span></code></pre></div>
 <p><span class="math display">\[
 \boldsymbol \Gamma_n = \begin {pmatrix}
 \gamma_0 &amp; \gamma_1 &amp; \gamma_2 &amp; \cdots &amp; \gamma_{n - 1} \\ \gamma_1 &amp; \gamma_0 &amp; \gamma_1 &amp; \cdots &amp; \gamma_{n - 2} \\ \gamma_2 &amp; \gamma_1 &amp; \gamma_0 &amp; \cdots &amp; \gamma_{n - 3} \\ \vdots &amp; \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\ \gamma_{n - 1} &amp; \gamma_{n - 2} &amp; \gamma_{n - 3} &amp; \cdots &amp; \gamma_0 \end {pmatrix}

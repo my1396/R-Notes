@@ -654,8 +654,8 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="8.8" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html"><i class="fa fa-check"></i><b>8.8</b> Data Frame Operations</a>
 <ul>
-<li class="chapter" data-level="" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#columnrow-wise-operations"><i class="fa fa-check"></i>Column/Row-wise Operations</a></li>
-<li class="chapter" data-level="8.8.1" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#process-na-values"><i class="fa fa-check"></i><b>8.8.1</b> <span class="env-green"><strong>Process <code>NA</code> values</strong></span></a></li>
+<li class="chapter" data-level="8.8.1" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#columnrow-wise-operations"><i class="fa fa-check"></i><b>8.8.1</b> Column/Row-wise Operations</a></li>
+<li class="chapter" data-level="8.8.2" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#process-na-values"><i class="fa fa-check"></i><b>8.8.2</b> <span class="env-green"><strong>Process <code>NA</code> values</strong></span></a></li>
 </ul></li>
 <li class="chapter" data-level="8.9" data-path="8.9-matrix-multiplication.html"><a href="8.9-matrix-multiplication.html"><i class="fa fa-check"></i><b>8.9</b> Matrix multiplication</a></li>
 <li class="chapter" data-level="8.10" data-path="8.10-string-operations.html"><a href="8.10-string-operations.html"><i class="fa fa-check"></i><b>8.10</b> String Operations</a></li>
@@ -868,17 +868,47 @@ function myFunction(id) {
   x.style.display = (x.style.display === 'none') ? 'block' : 'none';
 }
 
-// Auto-expand active top-level section so its level 2/3 items are visible
+// Auto-expand active section and keep all siblings within the same level 1 section open
 document.addEventListener('DOMContentLoaded', function() {
   try {
     var summary = document.querySelector('.book-summary ul.summary');
     if (!summary) return;
 
     function applyAutoOpen() {
-      // Clear previous
-      summary.querySelectorAll('li.chapter.auto-open').forEach(function(li){ li.classList.remove('auto-open'); });
+      // Find the active item (could be level 1, 2, or 3)
       var active = summary.querySelector('li.chapter.active');
-      if (active) active.classList.add('auto-open');
+      if (!active) return;
+      
+      // Find the top-level (level 1) chapter containing the active item
+      var topLevelChapter = active.closest('ul.summary > li.chapter');
+      if (!topLevelChapter) return;
+      
+      // Collapse all other top-level chapters
+      summary.querySelectorAll('ul.summary > li.chapter').forEach(function(chapter) {
+        if (chapter !== topLevelChapter) {
+          chapter.classList.remove('auto-open');
+          // Collapse all nested items in other chapters
+          chapter.querySelectorAll('li.chapter').forEach(function(nested) {
+            nested.classList.remove('auto-open');
+          });
+        }
+      });
+      
+      // Expand the active top-level chapter
+      topLevelChapter.classList.add('auto-open');
+      
+      // Expand ALL level 2 and level 3 items within this top-level chapter
+      topLevelChapter.querySelectorAll('li.chapter').forEach(function(nested) {
+        nested.classList.add('auto-open');
+      });
+      
+      // Scroll the active TOC item to the center of the TOC panel
+      setTimeout(function() {
+        var activeLink = active.querySelector('a');
+        if (activeLink) {
+          activeLink.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
     }
 
     applyAutoOpen();
@@ -894,14 +924,14 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-// Toggle collapse: clicking an expanded section collapses it
+// Toggle collapse: clicking level 1 heading expands/collapses all sublevels
 document.addEventListener('DOMContentLoaded', function() {
   try {
     var summary = document.querySelector('.book-summary ul.summary');
     if (!summary) return;
 
-    // Add click handlers to chapter links with children
-    summary.querySelectorAll('li.chapter').forEach(function(chapter) {
+    // Add click handlers only to top-level chapter links with children
+    summary.querySelectorAll('ul.summary > li.chapter').forEach(function(chapter) {
       var sublist = chapter.querySelector('ul');
       if (!sublist) return; // Only chapters with subsections
 
@@ -913,15 +943,28 @@ document.addEventListener('DOMContentLoaded', function() {
         var isExpanded = chapter.classList.contains('auto-open');
         
         if (isExpanded) {
-          // Collapse it
+          // Collapse it and all nested items
           e.preventDefault();
           chapter.classList.remove('auto-open');
+          // Also collapse all level 2 and level 3 items
+          chapter.querySelectorAll('li.chapter.auto-open').forEach(function(nested) {
+            nested.classList.remove('auto-open');
+          });
         } else {
-          // Expand it (remove auto-open from others first)
-          summary.querySelectorAll('li.chapter.auto-open').forEach(function(li) {
-            if (li !== chapter) li.classList.remove('auto-open');
+          // Expand it (collapse other top-level chapters first)
+          summary.querySelectorAll('ul.summary > li.chapter.auto-open').forEach(function(li) {
+            if (li !== chapter) {
+              li.classList.remove('auto-open');
+              li.querySelectorAll('li.chapter.auto-open').forEach(function(nested) {
+                nested.classList.remove('auto-open');
+              });
+            }
           });
           chapter.classList.add('auto-open');
+          // Expand all level 2 items within this chapter
+          chapter.querySelectorAll('ul > li.chapter').forEach(function(level2) {
+            level2.classList.add('auto-open');
+          });
         }
       });
     });
@@ -931,9 +974,26 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 <style>
-/* Show nested UL of active chapter when collapse=section */
-.book-summary ul.summary li.chapter.auto-open ul { display: block !important; }
-.book-summary ul.summary li.chapter.auto-open > a { font-weight: 700; }
+/* Show all nested UL of chapters marked as auto-open */
+.book-summary ul.summary li.chapter.auto-open > ul { 
+  display: block !important; 
+}
+
+/* Make parent level headings bold when expanded */
+.book-summary ul.summary li.chapter.auto-open > a { 
+  font-weight: 700; 
+}
+
+/* Highlight the actual active item with color and bold */
+.book-summary ul.summary li.chapter.active > a { 
+  font-weight: 700 !important;
+  color: #0078D4 !important;
+}
+
+/* Ensure proper indentation for nested levels */
+.book-summary ul.summary li.chapter ul li.chapter { 
+  padding-left: 0; 
+}
 </style>
 <div id="matrix-multiplication" class="section level2 hasAnchor" number="8.9">
 <h2><span class="header-section-number">8.9</span> Matrix multiplication<a href="8.9-matrix-multiplication.html#matrix-multiplication" class="anchor-section" aria-label="Anchor link to header"></a></h2>
@@ -947,20 +1007,20 @@ document.addEventListener('DOMContentLoaded', function() {
 <p><code>outer(x, y, FUN = "*")</code> <code>FUN</code> can be other operations, such as <code>+</code>.</p>
 <p>Kronecker product <code>%x%</code></p>
 <p><strong>New Empty Matrix</strong></p>
-<div class="sourceCode" id="cb609"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb609-1"><a href="8.9-matrix-multiplication.html#cb609-1" tabindex="-1"></a><span class="co"># initialize an empty matrix</span></span>
-<span id="cb609-2"><a href="8.9-matrix-multiplication.html#cb609-2" tabindex="-1"></a>prediction_df <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="at">ncol=</span><span class="dv">7</span>, <span class="at">nrow=</span><span class="dv">0</span>)</span>
-<span id="cb609-3"><a href="8.9-matrix-multiplication.html#cb609-3" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>){</span>
-<span id="cb609-4"><a href="8.9-matrix-multiplication.html#cb609-4" tabindex="-1"></a>  the_prediction <span class="ot">&lt;-</span> ...</span>
-<span id="cb609-5"><a href="8.9-matrix-multiplication.html#cb609-5" tabindex="-1"></a>  prediction_df <span class="ot">&lt;-</span> <span class="fu">rbind</span>(prediction_df, the_prediction)</span>
-<span id="cb609-6"><a href="8.9-matrix-multiplication.html#cb609-6" tabindex="-1"></a>}</span>
-<span id="cb609-7"><a href="8.9-matrix-multiplication.html#cb609-7" tabindex="-1"></a></span>
-<span id="cb609-8"><a href="8.9-matrix-multiplication.html#cb609-8" tabindex="-1"></a>varImp_df <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="at">ncol=</span><span class="dv">0</span>, <span class="at">nrow=</span><span class="dv">4</span>)</span>
-<span id="cb609-9"><a href="8.9-matrix-multiplication.html#cb609-9" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>){</span>
-<span id="cb609-10"><a href="8.9-matrix-multiplication.html#cb609-10" tabindex="-1"></a>  varImp <span class="ot">&lt;-</span> ...</span>
-<span id="cb609-11"><a href="8.9-matrix-multiplication.html#cb609-11" tabindex="-1"></a>    varImp_df <span class="ot">&lt;-</span> <span class="fu">bind_cols</span>(varImp_df, varImp)</span>
-<span id="cb609-12"><a href="8.9-matrix-multiplication.html#cb609-12" tabindex="-1"></a>  <span class="co"># or cbind(varImp_df, varImp), bind_cols and cbind bind by positions</span></span>
-<span id="cb609-13"><a href="8.9-matrix-multiplication.html#cb609-13" tabindex="-1"></a>  <span class="co"># if need to match by namesm use left_join(varImp_df, varImp, by=&quot;name&quot;)</span></span>
-<span id="cb609-14"><a href="8.9-matrix-multiplication.html#cb609-14" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb612"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb612-1"><a href="8.9-matrix-multiplication.html#cb612-1" tabindex="-1"></a><span class="co"># initialize an empty matrix</span></span>
+<span id="cb612-2"><a href="8.9-matrix-multiplication.html#cb612-2" tabindex="-1"></a>prediction_df <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="at">ncol=</span><span class="dv">7</span>, <span class="at">nrow=</span><span class="dv">0</span>)</span>
+<span id="cb612-3"><a href="8.9-matrix-multiplication.html#cb612-3" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>){</span>
+<span id="cb612-4"><a href="8.9-matrix-multiplication.html#cb612-4" tabindex="-1"></a>  the_prediction <span class="ot">&lt;-</span> ...</span>
+<span id="cb612-5"><a href="8.9-matrix-multiplication.html#cb612-5" tabindex="-1"></a>  prediction_df <span class="ot">&lt;-</span> <span class="fu">rbind</span>(prediction_df, the_prediction)</span>
+<span id="cb612-6"><a href="8.9-matrix-multiplication.html#cb612-6" tabindex="-1"></a>}</span>
+<span id="cb612-7"><a href="8.9-matrix-multiplication.html#cb612-7" tabindex="-1"></a></span>
+<span id="cb612-8"><a href="8.9-matrix-multiplication.html#cb612-8" tabindex="-1"></a>varImp_df <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="at">ncol=</span><span class="dv">0</span>, <span class="at">nrow=</span><span class="dv">4</span>)</span>
+<span id="cb612-9"><a href="8.9-matrix-multiplication.html#cb612-9" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>){</span>
+<span id="cb612-10"><a href="8.9-matrix-multiplication.html#cb612-10" tabindex="-1"></a>  varImp <span class="ot">&lt;-</span> ...</span>
+<span id="cb612-11"><a href="8.9-matrix-multiplication.html#cb612-11" tabindex="-1"></a>    varImp_df <span class="ot">&lt;-</span> <span class="fu">bind_cols</span>(varImp_df, varImp)</span>
+<span id="cb612-12"><a href="8.9-matrix-multiplication.html#cb612-12" tabindex="-1"></a>  <span class="co"># or cbind(varImp_df, varImp), bind_cols and cbind bind by positions</span></span>
+<span id="cb612-13"><a href="8.9-matrix-multiplication.html#cb612-13" tabindex="-1"></a>  <span class="co"># if need to match by namesm use left_join(varImp_df, varImp, by=&quot;name&quot;)</span></span>
+<span id="cb612-14"><a href="8.9-matrix-multiplication.html#cb612-14" tabindex="-1"></a>}</span></code></pre></div>
 
 </div>
             </section>

@@ -654,8 +654,8 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="8.8" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html"><i class="fa fa-check"></i><b>8.8</b> Data Frame Operations</a>
 <ul>
-<li class="chapter" data-level="" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#columnrow-wise-operations"><i class="fa fa-check"></i>Column/Row-wise Operations</a></li>
-<li class="chapter" data-level="8.8.1" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#process-na-values"><i class="fa fa-check"></i><b>8.8.1</b> <span class="env-green"><strong>Process <code>NA</code> values</strong></span></a></li>
+<li class="chapter" data-level="8.8.1" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#columnrow-wise-operations"><i class="fa fa-check"></i><b>8.8.1</b> Column/Row-wise Operations</a></li>
+<li class="chapter" data-level="8.8.2" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#process-na-values"><i class="fa fa-check"></i><b>8.8.2</b> <span class="env-green"><strong>Process <code>NA</code> values</strong></span></a></li>
 </ul></li>
 <li class="chapter" data-level="8.9" data-path="8.9-matrix-multiplication.html"><a href="8.9-matrix-multiplication.html"><i class="fa fa-check"></i><b>8.9</b> Matrix multiplication</a></li>
 <li class="chapter" data-level="8.10" data-path="8.10-string-operations.html"><a href="8.10-string-operations.html"><i class="fa fa-check"></i><b>8.10</b> String Operations</a></li>
@@ -868,17 +868,47 @@ function myFunction(id) {
   x.style.display = (x.style.display === 'none') ? 'block' : 'none';
 }
 
-// Auto-expand active top-level section so its level 2/3 items are visible
+// Auto-expand active section and keep all siblings within the same level 1 section open
 document.addEventListener('DOMContentLoaded', function() {
   try {
     var summary = document.querySelector('.book-summary ul.summary');
     if (!summary) return;
 
     function applyAutoOpen() {
-      // Clear previous
-      summary.querySelectorAll('li.chapter.auto-open').forEach(function(li){ li.classList.remove('auto-open'); });
+      // Find the active item (could be level 1, 2, or 3)
       var active = summary.querySelector('li.chapter.active');
-      if (active) active.classList.add('auto-open');
+      if (!active) return;
+      
+      // Find the top-level (level 1) chapter containing the active item
+      var topLevelChapter = active.closest('ul.summary > li.chapter');
+      if (!topLevelChapter) return;
+      
+      // Collapse all other top-level chapters
+      summary.querySelectorAll('ul.summary > li.chapter').forEach(function(chapter) {
+        if (chapter !== topLevelChapter) {
+          chapter.classList.remove('auto-open');
+          // Collapse all nested items in other chapters
+          chapter.querySelectorAll('li.chapter').forEach(function(nested) {
+            nested.classList.remove('auto-open');
+          });
+        }
+      });
+      
+      // Expand the active top-level chapter
+      topLevelChapter.classList.add('auto-open');
+      
+      // Expand ALL level 2 and level 3 items within this top-level chapter
+      topLevelChapter.querySelectorAll('li.chapter').forEach(function(nested) {
+        nested.classList.add('auto-open');
+      });
+      
+      // Scroll the active TOC item to the center of the TOC panel
+      setTimeout(function() {
+        var activeLink = active.querySelector('a');
+        if (activeLink) {
+          activeLink.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
     }
 
     applyAutoOpen();
@@ -894,14 +924,14 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-// Toggle collapse: clicking an expanded section collapses it
+// Toggle collapse: clicking level 1 heading expands/collapses all sublevels
 document.addEventListener('DOMContentLoaded', function() {
   try {
     var summary = document.querySelector('.book-summary ul.summary');
     if (!summary) return;
 
-    // Add click handlers to chapter links with children
-    summary.querySelectorAll('li.chapter').forEach(function(chapter) {
+    // Add click handlers only to top-level chapter links with children
+    summary.querySelectorAll('ul.summary > li.chapter').forEach(function(chapter) {
       var sublist = chapter.querySelector('ul');
       if (!sublist) return; // Only chapters with subsections
 
@@ -913,15 +943,28 @@ document.addEventListener('DOMContentLoaded', function() {
         var isExpanded = chapter.classList.contains('auto-open');
         
         if (isExpanded) {
-          // Collapse it
+          // Collapse it and all nested items
           e.preventDefault();
           chapter.classList.remove('auto-open');
+          // Also collapse all level 2 and level 3 items
+          chapter.querySelectorAll('li.chapter.auto-open').forEach(function(nested) {
+            nested.classList.remove('auto-open');
+          });
         } else {
-          // Expand it (remove auto-open from others first)
-          summary.querySelectorAll('li.chapter.auto-open').forEach(function(li) {
-            if (li !== chapter) li.classList.remove('auto-open');
+          // Expand it (collapse other top-level chapters first)
+          summary.querySelectorAll('ul.summary > li.chapter.auto-open').forEach(function(li) {
+            if (li !== chapter) {
+              li.classList.remove('auto-open');
+              li.querySelectorAll('li.chapter.auto-open').forEach(function(nested) {
+                nested.classList.remove('auto-open');
+              });
+            }
           });
           chapter.classList.add('auto-open');
+          // Expand all level 2 items within this chapter
+          chapter.querySelectorAll('ul > li.chapter').forEach(function(level2) {
+            level2.classList.add('auto-open');
+          });
         }
       });
     });
@@ -931,9 +974,26 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 <style>
-/* Show nested UL of active chapter when collapse=section */
-.book-summary ul.summary li.chapter.auto-open ul { display: block !important; }
-.book-summary ul.summary li.chapter.auto-open > a { font-weight: 700; }
+/* Show all nested UL of chapters marked as auto-open */
+.book-summary ul.summary li.chapter.auto-open > ul { 
+  display: block !important; 
+}
+
+/* Make parent level headings bold when expanded */
+.book-summary ul.summary li.chapter.auto-open > a { 
+  font-weight: 700; 
+}
+
+/* Highlight the actual active item with color and bold */
+.book-summary ul.summary li.chapter.active > a { 
+  font-weight: 700 !important;
+  color: #0078D4 !important;
+}
+
+/* Ensure proper indentation for nested levels */
+.book-summary ul.summary li.chapter ul li.chapter { 
+  padding-left: 0; 
+}
 </style>
 <div id="stata" class="section level1 hasAnchor" number="14">
 <h1><span class="header-section-number">Chapter 14</span> Stata<a href="14-stata.html#stata" class="anchor-section" aria-label="Anchor link to header"></a></h1>
@@ -948,6 +1008,8 @@ document.addEventListener('DOMContentLoaded', function() {
 </ul></li>
 </ul>
 <p><span class="env-green"><code>help &lt;cmd_name&gt;</code></span>: Get help for a command in Stata console.</p>
+<p>For instance, type <code>help estimates</code> to get help for <code>estimates</code> command in Stata. If there are official documentation for the command, you will see “View complete PDF manual entry” hyperlink at the top of the help page. Click on it to view the complete PDF manual.</p>
+<p><img src="images/stata%20help%20page.png" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:60%;" /></p>
 <p>Overview of <a href="https://www.stata.com/features/documentation/">Documentation</a>:</p>
 <ul>
 <li><p>[U] User’s Guide: is divided into three sections: Stata basics, Elements of Stata, and Advice.</p>
@@ -987,8 +1049,8 @@ document.addEventListener('DOMContentLoaded', function() {
 <p>Within the Stata interface window, there are five windows: Command, Results, History, Properties, and Variables.</p>
 <p><img src="https://drive.google.com/thumbnail?id=1VDcZ6w7Ie8lqYKJxF7zJlUiXqH4WxDaw&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" /></p>
 <p>Output appears in the Results window. E.g.,</p>
-<div class="sourceCode" id="cb915"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb915-1"><a href="14-stata.html#cb915-1" tabindex="-1"></a>. <span class="kw">sysuse</span> auto, <span class="kw">clear</span></span>
-<span id="cb915-2"><a href="14-stata.html#cb915-2" tabindex="-1"></a>(1978 Automobile Data)</span></code></pre></div>
+<div class="sourceCode" id="cb918"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb918-1"><a href="14-stata.html#cb918-1" tabindex="-1"></a>. <span class="kw">sysuse</span> auto, <span class="kw">clear</span></span>
+<span id="cb918-2"><a href="14-stata.html#cb918-2" tabindex="-1"></a>(1978 Automobile Data)</span></code></pre></div>
 <p>The dot (<code>.</code>) indicates that the current line is a Stata command.</p>
 <p><code>&gt;</code> indicates that the command is not yet complete. You will see this when you have a command that spans multiple lines.</p>
 <p>While Stata can be command-driven by typing code in the Command window, it can also be used in a <strong>point-and-click</strong> manner using the menu bar.</p>
@@ -1011,9 +1073,9 @@ document.addEventListener('DOMContentLoaded', function() {
 <p><strong>Do-file Rule of Thumb</strong></p>
 <ul>
 <li><p>Your <code>.do</code> file begins with loading a dataset and ends with saving one.</p>
-<div class="sourceCode" id="cb917"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb917-1"><a href="14-stata.html#cb917-1" tabindex="-1"></a><span class="kw">use</span> ..., <span class="kw">clear</span> <span class="co">// begin</span></span>
-<span id="cb917-2"><a href="14-stata.html#cb917-2" tabindex="-1"></a><span class="co">/* your code */</span></span>
-<span id="cb917-3"><a href="14-stata.html#cb917-3" tabindex="-1"></a><span class="kw">save</span> ..., <span class="kw">replace</span> <span class="co">// end</span></span></code></pre></div></li>
+<div class="sourceCode" id="cb920"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb920-1"><a href="14-stata.html#cb920-1" tabindex="-1"></a><span class="kw">use</span> ..., <span class="kw">clear</span> <span class="co">// begin</span></span>
+<span id="cb920-2"><a href="14-stata.html#cb920-2" tabindex="-1"></a><span class="co">/* your code */</span></span>
+<span id="cb920-3"><a href="14-stata.html#cb920-3" tabindex="-1"></a><span class="kw">save</span> ..., <span class="kw">replace</span> <span class="co">// end</span></span></code></pre></div></li>
 <li><p>Never modify the raw data files. Save the results of your data cleaning in a new file.</p></li>
 <li><p>Every data file is created by a script. Convert your interactive data cleaning session to a <code>.do</code> file.</p></li>
 <li><p>No data file is modified by multiple scripts.</p></li>
@@ -1054,33 +1116,33 @@ document.addEventListener('DOMContentLoaded', function() {
 <p>Summary of ways to break long lines:</p>
 <ul>
 <li><p>You can change the end-of-line delimiter to <code>;</code> by using <code>#delimit</code>,</p>
-<div class="sourceCode" id="cb918"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb918-1"><a href="14-stata.html#cb918-1" tabindex="-1"></a>#delimit ; <span class="co">// change the line delimiter to semicolon</span></span>
-<span id="cb918-2"><a href="14-stata.html#cb918-2" tabindex="-1"></a><span class="kw">summarize</span> <span class="kw">weight</span> price displ headroom rep78 <span class="fu">length</span> turn gear_ratio</span>
-<span id="cb918-3"><a href="14-stata.html#cb918-3" tabindex="-1"></a>    <span class="kw">if</span> <span class="fu">substr</span>(company,1,4)==<span class="st">&quot;Ford&quot;</span> |</span>
-<span id="cb918-4"><a href="14-stata.html#cb918-4" tabindex="-1"></a>       <span class="fu">substr</span>(company,1,2)==<span class="st">&quot;GM&quot;</span>, <span class="kw">detail</span> ;</span>
-<span id="cb918-5"><a href="14-stata.html#cb918-5" tabindex="-1"></a><span class="kw">gen</span> <span class="kw">byte</span> ford = <span class="fu">substr</span>(company,1,4)==<span class="st">&quot;Ford&quot;</span> ;</span>
-<span id="cb918-6"><a href="14-stata.html#cb918-6" tabindex="-1"></a>#delimit <span class="kw">cr</span> <span class="co">// change the delimiter back to carriage return</span></span>
-<span id="cb918-7"><a href="14-stata.html#cb918-7" tabindex="-1"></a><span class="kw">gen</span> <span class="kw">byte</span> gm = <span class="fu">substr</span>(company,1,2)==<span class="st">&quot;GM&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb921"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb921-1"><a href="14-stata.html#cb921-1" tabindex="-1"></a>#delimit ; <span class="co">// change the line delimiter to semicolon</span></span>
+<span id="cb921-2"><a href="14-stata.html#cb921-2" tabindex="-1"></a><span class="kw">summarize</span> <span class="kw">weight</span> price displ headroom rep78 <span class="fu">length</span> turn gear_ratio</span>
+<span id="cb921-3"><a href="14-stata.html#cb921-3" tabindex="-1"></a>    <span class="kw">if</span> <span class="fu">substr</span>(company,1,4)==<span class="st">&quot;Ford&quot;</span> |</span>
+<span id="cb921-4"><a href="14-stata.html#cb921-4" tabindex="-1"></a>       <span class="fu">substr</span>(company,1,2)==<span class="st">&quot;GM&quot;</span>, <span class="kw">detail</span> ;</span>
+<span id="cb921-5"><a href="14-stata.html#cb921-5" tabindex="-1"></a><span class="kw">gen</span> <span class="kw">byte</span> ford = <span class="fu">substr</span>(company,1,4)==<span class="st">&quot;Ford&quot;</span> ;</span>
+<span id="cb921-6"><a href="14-stata.html#cb921-6" tabindex="-1"></a>#delimit <span class="kw">cr</span> <span class="co">// change the delimiter back to carriage return</span></span>
+<span id="cb921-7"><a href="14-stata.html#cb921-7" tabindex="-1"></a><span class="kw">gen</span> <span class="kw">byte</span> gm = <span class="fu">substr</span>(company,1,2)==<span class="st">&quot;GM&quot;</span></span></code></pre></div>
 <p>Once you declear <code>#delimit ;</code>, all lines must end in <code>;</code>. Stata treats carriage returns as no different from blanks.</p></li>
 <li><p>you can comment out the line break by using <code>/* */</code> comment delimiters, or</p></li>
 <li><p>you can use the <code>///</code> line-join indicator.</p></li>
 </ul>
 <p>Example</p>
-<div class="sourceCode" id="cb919"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb919-1"><a href="14-stata.html#cb919-1" tabindex="-1"></a><span class="kw">replace</span> final_result = <span class="co">///</span></span>
-<span id="cb919-2"><a href="14-stata.html#cb919-2" tabindex="-1"></a>    <span class="fu">sqrt</span>(first_side^2 + second_side^2) <span class="co">///</span></span>
-<span id="cb919-3"><a href="14-stata.html#cb919-3" tabindex="-1"></a>    <span class="kw">if</span> <span class="dv">type</span> == <span class="st">&quot;rectangle&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb922"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb922-1"><a href="14-stata.html#cb922-1" tabindex="-1"></a><span class="kw">replace</span> final_result = <span class="co">///</span></span>
+<span id="cb922-2"><a href="14-stata.html#cb922-2" tabindex="-1"></a>    <span class="fu">sqrt</span>(first_side^2 + second_side^2) <span class="co">///</span></span>
+<span id="cb922-3"><a href="14-stata.html#cb922-3" tabindex="-1"></a>    <span class="kw">if</span> <span class="dv">type</span> == <span class="st">&quot;rectangle&quot;</span></span></code></pre></div>
 <p>equivalently, you can use <code>/* */</code> to break long lines:</p>
-<div class="sourceCode" id="cb920"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb920-1"><a href="14-stata.html#cb920-1" tabindex="-1"></a><span class="kw">replace</span> final_result = <span class="co">/*</span></span>
-<span id="cb920-2"><a href="14-stata.html#cb920-2" tabindex="-1"></a><span class="co">    */</span> <span class="fu">sqrt</span>(first_side^2 + second_side^2) <span class="co">/*</span></span>
-<span id="cb920-3"><a href="14-stata.html#cb920-3" tabindex="-1"></a><span class="co">    */</span> <span class="kw">if</span> <span class="dv">type</span> == <span class="st">&quot;rectangle&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb923"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb923-1"><a href="14-stata.html#cb923-1" tabindex="-1"></a><span class="kw">replace</span> final_result = <span class="co">/*</span></span>
+<span id="cb923-2"><a href="14-stata.html#cb923-2" tabindex="-1"></a><span class="co">    */</span> <span class="fu">sqrt</span>(first_side^2 + second_side^2) <span class="co">/*</span></span>
+<span id="cb923-3"><a href="14-stata.html#cb923-3" tabindex="-1"></a><span class="co">    */</span> <span class="kw">if</span> <span class="dv">type</span> == <span class="st">&quot;rectangle&quot;</span></span></code></pre></div>
 <p>N.B. There’s NO line continuation marker (<code>///</code>) in the command window.</p>
 <p>In the command window, the enter key sends what has been written on the line to Stata. There is no way to continue a long command on a second line, without sending the first (incomplete) line to Stata.</p>
 <p>You can add comments after <code>///</code>.</p>
-<div class="sourceCode" id="cb921"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb921-1"><a href="14-stata.html#cb921-1" tabindex="-1"></a><span class="kw">args</span> a <span class="co">/// input parameter for a</span></span>
-<span id="cb921-2"><a href="14-stata.html#cb921-2" tabindex="-1"></a>     b <span class="co">/// input parameter for b</span></span>
-<span id="cb921-3"><a href="14-stata.html#cb921-3" tabindex="-1"></a>     c <span class="co">// input parameter for c</span></span></code></pre></div>
+<div class="sourceCode" id="cb924"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb924-1"><a href="14-stata.html#cb924-1" tabindex="-1"></a><span class="kw">args</span> a <span class="co">/// input parameter for a</span></span>
+<span id="cb924-2"><a href="14-stata.html#cb924-2" tabindex="-1"></a>     b <span class="co">/// input parameter for b</span></span>
+<span id="cb924-3"><a href="14-stata.html#cb924-3" tabindex="-1"></a>     c <span class="co">// input parameter for c</span></span></code></pre></div>
 <p>is equivalent to</p>
-<div class="sourceCode" id="cb922"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb922-1"><a href="14-stata.html#cb922-1" tabindex="-1"></a><span class="kw">args</span> a b c</span></code></pre></div>
+<div class="sourceCode" id="cb925"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb925-1"><a href="14-stata.html#cb925-1" tabindex="-1"></a><span class="kw">args</span> a b c</span></code></pre></div>
 <hr />
 <p><code>cd "directory_name"</code> change <strong>working directory</strong>.</p>
 <ul>
@@ -1091,10 +1153,10 @@ document.addEventListener('DOMContentLoaded', function() {
 <p><code>exit, clear</code> to quit Stata. If the dataset in memory has changed since the last time it was saved, Stata will refuse to quit unless you specify <code>clear</code>.</p>
 <hr />
 <p><strong>Abbreviation rules</strong>: Stata allows abbreviations. You can abbreviate commands, variable names, and options.</p>
-<div class="sourceCode" id="cb923"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb923-1"><a href="14-stata.html#cb923-1" tabindex="-1"></a><span class="co">// full command</span></span>
-<span id="cb923-2"><a href="14-stata.html#cb923-2" tabindex="-1"></a>. <span class="kw">summarize</span> myvar, <span class="kw">detail</span></span>
-<span id="cb923-3"><a href="14-stata.html#cb923-3" tabindex="-1"></a><span class="co">// use abbr. to achieve the same function</span></span>
-<span id="cb923-4"><a href="14-stata.html#cb923-4" tabindex="-1"></a>. <span class="kw">sum</span> myv, <span class="kw">d</span></span></code></pre></div>
+<div class="sourceCode" id="cb926"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb926-1"><a href="14-stata.html#cb926-1" tabindex="-1"></a><span class="co">// full command</span></span>
+<span id="cb926-2"><a href="14-stata.html#cb926-2" tabindex="-1"></a>. <span class="kw">summarize</span> myvar, <span class="kw">detail</span></span>
+<span id="cb926-3"><a href="14-stata.html#cb926-3" tabindex="-1"></a><span class="co">// use abbr. to achieve the same function</span></span>
+<span id="cb926-4"><a href="14-stata.html#cb926-4" tabindex="-1"></a>. <span class="kw">sum</span> myv, <span class="kw">d</span></span></code></pre></div>
 <p>As a general rule, command, option, and variable names may be abbreviated to the shortest string of characters that uniquely identifies them.</p>
 <p>When you read the Stata manual, it uses underlines to denote the minimal abbreviation for a command or option.</p>
 <p>E.g. When you see <span style="font-family: monospace"><u>ap</u>pend</span>, it means you can use <code>ap</code> to denote <code>append</code>.

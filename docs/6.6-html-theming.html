@@ -654,8 +654,8 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="8.8" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html"><i class="fa fa-check"></i><b>8.8</b> Data Frame Operations</a>
 <ul>
-<li class="chapter" data-level="" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#columnrow-wise-operations"><i class="fa fa-check"></i>Column/Row-wise Operations</a></li>
-<li class="chapter" data-level="8.8.1" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#process-na-values"><i class="fa fa-check"></i><b>8.8.1</b> <span class="env-green"><strong>Process <code>NA</code> values</strong></span></a></li>
+<li class="chapter" data-level="8.8.1" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#columnrow-wise-operations"><i class="fa fa-check"></i><b>8.8.1</b> Column/Row-wise Operations</a></li>
+<li class="chapter" data-level="8.8.2" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#process-na-values"><i class="fa fa-check"></i><b>8.8.2</b> <span class="env-green"><strong>Process <code>NA</code> values</strong></span></a></li>
 </ul></li>
 <li class="chapter" data-level="8.9" data-path="8.9-matrix-multiplication.html"><a href="8.9-matrix-multiplication.html"><i class="fa fa-check"></i><b>8.9</b> Matrix multiplication</a></li>
 <li class="chapter" data-level="8.10" data-path="8.10-string-operations.html"><a href="8.10-string-operations.html"><i class="fa fa-check"></i><b>8.10</b> String Operations</a></li>
@@ -868,17 +868,47 @@ function myFunction(id) {
   x.style.display = (x.style.display === 'none') ? 'block' : 'none';
 }
 
-// Auto-expand active top-level section so its level 2/3 items are visible
+// Auto-expand active section and keep all siblings within the same level 1 section open
 document.addEventListener('DOMContentLoaded', function() {
   try {
     var summary = document.querySelector('.book-summary ul.summary');
     if (!summary) return;
 
     function applyAutoOpen() {
-      // Clear previous
-      summary.querySelectorAll('li.chapter.auto-open').forEach(function(li){ li.classList.remove('auto-open'); });
+      // Find the active item (could be level 1, 2, or 3)
       var active = summary.querySelector('li.chapter.active');
-      if (active) active.classList.add('auto-open');
+      if (!active) return;
+      
+      // Find the top-level (level 1) chapter containing the active item
+      var topLevelChapter = active.closest('ul.summary > li.chapter');
+      if (!topLevelChapter) return;
+      
+      // Collapse all other top-level chapters
+      summary.querySelectorAll('ul.summary > li.chapter').forEach(function(chapter) {
+        if (chapter !== topLevelChapter) {
+          chapter.classList.remove('auto-open');
+          // Collapse all nested items in other chapters
+          chapter.querySelectorAll('li.chapter').forEach(function(nested) {
+            nested.classList.remove('auto-open');
+          });
+        }
+      });
+      
+      // Expand the active top-level chapter
+      topLevelChapter.classList.add('auto-open');
+      
+      // Expand ALL level 2 and level 3 items within this top-level chapter
+      topLevelChapter.querySelectorAll('li.chapter').forEach(function(nested) {
+        nested.classList.add('auto-open');
+      });
+      
+      // Scroll the active TOC item to the center of the TOC panel
+      setTimeout(function() {
+        var activeLink = active.querySelector('a');
+        if (activeLink) {
+          activeLink.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
     }
 
     applyAutoOpen();
@@ -894,14 +924,14 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-// Toggle collapse: clicking an expanded section collapses it
+// Toggle collapse: clicking level 1 heading expands/collapses all sublevels
 document.addEventListener('DOMContentLoaded', function() {
   try {
     var summary = document.querySelector('.book-summary ul.summary');
     if (!summary) return;
 
-    // Add click handlers to chapter links with children
-    summary.querySelectorAll('li.chapter').forEach(function(chapter) {
+    // Add click handlers only to top-level chapter links with children
+    summary.querySelectorAll('ul.summary > li.chapter').forEach(function(chapter) {
       var sublist = chapter.querySelector('ul');
       if (!sublist) return; // Only chapters with subsections
 
@@ -913,15 +943,28 @@ document.addEventListener('DOMContentLoaded', function() {
         var isExpanded = chapter.classList.contains('auto-open');
         
         if (isExpanded) {
-          // Collapse it
+          // Collapse it and all nested items
           e.preventDefault();
           chapter.classList.remove('auto-open');
+          // Also collapse all level 2 and level 3 items
+          chapter.querySelectorAll('li.chapter.auto-open').forEach(function(nested) {
+            nested.classList.remove('auto-open');
+          });
         } else {
-          // Expand it (remove auto-open from others first)
-          summary.querySelectorAll('li.chapter.auto-open').forEach(function(li) {
-            if (li !== chapter) li.classList.remove('auto-open');
+          // Expand it (collapse other top-level chapters first)
+          summary.querySelectorAll('ul.summary > li.chapter.auto-open').forEach(function(li) {
+            if (li !== chapter) {
+              li.classList.remove('auto-open');
+              li.querySelectorAll('li.chapter.auto-open').forEach(function(nested) {
+                nested.classList.remove('auto-open');
+              });
+            }
           });
           chapter.classList.add('auto-open');
+          // Expand all level 2 items within this chapter
+          chapter.querySelectorAll('ul > li.chapter').forEach(function(level2) {
+            level2.classList.add('auto-open');
+          });
         }
       });
     });
@@ -931,38 +974,55 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 <style>
-/* Show nested UL of active chapter when collapse=section */
-.book-summary ul.summary li.chapter.auto-open ul { display: block !important; }
-.book-summary ul.summary li.chapter.auto-open > a { font-weight: 700; }
+/* Show all nested UL of chapters marked as auto-open */
+.book-summary ul.summary li.chapter.auto-open > ul { 
+  display: block !important; 
+}
+
+/* Make parent level headings bold when expanded */
+.book-summary ul.summary li.chapter.auto-open > a { 
+  font-weight: 700; 
+}
+
+/* Highlight the actual active item with color and bold */
+.book-summary ul.summary li.chapter.active > a { 
+  font-weight: 700 !important;
+  color: #0078D4 !important;
+}
+
+/* Ensure proper indentation for nested levels */
+.book-summary ul.summary li.chapter ul li.chapter { 
+  padding-left: 0; 
+}
 </style>
 <div id="html-theming" class="section level2 hasAnchor" number="6.6">
 <h2><span class="header-section-number">6.6</span> HTML Theming<a href="6.6-html-theming.html#html-theming" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>One simple theme</p>
-<div class="sourceCode" id="cb364"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb364-1"><a href="6.6-html-theming.html#cb364-1" tabindex="-1"></a><span class="fu">title</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;My Document&quot;</span></span>
-<span id="cb364-2"><a href="6.6-html-theming.html#cb364-2" tabindex="-1"></a><span class="fu">format</span><span class="kw">:</span></span>
-<span id="cb364-3"><a href="6.6-html-theming.html#cb364-3" tabindex="-1"></a><span class="at">  </span><span class="fu">html</span><span class="kw">:</span><span class="at"> </span></span>
-<span id="cb364-4"><a href="6.6-html-theming.html#cb364-4" tabindex="-1"></a><span class="at">    </span><span class="fu">theme</span><span class="kw">:</span><span class="at"> cosmo</span></span>
-<span id="cb364-5"><a href="6.6-html-theming.html#cb364-5" tabindex="-1"></a><span class="at">    </span><span class="fu">fontsize</span><span class="kw">:</span><span class="at"> 14pt</span></span>
-<span id="cb364-6"><a href="6.6-html-theming.html#cb364-6" tabindex="-1"></a><span class="at">    </span><span class="fu">linestretch</span><span class="kw">:</span><span class="at"> </span><span class="fl">1.7</span></span>
-<span id="cb364-7"><a href="6.6-html-theming.html#cb364-7" tabindex="-1"></a><span class="at">    </span><span class="fu">toc</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
-<span id="cb364-8"><a href="6.6-html-theming.html#cb364-8" tabindex="-1"></a><span class="at">    </span><span class="fu">css</span><span class="kw">:</span><span class="at"> /Users/menghan/Library/CloudStorage/OneDrive-Norduniversitet/_shared-resources/custom-style.css</span></span>
-<span id="cb364-9"><a href="6.6-html-theming.html#cb364-9" tabindex="-1"></a><span class="at">    </span><span class="fu">self-contained</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
-<span id="cb364-10"><a href="6.6-html-theming.html#cb364-10" tabindex="-1"></a><span class="at">    </span><span class="fu">html-math-method</span><span class="kw">:</span><span class="at"> mathjax</span></span>
-<span id="cb364-11"><a href="6.6-html-theming.html#cb364-11" tabindex="-1"></a><span class="at">    </span><span class="fu">include-in-header</span><span class="kw">:</span><span class="at"> /Users/menghan/Library/CloudStorage/OneDrive-Norduniversitet/_shared-resources/mathjax.html</span></span>
-<span id="cb364-12"><a href="6.6-html-theming.html#cb364-12" tabindex="-1"></a><span class="at">    </span><span class="fu">grid</span><span class="kw">:</span></span>
-<span id="cb364-13"><a href="6.6-html-theming.html#cb364-13" tabindex="-1"></a><span class="at">      </span><span class="fu">body-width</span><span class="kw">:</span><span class="at"> 1000px</span></span></code></pre></div>
+<div class="sourceCode" id="cb366"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb366-1"><a href="6.6-html-theming.html#cb366-1" tabindex="-1"></a><span class="fu">title</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;My Document&quot;</span></span>
+<span id="cb366-2"><a href="6.6-html-theming.html#cb366-2" tabindex="-1"></a><span class="fu">format</span><span class="kw">:</span></span>
+<span id="cb366-3"><a href="6.6-html-theming.html#cb366-3" tabindex="-1"></a><span class="at">  </span><span class="fu">html</span><span class="kw">:</span><span class="at"> </span></span>
+<span id="cb366-4"><a href="6.6-html-theming.html#cb366-4" tabindex="-1"></a><span class="at">    </span><span class="fu">theme</span><span class="kw">:</span><span class="at"> cosmo</span></span>
+<span id="cb366-5"><a href="6.6-html-theming.html#cb366-5" tabindex="-1"></a><span class="at">    </span><span class="fu">fontsize</span><span class="kw">:</span><span class="at"> 14pt</span></span>
+<span id="cb366-6"><a href="6.6-html-theming.html#cb366-6" tabindex="-1"></a><span class="at">    </span><span class="fu">linestretch</span><span class="kw">:</span><span class="at"> </span><span class="fl">1.7</span></span>
+<span id="cb366-7"><a href="6.6-html-theming.html#cb366-7" tabindex="-1"></a><span class="at">    </span><span class="fu">toc</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb366-8"><a href="6.6-html-theming.html#cb366-8" tabindex="-1"></a><span class="at">    </span><span class="fu">css</span><span class="kw">:</span><span class="at"> /Users/menghan/Library/CloudStorage/OneDrive-Norduniversitet/_shared-resources/custom-style.css</span></span>
+<span id="cb366-9"><a href="6.6-html-theming.html#cb366-9" tabindex="-1"></a><span class="at">    </span><span class="fu">self-contained</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb366-10"><a href="6.6-html-theming.html#cb366-10" tabindex="-1"></a><span class="at">    </span><span class="fu">html-math-method</span><span class="kw">:</span><span class="at"> mathjax</span></span>
+<span id="cb366-11"><a href="6.6-html-theming.html#cb366-11" tabindex="-1"></a><span class="at">    </span><span class="fu">include-in-header</span><span class="kw">:</span><span class="at"> /Users/menghan/Library/CloudStorage/OneDrive-Norduniversitet/_shared-resources/mathjax.html</span></span>
+<span id="cb366-12"><a href="6.6-html-theming.html#cb366-12" tabindex="-1"></a><span class="at">    </span><span class="fu">grid</span><span class="kw">:</span></span>
+<span id="cb366-13"><a href="6.6-html-theming.html#cb366-13" tabindex="-1"></a><span class="at">      </span><span class="fu">body-width</span><span class="kw">:</span><span class="at"> 1000px</span></span></code></pre></div>
 <p><code>fontsize</code>: set base font size. Can be set in absolute units like <code>16px</code>, <code>14pt</code>, or relative units like <code>1.2em</code>, <code>120%</code>.
 See <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/font-size">HERE</a> for an overview of CSS font-size units.</p>
 <p><code>gird/body-width</code>: set the max width of the page content. By default, Quarto uses 800px. If you want to use the full width of the page, use <code>page-layout: full</code> instead.</p>
 <hr />
 <p>Enable <strong>dark and light</strong> modes</p>
-<div class="sourceCode" id="cb365"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb365-1"><a href="6.6-html-theming.html#cb365-1" tabindex="-1"></a><span class="fu">format</span><span class="kw">:</span></span>
-<span id="cb365-2"><a href="6.6-html-theming.html#cb365-2" tabindex="-1"></a><span class="at">  </span><span class="fu">html</span><span class="kw">:</span></span>
-<span id="cb365-3"><a href="6.6-html-theming.html#cb365-3" tabindex="-1"></a><span class="at">    </span><span class="fu">include-in-header</span><span class="kw">:</span><span class="at"> themes/mathjax.html</span></span>
-<span id="cb365-4"><a href="6.6-html-theming.html#cb365-4" tabindex="-1"></a><span class="at">    </span><span class="fu">respect-user-color-scheme</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
-<span id="cb365-5"><a href="6.6-html-theming.html#cb365-5" tabindex="-1"></a><span class="at">    </span><span class="fu">theme</span><span class="kw">:</span></span>
-<span id="cb365-6"><a href="6.6-html-theming.html#cb365-6" tabindex="-1"></a><span class="at">      </span><span class="fu">dark</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">cosmo</span><span class="kw">,</span><span class="at"> themes/cosmo-dark.scss</span><span class="kw">]</span></span>
-<span id="cb365-7"><a href="6.6-html-theming.html#cb365-7" tabindex="-1"></a><span class="at">      </span><span class="fu">light</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">cosmo</span><span class="kw">,</span><span class="at"> themes/cosmo-light.scss</span><span class="kw">]</span></span></code></pre></div>
+<div class="sourceCode" id="cb367"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb367-1"><a href="6.6-html-theming.html#cb367-1" tabindex="-1"></a><span class="fu">format</span><span class="kw">:</span></span>
+<span id="cb367-2"><a href="6.6-html-theming.html#cb367-2" tabindex="-1"></a><span class="at">  </span><span class="fu">html</span><span class="kw">:</span></span>
+<span id="cb367-3"><a href="6.6-html-theming.html#cb367-3" tabindex="-1"></a><span class="at">    </span><span class="fu">include-in-header</span><span class="kw">:</span><span class="at"> themes/mathjax.html</span></span>
+<span id="cb367-4"><a href="6.6-html-theming.html#cb367-4" tabindex="-1"></a><span class="at">    </span><span class="fu">respect-user-color-scheme</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb367-5"><a href="6.6-html-theming.html#cb367-5" tabindex="-1"></a><span class="at">    </span><span class="fu">theme</span><span class="kw">:</span></span>
+<span id="cb367-6"><a href="6.6-html-theming.html#cb367-6" tabindex="-1"></a><span class="at">      </span><span class="fu">dark</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">cosmo</span><span class="kw">,</span><span class="at"> themes/cosmo-dark.scss</span><span class="kw">]</span></span>
+<span id="cb367-7"><a href="6.6-html-theming.html#cb367-7" tabindex="-1"></a><span class="at">      </span><span class="fu">light</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">cosmo</span><span class="kw">,</span><span class="at"> themes/cosmo-light.scss</span><span class="kw">]</span></span></code></pre></div>
 <ul>
 <li>See <a href="https://quarto.org/docs/output-formats/html-basics.html">HTML basic yaml</a> for basic option settings.</li>
 <li>See <a href="https://quarto.org/docs/reference/formats/html.html">HTML format reference</a> for a complete list of all available options.</li>
@@ -975,14 +1035,14 @@ See <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properti
 <div id="custom-themes" class="section level3 unnumbered hasAnchor">
 <h3>Custom Themes<a href="6.6-html-theming.html#custom-themes" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Your <code>custom.scss</code> file might look something like this:</p>
-<div class="sourceCode" id="cb366"><pre class="sourceCode css"><code class="sourceCode css"><span id="cb366-1"><a href="6.6-html-theming.html#cb366-1" tabindex="-1"></a><span class="co">/*-- scss:defaults --*/</span></span>
-<span id="cb366-2"><a href="6.6-html-theming.html#cb366-2" tabindex="-1"></a>$h2-font-size<span class="in">:</span>          1<span class="fu">.6rem</span> !default;</span>
-<span id="cb366-3"><a href="6.6-html-theming.html#cb366-3" tabindex="-1"></a>$headings-font-weight<span class="in">:</span>  500 !default;</span>
-<span id="cb366-4"><a href="6.6-html-theming.html#cb366-4" tabindex="-1"></a></span>
-<span id="cb366-5"><a href="6.6-html-theming.html#cb366-5" tabindex="-1"></a><span class="co">/*-- scss:rules --*/</span></span>
-<span id="cb366-6"><a href="6.6-html-theming.html#cb366-6" tabindex="-1"></a>h1<span class="op">,</span> h2<span class="op">,</span> h3<span class="op">,</span> h4<span class="op">,</span> h5<span class="op">,</span> h6 {</span>
-<span id="cb366-7"><a href="6.6-html-theming.html#cb366-7" tabindex="-1"></a>  <span class="kw">text-shadow</span><span class="ch">:</span> <span class="dv">-1</span><span class="dt">px</span> <span class="dv">-1</span><span class="dt">px</span> <span class="dv">0</span> <span class="fu">rgba(</span><span class="dv">0</span><span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="dv">.3</span><span class="fu">)</span><span class="op">;</span></span>
-<span id="cb366-8"><a href="6.6-html-theming.html#cb366-8" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb368"><pre class="sourceCode css"><code class="sourceCode css"><span id="cb368-1"><a href="6.6-html-theming.html#cb368-1" tabindex="-1"></a><span class="co">/*-- scss:defaults --*/</span></span>
+<span id="cb368-2"><a href="6.6-html-theming.html#cb368-2" tabindex="-1"></a>$h2-font-size<span class="in">:</span>          1<span class="fu">.6rem</span> !default;</span>
+<span id="cb368-3"><a href="6.6-html-theming.html#cb368-3" tabindex="-1"></a>$headings-font-weight<span class="in">:</span>  500 !default;</span>
+<span id="cb368-4"><a href="6.6-html-theming.html#cb368-4" tabindex="-1"></a></span>
+<span id="cb368-5"><a href="6.6-html-theming.html#cb368-5" tabindex="-1"></a><span class="co">/*-- scss:rules --*/</span></span>
+<span id="cb368-6"><a href="6.6-html-theming.html#cb368-6" tabindex="-1"></a>h1<span class="op">,</span> h2<span class="op">,</span> h3<span class="op">,</span> h4<span class="op">,</span> h5<span class="op">,</span> h6 {</span>
+<span id="cb368-7"><a href="6.6-html-theming.html#cb368-7" tabindex="-1"></a>  <span class="kw">text-shadow</span><span class="ch">:</span> <span class="dv">-1</span><span class="dt">px</span> <span class="dv">-1</span><span class="dt">px</span> <span class="dv">0</span> <span class="fu">rgba(</span><span class="dv">0</span><span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="dv">.3</span><span class="fu">)</span><span class="op">;</span></span>
+<span id="cb368-8"><a href="6.6-html-theming.html#cb368-8" tabindex="-1"></a>}</span></code></pre></div>
 <p>Note that the variables section is denoted by</p>
 <ul>
 <li><p><code>/*-- scss:defaults --*/</code>: the defaults section (where Sass variables go)</p>

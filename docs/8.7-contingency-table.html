@@ -654,8 +654,8 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="8.8" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html"><i class="fa fa-check"></i><b>8.8</b> Data Frame Operations</a>
 <ul>
-<li class="chapter" data-level="" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#columnrow-wise-operations"><i class="fa fa-check"></i>Column/Row-wise Operations</a></li>
-<li class="chapter" data-level="8.8.1" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#process-na-values"><i class="fa fa-check"></i><b>8.8.1</b> <span class="env-green"><strong>Process <code>NA</code> values</strong></span></a></li>
+<li class="chapter" data-level="8.8.1" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#columnrow-wise-operations"><i class="fa fa-check"></i><b>8.8.1</b> Column/Row-wise Operations</a></li>
+<li class="chapter" data-level="8.8.2" data-path="8.8-data-frame-operations.html"><a href="8.8-data-frame-operations.html#process-na-values"><i class="fa fa-check"></i><b>8.8.2</b> <span class="env-green"><strong>Process <code>NA</code> values</strong></span></a></li>
 </ul></li>
 <li class="chapter" data-level="8.9" data-path="8.9-matrix-multiplication.html"><a href="8.9-matrix-multiplication.html"><i class="fa fa-check"></i><b>8.9</b> Matrix multiplication</a></li>
 <li class="chapter" data-level="8.10" data-path="8.10-string-operations.html"><a href="8.10-string-operations.html"><i class="fa fa-check"></i><b>8.10</b> String Operations</a></li>
@@ -868,17 +868,47 @@ function myFunction(id) {
   x.style.display = (x.style.display === 'none') ? 'block' : 'none';
 }
 
-// Auto-expand active top-level section so its level 2/3 items are visible
+// Auto-expand active section and keep all siblings within the same level 1 section open
 document.addEventListener('DOMContentLoaded', function() {
   try {
     var summary = document.querySelector('.book-summary ul.summary');
     if (!summary) return;
 
     function applyAutoOpen() {
-      // Clear previous
-      summary.querySelectorAll('li.chapter.auto-open').forEach(function(li){ li.classList.remove('auto-open'); });
+      // Find the active item (could be level 1, 2, or 3)
       var active = summary.querySelector('li.chapter.active');
-      if (active) active.classList.add('auto-open');
+      if (!active) return;
+      
+      // Find the top-level (level 1) chapter containing the active item
+      var topLevelChapter = active.closest('ul.summary > li.chapter');
+      if (!topLevelChapter) return;
+      
+      // Collapse all other top-level chapters
+      summary.querySelectorAll('ul.summary > li.chapter').forEach(function(chapter) {
+        if (chapter !== topLevelChapter) {
+          chapter.classList.remove('auto-open');
+          // Collapse all nested items in other chapters
+          chapter.querySelectorAll('li.chapter').forEach(function(nested) {
+            nested.classList.remove('auto-open');
+          });
+        }
+      });
+      
+      // Expand the active top-level chapter
+      topLevelChapter.classList.add('auto-open');
+      
+      // Expand ALL level 2 and level 3 items within this top-level chapter
+      topLevelChapter.querySelectorAll('li.chapter').forEach(function(nested) {
+        nested.classList.add('auto-open');
+      });
+      
+      // Scroll the active TOC item to the center of the TOC panel
+      setTimeout(function() {
+        var activeLink = active.querySelector('a');
+        if (activeLink) {
+          activeLink.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
     }
 
     applyAutoOpen();
@@ -894,14 +924,14 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-// Toggle collapse: clicking an expanded section collapses it
+// Toggle collapse: clicking level 1 heading expands/collapses all sublevels
 document.addEventListener('DOMContentLoaded', function() {
   try {
     var summary = document.querySelector('.book-summary ul.summary');
     if (!summary) return;
 
-    // Add click handlers to chapter links with children
-    summary.querySelectorAll('li.chapter').forEach(function(chapter) {
+    // Add click handlers only to top-level chapter links with children
+    summary.querySelectorAll('ul.summary > li.chapter').forEach(function(chapter) {
       var sublist = chapter.querySelector('ul');
       if (!sublist) return; // Only chapters with subsections
 
@@ -913,15 +943,28 @@ document.addEventListener('DOMContentLoaded', function() {
         var isExpanded = chapter.classList.contains('auto-open');
         
         if (isExpanded) {
-          // Collapse it
+          // Collapse it and all nested items
           e.preventDefault();
           chapter.classList.remove('auto-open');
+          // Also collapse all level 2 and level 3 items
+          chapter.querySelectorAll('li.chapter.auto-open').forEach(function(nested) {
+            nested.classList.remove('auto-open');
+          });
         } else {
-          // Expand it (remove auto-open from others first)
-          summary.querySelectorAll('li.chapter.auto-open').forEach(function(li) {
-            if (li !== chapter) li.classList.remove('auto-open');
+          // Expand it (collapse other top-level chapters first)
+          summary.querySelectorAll('ul.summary > li.chapter.auto-open').forEach(function(li) {
+            if (li !== chapter) {
+              li.classList.remove('auto-open');
+              li.querySelectorAll('li.chapter.auto-open').forEach(function(nested) {
+                nested.classList.remove('auto-open');
+              });
+            }
           });
           chapter.classList.add('auto-open');
+          // Expand all level 2 items within this chapter
+          chapter.querySelectorAll('ul > li.chapter').forEach(function(level2) {
+            level2.classList.add('auto-open');
+          });
         }
       });
     });
@@ -931,9 +974,26 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 <style>
-/* Show nested UL of active chapter when collapse=section */
-.book-summary ul.summary li.chapter.auto-open ul { display: block !important; }
-.book-summary ul.summary li.chapter.auto-open > a { font-weight: 700; }
+/* Show all nested UL of chapters marked as auto-open */
+.book-summary ul.summary li.chapter.auto-open > ul { 
+  display: block !important; 
+}
+
+/* Make parent level headings bold when expanded */
+.book-summary ul.summary li.chapter.auto-open > a { 
+  font-weight: 700; 
+}
+
+/* Highlight the actual active item with color and bold */
+.book-summary ul.summary li.chapter.active > a { 
+  font-weight: 700 !important;
+  color: #0078D4 !important;
+}
+
+/* Ensure proper indentation for nested levels */
+.book-summary ul.summary li.chapter ul li.chapter { 
+  padding-left: 0; 
+}
 </style>
 <div id="contingency-table" class="section level2 hasAnchor" number="8.7">
 <h2><span class="header-section-number">8.7</span> Contingency Table<a href="8.7-contingency-table.html#contingency-table" class="anchor-section" aria-label="Anchor link to header"></a></h2>
@@ -951,17 +1011,17 @@ document.addEventListener('DOMContentLoaded', function() {
 <li><p><code>wt_var</code> optional variable to weight by - if this is non-NULL, count will sum up the value of this variable for each combination of id variables.</p></li>
 </ul>
 <p><code>df %&gt;% count(a, b)</code> is roughly equivalent to <code>df %&gt;% group_by(a, b) %&gt;% summarise(n = n())</code>. For each combination of <code>(a,b)</code>, count the frequency.</p>
-<div class="sourceCode" id="cb581"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb581-1"><a href="8.7-contingency-table.html#cb581-1" tabindex="-1"></a><span class="co"># Count of each value of &quot;id&quot; in the first 100 cases</span></span>
-<span id="cb581-2"><a href="8.7-contingency-table.html#cb581-2" tabindex="-1"></a><span class="fu">count</span>(baseball[<span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>,], <span class="at">vars =</span> <span class="st">&quot;id&quot;</span>)</span>
-<span id="cb581-3"><a href="8.7-contingency-table.html#cb581-3" tabindex="-1"></a></span>
-<span id="cb581-4"><a href="8.7-contingency-table.html#cb581-4" tabindex="-1"></a><span class="co"># Count of ids, weighted by their &quot;g&quot; loading</span></span>
-<span id="cb581-5"><a href="8.7-contingency-table.html#cb581-5" tabindex="-1"></a><span class="fu">count</span>(baseball[<span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>,], <span class="at">vars =</span> <span class="st">&quot;id&quot;</span>, <span class="at">wt_var =</span> <span class="st">&quot;g&quot;</span>)</span>
-<span id="cb581-6"><a href="8.7-contingency-table.html#cb581-6" tabindex="-1"></a></span>
-<span id="cb581-7"><a href="8.7-contingency-table.html#cb581-7" tabindex="-1"></a><span class="co"># exercises is a dummay variable in `her.no`</span></span>
-<span id="cb581-8"><a href="8.7-contingency-table.html#cb581-8" tabindex="-1"></a><span class="fu">count</span>(hers.no, exercise)</span>
-<span id="cb581-9"><a href="8.7-contingency-table.html#cb581-9" tabindex="-1"></a><span class="co">#      exercise     n</span></span>
-<span id="cb581-10"><a href="8.7-contingency-table.html#cb581-10" tabindex="-1"></a><span class="co"># 1        0     1191</span></span>
-<span id="cb581-11"><a href="8.7-contingency-table.html#cb581-11" tabindex="-1"></a><span class="co"># 2        1      841</span></span></code></pre></div>
+<div class="sourceCode" id="cb583"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb583-1"><a href="8.7-contingency-table.html#cb583-1" tabindex="-1"></a><span class="co"># Count of each value of &quot;id&quot; in the first 100 cases</span></span>
+<span id="cb583-2"><a href="8.7-contingency-table.html#cb583-2" tabindex="-1"></a><span class="fu">count</span>(baseball[<span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>,], <span class="at">vars =</span> <span class="st">&quot;id&quot;</span>)</span>
+<span id="cb583-3"><a href="8.7-contingency-table.html#cb583-3" tabindex="-1"></a></span>
+<span id="cb583-4"><a href="8.7-contingency-table.html#cb583-4" tabindex="-1"></a><span class="co"># Count of ids, weighted by their &quot;g&quot; loading</span></span>
+<span id="cb583-5"><a href="8.7-contingency-table.html#cb583-5" tabindex="-1"></a><span class="fu">count</span>(baseball[<span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>,], <span class="at">vars =</span> <span class="st">&quot;id&quot;</span>, <span class="at">wt_var =</span> <span class="st">&quot;g&quot;</span>)</span>
+<span id="cb583-6"><a href="8.7-contingency-table.html#cb583-6" tabindex="-1"></a></span>
+<span id="cb583-7"><a href="8.7-contingency-table.html#cb583-7" tabindex="-1"></a><span class="co"># exercises is a dummay variable in `her.no`</span></span>
+<span id="cb583-8"><a href="8.7-contingency-table.html#cb583-8" tabindex="-1"></a><span class="fu">count</span>(hers.no, exercise)</span>
+<span id="cb583-9"><a href="8.7-contingency-table.html#cb583-9" tabindex="-1"></a><span class="co">#      exercise     n</span></span>
+<span id="cb583-10"><a href="8.7-contingency-table.html#cb583-10" tabindex="-1"></a><span class="co"># 1        0     1191</span></span>
+<span id="cb583-11"><a href="8.7-contingency-table.html#cb583-11" tabindex="-1"></a><span class="co"># 2        1      841</span></span></code></pre></div>
 <p><code>dplyr::tally()</code> works similarly to count, but you need to do <code>group_by</code> first manually. One step more than <code>count</code>.</p>
 <p><code>df %&gt;% group_by(a,b) %&gt;% tally()</code> is equivalent to <code>df %&gt;% group_by(a,b) %&gt;% summarise(n = n())</code>.</p>
 </div>
@@ -978,12 +1038,12 @@ document.addEventListener('DOMContentLoaded', function() {
 <li><span class="env-green">Frequency table</span> if providing one variable</li>
 <li><span class="env-green">Cross tabulation table</span> with proportion if providing multiple variables</li>
 </ul>
-<div class="sourceCode" id="cb582"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb582-1"><a href="8.7-contingency-table.html#cb582-1" tabindex="-1"></a><span class="co"># contingency table between chd69 and smoke</span></span>
-<span id="cb582-2"><a href="8.7-contingency-table.html#cb582-2" tabindex="-1"></a><span class="fu">with</span>(contingency_data, <span class="fu">table</span>(chd69, smoke))</span></code></pre></div>
+<div class="sourceCode" id="cb584"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb584-1"><a href="8.7-contingency-table.html#cb584-1" tabindex="-1"></a><span class="co"># contingency table between chd69 and smoke</span></span>
+<span id="cb584-2"><a href="8.7-contingency-table.html#cb584-2" tabindex="-1"></a><span class="fu">with</span>(contingency_data, <span class="fu">table</span>(chd69, smoke))</span></code></pre></div>
 <p>A relative frequency table can be produced using the function <span class="env-green"><code>prop.table(x, margin=NULL)</code></span>, which takes a table object as argument:</p>
 <p><code>margin</code>: <code>1</code> indicates rows, <code>2</code> indicates columns.</p>
-<div class="sourceCode" id="cb583"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb583-1"><a href="8.7-contingency-table.html#cb583-1" tabindex="-1"></a><span class="fu">with</span>(contingency_data, <span class="fu">table</span>(chd69, smoke)) <span class="sc">%&gt;%</span> </span>
-<span id="cb583-2"><a href="8.7-contingency-table.html#cb583-2" tabindex="-1"></a>        <span class="fu">prop.table</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb585"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb585-1"><a href="8.7-contingency-table.html#cb585-1" tabindex="-1"></a><span class="fu">with</span>(contingency_data, <span class="fu">table</span>(chd69, smoke)) <span class="sc">%&gt;%</span> </span>
+<span id="cb585-2"><a href="8.7-contingency-table.html#cb585-2" tabindex="-1"></a>        <span class="fu">prop.table</span>()</span></code></pre></div>
 <p>Table tutorial: <a href="https://cran.r-project.org/web/packages/DescTools/vignettes/TablesInR.pdf" class="uri">https://cran.r-project.org/web/packages/DescTools/vignettes/TablesInR.pdf</a></p>
 <p><code>table(..., exclude = if (useNA == "no") c(NA, NaN),       useNA = c("no", "ifany", "always"),       dnn = list.names(...), deparse.level = 1)</code></p>
 <p><code>table()</code> is more flexible than <code>count()</code>. <code>table()</code> accepts <u>vectors, lists, data.frames</u>, but <code>count()</code> accepts <u>data.frames only</u>.</p>
@@ -991,55 +1051,55 @@ document.addEventListener('DOMContentLoaded', function() {
 <li><code>...</code> <strong>one or more objects</strong> which can be interpreted as factors (including character strings), or a list (or data frame) whose components can be so interpreted.</li>
 </ul>
 <p>E.x codes:</p>
-<div class="sourceCode" id="cb584"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb584-1"><a href="8.7-contingency-table.html#cb584-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
-<span id="cb584-2"><a href="8.7-contingency-table.html#cb584-2" tabindex="-1"></a>tt <span class="ot">&lt;-</span> <span class="fu">sample</span>(letters, <span class="dv">100</span>, <span class="at">rep=</span><span class="cn">TRUE</span>)</span>
-<span id="cb584-3"><a href="8.7-contingency-table.html#cb584-3" tabindex="-1"></a></span>
-<span id="cb584-4"><a href="8.7-contingency-table.html#cb584-4" tabindex="-1"></a><span class="do">## using table</span></span>
-<span id="cb584-5"><a href="8.7-contingency-table.html#cb584-5" tabindex="-1"></a><span class="fu">table</span>(tt)</span>
-<span id="cb584-6"><a href="8.7-contingency-table.html#cb584-6" tabindex="-1"></a>tt</span>
-<span id="cb584-7"><a href="8.7-contingency-table.html#cb584-7" tabindex="-1"></a>a b c d e f g h i j k l m n o p q r s t u v w x y z </span>
-<span id="cb584-8"><a href="8.7-contingency-table.html#cb584-8" tabindex="-1"></a><span class="dv">2</span> <span class="dv">3</span> <span class="dv">3</span> <span class="dv">3</span> <span class="dv">2</span> <span class="dv">4</span> <span class="dv">6</span> <span class="dv">1</span> <span class="dv">6</span> <span class="dv">5</span> <span class="dv">6</span> <span class="dv">4</span> <span class="dv">7</span> <span class="dv">2</span> <span class="dv">2</span> <span class="dv">2</span> <span class="dv">5</span> <span class="dv">4</span> <span class="dv">5</span> <span class="dv">3</span> <span class="dv">8</span> <span class="dv">4</span> <span class="dv">5</span> <span class="dv">4</span> <span class="dv">3</span> <span class="dv">1</span> </span>
-<span id="cb584-9"><a href="8.7-contingency-table.html#cb584-9" tabindex="-1"></a><span class="do">## using tapply</span></span>
-<span id="cb584-10"><a href="8.7-contingency-table.html#cb584-10" tabindex="-1"></a><span class="fu">tapply</span>(tt, tt, length)</span>
-<span id="cb584-11"><a href="8.7-contingency-table.html#cb584-11" tabindex="-1"></a>a b c d e f g h i j k l m n o p q r s t u v w x y z </span>
-<span id="cb584-12"><a href="8.7-contingency-table.html#cb584-12" tabindex="-1"></a><span class="dv">2</span> <span class="dv">3</span> <span class="dv">3</span> <span class="dv">3</span> <span class="dv">2</span> <span class="dv">4</span> <span class="dv">6</span> <span class="dv">1</span> <span class="dv">6</span> <span class="dv">5</span> <span class="dv">6</span> <span class="dv">4</span> <span class="dv">7</span> <span class="dv">2</span> <span class="dv">2</span> <span class="dv">2</span> <span class="dv">5</span> <span class="dv">4</span> <span class="dv">5</span> <span class="dv">3</span> <span class="dv">8</span> <span class="dv">4</span> <span class="dv">5</span> <span class="dv">4</span> <span class="dv">3</span> <span class="dv">1</span> </span></code></pre></div>
+<div class="sourceCode" id="cb586"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb586-1"><a href="8.7-contingency-table.html#cb586-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb586-2"><a href="8.7-contingency-table.html#cb586-2" tabindex="-1"></a>tt <span class="ot">&lt;-</span> <span class="fu">sample</span>(letters, <span class="dv">100</span>, <span class="at">rep=</span><span class="cn">TRUE</span>)</span>
+<span id="cb586-3"><a href="8.7-contingency-table.html#cb586-3" tabindex="-1"></a></span>
+<span id="cb586-4"><a href="8.7-contingency-table.html#cb586-4" tabindex="-1"></a><span class="do">## using table</span></span>
+<span id="cb586-5"><a href="8.7-contingency-table.html#cb586-5" tabindex="-1"></a><span class="fu">table</span>(tt)</span>
+<span id="cb586-6"><a href="8.7-contingency-table.html#cb586-6" tabindex="-1"></a>tt</span>
+<span id="cb586-7"><a href="8.7-contingency-table.html#cb586-7" tabindex="-1"></a>a b c d e f g h i j k l m n o p q r s t u v w x y z </span>
+<span id="cb586-8"><a href="8.7-contingency-table.html#cb586-8" tabindex="-1"></a><span class="dv">2</span> <span class="dv">3</span> <span class="dv">3</span> <span class="dv">3</span> <span class="dv">2</span> <span class="dv">4</span> <span class="dv">6</span> <span class="dv">1</span> <span class="dv">6</span> <span class="dv">5</span> <span class="dv">6</span> <span class="dv">4</span> <span class="dv">7</span> <span class="dv">2</span> <span class="dv">2</span> <span class="dv">2</span> <span class="dv">5</span> <span class="dv">4</span> <span class="dv">5</span> <span class="dv">3</span> <span class="dv">8</span> <span class="dv">4</span> <span class="dv">5</span> <span class="dv">4</span> <span class="dv">3</span> <span class="dv">1</span> </span>
+<span id="cb586-9"><a href="8.7-contingency-table.html#cb586-9" tabindex="-1"></a><span class="do">## using tapply</span></span>
+<span id="cb586-10"><a href="8.7-contingency-table.html#cb586-10" tabindex="-1"></a><span class="fu">tapply</span>(tt, tt, length)</span>
+<span id="cb586-11"><a href="8.7-contingency-table.html#cb586-11" tabindex="-1"></a>a b c d e f g h i j k l m n o p q r s t u v w x y z </span>
+<span id="cb586-12"><a href="8.7-contingency-table.html#cb586-12" tabindex="-1"></a><span class="dv">2</span> <span class="dv">3</span> <span class="dv">3</span> <span class="dv">3</span> <span class="dv">2</span> <span class="dv">4</span> <span class="dv">6</span> <span class="dv">1</span> <span class="dv">6</span> <span class="dv">5</span> <span class="dv">6</span> <span class="dv">4</span> <span class="dv">7</span> <span class="dv">2</span> <span class="dv">2</span> <span class="dv">2</span> <span class="dv">5</span> <span class="dv">4</span> <span class="dv">5</span> <span class="dv">3</span> <span class="dv">8</span> <span class="dv">4</span> <span class="dv">5</span> <span class="dv">4</span> <span class="dv">3</span> <span class="dv">1</span> </span></code></pre></div>
 <p>Another example:</p>
-<div class="sourceCode" id="cb585"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb585-1"><a href="8.7-contingency-table.html#cb585-1" tabindex="-1"></a>breaks <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">1</span>, <span class="fl">3.5</span>, <span class="at">by=</span><span class="fl">0.5</span>)</span>
-<span id="cb585-2"><a href="8.7-contingency-table.html#cb585-2" tabindex="-1"></a>labels <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fl">1.25</span>, <span class="at">by=</span><span class="fl">0.5</span>, <span class="at">length.out=</span><span class="fu">length</span>(breaks)<span class="sc">-</span><span class="dv">1</span>)</span>
-<span id="cb585-3"><a href="8.7-contingency-table.html#cb585-3" tabindex="-1"></a><span class="fu">cut</span>(x<span class="sc">$</span>TCS_reported, <span class="at">breaks=</span>breaks, <span class="at">labels=</span>labels) <span class="sc">%&gt;%</span> <span class="fu">table</span>()</span>
-<span id="cb585-4"><a href="8.7-contingency-table.html#cb585-4" tabindex="-1"></a><span class="co"># .</span></span>
-<span id="cb585-5"><a href="8.7-contingency-table.html#cb585-5" tabindex="-1"></a><span class="co"># 1.25 1.75 2.25 2.75 3.25 </span></span>
-<span id="cb585-6"><a href="8.7-contingency-table.html#cb585-6" tabindex="-1"></a><span class="co"># 3   10    4    5    0 </span></span>
-<span id="cb585-7"><a href="8.7-contingency-table.html#cb585-7" tabindex="-1"></a><span class="fu">apply</span>(x, <span class="dv">2</span>, <span class="cf">function</span>(col) <span class="fu">cut</span>(col, <span class="at">breaks=</span>breaks, <span class="at">labels=</span>labels) <span class="sc">%&gt;%</span> <span class="fu">table</span>())</span>
-<span id="cb585-8"><a href="8.7-contingency-table.html#cb585-8" tabindex="-1"></a><span class="co">#      TCS_reported TCS_global_cvt</span></span>
-<span id="cb585-9"><a href="8.7-contingency-table.html#cb585-9" tabindex="-1"></a><span class="co"># 1.25            3              2</span></span>
-<span id="cb585-10"><a href="8.7-contingency-table.html#cb585-10" tabindex="-1"></a><span class="co"># 1.75           10              5</span></span>
-<span id="cb585-11"><a href="8.7-contingency-table.html#cb585-11" tabindex="-1"></a><span class="co"># 2.25            4             11</span></span>
-<span id="cb585-12"><a href="8.7-contingency-table.html#cb585-12" tabindex="-1"></a><span class="co"># 2.75            5              2</span></span>
-<span id="cb585-13"><a href="8.7-contingency-table.html#cb585-13" tabindex="-1"></a><span class="co"># 3.25            0              2</span></span></code></pre></div>
+<div class="sourceCode" id="cb587"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb587-1"><a href="8.7-contingency-table.html#cb587-1" tabindex="-1"></a>breaks <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">1</span>, <span class="fl">3.5</span>, <span class="at">by=</span><span class="fl">0.5</span>)</span>
+<span id="cb587-2"><a href="8.7-contingency-table.html#cb587-2" tabindex="-1"></a>labels <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fl">1.25</span>, <span class="at">by=</span><span class="fl">0.5</span>, <span class="at">length.out=</span><span class="fu">length</span>(breaks)<span class="sc">-</span><span class="dv">1</span>)</span>
+<span id="cb587-3"><a href="8.7-contingency-table.html#cb587-3" tabindex="-1"></a><span class="fu">cut</span>(x<span class="sc">$</span>TCS_reported, <span class="at">breaks=</span>breaks, <span class="at">labels=</span>labels) <span class="sc">%&gt;%</span> <span class="fu">table</span>()</span>
+<span id="cb587-4"><a href="8.7-contingency-table.html#cb587-4" tabindex="-1"></a><span class="co"># .</span></span>
+<span id="cb587-5"><a href="8.7-contingency-table.html#cb587-5" tabindex="-1"></a><span class="co"># 1.25 1.75 2.25 2.75 3.25 </span></span>
+<span id="cb587-6"><a href="8.7-contingency-table.html#cb587-6" tabindex="-1"></a><span class="co"># 3   10    4    5    0 </span></span>
+<span id="cb587-7"><a href="8.7-contingency-table.html#cb587-7" tabindex="-1"></a><span class="fu">apply</span>(x, <span class="dv">2</span>, <span class="cf">function</span>(col) <span class="fu">cut</span>(col, <span class="at">breaks=</span>breaks, <span class="at">labels=</span>labels) <span class="sc">%&gt;%</span> <span class="fu">table</span>())</span>
+<span id="cb587-8"><a href="8.7-contingency-table.html#cb587-8" tabindex="-1"></a><span class="co">#      TCS_reported TCS_global_cvt</span></span>
+<span id="cb587-9"><a href="8.7-contingency-table.html#cb587-9" tabindex="-1"></a><span class="co"># 1.25            3              2</span></span>
+<span id="cb587-10"><a href="8.7-contingency-table.html#cb587-10" tabindex="-1"></a><span class="co"># 1.75           10              5</span></span>
+<span id="cb587-11"><a href="8.7-contingency-table.html#cb587-11" tabindex="-1"></a><span class="co"># 2.25            4             11</span></span>
+<span id="cb587-12"><a href="8.7-contingency-table.html#cb587-12" tabindex="-1"></a><span class="co"># 2.75            5              2</span></span>
+<span id="cb587-13"><a href="8.7-contingency-table.html#cb587-13" tabindex="-1"></a><span class="co"># 3.25            0              2</span></span></code></pre></div>
 </div>
 <div id="the-xtabs-function" class="section level4 unnumbered hasAnchor">
 <h4>The <code>xtabs()</code> Function<a href="8.7-contingency-table.html#the-xtabs-function" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p><span class="env-green"><code>xtabs(formula = ~., data)</code></span> Create a <u>contingency table</u> from cross-classfifying factors.</p>
 <p>We now create a cross-tabulated table to see how occurrences break down across age and gender. Notice we use the <code>cut()</code> function to quickly create 4 arbitrary age groups containing equal numbers of people.</p>
-<div class="sourceCode" id="cb586"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb586-1"><a href="8.7-contingency-table.html#cb586-1" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">xtabs</span>(<span class="sc">~</span> <span class="fu">cut</span>(age,<span class="dv">4</span>) <span class="sc">+</span> gender <span class="sc">+</span> y)</span>
-<span id="cb586-2"><a href="8.7-contingency-table.html#cb586-2" tabindex="-1"></a>, , y <span class="ot">=</span> <span class="dv">0</span></span>
-<span id="cb586-3"><a href="8.7-contingency-table.html#cb586-3" tabindex="-1"></a></span>
-<span id="cb586-4"><a href="8.7-contingency-table.html#cb586-4" tabindex="-1"></a>           gender</span>
-<span id="cb586-5"><a href="8.7-contingency-table.html#cb586-5" tabindex="-1"></a><span class="fu">cut</span>(age, <span class="dv">4</span>)  <span class="dv">0</span>  <span class="dv">1</span></span>
-<span id="cb586-6"><a href="8.7-contingency-table.html#cb586-6" tabindex="-1"></a>  (<span class="fl">18.9</span>,<span class="dv">34</span>] <span class="dv">15</span> <span class="dv">10</span></span>
-<span id="cb586-7"><a href="8.7-contingency-table.html#cb586-7" tabindex="-1"></a>  (<span class="dv">34</span>,<span class="dv">49</span>]   <span class="dv">11</span>  <span class="dv">1</span></span>
-<span id="cb586-8"><a href="8.7-contingency-table.html#cb586-8" tabindex="-1"></a>  (<span class="dv">49</span>,<span class="dv">64</span>]    <span class="dv">1</span>  <span class="dv">0</span></span>
-<span id="cb586-9"><a href="8.7-contingency-table.html#cb586-9" tabindex="-1"></a>  (<span class="dv">64</span>,<span class="fl">79.1</span>]  <span class="dv">0</span>  <span class="dv">0</span></span>
-<span id="cb586-10"><a href="8.7-contingency-table.html#cb586-10" tabindex="-1"></a></span>
-<span id="cb586-11"><a href="8.7-contingency-table.html#cb586-11" tabindex="-1"></a>, , <span class="at">y =</span> <span class="dv">1</span></span>
-<span id="cb586-12"><a href="8.7-contingency-table.html#cb586-12" tabindex="-1"></a></span>
-<span id="cb586-13"><a href="8.7-contingency-table.html#cb586-13" tabindex="-1"></a>           gender</span>
-<span id="cb586-14"><a href="8.7-contingency-table.html#cb586-14" tabindex="-1"></a><span class="fu">cut</span>(age, <span class="dv">4</span>)  <span class="dv">0</span>  <span class="dv">1</span></span>
-<span id="cb586-15"><a href="8.7-contingency-table.html#cb586-15" tabindex="-1"></a>  (<span class="fl">18.9</span>,<span class="dv">34</span>]  <span class="dv">2</span>  <span class="dv">4</span></span>
-<span id="cb586-16"><a href="8.7-contingency-table.html#cb586-16" tabindex="-1"></a>  (<span class="dv">34</span>,<span class="dv">49</span>]    <span class="dv">4</span>  <span class="dv">8</span></span>
-<span id="cb586-17"><a href="8.7-contingency-table.html#cb586-17" tabindex="-1"></a>  (<span class="dv">49</span>,<span class="dv">64</span>]    <span class="dv">5</span> <span class="dv">11</span></span>
-<span id="cb586-18"><a href="8.7-contingency-table.html#cb586-18" tabindex="-1"></a>  (<span class="dv">64</span>,<span class="fl">79.1</span>] <span class="dv">11</span> <span class="dv">17</span></span></code></pre></div>
+<div class="sourceCode" id="cb588"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb588-1"><a href="8.7-contingency-table.html#cb588-1" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">xtabs</span>(<span class="sc">~</span> <span class="fu">cut</span>(age,<span class="dv">4</span>) <span class="sc">+</span> gender <span class="sc">+</span> y)</span>
+<span id="cb588-2"><a href="8.7-contingency-table.html#cb588-2" tabindex="-1"></a>, , y <span class="ot">=</span> <span class="dv">0</span></span>
+<span id="cb588-3"><a href="8.7-contingency-table.html#cb588-3" tabindex="-1"></a></span>
+<span id="cb588-4"><a href="8.7-contingency-table.html#cb588-4" tabindex="-1"></a>           gender</span>
+<span id="cb588-5"><a href="8.7-contingency-table.html#cb588-5" tabindex="-1"></a><span class="fu">cut</span>(age, <span class="dv">4</span>)  <span class="dv">0</span>  <span class="dv">1</span></span>
+<span id="cb588-6"><a href="8.7-contingency-table.html#cb588-6" tabindex="-1"></a>  (<span class="fl">18.9</span>,<span class="dv">34</span>] <span class="dv">15</span> <span class="dv">10</span></span>
+<span id="cb588-7"><a href="8.7-contingency-table.html#cb588-7" tabindex="-1"></a>  (<span class="dv">34</span>,<span class="dv">49</span>]   <span class="dv">11</span>  <span class="dv">1</span></span>
+<span id="cb588-8"><a href="8.7-contingency-table.html#cb588-8" tabindex="-1"></a>  (<span class="dv">49</span>,<span class="dv">64</span>]    <span class="dv">1</span>  <span class="dv">0</span></span>
+<span id="cb588-9"><a href="8.7-contingency-table.html#cb588-9" tabindex="-1"></a>  (<span class="dv">64</span>,<span class="fl">79.1</span>]  <span class="dv">0</span>  <span class="dv">0</span></span>
+<span id="cb588-10"><a href="8.7-contingency-table.html#cb588-10" tabindex="-1"></a></span>
+<span id="cb588-11"><a href="8.7-contingency-table.html#cb588-11" tabindex="-1"></a>, , <span class="at">y =</span> <span class="dv">1</span></span>
+<span id="cb588-12"><a href="8.7-contingency-table.html#cb588-12" tabindex="-1"></a></span>
+<span id="cb588-13"><a href="8.7-contingency-table.html#cb588-13" tabindex="-1"></a>           gender</span>
+<span id="cb588-14"><a href="8.7-contingency-table.html#cb588-14" tabindex="-1"></a><span class="fu">cut</span>(age, <span class="dv">4</span>)  <span class="dv">0</span>  <span class="dv">1</span></span>
+<span id="cb588-15"><a href="8.7-contingency-table.html#cb588-15" tabindex="-1"></a>  (<span class="fl">18.9</span>,<span class="dv">34</span>]  <span class="dv">2</span>  <span class="dv">4</span></span>
+<span id="cb588-16"><a href="8.7-contingency-table.html#cb588-16" tabindex="-1"></a>  (<span class="dv">34</span>,<span class="dv">49</span>]    <span class="dv">4</span>  <span class="dv">8</span></span>
+<span id="cb588-17"><a href="8.7-contingency-table.html#cb588-17" tabindex="-1"></a>  (<span class="dv">49</span>,<span class="dv">64</span>]    <span class="dv">5</span> <span class="dv">11</span></span>
+<span id="cb588-18"><a href="8.7-contingency-table.html#cb588-18" tabindex="-1"></a>  (<span class="dv">64</span>,<span class="fl">79.1</span>] <span class="dv">11</span> <span class="dv">17</span></span></code></pre></div>
 </div>
 </div>
 <div id="working-with-arrays-and-multi-dimensional-tables" class="section level3 hasAnchor" number="8.7.3">
@@ -1047,57 +1107,57 @@ document.addEventListener('DOMContentLoaded', function() {
 <p>The returned table works like an <span class="env-green"><code>array</code></span>.</p>
 <div id="array-creation-and-manipulation" class="section level4 unnumbered hasAnchor">
 <h4>Array Creation and Manipulation<a href="8.7-contingency-table.html#array-creation-and-manipulation" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<div class="sourceCode" id="cb587"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb587-1"><a href="8.7-contingency-table.html#cb587-1" tabindex="-1"></a><span class="co"># Define an empty array</span></span>
-<span id="cb587-2"><a href="8.7-contingency-table.html#cb587-2" tabindex="-1"></a>a <span class="ot">&lt;-</span> <span class="fu">array</span>(<span class="fu">numeric</span>(), <span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">0</span>)) </span>
-<span id="cb587-3"><a href="8.7-contingency-table.html#cb587-3" tabindex="-1"></a></span>
-<span id="cb587-4"><a href="8.7-contingency-table.html#cb587-4" tabindex="-1"></a><span class="sc">&gt;</span> a</span>
-<span id="cb587-5"><a href="8.7-contingency-table.html#cb587-5" tabindex="-1"></a><span class="sc">&lt;</span><span class="dv">2</span> x <span class="dv">3</span> x <span class="dv">0</span> array of double<span class="sc">&gt;</span></span>
-<span id="cb587-6"><a href="8.7-contingency-table.html#cb587-6" tabindex="-1"></a>     [,<span class="dv">1</span>] [,<span class="dv">2</span>] [,<span class="dv">3</span>]</span>
-<span id="cb587-7"><a href="8.7-contingency-table.html#cb587-7" tabindex="-1"></a>[<span class="dv">1</span>,]</span>
-<span id="cb587-8"><a href="8.7-contingency-table.html#cb587-8" tabindex="-1"></a>[<span class="dv">2</span>,]</span></code></pre></div>
+<div class="sourceCode" id="cb589"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb589-1"><a href="8.7-contingency-table.html#cb589-1" tabindex="-1"></a><span class="co"># Define an empty array</span></span>
+<span id="cb589-2"><a href="8.7-contingency-table.html#cb589-2" tabindex="-1"></a>a <span class="ot">&lt;-</span> <span class="fu">array</span>(<span class="fu">numeric</span>(), <span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">0</span>)) </span>
+<span id="cb589-3"><a href="8.7-contingency-table.html#cb589-3" tabindex="-1"></a></span>
+<span id="cb589-4"><a href="8.7-contingency-table.html#cb589-4" tabindex="-1"></a><span class="sc">&gt;</span> a</span>
+<span id="cb589-5"><a href="8.7-contingency-table.html#cb589-5" tabindex="-1"></a><span class="sc">&lt;</span><span class="dv">2</span> x <span class="dv">3</span> x <span class="dv">0</span> array of double<span class="sc">&gt;</span></span>
+<span id="cb589-6"><a href="8.7-contingency-table.html#cb589-6" tabindex="-1"></a>     [,<span class="dv">1</span>] [,<span class="dv">2</span>] [,<span class="dv">3</span>]</span>
+<span id="cb589-7"><a href="8.7-contingency-table.html#cb589-7" tabindex="-1"></a>[<span class="dv">1</span>,]</span>
+<span id="cb589-8"><a href="8.7-contingency-table.html#cb589-8" tabindex="-1"></a>[<span class="dv">2</span>,]</span></code></pre></div>
 <p>Note that you need <strong>to set at least one dimension to zero</strong>, otherwise the array will contain something by definition.</p>
 <p><code>dim</code> can be</p>
 <ul>
 <li>an integer (will coerce to a vector), or</li>
 <li>a vector giving the maximal indices in each dimension.</li>
 </ul>
-<div class="sourceCode" id="cb588"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb588-1"><a href="8.7-contingency-table.html#cb588-1" tabindex="-1"></a><span class="fu">array</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">24</span>, <span class="at">dim=</span><span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>))</span>
-<span id="cb588-2"><a href="8.7-contingency-table.html#cb588-2" tabindex="-1"></a><span class="co"># equivalently, </span></span>
-<span id="cb588-3"><a href="8.7-contingency-table.html#cb588-3" tabindex="-1"></a><span class="fu">array</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">24</span>, <span class="at">dim=</span><span class="dv">2</span><span class="sc">:</span><span class="dv">4</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb590"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb590-1"><a href="8.7-contingency-table.html#cb590-1" tabindex="-1"></a><span class="fu">array</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">24</span>, <span class="at">dim=</span><span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>))</span>
+<span id="cb590-2"><a href="8.7-contingency-table.html#cb590-2" tabindex="-1"></a><span class="co"># equivalently, </span></span>
+<span id="cb590-3"><a href="8.7-contingency-table.html#cb590-3" tabindex="-1"></a><span class="fu">array</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">24</span>, <span class="at">dim=</span><span class="dv">2</span><span class="sc">:</span><span class="dv">4</span>)</span></code></pre></div>
 <p><code>aperm(a, perm)</code> <span class="env-green">Transpose an array</span> by permuting its dimensions.</p>
 <ul>
 <li><code>perm</code> the subscript permutation vector, usually a permutation of the integers <code>1:n</code>, where <code>n</code> is the number of dimensions of <code>a</code>.</li>
 </ul>
-<div class="sourceCode" id="cb589"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb589-1"><a href="8.7-contingency-table.html#cb589-1" tabindex="-1"></a><span class="co"># initialize a 3D arry 2x3x2</span></span>
-<span id="cb589-2"><a href="8.7-contingency-table.html#cb589-2" tabindex="-1"></a><span class="sc">&gt;</span> x  <span class="ot">&lt;-</span> <span class="fu">array</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">12</span>, <span class="at">dim =</span> <span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">2</span>))</span>
-<span id="cb589-3"><a href="8.7-contingency-table.html#cb589-3" tabindex="-1"></a><span class="sc">&gt;</span> x</span>
-<span id="cb589-4"><a href="8.7-contingency-table.html#cb589-4" tabindex="-1"></a>, , <span class="dv">1</span></span>
-<span id="cb589-5"><a href="8.7-contingency-table.html#cb589-5" tabindex="-1"></a></span>
-<span id="cb589-6"><a href="8.7-contingency-table.html#cb589-6" tabindex="-1"></a>     [,<span class="dv">1</span>] [,<span class="dv">2</span>] [,<span class="dv">3</span>]</span>
-<span id="cb589-7"><a href="8.7-contingency-table.html#cb589-7" tabindex="-1"></a>[<span class="dv">1</span>,]    <span class="dv">1</span>    <span class="dv">3</span>    <span class="dv">5</span></span>
-<span id="cb589-8"><a href="8.7-contingency-table.html#cb589-8" tabindex="-1"></a>[<span class="dv">2</span>,]    <span class="dv">2</span>    <span class="dv">4</span>    <span class="dv">6</span></span>
-<span id="cb589-9"><a href="8.7-contingency-table.html#cb589-9" tabindex="-1"></a></span>
-<span id="cb589-10"><a href="8.7-contingency-table.html#cb589-10" tabindex="-1"></a>, , <span class="dv">2</span></span>
-<span id="cb589-11"><a href="8.7-contingency-table.html#cb589-11" tabindex="-1"></a></span>
-<span id="cb589-12"><a href="8.7-contingency-table.html#cb589-12" tabindex="-1"></a>     [,<span class="dv">1</span>] [,<span class="dv">2</span>] [,<span class="dv">3</span>]</span>
-<span id="cb589-13"><a href="8.7-contingency-table.html#cb589-13" tabindex="-1"></a>[<span class="dv">1</span>,]    <span class="dv">7</span>    <span class="dv">9</span>   <span class="dv">11</span></span>
-<span id="cb589-14"><a href="8.7-contingency-table.html#cb589-14" tabindex="-1"></a>[<span class="dv">2</span>,]    <span class="dv">8</span>   <span class="dv">10</span>   <span class="dv">12</span></span>
-<span id="cb589-15"><a href="8.7-contingency-table.html#cb589-15" tabindex="-1"></a></span>
-<span id="cb589-16"><a href="8.7-contingency-table.html#cb589-16" tabindex="-1"></a><span class="co"># array transpose, from 2x3 to 3x2</span></span>
-<span id="cb589-17"><a href="8.7-contingency-table.html#cb589-17" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">aperm</span>(x, <span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">1</span>,<span class="dv">3</span>))</span>
-<span id="cb589-18"><a href="8.7-contingency-table.html#cb589-18" tabindex="-1"></a>, , <span class="dv">1</span></span>
-<span id="cb589-19"><a href="8.7-contingency-table.html#cb589-19" tabindex="-1"></a></span>
-<span id="cb589-20"><a href="8.7-contingency-table.html#cb589-20" tabindex="-1"></a>     [,<span class="dv">1</span>] [,<span class="dv">2</span>]</span>
-<span id="cb589-21"><a href="8.7-contingency-table.html#cb589-21" tabindex="-1"></a>[<span class="dv">1</span>,]    <span class="dv">1</span>    <span class="dv">2</span></span>
-<span id="cb589-22"><a href="8.7-contingency-table.html#cb589-22" tabindex="-1"></a>[<span class="dv">2</span>,]    <span class="dv">3</span>    <span class="dv">4</span></span>
-<span id="cb589-23"><a href="8.7-contingency-table.html#cb589-23" tabindex="-1"></a>[<span class="dv">3</span>,]    <span class="dv">5</span>    <span class="dv">6</span></span>
-<span id="cb589-24"><a href="8.7-contingency-table.html#cb589-24" tabindex="-1"></a></span>
-<span id="cb589-25"><a href="8.7-contingency-table.html#cb589-25" tabindex="-1"></a>, , <span class="dv">2</span></span>
-<span id="cb589-26"><a href="8.7-contingency-table.html#cb589-26" tabindex="-1"></a></span>
-<span id="cb589-27"><a href="8.7-contingency-table.html#cb589-27" tabindex="-1"></a>     [,<span class="dv">1</span>] [,<span class="dv">2</span>]</span>
-<span id="cb589-28"><a href="8.7-contingency-table.html#cb589-28" tabindex="-1"></a>[<span class="dv">1</span>,]    <span class="dv">7</span>    <span class="dv">8</span></span>
-<span id="cb589-29"><a href="8.7-contingency-table.html#cb589-29" tabindex="-1"></a>[<span class="dv">2</span>,]    <span class="dv">9</span>   <span class="dv">10</span></span>
-<span id="cb589-30"><a href="8.7-contingency-table.html#cb589-30" tabindex="-1"></a>[<span class="dv">3</span>,]   <span class="dv">11</span>   <span class="dv">12</span></span></code></pre></div>
+<div class="sourceCode" id="cb591"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb591-1"><a href="8.7-contingency-table.html#cb591-1" tabindex="-1"></a><span class="co"># initialize a 3D arry 2x3x2</span></span>
+<span id="cb591-2"><a href="8.7-contingency-table.html#cb591-2" tabindex="-1"></a><span class="sc">&gt;</span> x  <span class="ot">&lt;-</span> <span class="fu">array</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">12</span>, <span class="at">dim =</span> <span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">2</span>))</span>
+<span id="cb591-3"><a href="8.7-contingency-table.html#cb591-3" tabindex="-1"></a><span class="sc">&gt;</span> x</span>
+<span id="cb591-4"><a href="8.7-contingency-table.html#cb591-4" tabindex="-1"></a>, , <span class="dv">1</span></span>
+<span id="cb591-5"><a href="8.7-contingency-table.html#cb591-5" tabindex="-1"></a></span>
+<span id="cb591-6"><a href="8.7-contingency-table.html#cb591-6" tabindex="-1"></a>     [,<span class="dv">1</span>] [,<span class="dv">2</span>] [,<span class="dv">3</span>]</span>
+<span id="cb591-7"><a href="8.7-contingency-table.html#cb591-7" tabindex="-1"></a>[<span class="dv">1</span>,]    <span class="dv">1</span>    <span class="dv">3</span>    <span class="dv">5</span></span>
+<span id="cb591-8"><a href="8.7-contingency-table.html#cb591-8" tabindex="-1"></a>[<span class="dv">2</span>,]    <span class="dv">2</span>    <span class="dv">4</span>    <span class="dv">6</span></span>
+<span id="cb591-9"><a href="8.7-contingency-table.html#cb591-9" tabindex="-1"></a></span>
+<span id="cb591-10"><a href="8.7-contingency-table.html#cb591-10" tabindex="-1"></a>, , <span class="dv">2</span></span>
+<span id="cb591-11"><a href="8.7-contingency-table.html#cb591-11" tabindex="-1"></a></span>
+<span id="cb591-12"><a href="8.7-contingency-table.html#cb591-12" tabindex="-1"></a>     [,<span class="dv">1</span>] [,<span class="dv">2</span>] [,<span class="dv">3</span>]</span>
+<span id="cb591-13"><a href="8.7-contingency-table.html#cb591-13" tabindex="-1"></a>[<span class="dv">1</span>,]    <span class="dv">7</span>    <span class="dv">9</span>   <span class="dv">11</span></span>
+<span id="cb591-14"><a href="8.7-contingency-table.html#cb591-14" tabindex="-1"></a>[<span class="dv">2</span>,]    <span class="dv">8</span>   <span class="dv">10</span>   <span class="dv">12</span></span>
+<span id="cb591-15"><a href="8.7-contingency-table.html#cb591-15" tabindex="-1"></a></span>
+<span id="cb591-16"><a href="8.7-contingency-table.html#cb591-16" tabindex="-1"></a><span class="co"># array transpose, from 2x3 to 3x2</span></span>
+<span id="cb591-17"><a href="8.7-contingency-table.html#cb591-17" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">aperm</span>(x, <span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">1</span>,<span class="dv">3</span>))</span>
+<span id="cb591-18"><a href="8.7-contingency-table.html#cb591-18" tabindex="-1"></a>, , <span class="dv">1</span></span>
+<span id="cb591-19"><a href="8.7-contingency-table.html#cb591-19" tabindex="-1"></a></span>
+<span id="cb591-20"><a href="8.7-contingency-table.html#cb591-20" tabindex="-1"></a>     [,<span class="dv">1</span>] [,<span class="dv">2</span>]</span>
+<span id="cb591-21"><a href="8.7-contingency-table.html#cb591-21" tabindex="-1"></a>[<span class="dv">1</span>,]    <span class="dv">1</span>    <span class="dv">2</span></span>
+<span id="cb591-22"><a href="8.7-contingency-table.html#cb591-22" tabindex="-1"></a>[<span class="dv">2</span>,]    <span class="dv">3</span>    <span class="dv">4</span></span>
+<span id="cb591-23"><a href="8.7-contingency-table.html#cb591-23" tabindex="-1"></a>[<span class="dv">3</span>,]    <span class="dv">5</span>    <span class="dv">6</span></span>
+<span id="cb591-24"><a href="8.7-contingency-table.html#cb591-24" tabindex="-1"></a></span>
+<span id="cb591-25"><a href="8.7-contingency-table.html#cb591-25" tabindex="-1"></a>, , <span class="dv">2</span></span>
+<span id="cb591-26"><a href="8.7-contingency-table.html#cb591-26" tabindex="-1"></a></span>
+<span id="cb591-27"><a href="8.7-contingency-table.html#cb591-27" tabindex="-1"></a>     [,<span class="dv">1</span>] [,<span class="dv">2</span>]</span>
+<span id="cb591-28"><a href="8.7-contingency-table.html#cb591-28" tabindex="-1"></a>[<span class="dv">1</span>,]    <span class="dv">7</span>    <span class="dv">8</span></span>
+<span id="cb591-29"><a href="8.7-contingency-table.html#cb591-29" tabindex="-1"></a>[<span class="dv">2</span>,]    <span class="dv">9</span>   <span class="dv">10</span></span>
+<span id="cb591-30"><a href="8.7-contingency-table.html#cb591-30" tabindex="-1"></a>[<span class="dv">3</span>,]   <span class="dv">11</span>   <span class="dv">12</span></span></code></pre></div>
 <p>Add data to the array using <code>abind</code>. <code>abind</code> works like <code>rbind/cbind</code> but in a generalized way.
 So, as <code>rbind/cbind</code> add a 1-dimensional structure to a 2-dimensional one, using <code>abind</code> with a 3-dimensional array.</p>
 <p><code>abind(..., along=N)</code> Combine multi-dimensional arrays.</p>
@@ -1105,31 +1165,31 @@ So, as <code>rbind/cbind</code> add a 1-dimensional structure to a 2-dimensional
 <li><code>...</code> Any number of vectors, matrices, arrays, or data frames.</li>
 <li><code>along=N</code> (optional) The dimension along which to bind the arrays. The default is the last dimension.</li>
 </ul>
-<div class="sourceCode" id="cb590"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb590-1"><a href="8.7-contingency-table.html#cb590-1" tabindex="-1"></a><span class="co"># Append a matrix </span></span>
-<span id="cb590-2"><a href="8.7-contingency-table.html#cb590-2" tabindex="-1"></a>a <span class="ot">&lt;-</span> <span class="fu">abind</span>(a, <span class="fu">matrix</span>(<span class="dv">5</span>,<span class="at">nrow=</span><span class="dv">2</span>,<span class="at">ncol=</span><span class="dv">3</span>), <span class="at">along=</span><span class="dv">3</span>)</span>
-<span id="cb590-3"><a href="8.7-contingency-table.html#cb590-3" tabindex="-1"></a></span>
-<span id="cb590-4"><a href="8.7-contingency-table.html#cb590-4" tabindex="-1"></a><span class="sc">&gt;</span> a</span>
-<span id="cb590-5"><a href="8.7-contingency-table.html#cb590-5" tabindex="-1"></a>, , <span class="dv">1</span></span>
-<span id="cb590-6"><a href="8.7-contingency-table.html#cb590-6" tabindex="-1"></a></span>
-<span id="cb590-7"><a href="8.7-contingency-table.html#cb590-7" tabindex="-1"></a>     [,<span class="dv">1</span>] [,<span class="dv">2</span>] [,<span class="dv">3</span>]</span>
-<span id="cb590-8"><a href="8.7-contingency-table.html#cb590-8" tabindex="-1"></a>[<span class="dv">1</span>,]    <span class="dv">5</span>    <span class="dv">5</span>    <span class="dv">5</span></span>
-<span id="cb590-9"><a href="8.7-contingency-table.html#cb590-9" tabindex="-1"></a>[<span class="dv">2</span>,]    <span class="dv">5</span>    <span class="dv">5</span>    <span class="dv">5</span></span>
-<span id="cb590-10"><a href="8.7-contingency-table.html#cb590-10" tabindex="-1"></a></span>
-<span id="cb590-11"><a href="8.7-contingency-table.html#cb590-11" tabindex="-1"></a><span class="co"># Append a matrix again</span></span>
-<span id="cb590-12"><a href="8.7-contingency-table.html#cb590-12" tabindex="-1"></a>a <span class="ot">&lt;-</span> <span class="fu">abind</span>(a, <span class="fu">matrix</span>(<span class="dv">7</span>,<span class="at">nrow=</span><span class="dv">2</span>,<span class="at">ncol=</span><span class="dv">3</span>), <span class="at">along=</span><span class="dv">3</span>)</span>
-<span id="cb590-13"><a href="8.7-contingency-table.html#cb590-13" tabindex="-1"></a></span>
-<span id="cb590-14"><a href="8.7-contingency-table.html#cb590-14" tabindex="-1"></a><span class="sc">&gt;</span> a</span>
-<span id="cb590-15"><a href="8.7-contingency-table.html#cb590-15" tabindex="-1"></a>, , <span class="dv">1</span></span>
-<span id="cb590-16"><a href="8.7-contingency-table.html#cb590-16" tabindex="-1"></a></span>
-<span id="cb590-17"><a href="8.7-contingency-table.html#cb590-17" tabindex="-1"></a>     [,<span class="dv">1</span>] [,<span class="dv">2</span>] [,<span class="dv">3</span>]</span>
-<span id="cb590-18"><a href="8.7-contingency-table.html#cb590-18" tabindex="-1"></a>[<span class="dv">1</span>,]    <span class="dv">5</span>    <span class="dv">5</span>    <span class="dv">5</span></span>
-<span id="cb590-19"><a href="8.7-contingency-table.html#cb590-19" tabindex="-1"></a>[<span class="dv">2</span>,]    <span class="dv">5</span>    <span class="dv">5</span>    <span class="dv">5</span></span>
-<span id="cb590-20"><a href="8.7-contingency-table.html#cb590-20" tabindex="-1"></a></span>
-<span id="cb590-21"><a href="8.7-contingency-table.html#cb590-21" tabindex="-1"></a>, , <span class="dv">2</span></span>
-<span id="cb590-22"><a href="8.7-contingency-table.html#cb590-22" tabindex="-1"></a></span>
-<span id="cb590-23"><a href="8.7-contingency-table.html#cb590-23" tabindex="-1"></a>     [,<span class="dv">1</span>] [,<span class="dv">2</span>] [,<span class="dv">3</span>]</span>
-<span id="cb590-24"><a href="8.7-contingency-table.html#cb590-24" tabindex="-1"></a>[<span class="dv">1</span>,]    <span class="dv">7</span>    <span class="dv">7</span>    <span class="dv">7</span></span>
-<span id="cb590-25"><a href="8.7-contingency-table.html#cb590-25" tabindex="-1"></a>[<span class="dv">2</span>,]    <span class="dv">7</span>    <span class="dv">7</span>    <span class="dv">7</span></span></code></pre></div>
+<div class="sourceCode" id="cb592"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb592-1"><a href="8.7-contingency-table.html#cb592-1" tabindex="-1"></a><span class="co"># Append a matrix </span></span>
+<span id="cb592-2"><a href="8.7-contingency-table.html#cb592-2" tabindex="-1"></a>a <span class="ot">&lt;-</span> <span class="fu">abind</span>(a, <span class="fu">matrix</span>(<span class="dv">5</span>,<span class="at">nrow=</span><span class="dv">2</span>,<span class="at">ncol=</span><span class="dv">3</span>), <span class="at">along=</span><span class="dv">3</span>)</span>
+<span id="cb592-3"><a href="8.7-contingency-table.html#cb592-3" tabindex="-1"></a></span>
+<span id="cb592-4"><a href="8.7-contingency-table.html#cb592-4" tabindex="-1"></a><span class="sc">&gt;</span> a</span>
+<span id="cb592-5"><a href="8.7-contingency-table.html#cb592-5" tabindex="-1"></a>, , <span class="dv">1</span></span>
+<span id="cb592-6"><a href="8.7-contingency-table.html#cb592-6" tabindex="-1"></a></span>
+<span id="cb592-7"><a href="8.7-contingency-table.html#cb592-7" tabindex="-1"></a>     [,<span class="dv">1</span>] [,<span class="dv">2</span>] [,<span class="dv">3</span>]</span>
+<span id="cb592-8"><a href="8.7-contingency-table.html#cb592-8" tabindex="-1"></a>[<span class="dv">1</span>,]    <span class="dv">5</span>    <span class="dv">5</span>    <span class="dv">5</span></span>
+<span id="cb592-9"><a href="8.7-contingency-table.html#cb592-9" tabindex="-1"></a>[<span class="dv">2</span>,]    <span class="dv">5</span>    <span class="dv">5</span>    <span class="dv">5</span></span>
+<span id="cb592-10"><a href="8.7-contingency-table.html#cb592-10" tabindex="-1"></a></span>
+<span id="cb592-11"><a href="8.7-contingency-table.html#cb592-11" tabindex="-1"></a><span class="co"># Append a matrix again</span></span>
+<span id="cb592-12"><a href="8.7-contingency-table.html#cb592-12" tabindex="-1"></a>a <span class="ot">&lt;-</span> <span class="fu">abind</span>(a, <span class="fu">matrix</span>(<span class="dv">7</span>,<span class="at">nrow=</span><span class="dv">2</span>,<span class="at">ncol=</span><span class="dv">3</span>), <span class="at">along=</span><span class="dv">3</span>)</span>
+<span id="cb592-13"><a href="8.7-contingency-table.html#cb592-13" tabindex="-1"></a></span>
+<span id="cb592-14"><a href="8.7-contingency-table.html#cb592-14" tabindex="-1"></a><span class="sc">&gt;</span> a</span>
+<span id="cb592-15"><a href="8.7-contingency-table.html#cb592-15" tabindex="-1"></a>, , <span class="dv">1</span></span>
+<span id="cb592-16"><a href="8.7-contingency-table.html#cb592-16" tabindex="-1"></a></span>
+<span id="cb592-17"><a href="8.7-contingency-table.html#cb592-17" tabindex="-1"></a>     [,<span class="dv">1</span>] [,<span class="dv">2</span>] [,<span class="dv">3</span>]</span>
+<span id="cb592-18"><a href="8.7-contingency-table.html#cb592-18" tabindex="-1"></a>[<span class="dv">1</span>,]    <span class="dv">5</span>    <span class="dv">5</span>    <span class="dv">5</span></span>
+<span id="cb592-19"><a href="8.7-contingency-table.html#cb592-19" tabindex="-1"></a>[<span class="dv">2</span>,]    <span class="dv">5</span>    <span class="dv">5</span>    <span class="dv">5</span></span>
+<span id="cb592-20"><a href="8.7-contingency-table.html#cb592-20" tabindex="-1"></a></span>
+<span id="cb592-21"><a href="8.7-contingency-table.html#cb592-21" tabindex="-1"></a>, , <span class="dv">2</span></span>
+<span id="cb592-22"><a href="8.7-contingency-table.html#cb592-22" tabindex="-1"></a></span>
+<span id="cb592-23"><a href="8.7-contingency-table.html#cb592-23" tabindex="-1"></a>     [,<span class="dv">1</span>] [,<span class="dv">2</span>] [,<span class="dv">3</span>]</span>
+<span id="cb592-24"><a href="8.7-contingency-table.html#cb592-24" tabindex="-1"></a>[<span class="dv">1</span>,]    <span class="dv">7</span>    <span class="dv">7</span>    <span class="dv">7</span></span>
+<span id="cb592-25"><a href="8.7-contingency-table.html#cb592-25" tabindex="-1"></a>[<span class="dv">2</span>,]    <span class="dv">7</span>    <span class="dv">7</span>    <span class="dv">7</span></span></code></pre></div>
 </div>
 </div>
 <div id="flattening-and-exporting-tables" class="section level3 hasAnchor" number="8.7.4">
@@ -1139,175 +1199,175 @@ So, as <code>rbind/cbind</code> add a 1-dimensional structure to a 2-dimensional
 <p><span class="env-green"><strong>Save <code>ftable()</code> output to csv</strong></span></p>
 <p>Save to local and you’ll be able to read the data afterwards.</p>
 <p>Higher dimensional tables can be “falttened” into one table using <a href="https://docs.tibco.com/pub/enterprise-runtime-for-R/6.1.4/doc/html/Language_Reference/stats/ftable.html"><code>ftable</code></a>. The resulting three-way table shows the frequencies of all three variables in a “flat” format.</p>
-<div class="sourceCode" id="cb591"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb591-1"><a href="8.7-contingency-table.html#cb591-1" tabindex="-1"></a><span class="co">#view three-way table</span></span>
-<span id="cb591-2"><a href="8.7-contingency-table.html#cb591-2" tabindex="-1"></a>three_way</span>
-<span id="cb591-3"><a href="8.7-contingency-table.html#cb591-3" tabindex="-1"></a></span>
-<span id="cb591-4"><a href="8.7-contingency-table.html#cb591-4" tabindex="-1"></a>, , starter <span class="ot">=</span> No</span>
-<span id="cb591-5"><a href="8.7-contingency-table.html#cb591-5" tabindex="-1"></a></span>
-<span id="cb591-6"><a href="8.7-contingency-table.html#cb591-6" tabindex="-1"></a>    position</span>
-<span id="cb591-7"><a href="8.7-contingency-table.html#cb591-7" tabindex="-1"></a>team F G</span>
-<span id="cb591-8"><a href="8.7-contingency-table.html#cb591-8" tabindex="-1"></a>   A <span class="dv">1</span> <span class="dv">2</span></span>
-<span id="cb591-9"><a href="8.7-contingency-table.html#cb591-9" tabindex="-1"></a>   B <span class="dv">1</span> <span class="dv">1</span></span>
-<span id="cb591-10"><a href="8.7-contingency-table.html#cb591-10" tabindex="-1"></a></span>
-<span id="cb591-11"><a href="8.7-contingency-table.html#cb591-11" tabindex="-1"></a>, , starter <span class="ot">=</span> Yes</span>
-<span id="cb591-12"><a href="8.7-contingency-table.html#cb591-12" tabindex="-1"></a></span>
-<span id="cb591-13"><a href="8.7-contingency-table.html#cb591-13" tabindex="-1"></a>    position</span>
-<span id="cb591-14"><a href="8.7-contingency-table.html#cb591-14" tabindex="-1"></a>team F G</span>
-<span id="cb591-15"><a href="8.7-contingency-table.html#cb591-15" tabindex="-1"></a>   A <span class="dv">1</span> <span class="dv">1</span></span>
-<span id="cb591-16"><a href="8.7-contingency-table.html#cb591-16" tabindex="-1"></a>   B <span class="dv">2</span> <span class="dv">1</span></span>
-<span id="cb591-17"><a href="8.7-contingency-table.html#cb591-17" tabindex="-1"></a></span>
-<span id="cb591-18"><a href="8.7-contingency-table.html#cb591-18" tabindex="-1"></a><span class="co">#convert table to ftable</span></span>
-<span id="cb591-19"><a href="8.7-contingency-table.html#cb591-19" tabindex="-1"></a>three_way_ftable <span class="ot">&lt;-</span> <span class="fu">ftable</span>(three_way)</span>
-<span id="cb591-20"><a href="8.7-contingency-table.html#cb591-20" tabindex="-1"></a></span>
-<span id="cb591-21"><a href="8.7-contingency-table.html#cb591-21" tabindex="-1"></a><span class="co">#view ftable</span></span>
-<span id="cb591-22"><a href="8.7-contingency-table.html#cb591-22" tabindex="-1"></a>three_way_ftable</span>
-<span id="cb591-23"><a href="8.7-contingency-table.html#cb591-23" tabindex="-1"></a></span>
-<span id="cb591-24"><a href="8.7-contingency-table.html#cb591-24" tabindex="-1"></a>              starter No Yes</span>
-<span id="cb591-25"><a href="8.7-contingency-table.html#cb591-25" tabindex="-1"></a>team position               </span>
-<span id="cb591-26"><a href="8.7-contingency-table.html#cb591-26" tabindex="-1"></a>A    F                 <span class="dv">1</span>   <span class="dv">1</span></span>
-<span id="cb591-27"><a href="8.7-contingency-table.html#cb591-27" tabindex="-1"></a>     G                 <span class="dv">2</span>   <span class="dv">1</span></span>
-<span id="cb591-28"><a href="8.7-contingency-table.html#cb591-28" tabindex="-1"></a>B    F                 <span class="dv">1</span>   <span class="dv">2</span></span>
-<span id="cb591-29"><a href="8.7-contingency-table.html#cb591-29" tabindex="-1"></a>     G                 <span class="dv">1</span>   <span class="dv">1</span></span></code></pre></div>
+<div class="sourceCode" id="cb593"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb593-1"><a href="8.7-contingency-table.html#cb593-1" tabindex="-1"></a><span class="co">#view three-way table</span></span>
+<span id="cb593-2"><a href="8.7-contingency-table.html#cb593-2" tabindex="-1"></a>three_way</span>
+<span id="cb593-3"><a href="8.7-contingency-table.html#cb593-3" tabindex="-1"></a></span>
+<span id="cb593-4"><a href="8.7-contingency-table.html#cb593-4" tabindex="-1"></a>, , starter <span class="ot">=</span> No</span>
+<span id="cb593-5"><a href="8.7-contingency-table.html#cb593-5" tabindex="-1"></a></span>
+<span id="cb593-6"><a href="8.7-contingency-table.html#cb593-6" tabindex="-1"></a>    position</span>
+<span id="cb593-7"><a href="8.7-contingency-table.html#cb593-7" tabindex="-1"></a>team F G</span>
+<span id="cb593-8"><a href="8.7-contingency-table.html#cb593-8" tabindex="-1"></a>   A <span class="dv">1</span> <span class="dv">2</span></span>
+<span id="cb593-9"><a href="8.7-contingency-table.html#cb593-9" tabindex="-1"></a>   B <span class="dv">1</span> <span class="dv">1</span></span>
+<span id="cb593-10"><a href="8.7-contingency-table.html#cb593-10" tabindex="-1"></a></span>
+<span id="cb593-11"><a href="8.7-contingency-table.html#cb593-11" tabindex="-1"></a>, , starter <span class="ot">=</span> Yes</span>
+<span id="cb593-12"><a href="8.7-contingency-table.html#cb593-12" tabindex="-1"></a></span>
+<span id="cb593-13"><a href="8.7-contingency-table.html#cb593-13" tabindex="-1"></a>    position</span>
+<span id="cb593-14"><a href="8.7-contingency-table.html#cb593-14" tabindex="-1"></a>team F G</span>
+<span id="cb593-15"><a href="8.7-contingency-table.html#cb593-15" tabindex="-1"></a>   A <span class="dv">1</span> <span class="dv">1</span></span>
+<span id="cb593-16"><a href="8.7-contingency-table.html#cb593-16" tabindex="-1"></a>   B <span class="dv">2</span> <span class="dv">1</span></span>
+<span id="cb593-17"><a href="8.7-contingency-table.html#cb593-17" tabindex="-1"></a></span>
+<span id="cb593-18"><a href="8.7-contingency-table.html#cb593-18" tabindex="-1"></a><span class="co">#convert table to ftable</span></span>
+<span id="cb593-19"><a href="8.7-contingency-table.html#cb593-19" tabindex="-1"></a>three_way_ftable <span class="ot">&lt;-</span> <span class="fu">ftable</span>(three_way)</span>
+<span id="cb593-20"><a href="8.7-contingency-table.html#cb593-20" tabindex="-1"></a></span>
+<span id="cb593-21"><a href="8.7-contingency-table.html#cb593-21" tabindex="-1"></a><span class="co">#view ftable</span></span>
+<span id="cb593-22"><a href="8.7-contingency-table.html#cb593-22" tabindex="-1"></a>three_way_ftable</span>
+<span id="cb593-23"><a href="8.7-contingency-table.html#cb593-23" tabindex="-1"></a></span>
+<span id="cb593-24"><a href="8.7-contingency-table.html#cb593-24" tabindex="-1"></a>              starter No Yes</span>
+<span id="cb593-25"><a href="8.7-contingency-table.html#cb593-25" tabindex="-1"></a>team position               </span>
+<span id="cb593-26"><a href="8.7-contingency-table.html#cb593-26" tabindex="-1"></a>A    F                 <span class="dv">1</span>   <span class="dv">1</span></span>
+<span id="cb593-27"><a href="8.7-contingency-table.html#cb593-27" tabindex="-1"></a>     G                 <span class="dv">2</span>   <span class="dv">1</span></span>
+<span id="cb593-28"><a href="8.7-contingency-table.html#cb593-28" tabindex="-1"></a>B    F                 <span class="dv">1</span>   <span class="dv">2</span></span>
+<span id="cb593-29"><a href="8.7-contingency-table.html#cb593-29" tabindex="-1"></a>     G                 <span class="dv">1</span>   <span class="dv">1</span></span></code></pre></div>
 <p><code>ftable(x)</code> Create ‘flat’ contingency tables. Condense into 2-dimension. Hard to read, but easy to save. 3-D array is difficult to save on the other hand.</p>
 <ul>
 <li><code>x</code> R objects which can be interpreted as factors (including character strings), or a list (or data frame) whose components can be so interpreted, or a contingency table object of class <code>"table"</code> or <code>"ftable"</code>.</li>
 </ul>
 <p>Use <code>stats</code> to first format <code>ftable</code> and then use <code>write.table</code>.</p>
-<div class="sourceCode" id="cb592"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb592-1"><a href="8.7-contingency-table.html#cb592-1" tabindex="-1"></a><span class="co"># `confusion_matrix_all` is an 3D array: 2x2x7</span></span>
-<span id="cb592-2"><a href="8.7-contingency-table.html#cb592-2" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">ftable</span>(confusion_matrix_all)</span>
-<span id="cb592-3"><a href="8.7-contingency-table.html#cb592-3" tabindex="-1"></a><span class="co"># quote=FALSE makes the table more readable</span></span>
-<span id="cb592-4"><a href="8.7-contingency-table.html#cb592-4" tabindex="-1"></a>cont <span class="ot">&lt;-</span> stats<span class="sc">:::</span><span class="fu">format.ftable</span>(df, <span class="at">method =</span> <span class="st">&quot;col.compact&quot;</span>, <span class="at">quote =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb592-5"><a href="8.7-contingency-table.html#cb592-5" tabindex="-1"></a><span class="fu">write.table</span>(cont, <span class="at">sep =</span> <span class="st">&quot;,&quot;</span>, <span class="at">file =</span> <span class="st">&quot;table.csv&quot;</span>)</span>
-<span id="cb592-6"><a href="8.7-contingency-table.html#cb592-6" tabindex="-1"></a><span class="co"># disable row and column names</span></span>
-<span id="cb592-7"><a href="8.7-contingency-table.html#cb592-7" tabindex="-1"></a><span class="fu">write.table</span>(cont, <span class="at">sep =</span> <span class="st">&quot;,&quot;</span>, <span class="at">file =</span> <span class="st">&quot;table.csv&quot;</span>,</span>
-<span id="cb592-8"><a href="8.7-contingency-table.html#cb592-8" tabindex="-1"></a>           <span class="at">row.names =</span> <span class="cn">FALSE</span>, <span class="at">col.names =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb594"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb594-1"><a href="8.7-contingency-table.html#cb594-1" tabindex="-1"></a><span class="co"># `confusion_matrix_all` is an 3D array: 2x2x7</span></span>
+<span id="cb594-2"><a href="8.7-contingency-table.html#cb594-2" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">ftable</span>(confusion_matrix_all)</span>
+<span id="cb594-3"><a href="8.7-contingency-table.html#cb594-3" tabindex="-1"></a><span class="co"># quote=FALSE makes the table more readable</span></span>
+<span id="cb594-4"><a href="8.7-contingency-table.html#cb594-4" tabindex="-1"></a>cont <span class="ot">&lt;-</span> stats<span class="sc">:::</span><span class="fu">format.ftable</span>(df, <span class="at">method =</span> <span class="st">&quot;col.compact&quot;</span>, <span class="at">quote =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb594-5"><a href="8.7-contingency-table.html#cb594-5" tabindex="-1"></a><span class="fu">write.table</span>(cont, <span class="at">sep =</span> <span class="st">&quot;,&quot;</span>, <span class="at">file =</span> <span class="st">&quot;table.csv&quot;</span>)</span>
+<span id="cb594-6"><a href="8.7-contingency-table.html#cb594-6" tabindex="-1"></a><span class="co"># disable row and column names</span></span>
+<span id="cb594-7"><a href="8.7-contingency-table.html#cb594-7" tabindex="-1"></a><span class="fu">write.table</span>(cont, <span class="at">sep =</span> <span class="st">&quot;,&quot;</span>, <span class="at">file =</span> <span class="st">&quot;table.csv&quot;</span>,</span>
+<span id="cb594-8"><a href="8.7-contingency-table.html#cb594-8" tabindex="-1"></a>           <span class="at">row.names =</span> <span class="cn">FALSE</span>, <span class="at">col.names =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <p>Load confusion table</p>
-<div class="sourceCode" id="cb593"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb593-1"><a href="8.7-contingency-table.html#cb593-1" tabindex="-1"></a><span class="co"># read as a regular table</span></span>
-<span id="cb593-2"><a href="8.7-contingency-table.html#cb593-2" tabindex="-1"></a>confusion_ftable <span class="ot">&lt;-</span> <span class="fu">read.table</span>(f_name, <span class="at">sep =</span> <span class="st">&quot;,&quot;</span>, <span class="at">skip =</span> <span class="dv">2</span>)</span>
-<span id="cb593-3"><a href="8.7-contingency-table.html#cb593-3" tabindex="-1"></a><span class="co"># change to array, check if need to transpose</span></span>
-<span id="cb593-4"><a href="8.7-contingency-table.html#cb593-4" tabindex="-1"></a>confusion_ftable <span class="ot">&lt;-</span> <span class="fu">array</span>(confusion_ftable[,<span class="dv">3</span><span class="sc">:</span><span class="dv">12</span>] <span class="sc">%&gt;%</span> <span class="fu">unlist</span>(), </span>
-<span id="cb593-5"><a href="8.7-contingency-table.html#cb593-5" tabindex="-1"></a>      <span class="at">dim =</span> <span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">2</span>,<span class="dv">10</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb593-6"><a href="8.7-contingency-table.html#cb593-6" tabindex="-1"></a>    <span class="fu">aperm</span>(<span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">1</span>,<span class="dv">3</span>))</span>
-<span id="cb593-7"><a href="8.7-contingency-table.html#cb593-7" tabindex="-1"></a><span class="co"># specify dimension names</span></span>
-<span id="cb593-8"><a href="8.7-contingency-table.html#cb593-8" tabindex="-1"></a><span class="fu">dimnames</span>(confusion_ftable) <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">rf.class.test =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>),</span>
-<span id="cb593-9"><a href="8.7-contingency-table.html#cb593-9" tabindex="-1"></a>                        <span class="at">obs.test =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>),</span>
-<span id="cb593-10"><a href="8.7-contingency-table.html#cb593-10" tabindex="-1"></a>                        <span class="at">Group =</span> <span class="fu">paste0</span>(<span class="st">&quot;G&quot;</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb595"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb595-1"><a href="8.7-contingency-table.html#cb595-1" tabindex="-1"></a><span class="co"># read as a regular table</span></span>
+<span id="cb595-2"><a href="8.7-contingency-table.html#cb595-2" tabindex="-1"></a>confusion_ftable <span class="ot">&lt;-</span> <span class="fu">read.table</span>(f_name, <span class="at">sep =</span> <span class="st">&quot;,&quot;</span>, <span class="at">skip =</span> <span class="dv">2</span>)</span>
+<span id="cb595-3"><a href="8.7-contingency-table.html#cb595-3" tabindex="-1"></a><span class="co"># change to array, check if need to transpose</span></span>
+<span id="cb595-4"><a href="8.7-contingency-table.html#cb595-4" tabindex="-1"></a>confusion_ftable <span class="ot">&lt;-</span> <span class="fu">array</span>(confusion_ftable[,<span class="dv">3</span><span class="sc">:</span><span class="dv">12</span>] <span class="sc">%&gt;%</span> <span class="fu">unlist</span>(), </span>
+<span id="cb595-5"><a href="8.7-contingency-table.html#cb595-5" tabindex="-1"></a>      <span class="at">dim =</span> <span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">2</span>,<span class="dv">10</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb595-6"><a href="8.7-contingency-table.html#cb595-6" tabindex="-1"></a>    <span class="fu">aperm</span>(<span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">1</span>,<span class="dv">3</span>))</span>
+<span id="cb595-7"><a href="8.7-contingency-table.html#cb595-7" tabindex="-1"></a><span class="co"># specify dimension names</span></span>
+<span id="cb595-8"><a href="8.7-contingency-table.html#cb595-8" tabindex="-1"></a><span class="fu">dimnames</span>(confusion_ftable) <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">rf.class.test =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>),</span>
+<span id="cb595-9"><a href="8.7-contingency-table.html#cb595-9" tabindex="-1"></a>                        <span class="at">obs.test =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>),</span>
+<span id="cb595-10"><a href="8.7-contingency-table.html#cb595-10" tabindex="-1"></a>                        <span class="at">Group =</span> <span class="fu">paste0</span>(<span class="st">&quot;G&quot;</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>))</span></code></pre></div>
 <p><strong><code>ftable</code> examples</strong></p>
-<div class="sourceCode" id="cb594"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb594-1"><a href="8.7-contingency-table.html#cb594-1" tabindex="-1"></a><span class="sc">&gt;</span> Pet <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Cat&quot;</span>,<span class="st">&quot;Dog&quot;</span>,<span class="st">&quot;Cat&quot;</span>,<span class="st">&quot;Dog&quot;</span>,<span class="st">&quot;Cat&quot;</span>,<span class="st">&quot;Fish&quot;</span>)</span>
-<span id="cb594-2"><a href="8.7-contingency-table.html#cb594-2" tabindex="-1"></a><span class="sc">&gt;</span> Food <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;F1&quot;</span>,<span class="st">&quot;F3&quot;</span>,<span class="st">&quot;F2&quot;</span>,<span class="st">&quot;F4&quot;</span>,<span class="st">&quot;F2&quot;</span>,<span class="st">&quot;F4&quot;</span>)</span>
-<span id="cb594-3"><a href="8.7-contingency-table.html#cb594-3" tabindex="-1"></a><span class="sc">&gt;</span> Sex <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;M&quot;</span>, <span class="st">&quot;M&quot;</span>, <span class="st">&quot;F&quot;</span>, <span class="st">&quot;M&quot;</span>, <span class="st">&quot;F&quot;</span>, <span class="st">&quot;F&quot;</span>)</span>
-<span id="cb594-4"><a href="8.7-contingency-table.html#cb594-4" tabindex="-1"></a><span class="sc">&gt;</span> Color <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Black&quot;</span>, <span class="st">&quot;White&quot;</span>, <span class="st">&quot;Yellow&quot;</span>, <span class="st">&quot;NA&quot;</span>, <span class="st">&quot;White&quot;</span>, <span class="st">&quot;Black&quot;</span> )</span>
-<span id="cb594-5"><a href="8.7-contingency-table.html#cb594-5" tabindex="-1"></a><span class="sc">&gt;</span> ft <span class="ot">&lt;-</span> <span class="fu">ftable</span>(Pet, Food, Sex, Color)</span>
-<span id="cb594-6"><a href="8.7-contingency-table.html#cb594-6" tabindex="-1"></a><span class="sc">&gt;</span> ft</span>
-<span id="cb594-7"><a href="8.7-contingency-table.html#cb594-7" tabindex="-1"></a>              Color Black <span class="cn">NA</span> White Yellow</span>
-<span id="cb594-8"><a href="8.7-contingency-table.html#cb594-8" tabindex="-1"></a>Pet  Food Sex                            </span>
-<span id="cb594-9"><a href="8.7-contingency-table.html#cb594-9" tabindex="-1"></a>Cat  F1   F             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
-<span id="cb594-10"><a href="8.7-contingency-table.html#cb594-10" tabindex="-1"></a>          M             <span class="dv">1</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
-<span id="cb594-11"><a href="8.7-contingency-table.html#cb594-11" tabindex="-1"></a>     F2   F             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">1</span>      <span class="dv">1</span></span>
-<span id="cb594-12"><a href="8.7-contingency-table.html#cb594-12" tabindex="-1"></a>          M             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
-<span id="cb594-13"><a href="8.7-contingency-table.html#cb594-13" tabindex="-1"></a>     F3   F             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
-<span id="cb594-14"><a href="8.7-contingency-table.html#cb594-14" tabindex="-1"></a>          M             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
-<span id="cb594-15"><a href="8.7-contingency-table.html#cb594-15" tabindex="-1"></a>     F4   F             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
-<span id="cb594-16"><a href="8.7-contingency-table.html#cb594-16" tabindex="-1"></a>          M             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
-<span id="cb594-17"><a href="8.7-contingency-table.html#cb594-17" tabindex="-1"></a>Dog  F1   F             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
-<span id="cb594-18"><a href="8.7-contingency-table.html#cb594-18" tabindex="-1"></a>          M             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
-<span id="cb594-19"><a href="8.7-contingency-table.html#cb594-19" tabindex="-1"></a>     F2   F             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
-<span id="cb594-20"><a href="8.7-contingency-table.html#cb594-20" tabindex="-1"></a>          M             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
-<span id="cb594-21"><a href="8.7-contingency-table.html#cb594-21" tabindex="-1"></a>     F3   F             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
-<span id="cb594-22"><a href="8.7-contingency-table.html#cb594-22" tabindex="-1"></a>          M             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">1</span>      <span class="dv">0</span></span>
-<span id="cb594-23"><a href="8.7-contingency-table.html#cb594-23" tabindex="-1"></a>     F4   F             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
-<span id="cb594-24"><a href="8.7-contingency-table.html#cb594-24" tabindex="-1"></a>          M             <span class="dv">0</span>  <span class="dv">1</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
-<span id="cb594-25"><a href="8.7-contingency-table.html#cb594-25" tabindex="-1"></a>Fish F1   F             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
-<span id="cb594-26"><a href="8.7-contingency-table.html#cb594-26" tabindex="-1"></a>          M             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
-<span id="cb594-27"><a href="8.7-contingency-table.html#cb594-27" tabindex="-1"></a>     F2   F             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
-<span id="cb594-28"><a href="8.7-contingency-table.html#cb594-28" tabindex="-1"></a>          M             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
-<span id="cb594-29"><a href="8.7-contingency-table.html#cb594-29" tabindex="-1"></a>     F3   F             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
-<span id="cb594-30"><a href="8.7-contingency-table.html#cb594-30" tabindex="-1"></a>          M             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
-<span id="cb594-31"><a href="8.7-contingency-table.html#cb594-31" tabindex="-1"></a>     F4   F             <span class="dv">1</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
-<span id="cb594-32"><a href="8.7-contingency-table.html#cb594-32" tabindex="-1"></a>          M             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
-<span id="cb594-33"><a href="8.7-contingency-table.html#cb594-33" tabindex="-1"></a><span class="sc">&gt;</span> ft3 <span class="ot">&lt;-</span> <span class="fu">ftable</span>(ft, <span class="at">row.vars =</span> <span class="st">&quot;Food&quot;</span>, <span class="at">col.vars =</span> <span class="fu">c</span>(<span class="st">&quot;Sex&quot;</span>, <span class="st">&quot;Pet&quot;</span>))</span>
-<span id="cb594-34"><a href="8.7-contingency-table.html#cb594-34" tabindex="-1"></a><span class="sc">&gt;</span> ft3</span>
-<span id="cb594-35"><a href="8.7-contingency-table.html#cb594-35" tabindex="-1"></a>     Sex   F            M         </span>
-<span id="cb594-36"><a href="8.7-contingency-table.html#cb594-36" tabindex="-1"></a>     Pet Cat Dog Fish Cat Dog Fish</span>
-<span id="cb594-37"><a href="8.7-contingency-table.html#cb594-37" tabindex="-1"></a>Food                              </span>
-<span id="cb594-38"><a href="8.7-contingency-table.html#cb594-38" tabindex="-1"></a>F1         <span class="dv">0</span>   <span class="dv">0</span>    <span class="dv">0</span>   <span class="dv">1</span>   <span class="dv">0</span>    <span class="dv">0</span></span>
-<span id="cb594-39"><a href="8.7-contingency-table.html#cb594-39" tabindex="-1"></a>F2         <span class="dv">2</span>   <span class="dv">0</span>    <span class="dv">0</span>   <span class="dv">0</span>   <span class="dv">0</span>    <span class="dv">0</span></span>
-<span id="cb594-40"><a href="8.7-contingency-table.html#cb594-40" tabindex="-1"></a>F3         <span class="dv">0</span>   <span class="dv">0</span>    <span class="dv">0</span>   <span class="dv">0</span>   <span class="dv">1</span>    <span class="dv">0</span></span>
-<span id="cb594-41"><a href="8.7-contingency-table.html#cb594-41" tabindex="-1"></a>F4         <span class="dv">0</span>   <span class="dv">0</span>    <span class="dv">1</span>   <span class="dv">0</span>   <span class="dv">1</span>    <span class="dv">0</span></span>
-<span id="cb594-42"><a href="8.7-contingency-table.html#cb594-42" tabindex="-1"></a></span>
-<span id="cb594-43"><a href="8.7-contingency-table.html#cb594-43" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">as.table</span>(ft3)</span>
-<span id="cb594-44"><a href="8.7-contingency-table.html#cb594-44" tabindex="-1"></a>, , Pet <span class="ot">=</span> Cat</span>
-<span id="cb594-45"><a href="8.7-contingency-table.html#cb594-45" tabindex="-1"></a></span>
-<span id="cb594-46"><a href="8.7-contingency-table.html#cb594-46" tabindex="-1"></a>    Sex</span>
-<span id="cb594-47"><a href="8.7-contingency-table.html#cb594-47" tabindex="-1"></a>Food F M</span>
-<span id="cb594-48"><a href="8.7-contingency-table.html#cb594-48" tabindex="-1"></a>  F1 <span class="dv">0</span> <span class="dv">1</span></span>
-<span id="cb594-49"><a href="8.7-contingency-table.html#cb594-49" tabindex="-1"></a>  F2 <span class="dv">2</span> <span class="dv">0</span></span>
-<span id="cb594-50"><a href="8.7-contingency-table.html#cb594-50" tabindex="-1"></a>  F3 <span class="dv">0</span> <span class="dv">0</span></span>
-<span id="cb594-51"><a href="8.7-contingency-table.html#cb594-51" tabindex="-1"></a>  F4 <span class="dv">0</span> <span class="dv">0</span></span>
-<span id="cb594-52"><a href="8.7-contingency-table.html#cb594-52" tabindex="-1"></a></span>
-<span id="cb594-53"><a href="8.7-contingency-table.html#cb594-53" tabindex="-1"></a>, , Pet <span class="ot">=</span> Dog</span>
-<span id="cb594-54"><a href="8.7-contingency-table.html#cb594-54" tabindex="-1"></a></span>
-<span id="cb594-55"><a href="8.7-contingency-table.html#cb594-55" tabindex="-1"></a>    Sex</span>
-<span id="cb594-56"><a href="8.7-contingency-table.html#cb594-56" tabindex="-1"></a>Food F M</span>
-<span id="cb594-57"><a href="8.7-contingency-table.html#cb594-57" tabindex="-1"></a>  F1 <span class="dv">0</span> <span class="dv">0</span></span>
-<span id="cb594-58"><a href="8.7-contingency-table.html#cb594-58" tabindex="-1"></a>  F2 <span class="dv">0</span> <span class="dv">0</span></span>
-<span id="cb594-59"><a href="8.7-contingency-table.html#cb594-59" tabindex="-1"></a>  F3 <span class="dv">0</span> <span class="dv">1</span></span>
-<span id="cb594-60"><a href="8.7-contingency-table.html#cb594-60" tabindex="-1"></a>  F4 <span class="dv">0</span> <span class="dv">1</span></span>
-<span id="cb594-61"><a href="8.7-contingency-table.html#cb594-61" tabindex="-1"></a></span>
-<span id="cb594-62"><a href="8.7-contingency-table.html#cb594-62" tabindex="-1"></a>, , Pet <span class="ot">=</span> Fish</span>
-<span id="cb594-63"><a href="8.7-contingency-table.html#cb594-63" tabindex="-1"></a></span>
-<span id="cb594-64"><a href="8.7-contingency-table.html#cb594-64" tabindex="-1"></a>    Sex</span>
-<span id="cb594-65"><a href="8.7-contingency-table.html#cb594-65" tabindex="-1"></a>Food F M</span>
-<span id="cb594-66"><a href="8.7-contingency-table.html#cb594-66" tabindex="-1"></a>  F1 <span class="dv">0</span> <span class="dv">0</span></span>
-<span id="cb594-67"><a href="8.7-contingency-table.html#cb594-67" tabindex="-1"></a>  F2 <span class="dv">0</span> <span class="dv">0</span></span>
-<span id="cb594-68"><a href="8.7-contingency-table.html#cb594-68" tabindex="-1"></a>  F3 <span class="dv">0</span> <span class="dv">0</span></span>
-<span id="cb594-69"><a href="8.7-contingency-table.html#cb594-69" tabindex="-1"></a>  F4 <span class="dv">1</span> <span class="dv">0</span></span></code></pre></div>
+<div class="sourceCode" id="cb596"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb596-1"><a href="8.7-contingency-table.html#cb596-1" tabindex="-1"></a><span class="sc">&gt;</span> Pet <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Cat&quot;</span>,<span class="st">&quot;Dog&quot;</span>,<span class="st">&quot;Cat&quot;</span>,<span class="st">&quot;Dog&quot;</span>,<span class="st">&quot;Cat&quot;</span>,<span class="st">&quot;Fish&quot;</span>)</span>
+<span id="cb596-2"><a href="8.7-contingency-table.html#cb596-2" tabindex="-1"></a><span class="sc">&gt;</span> Food <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;F1&quot;</span>,<span class="st">&quot;F3&quot;</span>,<span class="st">&quot;F2&quot;</span>,<span class="st">&quot;F4&quot;</span>,<span class="st">&quot;F2&quot;</span>,<span class="st">&quot;F4&quot;</span>)</span>
+<span id="cb596-3"><a href="8.7-contingency-table.html#cb596-3" tabindex="-1"></a><span class="sc">&gt;</span> Sex <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;M&quot;</span>, <span class="st">&quot;M&quot;</span>, <span class="st">&quot;F&quot;</span>, <span class="st">&quot;M&quot;</span>, <span class="st">&quot;F&quot;</span>, <span class="st">&quot;F&quot;</span>)</span>
+<span id="cb596-4"><a href="8.7-contingency-table.html#cb596-4" tabindex="-1"></a><span class="sc">&gt;</span> Color <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Black&quot;</span>, <span class="st">&quot;White&quot;</span>, <span class="st">&quot;Yellow&quot;</span>, <span class="st">&quot;NA&quot;</span>, <span class="st">&quot;White&quot;</span>, <span class="st">&quot;Black&quot;</span> )</span>
+<span id="cb596-5"><a href="8.7-contingency-table.html#cb596-5" tabindex="-1"></a><span class="sc">&gt;</span> ft <span class="ot">&lt;-</span> <span class="fu">ftable</span>(Pet, Food, Sex, Color)</span>
+<span id="cb596-6"><a href="8.7-contingency-table.html#cb596-6" tabindex="-1"></a><span class="sc">&gt;</span> ft</span>
+<span id="cb596-7"><a href="8.7-contingency-table.html#cb596-7" tabindex="-1"></a>              Color Black <span class="cn">NA</span> White Yellow</span>
+<span id="cb596-8"><a href="8.7-contingency-table.html#cb596-8" tabindex="-1"></a>Pet  Food Sex                            </span>
+<span id="cb596-9"><a href="8.7-contingency-table.html#cb596-9" tabindex="-1"></a>Cat  F1   F             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
+<span id="cb596-10"><a href="8.7-contingency-table.html#cb596-10" tabindex="-1"></a>          M             <span class="dv">1</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
+<span id="cb596-11"><a href="8.7-contingency-table.html#cb596-11" tabindex="-1"></a>     F2   F             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">1</span>      <span class="dv">1</span></span>
+<span id="cb596-12"><a href="8.7-contingency-table.html#cb596-12" tabindex="-1"></a>          M             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
+<span id="cb596-13"><a href="8.7-contingency-table.html#cb596-13" tabindex="-1"></a>     F3   F             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
+<span id="cb596-14"><a href="8.7-contingency-table.html#cb596-14" tabindex="-1"></a>          M             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
+<span id="cb596-15"><a href="8.7-contingency-table.html#cb596-15" tabindex="-1"></a>     F4   F             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
+<span id="cb596-16"><a href="8.7-contingency-table.html#cb596-16" tabindex="-1"></a>          M             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
+<span id="cb596-17"><a href="8.7-contingency-table.html#cb596-17" tabindex="-1"></a>Dog  F1   F             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
+<span id="cb596-18"><a href="8.7-contingency-table.html#cb596-18" tabindex="-1"></a>          M             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
+<span id="cb596-19"><a href="8.7-contingency-table.html#cb596-19" tabindex="-1"></a>     F2   F             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
+<span id="cb596-20"><a href="8.7-contingency-table.html#cb596-20" tabindex="-1"></a>          M             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
+<span id="cb596-21"><a href="8.7-contingency-table.html#cb596-21" tabindex="-1"></a>     F3   F             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
+<span id="cb596-22"><a href="8.7-contingency-table.html#cb596-22" tabindex="-1"></a>          M             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">1</span>      <span class="dv">0</span></span>
+<span id="cb596-23"><a href="8.7-contingency-table.html#cb596-23" tabindex="-1"></a>     F4   F             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
+<span id="cb596-24"><a href="8.7-contingency-table.html#cb596-24" tabindex="-1"></a>          M             <span class="dv">0</span>  <span class="dv">1</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
+<span id="cb596-25"><a href="8.7-contingency-table.html#cb596-25" tabindex="-1"></a>Fish F1   F             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
+<span id="cb596-26"><a href="8.7-contingency-table.html#cb596-26" tabindex="-1"></a>          M             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
+<span id="cb596-27"><a href="8.7-contingency-table.html#cb596-27" tabindex="-1"></a>     F2   F             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
+<span id="cb596-28"><a href="8.7-contingency-table.html#cb596-28" tabindex="-1"></a>          M             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
+<span id="cb596-29"><a href="8.7-contingency-table.html#cb596-29" tabindex="-1"></a>     F3   F             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
+<span id="cb596-30"><a href="8.7-contingency-table.html#cb596-30" tabindex="-1"></a>          M             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
+<span id="cb596-31"><a href="8.7-contingency-table.html#cb596-31" tabindex="-1"></a>     F4   F             <span class="dv">1</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
+<span id="cb596-32"><a href="8.7-contingency-table.html#cb596-32" tabindex="-1"></a>          M             <span class="dv">0</span>  <span class="dv">0</span>     <span class="dv">0</span>      <span class="dv">0</span></span>
+<span id="cb596-33"><a href="8.7-contingency-table.html#cb596-33" tabindex="-1"></a><span class="sc">&gt;</span> ft3 <span class="ot">&lt;-</span> <span class="fu">ftable</span>(ft, <span class="at">row.vars =</span> <span class="st">&quot;Food&quot;</span>, <span class="at">col.vars =</span> <span class="fu">c</span>(<span class="st">&quot;Sex&quot;</span>, <span class="st">&quot;Pet&quot;</span>))</span>
+<span id="cb596-34"><a href="8.7-contingency-table.html#cb596-34" tabindex="-1"></a><span class="sc">&gt;</span> ft3</span>
+<span id="cb596-35"><a href="8.7-contingency-table.html#cb596-35" tabindex="-1"></a>     Sex   F            M         </span>
+<span id="cb596-36"><a href="8.7-contingency-table.html#cb596-36" tabindex="-1"></a>     Pet Cat Dog Fish Cat Dog Fish</span>
+<span id="cb596-37"><a href="8.7-contingency-table.html#cb596-37" tabindex="-1"></a>Food                              </span>
+<span id="cb596-38"><a href="8.7-contingency-table.html#cb596-38" tabindex="-1"></a>F1         <span class="dv">0</span>   <span class="dv">0</span>    <span class="dv">0</span>   <span class="dv">1</span>   <span class="dv">0</span>    <span class="dv">0</span></span>
+<span id="cb596-39"><a href="8.7-contingency-table.html#cb596-39" tabindex="-1"></a>F2         <span class="dv">2</span>   <span class="dv">0</span>    <span class="dv">0</span>   <span class="dv">0</span>   <span class="dv">0</span>    <span class="dv">0</span></span>
+<span id="cb596-40"><a href="8.7-contingency-table.html#cb596-40" tabindex="-1"></a>F3         <span class="dv">0</span>   <span class="dv">0</span>    <span class="dv">0</span>   <span class="dv">0</span>   <span class="dv">1</span>    <span class="dv">0</span></span>
+<span id="cb596-41"><a href="8.7-contingency-table.html#cb596-41" tabindex="-1"></a>F4         <span class="dv">0</span>   <span class="dv">0</span>    <span class="dv">1</span>   <span class="dv">0</span>   <span class="dv">1</span>    <span class="dv">0</span></span>
+<span id="cb596-42"><a href="8.7-contingency-table.html#cb596-42" tabindex="-1"></a></span>
+<span id="cb596-43"><a href="8.7-contingency-table.html#cb596-43" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">as.table</span>(ft3)</span>
+<span id="cb596-44"><a href="8.7-contingency-table.html#cb596-44" tabindex="-1"></a>, , Pet <span class="ot">=</span> Cat</span>
+<span id="cb596-45"><a href="8.7-contingency-table.html#cb596-45" tabindex="-1"></a></span>
+<span id="cb596-46"><a href="8.7-contingency-table.html#cb596-46" tabindex="-1"></a>    Sex</span>
+<span id="cb596-47"><a href="8.7-contingency-table.html#cb596-47" tabindex="-1"></a>Food F M</span>
+<span id="cb596-48"><a href="8.7-contingency-table.html#cb596-48" tabindex="-1"></a>  F1 <span class="dv">0</span> <span class="dv">1</span></span>
+<span id="cb596-49"><a href="8.7-contingency-table.html#cb596-49" tabindex="-1"></a>  F2 <span class="dv">2</span> <span class="dv">0</span></span>
+<span id="cb596-50"><a href="8.7-contingency-table.html#cb596-50" tabindex="-1"></a>  F3 <span class="dv">0</span> <span class="dv">0</span></span>
+<span id="cb596-51"><a href="8.7-contingency-table.html#cb596-51" tabindex="-1"></a>  F4 <span class="dv">0</span> <span class="dv">0</span></span>
+<span id="cb596-52"><a href="8.7-contingency-table.html#cb596-52" tabindex="-1"></a></span>
+<span id="cb596-53"><a href="8.7-contingency-table.html#cb596-53" tabindex="-1"></a>, , Pet <span class="ot">=</span> Dog</span>
+<span id="cb596-54"><a href="8.7-contingency-table.html#cb596-54" tabindex="-1"></a></span>
+<span id="cb596-55"><a href="8.7-contingency-table.html#cb596-55" tabindex="-1"></a>    Sex</span>
+<span id="cb596-56"><a href="8.7-contingency-table.html#cb596-56" tabindex="-1"></a>Food F M</span>
+<span id="cb596-57"><a href="8.7-contingency-table.html#cb596-57" tabindex="-1"></a>  F1 <span class="dv">0</span> <span class="dv">0</span></span>
+<span id="cb596-58"><a href="8.7-contingency-table.html#cb596-58" tabindex="-1"></a>  F2 <span class="dv">0</span> <span class="dv">0</span></span>
+<span id="cb596-59"><a href="8.7-contingency-table.html#cb596-59" tabindex="-1"></a>  F3 <span class="dv">0</span> <span class="dv">1</span></span>
+<span id="cb596-60"><a href="8.7-contingency-table.html#cb596-60" tabindex="-1"></a>  F4 <span class="dv">0</span> <span class="dv">1</span></span>
+<span id="cb596-61"><a href="8.7-contingency-table.html#cb596-61" tabindex="-1"></a></span>
+<span id="cb596-62"><a href="8.7-contingency-table.html#cb596-62" tabindex="-1"></a>, , Pet <span class="ot">=</span> Fish</span>
+<span id="cb596-63"><a href="8.7-contingency-table.html#cb596-63" tabindex="-1"></a></span>
+<span id="cb596-64"><a href="8.7-contingency-table.html#cb596-64" tabindex="-1"></a>    Sex</span>
+<span id="cb596-65"><a href="8.7-contingency-table.html#cb596-65" tabindex="-1"></a>Food F M</span>
+<span id="cb596-66"><a href="8.7-contingency-table.html#cb596-66" tabindex="-1"></a>  F1 <span class="dv">0</span> <span class="dv">0</span></span>
+<span id="cb596-67"><a href="8.7-contingency-table.html#cb596-67" tabindex="-1"></a>  F2 <span class="dv">0</span> <span class="dv">0</span></span>
+<span id="cb596-68"><a href="8.7-contingency-table.html#cb596-68" tabindex="-1"></a>  F3 <span class="dv">0</span> <span class="dv">0</span></span>
+<span id="cb596-69"><a href="8.7-contingency-table.html#cb596-69" tabindex="-1"></a>  F4 <span class="dv">1</span> <span class="dv">0</span></span></code></pre></div>
 <p><code>write.ftable</code> has three formats: <code>row.compact</code>, <code>col.compact</code>, and <code>compact</code>.</p>
-<div class="sourceCode" id="cb595"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb595-1"><a href="8.7-contingency-table.html#cb595-1" tabindex="-1"></a><span class="sc">&gt;</span> ft22</span>
-<span id="cb595-2"><a href="8.7-contingency-table.html#cb595-2" tabindex="-1"></a>             Survived    No         Yes      </span>
-<span id="cb595-3"><a href="8.7-contingency-table.html#cb595-3" tabindex="-1"></a>             Age      Child Adult Child Adult</span>
-<span id="cb595-4"><a href="8.7-contingency-table.html#cb595-4" tabindex="-1"></a>Sex    Class                                 </span>
-<span id="cb595-5"><a href="8.7-contingency-table.html#cb595-5" tabindex="-1"></a>Male   <span class="dv">1</span>st                <span class="dv">0</span>   <span class="dv">118</span>     <span class="dv">5</span>    <span class="dv">57</span></span>
-<span id="cb595-6"><a href="8.7-contingency-table.html#cb595-6" tabindex="-1"></a>       <span class="dv">2</span>nd                <span class="dv">0</span>   <span class="dv">154</span>    <span class="dv">11</span>    <span class="dv">14</span></span>
-<span id="cb595-7"><a href="8.7-contingency-table.html#cb595-7" tabindex="-1"></a>       <span class="dv">3</span>rd               <span class="dv">35</span>   <span class="dv">387</span>    <span class="dv">13</span>    <span class="dv">75</span></span>
-<span id="cb595-8"><a href="8.7-contingency-table.html#cb595-8" tabindex="-1"></a>       Crew               <span class="dv">0</span>   <span class="dv">670</span>     <span class="dv">0</span>   <span class="dv">192</span></span>
-<span id="cb595-9"><a href="8.7-contingency-table.html#cb595-9" tabindex="-1"></a>Female <span class="dv">1</span>st                <span class="dv">0</span>     <span class="dv">4</span>     <span class="dv">1</span>   <span class="dv">140</span></span>
-<span id="cb595-10"><a href="8.7-contingency-table.html#cb595-10" tabindex="-1"></a>       <span class="dv">2</span>nd                <span class="dv">0</span>    <span class="dv">13</span>    <span class="dv">13</span>    <span class="dv">80</span></span>
-<span id="cb595-11"><a href="8.7-contingency-table.html#cb595-11" tabindex="-1"></a>       <span class="dv">3</span>rd               <span class="dv">17</span>    <span class="dv">89</span>    <span class="dv">14</span>    <span class="dv">76</span></span>
-<span id="cb595-12"><a href="8.7-contingency-table.html#cb595-12" tabindex="-1"></a>       Crew               <span class="dv">0</span>     <span class="dv">3</span>     <span class="dv">0</span>    <span class="dv">20</span></span>
-<span id="cb595-13"><a href="8.7-contingency-table.html#cb595-13" tabindex="-1"></a><span class="sc">-------------------------------------------------------------</span></span>
-<span id="cb595-14"><a href="8.7-contingency-table.html#cb595-14" tabindex="-1"></a><span class="er">&gt;</span> <span class="fu">write.ftable</span>(ft22, <span class="at">quote =</span> <span class="cn">FALSE</span>, <span class="at">method=</span><span class="st">&quot;row.compact&quot;</span>)</span>
-<span id="cb595-15"><a href="8.7-contingency-table.html#cb595-15" tabindex="-1"></a>             Survived    No         Yes      </span>
-<span id="cb595-16"><a href="8.7-contingency-table.html#cb595-16" tabindex="-1"></a>Sex    Class Age      Child Adult Child Adult</span>
-<span id="cb595-17"><a href="8.7-contingency-table.html#cb595-17" tabindex="-1"></a>Male   <span class="dv">1</span>st                <span class="dv">0</span>   <span class="dv">118</span>     <span class="dv">5</span>    <span class="dv">57</span></span>
-<span id="cb595-18"><a href="8.7-contingency-table.html#cb595-18" tabindex="-1"></a>       <span class="dv">2</span>nd                <span class="dv">0</span>   <span class="dv">154</span>    <span class="dv">11</span>    <span class="dv">14</span></span>
-<span id="cb595-19"><a href="8.7-contingency-table.html#cb595-19" tabindex="-1"></a>       <span class="dv">3</span>rd               <span class="dv">35</span>   <span class="dv">387</span>    <span class="dv">13</span>    <span class="dv">75</span></span>
-<span id="cb595-20"><a href="8.7-contingency-table.html#cb595-20" tabindex="-1"></a>       Crew               <span class="dv">0</span>   <span class="dv">670</span>     <span class="dv">0</span>   <span class="dv">192</span></span>
-<span id="cb595-21"><a href="8.7-contingency-table.html#cb595-21" tabindex="-1"></a>Female <span class="dv">1</span>st                <span class="dv">0</span>     <span class="dv">4</span>     <span class="dv">1</span>   <span class="dv">140</span></span>
-<span id="cb595-22"><a href="8.7-contingency-table.html#cb595-22" tabindex="-1"></a>       <span class="dv">2</span>nd                <span class="dv">0</span>    <span class="dv">13</span>    <span class="dv">13</span>    <span class="dv">80</span></span>
-<span id="cb595-23"><a href="8.7-contingency-table.html#cb595-23" tabindex="-1"></a>       <span class="dv">3</span>rd               <span class="dv">17</span>    <span class="dv">89</span>    <span class="dv">14</span>    <span class="dv">76</span></span>
-<span id="cb595-24"><a href="8.7-contingency-table.html#cb595-24" tabindex="-1"></a>       Crew               <span class="dv">0</span>     <span class="dv">3</span>     <span class="dv">0</span>    <span class="dv">20</span></span>
-<span id="cb595-25"><a href="8.7-contingency-table.html#cb595-25" tabindex="-1"></a><span class="sc">-------------------------------------------------------------</span></span>
-<span id="cb595-26"><a href="8.7-contingency-table.html#cb595-26" tabindex="-1"></a><span class="er">&gt;</span> <span class="fu">write.ftable</span>(ft22, <span class="at">quote =</span> <span class="cn">FALSE</span>, <span class="at">method=</span><span class="st">&quot;col.compact&quot;</span>)</span>
-<span id="cb595-27"><a href="8.7-contingency-table.html#cb595-27" tabindex="-1"></a>       Survived    No         Yes      </span>
-<span id="cb595-28"><a href="8.7-contingency-table.html#cb595-28" tabindex="-1"></a>       Age      Child Adult Child Adult</span>
-<span id="cb595-29"><a href="8.7-contingency-table.html#cb595-29" tabindex="-1"></a>Sex    Class                           </span>
-<span id="cb595-30"><a href="8.7-contingency-table.html#cb595-30" tabindex="-1"></a>Male   <span class="dv">1</span>st          <span class="dv">0</span>   <span class="dv">118</span>     <span class="dv">5</span>    <span class="dv">57</span></span>
-<span id="cb595-31"><a href="8.7-contingency-table.html#cb595-31" tabindex="-1"></a>       <span class="dv">2</span>nd          <span class="dv">0</span>   <span class="dv">154</span>    <span class="dv">11</span>    <span class="dv">14</span></span>
-<span id="cb595-32"><a href="8.7-contingency-table.html#cb595-32" tabindex="-1"></a>       <span class="dv">3</span>rd         <span class="dv">35</span>   <span class="dv">387</span>    <span class="dv">13</span>    <span class="dv">75</span></span>
-<span id="cb595-33"><a href="8.7-contingency-table.html#cb595-33" tabindex="-1"></a>       Crew         <span class="dv">0</span>   <span class="dv">670</span>     <span class="dv">0</span>   <span class="dv">192</span></span>
-<span id="cb595-34"><a href="8.7-contingency-table.html#cb595-34" tabindex="-1"></a>Female <span class="dv">1</span>st          <span class="dv">0</span>     <span class="dv">4</span>     <span class="dv">1</span>   <span class="dv">140</span></span>
-<span id="cb595-35"><a href="8.7-contingency-table.html#cb595-35" tabindex="-1"></a>       <span class="dv">2</span>nd          <span class="dv">0</span>    <span class="dv">13</span>    <span class="dv">13</span>    <span class="dv">80</span></span>
-<span id="cb595-36"><a href="8.7-contingency-table.html#cb595-36" tabindex="-1"></a>       <span class="dv">3</span>rd         <span class="dv">17</span>    <span class="dv">89</span>    <span class="dv">14</span>    <span class="dv">76</span></span>
-<span id="cb595-37"><a href="8.7-contingency-table.html#cb595-37" tabindex="-1"></a>       Crew         <span class="dv">0</span>     <span class="dv">3</span>     <span class="dv">0</span>    <span class="dv">20</span></span>
-<span id="cb595-38"><a href="8.7-contingency-table.html#cb595-38" tabindex="-1"></a><span class="sc">-------------------------------------------------------------</span></span>
-<span id="cb595-39"><a href="8.7-contingency-table.html#cb595-39" tabindex="-1"></a><span class="er">&gt;</span> <span class="fu">write.ftable</span>(ft22, <span class="at">quote =</span> <span class="cn">FALSE</span>, <span class="at">method=</span><span class="st">&quot;compact&quot;</span>)</span>
-<span id="cb595-40"><a href="8.7-contingency-table.html#cb595-40" tabindex="-1"></a>       Survived       No         Yes      </span>
-<span id="cb595-41"><a href="8.7-contingency-table.html#cb595-41" tabindex="-1"></a>Sex    Class <span class="sc">|</span> Age Child Adult Child Adult</span>
-<span id="cb595-42"><a href="8.7-contingency-table.html#cb595-42" tabindex="-1"></a>Male   <span class="dv">1</span>st             <span class="dv">0</span>   <span class="dv">118</span>     <span class="dv">5</span>    <span class="dv">57</span></span>
-<span id="cb595-43"><a href="8.7-contingency-table.html#cb595-43" tabindex="-1"></a>       <span class="dv">2</span>nd             <span class="dv">0</span>   <span class="dv">154</span>    <span class="dv">11</span>    <span class="dv">14</span></span>
-<span id="cb595-44"><a href="8.7-contingency-table.html#cb595-44" tabindex="-1"></a>       <span class="dv">3</span>rd            <span class="dv">35</span>   <span class="dv">387</span>    <span class="dv">13</span>    <span class="dv">75</span></span>
-<span id="cb595-45"><a href="8.7-contingency-table.html#cb595-45" tabindex="-1"></a>       Crew            <span class="dv">0</span>   <span class="dv">670</span>     <span class="dv">0</span>   <span class="dv">192</span></span></code></pre></div>
+<div class="sourceCode" id="cb597"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb597-1"><a href="8.7-contingency-table.html#cb597-1" tabindex="-1"></a><span class="sc">&gt;</span> ft22</span>
+<span id="cb597-2"><a href="8.7-contingency-table.html#cb597-2" tabindex="-1"></a>             Survived    No         Yes      </span>
+<span id="cb597-3"><a href="8.7-contingency-table.html#cb597-3" tabindex="-1"></a>             Age      Child Adult Child Adult</span>
+<span id="cb597-4"><a href="8.7-contingency-table.html#cb597-4" tabindex="-1"></a>Sex    Class                                 </span>
+<span id="cb597-5"><a href="8.7-contingency-table.html#cb597-5" tabindex="-1"></a>Male   <span class="dv">1</span>st                <span class="dv">0</span>   <span class="dv">118</span>     <span class="dv">5</span>    <span class="dv">57</span></span>
+<span id="cb597-6"><a href="8.7-contingency-table.html#cb597-6" tabindex="-1"></a>       <span class="dv">2</span>nd                <span class="dv">0</span>   <span class="dv">154</span>    <span class="dv">11</span>    <span class="dv">14</span></span>
+<span id="cb597-7"><a href="8.7-contingency-table.html#cb597-7" tabindex="-1"></a>       <span class="dv">3</span>rd               <span class="dv">35</span>   <span class="dv">387</span>    <span class="dv">13</span>    <span class="dv">75</span></span>
+<span id="cb597-8"><a href="8.7-contingency-table.html#cb597-8" tabindex="-1"></a>       Crew               <span class="dv">0</span>   <span class="dv">670</span>     <span class="dv">0</span>   <span class="dv">192</span></span>
+<span id="cb597-9"><a href="8.7-contingency-table.html#cb597-9" tabindex="-1"></a>Female <span class="dv">1</span>st                <span class="dv">0</span>     <span class="dv">4</span>     <span class="dv">1</span>   <span class="dv">140</span></span>
+<span id="cb597-10"><a href="8.7-contingency-table.html#cb597-10" tabindex="-1"></a>       <span class="dv">2</span>nd                <span class="dv">0</span>    <span class="dv">13</span>    <span class="dv">13</span>    <span class="dv">80</span></span>
+<span id="cb597-11"><a href="8.7-contingency-table.html#cb597-11" tabindex="-1"></a>       <span class="dv">3</span>rd               <span class="dv">17</span>    <span class="dv">89</span>    <span class="dv">14</span>    <span class="dv">76</span></span>
+<span id="cb597-12"><a href="8.7-contingency-table.html#cb597-12" tabindex="-1"></a>       Crew               <span class="dv">0</span>     <span class="dv">3</span>     <span class="dv">0</span>    <span class="dv">20</span></span>
+<span id="cb597-13"><a href="8.7-contingency-table.html#cb597-13" tabindex="-1"></a><span class="sc">-------------------------------------------------------------</span></span>
+<span id="cb597-14"><a href="8.7-contingency-table.html#cb597-14" tabindex="-1"></a><span class="er">&gt;</span> <span class="fu">write.ftable</span>(ft22, <span class="at">quote =</span> <span class="cn">FALSE</span>, <span class="at">method=</span><span class="st">&quot;row.compact&quot;</span>)</span>
+<span id="cb597-15"><a href="8.7-contingency-table.html#cb597-15" tabindex="-1"></a>             Survived    No         Yes      </span>
+<span id="cb597-16"><a href="8.7-contingency-table.html#cb597-16" tabindex="-1"></a>Sex    Class Age      Child Adult Child Adult</span>
+<span id="cb597-17"><a href="8.7-contingency-table.html#cb597-17" tabindex="-1"></a>Male   <span class="dv">1</span>st                <span class="dv">0</span>   <span class="dv">118</span>     <span class="dv">5</span>    <span class="dv">57</span></span>
+<span id="cb597-18"><a href="8.7-contingency-table.html#cb597-18" tabindex="-1"></a>       <span class="dv">2</span>nd                <span class="dv">0</span>   <span class="dv">154</span>    <span class="dv">11</span>    <span class="dv">14</span></span>
+<span id="cb597-19"><a href="8.7-contingency-table.html#cb597-19" tabindex="-1"></a>       <span class="dv">3</span>rd               <span class="dv">35</span>   <span class="dv">387</span>    <span class="dv">13</span>    <span class="dv">75</span></span>
+<span id="cb597-20"><a href="8.7-contingency-table.html#cb597-20" tabindex="-1"></a>       Crew               <span class="dv">0</span>   <span class="dv">670</span>     <span class="dv">0</span>   <span class="dv">192</span></span>
+<span id="cb597-21"><a href="8.7-contingency-table.html#cb597-21" tabindex="-1"></a>Female <span class="dv">1</span>st                <span class="dv">0</span>     <span class="dv">4</span>     <span class="dv">1</span>   <span class="dv">140</span></span>
+<span id="cb597-22"><a href="8.7-contingency-table.html#cb597-22" tabindex="-1"></a>       <span class="dv">2</span>nd                <span class="dv">0</span>    <span class="dv">13</span>    <span class="dv">13</span>    <span class="dv">80</span></span>
+<span id="cb597-23"><a href="8.7-contingency-table.html#cb597-23" tabindex="-1"></a>       <span class="dv">3</span>rd               <span class="dv">17</span>    <span class="dv">89</span>    <span class="dv">14</span>    <span class="dv">76</span></span>
+<span id="cb597-24"><a href="8.7-contingency-table.html#cb597-24" tabindex="-1"></a>       Crew               <span class="dv">0</span>     <span class="dv">3</span>     <span class="dv">0</span>    <span class="dv">20</span></span>
+<span id="cb597-25"><a href="8.7-contingency-table.html#cb597-25" tabindex="-1"></a><span class="sc">-------------------------------------------------------------</span></span>
+<span id="cb597-26"><a href="8.7-contingency-table.html#cb597-26" tabindex="-1"></a><span class="er">&gt;</span> <span class="fu">write.ftable</span>(ft22, <span class="at">quote =</span> <span class="cn">FALSE</span>, <span class="at">method=</span><span class="st">&quot;col.compact&quot;</span>)</span>
+<span id="cb597-27"><a href="8.7-contingency-table.html#cb597-27" tabindex="-1"></a>       Survived    No         Yes      </span>
+<span id="cb597-28"><a href="8.7-contingency-table.html#cb597-28" tabindex="-1"></a>       Age      Child Adult Child Adult</span>
+<span id="cb597-29"><a href="8.7-contingency-table.html#cb597-29" tabindex="-1"></a>Sex    Class                           </span>
+<span id="cb597-30"><a href="8.7-contingency-table.html#cb597-30" tabindex="-1"></a>Male   <span class="dv">1</span>st          <span class="dv">0</span>   <span class="dv">118</span>     <span class="dv">5</span>    <span class="dv">57</span></span>
+<span id="cb597-31"><a href="8.7-contingency-table.html#cb597-31" tabindex="-1"></a>       <span class="dv">2</span>nd          <span class="dv">0</span>   <span class="dv">154</span>    <span class="dv">11</span>    <span class="dv">14</span></span>
+<span id="cb597-32"><a href="8.7-contingency-table.html#cb597-32" tabindex="-1"></a>       <span class="dv">3</span>rd         <span class="dv">35</span>   <span class="dv">387</span>    <span class="dv">13</span>    <span class="dv">75</span></span>
+<span id="cb597-33"><a href="8.7-contingency-table.html#cb597-33" tabindex="-1"></a>       Crew         <span class="dv">0</span>   <span class="dv">670</span>     <span class="dv">0</span>   <span class="dv">192</span></span>
+<span id="cb597-34"><a href="8.7-contingency-table.html#cb597-34" tabindex="-1"></a>Female <span class="dv">1</span>st          <span class="dv">0</span>     <span class="dv">4</span>     <span class="dv">1</span>   <span class="dv">140</span></span>
+<span id="cb597-35"><a href="8.7-contingency-table.html#cb597-35" tabindex="-1"></a>       <span class="dv">2</span>nd          <span class="dv">0</span>    <span class="dv">13</span>    <span class="dv">13</span>    <span class="dv">80</span></span>
+<span id="cb597-36"><a href="8.7-contingency-table.html#cb597-36" tabindex="-1"></a>       <span class="dv">3</span>rd         <span class="dv">17</span>    <span class="dv">89</span>    <span class="dv">14</span>    <span class="dv">76</span></span>
+<span id="cb597-37"><a href="8.7-contingency-table.html#cb597-37" tabindex="-1"></a>       Crew         <span class="dv">0</span>     <span class="dv">3</span>     <span class="dv">0</span>    <span class="dv">20</span></span>
+<span id="cb597-38"><a href="8.7-contingency-table.html#cb597-38" tabindex="-1"></a><span class="sc">-------------------------------------------------------------</span></span>
+<span id="cb597-39"><a href="8.7-contingency-table.html#cb597-39" tabindex="-1"></a><span class="er">&gt;</span> <span class="fu">write.ftable</span>(ft22, <span class="at">quote =</span> <span class="cn">FALSE</span>, <span class="at">method=</span><span class="st">&quot;compact&quot;</span>)</span>
+<span id="cb597-40"><a href="8.7-contingency-table.html#cb597-40" tabindex="-1"></a>       Survived       No         Yes      </span>
+<span id="cb597-41"><a href="8.7-contingency-table.html#cb597-41" tabindex="-1"></a>Sex    Class <span class="sc">|</span> Age Child Adult Child Adult</span>
+<span id="cb597-42"><a href="8.7-contingency-table.html#cb597-42" tabindex="-1"></a>Male   <span class="dv">1</span>st             <span class="dv">0</span>   <span class="dv">118</span>     <span class="dv">5</span>    <span class="dv">57</span></span>
+<span id="cb597-43"><a href="8.7-contingency-table.html#cb597-43" tabindex="-1"></a>       <span class="dv">2</span>nd             <span class="dv">0</span>   <span class="dv">154</span>    <span class="dv">11</span>    <span class="dv">14</span></span>
+<span id="cb597-44"><a href="8.7-contingency-table.html#cb597-44" tabindex="-1"></a>       <span class="dv">3</span>rd            <span class="dv">35</span>   <span class="dv">387</span>    <span class="dv">13</span>    <span class="dv">75</span></span>
+<span id="cb597-45"><a href="8.7-contingency-table.html#cb597-45" tabindex="-1"></a>       Crew            <span class="dv">0</span>   <span class="dv">670</span>     <span class="dv">0</span>   <span class="dv">192</span></span></code></pre></div>
 </div>
 </div>
 <div id="table-visualization-and-formatting" class="section level3 hasAnchor" number="8.7.5">
@@ -1348,33 +1408,33 @@ So, as <code>rbind/cbind</code> add a 1-dimensional structure to a 2-dimensional
 </table>
 <p><a href="https://davidgohel.github.io/flextable/reference/as_flextable.data.frame.html"><code>flextable::as_flextable</code></a> will print the table in the <code>Viewer</code> pane.</p>
 <p><img src="https://drive.google.com/thumbnail?id=1DguPlnaTMwvEgzycxEDJYxSg5f2Un0zE&sz=w1000" alt="flextable" style="display: block; margin-right: auto; margin-left: auto; zoom:100%;" /></p>
-<div class="sourceCode" id="cb596"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb596-1"><a href="8.7-contingency-table.html#cb596-1" tabindex="-1"></a><span class="co"># might need to load `officer` pkg</span></span>
-<span id="cb596-2"><a href="8.7-contingency-table.html#cb596-2" tabindex="-1"></a><span class="co"># library(officer)</span></span>
-<span id="cb596-3"><a href="8.7-contingency-table.html#cb596-3" tabindex="-1"></a><span class="fu">library</span>(flextable)</span>
-<span id="cb596-4"><a href="8.7-contingency-table.html#cb596-4" tabindex="-1"></a>confusion_matrix <span class="sc">%&gt;%</span> </span>
-<span id="cb596-5"><a href="8.7-contingency-table.html#cb596-5" tabindex="-1"></a>    <span class="fu">as_flextable</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb596-6"><a href="8.7-contingency-table.html#cb596-6" tabindex="-1"></a>    <span class="fu">set_caption</span>(</span>
-<span id="cb596-7"><a href="8.7-contingency-table.html#cb596-7" tabindex="-1"></a>        <span class="fu">as_paragraph</span>(</span>
-<span id="cb596-8"><a href="8.7-contingency-table.html#cb596-8" tabindex="-1"></a>            <span class="fu">as_chunk</span>(<span class="st">&quot;Year: 2013&quot;</span>, <span class="co"># specify caption text </span></span>
-<span id="cb596-9"><a href="8.7-contingency-table.html#cb596-9" tabindex="-1"></a>                     <span class="at">props =</span> <span class="fu">fp_text</span>(<span class="at">bold =</span> <span class="cn">TRUE</span>,   <span class="co"># bold face                  </span></span>
-<span id="cb596-10"><a href="8.7-contingency-table.html#cb596-10" tabindex="-1"></a>                                     <span class="at">font.family =</span> <span class="st">&quot;Helvetica&quot;</span> <span class="co"># font family</span></span>
-<span id="cb596-11"><a href="8.7-contingency-table.html#cb596-11" tabindex="-1"></a>                                    )</span>
-<span id="cb596-12"><a href="8.7-contingency-table.html#cb596-12" tabindex="-1"></a>                     )</span>
-<span id="cb596-13"><a href="8.7-contingency-table.html#cb596-13" tabindex="-1"></a>        )</span>
-<span id="cb596-14"><a href="8.7-contingency-table.html#cb596-14" tabindex="-1"></a>    )</span></code></pre></div>
+<div class="sourceCode" id="cb598"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb598-1"><a href="8.7-contingency-table.html#cb598-1" tabindex="-1"></a><span class="co"># might need to load `officer` pkg</span></span>
+<span id="cb598-2"><a href="8.7-contingency-table.html#cb598-2" tabindex="-1"></a><span class="co"># library(officer)</span></span>
+<span id="cb598-3"><a href="8.7-contingency-table.html#cb598-3" tabindex="-1"></a><span class="fu">library</span>(flextable)</span>
+<span id="cb598-4"><a href="8.7-contingency-table.html#cb598-4" tabindex="-1"></a>confusion_matrix <span class="sc">%&gt;%</span> </span>
+<span id="cb598-5"><a href="8.7-contingency-table.html#cb598-5" tabindex="-1"></a>    <span class="fu">as_flextable</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb598-6"><a href="8.7-contingency-table.html#cb598-6" tabindex="-1"></a>    <span class="fu">set_caption</span>(</span>
+<span id="cb598-7"><a href="8.7-contingency-table.html#cb598-7" tabindex="-1"></a>        <span class="fu">as_paragraph</span>(</span>
+<span id="cb598-8"><a href="8.7-contingency-table.html#cb598-8" tabindex="-1"></a>            <span class="fu">as_chunk</span>(<span class="st">&quot;Year: 2013&quot;</span>, <span class="co"># specify caption text </span></span>
+<span id="cb598-9"><a href="8.7-contingency-table.html#cb598-9" tabindex="-1"></a>                     <span class="at">props =</span> <span class="fu">fp_text</span>(<span class="at">bold =</span> <span class="cn">TRUE</span>,   <span class="co"># bold face                  </span></span>
+<span id="cb598-10"><a href="8.7-contingency-table.html#cb598-10" tabindex="-1"></a>                                     <span class="at">font.family =</span> <span class="st">&quot;Helvetica&quot;</span> <span class="co"># font family</span></span>
+<span id="cb598-11"><a href="8.7-contingency-table.html#cb598-11" tabindex="-1"></a>                                    )</span>
+<span id="cb598-12"><a href="8.7-contingency-table.html#cb598-12" tabindex="-1"></a>                     )</span>
+<span id="cb598-13"><a href="8.7-contingency-table.html#cb598-13" tabindex="-1"></a>        )</span>
+<span id="cb598-14"><a href="8.7-contingency-table.html#cb598-14" tabindex="-1"></a>    )</span></code></pre></div>
 <p>More about <code>flextable</code>:</p>
 <p><a href="https://blog.djnavarro.net/posts/2024-07-04_flextable/" class="uri">https://blog.djnavarro.net/posts/2024-07-04_flextable/</a></p>
 </div>
 <div id="excel-export-with-xltabr" class="section level4 unnumbered hasAnchor">
 <h4>Excel Export with <code>xltabr</code><a href="8.7-contingency-table.html#excel-export-with-xltabr" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>Write crosstabs into Excel</p>
-<div class="sourceCode" id="cb597"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb597-1"><a href="8.7-contingency-table.html#cb597-1" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">&quot;moj-analytical-services/xltabr&quot;</span>)</span>
-<span id="cb597-2"><a href="8.7-contingency-table.html#cb597-2" tabindex="-1"></a><span class="fu">library</span>(xltabr)</span>
-<span id="cb597-3"><a href="8.7-contingency-table.html#cb597-3" tabindex="-1"></a></span>
-<span id="cb597-4"><a href="8.7-contingency-table.html#cb597-4" tabindex="-1"></a>titles <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&quot;Breakdown of car statistics&quot;</span>, <span class="st">&quot;Cross tabulation of drive and age against type*&quot;</span>)</span>
-<span id="cb597-5"><a href="8.7-contingency-table.html#cb597-5" tabindex="-1"></a>footers <span class="ot">=</span> <span class="st">&quot;*age as of January 2015&quot;</span></span>
-<span id="cb597-6"><a href="8.7-contingency-table.html#cb597-6" tabindex="-1"></a>wb <span class="ot">&lt;-</span> xltabr<span class="sc">::</span><span class="fu">auto_crosstab_to_wb</span>(ct, <span class="at">titles =</span> titles, <span class="at">footers =</span> footers)</span>
-<span id="cb597-7"><a href="8.7-contingency-table.html#cb597-7" tabindex="-1"></a>openxlsx<span class="sc">::</span><span class="fu">openXL</span>(wb)</span></code></pre></div>
+<div class="sourceCode" id="cb599"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb599-1"><a href="8.7-contingency-table.html#cb599-1" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">&quot;moj-analytical-services/xltabr&quot;</span>)</span>
+<span id="cb599-2"><a href="8.7-contingency-table.html#cb599-2" tabindex="-1"></a><span class="fu">library</span>(xltabr)</span>
+<span id="cb599-3"><a href="8.7-contingency-table.html#cb599-3" tabindex="-1"></a></span>
+<span id="cb599-4"><a href="8.7-contingency-table.html#cb599-4" tabindex="-1"></a>titles <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&quot;Breakdown of car statistics&quot;</span>, <span class="st">&quot;Cross tabulation of drive and age against type*&quot;</span>)</span>
+<span id="cb599-5"><a href="8.7-contingency-table.html#cb599-5" tabindex="-1"></a>footers <span class="ot">=</span> <span class="st">&quot;*age as of January 2015&quot;</span></span>
+<span id="cb599-6"><a href="8.7-contingency-table.html#cb599-6" tabindex="-1"></a>wb <span class="ot">&lt;-</span> xltabr<span class="sc">::</span><span class="fu">auto_crosstab_to_wb</span>(ct, <span class="at">titles =</span> titles, <span class="at">footers =</span> footers)</span>
+<span id="cb599-7"><a href="8.7-contingency-table.html#cb599-7" tabindex="-1"></a>openxlsx<span class="sc">::</span><span class="fu">openXL</span>(wb)</span></code></pre></div>
 <p>Given a crosstabulation <code>ct</code> produced by <code>reshape2:dcast</code>, the following table is generated.</p>
 <p><img src="https://moj-analytical-services.github.io/xltabr/vignettes/example_1.png?raw=true" alt="xltabr" style="display: block; margin-right: auto; margin-left: auto; zoom:100%;" /></p>
 
