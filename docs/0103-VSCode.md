@@ -186,13 +186,24 @@ r$>
 
 Then, in VS Code, you will need to set Radian as the default R terminal. You can also configure other settings for R.
 
+Add the following settings to your `settings.json` file:
+
 ```json
 {
+  /* R settings */ 
   "r.rterm.mac": "/Users/menghan/.local/bin/radian",
   "r.bracketedPaste": true,
   "r.sessionWatcher": true,
+  "r.plot.useHttpgd": true,
+  "[r]": {
+    "editor.defaultFormatter": "REditorSupport.r",
+    "editor.formatOnType": true
+  },
+  "r.formatting.style": "styler",
 }
 ```
+
+**Options:**
 
 - `r.rterm.mac`: Path to the Radian executable.
 - `r.bracketedPaste`: Enables bracketed paste mode, which allows pasting code without executing it immediately. This is useful if you want to paste multiple lines of code into the console at once.
@@ -206,13 +217,28 @@ Then, in VS Code, you will need to set Radian as the default R terminal. You can
 
 - `r.plot.useHttpgd`: Use the httpgd package for viewing plots in a VS Code window or in the browser.
 
+- Language-specific editor settings for R files: 
+  
+  Prerequisite: install `styler` package in R.
+  
+  ```r
+  install.packages("styler")
+  ```
+
+  Use `styler` for code formatting, and set the default formatter to `REditorSupport.r`.
+
+  `REditorSupport.r` and `styler` are able to identify specific R syntax, e.g., `%>%` and `|>` as pipe operators, and will format the code accordingly. 
+  By contrast, the default formater in VS Code does not recognize these operators and fails to auto indent after a pipe operator.
+
+  `"editor.formatOnType": true` will trigger formatting as you type.
+
 See [Extension Settings](https://github.com/REditorSupport/vscode-R/wiki/Extension-settings) for a full list of settings of `vscode-R` that can be set in VSCode's `settings.json` file.
 
 
 ### Configuration
 
 
-radian can be customized by specifying the below options in various locations:
+Radian can be customized by specifying the below options in various locations:
 
 - `$HOME/.config/radian/profile`
 - `.radian_profile` in the working directory
@@ -284,6 +310,16 @@ This is more robust than `rstudioapi::restartSession()`.
 Issue: the `restart()` function, cannot use `rstudioapi::` functions.
 
 Workaround: Close R and create a new R terminal manually or use `rstudioapi::restartSession()`.
+
+
+### Data Viewer
+
+You can view objects in the workspace by clicking the R icon in the Activity bar.
+It is a convenient way to view the R workspace, preview existing R objects, find help topics, and read help pages interactively.
+
+<img src="https://code.visualstudio.com/assets/docs/languages/r/workspace-viewer.gif" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
+
+You can use <span class="env-green">`view()`</span> to open the data viewer in a new tab. For example, `view(mtcars)` will open the `mtcars` dataset in the data viewer.
 
 
 --------------------------------------------------------------------------------
@@ -1115,6 +1151,7 @@ The following tables shows the icons that you most commonly see in the OUTLINE v
   - <https://renkun.me/2019/12/26/writing-r-in-vscode-interacting-with-an-r-session/>
   - <https://francojc.github.io/posts/r-in-vscode/>
   - [VS Code for R on macOS](https://jimgar.github.io/posts/vs-code-macos-r/post.html#extensions)
+  - [vscode-R GitHub Wiki](https://github.com/REditorSupport/vscode-R/wiki/Getting-Started)
 - Getting started with `httpgd`: <https://nx10.github.io/httpgd/articles/getting-started.html>
 - Bookdown in VS code: <https://www.bendirt.com/bookdown/>
 - [Jupyter Notebooks in VS Code](https://code.visualstudio.com/docs/datascience/jupyter-notebooks)

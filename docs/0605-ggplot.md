@@ -509,6 +509,17 @@ We
     -   `waiver()` for the default breaks computed by the [transformation object](https://scales.r-lib.org/reference/trans_new.html)
     -   A numeric vector of positions. Note that the vector will be cut off if the range exceeds the data coverage.
     -   A function that takes the limits as input and returns breaks as output (e.g., a function returned by `scales::extended_breaks()`). Also accepts rlang [lambda](https://rlang.r-lib.org/reference/as_function.html) function notation.
+
+-   `labels`
+    
+    -   `NULL` for no labels
+    -   a character vector of labels (must be same length as `breaks`); 
+    -   a function that takes the breaks as input and returns labels as output. 
+        
+        `scales::percent` formats the breaks as percentages. E.g., `.05` will display as `5%`. 
+
+        If the labels are already in percentage units (e.g., 5), use `scales::label_percent(scale = 1)` instead.
+
 - <span class="env-green">`expand`</span> add some padding around the data to ensure that they are placed some distance away from the axes.
   
   `expand = expansion(mult = c(0.1, 0.1))` adds 10% padding on both sides of the axis. The defaults are to expand the scale by 5% on each side for continuous variables, and by 0.6 units on each side for discrete variables.

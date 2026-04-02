@@ -403,7 +403,7 @@ replace variable = expression  // replace the value of existing variables
 
 `generate exp2 = exp^2` generate the square of `exp`
 
-`egen`: Extensions to `generate`; creates a new variable based on <span class="env-green">`egen` functions</span> of existing variables.
+<span class="env-green">`egen`</span>: Extensions to `generate`; creates a new variable based on <span class="env-green">`egen` functions</span> of existing variables. These functions usually conduct across-row aggregation or group-wise operations, such as `mean()`, `sum()`, `group()`, etc.
 
 Q: What are `egen` functions? \
 A: The functions are specifically written for `egen`.
@@ -419,8 +419,8 @@ by country_id, sort: egen pop_country = mean(wpop)
 `gen` vs. `egen`
 
 - `gen` used for simple algebraic transformations
-- `egen` for more complexed transformations, e.g., operations based on groups of observations.
-- They behave differently if you want to calcualte the `sum` per group.
+- `egen` for more complex transformations, e.g., operations based on groups of observations.
+- They behave differently if you want to calculate the `sum` per group.
   - `gen` returns running sum
   - `egen` returns group sum
 
@@ -433,6 +433,7 @@ egen totalsum = total(x)
 ```
 
 
+--------------------------------------------------------------------------------
 
 
 
@@ -440,9 +441,11 @@ egen totalsum = total(x)
 
 ```stata
 encode sex, gen(gender)
-// nolabel drops value labels and show how the data really appear
+
+* nolabel drops value labels and show how the data really appear
 list sex gender in 1/4, nolabel
-// you won't see difference using the following cmd
+
+* you won't see difference using the following cmd
 list sex gender in 1/4
 ```
 
@@ -450,6 +453,7 @@ list sex gender in 1/4
 
 `encode` creates a new variable `gender`, mapping each level in `sex` to a numerical value. `female` becomes 1 and `male` becomes 2.
 
+--------------------------------------------------------------------------------
 
 
 `display` displays strings and values of scalar expressions.
@@ -457,6 +461,7 @@ list sex gender in 1/4
 ```stata
 display [display_directive [display_directive [...]]]
 ```
+--------------------------------------------------------------------------------
 
 `list` displays the values of variables. If no `varlist` is specified, the values of all the variables are displayed.
 
@@ -1432,6 +1437,7 @@ If your variable namess got cut off, you can use
   
   If you want to add extra space between columns, use `modelwidth()` to increase the width of model names.
 
+If you want more compact columns, use `compress` option to remove extra spaces between columns. But it looks bad.
 
 --------------------------------------------------------------------------------
 

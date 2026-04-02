@@ -400,6 +400,7 @@ div.csl-indent {
 <li class="chapter" data-level="3.3" data-path="3.3-radian.html"><a href="3.3-radian.html"><i class="fa fa-check"></i><b>3.3</b> Radian</a>
 <ul>
 <li class="chapter" data-level="3.3.1" data-path="3.3-radian.html"><a href="3.3-radian.html#configuration"><i class="fa fa-check"></i><b>3.3.1</b> Configuration</a></li>
+<li class="chapter" data-level="3.3.2" data-path="3.3-radian.html"><a href="3.3-radian.html#data-viewer"><i class="fa fa-check"></i><b>3.3.2</b> Data Viewer</a></li>
 </ul></li>
 <li class="chapter" data-level="3.4" data-path="3.4-plot-viewer.html"><a href="3.4-plot-viewer.html"><i class="fa fa-check"></i><b>3.4</b> Plot Viewer</a>
 <ul>
@@ -1013,8 +1014,8 @@ document.addEventListener('DOMContentLoaded', function() {
 <div id="rendering-bookdown-website" class="section level3 hasAnchor" number="5.2.1">
 <h3><span class="header-section-number">5.2.1</span> Rendering bookdown website<a href="5.2-rendering-bookdown.html#rendering-bookdown-website" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Assuming you have a <strong>website</strong>, use the following command to render your site:</p>
-<div class="sourceCode" id="cb330"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb330-1"><a href="5.2-rendering-bookdown.html#cb330-1" tabindex="-1"></a><span class="co"># render gitbook format only</span></span>
-<span id="cb330-2"><a href="5.2-rendering-bookdown.html#cb330-2" tabindex="-1"></a>rmarkdown<span class="sc">::</span><span class="fu">render_site</span>(<span class="at">output_format =</span> <span class="st">&quot;bookdown::gitbook&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb331"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb331-1"><a href="5.2-rendering-bookdown.html#cb331-1" tabindex="-1"></a><span class="co"># render gitbook format only</span></span>
+<span id="cb331-2"><a href="5.2-rendering-bookdown.html#cb331-2" tabindex="-1"></a>rmarkdown<span class="sc">::</span><span class="fu">render_site</span>(<span class="at">output_format =</span> <span class="st">&quot;bookdown::gitbook&quot;</span>)</span></code></pre></div>
 <p>Every time you make changes to individual Rmd files or to CSS style files, you can knit the single page using <code>rmarkdown::render("0100-RStudio.Rmd")</code> or the Knit button in the source editor. The change will be reflected to your website.</p>
 <ul>
 <li>This is faster than Build the website.</li>
@@ -1048,60 +1049,60 @@ A: Bookdown is for books, grouped in chapters; Blogdown is for blogs, ordered by
 <li><p>Put the following functions to the set up code chunk.</p></li>
 <li><p>Then you could use the option <code>max.lines = 10</code> whenever you want to set a limit to the maximum output length to print.</p></li>
 </ol>
-<div class="sourceCode" id="cb331"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb331-1"><a href="5.2-rendering-bookdown.html#cb331-1" tabindex="-1"></a><span class="do">## control long outputs by using eg `max.lines = 10`</span></span>
-<span id="cb331-2"><a href="5.2-rendering-bookdown.html#cb331-2" tabindex="-1"></a>hook_output_default <span class="ot">&lt;-</span> knitr<span class="sc">::</span>knit_hooks<span class="sc">$</span><span class="fu">get</span>(<span class="st">&#39;output&#39;</span>)</span>
-<span id="cb331-3"><a href="5.2-rendering-bookdown.html#cb331-3" tabindex="-1"></a>truncate_to_lines <span class="ot">&lt;-</span> <span class="cf">function</span>(x, n) {</span>
-<span id="cb331-4"><a href="5.2-rendering-bookdown.html#cb331-4" tabindex="-1"></a>   <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.null</span>(n)) {</span>
-<span id="cb331-5"><a href="5.2-rendering-bookdown.html#cb331-5" tabindex="-1"></a>      x <span class="ot">=</span> <span class="fu">unlist</span>(stringr<span class="sc">::</span><span class="fu">str_split</span>(x, <span class="st">&#39;</span><span class="sc">\n</span><span class="st">&#39;</span>))</span>
-<span id="cb331-6"><a href="5.2-rendering-bookdown.html#cb331-6" tabindex="-1"></a>      <span class="cf">if</span> (<span class="fu">length</span>(x) <span class="sc">&gt;</span> n) {</span>
-<span id="cb331-7"><a href="5.2-rendering-bookdown.html#cb331-7" tabindex="-1"></a>         <span class="co"># truncate the output</span></span>
-<span id="cb331-8"><a href="5.2-rendering-bookdown.html#cb331-8" tabindex="-1"></a>         x <span class="ot">=</span> <span class="fu">c</span>(<span class="fu">head</span>(x, n), <span class="st">&#39;...</span><span class="sc">\n</span><span class="st">&#39;</span>)</span>
-<span id="cb331-9"><a href="5.2-rendering-bookdown.html#cb331-9" tabindex="-1"></a>      }</span>
-<span id="cb331-10"><a href="5.2-rendering-bookdown.html#cb331-10" tabindex="-1"></a>      x <span class="ot">=</span> <span class="fu">paste</span>(x, <span class="at">collapse =</span> <span class="st">&#39;</span><span class="sc">\n</span><span class="st">&#39;</span>) <span class="co"># paste first n lines together</span></span>
-<span id="cb331-11"><a href="5.2-rendering-bookdown.html#cb331-11" tabindex="-1"></a>   }</span>
-<span id="cb331-12"><a href="5.2-rendering-bookdown.html#cb331-12" tabindex="-1"></a>   x</span>
-<span id="cb331-13"><a href="5.2-rendering-bookdown.html#cb331-13" tabindex="-1"></a>}</span>
-<span id="cb331-14"><a href="5.2-rendering-bookdown.html#cb331-14" tabindex="-1"></a>knitr<span class="sc">::</span>knit_hooks<span class="sc">$</span><span class="fu">set</span>(<span class="at">output =</span> <span class="cf">function</span>(x, options) {</span>
-<span id="cb331-15"><a href="5.2-rendering-bookdown.html#cb331-15" tabindex="-1"></a>   max.lines <span class="ot">&lt;-</span> options<span class="sc">$</span>max.lines</span>
-<span id="cb331-16"><a href="5.2-rendering-bookdown.html#cb331-16" tabindex="-1"></a>   x <span class="ot">&lt;-</span> <span class="fu">truncate_to_lines</span>(x, max.lines)</span>
-<span id="cb331-17"><a href="5.2-rendering-bookdown.html#cb331-17" tabindex="-1"></a>   <span class="fu">hook_output_default</span>(x, options)</span>
-<span id="cb331-18"><a href="5.2-rendering-bookdown.html#cb331-18" tabindex="-1"></a>})</span></code></pre></div>
+<div class="sourceCode" id="cb332"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb332-1"><a href="5.2-rendering-bookdown.html#cb332-1" tabindex="-1"></a><span class="do">## control long outputs by using eg `max.lines = 10`</span></span>
+<span id="cb332-2"><a href="5.2-rendering-bookdown.html#cb332-2" tabindex="-1"></a>hook_output_default <span class="ot">&lt;-</span> knitr<span class="sc">::</span>knit_hooks<span class="sc">$</span><span class="fu">get</span>(<span class="st">&#39;output&#39;</span>)</span>
+<span id="cb332-3"><a href="5.2-rendering-bookdown.html#cb332-3" tabindex="-1"></a>truncate_to_lines <span class="ot">&lt;-</span> <span class="cf">function</span>(x, n) {</span>
+<span id="cb332-4"><a href="5.2-rendering-bookdown.html#cb332-4" tabindex="-1"></a>   <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.null</span>(n)) {</span>
+<span id="cb332-5"><a href="5.2-rendering-bookdown.html#cb332-5" tabindex="-1"></a>      x <span class="ot">=</span> <span class="fu">unlist</span>(stringr<span class="sc">::</span><span class="fu">str_split</span>(x, <span class="st">&#39;</span><span class="sc">\n</span><span class="st">&#39;</span>))</span>
+<span id="cb332-6"><a href="5.2-rendering-bookdown.html#cb332-6" tabindex="-1"></a>      <span class="cf">if</span> (<span class="fu">length</span>(x) <span class="sc">&gt;</span> n) {</span>
+<span id="cb332-7"><a href="5.2-rendering-bookdown.html#cb332-7" tabindex="-1"></a>         <span class="co"># truncate the output</span></span>
+<span id="cb332-8"><a href="5.2-rendering-bookdown.html#cb332-8" tabindex="-1"></a>         x <span class="ot">=</span> <span class="fu">c</span>(<span class="fu">head</span>(x, n), <span class="st">&#39;...</span><span class="sc">\n</span><span class="st">&#39;</span>)</span>
+<span id="cb332-9"><a href="5.2-rendering-bookdown.html#cb332-9" tabindex="-1"></a>      }</span>
+<span id="cb332-10"><a href="5.2-rendering-bookdown.html#cb332-10" tabindex="-1"></a>      x <span class="ot">=</span> <span class="fu">paste</span>(x, <span class="at">collapse =</span> <span class="st">&#39;</span><span class="sc">\n</span><span class="st">&#39;</span>) <span class="co"># paste first n lines together</span></span>
+<span id="cb332-11"><a href="5.2-rendering-bookdown.html#cb332-11" tabindex="-1"></a>   }</span>
+<span id="cb332-12"><a href="5.2-rendering-bookdown.html#cb332-12" tabindex="-1"></a>   x</span>
+<span id="cb332-13"><a href="5.2-rendering-bookdown.html#cb332-13" tabindex="-1"></a>}</span>
+<span id="cb332-14"><a href="5.2-rendering-bookdown.html#cb332-14" tabindex="-1"></a>knitr<span class="sc">::</span>knit_hooks<span class="sc">$</span><span class="fu">set</span>(<span class="at">output =</span> <span class="cf">function</span>(x, options) {</span>
+<span id="cb332-15"><a href="5.2-rendering-bookdown.html#cb332-15" tabindex="-1"></a>   max.lines <span class="ot">&lt;-</span> options<span class="sc">$</span>max.lines</span>
+<span id="cb332-16"><a href="5.2-rendering-bookdown.html#cb332-16" tabindex="-1"></a>   x <span class="ot">&lt;-</span> <span class="fu">truncate_to_lines</span>(x, max.lines)</span>
+<span id="cb332-17"><a href="5.2-rendering-bookdown.html#cb332-17" tabindex="-1"></a>   <span class="fu">hook_output_default</span>(x, options)</span>
+<span id="cb332-18"><a href="5.2-rendering-bookdown.html#cb332-18" tabindex="-1"></a>})</span></code></pre></div>
 <hr />
 <p><strong>Issue</strong>: <u>In RStudio dark mode</u>, <code>kableExtra</code> tables are invisible in the code block output preview because both the font and background are white, making the content unreadable.</p>
 <p>Fix: Force the font color to be black.</p>
 <p>First run this edited version of <code>kableExtra:::print.kableExtra()</code>:</p>
-<div class="sourceCode" id="cb332"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb332-1"><a href="5.2-rendering-bookdown.html#cb332-1" tabindex="-1"></a>print.kableExtra <span class="ot">&lt;-</span> <span class="cf">function</span> (x, ...) {</span>
-<span id="cb332-2"><a href="5.2-rendering-bookdown.html#cb332-2" tabindex="-1"></a>  view_html <span class="ot">&lt;-</span> <span class="fu">getOption</span>(<span class="st">&quot;kableExtra_view_html&quot;</span>, <span class="cn">TRUE</span>)</span>
-<span id="cb332-3"><a href="5.2-rendering-bookdown.html#cb332-3" tabindex="-1"></a>  <span class="cf">if</span> (view_html <span class="sc">&amp;</span> <span class="fu">interactive</span>()) {</span>
-<span id="cb332-4"><a href="5.2-rendering-bookdown.html#cb332-4" tabindex="-1"></a>    dep <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
-<span id="cb332-5"><a href="5.2-rendering-bookdown.html#cb332-5" tabindex="-1"></a>      rmarkdown<span class="sc">::</span><span class="fu">html_dependency_jquery</span>(), </span>
-<span id="cb332-6"><a href="5.2-rendering-bookdown.html#cb332-6" tabindex="-1"></a>      rmarkdown<span class="sc">::</span><span class="fu">html_dependency_bootstrap</span>(<span class="at">theme =</span> <span class="st">&quot;cosmo&quot;</span>), </span>
-<span id="cb332-7"><a href="5.2-rendering-bookdown.html#cb332-7" tabindex="-1"></a>      kableExtra<span class="sc">::</span><span class="fu">html_dependency_kePrint</span>(), </span>
-<span id="cb332-8"><a href="5.2-rendering-bookdown.html#cb332-8" tabindex="-1"></a>      kableExtra<span class="sc">::</span><span class="fu">html_dependency_lightable</span>()</span>
-<span id="cb332-9"><a href="5.2-rendering-bookdown.html#cb332-9" tabindex="-1"></a>    )</span>
-<span id="cb332-10"><a href="5.2-rendering-bookdown.html#cb332-10" tabindex="-1"></a>    </span>
-<span id="cb332-11"><a href="5.2-rendering-bookdown.html#cb332-11" tabindex="-1"></a>    x <span class="ot">&lt;-</span> <span class="fu">sub</span>(<span class="st">&#39;style=&quot;&#39;</span>, <span class="st">&#39;style=&quot;color: black; &#39;</span>, <span class="fu">as.character</span>(x), <span class="at">fixed =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb332-12"><a href="5.2-rendering-bookdown.html#cb332-12" tabindex="-1"></a>        </span>
-<span id="cb332-13"><a href="5.2-rendering-bookdown.html#cb332-13" tabindex="-1"></a>    html_kable <span class="ot">&lt;-</span> htmltools<span class="sc">::</span><span class="fu">browsable</span>(</span>
-<span id="cb332-14"><a href="5.2-rendering-bookdown.html#cb332-14" tabindex="-1"></a>      htmltools<span class="sc">::</span><span class="fu">HTML</span>(</span>
-<span id="cb332-15"><a href="5.2-rendering-bookdown.html#cb332-15" tabindex="-1"></a>        <span class="fu">as.character</span>(x), </span>
-<span id="cb332-16"><a href="5.2-rendering-bookdown.html#cb332-16" tabindex="-1"></a>        <span class="st">&quot;&lt;script type=</span><span class="sc">\&quot;</span><span class="st">text/x-mathjax-config</span><span class="sc">\&quot;</span><span class="st">&gt;MathJax.Hub.Config({tex2jax: {inlineMath: [[</span><span class="sc">\&quot;</span><span class="st">$</span><span class="sc">\&quot;</span><span class="st">,</span><span class="sc">\&quot;</span><span class="st">$</span><span class="sc">\&quot;</span><span class="st">]]}})&lt;/script&gt;&lt;script async src=</span><span class="sc">\&quot;</span><span class="st">https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML</span><span class="sc">\&quot;</span><span class="st">&gt;&lt;/script&gt;&quot;</span></span>
-<span id="cb332-17"><a href="5.2-rendering-bookdown.html#cb332-17" tabindex="-1"></a>      )</span>
-<span id="cb332-18"><a href="5.2-rendering-bookdown.html#cb332-18" tabindex="-1"></a>    )</span>
-<span id="cb332-19"><a href="5.2-rendering-bookdown.html#cb332-19" tabindex="-1"></a>    htmltools<span class="sc">::</span><span class="fu">htmlDependencies</span>(html_kable) <span class="ot">&lt;-</span> dep</span>
-<span id="cb332-20"><a href="5.2-rendering-bookdown.html#cb332-20" tabindex="-1"></a>    <span class="fu">class</span>(html_kable) <span class="ot">&lt;-</span> <span class="st">&quot;shiny.tag.list&quot;</span></span>
-<span id="cb332-21"><a href="5.2-rendering-bookdown.html#cb332-21" tabindex="-1"></a>    <span class="fu">print</span>(html_kable)</span>
-<span id="cb332-22"><a href="5.2-rendering-bookdown.html#cb332-22" tabindex="-1"></a>  }</span>
-<span id="cb332-23"><a href="5.2-rendering-bookdown.html#cb332-23" tabindex="-1"></a>  <span class="cf">else</span> {</span>
-<span id="cb332-24"><a href="5.2-rendering-bookdown.html#cb332-24" tabindex="-1"></a>    <span class="fu">cat</span>(<span class="fu">as.character</span>(x))</span>
-<span id="cb332-25"><a href="5.2-rendering-bookdown.html#cb332-25" tabindex="-1"></a>  }</span>
-<span id="cb332-26"><a href="5.2-rendering-bookdown.html#cb332-26" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb333"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb333-1"><a href="5.2-rendering-bookdown.html#cb333-1" tabindex="-1"></a>print.kableExtra <span class="ot">&lt;-</span> <span class="cf">function</span> (x, ...) {</span>
+<span id="cb333-2"><a href="5.2-rendering-bookdown.html#cb333-2" tabindex="-1"></a>  view_html <span class="ot">&lt;-</span> <span class="fu">getOption</span>(<span class="st">&quot;kableExtra_view_html&quot;</span>, <span class="cn">TRUE</span>)</span>
+<span id="cb333-3"><a href="5.2-rendering-bookdown.html#cb333-3" tabindex="-1"></a>  <span class="cf">if</span> (view_html <span class="sc">&amp;</span> <span class="fu">interactive</span>()) {</span>
+<span id="cb333-4"><a href="5.2-rendering-bookdown.html#cb333-4" tabindex="-1"></a>    dep <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb333-5"><a href="5.2-rendering-bookdown.html#cb333-5" tabindex="-1"></a>      rmarkdown<span class="sc">::</span><span class="fu">html_dependency_jquery</span>(), </span>
+<span id="cb333-6"><a href="5.2-rendering-bookdown.html#cb333-6" tabindex="-1"></a>      rmarkdown<span class="sc">::</span><span class="fu">html_dependency_bootstrap</span>(<span class="at">theme =</span> <span class="st">&quot;cosmo&quot;</span>), </span>
+<span id="cb333-7"><a href="5.2-rendering-bookdown.html#cb333-7" tabindex="-1"></a>      kableExtra<span class="sc">::</span><span class="fu">html_dependency_kePrint</span>(), </span>
+<span id="cb333-8"><a href="5.2-rendering-bookdown.html#cb333-8" tabindex="-1"></a>      kableExtra<span class="sc">::</span><span class="fu">html_dependency_lightable</span>()</span>
+<span id="cb333-9"><a href="5.2-rendering-bookdown.html#cb333-9" tabindex="-1"></a>    )</span>
+<span id="cb333-10"><a href="5.2-rendering-bookdown.html#cb333-10" tabindex="-1"></a>    </span>
+<span id="cb333-11"><a href="5.2-rendering-bookdown.html#cb333-11" tabindex="-1"></a>    x <span class="ot">&lt;-</span> <span class="fu">sub</span>(<span class="st">&#39;style=&quot;&#39;</span>, <span class="st">&#39;style=&quot;color: black; &#39;</span>, <span class="fu">as.character</span>(x), <span class="at">fixed =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb333-12"><a href="5.2-rendering-bookdown.html#cb333-12" tabindex="-1"></a>        </span>
+<span id="cb333-13"><a href="5.2-rendering-bookdown.html#cb333-13" tabindex="-1"></a>    html_kable <span class="ot">&lt;-</span> htmltools<span class="sc">::</span><span class="fu">browsable</span>(</span>
+<span id="cb333-14"><a href="5.2-rendering-bookdown.html#cb333-14" tabindex="-1"></a>      htmltools<span class="sc">::</span><span class="fu">HTML</span>(</span>
+<span id="cb333-15"><a href="5.2-rendering-bookdown.html#cb333-15" tabindex="-1"></a>        <span class="fu">as.character</span>(x), </span>
+<span id="cb333-16"><a href="5.2-rendering-bookdown.html#cb333-16" tabindex="-1"></a>        <span class="st">&quot;&lt;script type=</span><span class="sc">\&quot;</span><span class="st">text/x-mathjax-config</span><span class="sc">\&quot;</span><span class="st">&gt;MathJax.Hub.Config({tex2jax: {inlineMath: [[</span><span class="sc">\&quot;</span><span class="st">$</span><span class="sc">\&quot;</span><span class="st">,</span><span class="sc">\&quot;</span><span class="st">$</span><span class="sc">\&quot;</span><span class="st">]]}})&lt;/script&gt;&lt;script async src=</span><span class="sc">\&quot;</span><span class="st">https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML</span><span class="sc">\&quot;</span><span class="st">&gt;&lt;/script&gt;&quot;</span></span>
+<span id="cb333-17"><a href="5.2-rendering-bookdown.html#cb333-17" tabindex="-1"></a>      )</span>
+<span id="cb333-18"><a href="5.2-rendering-bookdown.html#cb333-18" tabindex="-1"></a>    )</span>
+<span id="cb333-19"><a href="5.2-rendering-bookdown.html#cb333-19" tabindex="-1"></a>    htmltools<span class="sc">::</span><span class="fu">htmlDependencies</span>(html_kable) <span class="ot">&lt;-</span> dep</span>
+<span id="cb333-20"><a href="5.2-rendering-bookdown.html#cb333-20" tabindex="-1"></a>    <span class="fu">class</span>(html_kable) <span class="ot">&lt;-</span> <span class="st">&quot;shiny.tag.list&quot;</span></span>
+<span id="cb333-21"><a href="5.2-rendering-bookdown.html#cb333-21" tabindex="-1"></a>    <span class="fu">print</span>(html_kable)</span>
+<span id="cb333-22"><a href="5.2-rendering-bookdown.html#cb333-22" tabindex="-1"></a>  }</span>
+<span id="cb333-23"><a href="5.2-rendering-bookdown.html#cb333-23" tabindex="-1"></a>  <span class="cf">else</span> {</span>
+<span id="cb333-24"><a href="5.2-rendering-bookdown.html#cb333-24" tabindex="-1"></a>    <span class="fu">cat</span>(<span class="fu">as.character</span>(x))</span>
+<span id="cb333-25"><a href="5.2-rendering-bookdown.html#cb333-25" tabindex="-1"></a>  }</span>
+<span id="cb333-26"><a href="5.2-rendering-bookdown.html#cb333-26" tabindex="-1"></a>}</span></code></pre></div>
 <p>The changes consisted of adding the <code>x &lt;- sub('style="', 'style="color: black; ', as.character(x), fixed = TRUE)</code> line and also adding full references to some of the functions.</p>
 <p>Then you can print the table as before, the table font color will be forced to be black, and hence visible.</p>
-<div class="sourceCode" id="cb333"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb333-1"><a href="5.2-rendering-bookdown.html#cb333-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb333-2"><a href="5.2-rendering-bookdown.html#cb333-2" tabindex="-1"></a><span class="fu">head</span>(iris) <span class="sc">%&gt;%</span> </span>
-<span id="cb333-3"><a href="5.2-rendering-bookdown.html#cb333-3" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="at">caption =</span> <span class="st">&quot;**Table 1.** Iris data. &quot;</span>, <span class="at">digits =</span> <span class="dv">2</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb333-4"><a href="5.2-rendering-bookdown.html#cb333-4" tabindex="-1"></a>  kableExtra<span class="sc">::</span><span class="fu">kable_styling</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb334"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb334-1"><a href="5.2-rendering-bookdown.html#cb334-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb334-2"><a href="5.2-rendering-bookdown.html#cb334-2" tabindex="-1"></a><span class="fu">head</span>(iris) <span class="sc">%&gt;%</span> </span>
+<span id="cb334-3"><a href="5.2-rendering-bookdown.html#cb334-3" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="at">caption =</span> <span class="st">&quot;**Table 1.** Iris data. &quot;</span>, <span class="at">digits =</span> <span class="dv">2</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb334-4"><a href="5.2-rendering-bookdown.html#cb334-4" tabindex="-1"></a>  kableExtra<span class="sc">::</span><span class="fu">kable_styling</span>()</span></code></pre></div>
 
 </div>
 </div>
