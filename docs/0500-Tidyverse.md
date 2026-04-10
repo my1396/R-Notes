@@ -356,6 +356,34 @@ data %>%
 > If you load both packages, make sure to specify the package name when calling functions, e.g. `dplyr::count()` or `plyr::count()`.  
 > If you are not careful, unexpected errors may occur.
 
+**Check unique combinations of multiple columns:**
+
+```r
+# count unique combinations of companyID and ISIN
+data %>%
+    count(companyID, ISIN)
+# one-to-more mappting btw companyID and ISIN, but financial variables are the same for the same companyID, so we can just keep one row for each companyID and Year
+# keep the first row of unique combinations of companyID and Year
+data %>%
+    group_by(companyID, Year) %>%
+    summarise(across(everything(), ~ first(.x)), .groups = "drop")
+```
+
+`group_by` and `first` is slow due to a large number of groups.
+
+A faster way is to use `distinct` then join back the ISINs you want to keep:
+
+```r
+isin_map <- data %>%
+    group_by(companyID) %>%
+    summarise(ISIN = first(ISIN), .groups = "drop")
+isin_map
+
+data %>%
+    select(-ISIN) %>%
+    distinct(companyID, Year, .keep_all = TRUE) %>%
+    left_join(isin_map, by = "companyID")
+```
 
 ### Column Names
 
