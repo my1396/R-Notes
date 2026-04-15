@@ -35,7 +35,7 @@ If you have multiple .qmd files in one directory, it's a good practice to create
 
 - Share YAML configuration across multiple .qmd files. 
   
-  Sometimes yaml gets very long. Put shared yaml in `_quarto.yml` file and it will apply to all .qmd files in the same directory. This makes your .qmd files more clean.
+  Sometimes yaml gets very long. Put shared YAML options in [`_quarto.yml`](#project-metadata) file and it will apply to all .qmd files in the same directory. This makes your .qmd files more clean.
 
 - Redirect output to a specific folder.
 - Freeze rendered output, so that only changed files will be re-rendered
@@ -89,13 +89,16 @@ When you run `quarto render`, Quarto will render all Quarto documents in the pro
 
 --------------------------------------------------------------------------------
 
-Put project metadata in `_quarto.yml` file. Any document rendered within the project directory will automatically inherit the metadata defined at the project level. Here is an example of what the `_quarto.yml` file might look like
+<a id="project-metadata"></a>
+
+Put <span class="env-green">**project metadata**</span> in `_quarto.yml` file. Any document rendered within the project directory will automatically inherit the metadata defined at the project level. Here is an example of what the `_quarto.yml` file might look like
+
 
 ```yaml
 project:
   type: default
 
-from: markdown+tex_math_single_backslash
+from: markdown+tex_math_single_backslash+markdown_in_html_blocks
 bibliography: bibli.bib
 
 format:
@@ -136,6 +139,53 @@ include-in-header: [mathjax.html, custom-style.css]
   
   `css` official option can also be used to include CSS files in HTML documents. 
 
+--------------------------------------------------------------------------------
+
+<span class="env-green">**Markdown Extensions**</span> can be enabled using [`from` option](https://quarto.org/docs/reference/formats/html.html#rendering) in YAML. 
+For example, `from: markdown+tex_math_single_backslash+markdown_in_html_blocks` enables the following extensions: 
+
+- `tex_math_single_backslash` allows you to use `\(` and `\)` to delimit inline math, and `\[` and `\]` to delimit display math.
+
+- `markdown_in_html_blocks` allows you to use markdown syntax within HTML tags. 
+  
+  `markdown_in_html_blocks` (markdown inside html) seems to be enabled by default in Rmd, but NOT in Quarto or Jekyll websites.
+  
+  A workaround if you don't want to enable this extension is to use html innner and markdown outer, e.g., 
+
+  ```markdown
+  **<span class="env-green">text</span>**
+  ```
+
+  This way, both the html class and markdown bold syntax will apply.
+
+
+For more on available markdown extensions see the [Pandoc Markdown specification](http://pandoc.org/MANUAL.html#pandocs-markdown).
+
+
+Note that Rmd enables Markdown extensions differently than Quarto. 
+
+- Rmd uses the `md_extensions` option.
+- Quarto uses the `from` option. 
+
+Both options can be specified under specific output formats, e.g., `html` or `pdf`, or as top-level options that apply to all output formats.
+
+Under specific output formats:
+
+```yaml
+---
+title: "Habits"
+output:
+  html_document:
+    md_extensions: -autolink_bare_uris+hard_line_breaks
+---
+```
+
+Top-level options:
+
+```yaml
+title: "Habits"
+md_extensions: -autolink_bare_uris+hard_line_breaks
+```
 
 --------------------------------------------------------------------------------
 

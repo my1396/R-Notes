@@ -84,7 +84,7 @@ knitr::kable(mtcars[1:5, 1:5], format = "pipe")
 
 It **adjusts column widths automatically** based on content.
 
-- `caption` 	The table caption. In order to number the table, mut specify the `caption` argument.
+- `caption` The table caption. In order to number the table, mut specify the `caption` argument.
 
 - `format`  Possible values are `latex`, `html`, `pipe` (Pandoc's pipe tables), `simple` (Pandoc's simple tables), `rst`, and `jira`. 
 
@@ -92,7 +92,24 @@ It **adjusts column widths automatically** based on content.
 
   If the tables is not rendered properly, you can specify the format manually.
 
-- `digits`  Maximum number of digits for numeric columns, passed to `round()`. 
+- <span class="env-green">`digits`</span>  Maximum number of digits for numeric columns, passed to `round()`. 
+
+  `kable` displays numeric columns with decimal or scientific notation. You can disable scientific notation by specifying `kable(digits = 4, format.args = list(scientific = FALSE))`.
+
+  If you want to disable scientific notation globally, set `options(scipen = 999)` in R. `scipen` applies a penalty for using scientific notation. Higher values make it less likely to use scientific notation and more likely to use fixed notation.
+
+  ✅ If you prefer to have <span class="env-green">more control</span> over the formatting of numeric columns you can format them in advance using <span class="env-green">`formatC`</span> function, e.g.,
+
+  ```r
+  sci_cols <- c("max", "min")
+  result %>% 
+    mutate(across(all_of(sci+cols), ~ formatC(.x, format = "e", digits = 2))) %>%
+    kable(digits = 4) %>%
+    kable_styling(bootstrap_options = "striped", full_width = FALSE)
+  ```
+
+  `formatC` formats numbers as **strings** so that they will display verbatim in the table. It's the R equivalent of C's `printf`-style formatting, hence the `C` in the name. 
+  `formatC` before passing to `kable` prevents `kable` from taking liberties and formatting numeric columns in an uncertain way. String columns are always printed verbatim.
 
 - `col.names` Rename columns.
 
@@ -269,7 +286,7 @@ To show the `tibble` information (number of row/columns, and group information) 
 ```yaml
 ---
 title: "Use caption with df_print set to page"
-date: "2026-04-10"
+date: "2026-04-15"
 output:
   bookdown::html_document2:
     df_print: paged
@@ -773,7 +790,7 @@ print(xtab, type = "html", include.rownames = TRUE)
 ```
 
 <!-- html table generated in R 4.5.1 by xtable 1.8-4 package -->
-<!-- Fri Apr 10 10:36:11 2026 -->
+<!-- Wed Apr 15 11:42:13 2026 -->
 <table border=1>
 <caption align="bottom"> Asset Parameters </caption>
 <tr> <th>  </th> <th> Asset </th> <th> Mu </th> <th> Sigma </th>  </tr>
@@ -793,7 +810,7 @@ print(xtab_model, type = "html", digits = 3)
 ```
 
 <!-- html table generated in R 4.5.1 by xtable 1.8-4 package -->
-<!-- Fri Apr 10 10:36:11 2026 -->
+<!-- Wed Apr 15 11:42:13 2026 -->
 <table border=1>
 <caption align="bottom"> Regression of mpg on hp and wt </caption>
 <tr> <th>  </th> <th> Estimate </th> <th> Std. Error </th> <th> t value </th> <th> Pr(&gt;|t|) </th>  </tr>

@@ -115,8 +115,29 @@ Book formats:
 
 --------------------------------------------------------------------------------
 
-### Top-level YAML metadata
+**Shared Options**
 
+You can have a file that contains a set of **default options** to be shared by multiple documents within a directory. It makes your Rmd files cleaner and more consistent. 
+
+You can create a `_output.yml` file in the same directory as your Rmd files, and specify the output format and its options there. For example:
+
+```yml
+html_document:
+  self_contained: false
+  theme: united
+  highlight: textmate
+```
+
+Note: 
+
+- Do <span class="env-orange">NOT</span> include `output:` in the `_output.yml` file. 
+- Comments start with `#` and are ignored by the parser.
+
+All documents located in the same directory as `_output.yml` will inherit its options. Options defined explicitly within documents will override those specified in the shared options file.
+
+--------------------------------------------------------------------------------
+
+### Top-level YAML metadata
 
 - Many aspects of the LaTeX template used to create PDF documents can be customized using <span class="env-green">**top-level**</span> [YAML metadata](https://bookdown.org/yihui/rmarkdown/pdf-document.html#tab:latex-vars) (note that these options do <span style='color:#FF9900'>**NOT**</span> appear underneath the `output` section, but rather appear at the top level along with `title`, `author`, and so on). For example:
 
@@ -437,6 +458,48 @@ output:
 ```
 
 Ref: <https://bookdown.dongzhuoer.com/rstudio/rmarkdown-book/html-document#mathjax-equations>
+
+--------------------------------------------------------------------------------
+
+### Extensions
+
+You can enable Markdown extensions to control the behavior of the Markdown parser. 
+
+To enable an extension, add it to the `md_extensions` field in the YAML frontmatter. 
+Preface an extension with a `+` to enable it, or a `-` to disable it.
+For example:
+
+```yaml
+---
+title: "Habits"
+output:
+  html_document:
+    md_extensions: -autolink_bare_uris+hard_line_breaks
+---
+```
+
+The above would disable the `autolink_bare_uris` extension, and enable the `hard_line_breaks`extension.
+
+For more on available markdown extensions see the [Pandoc Markdown specification](http://pandoc.org/MANUAL.html#pandocs-markdown).
+
+### Pandoc arguments
+
+If there are Pandoc features that you want to use but lack equivalents in the YAML options described above, you can still use them by passing custom `pandoc_args`. For example:
+
+```yml
+---
+title:"Habits"
+output:
+  html_document:
+    pandoc_args: [
+      "--title-prefix","Foo",
+      "--id-prefix","Bar"
+    ]
+---
+```
+
+Documentation on all available pandoc arguments can be found in the [Pandoc User Guide](http://pandoc.org/MANUAL.html#options).
+
 
 
 --------------------------------------------------------------------------------

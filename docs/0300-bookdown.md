@@ -154,7 +154,7 @@ See [Section 12.4 in *R Markdown: The Definitive Guide*](https://bookdown.org/yi
 
   The issue is that Tango highlighting does not work well with dark mode.
 
-  
+- You can add comments in `.yml`. Start a line with `#` and it will be ignored by the parser.
 
 Here is a brief example of  `_output.yml`:
 
