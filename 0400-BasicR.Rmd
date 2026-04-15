@@ -479,9 +479,40 @@ read.csv(header = FALSE, file = "path/to/file.csv")
 - You can pass the arguments to `read.csv` without naming them if they are in the order that `R` expects.
 - However, the order of the arguments matter if they are not named.
 
+When you call a function and specify arguments, it is recommended to put a space around `=`, also put a space after a comma, not before.
+
 --------------------------------------------------------------------------------
 
-When you call a function and specify arguments, it is recommended to put a space around `=`, also put a space after a comma, not before.
+### Lambda functions
+
+Traditional lambda functions `~ .x` are used to create anonymous functions, making code more concise.
+Commonly used together with [`purrr` package](https://www.r4epi.com/chapters/using_purrr/using_purrr) mapping functions like `map()`
+
+For example:
+
+```r
+numbers <- 1:5
+squared_numbers <- map(numbers, ~ .x^2)
+```
+
+After R version 4.1.0 the `~ .x` syntax is deprecated. It is recommended to use `\(x) x^2` instead. The new syntax explicitly declares the argument `x`.
+
+When you have **additional arguments** passed to the mapped function.
+
+```r
+# old syntax (NOT recommended):
+x |> map(f, 1, 2, collapse = ",")
+
+# new syntax (more clear, one can easily see x is passed to f as the first argument):
+x |> map(\(x) f(x, 1, 2, collapse = ","))
+```
+
+When you have **two arguments**,
+
+- old syntax: `~ .x + .y`
+- ✅ new syntax: `\(x, y) x + y`
+
+--------------------------------------------------------------------------------
 
 
 ```r
@@ -774,10 +805,10 @@ A 'do ... until' loop in R:
 ```r
 repeat {
   # code
-  if(stop_condition_is_true) break
+  if (stop_condition_is_true) break
 }
 
-while(TRUE){
+while (TRUE){
   # Do things
   if (stop_condition_is_true) break
 }
@@ -791,13 +822,14 @@ while(TRUE){
 
 ```r
 a <- 4
-switch(a,
-       "1"="this is the first case in switch",
-       "2"="this is the second case in switch",
-       "3"="this is the third case in switch",
-       "4"="this is the fourth case in switch",
-       "5"="this is the fifth case in switch"
-       )
+switch(
+  a,
+  "1" = "this is the first case in switch",
+  "2" = "this is the second case in switch",
+  "3" = "this is the third case in switch",
+  "4" = "this is the fourth case in switch",
+  "5" = "this is the fifth case in switch"
+)
 ```
 
 

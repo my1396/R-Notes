@@ -1,8 +1,8 @@
 ## ggplot
 
-Reference: <https://ggplot2.tidyverse.org/reference/index.html>
-
-[Cheatsheet](https://rstudio.github.io/cheatsheets/html/data-visualization.html?_gl=1*qjpdg3*_ga*NTc0NDA2OTQ0LjE3NTQwMzAyMjI.*_ga_2C0WZ1JHG0*czE3NTYyMTA0NDMkbzEyJGcwJHQxNzU2MjEwNDQzJGo2MCRsMCRoMA..#labels-and-legends)
+- [Package Reference](https://ggplot2.tidyverse.org/reference/index.html)
+- [R graph gallery](https://r-graph-gallery.com/ggplot2-package.html)
+- [Cheatsheet](https://rstudio.github.io/cheatsheets/html/data-visualization.html?_gl=1*qjpdg3*_ga*NTc0NDA2OTQ0LjE3NTQwMzAyMjI.*_ga_2C0WZ1JHG0*czE3NTYyMTA0NDMkbzEyJGcwJHQxNzU2MjEwNDQzJGo2MCRsMCRoMA..#labels-and-legends)
 
 
 **Change global settings**
@@ -500,30 +500,32 @@ We
     ❗️ Note that setting limits on positional scales will <span class="env-orange">**remove** data outside of the limits.</span> The data outside the limits will be dropped and shown as missing values. This can be especially noticeable for maps.
     
     -   `NULL` to use the default scale range.
-    -   e.g., `c(0,1)` A numeric vector of length two providing limits of the scale. Use `NA` to refer to the existing minimum or maximum.
-    -   A function that accepts the existing (automatic) limits and returns new limits. Also accepts rlang [lambda](https://rlang.r-lib.org/reference/as_function.html) function notation. Note that setting limits on positional scales will **remove** data outside of the limits. 
-        -   If the purpose is to **zoom in on part of the graph**, <span class="env-green">withouting clipping</span>, use the limit argument in the coordinate system (see `coord_cartesian(xlim=c(0, 100), ylim=c(10, 20))`).
-    -   Alternatively, could use `+ xlim(0, 100) + ylim(10, 20)` to achieve the same effects. This is the same as `scale_x_continuous(limits=c(0, 100)) + scale_y_continuous(limits=c(10, 20))`
--   `breaks` 
-    -   `NULL` for no breaks
-    -   `waiver()` for the default breaks computed by the [transformation object](https://scales.r-lib.org/reference/trans_new.html)
-    -   A numeric vector of positions. Note that the vector will be cut off if the range exceeds the data coverage.
-    -   A function that takes the limits as input and returns breaks as output (e.g., a function returned by `scales::extended_breaks()`). Also accepts rlang [lambda](https://rlang.r-lib.org/reference/as_function.html) function notation.
-
--   `labels`
     
-    -   `NULL` for no labels
-    -   a character vector of labels (must be same length as `breaks`); 
-    -   a function that takes the breaks as input and returns labels as output. 
+    -   A numeric vector, e.g., `limits = c(0,1)`, of length two providing limits of the scale. 
         
-        `scales::percent` formats the breaks as percentages. E.g., `.05` will display as `5%`. 
+        Use `NA` to refer to the existing minimum or maximum.
+    
+    -   A function that accepts the existing (automatic) limits and returns new limits. Also accepts rlang [lambda](https://rlang.r-lib.org/reference/as_function.html) function notation. Note that setting limits on positional scales will **remove** data outside of the limits. 
+        
+        -   If the purpose is to **zoom in on part of the graph**, <span class="env-green">withouting clipping</span>, use the limit argument in the coordinate system (see `coord_cartesian(xlim = c(0, 100), ylim = c(10, 20))`).
+            
+            It is essential to use `coord_cartesian()` when your figure involves the calculation of statistics, e.g., `geom_histogram()`, `geom_smooth()`, etc., as these geoms will be affected by the limits set in `scale_*_continuous()`. Setting limits in `scale_*_continuous()` will remove data outside the limits, which can lead to incorrect calculations and visualizations. 
+            
+            In contrast, using `coord_cartesian()` allows you to zoom in on a specific area of the plot without affecting the underlying data or calculations.
+    
+    -   Alternatively, could use `+ xlim(0, 100) + ylim(10, 20)` to achieve the same effects. This is the same as `scale_x_continuous(limits = c(0, 100)) + scale_y_continuous(limits = c(10, 20))`
 
-        If the labels are already in percentage units (e.g., 5), use `scales::label_percent(scale = 1)` instead.
-
-- <span class="env-green">`expand`</span> add some padding around the data to ensure that they are placed some distance away from the axes.
+- <span class="env-green">`expand`</span> add some **padding around the data range** to ensure that they are placed some distance away from the axes.
   
-  `expand = expansion(mult = c(0.1, 0.1))` adds 10% padding on both sides of the axis. The defaults are to expand the scale by 5% on each side for continuous variables, and by 0.6 units on each side for discrete variables.
-
+  Defaults to 
+  
+  - `expand = c(0.05, 0)` for continuous variables, which adds a constant 5% padding on both sides of the axis.
+  - `expand = c(0, 0.06)` for discrete variables, which adds a constant 0.6 units of padding on both sides of the axis.
+  
+  `expansion` allows you to specify each side separately multiplicatively or addtively. For example,
+  
+  - `expand = expansion(mult = c(0.1, 0.1))` adds **10%** padding on both sides of the axis. 
+  - `expand = expansion(add = c(0.5, 1))` adds **0.5 units** of padding to the left and **1 unit** of padding to the right of the axis.
 
 **Set limits/boundaries for axes:**
 
@@ -535,21 +537,45 @@ p + coord_fixed(ratio = 1, xlim = c(0,100)) # fixed aspect ratio
 
 `coord_fixed` sets a fixed aspect ratio between the x and y axes. The ratio represents the number of units on the y-axis equivalent to one unit on the x-axis. The default, `ratio = 1`, ensures that one unit on the x-axis is the same length as one unit on the y-axis.
 
+-   `breaks` sets ticks on the axes. It can be specified as:
+    -   `NULL` for no breaks
+    -   `waiver()` for the default breaks computed by the [transformation object](https://scales.r-lib.org/reference/trans_new.html)
+    -   A numeric vector of positions. Note that the vector will be cut off if the range exceeds the data coverage.
+    -   A function that takes the limits as input and returns breaks as output (e.g., a function returned by `scales::extended_breaks()`). Also accepts rlang [lambda](https://rlang.r-lib.org/reference/as_function.html) function notation.
+
+-   `labels` sets the labels of the ticks. It can be specified as:
+    
+    -   `NULL` for no labels
+    -   a character vector of labels (must be same length as `breaks`); 
+    -   a function that takes the breaks as input and returns labels as output. 
+        
+        `scales::percent` formats the breaks as percentages. E.g., `.05` will display as `5%`. 
+
+        If the labels are already in percentage units (e.g., 5), use `scales::label_percent(scale = 1)` instead.
+
+
+- `oob` Deals with Out-Of-Bounds data. Defaults to `scales::censor`, which replaces out-of-bounds values with `NA`. 
+  
+  Other options include `scales::squish` (squishes out-of-bounds values into the range) and `scales::squish_infinite` (squishes infinite values into the range, but leaves out-of-bounds finite values alone).
+
+  It can also be a custom function that handles out-of-bounds values. Lambda functions (e.g., `~ .x+1`) are also accepted. 
 
 Other position scales: `scale_x_binned()`, `scale_x_date()`, `scale_x_discrete()`.
 
-`scale_x_date()` :  class `Date`
+`scale_x_date()` : class `Date`
 
-`scale_x_datetime()` :  class `POSIXct`
+`scale_x_datetime()` : class `POSIXct`
 
 ```R
-scale_x_datetime(labels = scales::date_format("%Y", tz = "CET"),
-                 breaks = seq(as.POSIXct("1960-12-31 01:00:00 CET"),
-                              as.POSIXct("2015-02-11 01:00:00 CET"), "10 years")
-                 )
+scale_x_datetime(
+  labels = scales::date_format("%Y", tz = "CET"),
+  breaks = seq(as.POSIXct("1960-12-31 01:00:00 CET"),
+               as.POSIXct("2015-02-11 01:00:00 CET"),
+               "10 years")
+  )
 ```
 
--   `scales::date_format("%Y", tz = "CET")` is a wrapper for formatting dates on the axis.
+- `scales::date_format("%Y", tz = "CET")` is a wrapper for formatting dates on the axis.
 
 
 
@@ -559,6 +585,7 @@ scale_x_datetime(labels = scales::date_format("%Y", tz = "CET"),
 
 `scale_(x|y)_binned()` are scales that discretize continuous position data.  You can use these scales to transform continuous inputs before using it with a geom that requires discrete positions. An example is using `scale_x_binned()` with `geom_bar()` to create a histogram.
 
+--------------------------------------------------------------------------------
 
 
 **`scale_*_manual(..., values, breaks = waiver())`**  specify your own set of mappings from levels in the data to aesthetic values.
@@ -643,7 +670,7 @@ p + scale_colour_manual(values = cols, limits = c("4", "6", "8", "10"))
 
 
 
-Enlarge `geom_point()` dot size by setting `size=3`, default to 1.
+Enlarge `geom_point()` dot size by setting `size = 3`, defaults to 1.
 
 ```r
 # Set aesthetics to fixed value
@@ -690,7 +717,7 @@ ggplot(aes(x = Sepal.Length), data = iris) +
   na.rm = FALSE,orientation = NA,
   show.legend = NA,inherit.aes = TRUE)` 
 
-Addds a trend line over an existing plot. By default, it uses a `LOESS` smooth line. If you want a straight "linear model" line, you can use `method=lm`.
+Adds a trend line over an existing plot. By default, it uses a `LOESS` smooth line. If you want a straight "linear model" line, you can use `method=lm`.
 
 - `method` 	 Smoothing method (function) to use, accepts either `NULL` or a character vector, e.g. <span class="env-green">**`"lm"`** (linear model)</span>, `"glm"`, `"gam"`, `"loess"` or a function, e.g. `MASS::rlm` or `mgcv::gam`, `stats::lm`, or `stats::loess`. `"auto"` is also accepted for backwards compatibility. It is equivalent to `NULL`.
 
@@ -756,7 +783,9 @@ ggplot(df, aes_string(x="true value", y='predicted value')) +
 
 
 
+--------------------------------------------------------------------------------
 
+### Add text to plot
 
 `geom_text(data, mapping, check_overlap = FALSE, ...)` add text to the plot	
 
@@ -768,6 +797,13 @@ ggplot(mtcars, aes(wt, mpg)) +
 **`ggrepel::geom_text_repel(aes(label=Model), size=3.5, fontface="bold")`**  avoid overlap among labels.
 
 `geom_label()` works similar to `geom_text`, except for that text is wrapped in a box.
+
+The left figure uses `geom_text()` while the right figure uses `geom_label()`. 
+
+<table style="width:100%;"><tr><td style="text-align:center;"><img src="https://r-graph-gallery.com/233-add-annotations-on-ggplot2-chart_files/figure-html/thecodeA-1.png" style="width:90%;" /></td><td style="text-align:center;"><img src="https://r-graph-gallery.com/233-add-annotations-on-ggplot2-chart_files/figure-html/thecodeB-1.png" style="width:90%;" /></td></tr></table>
+
+
+ref: [Add text labels with ggplot2](https://r-graph-gallery.com/275-add-text-labels-with-ggplot2.html)
 
 Q: How to remove 'a' from legend when using aesthetics and `geom_text`?
 
@@ -910,11 +946,46 @@ ggplot(the_variable, aes(x=Water_receive, y=water_stress, fill=year)) +
     geom_boxplot(outlier.shape = NA, outliers = FALSE) 
 ```
 
+### Boxplot
 
 
+<img src="https://drive.google.com/thumbnail?id=1V23hs57ZZzaLOBhHKpdmk2x6mt5ECros&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:40%;" />
+
+**Understanding the Box Plot:**
+
+1. **Box and middle bar (median)**
+   
+   - The **box** itself spans from the **first quartile (Q1, 25th percentile)** to the **third quartile (Q3, 75th percentile)**.
+   - This range is called the **interquartile range (IQR = Q3 - Q1)**.
+   - The **middle bar** inside the box represents the **median (50th percentile)**.
+     - If the median is closer to the bottom of the box, the lower half of the data is more concentrated.
+     - If closer to the top, the upper half is more concentrated.
+
+2. **Whiskers**
+
+   -   The **whiskers** extend from the box to show the range of the data **excluding outliers**.
+   -   A whisker extends to the **largest/smallest value within 1.5 × IQR from the box**:
+       -   Upper whisker = largest value ≤ Q3 + 1.5 × IQR
+       -   Lower whisker = smallest value ≥ Q1 - 1.5 × IQR
+
+3. **Outliers**
+
+   -   **Points beyond the whiskers** are plotted individually as **outliers**.
+   -   These are values that are unusually high or low relative to the bulk of the data.
 
 
-Deal with Outliers
+::: {.rmdnote}
+**Summary of boxplot**
+
+- Box: middle 50% of the data
+- Middle line: median
+- Whiskers: typical range, excluding extreme values
+- Outliers: extreme observations
+:::
+
+--------------------------------------------------------------------------------
+
+**Deal with Outliers**
 
 One idea would be to [*winsorize*](http://en.wikipedia.org/wiki/Winsorising) the data in a two-pass procedure:
 

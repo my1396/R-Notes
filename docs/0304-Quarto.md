@@ -1905,7 +1905,7 @@ ref: <https://stackoverflow.com/a/78497776>
 --------------------------------------------------------------------------------
 
 
-## Callouts
+## Callouts {#callouts}
 
 There are five different types of [callouts](https://quarto.org/docs/authoring/callouts.html) available.
 

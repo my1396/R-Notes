@@ -83,6 +83,100 @@ A: There's **no built-in `@ref()`** syntax for referencing arbitrary inline text
 
 --------------------------------------------------------------------------------
 
+### Custom Blocks
+
+
+To achieve [Quarto callouts](#callouts) in R Markdown, you can use the syntax of [Pandoc's fenced Div blocks](https://pandoc.org/MANUAL.html#divs-and-spans).
+
+
+A Div starts with a fence containing at least three consecutive colons plus some attributes.
+
+These Div blocks can be nested.
+
+Since version 1.16 of the **rmarkdown** package, it has been possible to convert `Div` blocks to both HTML and LaTeX. For HTML output, all attributes of the block will become attributes of the `<div>` tag. For example, a `Div` can have an ID (after `#`), one or multiple classes (class names are written after `.`), and other attributes. The following `Div` block
+
+```markdown
+::: {#hello .greeting .message style="color: red;"}
+Hello **world**!
+:::
+```
+
+will be converted to the HTML code below:
+
+```markdown
+<div id="hello" class="greeting message" style="color: red;">
+  Hello <strong>world</strong>!
+</div>
+```
+
+You need to add custom CSS for the class `greeting` and `message` to style the block.
+
+
+Use example: define `rmdnote` class in CSS, then use `::: {.rmdnote}` to create a note block.
+
+
+
+Add to your CSS file:
+
+```css
+.rmdnote, .rmdtip, .rmdwarning, .rmdimportant, .rmdcaution {
+  padding: 10px 15px;
+  margin: 1.2em 0;
+  border-radius: 5px;
+  border-left: 5px solid;
+}
+
+/* Light theme */
+.rmdnote {
+  background-color: #e8f4fd;
+  border-left-color: #3498db;
+  color: #1a3a4a;
+}
+
+/* Night theme overrides */
+.book.color-theme-2 .rmdnote {
+  background-color: #1a2e3a;
+  color: #a8d4f0;
+  border-left-color: #3498db;
+}
+```
+
+
+To create a note block, use:
+
+```markdown
+::: {.rmdnote}
+This is a note.
+:::
+```
+
+will be rendered as:
+
+::: {.rmdnote}
+This is a note.
+:::
+
+
+::: {.rmdtip}
+This is a tip.
+:::
+
+::: {.rmdwarning}
+This is a warning.
+:::
+
+::: {.rmdimportant}
+This is important.
+:::
+
+::: {.rmdcaution}
+This is caution.
+:::
+
+ref: [R Markdown Cookbook: Custom Blocks](https://yihui.org/rmarkdown-cookbook/custom-blocks)
+
+
+--------------------------------------------------------------------------------
 
 ### Knitting in the global environment
 
