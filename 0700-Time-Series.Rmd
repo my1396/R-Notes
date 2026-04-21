@@ -1154,18 +1154,19 @@ plot_data
 
 col_vec <- c("black", "red") # color series
 plot.xts(plot_data, col = col_vec, main = "Excess Return on Asset and Market")
-addLegend("topright", 
-          legend.names = c("eRi", "rmrf"), 
-          lty = c(1, 1), 
-          lwd = c(2, 2),
-          col = col_vec,
-          bg = "white", # legend background
-          bty = "o",    # box border style, doesn't work
-          box.col = "white" # box border color
-         )
+addLegend(
+  "topright", 
+  legend.names = c("eRi", "rmrf"), 
+  lty = c(1, 1), 
+  lwd = c(2, 2),
+  col = col_vec,
+  bg = "white", # legend background
+  bty = "o",    # box border style, doesn't work
+  box.col = "white" # box border color
+)
 ```
 
-Another example
+**Another example**
 
 ```r
 plot(x = basket[,"SPY.Close"], xlab = "Time", ylab = "Cumulative Return",
@@ -1191,7 +1192,10 @@ legend(x = 'topleft', legend = c("SPY", "QQQ", "GDX", "DBO", "VWO"),
 
 ### `autoplot`
 
-For plotting `xts` objects, especially with multiple columns (data series), the **ggplot2** function `autoplot()` is especially convenient and easy:
+For plotting `xts` objects, especially with multiple columns (data series), the **ggplot2** function <span class="env-green">`autoplot()`</span> is especially convenient and easy:
+
+
+<span class="env-green">`facets = NULL`</span>: plot all series in **one panel**.
 
 ```R
 library(ggplot2)
@@ -1202,7 +1206,7 @@ autoplot(msftSbuxDailyPrices, facets = NULL) +
   xlab("Year")
 ```
 
-or produce a multi-panel plot call `autoplot()` with `facets = Series ~ .`:
+or produce a **multi-panel** plot call `autoplot()` with <span class="env-green">`facets = Series ~ .`</span>:
 
 ```R
 # one panel for each series
@@ -1212,76 +1216,99 @@ autoplot(msftSbuxDailyPrices, facets = Series ~ .) +
   xlab("Year")
 ```
 
-More refined setting
+**More refined setting**
 
-Set colors
+**Set colors**
+
+Use `scale_[color | fill | linetype]_manual(values = c("key" = "value"), ...)` to set colors/fills/linetypes for different series.
 
 ```r
 # using autoplot from earlier, I placed it into an object
-p <- autoplot(prcomp(df), data = iris, colour = 'Species', shape='Species', frame=T)
+p <- autoplot(prcomp(df), data = iris, colour = 'Species', shape = 'Species', frame = T)
 # then I added on scale_color_manual and scale_fill_manual with the wacky color combos that would never be publishable 
-a + scale_fill_manual(values = c("#FF1BB3","#A7FF5B","#99554D")) + scale_color_manual(values = c("black","white","orange")) 
+p + 
+  scale_fill_manual(values = c("#FF1BB3", "#A7FF5B", "#99554D")) + 
+  scale_color_manual(values = c("black", "white", "orange")) 
 ```
 
-Set date breaks
+**Set date breaks**
+
+`scale_x_date` can be used to set date breaks and labels on the x-axis.
 
 ```r
 # auto date breaks every 6 mons
 autoplot(plot_data, facets = NULL) +
     scale_color_manual(values = c("black", "red")) +
-    scale_x_date(date_breaks = "6 month",
-                 date_labels = "%b %y",
-                 limits=c(ymd("2014-12-30"), ymd("2021-12-30") )
-                 )
+    scale_x_date(
+      date_breaks = "6 month",
+      date_labels = "%b %y",
+      limits = c(ymd("2014-12-30"), ymd("2021-12-30") )
+    )
 
 # explicit date breaks 
 autoplot(plot_data, facets = NULL) +
     scale_color_manual(values = c("black", "red")) +
-    scale_x_date(breaks = seq(from=index(plot_data)[1] %m-% months(1), 
-                              to=tail(index(plot_data), 1), 
-                              by="6 month"),
-                 date_labels = "%b %y",
-                 limits=c(ymd("2014-12-30"), ymd("2021-12-30") )
-                 )
+    scale_x_date(
+      breaks = seq(from = index(plot_data)[1] %m-% months(1), 
+                   to = tail(index(plot_data), 1), 
+                   by = "6 month"),
+      date_labels = "%b %y",
+      limits = c(ymd("2014-12-30"), ymd("2021-12-30") )
+    )
 ```
 
+Alternatively, you can use `zoo` functions 
+
+- `scale_x_yearmon` to set date breaks for monthly data.
+- `scale_x_yearqtr` to set date breaks for quarterly data.
+
+These functions are more constrained as it requires the index of the `xts` object to be in `yearmon` or `yearqtr` format. Otherwise, you can use `zoo::as.yearmon` or `zoo::as.yearqtr` to convert the index to the required format.
 
 
-Simulate a autocorrelated time series.
 
-`arima.sim(model, n, sd=1)`
+--------------------------------------------------------------------------------
 
-- `model`   a list with the following elements. The coefficients must be provided through the elements `ar` and `ma`.
+**Simulate a autocorrelated time series**
 
-  - `order `   a vector of length 3 containing the `ARIMA(p, d, q)` order
+`arima.sim(model, n, sd = 1)`
 
-    `p` specifies AR order;  `d` is the differencing order; `q` specifies MA order.
+- `model`   a `list` with the following elements. 
 
-    `order = c(0, 0, 0)` will generate White Noise.
+  - `order `   an optional vector of length 3 containing the `ARIMA(p, d, q)` order
 
-    `order = c(2, 0, 0)` will generate an AR(2) series.
+    - `p` specifies AR order; 
+      
+      `order = c(0, 0, 0)` will generate White Noise.
 
-    `order = c(0, 0, 2)` will generate an MA(2) series.
+      `order = c(2, 0, 0)` will generate an AR(2) series.
+    
+    - `d` is the differencing order; 
+    
+    - `q` specifies MA order. `order = c(0, 0, 2)` will generate an MA(2) series.
 
-  - `ar` 	 a vector of length `p` containing the `AR(p)` coefficients
+  The coefficients/parameters must be provided through the elements `ar` and `ma`.
+  
+  - `ar`   a vector of length `p` containing the `AR(p)` coefficients
 
-  - `ma`          a vector of length `q` containing the `MA(q)` coefficients
+  - `ma`   a vector of length `q` containing the `MA(q)` coefficients
 
-- `n` 	   length of simulated time series
+- `n`   length of simulated time series
 
-- `sd`  	the standard deviation of the Gaussian errors. Defaults to 1.
+- `sd`  the standard deviation of the Gaussian errors. Defaults to 1.
 
-- `rand.gen = rnorm`   can specify a function to generate the innovations. Defaults to normal distribution generator.
+- `rand.gen = rnorm`  can specify a function to generate the innovations. Defaults to normal distribution generator.
 
 - `innov = rand.gen(n, ...)` can specify your own series of error here.
 
 ```r
 # AR(1), with rho=0.7
-ar.epsilon <- arima.sim(model = list(order = c(1,0,0), ar = 0.7), n = 200, sd=20)
+ar.epsilon <- arima.sim(model = list(order = c(1, 0, 0), ar = 0.7), n = 200, sd = 20)
+
 # AR(2), with with parameters 1.5 and -.75
 AR <- arima.sim(model = list(order = c(2, 0, 0), ar = c(1.5, -.75)), n = 200) 
+
 # MA(3), with parameters 0.5, 0.4, and 0.2
-sim_ma3_05 <- arima.sim(model = list(order = c(0,0,3), ma = c(0.5, 0.4, 0.2)), n=200)
+sim_ma3_05 <- arima.sim(model = list(order = c(0, 0, 3), ma = c(0.5, 0.4, 0.2)), n=200)
 ```
 
 

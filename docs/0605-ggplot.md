@@ -562,16 +562,24 @@ p + coord_fixed(ratio = 1, xlim = c(0,100)) # fixed aspect ratio
 
 Other position scales: `scale_x_binned()`, `scale_x_date()`, `scale_x_discrete()`.
 
+
+
+`scale_(x|y)_binned()` are scales that discretize continuous position data.  You can use these scales to transform continuous inputs before using it with a geom that requires discrete positions. An example is using `scale_x_binned()` with `geom_bar()` to create a histogram.
+
+### Date and Time axes
+
 `scale_x_date()` : class `Date`
 
 `scale_x_datetime()` : class `POSIXct`
 
+`scale_x_time()` :  class `hms`
+
 ```R
 scale_x_datetime(
   labels = scales::date_format("%Y", tz = "CET"),
-  breaks = seq(as.POSIXct("1960-12-31 01:00:00 CET"),
-               as.POSIXct("2015-02-11 01:00:00 CET"),
-               "10 years")
+  breaks = seq(from = as.POSIXct("1960-12-31 01:00:00 CET"),
+               to = as.POSIXct("2015-02-11 01:00:00 CET"),
+               by = "10 years")
   )
 ```
 
@@ -579,11 +587,9 @@ scale_x_datetime(
 
 
 
-`scale_x_time()` :  class `hms`
+If you are working with `xts` or `zoo` objects, you can use `scale_x_yearmon()` and `scale_x_yearqtr()` to handle date axes with monthly or quarterly data, respectively. 
 
 
-
-`scale_(x|y)_binned()` are scales that discretize continuous position data.  You can use these scales to transform continuous inputs before using it with a geom that requires discrete positions. An example is using `scale_x_binned()` with `geom_bar()` to create a histogram.
 
 --------------------------------------------------------------------------------
 

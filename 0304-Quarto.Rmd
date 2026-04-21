@@ -1053,6 +1053,7 @@ Alternatively, you can use the **Render** button in RStudio. The Render button w
 | Equation | `#eq-xxx`  | `@eq-xxx`   |
 | Section  | `#sec-xxx` | `@sec-xxx`  |
 
+Note: Quarto support cross-references across documents in the same project.
 
 Cross-reference to a figure:
 
