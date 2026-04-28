@@ -1196,7 +1196,7 @@ legend(x = 'topleft', legend = c("SPY", "QQQ", "GDX", "DBO", "VWO"),
 For plotting `xts` objects, especially with multiple columns (data series), the **ggplot2** function <span class="env-green">`autoplot()`</span> is especially convenient and easy:
 
 
-<span class="env-green">`facets = NULL`</span>: plot all series in one panel.
+<span class="env-green">`facets = NULL`</span>: plot all series in **one panel**.
 
 ```R
 library(ggplot2)
@@ -1207,7 +1207,7 @@ autoplot(msftSbuxDailyPrices, facets = NULL) +
   xlab("Year")
 ```
 
-or produce a multi-panel plot call `autoplot()` with <span class="env-green">`facets = Series ~ .`</span>:
+or produce a **multi-panel** plot call `autoplot()` with <span class="env-green">`facets = Series ~ .`</span>:
 
 ```R
 # one panel for each series

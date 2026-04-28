@@ -460,7 +460,9 @@ Common uses of `index.Rmd`'s YAML frontmatter:
 
 - Link to your GitHub in the toolbar (also need `_output.yml`)
 
-- Add a favicon
+- Add a <span class="env-green">**favicon**</span>
+
+  A favicon is a small icon that appears in the browser tab when you open a website. It helps users to quickly identify and navigate to your website among multiple open tabs.
 
   Add the following line to `index.Rmd` YAML:
 
@@ -469,7 +471,9 @@ Common uses of `index.Rmd`'s YAML frontmatter:
   ```
 
   Issue: Favicon shows ok on Chrome but couldn't display on Safari. Same issue reported in [Stack Overflow](https://stackoverflow.com/questions/66023588/r-bookdown-favicon-works-offline-but-not-online). \
-  Fix: There is a delay for Safari to show Favicon. Wait for two hours and the issue resolves itself...
+  Fix: There is a <span class="env-orange">delay for Safari</span> to show Favicon. Wait for two hours and the issue resolves itself...
+
+  Note: Your favicon file should be in `.ico` format, and the recommended size is 16x16 pixels or 32x32 pixels. <span class="env-orange">Safari may not support png</span> as favicon.
 
 
 An example of `index.Rmd`

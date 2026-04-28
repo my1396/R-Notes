@@ -315,6 +315,29 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
   
   div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 </style>
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
 
 <link rel="stylesheet" href="style.css" type="text/css" />
 </head>
@@ -332,7 +355,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <li><a href="./">R Notes</a></li>
 
 <li class="divider"></li>
-<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> date: “2026-04-21”</a>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> About</a>
 <ul>
 <li class="chapter" data-level="1.1" data-path="1.1-usage.html"><a href="1.1-usage.html"><i class="fa fa-check"></i><b>1.1</b> Usage</a></li>
 <li class="chapter" data-level="1.2" data-path="1.2-render-book.html"><a href="1.2-render-book.html"><i class="fa fa-check"></i><b>1.2</b> Render book</a></li>
@@ -993,93 +1016,93 @@ document.addEventListener('DOMContentLoaded', function() {
 <p>R loads the <a href="https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/lag"><code>lag</code></a> function from the <code>stats</code> package by default, which is designed for time series objects. It has a different behavior when applied to regular data frames or tibbles, and it may lead to unexpected results, such as returning the original vector instead of lagging it.</p>
 <p>‼️ To avoid this issue, you should use <span class="env-green"><code>dplyr::lag()</code></span> instead of <code>stats::lag()</code>, especially when working with tibbles or data frames.</p>
 <p>Apply default <code>lag</code> on a numeric vector: no errors but it does not shift the values as expected. → <span class="env-orange">This is very dangerous because it does not throw an error</span>, but it does not do what you expect. You have to check the output carefully to make sure it is correct.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="11.2-lag-and-lead.html#cb9-1" tabindex="-1"></a><span class="sc">&gt;</span> x <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span></span>
-<span id="cb9-2"><a href="11.2-lag-and-lead.html#cb9-2" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">lag</span>(x, <span class="dv">1</span>)</span>
-<span id="cb9-3"><a href="11.2-lag-and-lead.html#cb9-3" tabindex="-1"></a>[<span class="dv">1</span>] <span class="dv">1</span> <span class="dv">2</span> <span class="dv">3</span> <span class="dv">4</span> <span class="dv">5</span></span>
-<span id="cb9-4"><a href="11.2-lag-and-lead.html#cb9-4" tabindex="-1"></a><span class="fu">attr</span>(,<span class="st">&quot;tsp&quot;</span>)</span>
-<span id="cb9-5"><a href="11.2-lag-and-lead.html#cb9-5" tabindex="-1"></a>[<span class="dv">1</span>] <span class="dv">0</span> <span class="dv">4</span> <span class="dv">1</span></span></code></pre></div>
+<div class="sourceCode" id="cb849"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb849-1"><a href="11.2-lag-and-lead.html#cb849-1" tabindex="-1"></a><span class="sc">&gt;</span> x <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span></span>
+<span id="cb849-2"><a href="11.2-lag-and-lead.html#cb849-2" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">lag</span>(x, <span class="dv">1</span>)</span>
+<span id="cb849-3"><a href="11.2-lag-and-lead.html#cb849-3" tabindex="-1"></a>[<span class="dv">1</span>] <span class="dv">1</span> <span class="dv">2</span> <span class="dv">3</span> <span class="dv">4</span> <span class="dv">5</span></span>
+<span id="cb849-4"><a href="11.2-lag-and-lead.html#cb849-4" tabindex="-1"></a><span class="fu">attr</span>(,<span class="st">&quot;tsp&quot;</span>)</span>
+<span id="cb849-5"><a href="11.2-lag-and-lead.html#cb849-5" tabindex="-1"></a>[<span class="dv">1</span>] <span class="dv">0</span> <span class="dv">4</span> <span class="dv">1</span></span></code></pre></div>
 <p><code>stats::lag()</code> on time series objects:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="11.2-lag-and-lead.html#cb10-1" tabindex="-1"></a><span class="sc">&gt;</span> ts_vector <span class="ot">&lt;-</span> <span class="fu">ts</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>)</span>
-<span id="cb10-2"><a href="11.2-lag-and-lead.html#cb10-2" tabindex="-1"></a><span class="sc">&gt;</span> ts_vector</span>
-<span id="cb10-3"><a href="11.2-lag-and-lead.html#cb10-3" tabindex="-1"></a>Time Series<span class="sc">:</span></span>
-<span id="cb10-4"><a href="11.2-lag-and-lead.html#cb10-4" tabindex="-1"></a>Start <span class="ot">=</span> <span class="dv">1</span> </span>
-<span id="cb10-5"><a href="11.2-lag-and-lead.html#cb10-5" tabindex="-1"></a>End <span class="ot">=</span> <span class="dv">10</span> </span>
-<span id="cb10-6"><a href="11.2-lag-and-lead.html#cb10-6" tabindex="-1"></a>Frequency <span class="ot">=</span> <span class="dv">1</span> </span>
-<span id="cb10-7"><a href="11.2-lag-and-lead.html#cb10-7" tabindex="-1"></a> [<span class="dv">1</span>]  <span class="dv">1</span>  <span class="dv">2</span>  <span class="dv">3</span>  <span class="dv">4</span>  <span class="dv">5</span>  <span class="dv">6</span>  <span class="dv">7</span>  <span class="dv">8</span>  <span class="dv">9</span> <span class="dv">10</span></span>
-<span id="cb10-8"><a href="11.2-lag-and-lead.html#cb10-8" tabindex="-1"></a></span>
-<span id="cb10-9"><a href="11.2-lag-and-lead.html#cb10-9" tabindex="-1"></a></span>
-<span id="cb10-10"><a href="11.2-lag-and-lead.html#cb10-10" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">lag</span>(ts_vector, <span class="dv">1</span>)</span>
-<span id="cb10-11"><a href="11.2-lag-and-lead.html#cb10-11" tabindex="-1"></a>Time Series<span class="sc">:</span></span>
-<span id="cb10-12"><a href="11.2-lag-and-lead.html#cb10-12" tabindex="-1"></a>Start <span class="ot">=</span> <span class="dv">0</span> </span>
-<span id="cb10-13"><a href="11.2-lag-and-lead.html#cb10-13" tabindex="-1"></a>End <span class="ot">=</span> <span class="dv">9</span> </span>
-<span id="cb10-14"><a href="11.2-lag-and-lead.html#cb10-14" tabindex="-1"></a>Frequency <span class="ot">=</span> <span class="dv">1</span> </span>
-<span id="cb10-15"><a href="11.2-lag-and-lead.html#cb10-15" tabindex="-1"></a> [<span class="dv">1</span>]  <span class="dv">1</span>  <span class="dv">2</span>  <span class="dv">3</span>  <span class="dv">4</span>  <span class="dv">5</span>  <span class="dv">6</span>  <span class="dv">7</span>  <span class="dv">8</span>  <span class="dv">9</span> <span class="dv">10</span></span>
-<span id="cb10-16"><a href="11.2-lag-and-lead.html#cb10-16" tabindex="-1"></a></span>
-<span id="cb10-17"><a href="11.2-lag-and-lead.html#cb10-17" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">lag</span>(ts_vector, <span class="sc">-</span><span class="dv">1</span>)</span>
-<span id="cb10-18"><a href="11.2-lag-and-lead.html#cb10-18" tabindex="-1"></a>Time Series<span class="sc">:</span></span>
-<span id="cb10-19"><a href="11.2-lag-and-lead.html#cb10-19" tabindex="-1"></a>Start <span class="ot">=</span> <span class="dv">2</span> </span>
-<span id="cb10-20"><a href="11.2-lag-and-lead.html#cb10-20" tabindex="-1"></a>End <span class="ot">=</span> <span class="dv">11</span> </span>
-<span id="cb10-21"><a href="11.2-lag-and-lead.html#cb10-21" tabindex="-1"></a>Frequency <span class="ot">=</span> <span class="dv">1</span> </span>
-<span id="cb10-22"><a href="11.2-lag-and-lead.html#cb10-22" tabindex="-1"></a> [<span class="dv">1</span>]  <span class="dv">1</span>  <span class="dv">2</span>  <span class="dv">3</span>  <span class="dv">4</span>  <span class="dv">5</span>  <span class="dv">6</span>  <span class="dv">7</span>  <span class="dv">8</span>  <span class="dv">9</span> <span class="dv">10</span></span></code></pre></div>
+<div class="sourceCode" id="cb850"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb850-1"><a href="11.2-lag-and-lead.html#cb850-1" tabindex="-1"></a><span class="sc">&gt;</span> ts_vector <span class="ot">&lt;-</span> <span class="fu">ts</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>)</span>
+<span id="cb850-2"><a href="11.2-lag-and-lead.html#cb850-2" tabindex="-1"></a><span class="sc">&gt;</span> ts_vector</span>
+<span id="cb850-3"><a href="11.2-lag-and-lead.html#cb850-3" tabindex="-1"></a>Time Series<span class="sc">:</span></span>
+<span id="cb850-4"><a href="11.2-lag-and-lead.html#cb850-4" tabindex="-1"></a>Start <span class="ot">=</span> <span class="dv">1</span> </span>
+<span id="cb850-5"><a href="11.2-lag-and-lead.html#cb850-5" tabindex="-1"></a>End <span class="ot">=</span> <span class="dv">10</span> </span>
+<span id="cb850-6"><a href="11.2-lag-and-lead.html#cb850-6" tabindex="-1"></a>Frequency <span class="ot">=</span> <span class="dv">1</span> </span>
+<span id="cb850-7"><a href="11.2-lag-and-lead.html#cb850-7" tabindex="-1"></a> [<span class="dv">1</span>]  <span class="dv">1</span>  <span class="dv">2</span>  <span class="dv">3</span>  <span class="dv">4</span>  <span class="dv">5</span>  <span class="dv">6</span>  <span class="dv">7</span>  <span class="dv">8</span>  <span class="dv">9</span> <span class="dv">10</span></span>
+<span id="cb850-8"><a href="11.2-lag-and-lead.html#cb850-8" tabindex="-1"></a></span>
+<span id="cb850-9"><a href="11.2-lag-and-lead.html#cb850-9" tabindex="-1"></a></span>
+<span id="cb850-10"><a href="11.2-lag-and-lead.html#cb850-10" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">lag</span>(ts_vector, <span class="dv">1</span>)</span>
+<span id="cb850-11"><a href="11.2-lag-and-lead.html#cb850-11" tabindex="-1"></a>Time Series<span class="sc">:</span></span>
+<span id="cb850-12"><a href="11.2-lag-and-lead.html#cb850-12" tabindex="-1"></a>Start <span class="ot">=</span> <span class="dv">0</span> </span>
+<span id="cb850-13"><a href="11.2-lag-and-lead.html#cb850-13" tabindex="-1"></a>End <span class="ot">=</span> <span class="dv">9</span> </span>
+<span id="cb850-14"><a href="11.2-lag-and-lead.html#cb850-14" tabindex="-1"></a>Frequency <span class="ot">=</span> <span class="dv">1</span> </span>
+<span id="cb850-15"><a href="11.2-lag-and-lead.html#cb850-15" tabindex="-1"></a> [<span class="dv">1</span>]  <span class="dv">1</span>  <span class="dv">2</span>  <span class="dv">3</span>  <span class="dv">4</span>  <span class="dv">5</span>  <span class="dv">6</span>  <span class="dv">7</span>  <span class="dv">8</span>  <span class="dv">9</span> <span class="dv">10</span></span>
+<span id="cb850-16"><a href="11.2-lag-and-lead.html#cb850-16" tabindex="-1"></a></span>
+<span id="cb850-17"><a href="11.2-lag-and-lead.html#cb850-17" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">lag</span>(ts_vector, <span class="sc">-</span><span class="dv">1</span>)</span>
+<span id="cb850-18"><a href="11.2-lag-and-lead.html#cb850-18" tabindex="-1"></a>Time Series<span class="sc">:</span></span>
+<span id="cb850-19"><a href="11.2-lag-and-lead.html#cb850-19" tabindex="-1"></a>Start <span class="ot">=</span> <span class="dv">2</span> </span>
+<span id="cb850-20"><a href="11.2-lag-and-lead.html#cb850-20" tabindex="-1"></a>End <span class="ot">=</span> <span class="dv">11</span> </span>
+<span id="cb850-21"><a href="11.2-lag-and-lead.html#cb850-21" tabindex="-1"></a>Frequency <span class="ot">=</span> <span class="dv">1</span> </span>
+<span id="cb850-22"><a href="11.2-lag-and-lead.html#cb850-22" tabindex="-1"></a> [<span class="dv">1</span>]  <span class="dv">1</span>  <span class="dv">2</span>  <span class="dv">3</span>  <span class="dv">4</span>  <span class="dv">5</span>  <span class="dv">6</span>  <span class="dv">7</span>  <span class="dv">8</span>  <span class="dv">9</span> <span class="dv">10</span></span></code></pre></div>
 <p>💡 Note that <code>stats:lag</code> does NOT shift the actual data values. It changes the time index instead.</p>
 <p>Default <code>lag</code> throws an error when applied to a <code>tibble</code>, which is good because it alerts you that something is wrong.</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="11.2-lag-and-lead.html#cb11-1" tabindex="-1"></a><span class="sc">&gt;</span> df_tibble <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb11-2"><a href="11.2-lag-and-lead.html#cb11-2" tabindex="-1"></a>  <span class="at">year =</span> <span class="dv">2000</span><span class="sc">:</span><span class="dv">2025</span>,</span>
-<span id="cb11-3"><a href="11.2-lag-and-lead.html#cb11-3" tabindex="-1"></a>  <span class="at">value =</span> <span class="fu">seq</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">26</span>) </span>
-<span id="cb11-4"><a href="11.2-lag-and-lead.html#cb11-4" tabindex="-1"></a>)</span>
-<span id="cb11-5"><a href="11.2-lag-and-lead.html#cb11-5" tabindex="-1"></a><span class="sc">&gt;</span> df_tibble <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">value_lag1 =</span> stats<span class="sc">::</span><span class="fu">lag</span>(value, <span class="dv">1</span>))</span>
-<span id="cb11-6"><a href="11.2-lag-and-lead.html#cb11-6" tabindex="-1"></a><span class="co"># A tibble: 26 × 3</span></span>
-<span id="cb11-7"><a href="11.2-lag-and-lead.html#cb11-7" tabindex="-1"></a>Error <span class="cf">in</span> <span class="fu">split_decimal</span>(x, <span class="at">sigfig =</span> sigfig, <span class="at">digits =</span> digits) <span class="sc">:</span> </span>
-<span id="cb11-8"><a href="11.2-lag-and-lead.html#cb11-8" tabindex="-1"></a>  invalid time series parameters specified</span></code></pre></div>
+<div class="sourceCode" id="cb851"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb851-1"><a href="11.2-lag-and-lead.html#cb851-1" tabindex="-1"></a><span class="sc">&gt;</span> df_tibble <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb851-2"><a href="11.2-lag-and-lead.html#cb851-2" tabindex="-1"></a>  <span class="at">year =</span> <span class="dv">2000</span><span class="sc">:</span><span class="dv">2025</span>,</span>
+<span id="cb851-3"><a href="11.2-lag-and-lead.html#cb851-3" tabindex="-1"></a>  <span class="at">value =</span> <span class="fu">seq</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">26</span>) </span>
+<span id="cb851-4"><a href="11.2-lag-and-lead.html#cb851-4" tabindex="-1"></a>)</span>
+<span id="cb851-5"><a href="11.2-lag-and-lead.html#cb851-5" tabindex="-1"></a><span class="sc">&gt;</span> df_tibble <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">value_lag1 =</span> stats<span class="sc">::</span><span class="fu">lag</span>(value, <span class="dv">1</span>))</span>
+<span id="cb851-6"><a href="11.2-lag-and-lead.html#cb851-6" tabindex="-1"></a><span class="co"># A tibble: 26 × 3</span></span>
+<span id="cb851-7"><a href="11.2-lag-and-lead.html#cb851-7" tabindex="-1"></a>Error <span class="cf">in</span> <span class="fu">split_decimal</span>(x, <span class="at">sigfig =</span> sigfig, <span class="at">digits =</span> digits) <span class="sc">:</span> </span>
+<span id="cb851-8"><a href="11.2-lag-and-lead.html#cb851-8" tabindex="-1"></a>  invalid time series parameters specified</span></code></pre></div>
 <p>Default <code>lag</code> does <span class="env-orange">NOT throw an error when applied to a regular data frame</span>, but it does NOT shift the values as expected either.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="11.2-lag-and-lead.html#cb12-1" tabindex="-1"></a><span class="sc">&gt;</span> df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb12-2"><a href="11.2-lag-and-lead.html#cb12-2" tabindex="-1"></a>  <span class="at">year =</span> <span class="dv">2000</span><span class="sc">:</span><span class="dv">2025</span>,</span>
-<span id="cb12-3"><a href="11.2-lag-and-lead.html#cb12-3" tabindex="-1"></a>  <span class="at">value =</span> <span class="fu">seq</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">26</span>)</span>
-<span id="cb12-4"><a href="11.2-lag-and-lead.html#cb12-4" tabindex="-1"></a>)</span>
-<span id="cb12-5"><a href="11.2-lag-and-lead.html#cb12-5" tabindex="-1"></a><span class="sc">&gt;</span> df <span class="sc">%&gt;%</span> </span>
-<span id="cb12-6"><a href="11.2-lag-and-lead.html#cb12-6" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">value_lag1 =</span> stats<span class="sc">::</span><span class="fu">lag</span>(value, <span class="dv">1</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb12-7"><a href="11.2-lag-and-lead.html#cb12-7" tabindex="-1"></a>    data.table<span class="sc">::</span><span class="fu">data.table</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb12-8"><a href="11.2-lag-and-lead.html#cb12-8" tabindex="-1"></a>    <span class="fu">print</span>(<span class="at">topn=</span><span class="dv">5</span>)</span>
-<span id="cb12-9"><a href="11.2-lag-and-lead.html#cb12-9" tabindex="-1"></a></span>
-<span id="cb12-10"><a href="11.2-lag-and-lead.html#cb12-10" tabindex="-1"></a>     year value value_lag1</span>
-<span id="cb12-11"><a href="11.2-lag-and-lead.html#cb12-11" tabindex="-1"></a>    <span class="sc">&lt;</span>int<span class="sc">&gt;</span> <span class="er">&lt;</span>int<span class="sc">&gt;</span>      <span class="er">&lt;</span>int<span class="sc">&gt;</span></span>
-<span id="cb12-12"><a href="11.2-lag-and-lead.html#cb12-12" tabindex="-1"></a> <span class="dv">1</span><span class="sc">:</span>  <span class="dv">2000</span>     <span class="dv">1</span>          <span class="dv">1</span></span>
-<span id="cb12-13"><a href="11.2-lag-and-lead.html#cb12-13" tabindex="-1"></a> <span class="dv">2</span><span class="sc">:</span>  <span class="dv">2001</span>     <span class="dv">2</span>          <span class="dv">2</span></span>
-<span id="cb12-14"><a href="11.2-lag-and-lead.html#cb12-14" tabindex="-1"></a> <span class="dv">3</span><span class="sc">:</span>  <span class="dv">2002</span>     <span class="dv">3</span>          <span class="dv">3</span></span>
-<span id="cb12-15"><a href="11.2-lag-and-lead.html#cb12-15" tabindex="-1"></a> <span class="dv">4</span><span class="sc">:</span>  <span class="dv">2003</span>     <span class="dv">4</span>          <span class="dv">4</span></span>
-<span id="cb12-16"><a href="11.2-lag-and-lead.html#cb12-16" tabindex="-1"></a> <span class="dv">5</span><span class="sc">:</span>  <span class="dv">2004</span>     <span class="dv">5</span>          <span class="dv">5</span></span>
-<span id="cb12-17"><a href="11.2-lag-and-lead.html#cb12-17" tabindex="-1"></a><span class="sc">---</span>                       </span>
-<span id="cb12-18"><a href="11.2-lag-and-lead.html#cb12-18" tabindex="-1"></a><span class="dv">22</span><span class="sc">:</span>  <span class="dv">2021</span>    <span class="dv">22</span>         <span class="dv">22</span></span>
-<span id="cb12-19"><a href="11.2-lag-and-lead.html#cb12-19" tabindex="-1"></a><span class="dv">23</span><span class="sc">:</span>  <span class="dv">2022</span>    <span class="dv">23</span>         <span class="dv">23</span></span>
-<span id="cb12-20"><a href="11.2-lag-and-lead.html#cb12-20" tabindex="-1"></a><span class="dv">24</span><span class="sc">:</span>  <span class="dv">2023</span>    <span class="dv">24</span>         <span class="dv">24</span></span>
-<span id="cb12-21"><a href="11.2-lag-and-lead.html#cb12-21" tabindex="-1"></a><span class="dv">25</span><span class="sc">:</span>  <span class="dv">2024</span>    <span class="dv">25</span>         <span class="dv">25</span></span>
-<span id="cb12-22"><a href="11.2-lag-and-lead.html#cb12-22" tabindex="-1"></a><span class="dv">26</span><span class="sc">:</span>  <span class="dv">2025</span>    <span class="dv">26</span>         <span class="dv">26</span></span></code></pre></div>
+<div class="sourceCode" id="cb852"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb852-1"><a href="11.2-lag-and-lead.html#cb852-1" tabindex="-1"></a><span class="sc">&gt;</span> df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb852-2"><a href="11.2-lag-and-lead.html#cb852-2" tabindex="-1"></a>  <span class="at">year =</span> <span class="dv">2000</span><span class="sc">:</span><span class="dv">2025</span>,</span>
+<span id="cb852-3"><a href="11.2-lag-and-lead.html#cb852-3" tabindex="-1"></a>  <span class="at">value =</span> <span class="fu">seq</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">26</span>)</span>
+<span id="cb852-4"><a href="11.2-lag-and-lead.html#cb852-4" tabindex="-1"></a>)</span>
+<span id="cb852-5"><a href="11.2-lag-and-lead.html#cb852-5" tabindex="-1"></a><span class="sc">&gt;</span> df <span class="sc">%&gt;%</span> </span>
+<span id="cb852-6"><a href="11.2-lag-and-lead.html#cb852-6" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">value_lag1 =</span> stats<span class="sc">::</span><span class="fu">lag</span>(value, <span class="dv">1</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb852-7"><a href="11.2-lag-and-lead.html#cb852-7" tabindex="-1"></a>    data.table<span class="sc">::</span><span class="fu">data.table</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb852-8"><a href="11.2-lag-and-lead.html#cb852-8" tabindex="-1"></a>    <span class="fu">print</span>(<span class="at">topn=</span><span class="dv">5</span>)</span>
+<span id="cb852-9"><a href="11.2-lag-and-lead.html#cb852-9" tabindex="-1"></a></span>
+<span id="cb852-10"><a href="11.2-lag-and-lead.html#cb852-10" tabindex="-1"></a>     year value value_lag1</span>
+<span id="cb852-11"><a href="11.2-lag-and-lead.html#cb852-11" tabindex="-1"></a>    <span class="sc">&lt;</span>int<span class="sc">&gt;</span> <span class="er">&lt;</span>int<span class="sc">&gt;</span>      <span class="er">&lt;</span>int<span class="sc">&gt;</span></span>
+<span id="cb852-12"><a href="11.2-lag-and-lead.html#cb852-12" tabindex="-1"></a> <span class="dv">1</span><span class="sc">:</span>  <span class="dv">2000</span>     <span class="dv">1</span>          <span class="dv">1</span></span>
+<span id="cb852-13"><a href="11.2-lag-and-lead.html#cb852-13" tabindex="-1"></a> <span class="dv">2</span><span class="sc">:</span>  <span class="dv">2001</span>     <span class="dv">2</span>          <span class="dv">2</span></span>
+<span id="cb852-14"><a href="11.2-lag-and-lead.html#cb852-14" tabindex="-1"></a> <span class="dv">3</span><span class="sc">:</span>  <span class="dv">2002</span>     <span class="dv">3</span>          <span class="dv">3</span></span>
+<span id="cb852-15"><a href="11.2-lag-and-lead.html#cb852-15" tabindex="-1"></a> <span class="dv">4</span><span class="sc">:</span>  <span class="dv">2003</span>     <span class="dv">4</span>          <span class="dv">4</span></span>
+<span id="cb852-16"><a href="11.2-lag-and-lead.html#cb852-16" tabindex="-1"></a> <span class="dv">5</span><span class="sc">:</span>  <span class="dv">2004</span>     <span class="dv">5</span>          <span class="dv">5</span></span>
+<span id="cb852-17"><a href="11.2-lag-and-lead.html#cb852-17" tabindex="-1"></a><span class="sc">---</span>                       </span>
+<span id="cb852-18"><a href="11.2-lag-and-lead.html#cb852-18" tabindex="-1"></a><span class="dv">22</span><span class="sc">:</span>  <span class="dv">2021</span>    <span class="dv">22</span>         <span class="dv">22</span></span>
+<span id="cb852-19"><a href="11.2-lag-and-lead.html#cb852-19" tabindex="-1"></a><span class="dv">23</span><span class="sc">:</span>  <span class="dv">2022</span>    <span class="dv">23</span>         <span class="dv">23</span></span>
+<span id="cb852-20"><a href="11.2-lag-and-lead.html#cb852-20" tabindex="-1"></a><span class="dv">24</span><span class="sc">:</span>  <span class="dv">2023</span>    <span class="dv">24</span>         <span class="dv">24</span></span>
+<span id="cb852-21"><a href="11.2-lag-and-lead.html#cb852-21" tabindex="-1"></a><span class="dv">25</span><span class="sc">:</span>  <span class="dv">2024</span>    <span class="dv">25</span>         <span class="dv">25</span></span>
+<span id="cb852-22"><a href="11.2-lag-and-lead.html#cb852-22" tabindex="-1"></a><span class="dv">26</span><span class="sc">:</span>  <span class="dv">2025</span>    <span class="dv">26</span>         <span class="dv">26</span></span></code></pre></div>
 <p>Use <span class="env-green"><code>dplyr::lag()</code></span> to get the expected lagged values.</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="11.2-lag-and-lead.html#cb13-1" tabindex="-1"></a><span class="sc">&gt;</span> dplyr<span class="sc">::</span><span class="fu">lag</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span>)</span>
-<span id="cb13-2"><a href="11.2-lag-and-lead.html#cb13-2" tabindex="-1"></a>[<span class="dv">1</span>] <span class="cn">NA</span>  <span class="dv">1</span>  <span class="dv">2</span>  <span class="dv">3</span>  <span class="dv">4</span></span>
-<span id="cb13-3"><a href="11.2-lag-and-lead.html#cb13-3" tabindex="-1"></a></span>
-<span id="cb13-4"><a href="11.2-lag-and-lead.html#cb13-4" tabindex="-1"></a><span class="co"># Create a lead variable</span></span>
-<span id="cb13-5"><a href="11.2-lag-and-lead.html#cb13-5" tabindex="-1"></a><span class="sc">&gt;</span> dplyr<span class="sc">::</span><span class="fu">lead</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span>)</span>
-<span id="cb13-6"><a href="11.2-lag-and-lead.html#cb13-6" tabindex="-1"></a>[<span class="dv">1</span>]  <span class="dv">2</span>  <span class="dv">3</span>  <span class="dv">4</span>  <span class="dv">5</span> <span class="cn">NA</span></span>
-<span id="cb13-7"><a href="11.2-lag-and-lead.html#cb13-7" tabindex="-1"></a></span>
-<span id="cb13-8"><a href="11.2-lag-and-lead.html#cb13-8" tabindex="-1"></a><span class="sc">&gt;</span> df <span class="sc">%&gt;%</span> </span>
-<span id="cb13-9"><a href="11.2-lag-and-lead.html#cb13-9" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">value_lag1 =</span> dplyr<span class="sc">::</span><span class="fu">lag</span>(value, <span class="dv">1</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb13-10"><a href="11.2-lag-and-lead.html#cb13-10" tabindex="-1"></a>    data.table<span class="sc">::</span><span class="fu">data.table</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb13-11"><a href="11.2-lag-and-lead.html#cb13-11" tabindex="-1"></a>    <span class="fu">print</span>(<span class="at">topn =</span> <span class="dv">5</span>)</span>
-<span id="cb13-12"><a href="11.2-lag-and-lead.html#cb13-12" tabindex="-1"></a></span>
-<span id="cb13-13"><a href="11.2-lag-and-lead.html#cb13-13" tabindex="-1"></a>     year value value_lag1</span>
-<span id="cb13-14"><a href="11.2-lag-and-lead.html#cb13-14" tabindex="-1"></a>    <span class="sc">&lt;</span>int<span class="sc">&gt;</span> <span class="er">&lt;</span>int<span class="sc">&gt;</span>      <span class="er">&lt;</span>int<span class="sc">&gt;</span></span>
-<span id="cb13-15"><a href="11.2-lag-and-lead.html#cb13-15" tabindex="-1"></a> <span class="dv">1</span><span class="sc">:</span>  <span class="dv">2000</span>     <span class="dv">1</span>         <span class="cn">NA</span></span>
-<span id="cb13-16"><a href="11.2-lag-and-lead.html#cb13-16" tabindex="-1"></a> <span class="dv">2</span><span class="sc">:</span>  <span class="dv">2001</span>     <span class="dv">2</span>          <span class="dv">1</span></span>
-<span id="cb13-17"><a href="11.2-lag-and-lead.html#cb13-17" tabindex="-1"></a> <span class="dv">3</span><span class="sc">:</span>  <span class="dv">2002</span>     <span class="dv">3</span>          <span class="dv">2</span></span>
-<span id="cb13-18"><a href="11.2-lag-and-lead.html#cb13-18" tabindex="-1"></a> <span class="dv">4</span><span class="sc">:</span>  <span class="dv">2003</span>     <span class="dv">4</span>          <span class="dv">3</span></span>
-<span id="cb13-19"><a href="11.2-lag-and-lead.html#cb13-19" tabindex="-1"></a> <span class="dv">5</span><span class="sc">:</span>  <span class="dv">2004</span>     <span class="dv">5</span>          <span class="dv">4</span></span>
-<span id="cb13-20"><a href="11.2-lag-and-lead.html#cb13-20" tabindex="-1"></a><span class="sc">---</span>                       </span>
-<span id="cb13-21"><a href="11.2-lag-and-lead.html#cb13-21" tabindex="-1"></a><span class="dv">22</span><span class="sc">:</span>  <span class="dv">2021</span>    <span class="dv">22</span>         <span class="dv">21</span></span>
-<span id="cb13-22"><a href="11.2-lag-and-lead.html#cb13-22" tabindex="-1"></a><span class="dv">23</span><span class="sc">:</span>  <span class="dv">2022</span>    <span class="dv">23</span>         <span class="dv">22</span></span>
-<span id="cb13-23"><a href="11.2-lag-and-lead.html#cb13-23" tabindex="-1"></a><span class="dv">24</span><span class="sc">:</span>  <span class="dv">2023</span>    <span class="dv">24</span>         <span class="dv">23</span></span>
-<span id="cb13-24"><a href="11.2-lag-and-lead.html#cb13-24" tabindex="-1"></a><span class="dv">25</span><span class="sc">:</span>  <span class="dv">2024</span>    <span class="dv">25</span>         <span class="dv">24</span></span>
-<span id="cb13-25"><a href="11.2-lag-and-lead.html#cb13-25" tabindex="-1"></a><span class="dv">26</span><span class="sc">:</span>  <span class="dv">2025</span>    <span class="dv">26</span>         <span class="dv">25</span></span></code></pre></div>
+<div class="sourceCode" id="cb853"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb853-1"><a href="11.2-lag-and-lead.html#cb853-1" tabindex="-1"></a><span class="sc">&gt;</span> dplyr<span class="sc">::</span><span class="fu">lag</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span>)</span>
+<span id="cb853-2"><a href="11.2-lag-and-lead.html#cb853-2" tabindex="-1"></a>[<span class="dv">1</span>] <span class="cn">NA</span>  <span class="dv">1</span>  <span class="dv">2</span>  <span class="dv">3</span>  <span class="dv">4</span></span>
+<span id="cb853-3"><a href="11.2-lag-and-lead.html#cb853-3" tabindex="-1"></a></span>
+<span id="cb853-4"><a href="11.2-lag-and-lead.html#cb853-4" tabindex="-1"></a><span class="co"># Create a lead variable</span></span>
+<span id="cb853-5"><a href="11.2-lag-and-lead.html#cb853-5" tabindex="-1"></a><span class="sc">&gt;</span> dplyr<span class="sc">::</span><span class="fu">lead</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span>)</span>
+<span id="cb853-6"><a href="11.2-lag-and-lead.html#cb853-6" tabindex="-1"></a>[<span class="dv">1</span>]  <span class="dv">2</span>  <span class="dv">3</span>  <span class="dv">4</span>  <span class="dv">5</span> <span class="cn">NA</span></span>
+<span id="cb853-7"><a href="11.2-lag-and-lead.html#cb853-7" tabindex="-1"></a></span>
+<span id="cb853-8"><a href="11.2-lag-and-lead.html#cb853-8" tabindex="-1"></a><span class="sc">&gt;</span> df <span class="sc">%&gt;%</span> </span>
+<span id="cb853-9"><a href="11.2-lag-and-lead.html#cb853-9" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">value_lag1 =</span> dplyr<span class="sc">::</span><span class="fu">lag</span>(value, <span class="dv">1</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb853-10"><a href="11.2-lag-and-lead.html#cb853-10" tabindex="-1"></a>    data.table<span class="sc">::</span><span class="fu">data.table</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb853-11"><a href="11.2-lag-and-lead.html#cb853-11" tabindex="-1"></a>    <span class="fu">print</span>(<span class="at">topn =</span> <span class="dv">5</span>)</span>
+<span id="cb853-12"><a href="11.2-lag-and-lead.html#cb853-12" tabindex="-1"></a></span>
+<span id="cb853-13"><a href="11.2-lag-and-lead.html#cb853-13" tabindex="-1"></a>     year value value_lag1</span>
+<span id="cb853-14"><a href="11.2-lag-and-lead.html#cb853-14" tabindex="-1"></a>    <span class="sc">&lt;</span>int<span class="sc">&gt;</span> <span class="er">&lt;</span>int<span class="sc">&gt;</span>      <span class="er">&lt;</span>int<span class="sc">&gt;</span></span>
+<span id="cb853-15"><a href="11.2-lag-and-lead.html#cb853-15" tabindex="-1"></a> <span class="dv">1</span><span class="sc">:</span>  <span class="dv">2000</span>     <span class="dv">1</span>         <span class="cn">NA</span></span>
+<span id="cb853-16"><a href="11.2-lag-and-lead.html#cb853-16" tabindex="-1"></a> <span class="dv">2</span><span class="sc">:</span>  <span class="dv">2001</span>     <span class="dv">2</span>          <span class="dv">1</span></span>
+<span id="cb853-17"><a href="11.2-lag-and-lead.html#cb853-17" tabindex="-1"></a> <span class="dv">3</span><span class="sc">:</span>  <span class="dv">2002</span>     <span class="dv">3</span>          <span class="dv">2</span></span>
+<span id="cb853-18"><a href="11.2-lag-and-lead.html#cb853-18" tabindex="-1"></a> <span class="dv">4</span><span class="sc">:</span>  <span class="dv">2003</span>     <span class="dv">4</span>          <span class="dv">3</span></span>
+<span id="cb853-19"><a href="11.2-lag-and-lead.html#cb853-19" tabindex="-1"></a> <span class="dv">5</span><span class="sc">:</span>  <span class="dv">2004</span>     <span class="dv">5</span>          <span class="dv">4</span></span>
+<span id="cb853-20"><a href="11.2-lag-and-lead.html#cb853-20" tabindex="-1"></a><span class="sc">---</span>                       </span>
+<span id="cb853-21"><a href="11.2-lag-and-lead.html#cb853-21" tabindex="-1"></a><span class="dv">22</span><span class="sc">:</span>  <span class="dv">2021</span>    <span class="dv">22</span>         <span class="dv">21</span></span>
+<span id="cb853-22"><a href="11.2-lag-and-lead.html#cb853-22" tabindex="-1"></a><span class="dv">23</span><span class="sc">:</span>  <span class="dv">2022</span>    <span class="dv">23</span>         <span class="dv">22</span></span>
+<span id="cb853-23"><a href="11.2-lag-and-lead.html#cb853-23" tabindex="-1"></a><span class="dv">24</span><span class="sc">:</span>  <span class="dv">2023</span>    <span class="dv">24</span>         <span class="dv">23</span></span>
+<span id="cb853-24"><a href="11.2-lag-and-lead.html#cb853-24" tabindex="-1"></a><span class="dv">25</span><span class="sc">:</span>  <span class="dv">2024</span>    <span class="dv">25</span>         <span class="dv">24</span></span>
+<span id="cb853-25"><a href="11.2-lag-and-lead.html#cb853-25" tabindex="-1"></a><span class="dv">26</span><span class="sc">:</span>  <span class="dv">2025</span>    <span class="dv">26</span>         <span class="dv">25</span></span></code></pre></div>
 <p>Note that <code>dplyr::lag(x, n=1)</code> does NOT take a negative <code>n</code> argument to create a lead variable. You have to use <code>dplyr::lead()</code> instead.
 This is in contrast to <code>stats::lag(x, k=1)</code> which can take a negative <code>k</code> to create a lead variable.</p>
 <blockquote>
@@ -1087,93 +1110,93 @@ This is in contrast to <code>stats::lag(x, k=1)</code> which can take a negative
 <p>Always use <code>dplyr::lag()</code> when working with data frames or tibbles to avoid unexpected results.</p>
 </blockquote>
 <p>You can rename <code>dplyr::lag()</code> to <code>lag()</code> to avoid typing <code>dplyr::</code> every time.</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="11.2-lag-and-lead.html#cb14-1" tabindex="-1"></a>lag <span class="ot">&lt;-</span> dplyr<span class="sc">::</span>lag</span></code></pre></div>
+<div class="sourceCode" id="cb854"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb854-1"><a href="11.2-lag-and-lead.html#cb854-1" tabindex="-1"></a>lag <span class="ot">&lt;-</span> dplyr<span class="sc">::</span>lag</span></code></pre></div>
 <div id="unbalanced-panel" class="section level3 hasAnchor" number="11.2.1">
 <h3><span class="header-section-number">11.2.1</span> Unbalanced panel<a href="11.2-lag-and-lead.html#unbalanced-panel" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>When you have unbalanced panel data, for instance, you have missing values for some time periods for some units, <code>dplyr::lag()</code> will ignore the time structure and just lag the values by row. This can lead to incorrect lagged values.</p>
 <p>To deal with time gaps in unbalanced panel data, you can first make a balanced panel by filling in the missing time periods with <code>NA</code> values, and then apply <code>dplyr::lag()</code> to get the correct lagged values.</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="11.2-lag-and-lead.html#cb15-1" tabindex="-1"></a><span class="co"># Create an unbalanced panel data frame</span></span>
-<span id="cb15-2"><a href="11.2-lag-and-lead.html#cb15-2" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb15-3"><a href="11.2-lag-and-lead.html#cb15-3" tabindex="-1"></a>  <span class="at">firm =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="st">&quot;A&quot;</span>, <span class="dv">3</span>), <span class="fu">rep</span>(<span class="st">&quot;B&quot;</span>, <span class="dv">4</span>)),</span>
-<span id="cb15-4"><a href="11.2-lag-and-lead.html#cb15-4" tabindex="-1"></a>  <span class="at">year =</span> <span class="fu">c</span>(<span class="dv">2018</span>, <span class="dv">2019</span>, <span class="dv">2021</span>, <span class="dv">2018</span>, <span class="dv">2019</span>, <span class="dv">2020</span>, <span class="dv">2021</span>),</span>
-<span id="cb15-5"><a href="11.2-lag-and-lead.html#cb15-5" tabindex="-1"></a>  <span class="at">value =</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">12</span>, <span class="dv">20</span>, <span class="fu">seq</span>(<span class="dv">1</span>,<span class="dv">4</span>))</span>
-<span id="cb15-6"><a href="11.2-lag-and-lead.html#cb15-6" tabindex="-1"></a>)</span>
-<span id="cb15-7"><a href="11.2-lag-and-lead.html#cb15-7" tabindex="-1"></a>df</span>
-<span id="cb15-8"><a href="11.2-lag-and-lead.html#cb15-8" tabindex="-1"></a><span class="co"># A tibble: 7 × 3</span></span>
-<span id="cb15-9"><a href="11.2-lag-and-lead.html#cb15-9" tabindex="-1"></a>  firm   year value</span>
-<span id="cb15-10"><a href="11.2-lag-and-lead.html#cb15-10" tabindex="-1"></a>  <span class="sc">&lt;</span>chr<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span></span>
-<span id="cb15-11"><a href="11.2-lag-and-lead.html#cb15-11" tabindex="-1"></a><span class="dv">1</span> A      <span class="dv">2018</span>    <span class="dv">10</span></span>
-<span id="cb15-12"><a href="11.2-lag-and-lead.html#cb15-12" tabindex="-1"></a><span class="dv">2</span> A      <span class="dv">2019</span>    <span class="dv">12</span></span>
-<span id="cb15-13"><a href="11.2-lag-and-lead.html#cb15-13" tabindex="-1"></a><span class="dv">3</span> A      <span class="dv">2021</span>    <span class="dv">20</span></span>
-<span id="cb15-14"><a href="11.2-lag-and-lead.html#cb15-14" tabindex="-1"></a><span class="dv">4</span> B      <span class="dv">2018</span>     <span class="dv">1</span></span>
-<span id="cb15-15"><a href="11.2-lag-and-lead.html#cb15-15" tabindex="-1"></a><span class="dv">5</span> B      <span class="dv">2019</span>     <span class="dv">2</span></span>
-<span id="cb15-16"><a href="11.2-lag-and-lead.html#cb15-16" tabindex="-1"></a><span class="dv">6</span> B      <span class="dv">2020</span>     <span class="dv">3</span></span>
-<span id="cb15-17"><a href="11.2-lag-and-lead.html#cb15-17" tabindex="-1"></a><span class="dv">7</span> B      <span class="dv">2021</span>     <span class="dv">4</span></span>
-<span id="cb15-18"><a href="11.2-lag-and-lead.html#cb15-18" tabindex="-1"></a></span>
-<span id="cb15-19"><a href="11.2-lag-and-lead.html#cb15-19" tabindex="-1"></a>df_wrong <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
-<span id="cb15-20"><a href="11.2-lag-and-lead.html#cb15-20" tabindex="-1"></a>  <span class="fu">arrange</span>(firm, year) <span class="sc">%&gt;%</span></span>
-<span id="cb15-21"><a href="11.2-lag-and-lead.html#cb15-21" tabindex="-1"></a>  <span class="fu">group_by</span>(firm) <span class="sc">%&gt;%</span></span>
-<span id="cb15-22"><a href="11.2-lag-and-lead.html#cb15-22" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">lag_value =</span> dplyr<span class="sc">::</span><span class="fu">lag</span>(value)) <span class="sc">%&gt;%</span> </span>
-<span id="cb15-23"><a href="11.2-lag-and-lead.html#cb15-23" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
-<span id="cb15-24"><a href="11.2-lag-and-lead.html#cb15-24" tabindex="-1"></a>df_wrong</span>
-<span id="cb15-25"><a href="11.2-lag-and-lead.html#cb15-25" tabindex="-1"></a><span class="co"># A tibble: 7 × 4</span></span>
-<span id="cb15-26"><a href="11.2-lag-and-lead.html#cb15-26" tabindex="-1"></a>  firm   year value lag_value</span>
-<span id="cb15-27"><a href="11.2-lag-and-lead.html#cb15-27" tabindex="-1"></a>  <span class="sc">&lt;</span>chr<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span>     <span class="er">&lt;</span>dbl<span class="sc">&gt;</span></span>
-<span id="cb15-28"><a href="11.2-lag-and-lead.html#cb15-28" tabindex="-1"></a><span class="dv">1</span> A      <span class="dv">2018</span>    <span class="dv">10</span>        <span class="cn">NA</span></span>
-<span id="cb15-29"><a href="11.2-lag-and-lead.html#cb15-29" tabindex="-1"></a><span class="dv">2</span> A      <span class="dv">2019</span>    <span class="dv">12</span>        <span class="dv">10</span></span>
-<span id="cb15-30"><a href="11.2-lag-and-lead.html#cb15-30" tabindex="-1"></a><span class="dv">3</span> A      <span class="dv">2021</span>    <span class="dv">20</span>        <span class="dv">12</span></span>
-<span id="cb15-31"><a href="11.2-lag-and-lead.html#cb15-31" tabindex="-1"></a><span class="dv">4</span> B      <span class="dv">2018</span>     <span class="dv">1</span>        <span class="cn">NA</span></span>
-<span id="cb15-32"><a href="11.2-lag-and-lead.html#cb15-32" tabindex="-1"></a><span class="dv">5</span> B      <span class="dv">2019</span>     <span class="dv">2</span>         <span class="dv">1</span></span>
-<span id="cb15-33"><a href="11.2-lag-and-lead.html#cb15-33" tabindex="-1"></a><span class="dv">6</span> B      <span class="dv">2020</span>     <span class="dv">3</span>         <span class="dv">2</span></span>
-<span id="cb15-34"><a href="11.2-lag-and-lead.html#cb15-34" tabindex="-1"></a><span class="dv">7</span> B      <span class="dv">2021</span>     <span class="dv">4</span>         <span class="dv">3</span></span></code></pre></div>
+<div class="sourceCode" id="cb855"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb855-1"><a href="11.2-lag-and-lead.html#cb855-1" tabindex="-1"></a><span class="co"># Create an unbalanced panel data frame</span></span>
+<span id="cb855-2"><a href="11.2-lag-and-lead.html#cb855-2" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb855-3"><a href="11.2-lag-and-lead.html#cb855-3" tabindex="-1"></a>  <span class="at">firm =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="st">&quot;A&quot;</span>, <span class="dv">3</span>), <span class="fu">rep</span>(<span class="st">&quot;B&quot;</span>, <span class="dv">4</span>)),</span>
+<span id="cb855-4"><a href="11.2-lag-and-lead.html#cb855-4" tabindex="-1"></a>  <span class="at">year =</span> <span class="fu">c</span>(<span class="dv">2018</span>, <span class="dv">2019</span>, <span class="dv">2021</span>, <span class="dv">2018</span>, <span class="dv">2019</span>, <span class="dv">2020</span>, <span class="dv">2021</span>),</span>
+<span id="cb855-5"><a href="11.2-lag-and-lead.html#cb855-5" tabindex="-1"></a>  <span class="at">value =</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">12</span>, <span class="dv">20</span>, <span class="fu">seq</span>(<span class="dv">1</span>,<span class="dv">4</span>))</span>
+<span id="cb855-6"><a href="11.2-lag-and-lead.html#cb855-6" tabindex="-1"></a>)</span>
+<span id="cb855-7"><a href="11.2-lag-and-lead.html#cb855-7" tabindex="-1"></a>df</span>
+<span id="cb855-8"><a href="11.2-lag-and-lead.html#cb855-8" tabindex="-1"></a><span class="co"># A tibble: 7 × 3</span></span>
+<span id="cb855-9"><a href="11.2-lag-and-lead.html#cb855-9" tabindex="-1"></a>  firm   year value</span>
+<span id="cb855-10"><a href="11.2-lag-and-lead.html#cb855-10" tabindex="-1"></a>  <span class="sc">&lt;</span>chr<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span></span>
+<span id="cb855-11"><a href="11.2-lag-and-lead.html#cb855-11" tabindex="-1"></a><span class="dv">1</span> A      <span class="dv">2018</span>    <span class="dv">10</span></span>
+<span id="cb855-12"><a href="11.2-lag-and-lead.html#cb855-12" tabindex="-1"></a><span class="dv">2</span> A      <span class="dv">2019</span>    <span class="dv">12</span></span>
+<span id="cb855-13"><a href="11.2-lag-and-lead.html#cb855-13" tabindex="-1"></a><span class="dv">3</span> A      <span class="dv">2021</span>    <span class="dv">20</span></span>
+<span id="cb855-14"><a href="11.2-lag-and-lead.html#cb855-14" tabindex="-1"></a><span class="dv">4</span> B      <span class="dv">2018</span>     <span class="dv">1</span></span>
+<span id="cb855-15"><a href="11.2-lag-and-lead.html#cb855-15" tabindex="-1"></a><span class="dv">5</span> B      <span class="dv">2019</span>     <span class="dv">2</span></span>
+<span id="cb855-16"><a href="11.2-lag-and-lead.html#cb855-16" tabindex="-1"></a><span class="dv">6</span> B      <span class="dv">2020</span>     <span class="dv">3</span></span>
+<span id="cb855-17"><a href="11.2-lag-and-lead.html#cb855-17" tabindex="-1"></a><span class="dv">7</span> B      <span class="dv">2021</span>     <span class="dv">4</span></span>
+<span id="cb855-18"><a href="11.2-lag-and-lead.html#cb855-18" tabindex="-1"></a></span>
+<span id="cb855-19"><a href="11.2-lag-and-lead.html#cb855-19" tabindex="-1"></a>df_wrong <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
+<span id="cb855-20"><a href="11.2-lag-and-lead.html#cb855-20" tabindex="-1"></a>  <span class="fu">arrange</span>(firm, year) <span class="sc">%&gt;%</span></span>
+<span id="cb855-21"><a href="11.2-lag-and-lead.html#cb855-21" tabindex="-1"></a>  <span class="fu">group_by</span>(firm) <span class="sc">%&gt;%</span></span>
+<span id="cb855-22"><a href="11.2-lag-and-lead.html#cb855-22" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">lag_value =</span> dplyr<span class="sc">::</span><span class="fu">lag</span>(value)) <span class="sc">%&gt;%</span> </span>
+<span id="cb855-23"><a href="11.2-lag-and-lead.html#cb855-23" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
+<span id="cb855-24"><a href="11.2-lag-and-lead.html#cb855-24" tabindex="-1"></a>df_wrong</span>
+<span id="cb855-25"><a href="11.2-lag-and-lead.html#cb855-25" tabindex="-1"></a><span class="co"># A tibble: 7 × 4</span></span>
+<span id="cb855-26"><a href="11.2-lag-and-lead.html#cb855-26" tabindex="-1"></a>  firm   year value lag_value</span>
+<span id="cb855-27"><a href="11.2-lag-and-lead.html#cb855-27" tabindex="-1"></a>  <span class="sc">&lt;</span>chr<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span>     <span class="er">&lt;</span>dbl<span class="sc">&gt;</span></span>
+<span id="cb855-28"><a href="11.2-lag-and-lead.html#cb855-28" tabindex="-1"></a><span class="dv">1</span> A      <span class="dv">2018</span>    <span class="dv">10</span>        <span class="cn">NA</span></span>
+<span id="cb855-29"><a href="11.2-lag-and-lead.html#cb855-29" tabindex="-1"></a><span class="dv">2</span> A      <span class="dv">2019</span>    <span class="dv">12</span>        <span class="dv">10</span></span>
+<span id="cb855-30"><a href="11.2-lag-and-lead.html#cb855-30" tabindex="-1"></a><span class="dv">3</span> A      <span class="dv">2021</span>    <span class="dv">20</span>        <span class="dv">12</span></span>
+<span id="cb855-31"><a href="11.2-lag-and-lead.html#cb855-31" tabindex="-1"></a><span class="dv">4</span> B      <span class="dv">2018</span>     <span class="dv">1</span>        <span class="cn">NA</span></span>
+<span id="cb855-32"><a href="11.2-lag-and-lead.html#cb855-32" tabindex="-1"></a><span class="dv">5</span> B      <span class="dv">2019</span>     <span class="dv">2</span>         <span class="dv">1</span></span>
+<span id="cb855-33"><a href="11.2-lag-and-lead.html#cb855-33" tabindex="-1"></a><span class="dv">6</span> B      <span class="dv">2020</span>     <span class="dv">3</span>         <span class="dv">2</span></span>
+<span id="cb855-34"><a href="11.2-lag-and-lead.html#cb855-34" tabindex="-1"></a><span class="dv">7</span> B      <span class="dv">2021</span>     <span class="dv">4</span>         <span class="dv">3</span></span></code></pre></div>
 <p>Firm A has a missing value for 2020, so the lagged value for 2021 is incorrect because it is lagging from 2019 instead of 2020.</p>
 <p>To fix this, we create a balanced panel first</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="11.2-lag-and-lead.html#cb16-1" tabindex="-1"></a><span class="fu">library</span>(plm)</span>
-<span id="cb16-2"><a href="11.2-lag-and-lead.html#cb16-2" tabindex="-1"></a>df_balanced <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
-<span id="cb16-3"><a href="11.2-lag-and-lead.html#cb16-3" tabindex="-1"></a>  <span class="fu">pdata.frame</span>(<span class="at">index =</span> <span class="fu">c</span>(<span class="st">&quot;firm&quot;</span>, <span class="st">&quot;year&quot;</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb16-4"><a href="11.2-lag-and-lead.html#cb16-4" tabindex="-1"></a>  <span class="fu">make.pbalanced</span>() </span>
-<span id="cb16-5"><a href="11.2-lag-and-lead.html#cb16-5" tabindex="-1"></a>df_balanced</span>
-<span id="cb16-6"><a href="11.2-lag-and-lead.html#cb16-6" tabindex="-1"></a><span class="co">#        firm year value</span></span>
-<span id="cb16-7"><a href="11.2-lag-and-lead.html#cb16-7" tabindex="-1"></a><span class="co"># A-2018    A 2018    10</span></span>
-<span id="cb16-8"><a href="11.2-lag-and-lead.html#cb16-8" tabindex="-1"></a><span class="co"># A-2019    A 2019    12</span></span>
-<span id="cb16-9"><a href="11.2-lag-and-lead.html#cb16-9" tabindex="-1"></a><span class="co"># A-2020    A 2020    NA</span></span>
-<span id="cb16-10"><a href="11.2-lag-and-lead.html#cb16-10" tabindex="-1"></a><span class="co"># A-2021    A 2021    20</span></span>
-<span id="cb16-11"><a href="11.2-lag-and-lead.html#cb16-11" tabindex="-1"></a><span class="co"># B-2018    B 2018     1</span></span>
-<span id="cb16-12"><a href="11.2-lag-and-lead.html#cb16-12" tabindex="-1"></a><span class="co"># B-2019    B 2019     2</span></span>
-<span id="cb16-13"><a href="11.2-lag-and-lead.html#cb16-13" tabindex="-1"></a><span class="co"># B-2020    B 2020     3</span></span>
-<span id="cb16-14"><a href="11.2-lag-and-lead.html#cb16-14" tabindex="-1"></a><span class="co"># B-2021    B 2021     4</span></span></code></pre></div>
+<div class="sourceCode" id="cb856"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb856-1"><a href="11.2-lag-and-lead.html#cb856-1" tabindex="-1"></a><span class="fu">library</span>(plm)</span>
+<span id="cb856-2"><a href="11.2-lag-and-lead.html#cb856-2" tabindex="-1"></a>df_balanced <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
+<span id="cb856-3"><a href="11.2-lag-and-lead.html#cb856-3" tabindex="-1"></a>  <span class="fu">pdata.frame</span>(<span class="at">index =</span> <span class="fu">c</span>(<span class="st">&quot;firm&quot;</span>, <span class="st">&quot;year&quot;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb856-4"><a href="11.2-lag-and-lead.html#cb856-4" tabindex="-1"></a>  <span class="fu">make.pbalanced</span>() </span>
+<span id="cb856-5"><a href="11.2-lag-and-lead.html#cb856-5" tabindex="-1"></a>df_balanced</span>
+<span id="cb856-6"><a href="11.2-lag-and-lead.html#cb856-6" tabindex="-1"></a><span class="co">#        firm year value</span></span>
+<span id="cb856-7"><a href="11.2-lag-and-lead.html#cb856-7" tabindex="-1"></a><span class="co"># A-2018    A 2018    10</span></span>
+<span id="cb856-8"><a href="11.2-lag-and-lead.html#cb856-8" tabindex="-1"></a><span class="co"># A-2019    A 2019    12</span></span>
+<span id="cb856-9"><a href="11.2-lag-and-lead.html#cb856-9" tabindex="-1"></a><span class="co"># A-2020    A 2020    NA</span></span>
+<span id="cb856-10"><a href="11.2-lag-and-lead.html#cb856-10" tabindex="-1"></a><span class="co"># A-2021    A 2021    20</span></span>
+<span id="cb856-11"><a href="11.2-lag-and-lead.html#cb856-11" tabindex="-1"></a><span class="co"># B-2018    B 2018     1</span></span>
+<span id="cb856-12"><a href="11.2-lag-and-lead.html#cb856-12" tabindex="-1"></a><span class="co"># B-2019    B 2019     2</span></span>
+<span id="cb856-13"><a href="11.2-lag-and-lead.html#cb856-13" tabindex="-1"></a><span class="co"># B-2020    B 2020     3</span></span>
+<span id="cb856-14"><a href="11.2-lag-and-lead.html#cb856-14" tabindex="-1"></a><span class="co"># B-2021    B 2021     4</span></span></code></pre></div>
 <p>Now we can apply <code>dplyr::lag()</code> to the balanced panel to get the correct lagged values.</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="11.2-lag-and-lead.html#cb17-1" tabindex="-1"></a>df_balanced <span class="ot">&lt;-</span> df_balanced <span class="sc">%&gt;%</span></span>
-<span id="cb17-2"><a href="11.2-lag-and-lead.html#cb17-2" tabindex="-1"></a>  <span class="fu">group_by</span>(firm) <span class="sc">%&gt;%</span></span>
-<span id="cb17-3"><a href="11.2-lag-and-lead.html#cb17-3" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">lag_value =</span> dplyr<span class="sc">::</span><span class="fu">lag</span>(value)) <span class="sc">%&gt;%</span> </span>
-<span id="cb17-4"><a href="11.2-lag-and-lead.html#cb17-4" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
-<span id="cb17-5"><a href="11.2-lag-and-lead.html#cb17-5" tabindex="-1"></a>df_balanced</span>
-<span id="cb17-6"><a href="11.2-lag-and-lead.html#cb17-6" tabindex="-1"></a><span class="co"># A tibble: 8 × 4</span></span>
-<span id="cb17-7"><a href="11.2-lag-and-lead.html#cb17-7" tabindex="-1"></a>  firm  year  value lag_value</span>
-<span id="cb17-8"><a href="11.2-lag-and-lead.html#cb17-8" tabindex="-1"></a>  <span class="sc">&lt;</span>fct<span class="sc">&gt;</span> <span class="er">&lt;</span>fct<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span>     <span class="er">&lt;</span>dbl<span class="sc">&gt;</span></span>
-<span id="cb17-9"><a href="11.2-lag-and-lead.html#cb17-9" tabindex="-1"></a><span class="dv">1</span> A     <span class="dv">2018</span>     <span class="dv">10</span>        <span class="cn">NA</span></span>
-<span id="cb17-10"><a href="11.2-lag-and-lead.html#cb17-10" tabindex="-1"></a><span class="dv">2</span> A     <span class="dv">2019</span>     <span class="dv">12</span>        <span class="dv">10</span></span>
-<span id="cb17-11"><a href="11.2-lag-and-lead.html#cb17-11" tabindex="-1"></a><span class="dv">3</span> A     <span class="dv">2020</span>     <span class="cn">NA</span>        <span class="dv">12</span></span>
-<span id="cb17-12"><a href="11.2-lag-and-lead.html#cb17-12" tabindex="-1"></a><span class="dv">4</span> A     <span class="dv">2021</span>     <span class="dv">20</span>        <span class="cn">NA</span></span>
-<span id="cb17-13"><a href="11.2-lag-and-lead.html#cb17-13" tabindex="-1"></a><span class="dv">5</span> B     <span class="dv">2018</span>      <span class="dv">1</span>        <span class="cn">NA</span></span>
-<span id="cb17-14"><a href="11.2-lag-and-lead.html#cb17-14" tabindex="-1"></a><span class="dv">6</span> B     <span class="dv">2019</span>      <span class="dv">2</span>         <span class="dv">1</span></span>
-<span id="cb17-15"><a href="11.2-lag-and-lead.html#cb17-15" tabindex="-1"></a><span class="dv">7</span> B     <span class="dv">2020</span>      <span class="dv">3</span>         <span class="dv">2</span></span>
-<span id="cb17-16"><a href="11.2-lag-and-lead.html#cb17-16" tabindex="-1"></a><span class="dv">8</span> B     <span class="dv">2021</span>      <span class="dv">4</span>         <span class="dv">3</span></span></code></pre></div>
+<div class="sourceCode" id="cb857"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb857-1"><a href="11.2-lag-and-lead.html#cb857-1" tabindex="-1"></a>df_balanced <span class="ot">&lt;-</span> df_balanced <span class="sc">%&gt;%</span></span>
+<span id="cb857-2"><a href="11.2-lag-and-lead.html#cb857-2" tabindex="-1"></a>  <span class="fu">group_by</span>(firm) <span class="sc">%&gt;%</span></span>
+<span id="cb857-3"><a href="11.2-lag-and-lead.html#cb857-3" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">lag_value =</span> dplyr<span class="sc">::</span><span class="fu">lag</span>(value)) <span class="sc">%&gt;%</span> </span>
+<span id="cb857-4"><a href="11.2-lag-and-lead.html#cb857-4" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
+<span id="cb857-5"><a href="11.2-lag-and-lead.html#cb857-5" tabindex="-1"></a>df_balanced</span>
+<span id="cb857-6"><a href="11.2-lag-and-lead.html#cb857-6" tabindex="-1"></a><span class="co"># A tibble: 8 × 4</span></span>
+<span id="cb857-7"><a href="11.2-lag-and-lead.html#cb857-7" tabindex="-1"></a>  firm  year  value lag_value</span>
+<span id="cb857-8"><a href="11.2-lag-and-lead.html#cb857-8" tabindex="-1"></a>  <span class="sc">&lt;</span>fct<span class="sc">&gt;</span> <span class="er">&lt;</span>fct<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span>     <span class="er">&lt;</span>dbl<span class="sc">&gt;</span></span>
+<span id="cb857-9"><a href="11.2-lag-and-lead.html#cb857-9" tabindex="-1"></a><span class="dv">1</span> A     <span class="dv">2018</span>     <span class="dv">10</span>        <span class="cn">NA</span></span>
+<span id="cb857-10"><a href="11.2-lag-and-lead.html#cb857-10" tabindex="-1"></a><span class="dv">2</span> A     <span class="dv">2019</span>     <span class="dv">12</span>        <span class="dv">10</span></span>
+<span id="cb857-11"><a href="11.2-lag-and-lead.html#cb857-11" tabindex="-1"></a><span class="dv">3</span> A     <span class="dv">2020</span>     <span class="cn">NA</span>        <span class="dv">12</span></span>
+<span id="cb857-12"><a href="11.2-lag-and-lead.html#cb857-12" tabindex="-1"></a><span class="dv">4</span> A     <span class="dv">2021</span>     <span class="dv">20</span>        <span class="cn">NA</span></span>
+<span id="cb857-13"><a href="11.2-lag-and-lead.html#cb857-13" tabindex="-1"></a><span class="dv">5</span> B     <span class="dv">2018</span>      <span class="dv">1</span>        <span class="cn">NA</span></span>
+<span id="cb857-14"><a href="11.2-lag-and-lead.html#cb857-14" tabindex="-1"></a><span class="dv">6</span> B     <span class="dv">2019</span>      <span class="dv">2</span>         <span class="dv">1</span></span>
+<span id="cb857-15"><a href="11.2-lag-and-lead.html#cb857-15" tabindex="-1"></a><span class="dv">7</span> B     <span class="dv">2020</span>      <span class="dv">3</span>         <span class="dv">2</span></span>
+<span id="cb857-16"><a href="11.2-lag-and-lead.html#cb857-16" tabindex="-1"></a><span class="dv">8</span> B     <span class="dv">2021</span>      <span class="dv">4</span>         <span class="dv">3</span></span></code></pre></div>
 <p>Notice that <code>year</code> becomes a factor variable after using <code>pdata.frame()</code>. You can convert it back to numeric if needed.</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="11.2-lag-and-lead.html#cb18-1" tabindex="-1"></a><span class="co"># convert year to numeric</span></span>
-<span id="cb18-2"><a href="11.2-lag-and-lead.html#cb18-2" tabindex="-1"></a>df_balanced <span class="sc">%&gt;%</span> </span>
-<span id="cb18-3"><a href="11.2-lag-and-lead.html#cb18-3" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">year =</span> <span class="fu">as.numeric</span>(<span class="fu">as.character</span>(year)))</span>
-<span id="cb18-4"><a href="11.2-lag-and-lead.html#cb18-4" tabindex="-1"></a><span class="co"># A tibble: 8 × 4</span></span>
-<span id="cb18-5"><a href="11.2-lag-and-lead.html#cb18-5" tabindex="-1"></a>  firm   year value lag_value</span>
-<span id="cb18-6"><a href="11.2-lag-and-lead.html#cb18-6" tabindex="-1"></a>  <span class="sc">&lt;</span>fct<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span>     <span class="er">&lt;</span>dbl<span class="sc">&gt;</span></span>
-<span id="cb18-7"><a href="11.2-lag-and-lead.html#cb18-7" tabindex="-1"></a><span class="dv">1</span> A      <span class="dv">2018</span>    <span class="dv">10</span>        <span class="cn">NA</span></span>
-<span id="cb18-8"><a href="11.2-lag-and-lead.html#cb18-8" tabindex="-1"></a><span class="dv">2</span> A      <span class="dv">2019</span>    <span class="dv">12</span>        <span class="dv">10</span></span>
-<span id="cb18-9"><a href="11.2-lag-and-lead.html#cb18-9" tabindex="-1"></a><span class="dv">3</span> A      <span class="dv">2020</span>    <span class="cn">NA</span>        <span class="dv">12</span></span>
-<span id="cb18-10"><a href="11.2-lag-and-lead.html#cb18-10" tabindex="-1"></a><span class="dv">4</span> A      <span class="dv">2021</span>    <span class="dv">20</span>        <span class="cn">NA</span></span>
-<span id="cb18-11"><a href="11.2-lag-and-lead.html#cb18-11" tabindex="-1"></a><span class="dv">5</span> B      <span class="dv">2018</span>     <span class="dv">1</span>        <span class="cn">NA</span></span>
-<span id="cb18-12"><a href="11.2-lag-and-lead.html#cb18-12" tabindex="-1"></a><span class="dv">6</span> B      <span class="dv">2019</span>     <span class="dv">2</span>         <span class="dv">1</span></span>
-<span id="cb18-13"><a href="11.2-lag-and-lead.html#cb18-13" tabindex="-1"></a><span class="dv">7</span> B      <span class="dv">2020</span>     <span class="dv">3</span>         <span class="dv">2</span></span>
-<span id="cb18-14"><a href="11.2-lag-and-lead.html#cb18-14" tabindex="-1"></a><span class="dv">8</span> B      <span class="dv">2021</span>     <span class="dv">4</span>         <span class="dv">3</span></span></code></pre></div>
+<div class="sourceCode" id="cb858"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb858-1"><a href="11.2-lag-and-lead.html#cb858-1" tabindex="-1"></a><span class="co"># convert year to numeric</span></span>
+<span id="cb858-2"><a href="11.2-lag-and-lead.html#cb858-2" tabindex="-1"></a>df_balanced <span class="sc">%&gt;%</span> </span>
+<span id="cb858-3"><a href="11.2-lag-and-lead.html#cb858-3" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">year =</span> <span class="fu">as.numeric</span>(<span class="fu">as.character</span>(year)))</span>
+<span id="cb858-4"><a href="11.2-lag-and-lead.html#cb858-4" tabindex="-1"></a><span class="co"># A tibble: 8 × 4</span></span>
+<span id="cb858-5"><a href="11.2-lag-and-lead.html#cb858-5" tabindex="-1"></a>  firm   year value lag_value</span>
+<span id="cb858-6"><a href="11.2-lag-and-lead.html#cb858-6" tabindex="-1"></a>  <span class="sc">&lt;</span>fct<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span>     <span class="er">&lt;</span>dbl<span class="sc">&gt;</span></span>
+<span id="cb858-7"><a href="11.2-lag-and-lead.html#cb858-7" tabindex="-1"></a><span class="dv">1</span> A      <span class="dv">2018</span>    <span class="dv">10</span>        <span class="cn">NA</span></span>
+<span id="cb858-8"><a href="11.2-lag-and-lead.html#cb858-8" tabindex="-1"></a><span class="dv">2</span> A      <span class="dv">2019</span>    <span class="dv">12</span>        <span class="dv">10</span></span>
+<span id="cb858-9"><a href="11.2-lag-and-lead.html#cb858-9" tabindex="-1"></a><span class="dv">3</span> A      <span class="dv">2020</span>    <span class="cn">NA</span>        <span class="dv">12</span></span>
+<span id="cb858-10"><a href="11.2-lag-and-lead.html#cb858-10" tabindex="-1"></a><span class="dv">4</span> A      <span class="dv">2021</span>    <span class="dv">20</span>        <span class="cn">NA</span></span>
+<span id="cb858-11"><a href="11.2-lag-and-lead.html#cb858-11" tabindex="-1"></a><span class="dv">5</span> B      <span class="dv">2018</span>     <span class="dv">1</span>        <span class="cn">NA</span></span>
+<span id="cb858-12"><a href="11.2-lag-and-lead.html#cb858-12" tabindex="-1"></a><span class="dv">6</span> B      <span class="dv">2019</span>     <span class="dv">2</span>         <span class="dv">1</span></span>
+<span id="cb858-13"><a href="11.2-lag-and-lead.html#cb858-13" tabindex="-1"></a><span class="dv">7</span> B      <span class="dv">2020</span>     <span class="dv">3</span>         <span class="dv">2</span></span>
+<span id="cb858-14"><a href="11.2-lag-and-lead.html#cb858-14" tabindex="-1"></a><span class="dv">8</span> B      <span class="dv">2021</span>     <span class="dv">4</span>         <span class="dv">3</span></span></code></pre></div>
 <hr />
 </div>
 </div>
