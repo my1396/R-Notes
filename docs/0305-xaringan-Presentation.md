@@ -27,6 +27,12 @@ Features:
 
 When you decide to use `xaringan`, read tutorials [HERE](https://bookdown.org/yihui/rmarkdown/xaringan.html).
 
+--------------------------------------------------------------------------------
+
+[`revealjs`](https://quarto.org/docs/presentations/revealjs/) is a more powerful and feature-rich alternative to `xaringan`. It is based on the `reveal.js` framework.
+
+
+--------------------------------------------------------------------------------
 
 To create a new xaringan presentation, you simply create a new R Markdown document and use the following YAML header:
 

@@ -83,7 +83,7 @@ A: There's **no built-in `@ref()`** syntax for referencing arbitrary inline text
 
 --------------------------------------------------------------------------------
 
-### Custom Blocks
+### Custom Blocks / Callouts
 
 
 To achieve [Quarto callouts](#callouts) in R Markdown, you can use the syntax of [Pandoc's fenced Div blocks](https://pandoc.org/MANUAL.html#divs-and-spans).

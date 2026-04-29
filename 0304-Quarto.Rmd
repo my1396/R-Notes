@@ -754,7 +754,7 @@ title: "My Document"
 format:
   html: 
     theme: cosmo
-    fontsize: 14pt
+    fontsize: 18px
     linestretch: 1.7
     toc: true
     css: /Users/menghan/Library/CloudStorage/OneDrive-Norduniversitet/_shared-resources/custom-style.css
@@ -765,10 +765,37 @@ format:
       body-width: 1000px
 ```
 
-`fontsize`: set base font size. Can be set in absolute units like `16px`, `14pt`, or relative units like `1.2em`, `120%`.
-See [HERE](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/font-size) for an overview of CSS font-size units.
+- <span class="env-green">`fontsize`</span>: set base font size. Can be set in absolute units like `16px`, `14pt`, or relative units like `1.2em`, `120%`.
+  
+  See [HERE](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/font-size) for an overview of CSS font-size units.
 
-`gird/body-width`: set the max width of the page content. By default, Quarto uses 800px. If you want to use the full width of the page, use `page-layout: full` instead.
+  Note the attribute `fontsize` has no dash; distinguish from the CSS property `font-size` with a dash.
+  
+  I prefer to use `fontsize: 18px` together with `cosmo`, as I feel the default font size in `cosmo` is a bit small.
+
+  `fontsize: 18px` in YAML will be resolved to `--bs-root-font-size: 18px;` in Bootstrap CSS, which is the **base font size** for the *entire document*.
+
+  ---
+
+  Q: Which unit should I use?   
+  A: <span class="env-green">`px` for screen display</span>, `pt` for print.
+
+  `px` pixels are optimized for screen display, browsers has better support for `px` and it is more consistent across different devices. 
+
+  `pt` will force fixed font size regardless of user settings or screen scaling. `px` is useful in `@media print` CSS rules to ensure that printed text is a specific size.
+  
+  ---
+
+  Alternatively, you can set font size in your custom SCSS file, e.g.,
+
+  ```scss
+  // Default font size
+  $font-size-base: 1rem; // 16px
+  ```
+
+  `$font-size-base` is used by Bootstrap to set the base font size for the body text. When you reset `$font-size-base`, all other font sizes that are defined in terms of it will also be updated accordingly.
+
+- `gird/body-width`: set the max width of the page content. By default, Quarto uses 800px. If you want to use the full width of the page, use `page-layout: full` instead.
 
 --------------------------------------------------------------------------------
 
@@ -831,32 +858,72 @@ Note that the variables section is denoted by
 
 You can do extensive customization of themes using [Sass variables](https://sass-lang.com/). Bootstrap defines over 1,400 Sass variables that control fonts, colors, padding, borders, and much more. 
 
-The Sass Variables can be specified within SCSS files. These variables should always be prefixed with a `$` and are specified within theme files rather than within YAML options
+The Sass Variables can be specified within SCSS files. These variables should always be prefixed with a `$` and are specified within <span class="env-green">the respective theme files</span> rather than within YAML options.
+
+For instance, I use `cosmo` together with custom SCSS files `cosmo-dark.scss` and `cosmo-light.scss` to customize the dark and light modes of the `cosmo` theme, respectively. If I want to change the Sass variables, I need to specify the variables in <span class="env-green">both `cosmo-dark.scss` and `cosmo-light.scss`</span>. It seems to be repetitive to specify the same variables in both files, but it is necessary for it to work in dark and light themes.
 
 [Commonly used Sass variables](https://jmjung.quarto.pub/m02-advanced-literate-programming/#sass-variables):
 
-| Category   | Variable        | Description                                                  |
-|:-----------|:----------------|:-------------------------------------------------------------|
-| **Colors** | `$body-bg`      | The page background color.                                   |
-|            | `$body-color`   | The page text color.                                         |
-|            | `$link-color`   | The link color.                                              |
-|            | `$input-bg`     | The background color for HTML inputs.                       |
-|            | `$popover-bg`   | The background color for popovers (for example, when a citation preview is shown). |
-
-
-
+<table style="width: 100%; border-collapse: collapse;">
+  <thead>
+    <tr>
+      <th style="width: 30%; text-align: left;">Variable</th>
+      <th style="width: 70%; text-align: left;">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td colspan="2"><strong>Colors</strong></td>
+    </tr>
+    <tr>
+      <td><code>&#36;body-bg</code></td>
+      <td>The page background color.</td>
+    </tr>
+    <tr>
+      <td><code>&#36;body-color</code></td>
+      <td>The page text color.</td>
+    </tr>
+    <tr>
+      <td><code>&#36;link-color</code></td>
+      <td>The link color.</td>
+    </tr>
+    <tr>
+      <td><code>&#36;input-bg</code></td>
+      <td>The background color for HTML inputs.</td>
+    </tr>
+    <tr>
+      <td><code>&#36;popover-bg</code></td>
+      <td>The background color for popovers (for example, when a citation preview is shown).</td>
+    </tr>
+    <tr>
+      <td colspan="2"><strong>Fonts</strong></td>
+    </tr>
+    <tr>
+      <td><code class="env-green">&#36;font-size-base</code></td>
+      <td>Base <strong>font size</strong> for the <b>body text</b> (<code>&lt;body&gt;</code>).</td>
+    </tr>
+    <tr>
+      <td><code>&#36;font-size-root</code></td>
+      <td>Base <strong>font size</strong> for the entire document, i.e., what <code>rem</code> is based on. By default, this is usually set to <code>16px</code>.</td>
+    </tr>
+  </tbody>
+</table>
 
 
 
 You can see all of the variables here:
 
-https://github.com/twbs/bootstrap/blob/main/scss/_variables.scss
-
-Note that when you make changes to your local `.scss`, the changes will be implemented in-time. That is, you don't need to re-build your website to see the effects.
+<https://github.com/twbs/bootstrap/blob/main/scss/_variables.scss>
 
 
+When you wonder what is used on your website, use the browser's developer tools to inspect the CSS variables. 
+Go to "Source" tab, in "Style Sheets" folder, find your `.scss` file. You will see the variable resolved values in the <span class="env-green">`:root` section</span>.
 
-Ref: 
+
+Note that when you make changes to your local `.scss`, the changes will be implemented in-time. That is, you don't need to re-build your website to see the effects. 
+
+
+**Ref:** 
 
 - Quarto document: <https://quarto.org/docs/output-formats/html-themes.html>
 
