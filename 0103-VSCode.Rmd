@@ -337,7 +337,7 @@ What I don't like about the built-in plot viewer
 - Weird aspect ratio and zoom, labels look very small
 - auto-resize is bad
 
-[`httpgd`](https://nx10.github.io/httpgd/): A graphics device for R that is accessible via HTTP and WebSockets. This package was created to make it easier to embed live R graphics in integrated development environments and other applications. `httpgd` is required by the interactive plot viewer of the R extension for VS Code.
+[`httpgd`](https://nx10.github.io/httpgd/): A graphics device for R that is accessible via HTTP and WebSockets. A clear distinction from the built-in VS Code plot panel is that there is a url as tab name on the top of the **browser viewer**. `httpgd` was created to make it easier to embed live R graphics in integrated development environments and other applications. `httpgd` is required by the interactive plot viewer of the R extension for VS Code.
 
 A preview of `httpgd` plot viewer in VS Code:
 
@@ -363,8 +363,8 @@ A preview of `httpgd` plot viewer in VS Code:
 1. Install `httpgd` package in R
    
    ```r
-    install.packages("httpgd")
-    ```
+   install.packages("httpgd")
+   ```
 
 2. Enable `r.plot.useHttpgd` in VS Code settings.
 
@@ -383,24 +383,62 @@ A preview of `httpgd` plot viewer in VS Code:
 ### Quick Start with `httpgd`
 
 ```r
-library(httpgd)
+> library(httpgd)
 # Start the httpgd graphics device
-hgd()
+> hgd()
+httpgd server running at:
+  http://127.0.0.1:49724/live?token=QTikqshP
 
 # Open the plot viewer in your browser
-hgd_browse()
+> hgd_browse()
 
 # Create a figure
-x = seq(0, 3 * pi, by = 0.1)
-plot(x, sin(x), type = "l")
+> x = seq(0, 3 * pi, by = 0.1)
+> plot(x, sin(x), type = "l")
 ```
 
-Q: Plot viewer is missing. \
-A: Run `hgd()` in R and get the url to the viewer. Use the command palette to run "**R Plot: Open httpgd Url**". It will let you enter the url address, fill it in and hit Enter to open the plot viewer. Alternatively, if you want to view in external browser, you can copy the url and paste it in your browser.
+Q: Plot viewer is missing or you accidentally closed it. \
+A: Run `hgd_browse()` to re-open the browser viewer. 
+
+If you don't have any httpgd client open, say you had run `hgd_close()`, then first run `hgd()` in R and an url will be shown in the R console. Then run `hgd_browse()` to open the url in the internal browser viewer.
+Alternatively, use the command palette to run "**R Plot: Open httpgd Url**". It will let you enter the url address, fill it in and hit Enter to open the plot viewer. You can also copy and paste the url in an external browser.
+
+When you call `hgd()` and `hgd_browse()`, it will start the httpgd web server and open the plot viewer in a new tab. You will see the url, e.g., `http://127.0.0.1.<port>/live?token=...` in the address bar of the viewer. 
 
 --------------------------------------------------------------------------------
 
-**Functions in `httpgd`:** [↩](https://nx10.dev/httpgd/reference/index.html)
+<i class="codicon codicon-debug env-red" aria-hidden="true" style="font-size:1.5em; vertical-align: middle;"></i>
+**Issue:** When you plot a new figure, it will show both in the VS Code plot panel and the browser viewer. 
+It's like one device with two clients: the VS Code plot panel and the browser viewer. 
+The browser viewer is more interactive and has better display quality, so I prefer to use the browser viewer. 
+
+<i class="codicon codicon-lightbulb-sparkle env-green" aria-hidden="true" style="font-size:1.5em; vertical-align: middle;"></i> **Fix:** Open a plot directly in my httpgd browser without opening it inside VS Code plot panel. Add the following to your `.Rprofile`:
+
+```r
+# Source - https://stackoverflow.com/a/75183587
+# Posted by MarBlo
+
+if (interactive() && Sys.getenv("RSTUDIO") == "") {
+  source(file.path(Sys.getenv(
+    if (.Platform$OS.type == "windows") "USERPROFILE" else "HOME"
+  ), ".vscode-R", "init.R"))
+  if ("httpgd" %in% .packages(all.available = TRUE)) {
+    options(vsc.plot = FALSE, vsc.use_httpgd = FALSE)
+    options(device = function(...) {
+      httpgd::hgd(silent = TRUE)
+      .vsc.browser(httpgd::hgd_url(history = FALSE), viewer = TRUE)
+    })
+  }
+}
+```
+
+`viewer = TRUE` to open the plot viewer in a new internal WebView tab in VS Code.
+Set `viewer = FALSE` will open the plot viewer in an external browser.
+
+
+--------------------------------------------------------------------------------
+
+**Commonly used functions in `httpgd`:** [↩](https://nx10.dev/httpgd/reference/index.html)
 
 - `hgd()` Initialize device and start server.
 - `hgd_browse()` Open the plot viewer in your browser, can be internal or external.
@@ -422,9 +460,13 @@ A: Run `hgd()` in R and get the url to the viewer. Use the command palette to ru
 
   <img src="https://drive.google.com/thumbnail?id=1yu1XGUUaCcqfmtiszAuc3W2aSVke-5h1&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
   
-  There is an url in the tab header to indicate it is a web browser. When you hover over the image, the menu bar will show up. You can choose to download, copy, <span class="env-green">clear all plots</span>, etc.
+  There is an url in the tab header indicating it is a web browser. 
+
+  Click <i class="codicon codicon-link-external" aria-hidden="true" style="font-size:1.5em; vertical-align: middle;"></i> to open the viewer in an external browser.
 
   Click <i class="codicon codicon-refresh" aria-hidden="true" style="font-size:1.5em; vertical-align: middle;"></i> in the tool bar to refresh the viewer.
+
+  When you hover over the image, a menu bar will show up. You can choose to download, copy, <span class="env-green">clear all plots</span>, etc.
 
   <img src="https://drive.google.com/thumbnail?id=1cbH_p8_u9isUHGjgLo5OQRm3yMmdy5Yg&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
 
@@ -450,7 +492,10 @@ A: Run `hgd()` in R and get the url to the viewer. Use the command palette to ru
 
   Otherwise, if you click the "x" button directly, the viewer will be closed, but all historical plots are still there. You can call `plot` again to see the previous plots.
 
-- `hgd_url()` will return the url of the viewer. You can copy and paste the url to your external browser.
+- `hgd_url()` will return the url of the viewer. 
+  
+  If you accidentally close the viewer, you can call `hgd_url()` to get the url and open it again.
+  You can also copy and paste the url to your external browser.
 
 --------------------------------------------------------------------------------
 

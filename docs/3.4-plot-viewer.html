@@ -536,6 +536,7 @@ div.csl-indent {
 <ul>
 <li class="chapter" data-level="" data-path="6.6-html-theming.html"><a href="6.6-html-theming.html#custom-themes"><i class="fa fa-check"></i>Custom Themes</a></li>
 <li class="chapter" data-level="" data-path="6.6-html-theming.html"><a href="6.6-html-theming.html#theme-options"><i class="fa fa-check"></i>Theme Options</a></li>
+<li class="chapter" data-level="" data-path="6.6-html-theming.html"><a href="6.6-html-theming.html#font-family"><i class="fa fa-check"></i>Font Family</a></li>
 </ul></li>
 <li class="chapter" data-level="6.7" data-path="6.7-render-quarto.html"><a href="6.7-render-quarto.html"><i class="fa fa-check"></i><b>6.7</b> Render Quarto</a>
 <ul>
@@ -1020,7 +1021,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <li>Weird aspect ratio and zoom, labels look very small</li>
 <li>auto-resize is bad</li>
 </ul>
-<p><a href="https://nx10.github.io/httpgd/"><code>httpgd</code></a>: A graphics device for R that is accessible via HTTP and WebSockets. This package was created to make it easier to embed live R graphics in integrated development environments and other applications. <code>httpgd</code> is required by the interactive plot viewer of the R extension for VS Code.</p>
+<p><a href="https://nx10.github.io/httpgd/"><code>httpgd</code></a>: A graphics device for R that is accessible via HTTP and WebSockets. A clear distinction from the built-in VS Code plot panel is that there is a url as tab name on the top of the <strong>browser viewer</strong>. <code>httpgd</code> was created to make it easier to embed live R graphics in integrated development environments and other applications. <code>httpgd</code> is required by the interactive plot viewer of the R extension for VS Code.</p>
 <p>A preview of <code>httpgd</code> plot viewer in VS Code:</p>
 <p><img src="https://user-images.githubusercontent.com/33600480/113182768-92eeda80-9253-11eb-9505-79de107024f7.gif" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" /></p>
 <p><strong>Benefits of <code>httpgd</code> plot viewer:</strong></p>
@@ -1039,7 +1040,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <p><strong>Setup <code>httpgd</code> in VS Code</strong></p>
 <ol style="list-style-type: decimal">
 <li><p>Install <code>httpgd</code> package in R</p>
-<div class="sourceCode" id="cb71"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb71-1"><a href="3.4-plot-viewer.html#cb71-1" tabindex="-1"></a> <span class="fu">install.packages</span>(<span class="st">&quot;httpgd&quot;</span>)</span></code></pre></div></li>
+<div class="sourceCode" id="cb71"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb71-1"><a href="3.4-plot-viewer.html#cb71-1" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;httpgd&quot;</span>)</span></code></pre></div></li>
 <li><p>Enable <code>r.plot.useHttpgd</code> in VS Code settings.</p>
 <div class="sourceCode" id="cb72"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb72-1"><a href="3.4-plot-viewer.html#cb72-1" tabindex="-1"></a><span class="fu">{</span></span>
 <span id="cb72-2"><a href="3.4-plot-viewer.html#cb72-2" tabindex="-1"></a>  <span class="dt">&quot;r.plot.useHttpgd&quot;</span><span class="fu">:</span> <span class="kw">true</span></span>
@@ -1052,41 +1053,71 @@ document.addEventListener('DOMContentLoaded', function() {
 <hr />
 <div id="quick-start-with-httpgd" class="section level3 hasAnchor" number="3.4.1">
 <h3><span class="header-section-number">3.4.1</span> Quick Start with <code>httpgd</code><a href="3.4-plot-viewer.html#quick-start-with-httpgd" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<div class="sourceCode" id="cb73"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb73-1"><a href="3.4-plot-viewer.html#cb73-1" tabindex="-1"></a><span class="fu">library</span>(httpgd)</span>
+<div class="sourceCode" id="cb73"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb73-1"><a href="3.4-plot-viewer.html#cb73-1" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">library</span>(httpgd)</span>
 <span id="cb73-2"><a href="3.4-plot-viewer.html#cb73-2" tabindex="-1"></a><span class="co"># Start the httpgd graphics device</span></span>
-<span id="cb73-3"><a href="3.4-plot-viewer.html#cb73-3" tabindex="-1"></a><span class="fu">hgd</span>()</span>
-<span id="cb73-4"><a href="3.4-plot-viewer.html#cb73-4" tabindex="-1"></a></span>
-<span id="cb73-5"><a href="3.4-plot-viewer.html#cb73-5" tabindex="-1"></a><span class="co"># Open the plot viewer in your browser</span></span>
-<span id="cb73-6"><a href="3.4-plot-viewer.html#cb73-6" tabindex="-1"></a><span class="fu">hgd_browse</span>()</span>
-<span id="cb73-7"><a href="3.4-plot-viewer.html#cb73-7" tabindex="-1"></a></span>
-<span id="cb73-8"><a href="3.4-plot-viewer.html#cb73-8" tabindex="-1"></a><span class="co"># Create a figure</span></span>
-<span id="cb73-9"><a href="3.4-plot-viewer.html#cb73-9" tabindex="-1"></a>x <span class="ot">=</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">3</span> <span class="sc">*</span> pi, <span class="at">by =</span> <span class="fl">0.1</span>)</span>
-<span id="cb73-10"><a href="3.4-plot-viewer.html#cb73-10" tabindex="-1"></a><span class="fu">plot</span>(x, <span class="fu">sin</span>(x), <span class="at">type =</span> <span class="st">&quot;l&quot;</span>)</span></code></pre></div>
-<p>Q: Plot viewer is missing.<br />
-A: Run <code>hgd()</code> in R and get the url to the viewer. Use the command palette to run “<strong>R Plot: Open httpgd Url</strong>”. It will let you enter the url address, fill it in and hit Enter to open the plot viewer. Alternatively, if you want to view in external browser, you can copy the url and paste it in your browser.</p>
+<span id="cb73-3"><a href="3.4-plot-viewer.html#cb73-3" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">hgd</span>()</span>
+<span id="cb73-4"><a href="3.4-plot-viewer.html#cb73-4" tabindex="-1"></a>httpgd server running at<span class="sc">:</span></span>
+<span id="cb73-5"><a href="3.4-plot-viewer.html#cb73-5" tabindex="-1"></a>  http<span class="sc">:</span><span class="er">//</span><span class="dv">127</span>.<span class="dv">0</span>.<span class="fl">0.1</span><span class="sc">:</span><span class="dv">49724</span><span class="sc">/</span>live?token<span class="ot">=</span>QTikqshP</span>
+<span id="cb73-6"><a href="3.4-plot-viewer.html#cb73-6" tabindex="-1"></a></span>
+<span id="cb73-7"><a href="3.4-plot-viewer.html#cb73-7" tabindex="-1"></a><span class="co"># Open the plot viewer in your browser</span></span>
+<span id="cb73-8"><a href="3.4-plot-viewer.html#cb73-8" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">hgd_browse</span>()</span>
+<span id="cb73-9"><a href="3.4-plot-viewer.html#cb73-9" tabindex="-1"></a></span>
+<span id="cb73-10"><a href="3.4-plot-viewer.html#cb73-10" tabindex="-1"></a><span class="co"># Create a figure</span></span>
+<span id="cb73-11"><a href="3.4-plot-viewer.html#cb73-11" tabindex="-1"></a><span class="sc">&gt;</span> x <span class="ot">=</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">3</span> <span class="sc">*</span> pi, <span class="at">by =</span> <span class="fl">0.1</span>)</span>
+<span id="cb73-12"><a href="3.4-plot-viewer.html#cb73-12" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">plot</span>(x, <span class="fu">sin</span>(x), <span class="at">type =</span> <span class="st">&quot;l&quot;</span>)</span></code></pre></div>
+<p>Q: Plot viewer is missing or you accidentally closed it.<br />
+A: Run <code>hgd_browse()</code> to re-open the browser viewer.</p>
+<p>If you don’t have any httpgd client open, say you had run <code>hgd_close()</code>, then first run <code>hgd()</code> in R and an url will be shown in the R console. Then run <code>hgd_browse()</code> to open the url in the internal browser viewer.
+Alternatively, use the command palette to run “<strong>R Plot: Open httpgd Url</strong>”. It will let you enter the url address, fill it in and hit Enter to open the plot viewer. You can also copy and paste the url in an external browser.</p>
+<p>When you call <code>hgd()</code> and <code>hgd_browse()</code>, it will start the httpgd web server and open the plot viewer in a new tab. You will see the url, e.g., <code>http://127.0.0.1.&lt;port&gt;/live?token=...</code> in the address bar of the viewer.</p>
 <hr />
-<p><strong>Functions in <code>httpgd</code>:</strong> <a href="https://nx10.dev/httpgd/reference/index.html">↩︎</a></p>
+<p><i class="codicon codicon-debug env-red" aria-hidden="true" style="font-size:1.5em; vertical-align: middle;"></i>
+<strong>Issue:</strong> When you plot a new figure, it will show both in the VS Code plot panel and the browser viewer.
+It’s like one device with two clients: the VS Code plot panel and the browser viewer.
+The browser viewer is more interactive and has better display quality, so I prefer to use the browser viewer.</p>
+<p><i class="codicon codicon-lightbulb-sparkle env-green" aria-hidden="true" style="font-size:1.5em; vertical-align: middle;"></i> <strong>Fix:</strong> Open a plot directly in my httpgd browser without opening it inside VS Code plot panel. Add the following to your <code>.Rprofile</code>:</p>
+<div class="sourceCode" id="cb74"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb74-1"><a href="3.4-plot-viewer.html#cb74-1" tabindex="-1"></a><span class="co"># Source - https://stackoverflow.com/a/75183587</span></span>
+<span id="cb74-2"><a href="3.4-plot-viewer.html#cb74-2" tabindex="-1"></a><span class="co"># Posted by MarBlo</span></span>
+<span id="cb74-3"><a href="3.4-plot-viewer.html#cb74-3" tabindex="-1"></a></span>
+<span id="cb74-4"><a href="3.4-plot-viewer.html#cb74-4" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">interactive</span>() <span class="sc">&amp;&amp;</span> <span class="fu">Sys.getenv</span>(<span class="st">&quot;RSTUDIO&quot;</span>) <span class="sc">==</span> <span class="st">&quot;&quot;</span>) {</span>
+<span id="cb74-5"><a href="3.4-plot-viewer.html#cb74-5" tabindex="-1"></a>  <span class="fu">source</span>(<span class="fu">file.path</span>(<span class="fu">Sys.getenv</span>(</span>
+<span id="cb74-6"><a href="3.4-plot-viewer.html#cb74-6" tabindex="-1"></a>    <span class="cf">if</span> (.Platform<span class="sc">$</span>OS.type <span class="sc">==</span> <span class="st">&quot;windows&quot;</span>) <span class="st">&quot;USERPROFILE&quot;</span> <span class="cf">else</span> <span class="st">&quot;HOME&quot;</span></span>
+<span id="cb74-7"><a href="3.4-plot-viewer.html#cb74-7" tabindex="-1"></a>  ), <span class="st">&quot;.vscode-R&quot;</span>, <span class="st">&quot;init.R&quot;</span>))</span>
+<span id="cb74-8"><a href="3.4-plot-viewer.html#cb74-8" tabindex="-1"></a>  <span class="cf">if</span> (<span class="st">&quot;httpgd&quot;</span> <span class="sc">%in%</span> <span class="fu">.packages</span>(<span class="at">all.available =</span> <span class="cn">TRUE</span>)) {</span>
+<span id="cb74-9"><a href="3.4-plot-viewer.html#cb74-9" tabindex="-1"></a>    <span class="fu">options</span>(<span class="at">vsc.plot =</span> <span class="cn">FALSE</span>, <span class="at">vsc.use_httpgd =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb74-10"><a href="3.4-plot-viewer.html#cb74-10" tabindex="-1"></a>    <span class="fu">options</span>(<span class="at">device =</span> <span class="cf">function</span>(...) {</span>
+<span id="cb74-11"><a href="3.4-plot-viewer.html#cb74-11" tabindex="-1"></a>      httpgd<span class="sc">::</span><span class="fu">hgd</span>(<span class="at">silent =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb74-12"><a href="3.4-plot-viewer.html#cb74-12" tabindex="-1"></a>      <span class="fu">.vsc.browser</span>(httpgd<span class="sc">::</span><span class="fu">hgd_url</span>(<span class="at">history =</span> <span class="cn">FALSE</span>), <span class="at">viewer =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb74-13"><a href="3.4-plot-viewer.html#cb74-13" tabindex="-1"></a>    })</span>
+<span id="cb74-14"><a href="3.4-plot-viewer.html#cb74-14" tabindex="-1"></a>  }</span>
+<span id="cb74-15"><a href="3.4-plot-viewer.html#cb74-15" tabindex="-1"></a>}</span></code></pre></div>
+<p><code>viewer = TRUE</code> to open the plot viewer in a new internal WebView tab in VS Code.
+Set <code>viewer = FALSE</code> will open the plot viewer in an external browser.</p>
+<hr />
+<p><strong>Commonly used functions in <code>httpgd</code>:</strong> <a href="https://nx10.dev/httpgd/reference/index.html">↩︎</a></p>
 <ul>
 <li><p><code>hgd()</code> Initialize device and start server.</p></li>
 <li><p><code>hgd_browse()</code> Open the plot viewer in your browser, can be internal or external.</p>
 <p><code>hgd_browse()</code> is equivalent to running “R Plot: Open Httpgd Url” in the command palette.</p>
-<div class="sourceCode" id="cb74"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb74-1"><a href="3.4-plot-viewer.html#cb74-1" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">hgd</span>()</span>
-<span id="cb74-2"><a href="3.4-plot-viewer.html#cb74-2" tabindex="-1"></a>httpgd server running at<span class="sc">:</span></span>
-<span id="cb74-3"><a href="3.4-plot-viewer.html#cb74-3" tabindex="-1"></a>  http<span class="sc">:</span><span class="er">//</span><span class="dv">127</span>.<span class="dv">0</span>.<span class="fl">0.1</span><span class="sc">:</span><span class="dv">58118</span><span class="sc">/</span>live?token<span class="ot">=</span>Ka9j9ziG</span>
-<span id="cb74-4"><a href="3.4-plot-viewer.html#cb74-4" tabindex="-1"></a></span>
-<span id="cb74-5"><a href="3.4-plot-viewer.html#cb74-5" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">hgd_browse</span>()</span>
-<span id="cb74-6"><a href="3.4-plot-viewer.html#cb74-6" tabindex="-1"></a>Browsing http<span class="sc">:</span><span class="er">//</span><span class="dv">127</span>.<span class="dv">0</span>.<span class="fl">0.1</span><span class="sc">:</span><span class="dv">58118</span><span class="sc">/</span>live?token<span class="ot">=</span>Ka9j9ziG</span></code></pre></div>
+<div class="sourceCode" id="cb75"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb75-1"><a href="3.4-plot-viewer.html#cb75-1" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">hgd</span>()</span>
+<span id="cb75-2"><a href="3.4-plot-viewer.html#cb75-2" tabindex="-1"></a>httpgd server running at<span class="sc">:</span></span>
+<span id="cb75-3"><a href="3.4-plot-viewer.html#cb75-3" tabindex="-1"></a>  http<span class="sc">:</span><span class="er">//</span><span class="dv">127</span>.<span class="dv">0</span>.<span class="fl">0.1</span><span class="sc">:</span><span class="dv">58118</span><span class="sc">/</span>live?token<span class="ot">=</span>Ka9j9ziG</span>
+<span id="cb75-4"><a href="3.4-plot-viewer.html#cb75-4" tabindex="-1"></a></span>
+<span id="cb75-5"><a href="3.4-plot-viewer.html#cb75-5" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">hgd_browse</span>()</span>
+<span id="cb75-6"><a href="3.4-plot-viewer.html#cb75-6" tabindex="-1"></a>Browsing http<span class="sc">:</span><span class="er">//</span><span class="dv">127</span>.<span class="dv">0</span>.<span class="fl">0.1</span><span class="sc">:</span><span class="dv">58118</span><span class="sc">/</span>live?token<span class="ot">=</span>Ka9j9ziG</span></code></pre></div>
 <p>When you call <code>hgd_browse()</code>, it will open the graphic device in a new tab in your default web browser. You wil see the path to the viewer in the R console.</p>
 <p>You may copy and paste the url to your external browser.</p>
 <p><img src="https://drive.google.com/thumbnail?id=1yu1XGUUaCcqfmtiszAuc3W2aSVke-5h1&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" /></p>
-<p>There is an url in the tab header to indicate it is a web browser. When you hover over the image, the menu bar will show up. You can choose to download, copy, <span class="env-green">clear all plots</span>, etc.</p>
+<p>There is an url in the tab header indicating it is a web browser.</p>
+<p>Click <i class="codicon codicon-link-external" aria-hidden="true" style="font-size:1.5em; vertical-align: middle;"></i> to open the viewer in an external browser.</p>
 <p>Click <i class="codicon codicon-refresh" aria-hidden="true" style="font-size:1.5em; vertical-align: middle;"></i> in the tool bar to refresh the viewer.</p>
+<p>When you hover over the image, a menu bar will show up. You can choose to download, copy, <span class="env-green">clear all plots</span>, etc.</p>
 <p><img src="https://drive.google.com/thumbnail?id=1cbH_p8_u9isUHGjgLo5OQRm3yMmdy5Yg&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" /></p>
-<div class="sourceCode" id="cb75"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb75-1"><a href="3.4-plot-viewer.html#cb75-1" tabindex="-1"></a><span class="co"># Stop the browser server with:</span></span>
-<span id="cb75-2"><a href="3.4-plot-viewer.html#cb75-2" tabindex="-1"></a><span class="fu">dev.off</span>(<span class="at">which =</span> <span class="fu">dev.cur</span>())</span>
-<span id="cb75-3"><a href="3.4-plot-viewer.html#cb75-3" tabindex="-1"></a></span>
-<span id="cb75-4"><a href="3.4-plot-viewer.html#cb75-4" tabindex="-1"></a><span class="co"># If you have multiple devices open, close all devices with:</span></span>
-<span id="cb75-5"><a href="3.4-plot-viewer.html#cb75-5" tabindex="-1"></a><span class="fu">graphics.off</span>()</span></code></pre></div></li>
+<div class="sourceCode" id="cb76"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb76-1"><a href="3.4-plot-viewer.html#cb76-1" tabindex="-1"></a><span class="co"># Stop the browser server with:</span></span>
+<span id="cb76-2"><a href="3.4-plot-viewer.html#cb76-2" tabindex="-1"></a><span class="fu">dev.off</span>(<span class="at">which =</span> <span class="fu">dev.cur</span>())</span>
+<span id="cb76-3"><a href="3.4-plot-viewer.html#cb76-3" tabindex="-1"></a></span>
+<span id="cb76-4"><a href="3.4-plot-viewer.html#cb76-4" tabindex="-1"></a><span class="co"># If you have multiple devices open, close all devices with:</span></span>
+<span id="cb76-5"><a href="3.4-plot-viewer.html#cb76-5" tabindex="-1"></a><span class="fu">graphics.off</span>()</span></code></pre></div></li>
 <li><p><span class="env-green"><code>hgd_close()</code></span> will close the httpgd device.</p>
 <p>Equivalent to <code>dev.off()</code>.</p>
 <p>Note that this will <span class="env-orange"><strong>NOT</strong></span> close the viewer window automatically for you. You can close the viewer manually by clicking the “x” button on the top right corner of the viewer window.</p>
@@ -1096,7 +1127,9 @@ A: Run <code>hgd()</code> in R and get the url to the viewer. Use the command pa
 </blockquote>
 <p>If you don’t call <code>hgd_close()</code>, but click the “x” button on the top right corner of the viewer window, the viewer will be closed but all historical plots are still there. You can call <code>plot</code> again to see the previous plots.</p>
 <p>Otherwise, if you click the “x” button directly, the viewer will be closed, but all historical plots are still there. You can call <code>plot</code> again to see the previous plots.</p></li>
-<li><p><code>hgd_url()</code> will return the url of the viewer. You can copy and paste the url to your external browser.</p></li>
+<li><p><code>hgd_url()</code> will return the url of the viewer.</p>
+<p>If you accidentally close the viewer, you can call <code>hgd_url()</code> to get the url and open it again.
+You can also copy and paste the url to your external browser.</p></li>
 </ul>
 <hr />
 <p><strong>Keyboard shortcut</strong> in the WebView</p>
@@ -1116,24 +1149,24 @@ A: Run <code>hgd()</code> in R and get the url to the viewer. Use the command pa
 <h3><span class="header-section-number">3.4.2</span> Configuration<a href="3.4-plot-viewer.html#configuration-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Nice settings to make the plot viewer run more smoothly: make <code>httpgd</code> the default plot viewer in VS Code and open the viewer in a new tab beside the editor.</p>
 <p>Add to <code>.Rprofile</code></p>
-<div class="sourceCode" id="cb76"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb76-1"><a href="3.4-plot-viewer.html#cb76-1" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">interactive</span>() <span class="sc">&amp;&amp;</span> <span class="fu">Sys.getenv</span>(<span class="st">&quot;TERM_PROGRAM&quot;</span>) <span class="sc">==</span> <span class="st">&quot;vscode&quot;</span>) {</span>
-<span id="cb76-2"><a href="3.4-plot-viewer.html#cb76-2" tabindex="-1"></a>  <span class="cf">if</span> (<span class="st">&quot;httpgd&quot;</span> <span class="sc">%in%</span> <span class="fu">.packages</span>(<span class="at">all.available =</span> <span class="cn">TRUE</span>)) {</span>
-<span id="cb76-3"><a href="3.4-plot-viewer.html#cb76-3" tabindex="-1"></a>    <span class="fu">options</span>(<span class="at">vsc.plot =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb76-4"><a href="3.4-plot-viewer.html#cb76-4" tabindex="-1"></a>    <span class="fu">options</span>(<span class="at">device =</span> <span class="cf">function</span>(...) {</span>
-<span id="cb76-5"><a href="3.4-plot-viewer.html#cb76-5" tabindex="-1"></a>      httpgd<span class="sc">::</span><span class="fu">hgd</span>(<span class="at">silent =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb76-6"><a href="3.4-plot-viewer.html#cb76-6" tabindex="-1"></a>      <span class="fu">.vsc.browser</span>(httpgd<span class="sc">::</span><span class="fu">hgd_url</span>(), <span class="at">viewer =</span> <span class="st">&quot;Beside&quot;</span>)</span>
-<span id="cb76-7"><a href="3.4-plot-viewer.html#cb76-7" tabindex="-1"></a>    })</span>
-<span id="cb76-8"><a href="3.4-plot-viewer.html#cb76-8" tabindex="-1"></a>  }</span>
-<span id="cb76-9"><a href="3.4-plot-viewer.html#cb76-9" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb77"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb77-1"><a href="3.4-plot-viewer.html#cb77-1" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">interactive</span>() <span class="sc">&amp;&amp;</span> <span class="fu">Sys.getenv</span>(<span class="st">&quot;TERM_PROGRAM&quot;</span>) <span class="sc">==</span> <span class="st">&quot;vscode&quot;</span>) {</span>
+<span id="cb77-2"><a href="3.4-plot-viewer.html#cb77-2" tabindex="-1"></a>  <span class="cf">if</span> (<span class="st">&quot;httpgd&quot;</span> <span class="sc">%in%</span> <span class="fu">.packages</span>(<span class="at">all.available =</span> <span class="cn">TRUE</span>)) {</span>
+<span id="cb77-3"><a href="3.4-plot-viewer.html#cb77-3" tabindex="-1"></a>    <span class="fu">options</span>(<span class="at">vsc.plot =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb77-4"><a href="3.4-plot-viewer.html#cb77-4" tabindex="-1"></a>    <span class="fu">options</span>(<span class="at">device =</span> <span class="cf">function</span>(...) {</span>
+<span id="cb77-5"><a href="3.4-plot-viewer.html#cb77-5" tabindex="-1"></a>      httpgd<span class="sc">::</span><span class="fu">hgd</span>(<span class="at">silent =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb77-6"><a href="3.4-plot-viewer.html#cb77-6" tabindex="-1"></a>      <span class="fu">.vsc.browser</span>(httpgd<span class="sc">::</span><span class="fu">hgd_url</span>(), <span class="at">viewer =</span> <span class="st">&quot;Beside&quot;</span>)</span>
+<span id="cb77-7"><a href="3.4-plot-viewer.html#cb77-7" tabindex="-1"></a>    })</span>
+<span id="cb77-8"><a href="3.4-plot-viewer.html#cb77-8" tabindex="-1"></a>  }</span>
+<span id="cb77-9"><a href="3.4-plot-viewer.html#cb77-9" tabindex="-1"></a>}</span></code></pre></div>
 <p>It disables the original simple plot watcher provided by vscode-R session watcher (which replays user graphics into a png file) and use httpgd as the graphics device and opens a new WebView tab in VSCode to show the graphics.</p>
 <hr />
 <p>Useful <strong>shortcuts</strong> for the plot viewer: Open current <code>httpgd</code> window if closed (<kbd>ctrl</kbd> + <kbd>opt</kbd> + <kbd>p</kbd>).</p>
-<div class="sourceCode" id="cb77"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb77-1"><a href="3.4-plot-viewer.html#cb77-1" tabindex="-1"></a><span class="fu">{</span></span>
-<span id="cb77-2"><a href="3.4-plot-viewer.html#cb77-2" tabindex="-1"></a>  <span class="dt">&quot;key&quot;</span><span class="fu">:</span> <span class="st">&quot;ctrl+alt+p&quot;</span><span class="fu">,</span></span>
-<span id="cb77-3"><a href="3.4-plot-viewer.html#cb77-3" tabindex="-1"></a>  <span class="dt">&quot;command&quot;</span><span class="fu">:</span> <span class="st">&quot;r.runCommand&quot;</span><span class="fu">,</span></span>
-<span id="cb77-4"><a href="3.4-plot-viewer.html#cb77-4" tabindex="-1"></a>  <span class="dt">&quot;when&quot;</span><span class="fu">:</span> <span class="st">&quot;editorTextFocus &amp;&amp; editorLangId == &#39;r&#39;&quot;</span><span class="fu">,</span></span>
-<span id="cb77-5"><a href="3.4-plot-viewer.html#cb77-5" tabindex="-1"></a>  <span class="dt">&quot;args&quot;</span><span class="fu">:</span> <span class="st">&quot;.vsc.browser(httpgd::hgd_url(), viewer = </span><span class="ch">\&quot;</span><span class="st">Beside</span><span class="ch">\&quot;</span><span class="st">)&quot;</span></span>
-<span id="cb77-6"><a href="3.4-plot-viewer.html#cb77-6" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<div class="sourceCode" id="cb78"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb78-1"><a href="3.4-plot-viewer.html#cb78-1" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb78-2"><a href="3.4-plot-viewer.html#cb78-2" tabindex="-1"></a>  <span class="dt">&quot;key&quot;</span><span class="fu">:</span> <span class="st">&quot;ctrl+alt+p&quot;</span><span class="fu">,</span></span>
+<span id="cb78-3"><a href="3.4-plot-viewer.html#cb78-3" tabindex="-1"></a>  <span class="dt">&quot;command&quot;</span><span class="fu">:</span> <span class="st">&quot;r.runCommand&quot;</span><span class="fu">,</span></span>
+<span id="cb78-4"><a href="3.4-plot-viewer.html#cb78-4" tabindex="-1"></a>  <span class="dt">&quot;when&quot;</span><span class="fu">:</span> <span class="st">&quot;editorTextFocus &amp;&amp; editorLangId == &#39;r&#39;&quot;</span><span class="fu">,</span></span>
+<span id="cb78-5"><a href="3.4-plot-viewer.html#cb78-5" tabindex="-1"></a>  <span class="dt">&quot;args&quot;</span><span class="fu">:</span> <span class="st">&quot;.vsc.browser(httpgd::hgd_url(), viewer = </span><span class="ch">\&quot;</span><span class="st">Beside</span><span class="ch">\&quot;</span><span class="st">)&quot;</span></span>
+<span id="cb78-6"><a href="3.4-plot-viewer.html#cb78-6" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
 <hr />
 <p>Universal graphics device (<code>unigd</code>) is a package that provides a set of functions to manage the plot viewer, such as:</p>
 <ul>

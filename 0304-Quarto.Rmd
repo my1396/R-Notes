@@ -922,6 +922,39 @@ Go to "Source" tab, in "Style Sheets" folder, find your `.scss` file. You will s
 
 Note that when you make changes to your local `.scss`, the changes will be implemented in-time. That is, you don't need to re-build your website to see the effects. 
 
+### Font Family {-}
+
+If Safari does not display the font you specified but Chrome displays correctly, it is usually due to Safari is striter about system font access. In this case, you can attach the font file and explicitly load the font using `@font-face` in your custom SCSS file. 
+
+
+For example:
+
+1. Add the font file to your project, e.g., `assets/fonts/Georgia Pro/GeorgiaPro-Regular.ttf`.
+2. In `_quarto.yml`, add the following to tell Quarto to include the font file in the output direcotry, in my case `docs`:
+
+   ```yaml
+   format:
+     html:
+       resources: assets/
+   ```
+
+   This will copy the `assets` folder to the output directory.
+
+3. Add the following code to your html header files:
+
+   ```scss
+   <style>
+   @font-face {
+     font-family: "Georgia Pro";
+     src: url("assets/fonts/Georgia Pro/GeorgiaPro-Regular.ttf") format("truetype");
+     font-weight: 400;
+     font-style: normal;
+   }
+   </style>
+   ```
+
+   This will load the "Georgia Pro" font from the specified path and make it available for use in your CSS. You can then set the `font-family` property to "Georgia Pro" in your theme or custom styles to apply it to your document.
+
 
 **Ref:** 
 
@@ -950,8 +983,12 @@ Difference btw a standalone webpage from a component of a `qmd` project
 
 ### In terminal {-}
 
+I think using terminal is the most convienient way to render Quarto documents/projects.
 
-This will provide live preview of the document in your web browser. Newest changes will be reflected while you edit the document. ✅
+This will provide <span class="env-green">**live preview**</span> of the document in your web browser. Newest changes will be reflected while you edit the document. This is one of my favorite features of Quarto over Rmd. 👍
+
+In Rmd, you have to render the document every time you want to see the changes at least in VS Code. ❌
+But in Quarto, you can use `quarto preview` to see the changes in real time. Saves lots of troubles of rendering the whole document every time you make a change. ✅
 
 - Render a Quarto document to HTML using the command line:
 

@@ -80,6 +80,8 @@ Ref: Authoring Books with R Markdown, <https://bookdown.org/yihui/bookdown/githu
 
    Go to your GH remote repo, click `Settings` → click `Pages` in the left column → under `GitHub Pages`, change the “Source” to be “main branch /docs folder”.
 
+   Output directory is set in `_bookdown.yml` via `output_dir: "docs"`.
+
    <img src="https://drive.google.com/thumbnail?id=1Fvyx6UCwaZsqaT11X2JCrmdCLQJPZOii&sz=w1000" alt="GH pages Source" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
 
 --------------------------------------------------------------------------------
@@ -393,6 +395,11 @@ bookdown 中文书籍 `_output.yml` 范例: <https://github.com/yihui/bookdown-c
 **`_bookdown.yml`**  allows you to specify optional settings to build the book. For example:
 
 - Set [`output_dir: docs`](https://rstudio4edu.github.io/rstudio4edu-book/make-book.html#book-output)
+  
+  By default, bookdown will output the rendered files to a folder named `_book`. You can change the output directory by setting `output_dir: "docs"`. 
+  This will output the rendered files to a folder named `docs`. 
+  This is particularly useful when you want to deploy your book on GitHub Pages, which requires the website files to be in a folder named `docs`.
+
 - Set [`new_session: yes`](https://bookdown.org/yihui/bookdown/new-session.html)
 
   When set to `yes`, it uses "Knit and Merge" (K–M), and creates a new R session for each chapter, which is useful for avoiding conflicts between packages or variables across chapters.
