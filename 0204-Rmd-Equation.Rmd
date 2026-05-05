@@ -52,7 +52,7 @@ For equation numbering support in `bookdown::pdf_document2` you need to [assign 
 
   - `$$` do not add numbering automatically. 
 
-  - But in `bookdown::html_document2`, it is ok to use 
+  - But in <span class="env-green">`bookdown::html_document2`</span>, it is ok to use 
 
     ```latex
     $$
@@ -96,39 +96,62 @@ Test equation2 \eqref{eq:eq1}.
 
 <img src="https://drive.google.com/thumbnail?id=1mgX3uwLgTDHF0cMwn04mj9K4GjTOF4TX&sz=w1000" alt="eqn numbering in bookdown" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
 
+--------------------------------------------------------------------------------
 
-- **Multilined equations.**
+### Multilined equations
   
-  - Use the `split` environment inside `equation` so that all lines share the same number.
-    
-    Note that the label `(\#eq:label)` must be placed after `\end{split}`.
+- Use the `split` environment inside `equation` so that <span class="env-green">all lines share one number</span>.
+  
+  Note that the <span class="env-green">label `(\#eq:var-beta)` must be placed before `\begin{split}` or after `\end{split}`</span>, i.e., **outside** the `split` environment.
 
-    ```latex
-    \begin{equation} 
-    \begin{split}
-    \mathrm{Var}(\hat{\beta}) & =\mathrm{Var}((X'X)^{-1}X'y)\\
-    & =(X'X)^{-1}\sigma^{2}
-    \end{split}
-    (\#eq:var-beta)
-    \end{equation} 
-    ```
+  ```latex
+  \begin{equation} 
+  \begin{split}
+  \mathrm{Var}(\hat{\beta}) & =\mathrm{Var}((X'X)^{-1}X'y)\\
+  & =(X'X)^{-1}\sigma^{2}
+  \end{split}
+  (\#eq:var-beta)
+  \end{equation} 
+  ```
 
-    will be rendenered as
+  will be rendenered as
 
-    $$
-    \begin{equation} (\#eq:var-beta)
-    \begin{split}
-    \mathrm{Var}(\hat{\beta}) & =\mathrm{Var}((X'X)^{-1}X'y)\\
-    & =(X'X)^{-1}\sigma^{2}
-    \end{split}
-    \end{equation}
-    $$
+  $$
+  \begin{equation} (\#eq:var-beta)
+  \begin{split}
+  \mathrm{Var}(\hat{\beta}) & =\mathrm{Var}((X'X)^{-1}X'y)\\
+  & =(X'X)^{-1}\sigma^{2}
+  \end{split}
+  \end{equation}
+  $$
 
-    Note that the label `(\#eq:var-beta)` must be placed before `\begin{split}` or after `\end{split}`, i.e., **outside** the `split` environment.
+  Then reference with <span class="env-green">`Eq. \@ref(eq:var-beta)`</span>, e.g., see Eq. \@ref(eq:var-beta).
 
-    Then reference with <span class="env-green">`Eq. \@ref(eq:var-beta)`</span>, e.g., see Eq. \@ref(eq:var-beta).
+--------------------------------------------------------------------------------
 
-  - Each line in the `align` environment will be assigned an equation number. We suppressed the number of the first line in the previous example using `\notag`.
+- <span class="env-green">Each line</span> in the `align` environment will be assigned an <span class="env-green">individual equation number</span>. 
+  
+  In the following example, we suppressed the number of the first line using `\notag`.
+
+  ```latex
+  $$
+  \begin{align}
+  y & = X\beta + \varepsilon \notag \\
+  z & = X\gamma + \nu (\#eq:align-test)
+  \end{align}
+  $$
+  ```
+
+  will be rendered as
+
+  $$
+  \begin{align}
+  y & = X\beta + \varepsilon \notag \\
+  z & = X\gamma + \nu (\#eq:align-test)
+  \end{align}
+  $$
+
+  Then reference with <span class="env-green">`Eq. \@ref(eq:align-test)`</span>, e.g., see Eq. \@ref(eq:align-test).
 
 
 --------------------------------------------------------------------------------
@@ -136,13 +159,22 @@ Test equation2 \eqref{eq:eq1}.
 **Naming conventions** for equation labels in **bookdown**:
 
 - Equation labels must start with the prefix `eq:`. 
-    
-    In `qmd`, eq labels start with `eq-`.
-    
+  
+  `Rmd` has better compability with latex labels. You can use either `\label{eq:label}` or `(\#eq:label)` to assign labels, and reference with either `\eqref{eq:label}` or `\@ref(eq:label)`. They will be rendered the same and share the same numbering system.
+
+  ‼️ <span class="env-green">In `qmd`, eq labels start with `eq-`</span>. One <span class="env-orange">**drawback**</span> of Quarto equations is that they do not support numbering for each sub-equation in a multilined equation, e.g., `align` environment. 
+
+  You have to use the latex way `\label{eq:label}` to assign labels to each line in the `align` environment, and then reference with `\eqref{eq:label}`. 
+  The issue is that it uses a separate numbering system than Quarto (`{#eq-label}` and `@eq-label`), hence breaking the continuous numbering of equations in the whole document. 
+  
+  To keep the numbering consistent, use only one system of labeling. If you have to use sub-equation labels, stick to the latex way and use `\label{eq:label}` for all equations. Then reference with `\eqref{eq:label}`.
+
+  ref: [\@eeholmes, Quarto-dev Issues: referencing equations inside `$$ \begin{align}` environment](https://github.com/quarto-dev/quarto-cli/issues/2275#issuecomment-1399047519)
+
 - All labels must only contain alphanumeric characters, `:`, `-`, and/or `/`. 
 - Do <span style='color:#FF9900'>**NOT**</span> use underscore `_`. ❌
     
-    Note that `qmd` supports underscores in eq labels.
+  Note that `qmd` supports underscores in eq labels.
 
 
 
@@ -190,7 +222,7 @@ If you want to provide a specific number to the equation, you can use `\tag{XX.X
   \end{align}
   $$
   
-  The equation does not show properly; there are two `\tag{}`.
+  The equation does NOT show properly; there are two `\tag{}`.
   My specific label here, see eq \@ref(eq:my-label-bookdown) (eq. `\@ref(eq:my-label-bookdown)`).
 
 --------------------------------------------------------------------------------
@@ -235,7 +267,7 @@ We can then use the code in an inline R expression `` `r knitr::inline_expr('col
 --------------------------------------------------------------------------------
 
 
-### Mathjax {.unlisted .unnumbered}
+### Mathjax
 
 <https://bookdown.org/yihui/rmarkdown/html-document.html#mathjax-equations>
 
