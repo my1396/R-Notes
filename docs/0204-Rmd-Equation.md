@@ -98,6 +98,8 @@ Test equation2 \eqref{eq:eq1}.
 
 --------------------------------------------------------------------------------
 
+<a id="rmd-multiline-eqns"></a>
+
 ### Multilined equations
   
 - Use the `split` environment inside `equation` so that <span class="env-green">all lines share one number</span>.
@@ -205,7 +207,7 @@ If you want to provide a specific number to the equation, you can use `\tag{XX.X
 
 - With `bookdown`
   
-  `bookdown` does NOT support custom tag though. Don't use this.
+  `bookdown` does <span class="env-orange">**NOT** support custom tag</span> though. Don't use this.
   
   ```latex
   \begin{align}

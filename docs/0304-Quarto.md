@@ -144,13 +144,13 @@ include-in-header: [mathjax.html, custom-style.css]
 <span class="env-green">**Markdown Extensions**</span> can be enabled using [`from` option](https://quarto.org/docs/reference/formats/html.html#rendering) in YAML. 
 For example, `from: markdown+tex_math_single_backslash+markdown_in_html_blocks` enables the following extensions: 
 
-- `tex_math_single_backslash` allows you to use `\(` and `\)` to delimit inline math, and `\[` and `\]` to delimit display math.
+- <span class="env-green">`tex_math_single_backslash`</span> allows you to use `\(` and `\)` to delimit inline math, and `\[` and `\]` to delimit display math.
 
-- `markdown_in_html_blocks` allows you to use markdown syntax within HTML tags. 
+- <span class="env-green">`markdown_in_html_blocks`</span> allows you to use markdown syntax within HTML tags. 
   
-  `markdown_in_html_blocks` (markdown inside html) seems to be enabled by default in Rmd, but NOT in Quarto or Jekyll websites.
+  `markdown_in_html_blocks` (markdown inside html) seems to be enabled by default in Rmd, but <span class="env-orange">**NOT**</span> in Quarto or Jekyll websites.
   
-  A workaround if you don't want to enable this extension is to use html innner and markdown outer, e.g., 
+  A workaround if you don't want to enable this extension is to use **html innner and markdown outer**, e.g., 
 
   ```markdown
   **<span class="env-green">text</span>**
@@ -167,25 +167,25 @@ Note that Rmd enables Markdown extensions differently than Quarto.
 - Rmd uses the `md_extensions` option.
 - Quarto uses the `from` option. 
 
-Both options can be specified under specific output formats, e.g., `html` or `pdf`, or as top-level options that apply to all output formats.
+Both options can be specified under specific output formats, e.g., `html` or `pdf`, **or** as top-level options that apply to all output formats.
 
-Under specific output formats:
+- Under specific output formats:
 
-```yaml
----
-title: "Habits"
-output:
-  html_document:
-    md_extensions: -autolink_bare_uris+hard_line_breaks
----
-```
+  ```yaml
+  ---
+  title: "Habits"
+  output:
+    html_document:
+      md_extensions: -autolink_bare_uris+hard_line_breaks
+  ---
+  ```
 
-Top-level options:
+- Top-level options:
 
-```yaml
-title: "Habits"
-md_extensions: -autolink_bare_uris+hard_line_breaks
-```
+  ```yaml
+  title: "Habits"
+  md_extensions: -autolink_bare_uris+hard_line_breaks
+  ```
 
 --------------------------------------------------------------------------------
 
@@ -231,13 +231,13 @@ There are drawbacks: some files may not be updated in time.
 --------------------------------------------------------------------------------
 
 
-Strengths of Quarto:
+**Strengths of Quarto:**
 
 - hoverable citations and cross-references, easy to read
 - [easy subplots](https://quarto.org/docs/authoring/cross-references.html#subfigures)
 
 
-Weaknesses of Quarto:
+**Weaknesses of Quarto:**
 
 - slow compared to `Bookdown`
   
@@ -246,11 +246,7 @@ Weaknesses of Quarto:
   - Use `quarto preview` in terminal to enable live preview
   - Set `freeze: auto` in `_quarto.yml` to only re-render changed files.
 
-- Issues when you want to compile one single page within a package. Changes are not reflected in time unless you render the whole website. 
-
-    Workaround: Need to exclude from project index, and need file header `yaml` to import mathjax settings and themes.
-    
-    `Bookdown` is reliable. Don't need `yaml` in single `Rmd`, website theme will apply automatically. 
+- Quarto's way of cross references equations is NOT compatible with latex labels. Quarto's way does not handle multilined equations labeling well. See [HERE](#rmd-multiline-eqns) for details.
 
 - Not support `rstudioapi` functions. E.g., the following is often used to set working directory to the folder where the current script is located. 
 

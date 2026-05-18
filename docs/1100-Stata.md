@@ -8,6 +8,9 @@
   - <https://lanekenworthy.net/stata-quick-guide/>
   - [[GSM] Getting Started with Stata for Mac](https://www.stata.com/manuals/gsm1.pdf) 
 
+Mac Stata does not have the close button <img src="images/xmark.circle.svg" alt="" width="25" height="25" style="display: inline; vertical-align: middle;" />. To quit Stata, use either ⌘+Q or `exit` in the command window.
+
+
 
 <span class="env-green">`help <cmd_name>`</span>: Get help for a command in Stata console.
 
