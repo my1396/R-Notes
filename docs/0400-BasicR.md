@@ -338,7 +338,7 @@ Save data in `uft8` encoding with special language characters
 
 --------------------------------------------------------------------------------
 
-#### `flextable` {.unnumbered} 
+#### `flextable` 
 
 `flextable` package create tables for reporting and publications.
 
@@ -422,6 +422,19 @@ res
 f_name <- here(out_dir, "my_table.txt")
 save_with_prompt(res, f_name)
 ```
+
+--------------------------------------------------------------------------------
+
+`sink()` can be used to redirect output that would normally go to the console into a file (or another connection). It appears in a pair, the first `sink()` call redirects the output, and the second `sink()` call restores the normal output to the console.
+
+```r
+sink("output.txt")
+summary(lm(y ~ x))
+print("hello")
+sink()
+```
+This will save the output of `summary(lm(y ~ x))` and `print("hello")` into the file `output.txt`. 
+The second `sink()` call is important because it restores the normal output to the console. If you forget to call `sink()` again, all subsequent output will continue to be redirected to the file, which can lead to confusion and make it difficult to see what's happening in your R session.
 
 
 ## Functions Overview
