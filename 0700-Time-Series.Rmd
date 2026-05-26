@@ -1043,6 +1043,95 @@ ___
 
 ## Portfolio Return
 
+**From asset parameters to portfolio parameters**
+
+Given a expected return and volatility for each asset, we can calculate the expected return and volatility of a portfolio by the following formulas:
+
+$$
+\begin{aligned}
+E[r_{p,t}] &= \sum_{i=1}^k w_{i,t} E[r_{i,t}] \\
+\text{Var}[r_{p,t}] &= \sum_{i=1}^k\sum_{j=1}^k w_{i,t}\,w_{j,t}\,\text{Cov}(r_{i,t}, r_{j,t})
+\end{aligned}
+$$
+
+Given the following set up for two assets A and B:
+
+<table border="0" cellspacing="0" cellpadding="0"><colgroup><col width="100px" /><col span="2" width="77" /></colgroup>
+<tbody>
+<tr style="border-bottom: 1pt solid black;">
+<td height="21">&nbsp;</td>
+<td style="font-weight: bold; width: 77px; text-align: right;" >Asset A</td>
+<td style="font-weight: bold; width: 97px; text-align: right;" >Asset B</td>
+</tr>
+<tr>
+<td height="21">$\mu$</td>
+<td align="right">0.175</td>
+<td align="right">0.055</td>
+</tr>
+<tr>
+<td height="21">$\sigma$</td>
+<td align="right">0.258</td>
+<td align="right">0.115</td>
+</tr>
+<tr style="border-top: 1pt solid black;">
+<td height="21">$\rho_{AB}$</td>
+<td style="text-align: center;" colspan="2" align="right">-0.164</td>
+</tr>
+</tbody>
+</table>
+
+where $\mu$ is the expected return, $\sigma$ is the volatility (standard deviation) of returns, $\rho$ is the correlation coefficient between assets A and B.
+
+
+```{r}
+# initialize parameters
+mu.A = 0.175
+sig.A = 0.258
+
+mu.B = 0.055
+sig.B = 0.115
+
+rho.AB = -0.164
+```
+
+
+**Equally weighted**
+
+First we consider an equally weighted portfolio $p_1$.
+
+Asset weights: $w_A = w_B = 0.5$.
+
+```{r}
+ptf_par <- function(x.A, x.B, mu.A, mu.B, sig.A, sig.B, rho.AB) {
+  # Calculate portfolio parameters given asset parameters and weights
+  mu.p = x.A*mu.A + x.B*mu.B
+  sig2.p = x.A^2 * sig.A^2 + x.B^2 * sig.B^2 + 2*x.A*x.B*rho.AB*sig.A*sig.B
+  sig.p = sqrt(sig2.p)
+  data.tbl = t(c(mu.p=mu.p, sig.p=sig.p, sig.avg=x.A*sig.A+x.B*sig.B))
+  return(data.tbl)
+}
+
+# equally weighted portfolio
+ptf_par(x.A=0.5, x.B=0.5, mu.A, mu.B, sig.A, sig.B, rho.AB)
+```
+
+**Long-short portfolio**
+
+We now consider a long-short portfolio $p_2$.
+
+Asset weights: $w_A = 1.5$, $w_B = -0.5$.
+
+```{r}
+# long-short portfolio
+ptf_par(x.A=1.5, x.B=-0.5, mu.A, mu.B, sig.A, sig.B, rho.AB)
+```
+
+--------------------------------------------------------------------------------
+
+**From individual asset returns to portfolio**
+
+Given a data frame of asset returns, we can calculate the portfolio return by `PerformanceAnalytics::Return.portfolio()`.
+
 ```r
 w <- c(0.25, 0.25, 0.20, 0.20, 0.10)
 
@@ -1050,10 +1139,6 @@ portfolio_returns_xts_rebalanced_monthly <-
   Return.portfolio(asset_returns_xts, weights = w, rebalance_on = "months") %>%
   `colnames<-`("returns") 
 ```
-
-
-
-
 
 `PerformanceAnalytics::Return.portfolio(R=Return_xts, weights=NULL, rebalance_on, verbose=FALSE)` Using a time series of returns and any regular or irregular time series of weights for each asset, this function calculates the returns of a portfolio with the same periodicity of the returns data. Returns a time series of returns weighted by the `weights` parameter, or a list that includes intermediate calculations
 
