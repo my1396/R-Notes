@@ -9,6 +9,17 @@ If you have some data in R and you want to display them as nice tables, you can 
 But if you a table already, you can just copy-and-paste the table into your Rmd file. It can be either in 
 
 - Markdown table, or
+  
+  The **separator line** in the second row controls the column **relative width**.
+
+  For example,
+
+  ```
+  | ------- | ---- | ----- | -- |
+  ```
+
+  will produce the widest column on the left, the second-widest column being the third one, the second-most narrow column being the second one, and the narrowest column being the last one.
+
 - Latex table
   
   Note that Pandoc will preserve raw LaTeX code in Markdown documents when converting the document to LaTeX, so you can use LaTeX commands or environments in Markdown. [↩︎](https://bookdown.org/yihui/rmarkdown-cookbook/raw-latex.html#raw-latex)
@@ -286,7 +297,7 @@ To show the `tibble` information (number of row/columns, and group information) 
 ```yaml
 ---
 title: "Use caption with df_print set to page"
-date: "2026-05-26"
+date: "2026-06-02"
 output:
   bookdown::html_document2:
     df_print: paged
@@ -790,7 +801,7 @@ print(xtab, type = "html", include.rownames = TRUE)
 ```
 
 <!-- html table generated in R 4.5.1 by xtable 1.8-4 package -->
-<!-- Tue May 26 11:11:42 2026 -->
+<!-- Tue Jun  2 22:11:17 2026 -->
 <table border=1>
 <caption align="bottom"> Asset Parameters </caption>
 <tr> <th>  </th> <th> Asset </th> <th> Mu </th> <th> Sigma </th>  </tr>
@@ -810,7 +821,7 @@ print(xtab_model, type = "html", digits = 3)
 ```
 
 <!-- html table generated in R 4.5.1 by xtable 1.8-4 package -->
-<!-- Tue May 26 11:11:42 2026 -->
+<!-- Tue Jun  2 22:11:17 2026 -->
 <table border=1>
 <caption align="bottom"> Regression of mpg on hp and wt </caption>
 <tr> <th>  </th> <th> Estimate </th> <th> Std. Error </th> <th> t value </th> <th> Pr(&gt;|t|) </th>  </tr>

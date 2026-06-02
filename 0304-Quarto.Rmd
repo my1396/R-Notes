@@ -210,7 +210,8 @@ touch .nojekyll
 
 --------------------------------------------------------------------------------
 
-### Only re-render changed files {.unnumbered .unlisted}
+
+### Only re-render changed files {.unnumbered .unlisted #incremental-rendering}
 
 You can add the following to your `_quarto.yml` file to only re-render changed files:
 
@@ -504,7 +505,7 @@ See [Metadata variables](https://pandoc.org/demo/example33/6.2-variables.html) f
 **Title & Author**
 
 | PDF Options | Functions |
-| :--- |  :--- |
+| :--- | :--- |
 | `title` | Document title |
 | `date` | Document date |
 | `author` | Author or authors of the document |
@@ -512,9 +513,10 @@ See [Metadata variables](https://pandoc.org/demo/example33/6.2-variables.html) f
 
 **Format Options**
 
-| PDF Options | Functions |
-| :---------- | :-------- |
+| PDF Options | Functions                         |
+| :---------  | :-------------------------------- |
 | `pdf-engine` | Specify the PDF engine to use. <br />Options include `pdflatex`, `xelatex`, and `lualatex`. The default is `xelatex`. |
+| `keep-tex`   | Keep the intermediate tex file used during render. |
 
 <span class="env-green">[**Includes**](https://quarto.org/docs/reference/formats/pdf.html#includes)</span>
 
@@ -573,7 +575,7 @@ header-includes: |
 
 | PDF Options       | Functions                                                    |
 | :---------------- | :----------------------------------------------------------- |
-| `toc-depth: 3`       | Specify the number of section levels to include in the table of contents. The default is 3 |
+| `toc-depth: 3`    | Specify the number of section levels to include in the table of contents. The default is 3 |
 | <span class="env-green">`number-sections: false`</span> | Number section headings rendered output. <br />By default, sections are not numbered. |
 | `number-depth`    | By default, all headings in your document create a numbered section. |
 
@@ -591,8 +593,8 @@ header-includes: |
 | <span class="env-green">`keep-tex: false`</span> | Whether to keep the intermediate tex file used during render. Defaults to `false`.<br />Helpful when you want to debug or share tex files with others. |
 
 
-
-
+Q: Are there **incremental rendering options** for pdf output?  
+A: [Unresolved] for a single file. For a project with multiple files, you can set `freeze: auto` in `_quarto.yml` to only re-render changed files. See [Only re-render changed files](#incremental-rendering) for details.
 
 --------------------------------------------------------------------------------
 
@@ -1463,6 +1465,10 @@ format:
 
 ### Emoji
 
+HTML output has built-in support for emojis. You can simply insert emojis like 😀, the output will render it for you accordingly.
+
+`emoji` extension supports text representations of emojis. E.g., `:grinning:` will be rendered as 😀 in the output.
+
 In the yaml, add the `emoji` extension to the `from` option in document metadata.
 
 ```yaml
@@ -1472,9 +1478,18 @@ from: markdown+emoji
 ---
 ```
 
-For markdown formats that support text representations of emojis 😁 (e.g. `:grinning:`), the text version will be written. For other formats the literal emoji character will be written. Currently, the [gfm](https://quarto.org/docs/output-formats/gfm.html) and [hugo](https://quarto.org/docs/output-formats/hugo.html) (with `enableEmoji = true` in the site config) formats both support text representation of emojis.
+For markdown formats that support text representations of emojis 😁 (e.g. `:grinning:`), the text version will be written. For other formats the literal emoji character will be written. 
 
-Note: This does <span class="env-orange">**NOT**</span> work for quarto pdf. Use the `twemoji` approach instead. See below.
+Currently, the [gfm](https://quarto.org/docs/output-formats/gfm.html) and [hugo](https://quarto.org/docs/output-formats/hugo.html) (with `enableEmoji = true` in the site config) formats both support text representation of emojis.
+
+Usage: When you type `:smile:`, it will be rendered as 😄 in the output. 
+
+Note: This does <span class="env-orange">**NOT work for quarto pdf**</span>. Unsupported unicode/emoji characters will be rendered as empty boxes in pdf output.
+
+Fix: For pdf outputs, use the `twemoji` or `newunicodechar` approach instead. See below.
+
+- `twemoji` for emojis
+- `newunicodechar` for unicdoe characters
 
 --------------------------------------------------------------------------------
 
@@ -1487,7 +1502,7 @@ Note: This does <span class="env-orange">**NOT**</span> work for quarto pdf. Use
    
    - Example: `"1f44d": ["👍", ":thumbsup:"]`
    
-   How to find the code points of an emoji:
+   Use the following cmd to find the code points of an emoji; replace the emoji, '⚠️', in the command with the one you want to add. 
 
    ```bash
    node -e 'const s=process.argv[1]; const codes=[...s].map(ch=>ch.codePointAt(0).toString(16)); console.log(codes.join("-"))' '⚠️'
@@ -1541,6 +1556,108 @@ You can now use emojis in your QMD files in two ways:
 
 - Direct Unicode: Great job! 👍 This is amazing! 🎉
 - Shortcodes: Great job! `:thumbsup:` This is amazing! `:tada:`
+
+--------------------------------------------------------------------------------
+
+**`newunicodechar`**
+
+`newunicodechar` package allows you to define a mapping from a Unicode character to a LaTeX command. 
+
+Syntax: `\newunicodechar{<char>}{<code>}`
+
+- `<char>` is the Unicode character you want to display.
+- `<code>` is the LaTeX code that will be substituted to when `<char>` is encountered.
+
+For math symbols, wrap it using `\ensuremath{}`.
+
+```latex
+\usepackage{newunicodechar}
+
+% Manually define the missing characters
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{∀}{\ensuremath{\forall}}
+
+\begin{document}
+Now these will work: ∀x (Fx → Gx)
+\end{document}
+```
+
+**Appearance improvement**: Use "Apple Symbols" for symbol fonts. This font is most robust for symbol display, and with good looking. Declare the mapping for unsupported characters in the mainfont.
+
+```latex
+\newfontfamily\symbolfont{Apple Symbols}
+% \newfontfamily\symbolfont{DejaVu Sans}  % DejaVu Sans also has good unicode support
+
+\newunicodechar{→}{{\symbolfont →}}       % This looks better (shorter) than the math symbol \ensuremath{\rightarrow}
+\newunicodechar{♂}{{\symbolfont ♂}}
+\newunicodechar{♀}{{\symbolfont ♀}}
+\newunicodechar{♪}{{\symbolfont ♪}}
+\newunicodechar{⬢}{{\symbolfont ⬢}}
+```
+
+**The easiest way** is to use a mainfont that has good unicode support, such as "[DejaVu](https://dejavu-fonts.github.io)". It has a wide range of unicode characters, including emojis and math symbols. This avoids the need to manually define mappings for each character.
+
+Note: `Note DejaVu Sans Mono` does <span class="env-orange">NOT</span> support CJK characters, so if you have Chinese characters in your document, they will fall back to the default font, or be rendered as empty boxes.
+
+````latex
+% Select fonts that actually contain your symbols
+\setmainfont{DejaVu Serif}
+\setsansfont{DejaVu Sans}
+\setmonofont{DejaVu Sans Mono}
+
+\begin{document}
+
+Serif preview: The quick brown fox jumps over the lazy dog.
+
+\textsf{Sans-Serif preview: The quick brown fox jumps over the lazy dog.}
+
+Residual income: 
+$$ 
+\begin{aligned}
+RI_t &= NI - EC \\
+&= NI - r \cdot BV_{t-1} \\
+&= (ROE - r) \cdot BV_{t-1} 
+\end{aligned}
+$$
+
+Monospace preview: 
+
+```markdown
+DejaVu Sans Mono
+---------------中英文2:1---------------
+|ab|cd|ef|gh|ij|kl|mn|op|qr|st|uv|wx|yz|
+|这|应|该|是|中|英|文|完|美|的|2:|1等距|
+|A0|1!|2@|3#|4$|5%|6^|7&|8*|9(|0)|=+|[]|
+```
+\end{document}
+````
+
+will show like this:
+
+<img src="images/Dejavu preview.png" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
+
+
+To fix CJK characters, use `Maple Mono NF CN` for CJK monofont.
+
+```latex
+\setmainfont{DejaVu Serif}
+\setsansfont{DejaVu Sans}
+\setmonofont{DejaVu Sans Mono}
+
+% For CJK characters, use xeCJK package and set a CJK monospaced font
+\usepackage{xeCJK}
+\setCJKmonofont{Maple Mono NF CN}
+```
+
+will show like this:
+
+<img src="images/Maple mono preview.png" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
+
+
+**Georgia Pro**
+
+<img src="images/Georgia Pro preview.png" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:60%;" />
+
 
 --------------------------------------------------------------------------------
 

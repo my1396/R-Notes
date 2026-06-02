@@ -398,7 +398,7 @@ gen variable = expression      // generate new variables
 replace variable = expression  // replace the value of existing variables
 ```
 
-`generate` create variables based on expressions you specified.
+`generate` or `gen` create variables based on expressions you specified. Useful for <span class="env-green">row-wise</span> operations.
 
 `generate newvar = oldvar + 2` generate a new variable `newvar`, which equals `oldvar + 2`
 
@@ -406,7 +406,7 @@ replace variable = expression  // replace the value of existing variables
 
 `generate exp2 = exp^2` generate the square of `exp`
 
-<span class="env-green">`egen`</span>: Extensions to `generate`; creates a new variable based on <span class="env-green">`egen` functions</span> of existing variables. These functions usually conduct across-row aggregation or group-wise operations, such as `mean()`, `sum()`, `group()`, etc.
+<span class="env-green">`egen`</span>: Extensions to `generate`; creates a new variable based on <span class="env-green">`egen` functions</span> of existing variables. These functions usually conduct across-row aggregation or <span class="env-green">group-wise</span> operations, such as `mean()`, `sum()`, `group()`, etc.
 
 Q: What are `egen` functions? \
 A: The functions are specifically written for `egen`.
@@ -417,6 +417,12 @@ egen newv1 = group(v1 v2), label(mylabel)
 
 // for each country, calculate the average of wpop
 by country_id, sort: egen pop_country = mean(wpop)
+
+// tag(varname) creates a new variable that takes on the value 1 for the first observation of each group of observations defined by varname and 0 otherwise. 
+// It is often used to identify unique groups of observations. 
+egen tag = tag(firm_id)
+// tabulate industry for the first observation of each firm
+tab industry if tag, missing
 ```
 
 `gen` vs. `egen`

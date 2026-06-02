@@ -611,7 +611,7 @@ xtabond2 depvar varlist [if exp] [in range] [weight]
 
 - `level(#)` confidence level, default to `level(95)`
 
-- `gmmopt`
+- `gmmopt`: specify endogenous and predetermined variables here as GMM-style instruments.
 
   ```stata
   gmmstyle(
@@ -622,6 +622,8 @@ xtabond2 depvar varlist [if exp] [in range] [weight]
   ```
   
   `gmmstyle` specifies a set of variables to be used as bases for "GMM-style" instrument sets described in Holtz-Eakin, Newey, and Rosen (1988) and Arellano and Bond (1991).
+
+  gmm-style instruments are used for <span class="env-green">endogenous and predetermined</span> variables.
   
   By default `xtabond2` uses, for each time period, all available lags of the specified variables in levels dated $t-1$ or earlier as instruments for the transformed equation; and uses the contemporaneous first differences as instruments in the levels equation. These defaults are appropriate for predetermined variables that are not strictly exogenous (Bond 2000). Missing values are always replaced by zeros.
   
@@ -646,13 +648,13 @@ xtabond2 depvar varlist [if exp] [in range] [weight]
       `collapse` also greatly curtails computational demands by reducing the width of the instrument matrix, and helps keep the matrix within Stata's size limit.
 
 
-- `ivopt`
+- `ivopt`: specify strictly exogenous variables here as standard instruments.
 
   ```stata
   ivstyle(varlist [, equation({diff | level | both}) passthru mz])
   ```
 
-  `ivstyle` specifies a set of variables to serve as standard instruments, with one column in the instrument matrix per variable.  Normally, strictly exogenous regressors are included in `ivstyle` options, in order to enter the instrument matrix, as well as being listed before the main comma of the command line. 
+  `ivstyle` specifies a set of variables to serve as standard instruments, with one column in the instrument matrix per variable. Normally, strictly <span class="env-green">exogenous regressors</span> are included in `ivstyle` options, in order to enter the instrument matrix, as well as being listed before the main comma of the command line. 
   
   The `equation()` suboption specifies which equation(s) should use the instruments: 
   

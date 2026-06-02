@@ -74,4 +74,23 @@ Options
     By default, SE uses OLS estimates.
 
 
+### Test for serial correlation
 
+However, Wooldridge (2002, 319--320) derives a simple test for autocorrelation in panel-data models. Drukker (2003) provides simulation results showing that the test has good size and power properties in reasonably sized samples.
+
+There is a community-contributed program, called **xtserial**, written by David Drukker to perform this test in Stata. To install this community-contributed program, type
+
+```stata
+. search xtserial
+. net sj 3-2 st0039         (or click on st0039)
+. net install st0039        (or click on click here to install)
+```
+
+
+To use **xtserial**, you simply specify the dependent and independent variables:
+
+```stata
+. xtserial depvar indepvars 
+```
+
+A significant test statistic indicates the presence of serial correlation.
