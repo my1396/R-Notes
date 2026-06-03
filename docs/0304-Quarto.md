@@ -488,8 +488,11 @@ Use the `pdf` format to create PDF output. For example:
 title: "Lab 1: Solutions"
 format: 
   pdf:
-    include-in-header: ../latex/preamble.tex
-    fontsize: 12pt
+    include-in-header: 
+      - ../latex/preamble.tex         # tex template file, header file, can be used to overwrite default settings
+      - text: |                       # raw LaTeX preamble added after your header file above
+          \setmainfont{Georgia Pro}
+    fontsize: 12pt                    # top level option
     pdf-engine: xelatex
 ---
 ```
@@ -526,9 +529,13 @@ See [Metadata variables](https://pandoc.org/demo/example33/6.2-variables.html) f
 
 
 
-Subkeys for `include-in-header`
+Subkeys for `include-in-header`:
 
 - `file`: path to a file to include at the end of the header.
+  
+  - Useful if you have template files.
+  - Can have several files to include, e.g., `preamble.tex` for package setup and `macros.tex` for custom macros.
+
 - `text: |`: include raw latex content in the YAML header. 
   
   `|` indicates that the content is in multiple lines.
@@ -550,13 +557,15 @@ format:
 
 - Note that you need the dash `-` before `text:` and `file:` to indicate a list of items.
 
-Any packages specified using includes that you don’t already have installed locally will be installed by Quarto during the rendering of the document.
+Note: Any packages specified using includes that you don’t already have installed locally will be installed by Quarto during the rendering of the document.
 
 
 `header-includes: |` is a pandoc variable for including raw LaTeX code in the document header.
 
 - [use example](https://quarto.org/docs/reference/formats/pdf.html) in quarto doc
 - pandoc doc for [`header-includes`](https://pandoc.org/demo/example33/8.10-metadata-blocks.html)
+
+**Use example:**
 
 ```yaml
 header-includes: |
@@ -573,11 +582,22 @@ header-includes: |
 
 **Format & Typesettings**
 
-| PDF Options       | Functions                                                    |
-| :---------------- | :----------------------------------------------------------- |
-| `toc-depth: 3`    | Specify the number of section levels to include in the table of contents. The default is 3 |
+| PDF Options       | Functions                                     |
+| :---------------- | :-------------------------------------------- |
+| `toc-depth: 3`    | Specify the number of section levels to include in the table of contents. <br />The default is 3 |
 | <span class="env-green">`number-sections: false`</span> | Number section headings rendered output. <br />By default, sections are not numbered. |
 | `number-depth`    | By default, all headings in your document create a numbered section. |
+|  [**Fonts**](https://quarto.org/docs/reference/formats/pdf.html#fonts)|     |
+| `fontsize`        | base font size                                |
+| `mainfont`        | main font familty                             |
+| `sansfont`        | sans serif font family                        |
+| `mathfont`        | math font family                              |
+| `monofont`        | monospaced font family                        |
+| `CJKmainfont`     | main font family for Chinese, Japanese, and Korean (CJK) characters, supported by `xecjk` package |
+| `linestretch`     | line spacing using `setspace` package         |
+
+
+
 
 [**Tables**](https://quarto.org/docs/reference/formats/pdf.html#tables)
 
@@ -588,9 +608,11 @@ header-includes: |
 
 [**Engine Binding**](https://quarto.org/docs/computations/execution-options.html#engine-binding)
 
-| PDF Options       | Functions                                                    |
-| ----------------- | ------------------------------------------------------------ |
-| <span class="env-green">`keep-tex: false`</span> | Whether to keep the intermediate tex file used during render. Defaults to `false`.<br />Helpful when you want to debug or share tex files with others. |
+| PDF Options       | Functions                                     |
+| ----------------- | --------------------------------------------- |
+| <span class="env-green">`keep-tex: false`</span> | Whether to keep the intermediate tex file used during render. <br />Defaults to `false`.|
+
+The `.tex` file generated looks cluttered as it includes all default settings imposed by Quarto. I rarely use the `.tex` file, but can be useful when you want to debug or share tex files with others.
 
 
 Q: Are there **incremental rendering options** for pdf output?  
@@ -1186,12 +1208,18 @@ crossref:
 
 **For pdf output**, Quarto supports LaTeX's way of labeling and cross-referencing. 
 
+PDF output accepts raw LaTeX code, don't need to put the table in a fenced div or code chunk with `{=latex}`. You can directly write LaTeX code in your `qmd` file to create tables and label them for cross-referencing.
+
 For example, using `\label{tbl-income-statement}` to label a table and `\ref{tbl-income-statement}` or `\autoref{tbl-balance-sheet}` (with `hyperref`) to reference it.
 
-Note that you don't have to use `tbl-` prefix if you use LaTeX's way of labeling and referencing. You can 
+Note that you don't have to use `tbl-` prefix if you use LaTeX's way of labeling and referencing. 
+You can either
 
-- label a table with `\label{income-statement}` and reference it with `Table \ref{income-statement}`.
+- label a table with `\label{income-statement}` and reference it with `Table \ref{income-statement}`, or
 - label a table with `\label{tab: income-statement}` and reference it with `\autoref{tab: income-statement}`.
+  
+  What I like about `\autoref` (from `hyperref` package) is that it will automatically add the prefix (e.g. Table) to the reference and the whole reference, not just the number, will be colored and hyperlinked.
+
 
 You can also use Quarto's way of referencing in pdf output, but you need to make sure to label the table with `#tbl-xxx` and reference it with `@tbl-xxx`.
 
@@ -1213,12 +1241,16 @@ See @tbl-table-example for a simple table.
 \end{table}
 ```
 
+will show like this:
+
+<img src="images/quarto pdf table.png" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:100%;" />
+
 More examples of table cross-referencing [here](#quarto-tables).
 
 --------------------------------------------------------------------------------
 
 
-### Cross-references to Equations {.unnumbered}
+### Cross-references to Equations {-}
 
 ```latex
 $$
@@ -1620,8 +1652,8 @@ Now these will work: ∀x (Fx → Gx)
 **Appearance improvement**: Use "Apple Symbols" for symbol fonts. This font is most robust for symbol display, and with good looking. Declare the mapping for unsupported characters in the mainfont.
 
 ```latex
-\newfontfamily\symbolfont{Apple Symbols}
-% \newfontfamily\symbolfont{DejaVu Sans}  % DejaVu Sans also has good unicode support
+\newfontfamily\symbolfont{Apple Symbols}  % Works for Mac, but NOT for TeX Live distribution
+% \newfontfamily\symbolfont{DejaVu Sans}  % DejaVu Sans also has good unicode support, distributed with TeX Live, no additional installation needed
 
 \newunicodechar{→}{{\symbolfont →}}       % This looks better (shorter) than the math symbol \ensuremath{\rightarrow}
 \newunicodechar{♂}{{\symbolfont ♂}}
@@ -2022,6 +2054,9 @@ A: Add the following to the preamble file:
 \makeatother
 ```
 
+`\renewenvironment{table}[1][H]` takes one optional argument (the placement specifier) that defaults to `H`. This means that if you use `\begin{table}` without specifying a placement, it will default to `[H]`, which forces the table to be placed exactly where it appears in the source code.
+
+You can still override the default placement for individual tables by providing a different specifier, e.g. `\begin{table}[htbp]` will use the standard `htbp` placement for that table.
 
 
 ref: <https://github.com/quarto-dev/quarto-cli/discussions/6734#discussioncomment-6919437>
