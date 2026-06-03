@@ -4,13 +4,13 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>10.7 Histogram | R Notes</title>
+  <title>6.13 Tables | R Notes</title>
   <meta name="description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
 set in the _output.yml file.</p>" />
   <meta name="generator" content="bookdown 0.45 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="10.7 Histogram | R Notes" />
+  <meta property="og:title" content="6.13 Tables | R Notes" />
   <meta property="og:type" content="book" />
   
   <meta property="og:description" content="<p>This is a minimal example of using the bookdown package to write a book.
@@ -19,7 +19,7 @@ set in the _output.yml file.</p>" />
   <meta name="github-repo" content="my1396/R-Notes" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="10.7 Histogram | R Notes" />
+  <meta name="twitter:title" content="6.13 Tables | R Notes" />
   
   <meta name="twitter:description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
@@ -35,8 +35,8 @@ set in the _output.yml file.</p>" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   <link rel="shortcut icon" href="images/r-project-favicon.ico" type="image/x-icon" />
-<link rel="prev" href="10.6-plot-raster-data.html"/>
-<link rel="next" href="10.8-qq-plot.html"/>
+<link rel="prev" href="6.12-theorems-2.html"/>
+<link rel="next" href="6.14-raw-content.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -1017,183 +1017,105 @@ document.addEventListener('DOMContentLoaded', function() {
   padding-left: 0; 
 }
 </style>
-<div id="histogram" class="section level2 hasAnchor" number="10.7">
-<h2><span class="header-section-number">10.7</span> Histogram<a href="10.7-histogram.html#histogram" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p><code style="white-space: pre; display: inline;">geom_histogram(mapping = NULL,
-   data = NULL,
-   stat = “bin”,
-   position = “stack”,
-   …,
-   binwidth = NULL,
-   origin = NULL,
-   breaks = NULL,
-   bins = NULL,
-   na.rm = FALSE,
-   orientation = NA,
-   show.legend = NA,
-   inherit.aes = TRUE
-)</code></p>
+<div id="quarto-tables" class="section level2 hasAnchor" number="6.13">
+<h2><span class="header-section-number">6.13</span> Tables<a href="6.13-quarto-tables.html#quarto-tables" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p><strong>Tables in Latex</strong></p>
+<p>Tables in raw LaTeX can be included in Quarto documents using fenced divs or <span class="env-green"><strong>code chunks</strong></span> with <code>{=latex}</code>.</p>
 <ul>
-<li><p><span class="env-green"><code>binwidth</code></span> <span class="env-green">The width of the bins</span>.</p>
-<p>Can be specified as a numeric value or as a function that calculates width from unscaled x. Here, “unscaled x” refers to the original x values in the data, before application of any scale transformation. When specifying a function along with a grouping structure, the function will be called once per group.</p>
+<li>Use <span class="env-green"><strong>fenced div</strong></span> to add labels <code>#tbl-xxx</code> for cross-referencing. Note the <code>#</code> is mandatory. Without it, the table cross reference will show as <code>??</code> in the output.
 <ul>
-<li><p>The default is to use the number of bins in <code>bins</code>, covering the range of the data. <code>stat_bin()</code> using <code>bins=30</code>; this is NOT a good default, but the idea is to get you experimenting with different number of bins.</p>
-<p>You can also experiment modifying the <code>binwidth</code> with <code>center</code> or <code>boundary</code> arguments. <code>binwidth</code> overrides <code>bins</code> so you should do one change at a time.</p></li>
-<li><p><span class="env-green"><strong>You should always override this value</strong></span>, exploring multiple widths to find the best to illustrate the stories in your data.</p></li>
+<li>You can ignore the fenced divs if you don’t need cross-reference.</li>
 </ul></li>
-<li><p><span class="env-green"><code>bins</code></span> Number of bins. Defaults to 30. Overridden by binwidth.</p>
-<p>My experience is that it’s easier to specify <code>bins</code> at first to get a rough idea of the range of the axis.
-Then specify <code>binwidth</code> to get more control over the binning.</p>
-<div class="rmdimportant">
-<p>If you have both <code>bins</code> and <code>boundary</code> specified, <code>boundary</code> might be ignored.</p>
-<p>Use <code>binwidth</code> and <code>boundary</code> together to ensure that the bins are aligned with the specified boundary.</p>
-</div></li>
-<li><p><code>center</code>, <span class="env-green"><code>boundary</code></span> numeric values specify bin positions. One value for either <code>center</code> or <code>boundary</code> is adequate, other values will be automatically filled using <code>binwidth</code>.</p>
-<ul>
-<li><p><code>center</code> specifies the center of one of the bins. <strong>Default</strong> figure will use center position to identify bins.</p></li>
-<li><p><code>boundary</code> specifies the boundary between two bins. Boundary values are more informative.</p>
-<p>✅ <span class="env-green">[recommended to specify one boundary value; just easier to say boundaries]</span></p></li>
-<li><p>Worth noting that <code>center</code> and <code>boundary</code> can be either above or below the range of the data, in this case the value provided will be <u>shifted</u> of a multiple number of <code>binwidth</code>.</p></li>
-</ul></li>
-<li><p><code>breaks</code> Actual breaks to use. Intervals are created as left open, right closed. But specifying inside <code>geom_histogram</code> might show weird breaks in y-axis labels.</p>
-<p>✅ <span class="env-green">Specifying breaks using <code>scale_x_continuous</code></span> is a better practice.</p></li>
+<li>Refer to the table using <code>@tbl-xxx</code>.</li>
+<li>The table lable must begin with <code>tbl-</code> no matter whether you use div or latex approach for cross-references.</li>
 </ul>
-<div class="sourceCode" id="cb841"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb841-1"><a href="10.7-histogram.html#cb841-1" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> data, <span class="fu">aes</span>(tmp) ) <span class="sc">+</span> </span>
-<span id="cb841-2"><a href="10.7-histogram.html#cb841-2" tabindex="-1"></a>    <span class="fu">geom_histogram</span>(</span>
-<span id="cb841-3"><a href="10.7-histogram.html#cb841-3" tabindex="-1"></a>      <span class="at">fill =</span> <span class="st">&quot;#BDBCBC&quot;</span>, <span class="at">color =</span> <span class="st">&quot;black&quot;</span>, </span>
-<span id="cb841-4"><a href="10.7-histogram.html#cb841-4" tabindex="-1"></a>      <span class="at">binwidth =</span> <span class="dv">2</span>, <span class="at">boundary =</span> <span class="dv">0</span>) <span class="sc">+</span></span>
-<span id="cb841-5"><a href="10.7-histogram.html#cb841-5" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Average temperature [ºC]&quot;</span>)</span>
-<span id="cb841-6"><a href="10.7-histogram.html#cb841-6" tabindex="-1"></a>p</span></code></pre></div>
-<p><code>geom_histogram(aes(..density..))</code> surrounding the variable names with <code>..</code> means to call <code>after_stat</code> function. It delays the mapping until later in the rendering process when summary statistics have been calculated. The expression <code>..density..</code> is deprecated; use <code>after_stat()</code> in stead.</p>
-<p>Most <a href="https://ggplot2.tidyverse.org/reference/aes.html">aesthetics</a> are mapped directly from variables found in the data, called direct input (stage1). Sometimes, however, you want to delay the mapping until later stages of the data that you can map aesthetics from, and three functions to control at which stage aesthetics should be evaluated.</p>
-<p><code>after_stat(x)</code> and <code>after_scale(x)</code> can be used inside the <code>aes()</code> function, used as the <code>mapping</code> argument in layers.</p>
-<ul>
-<li><p><code>after_stat(x)</code> uses variables calculated after the transformation by the layer stat (stage 2);</p>
-<p>E.g., the height of bars in <code>geom_histogram()</code> can be density probability;</p>
-<div class="sourceCode" id="cb842"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb842-1"><a href="10.7-histogram.html#cb842-1" tabindex="-1"></a><span class="co"># this shows the count frequency</span></span>
-<span id="cb842-2"><a href="10.7-histogram.html#cb842-2" tabindex="-1"></a><span class="fu">ggplot</span>(faithful, <span class="fu">aes</span>(<span class="at">x =</span> waiting)) <span class="sc">+</span></span>
-<span id="cb842-3"><a href="10.7-histogram.html#cb842-3" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">fill =</span> <span class="st">&quot;#BDBCBC&quot;</span>, <span class="at">color =</span> <span class="st">&quot;black&quot;</span>) </span>
-<span id="cb842-4"><a href="10.7-histogram.html#cb842-4" tabindex="-1"></a></span>
-<span id="cb842-5"><a href="10.7-histogram.html#cb842-5" tabindex="-1"></a><span class="co"># this shows the density plot, can replace after_stat(density) with ..density..</span></span>
-<span id="cb842-6"><a href="10.7-histogram.html#cb842-6" tabindex="-1"></a><span class="co"># surrounding the variable name with two dots</span></span>
-<span id="cb842-7"><a href="10.7-histogram.html#cb842-7" tabindex="-1"></a><span class="fu">ggplot</span>(faithful, <span class="fu">aes</span>(<span class="at">x =</span> waiting)) <span class="sc">+</span></span>
-<span id="cb842-8"><a href="10.7-histogram.html#cb842-8" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">after_stat</span>(density)),</span>
-<span id="cb842-9"><a href="10.7-histogram.html#cb842-9" tabindex="-1"></a>                <span class="at">fill =</span> <span class="st">&quot;#BDBCBC&quot;</span>, <span class="at">color =</span> <span class="st">&quot;black&quot;</span>) <span class="sc">+</span></span>
-<span id="cb842-10"><a href="10.7-histogram.html#cb842-10" tabindex="-1"></a>  <span class="fu">geom_density</span>() <span class="co"># empirical density</span></span></code></pre></div>
-<ul>
-<li><p><code>after_stat(count)</code> show frequency count; <span class="env-green"><code>after_stat(ncount)</code></span> count, scaled to a maximum of 1;</p></li>
-<li><p><code>after_stat(density)</code> show density; <code>after_stat(ndensity)</code> density, scaled to a maximum of 1;</p></li>
-</ul></li>
-<li><p><code>after_scale</code> uses variables calculated after the scale transformation (stage 3); see documents <a href="the%20height%20of%20bars%20in%20%60geom_histogram()%60">here</a>.</p>
-<ul>
-<li>could be used to label a bar plot;</li>
-</ul></li>
-</ul>
+<div class="sourceCode" id="cb438"><pre class="sourceCode latex"><code class="sourceCode latex"><span id="cb438-1"><a href="6.13-quarto-tables.html#cb438-1" tabindex="-1"></a>::: {#tbl-1}</span>
+<span id="cb438-2"><a href="6.13-quarto-tables.html#cb438-2" tabindex="-1"></a></span>
+<span id="cb438-3"><a href="6.13-quarto-tables.html#cb438-3" tabindex="-1"></a>```{=latex} </span>
+<span id="cb438-4"><a href="6.13-quarto-tables.html#cb438-4" tabindex="-1"></a><span class="co">% Or whatever actual you want, includegraphics, whatever. </span></span>
+<span id="cb438-5"><a href="6.13-quarto-tables.html#cb438-5" tabindex="-1"></a><span class="co">% (_not_ \begin{table}, just the content of it)</span></span>
+<span id="cb438-6"><a href="6.13-quarto-tables.html#cb438-6" tabindex="-1"></a><span class="kw">\begin</span>{<span class="ex">tabular</span>}{l c r}</span>
+<span id="cb438-7"><a href="6.13-quarto-tables.html#cb438-7" tabindex="-1"></a><span class="fu">\hline</span></span>
+<span id="cb438-8"><a href="6.13-quarto-tables.html#cb438-8" tabindex="-1"></a>Header 1 <span class="op">&amp;</span> Header 2 <span class="op">&amp;</span> Header 3 <span class="fu">\\</span></span>
+<span id="cb438-9"><a href="6.13-quarto-tables.html#cb438-9" tabindex="-1"></a><span class="fu">\hline</span></span>
+<span id="cb438-10"><a href="6.13-quarto-tables.html#cb438-10" tabindex="-1"></a>Row 1 Col 1 <span class="op">&amp;</span> Row 1 Col 2 <span class="op">&amp;</span> Row 1 Col 3 <span class="fu">\\</span></span>
+<span id="cb438-11"><a href="6.13-quarto-tables.html#cb438-11" tabindex="-1"></a>Row 2 Col 1 <span class="op">&amp;</span> Row 2 Col 2 <span class="op">&amp;</span> Row 2 Col 3 <span class="fu">\\</span></span>
+<span id="cb438-12"><a href="6.13-quarto-tables.html#cb438-12" tabindex="-1"></a><span class="fu">\hline</span></span>
+<span id="cb438-13"><a href="6.13-quarto-tables.html#cb438-13" tabindex="-1"></a><span class="kw">\end</span>{<span class="ex">tabular</span>}</span>
+<span id="cb438-14"><a href="6.13-quarto-tables.html#cb438-14" tabindex="-1"></a>```</span>
+<span id="cb438-15"><a href="6.13-quarto-tables.html#cb438-15" tabindex="-1"></a></span>
+<span id="cb438-16"><a href="6.13-quarto-tables.html#cb438-16" tabindex="-1"></a>This is a table caption.</span>
+<span id="cb438-17"><a href="6.13-quarto-tables.html#cb438-17" tabindex="-1"></a></span>
+<span id="cb438-18"><a href="6.13-quarto-tables.html#cb438-18" tabindex="-1"></a>:::</span>
+<span id="cb438-19"><a href="6.13-quarto-tables.html#cb438-19" tabindex="-1"></a></span>
+<span id="cb438-20"><a href="6.13-quarto-tables.html#cb438-20" tabindex="-1"></a>For cross-reference: See @tbl-1.</span></code></pre></div>
+<p><strong>Alternatively</strong>, use LaTeX syntax entirely as follows.</p>
+<div class="sourceCode" id="cb439"><pre class="sourceCode latex"><code class="sourceCode latex"><span id="cb439-1"><a href="6.13-quarto-tables.html#cb439-1" tabindex="-1"></a>The regression results are summarized in Table <span class="kw">\ref</span>{<span class="ex">tbl-regression-results</span>}.</span>
+<span id="cb439-2"><a href="6.13-quarto-tables.html#cb439-2" tabindex="-1"></a></span>
+<span id="cb439-3"><a href="6.13-quarto-tables.html#cb439-3" tabindex="-1"></a>```{=latex} </span>
+<span id="cb439-4"><a href="6.13-quarto-tables.html#cb439-4" tabindex="-1"></a><span class="kw">\begin</span>{<span class="ex">table</span>}</span>
+<span id="cb439-5"><a href="6.13-quarto-tables.html#cb439-5" tabindex="-1"></a><span class="fu">\centering</span></span>
+<span id="cb439-6"><a href="6.13-quarto-tables.html#cb439-6" tabindex="-1"></a><span class="fu">\caption</span>{Regression Results: CAPM vs. Fama-French 3-Factor Model}</span>
+<span id="cb439-7"><a href="6.13-quarto-tables.html#cb439-7" tabindex="-1"></a><span class="kw">\label</span>{<span class="ex">tbl-regression-results</span>}</span>
+<span id="cb439-8"><a href="6.13-quarto-tables.html#cb439-8" tabindex="-1"></a><span class="kw">\begin</span>{<span class="ex">tabular</span>}{l c r}</span>
+<span id="cb439-9"><a href="6.13-quarto-tables.html#cb439-9" tabindex="-1"></a><span class="fu">\hline</span></span>
+<span id="cb439-10"><a href="6.13-quarto-tables.html#cb439-10" tabindex="-1"></a>Header 1 <span class="op">&amp;</span> Header 2 <span class="op">&amp;</span> Header 3 <span class="fu">\\</span></span>
+<span id="cb439-11"><a href="6.13-quarto-tables.html#cb439-11" tabindex="-1"></a><span class="fu">\hline</span></span>
+<span id="cb439-12"><a href="6.13-quarto-tables.html#cb439-12" tabindex="-1"></a>Row 1 Col 1 <span class="op">&amp;</span> Row 1 Col 2 <span class="op">&amp;</span> Row 1 Col 3 <span class="fu">\\</span></span>
+<span id="cb439-13"><a href="6.13-quarto-tables.html#cb439-13" tabindex="-1"></a>Row 2 Col 1 <span class="op">&amp;</span> Row 2 Col 2 <span class="op">&amp;</span> Row 2 Col 3 <span class="fu">\\</span></span>
+<span id="cb439-14"><a href="6.13-quarto-tables.html#cb439-14" tabindex="-1"></a><span class="fu">\hline</span></span>
+<span id="cb439-15"><a href="6.13-quarto-tables.html#cb439-15" tabindex="-1"></a><span class="kw">\end</span>{<span class="ex">tabular</span>}</span>
+<span id="cb439-16"><a href="6.13-quarto-tables.html#cb439-16" tabindex="-1"></a><span class="kw">\end</span>{<span class="ex">table</span>}</span>
+<span id="cb439-17"><a href="6.13-quarto-tables.html#cb439-17" tabindex="-1"></a>```</span></code></pre></div>
+<p>Q: How to use <code>[H]</code> to force table placement in qmd?<br />
+A: Add the following to the preamble file:</p>
+<div class="sourceCode" id="cb440"><pre class="sourceCode latex"><code class="sourceCode latex"><span id="cb440-1"><a href="6.13-quarto-tables.html#cb440-1" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">float</span>} <span class="co">% for [H] placement specifier</span></span>
+<span id="cb440-2"><a href="6.13-quarto-tables.html#cb440-2" tabindex="-1"></a></span>
+<span id="cb440-3"><a href="6.13-quarto-tables.html#cb440-3" tabindex="-1"></a><span class="co">% Make all tables use [H] placement by default</span></span>
+<span id="cb440-4"><a href="6.13-quarto-tables.html#cb440-4" tabindex="-1"></a><span class="fu">\makeatletter</span></span>
+<span id="cb440-5"><a href="6.13-quarto-tables.html#cb440-5" tabindex="-1"></a><span class="fu">\renewenvironment</span>{table}[1][H]{<span class="co">%</span></span>
+<span id="cb440-6"><a href="6.13-quarto-tables.html#cb440-6" tabindex="-1"></a>  <span class="fu">\@float</span>{table}[#1]<span class="co">%</span></span>
+<span id="cb440-7"><a href="6.13-quarto-tables.html#cb440-7" tabindex="-1"></a>}{<span class="co">%</span></span>
+<span id="cb440-8"><a href="6.13-quarto-tables.html#cb440-8" tabindex="-1"></a>  <span class="kw">\end</span>@float</span>
+<span id="cb440-9"><a href="6.13-quarto-tables.html#cb440-9" tabindex="-1"></a>}</span>
+<span id="cb440-10"><a href="6.13-quarto-tables.html#cb440-10" tabindex="-1"></a><span class="fu">\makeatother</span></span></code></pre></div>
+<p>ref: <a href="https://github.com/quarto-dev/quarto-cli/discussions/6734#discussioncomment-6919437" class="uri">https://github.com/quarto-dev/quarto-cli/discussions/6734#discussioncomment-6919437</a></p>
 <hr />
-<div id="set-axis-limits-for-histogram" class="section level3 hasAnchor" number="10.7.1">
-<h3><span class="header-section-number">10.7.1</span> Set axis limits for histogram<a href="10.7-histogram.html#set-axis-limits-for-histogram" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>❗ Always use <code>coord_cartesian()</code> to set axis limits for histogram as <code>scale_x_continuous(limits = c(0, 1))</code> will remove data outside the limits, which can lead to incorrect calculations and visualizations.</p>
-<p><code>coord_cartesian(xlim = c(0, 1))</code> will zoom in on the part of the graph when x is between 0 and 1, without removing data outside the limits. The axis will expand automatically to fit the data, by default, it will add a padding of 5% on each side of the data range. That means if the data range is from 0 to 1, the x-axis will be expanded to range from -0.05 to 1.05.</p>
-<p>You can adjust this padding using the <code>expand</code> argument in <code>scale_x_continuous(expand = c(0, 0))</code>, which will remove the padding and set the axis limits exactly to the specified range of 0 to 1.</p>
-<p>Use <code>?scale_x_continuous</code> to learn more about the <code>expand</code> argument. More nuanced control over the expansion can be achieved by using <code>expansion</code> functions, e.g., <code>scale_x_continuous(expand = expansion(mult = c(0.1, 0.2)))</code> will add a 10% expansion on the lower end and a 20% expansion on the upper end of the x-axis.</p>
-<div class="sourceCode" id="cb843"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb843-1"><a href="10.7-histogram.html#cb843-1" tabindex="-1"></a>fundamental_complete <span class="sc">%&gt;%</span></span>
-<span id="cb843-2"><a href="10.7-histogram.html#cb843-2" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> investment_assets)) <span class="sc">+</span></span>
-<span id="cb843-3"><a href="10.7-histogram.html#cb843-3" tabindex="-1"></a>    <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> .<span class="dv">002</span>, <span class="fu">aes</span>(<span class="at">y =</span> ..density..), <span class="at">fill =</span> <span class="st">&quot;steelblue&quot;</span>, <span class="at">color =</span> <span class="st">&quot;black&quot;</span>, <span class="at">boundary =</span> <span class="dv">0</span>) <span class="sc">+</span></span>
-<span id="cb843-4"><a href="10.7-histogram.html#cb843-4" tabindex="-1"></a>    <span class="fu">coord_cartesian</span>(<span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.1</span>)) <span class="sc">+</span></span>
-<span id="cb843-5"><a href="10.7-histogram.html#cb843-5" tabindex="-1"></a>    <span class="fu">scale_x_continuous</span>(<span class="at">expand =</span> <span class="fu">c</span>(<span class="fl">0.05</span>, <span class="dv">0</span>)) <span class="sc">+</span></span>
-<span id="cb843-6"><a href="10.7-histogram.html#cb843-6" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Distribution of Investment (CAPEX/Assets)&quot;</span>)</span></code></pre></div>
-<p>This will set the main x-axis range to 0 to 0.1, and add padding of <span class="math inline">\(5\% \times 0.1\)</span> to both sides of the x-axis, resulting in an expanded range of -0.005 to 0.105.</p>
-<p><img src="images/historgram_coord.svg" width="70%" /></p>
-<hr />
-</div>
-<div id="add-fitted-density-from-a-distribution" class="section level3 hasAnchor" number="10.7.2">
-<h3><span class="header-section-number">10.7.2</span> Add fitted density from a distribution<a href="10.7-histogram.html#add-fitted-density-from-a-distribution" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<div class="sourceCode" id="cb844"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb844-1"><a href="10.7-histogram.html#cb844-1" tabindex="-1"></a><span class="co"># fit a lognormal distribution</span></span>
-<span id="cb844-2"><a href="10.7-histogram.html#cb844-2" tabindex="-1"></a><span class="fu">library</span>(MASS)</span>
-<span id="cb844-3"><a href="10.7-histogram.html#cb844-3" tabindex="-1"></a>fit_params <span class="ot">&lt;-</span> <span class="fu">fitdistr</span>(prices_monthly<span class="sc">$</span>AdjustedPrice,<span class="st">&quot;lognormal&quot;</span>)</span>
-<span id="cb844-4"><a href="10.7-histogram.html#cb844-4" tabindex="-1"></a>fit_params<span class="sc">$</span>estimate</span>
-<span id="cb844-5"><a href="10.7-histogram.html#cb844-5" tabindex="-1"></a></span>
-<span id="cb844-6"><a href="10.7-histogram.html#cb844-6" tabindex="-1"></a><span class="fu">ggplot</span>(prices_monthly, <span class="fu">aes</span>(<span class="at">x =</span> AdjustedPrice)) <span class="sc">+</span></span>
-<span id="cb844-7"><a href="10.7-histogram.html#cb844-7" tabindex="-1"></a>    <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">40</span>,</span>
-<span id="cb844-8"><a href="10.7-histogram.html#cb844-8" tabindex="-1"></a>                   <span class="fu">aes</span>(<span class="at">y =</span> ..density..),</span>
-<span id="cb844-9"><a href="10.7-histogram.html#cb844-9" tabindex="-1"></a>                   <span class="at">fill=</span><span class="st">&quot;#BDBCBC&quot;</span>, <span class="at">color=</span><span class="st">&quot;black&quot;</span>) <span class="sc">+</span></span>
-<span id="cb844-10"><a href="10.7-histogram.html#cb844-10" tabindex="-1"></a>    <span class="fu">stat_function</span>(<span class="at">fun =</span> dlnorm, </span>
-<span id="cb844-11"><a href="10.7-histogram.html#cb844-11" tabindex="-1"></a>                  <span class="at">args =</span> <span class="fu">list</span>(<span class="at">meanlog =</span> fit_params<span class="sc">$</span>estimate[<span class="st">&#39;meanlog&#39;</span>], </span>
-<span id="cb844-12"><a href="10.7-histogram.html#cb844-12" tabindex="-1"></a>                            <span class="at">sdlog =</span> fit_params<span class="sc">$</span>estimate[<span class="st">&#39;sdlog&#39;</span>]),</span>
-<span id="cb844-13"><a href="10.7-histogram.html#cb844-13" tabindex="-1"></a>                  <span class="at">colour =</span> <span class="st">&quot;red&quot;</span></span>
-<span id="cb844-14"><a href="10.7-histogram.html#cb844-14" tabindex="-1"></a>                  ) <span class="sc">+</span></span>
-<span id="cb844-15"><a href="10.7-histogram.html#cb844-15" tabindex="-1"></a>    <span class="fu">scale_x_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">170</span>))</span></code></pre></div>
-<hr />
-</div>
-<div id="histogram-of-a-vector" class="section level3 hasAnchor" number="10.7.3">
-<h3><span class="header-section-number">10.7.3</span> Histogram of a vector<a href="10.7-histogram.html#histogram-of-a-vector" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<div class="sourceCode" id="cb845"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb845-1"><a href="10.7-histogram.html#cb845-1" tabindex="-1"></a>dice_results <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">2</span>,<span class="dv">4</span>,<span class="dv">5</span>,<span class="dv">6</span>,<span class="dv">5</span>,<span class="dv">3</span>,<span class="dv">2</span>,<span class="dv">1</span>,<span class="dv">6</span>,<span class="dv">2</span>,<span class="dv">6</span>,<span class="dv">5</span>,<span class="dv">6</span>,<span class="dv">4</span>)</span>
-<span id="cb845-2"><a href="10.7-histogram.html#cb845-2" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> dice_results)) <span class="sc">+</span> <span class="fu">geom_bar</span>()</span></code></pre></div>
-<p>This returns an error: <code>data</code> must be a <code>data.frame</code>. If you don’t provide argument name explicitly, sequential rule is used – <code>data</code> arg is used for <code>aes(x=dice_results)</code>.</p>
-<p>To correct it – use arg name explicitly:</p>
-<div class="sourceCode" id="cb846"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb846-1"><a href="10.7-histogram.html#cb846-1" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x=</span>dice_results)) <span class="sc">+</span> <span class="fu">geom_bar</span>()</span></code></pre></div>
-<p>Alternatively, you may use it inside <code>geom_</code> functions family without explicit naming <code>mapping</code> argument since <code>mapping</code> is the first argument unlike in <code>ggplot</code> function case where <code>data</code> is the first function argument.</p>
-<div class="sourceCode" id="cb847"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb847-1"><a href="10.7-histogram.html#cb847-1" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span> <span class="fu">geom_bar</span>(<span class="fu">aes</span>(dice_results))</span>
-<span id="cb847-2"><a href="10.7-histogram.html#cb847-2" tabindex="-1"></a></span>
-<span id="cb847-3"><a href="10.7-histogram.html#cb847-3" tabindex="-1"></a><span class="co"># or use the `aes` function</span></span>
-<span id="cb847-4"><a href="10.7-histogram.html#cb847-4" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span> </span>
-<span id="cb847-5"><a href="10.7-histogram.html#cb847-5" tabindex="-1"></a>        <span class="fu">aes</span>(dice_results) <span class="sc">+</span></span>
-<span id="cb847-6"><a href="10.7-histogram.html#cb847-6" tabindex="-1"></a>        <span class="fu">geom_bar</span>()</span></code></pre></div>
-<p><strong>Vertical histogram</strong></p>
-<p><a href="https://stackoverflow.com/a/13334294/10108921" class="uri">https://stackoverflow.com/a/13334294/10108921</a></p>
-<p><code>geom_bar</code> and <code>geom_col</code> plots bar charts.</p>
-<ul>
-<li><code>geom_bar</code> makes the height of the bar proportional to the number of cases in each group.</li>
-<li><code>geom_col</code> the heights of the bars to represent values in the data</li>
-</ul>
-<hr />
-</div>
-<div id="add-a-band" class="section level3 hasAnchor" number="10.7.4">
-<h3><span class="header-section-number">10.7.4</span> Add a band<a href="10.7-histogram.html#add-a-band" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p><code style="white-space: pre; display: inline;">geom_ribbon(
-   data = sim_obs_quantile,
-   aes(ymin=<code>17%</code>, ymax=<code>83%</code>),
-   alpha=0.2, fill=“#F8766D”
-)</code> plot confidence interval (CI) in shaded areas.</p>
-<hr />
-</div>
-<div id="add-a-line-or-arrow" class="section level3 hasAnchor" number="10.7.5">
-<h3><span class="header-section-number">10.7.5</span> Add a line or arrow<a href="10.7-histogram.html#add-a-line-or-arrow" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p><code style="white-space: pre; display: inline;">geom_segment(
-   aes(x = x1, y = y1, xend = x2, yend = y2),
-   col = “red”,
-   arrow = arrow(length = unit(0.3, “cm”) )
-)</code> draws a straight arrowhead line from the start point <code>(x, y)</code> to the end point<code>(xend, yend)</code> in the plot.</p>
-<ul>
-<li><code>arrow</code> specification for arrow heads, as created by <code>grid::arrow()</code>. <code>length</code> set the length of the arrow head to 0.3 cm.</li>
-</ul>
-<hr />
-</div>
-<div id="add-shapes" class="section level3 hasAnchor" number="10.7.6">
-<h3><span class="header-section-number">10.7.6</span> Add shapes<a href="10.7-histogram.html#add-shapes" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p><code style="white-space: pre; display: inline;">annotate(
-   geom = “segment”, x = 12, y = -0.05, xend = 12, yend = 0,
-   col = “red”, arrow = arrow(length = unit(0.3, “cm”) )
-)</code> draws arrows outside the plot.</p>
-<ul>
-<li><code>geom</code> specifies the type of annotation to draw. It can be any <code>geom_</code> functions, e.g.,
-<ul>
-<li><code>"text"</code>, <code>"label"</code>: for adding text annotations to the plot.</li>
-<li><code>"segment"</code>, <code>"curve"</code> for adding line segments or curves to the plot.</li>
-<li><code>"rect"</code> for adding rectangles to the plot.</li>
-</ul></li>
-</ul>
-<p>ref: <a href="https://r-graph-gallery.com/233-add-annotations-on-ggplot2-chart.html">How to annotate a plot in ggplot2</a></p>
+<p><strong>Tables in Markdown</strong></p>
+<p>You can create tables using standard Markdown syntax.</p>
+<pre class="rmd"><code>| Col1 | Col2 | Col3 |
+| ---- | ---- | ---- |
+| A    | B    | C    |
+| E    | F    | G    |
+| A    | G    | G    |
 
-</div>
+: My Caption {#tbl-letters .striped .hover}
+
+See @tbl-letters for the table.</code></pre>
+<ul>
+<li><p>Captions are added using <a href="https://pandoc.org/demo/example33/8.9-tables.html">Pandoc table syntax</a>: <code>:␣Caption text</code>.</p></li>
+<li><p>Table labels and attributes can be added within curly braces <code>{}</code> after the caption.</p>
+<p>If your table does not have a caption, you can still add attributes by placing them directly after <code>:␣</code></p></li>
+<li><p>You can also explicitly specify columns widths using the <code>tbl-colwidths</code> attribute or document-level option.
+If you have a table with two columns, and want to set 1st col to 25% and 2nd col to 75% of the table width, you can do:</p>
+<pre class="rmd"><code>| fruit  | price  |
+|--------|--------|
+| apple  | 2.05   |
+| pear   | 1.37   |
+| orange | 3.09   |
+
+: Fruit prices {tbl-colwidths=&quot;[25, 75]&quot;}</code></pre></li>
+</ul>
+<p>ref: <a href="https://quarto.org/docs/authoring/tables.html#markdown-tables" class="uri">https://quarto.org/docs/authoring/tables.html#markdown-tables</a></p>
+<hr />
 </div>
             </section>
 
           </div>
         </div>
       </div>
-<a href="10.6-plot-raster-data.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="10.8-qq-plot.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="6.12-theorems-2.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="6.14-raw-content.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -1224,7 +1146,7 @@ gitbook.start({
     "size": 3
   },
   "edit": {
-    "link": "https://github.com/my1396/R-Notes/edit/main/0606-Histogram.Rmd",
+    "link": "https://github.com/my1396/R-Notes/edit/main/0304-Quarto.Rmd",
     "text": "Edit"
   },
   "history": {
@@ -1235,7 +1157,7 @@ gitbook.start({
     "link": null,
     "text": null
   },
-  "download": ["_main.pdf", "_main.epub", "https://github.com/my1396/R-Notes/raw/main/0606-Histogram.Rmd"],
+  "download": ["_main.pdf", "_main.epub", "https://github.com/my1396/R-Notes/raw/main/0304-Quarto.Rmd"],
   "search": {
     "engine": "fuse",
     "options": null

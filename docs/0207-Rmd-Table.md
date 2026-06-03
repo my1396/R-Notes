@@ -801,7 +801,7 @@ print(xtab, type = "html", include.rownames = TRUE)
 ```
 
 <!-- html table generated in R 4.5.1 by xtable 1.8-4 package -->
-<!-- Tue Jun  2 22:11:17 2026 -->
+<!-- Tue Jun  2 23:19:13 2026 -->
 <table border=1>
 <caption align="bottom"> Asset Parameters </caption>
 <tr> <th>  </th> <th> Asset </th> <th> Mu </th> <th> Sigma </th>  </tr>
@@ -821,7 +821,7 @@ print(xtab_model, type = "html", digits = 3)
 ```
 
 <!-- html table generated in R 4.5.1 by xtable 1.8-4 package -->
-<!-- Tue Jun  2 22:11:17 2026 -->
+<!-- Tue Jun  2 23:19:13 2026 -->
 <table border=1>
 <caption align="bottom"> Regression of mpg on hp and wt </caption>
 <tr> <th>  </th> <th> Estimate </th> <th> Std. Error </th> <th> t value </th> <th> Pr(&gt;|t|) </th>  </tr>

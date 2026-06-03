@@ -1184,6 +1184,40 @@ crossref:
 
 --------------------------------------------------------------------------------
 
+**For pdf output**, Quarto supports LaTeX's way of labeling and cross-referencing. 
+
+For example, using `\label{tbl-income-statement}` to label a table and `\ref{tbl-income-statement}` or `\autoref{tbl-balance-sheet}` (with `hyperref`) to reference it.
+
+Note that you don't have to use `tbl-` prefix if you use LaTeX's way of labeling and referencing. You can 
+
+- label a table with `\label{income-statement}` and reference it with `Table \ref{income-statement}`.
+- label a table with `\label{tab: income-statement}` and reference it with `\autoref{tab: income-statement}`.
+
+You can also use Quarto's way of referencing in pdf output, but you need to make sure to label the table with `#tbl-xxx` and reference it with `@tbl-xxx`.
+
+```latex
+See @tbl-table-example for a simple table.
+
+\begin{table}[h!]
+\centering
+\label{tbl-table-example}
+\caption{Simple table example} 
+\begin{tabular}{l|c|r}
+  \textbf{Value 1} & \textbf{Value 2} & \textbf{Value 3}\\
+  $\alpha$ & $\beta$ & $\gamma$ \\
+  \hline
+  1 & 1110.1 & a\\
+  2 & 10.1 & b\\
+  3 & 23.113231 & c\\
+\end{tabular}
+\end{table}
+```
+
+More examples of table cross-referencing [here](#quarto-tables).
+
+--------------------------------------------------------------------------------
+
+
 ### Cross-references to Equations {.unnumbered}
 
 ```latex
@@ -1916,7 +1950,7 @@ crossref:
 
 --------------------------------------------------------------------------------
 
-## Tables
+## Tables {#quarto-tables}
 
 **Tables in Latex**
 
