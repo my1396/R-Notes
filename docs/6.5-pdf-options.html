@@ -1103,26 +1103,42 @@ document.addEventListener('DOMContentLoaded', function() {
 </tr>
 </tbody>
 </table>
-<p>Subkeys for <code>include-in-header</code>:</p>
+<p>Subkeys for <span class="env-green"><code>include-in-header</code></span>:</p>
 <ul>
 <li><p><code>file</code>: path to a file to include at the end of the header.</p>
 <ul>
-<li>Useful if you have template files.</li>
-<li>Can have several files to include, e.g., <code>preamble.tex</code> for package setup and <code>macros.tex</code> for custom macros.</li>
+<li><p>Useful if you have template files.</p></li>
+<li><p>Can have several files to include, e.g., <code>preamble.tex</code> for package setup and <code>macros.tex</code> for custom macros.</p></li>
+<li><p>You can use relative paths or absolute paths.</p>
+<p><img src="images/solution.png" alt="" width="25" height="25" style="display: inline; height: 1.2em; vertical-align: bottom;"/> Absolute paths can be lengthy, one workaround is to</p>
+<ol style="list-style-type: decimal">
+<li><p>put your template files in a shared folder</p></li>
+<li><p>create a <span class="env-green">symbolic link</span> to the shared folder in your project directory:</p>
+<div class="sourceCode" id="cb372"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb372-1"><a href="6.5-pdf-options.html#cb372-1" tabindex="-1"></a><span class="fu">ln</span> <span class="at">-s</span> /path/to/shared/latex/preamble.tex ./latex/preamble.tex</span></code></pre></div></li>
+<li><p>use the symbolic link in your yaml:</p>
+<div class="sourceCode" id="cb373"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb373-1"><a href="6.5-pdf-options.html#cb373-1" tabindex="-1"></a><span class="fu">format</span><span class="kw">:</span></span>
+<span id="cb373-2"><a href="6.5-pdf-options.html#cb373-2" tabindex="-1"></a><span class="at">  </span><span class="fu">pdf</span><span class="kw">:</span></span>
+<span id="cb373-3"><a href="6.5-pdf-options.html#cb373-3" tabindex="-1"></a><span class="at">    </span><span class="fu">include-in-header</span><span class="kw">:</span></span>
+<span id="cb373-4"><a href="6.5-pdf-options.html#cb373-4" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">file</span><span class="kw">:</span><span class="at"> ./latex/preamble.tex</span></span></code></pre></div></li>
+</ol></li>
 </ul></li>
 <li><p><code>text: |</code>: include raw latex content in the YAML header.</p>
 <p><code>|</code> indicates that the content is in multiple lines.</p></li>
 <li><p>If you omit <code>file:</code> or <code>text:</code>, Quarto assumes <code>file:</code> by default.</p></li>
 </ul>
+<div class="rmdnote">
+<p><code>include-in-header</code> 优先级最高，高于 Quarto top level <code>pdf</code> options. 比如既设置了 <code>mainfont: Charter</code>，又在 <code>include-in-header</code> 中设置了 <code>\setmainfont{Georgia Pro}</code>，两者会冲突，但由于 <code>include-in-header</code> 优先级更高，所以最终的字体是 <code>Georgia Pro</code>。</p>
+<p>如果你的 <code>include-in-header:file</code> 也中设置了字体，那么最后定义的字体会覆盖之前的设置。即谁后定义的字体，谁就生效。</p>
+</div>
 <p>Use example</p>
-<div class="sourceCode" id="cb372"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb372-1"><a href="6.5-pdf-options.html#cb372-1" tabindex="-1"></a><span class="fu">format</span><span class="kw">:</span></span>
-<span id="cb372-2"><a href="6.5-pdf-options.html#cb372-2" tabindex="-1"></a><span class="at">  </span><span class="fu">pdf</span><span class="kw">:</span></span>
-<span id="cb372-3"><a href="6.5-pdf-options.html#cb372-3" tabindex="-1"></a><span class="at">    </span><span class="fu">include-in-header</span><span class="kw">:</span></span>
-<span id="cb372-4"><a href="6.5-pdf-options.html#cb372-4" tabindex="-1"></a><span class="kw">      - </span><span class="fu">text</span><span class="kw">:</span><span class="at"> </span><span class="ch">|</span></span>
-<span id="cb372-5"><a href="6.5-pdf-options.html#cb372-5" tabindex="-1"></a>          \usepackage{eplain}</span>
-<span id="cb372-6"><a href="6.5-pdf-options.html#cb372-6" tabindex="-1"></a>          \usepackage{easy-todo}</span>
-<span id="cb372-7"><a href="6.5-pdf-options.html#cb372-7" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">file</span><span class="kw">:</span><span class="at"> packages.tex</span></span>
-<span id="cb372-8"><a href="6.5-pdf-options.html#cb372-8" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> macros.tex</span><span class="co">            # assume file by default</span></span></code></pre></div>
+<div class="sourceCode" id="cb374"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb374-1"><a href="6.5-pdf-options.html#cb374-1" tabindex="-1"></a><span class="fu">format</span><span class="kw">:</span></span>
+<span id="cb374-2"><a href="6.5-pdf-options.html#cb374-2" tabindex="-1"></a><span class="at">  </span><span class="fu">pdf</span><span class="kw">:</span></span>
+<span id="cb374-3"><a href="6.5-pdf-options.html#cb374-3" tabindex="-1"></a><span class="at">    </span><span class="fu">include-in-header</span><span class="kw">:</span></span>
+<span id="cb374-4"><a href="6.5-pdf-options.html#cb374-4" tabindex="-1"></a><span class="kw">      - </span><span class="fu">text</span><span class="kw">:</span><span class="at"> </span><span class="ch">|</span></span>
+<span id="cb374-5"><a href="6.5-pdf-options.html#cb374-5" tabindex="-1"></a>          \usepackage{eplain}</span>
+<span id="cb374-6"><a href="6.5-pdf-options.html#cb374-6" tabindex="-1"></a>          \usepackage{easy-todo}</span>
+<span id="cb374-7"><a href="6.5-pdf-options.html#cb374-7" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">file</span><span class="kw">:</span><span class="at"> packages.tex</span></span>
+<span id="cb374-8"><a href="6.5-pdf-options.html#cb374-8" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> macros.tex</span><span class="co">            # assume file by default</span></span></code></pre></div>
 <ul>
 <li>Note that you need the dash <code>-</code> before <code>text:</code> and <code>file:</code> to indicate a list of items.</li>
 </ul>
@@ -1133,16 +1149,16 @@ document.addEventListener('DOMContentLoaded', function() {
 <li>pandoc doc for <a href="https://pandoc.org/demo/example33/8.10-metadata-blocks.html"><code>header-includes</code></a></li>
 </ul>
 <p><strong>Use example:</strong></p>
-<div class="sourceCode" id="cb373"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb373-1"><a href="6.5-pdf-options.html#cb373-1" tabindex="-1"></a><span class="fu">header-includes</span><span class="kw">: </span><span class="ch">|</span></span>
-<span id="cb373-2"><a href="6.5-pdf-options.html#cb373-2" tabindex="-1"></a>  \RedeclareSectionCommand[</span>
-<span id="cb373-3"><a href="6.5-pdf-options.html#cb373-3" tabindex="-1"></a>    beforeskip=-10pt plus -2pt minus -1pt,</span>
-<span id="cb373-4"><a href="6.5-pdf-options.html#cb373-4" tabindex="-1"></a>    afterskip=1sp plus -1sp minus 1sp,</span>
-<span id="cb373-5"><a href="6.5-pdf-options.html#cb373-5" tabindex="-1"></a>    font=\normalfont\itshape]{paragraph}</span>
-<span id="cb373-6"><a href="6.5-pdf-options.html#cb373-6" tabindex="-1"></a>  \RedeclareSectionCommand[</span>
-<span id="cb373-7"><a href="6.5-pdf-options.html#cb373-7" tabindex="-1"></a>    beforeskip=-10pt plus -2pt minus -1pt,</span>
-<span id="cb373-8"><a href="6.5-pdf-options.html#cb373-8" tabindex="-1"></a>    afterskip=1sp plus -1sp minus 1sp,</span>
-<span id="cb373-9"><a href="6.5-pdf-options.html#cb373-9" tabindex="-1"></a>    font=\normalfont\scshape,</span>
-<span id="cb373-10"><a href="6.5-pdf-options.html#cb373-10" tabindex="-1"></a>    indent=0pt]{subparagraph}</span></code></pre></div>
+<div class="sourceCode" id="cb375"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb375-1"><a href="6.5-pdf-options.html#cb375-1" tabindex="-1"></a><span class="fu">header-includes</span><span class="kw">: </span><span class="ch">|</span></span>
+<span id="cb375-2"><a href="6.5-pdf-options.html#cb375-2" tabindex="-1"></a>  \RedeclareSectionCommand[</span>
+<span id="cb375-3"><a href="6.5-pdf-options.html#cb375-3" tabindex="-1"></a>    beforeskip=-10pt plus -2pt minus -1pt,</span>
+<span id="cb375-4"><a href="6.5-pdf-options.html#cb375-4" tabindex="-1"></a>    afterskip=1sp plus -1sp minus 1sp,</span>
+<span id="cb375-5"><a href="6.5-pdf-options.html#cb375-5" tabindex="-1"></a>    font=\normalfont\itshape]{paragraph}</span>
+<span id="cb375-6"><a href="6.5-pdf-options.html#cb375-6" tabindex="-1"></a>  \RedeclareSectionCommand[</span>
+<span id="cb375-7"><a href="6.5-pdf-options.html#cb375-7" tabindex="-1"></a>    beforeskip=-10pt plus -2pt minus -1pt,</span>
+<span id="cb375-8"><a href="6.5-pdf-options.html#cb375-8" tabindex="-1"></a>    afterskip=1sp plus -1sp minus 1sp,</span>
+<span id="cb375-9"><a href="6.5-pdf-options.html#cb375-9" tabindex="-1"></a>    font=\normalfont\scshape,</span>
+<span id="cb375-10"><a href="6.5-pdf-options.html#cb375-10" tabindex="-1"></a>    indent=0pt]{subparagraph}</span></code></pre></div>
 <p><strong>Format &amp; Typesettings</strong></p>
 <table>
 <colgroup>
@@ -1278,24 +1294,24 @@ KOMA-Script classes have good looking default settings, and are highly customiza
 <h3><span class="header-section-number">6.5.1</span> Title Margin<a href="6.5-pdf-options.html#title-margin" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>One issue is it might have too wide margins around the title.</p>
 <p>To reduce the margin above the title, add the following line to your <code>preamble.tex</code> file:</p>
-<div class="sourceCode" id="cb375"><pre class="sourceCode latex"><code class="sourceCode latex"><span id="cb375-1"><a href="6.5-pdf-options.html#cb375-1" tabindex="-1"></a><span class="co">% reduce title top margin</span></span>
-<span id="cb375-2"><a href="6.5-pdf-options.html#cb375-2" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">xpatch</span>}</span>
-<span id="cb375-3"><a href="6.5-pdf-options.html#cb375-3" tabindex="-1"></a><span class="fu">\makeatletter</span></span>
-<span id="cb375-4"><a href="6.5-pdf-options.html#cb375-4" tabindex="-1"></a><span class="fu">\xpatchcmd</span>{<span class="fu">\@maketitle</span>}{<span class="fu">\vskip</span>2em}{</span>
-<span id="cb375-5"><a href="6.5-pdf-options.html#cb375-5" tabindex="-1"></a>    <span class="co">% Insert here the space you want between the top margin and the title.</span></span>
-<span id="cb375-6"><a href="6.5-pdf-options.html#cb375-6" tabindex="-1"></a>    <span class="fu">\vspace</span>{-2em} <span class="co">% Example of smaller margin. </span></span>
-<span id="cb375-7"><a href="6.5-pdf-options.html#cb375-7" tabindex="-1"></a>}{}{}</span>
-<span id="cb375-8"><a href="6.5-pdf-options.html#cb375-8" tabindex="-1"></a><span class="fu">\makeatother</span></span></code></pre></div>
+<div class="sourceCode" id="cb377"><pre class="sourceCode latex"><code class="sourceCode latex"><span id="cb377-1"><a href="6.5-pdf-options.html#cb377-1" tabindex="-1"></a><span class="co">% reduce title top margin</span></span>
+<span id="cb377-2"><a href="6.5-pdf-options.html#cb377-2" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">xpatch</span>}</span>
+<span id="cb377-3"><a href="6.5-pdf-options.html#cb377-3" tabindex="-1"></a><span class="fu">\makeatletter</span></span>
+<span id="cb377-4"><a href="6.5-pdf-options.html#cb377-4" tabindex="-1"></a><span class="fu">\xpatchcmd</span>{<span class="fu">\@maketitle</span>}{<span class="fu">\vskip</span>2em}{</span>
+<span id="cb377-5"><a href="6.5-pdf-options.html#cb377-5" tabindex="-1"></a>    <span class="co">% Insert here the space you want between the top margin and the title.</span></span>
+<span id="cb377-6"><a href="6.5-pdf-options.html#cb377-6" tabindex="-1"></a>    <span class="fu">\vspace</span>{-2em} <span class="co">% Example of smaller margin. </span></span>
+<span id="cb377-7"><a href="6.5-pdf-options.html#cb377-7" tabindex="-1"></a>}{}{}</span>
+<span id="cb377-8"><a href="6.5-pdf-options.html#cb377-8" tabindex="-1"></a><span class="fu">\makeatother</span></span></code></pre></div>
 <p>To reduce the margin below the title, in individual <code>qmd</code> file, add the following line <strong>after</strong> the YAML header:</p>
 <ul>
 <li><p>fenced divs</p>
-<div class="sourceCode" id="cb376"><pre class="sourceCode latex"><code class="sourceCode latex"><span id="cb376-1"><a href="6.5-pdf-options.html#cb376-1" tabindex="-1"></a>::: {=latex}</span>
-<span id="cb376-2"><a href="6.5-pdf-options.html#cb376-2" tabindex="-1"></a><span class="fu">\vspace</span>{-6em}</span>
-<span id="cb376-3"><a href="6.5-pdf-options.html#cb376-3" tabindex="-1"></a>:::</span></code></pre></div></li>
+<div class="sourceCode" id="cb378"><pre class="sourceCode latex"><code class="sourceCode latex"><span id="cb378-1"><a href="6.5-pdf-options.html#cb378-1" tabindex="-1"></a>::: {=latex}</span>
+<span id="cb378-2"><a href="6.5-pdf-options.html#cb378-2" tabindex="-1"></a><span class="fu">\vspace</span>{-6em}</span>
+<span id="cb378-3"><a href="6.5-pdf-options.html#cb378-3" tabindex="-1"></a>:::</span></code></pre></div></li>
 <li><p>code chunks</p>
-<div class="sourceCode" id="cb377"><pre class="sourceCode latex"><code class="sourceCode latex"><span id="cb377-1"><a href="6.5-pdf-options.html#cb377-1" tabindex="-1"></a>```{=latex} </span>
-<span id="cb377-2"><a href="6.5-pdf-options.html#cb377-2" tabindex="-1"></a><span class="fu">\vspace</span>{-6em}</span>
-<span id="cb377-3"><a href="6.5-pdf-options.html#cb377-3" tabindex="-1"></a>```</span></code></pre></div></li>
+<div class="sourceCode" id="cb379"><pre class="sourceCode latex"><code class="sourceCode latex"><span id="cb379-1"><a href="6.5-pdf-options.html#cb379-1" tabindex="-1"></a>```{=latex} </span>
+<span id="cb379-2"><a href="6.5-pdf-options.html#cb379-2" tabindex="-1"></a><span class="fu">\vspace</span>{-6em}</span>
+<span id="cb379-3"><a href="6.5-pdf-options.html#cb379-3" tabindex="-1"></a>```</span></code></pre></div></li>
 </ul>
 <p>For pdf output, it is possible to <strong>write LaTeX code directly</strong> in Markdown document using fenced divs or code chunks with <code>{=latex}</code>.</p>
 <ul>
@@ -1320,18 +1336,18 @@ KOMA-Script classes have good looking default settings, and are highly customiza
 </div>
 <div id="add-appendices" class="section level3 hasAnchor" number="6.5.3">
 <h3><span class="header-section-number">6.5.3</span> Add Appendices<a href="6.5-pdf-options.html#add-appendices" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<div class="sourceCode" id="cb378"><pre class="sourceCode tex"><code class="sourceCode latex"><span id="cb378-1"><a href="6.5-pdf-options.html#cb378-1" tabindex="-1"></a><span class="fu">\newpage</span></span>
-<span id="cb378-2"><a href="6.5-pdf-options.html#cb378-2" tabindex="-1"></a></span>
-<span id="cb378-3"><a href="6.5-pdf-options.html#cb378-3" tabindex="-1"></a># Appendices {.unnumbered}</span>
-<span id="cb378-4"><a href="6.5-pdf-options.html#cb378-4" tabindex="-1"></a></span>
-<span id="cb378-5"><a href="6.5-pdf-options.html#cb378-5" tabindex="-1"></a><span class="fu">\appendix</span></span>
-<span id="cb378-6"><a href="6.5-pdf-options.html#cb378-6" tabindex="-1"></a><span class="fu">\renewcommand</span>{<span class="ex">\thesubsection</span>}{<span class="fu">\Alph</span>{subsection}}</span>
-<span id="cb378-7"><a href="6.5-pdf-options.html#cb378-7" tabindex="-1"></a><span class="fu">\setcounter</span>{table}{0}</span>
-<span id="cb378-8"><a href="6.5-pdf-options.html#cb378-8" tabindex="-1"></a><span class="fu">\renewcommand</span>{<span class="ex">\thetable</span>}{<span class="fu">\thesection\arabic</span>{table}}</span>
-<span id="cb378-9"><a href="6.5-pdf-options.html#cb378-9" tabindex="-1"></a><span class="fu">\setcounter</span>{figure}{0}</span>
-<span id="cb378-10"><a href="6.5-pdf-options.html#cb378-10" tabindex="-1"></a><span class="fu">\renewcommand</span>{<span class="ex">\thefigure</span>}{<span class="fu">\thesection\arabic</span>{figure}}</span>
-<span id="cb378-11"><a href="6.5-pdf-options.html#cb378-11" tabindex="-1"></a></span>
-<span id="cb378-12"><a href="6.5-pdf-options.html#cb378-12" tabindex="-1"></a>## Optimal Portfolio R Code</span></code></pre></div>
+<div class="sourceCode" id="cb380"><pre class="sourceCode tex"><code class="sourceCode latex"><span id="cb380-1"><a href="6.5-pdf-options.html#cb380-1" tabindex="-1"></a><span class="fu">\newpage</span></span>
+<span id="cb380-2"><a href="6.5-pdf-options.html#cb380-2" tabindex="-1"></a></span>
+<span id="cb380-3"><a href="6.5-pdf-options.html#cb380-3" tabindex="-1"></a># Appendices {.unnumbered}</span>
+<span id="cb380-4"><a href="6.5-pdf-options.html#cb380-4" tabindex="-1"></a></span>
+<span id="cb380-5"><a href="6.5-pdf-options.html#cb380-5" tabindex="-1"></a><span class="fu">\appendix</span></span>
+<span id="cb380-6"><a href="6.5-pdf-options.html#cb380-6" tabindex="-1"></a><span class="fu">\renewcommand</span>{<span class="ex">\thesubsection</span>}{<span class="fu">\Alph</span>{subsection}}</span>
+<span id="cb380-7"><a href="6.5-pdf-options.html#cb380-7" tabindex="-1"></a><span class="fu">\setcounter</span>{table}{0}</span>
+<span id="cb380-8"><a href="6.5-pdf-options.html#cb380-8" tabindex="-1"></a><span class="fu">\renewcommand</span>{<span class="ex">\thetable</span>}{<span class="fu">\thesection\arabic</span>{table}}</span>
+<span id="cb380-9"><a href="6.5-pdf-options.html#cb380-9" tabindex="-1"></a><span class="fu">\setcounter</span>{figure}{0}</span>
+<span id="cb380-10"><a href="6.5-pdf-options.html#cb380-10" tabindex="-1"></a><span class="fu">\renewcommand</span>{<span class="ex">\thefigure</span>}{<span class="fu">\thesection\arabic</span>{figure}}</span>
+<span id="cb380-11"><a href="6.5-pdf-options.html#cb380-11" tabindex="-1"></a></span>
+<span id="cb380-12"><a href="6.5-pdf-options.html#cb380-12" tabindex="-1"></a>## Optimal Portfolio R Code</span></code></pre></div>
 <ul>
 <li><code># Appendices {.unnumbered}</code> creates a title for the appendices section without a section number.</li>
 <li>Use <code>\appendix</code> to reset the section counter to 0 and <code>\renewcommand{\thesubsection}{\Alph{subsection}}</code> to change the section numbering to letters (A, B, C, …).</li>
@@ -1344,17 +1360,17 @@ KOMA-Script classes have good looking default settings, and are highly customiza
 <p>To show TOC pane in pdf, you can either set in YAML or in preambles.</p>
 <ul>
 <li><p>YAML</p>
-<div class="sourceCode" id="cb379"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb379-1"><a href="6.5-pdf-options.html#cb379-1" tabindex="-1"></a><span class="fu">hyperrefoptions</span><span class="kw">:</span></span>
-<span id="cb379-2"><a href="6.5-pdf-options.html#cb379-2" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> bookmarksopen=true</span></span>
-<span id="cb379-3"><a href="6.5-pdf-options.html#cb379-3" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> bookmarksopenlevel=3</span></span></code></pre></div></li>
+<div class="sourceCode" id="cb381"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb381-1"><a href="6.5-pdf-options.html#cb381-1" tabindex="-1"></a><span class="fu">hyperrefoptions</span><span class="kw">:</span></span>
+<span id="cb381-2"><a href="6.5-pdf-options.html#cb381-2" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> bookmarksopen=true</span></span>
+<span id="cb381-3"><a href="6.5-pdf-options.html#cb381-3" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> bookmarksopenlevel=3</span></span></code></pre></div></li>
 <li><p>preambles</p>
-<div class="sourceCode" id="cb380"><pre class="sourceCode latex"><code class="sourceCode latex"><span id="cb380-1"><a href="6.5-pdf-options.html#cb380-1" tabindex="-1"></a><span class="co">% Configure hyperref for expanded bookmarks</span></span>
-<span id="cb380-2"><a href="6.5-pdf-options.html#cb380-2" tabindex="-1"></a><span class="co">% Note that this only works for Adobe Acrobat Reader</span></span>
-<span id="cb380-3"><a href="6.5-pdf-options.html#cb380-3" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">hyperref</span>}</span>
-<span id="cb380-4"><a href="6.5-pdf-options.html#cb380-4" tabindex="-1"></a><span class="fu">\hypersetup</span>{</span>
-<span id="cb380-5"><a href="6.5-pdf-options.html#cb380-5" tabindex="-1"></a>  bookmarksopen = true, <span class="co">% show TOC with all the subtrees expanded</span></span>
-<span id="cb380-6"><a href="6.5-pdf-options.html#cb380-6" tabindex="-1"></a>  bookmarksopenlevel = 2 <span class="co">% level to which bookmarks are open</span></span>
-<span id="cb380-7"><a href="6.5-pdf-options.html#cb380-7" tabindex="-1"></a>}</span></code></pre></div></li>
+<div class="sourceCode" id="cb382"><pre class="sourceCode latex"><code class="sourceCode latex"><span id="cb382-1"><a href="6.5-pdf-options.html#cb382-1" tabindex="-1"></a><span class="co">% Configure hyperref for expanded bookmarks</span></span>
+<span id="cb382-2"><a href="6.5-pdf-options.html#cb382-2" tabindex="-1"></a><span class="co">% Note that this only works for Adobe Acrobat Reader</span></span>
+<span id="cb382-3"><a href="6.5-pdf-options.html#cb382-3" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">hyperref</span>}</span>
+<span id="cb382-4"><a href="6.5-pdf-options.html#cb382-4" tabindex="-1"></a><span class="fu">\hypersetup</span>{</span>
+<span id="cb382-5"><a href="6.5-pdf-options.html#cb382-5" tabindex="-1"></a>  bookmarksopen = true, <span class="co">% show TOC with all the subtrees expanded</span></span>
+<span id="cb382-6"><a href="6.5-pdf-options.html#cb382-6" tabindex="-1"></a>  bookmarksopenlevel = 2 <span class="co">% level to which bookmarks are open</span></span>
+<span id="cb382-7"><a href="6.5-pdf-options.html#cb382-7" tabindex="-1"></a>}</span></code></pre></div></li>
 </ul>
 <hr />
 </div>

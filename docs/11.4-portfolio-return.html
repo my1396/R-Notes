@@ -1078,45 +1078,45 @@ Asset B
 </tbody>
 </table>
 <p>where <span class="math inline">\(\mu\)</span> is the expected return, <span class="math inline">\(\sigma\)</span> is the volatility (standard deviation) of returns, <span class="math inline">\(\rho\)</span> is the correlation coefficient between assets A and B.</p>
-<div class="sourceCode" id="cb899"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb899-1"><a href="11.4-portfolio-return.html#cb899-1" tabindex="-1"></a><span class="co"># initialize parameters</span></span>
-<span id="cb899-2"><a href="11.4-portfolio-return.html#cb899-2" tabindex="-1"></a>mu.A <span class="ot">=</span> <span class="fl">0.175</span></span>
-<span id="cb899-3"><a href="11.4-portfolio-return.html#cb899-3" tabindex="-1"></a>sig.A <span class="ot">=</span> <span class="fl">0.258</span></span>
-<span id="cb899-4"><a href="11.4-portfolio-return.html#cb899-4" tabindex="-1"></a></span>
-<span id="cb899-5"><a href="11.4-portfolio-return.html#cb899-5" tabindex="-1"></a>mu.B <span class="ot">=</span> <span class="fl">0.055</span></span>
-<span id="cb899-6"><a href="11.4-portfolio-return.html#cb899-6" tabindex="-1"></a>sig.B <span class="ot">=</span> <span class="fl">0.115</span></span>
-<span id="cb899-7"><a href="11.4-portfolio-return.html#cb899-7" tabindex="-1"></a></span>
-<span id="cb899-8"><a href="11.4-portfolio-return.html#cb899-8" tabindex="-1"></a>rho.AB <span class="ot">=</span> <span class="sc">-</span><span class="fl">0.164</span></span></code></pre></div>
+<div class="sourceCode" id="cb901"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb901-1"><a href="11.4-portfolio-return.html#cb901-1" tabindex="-1"></a><span class="co"># initialize parameters</span></span>
+<span id="cb901-2"><a href="11.4-portfolio-return.html#cb901-2" tabindex="-1"></a>mu.A <span class="ot">=</span> <span class="fl">0.175</span></span>
+<span id="cb901-3"><a href="11.4-portfolio-return.html#cb901-3" tabindex="-1"></a>sig.A <span class="ot">=</span> <span class="fl">0.258</span></span>
+<span id="cb901-4"><a href="11.4-portfolio-return.html#cb901-4" tabindex="-1"></a></span>
+<span id="cb901-5"><a href="11.4-portfolio-return.html#cb901-5" tabindex="-1"></a>mu.B <span class="ot">=</span> <span class="fl">0.055</span></span>
+<span id="cb901-6"><a href="11.4-portfolio-return.html#cb901-6" tabindex="-1"></a>sig.B <span class="ot">=</span> <span class="fl">0.115</span></span>
+<span id="cb901-7"><a href="11.4-portfolio-return.html#cb901-7" tabindex="-1"></a></span>
+<span id="cb901-8"><a href="11.4-portfolio-return.html#cb901-8" tabindex="-1"></a>rho.AB <span class="ot">=</span> <span class="sc">-</span><span class="fl">0.164</span></span></code></pre></div>
 <p><strong>Equally weighted</strong></p>
 <p>First we consider an equally weighted portfolio <span class="math inline">\(p_1\)</span>.</p>
 <p>Asset weights: <span class="math inline">\(w_A = w_B = 0.5\)</span>.</p>
-<div class="sourceCode" id="cb900"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb900-1"><a href="11.4-portfolio-return.html#cb900-1" tabindex="-1"></a>ptf_par <span class="ot">&lt;-</span> <span class="cf">function</span>(x.A, x.B, mu.A, mu.B, sig.A, sig.B, rho.AB) {</span>
-<span id="cb900-2"><a href="11.4-portfolio-return.html#cb900-2" tabindex="-1"></a>  <span class="co"># Calculate portfolio parameters given asset parameters and weights</span></span>
-<span id="cb900-3"><a href="11.4-portfolio-return.html#cb900-3" tabindex="-1"></a>  mu.p <span class="ot">=</span> x.A<span class="sc">*</span>mu.A <span class="sc">+</span> x.B<span class="sc">*</span>mu.B</span>
-<span id="cb900-4"><a href="11.4-portfolio-return.html#cb900-4" tabindex="-1"></a>  sig2.p <span class="ot">=</span> x.A<span class="sc">^</span><span class="dv">2</span> <span class="sc">*</span> sig.A<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> x.B<span class="sc">^</span><span class="dv">2</span> <span class="sc">*</span> sig.B<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> <span class="dv">2</span><span class="sc">*</span>x.A<span class="sc">*</span>x.B<span class="sc">*</span>rho.AB<span class="sc">*</span>sig.A<span class="sc">*</span>sig.B</span>
-<span id="cb900-5"><a href="11.4-portfolio-return.html#cb900-5" tabindex="-1"></a>  sig.p <span class="ot">=</span> <span class="fu">sqrt</span>(sig2.p)</span>
-<span id="cb900-6"><a href="11.4-portfolio-return.html#cb900-6" tabindex="-1"></a>  data.tbl <span class="ot">=</span> <span class="fu">t</span>(<span class="fu">c</span>(<span class="at">mu.p=</span>mu.p, <span class="at">sig.p=</span>sig.p, <span class="at">sig.avg=</span>x.A<span class="sc">*</span>sig.A<span class="sc">+</span>x.B<span class="sc">*</span>sig.B))</span>
-<span id="cb900-7"><a href="11.4-portfolio-return.html#cb900-7" tabindex="-1"></a>  <span class="fu">return</span>(data.tbl)</span>
-<span id="cb900-8"><a href="11.4-portfolio-return.html#cb900-8" tabindex="-1"></a>}</span>
-<span id="cb900-9"><a href="11.4-portfolio-return.html#cb900-9" tabindex="-1"></a></span>
-<span id="cb900-10"><a href="11.4-portfolio-return.html#cb900-10" tabindex="-1"></a><span class="co"># equally weighted portfolio</span></span>
-<span id="cb900-11"><a href="11.4-portfolio-return.html#cb900-11" tabindex="-1"></a><span class="fu">ptf_par</span>(<span class="at">x.A=</span><span class="fl">0.5</span>, <span class="at">x.B=</span><span class="fl">0.5</span>, mu.A, mu.B, sig.A, sig.B, rho.AB)</span></code></pre></div>
+<div class="sourceCode" id="cb902"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb902-1"><a href="11.4-portfolio-return.html#cb902-1" tabindex="-1"></a>ptf_par <span class="ot">&lt;-</span> <span class="cf">function</span>(x.A, x.B, mu.A, mu.B, sig.A, sig.B, rho.AB) {</span>
+<span id="cb902-2"><a href="11.4-portfolio-return.html#cb902-2" tabindex="-1"></a>  <span class="co"># Calculate portfolio parameters given asset parameters and weights</span></span>
+<span id="cb902-3"><a href="11.4-portfolio-return.html#cb902-3" tabindex="-1"></a>  mu.p <span class="ot">=</span> x.A<span class="sc">*</span>mu.A <span class="sc">+</span> x.B<span class="sc">*</span>mu.B</span>
+<span id="cb902-4"><a href="11.4-portfolio-return.html#cb902-4" tabindex="-1"></a>  sig2.p <span class="ot">=</span> x.A<span class="sc">^</span><span class="dv">2</span> <span class="sc">*</span> sig.A<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> x.B<span class="sc">^</span><span class="dv">2</span> <span class="sc">*</span> sig.B<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> <span class="dv">2</span><span class="sc">*</span>x.A<span class="sc">*</span>x.B<span class="sc">*</span>rho.AB<span class="sc">*</span>sig.A<span class="sc">*</span>sig.B</span>
+<span id="cb902-5"><a href="11.4-portfolio-return.html#cb902-5" tabindex="-1"></a>  sig.p <span class="ot">=</span> <span class="fu">sqrt</span>(sig2.p)</span>
+<span id="cb902-6"><a href="11.4-portfolio-return.html#cb902-6" tabindex="-1"></a>  data.tbl <span class="ot">=</span> <span class="fu">t</span>(<span class="fu">c</span>(<span class="at">mu.p=</span>mu.p, <span class="at">sig.p=</span>sig.p, <span class="at">sig.avg=</span>x.A<span class="sc">*</span>sig.A<span class="sc">+</span>x.B<span class="sc">*</span>sig.B))</span>
+<span id="cb902-7"><a href="11.4-portfolio-return.html#cb902-7" tabindex="-1"></a>  <span class="fu">return</span>(data.tbl)</span>
+<span id="cb902-8"><a href="11.4-portfolio-return.html#cb902-8" tabindex="-1"></a>}</span>
+<span id="cb902-9"><a href="11.4-portfolio-return.html#cb902-9" tabindex="-1"></a></span>
+<span id="cb902-10"><a href="11.4-portfolio-return.html#cb902-10" tabindex="-1"></a><span class="co"># equally weighted portfolio</span></span>
+<span id="cb902-11"><a href="11.4-portfolio-return.html#cb902-11" tabindex="-1"></a><span class="fu">ptf_par</span>(<span class="at">x.A=</span><span class="fl">0.5</span>, <span class="at">x.B=</span><span class="fl">0.5</span>, mu.A, mu.B, sig.A, sig.B, rho.AB)</span></code></pre></div>
 <pre><code>##       mu.p     sig.p sig.avg
 ## [1,] 0.115 0.1323416  0.1865</code></pre>
 <p><strong>Long-short portfolio</strong></p>
 <p>We now consider a long-short portfolio <span class="math inline">\(p_2\)</span>.</p>
 <p>Asset weights: <span class="math inline">\(w_A = 1.5\)</span>, <span class="math inline">\(w_B = -0.5\)</span>.</p>
-<div class="sourceCode" id="cb902"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb902-1"><a href="11.4-portfolio-return.html#cb902-1" tabindex="-1"></a><span class="co"># long-short portfolio</span></span>
-<span id="cb902-2"><a href="11.4-portfolio-return.html#cb902-2" tabindex="-1"></a><span class="fu">ptf_par</span>(<span class="at">x.A=</span><span class="fl">1.5</span>, <span class="at">x.B=</span><span class="sc">-</span><span class="fl">0.5</span>, mu.A, mu.B, sig.A, sig.B, rho.AB)</span></code></pre></div>
+<div class="sourceCode" id="cb904"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb904-1"><a href="11.4-portfolio-return.html#cb904-1" tabindex="-1"></a><span class="co"># long-short portfolio</span></span>
+<span id="cb904-2"><a href="11.4-portfolio-return.html#cb904-2" tabindex="-1"></a><span class="fu">ptf_par</span>(<span class="at">x.A=</span><span class="fl">1.5</span>, <span class="at">x.B=</span><span class="sc">-</span><span class="fl">0.5</span>, mu.A, mu.B, sig.A, sig.B, rho.AB)</span></code></pre></div>
 <pre><code>##       mu.p     sig.p sig.avg
 ## [1,] 0.235 0.4004673  0.3295</code></pre>
 <hr />
 <p><strong>From individual asset returns to portfolio</strong></p>
 <p>Given a data frame of asset returns, we can calculate the portfolio return by <code>PerformanceAnalytics::Return.portfolio()</code>.</p>
-<div class="sourceCode" id="cb904"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb904-1"><a href="11.4-portfolio-return.html#cb904-1" tabindex="-1"></a>w <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.25</span>, <span class="fl">0.25</span>, <span class="fl">0.20</span>, <span class="fl">0.20</span>, <span class="fl">0.10</span>)</span>
-<span id="cb904-2"><a href="11.4-portfolio-return.html#cb904-2" tabindex="-1"></a></span>
-<span id="cb904-3"><a href="11.4-portfolio-return.html#cb904-3" tabindex="-1"></a>portfolio_returns_xts_rebalanced_monthly <span class="ot">&lt;-</span> </span>
-<span id="cb904-4"><a href="11.4-portfolio-return.html#cb904-4" tabindex="-1"></a>  <span class="fu">Return.portfolio</span>(asset_returns_xts, <span class="at">weights =</span> w, <span class="at">rebalance_on =</span> <span class="st">&quot;months&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb904-5"><a href="11.4-portfolio-return.html#cb904-5" tabindex="-1"></a>  <span class="st">`</span><span class="at">colnames&lt;-</span><span class="st">`</span>(<span class="st">&quot;returns&quot;</span>) </span></code></pre></div>
+<div class="sourceCode" id="cb906"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb906-1"><a href="11.4-portfolio-return.html#cb906-1" tabindex="-1"></a>w <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.25</span>, <span class="fl">0.25</span>, <span class="fl">0.20</span>, <span class="fl">0.20</span>, <span class="fl">0.10</span>)</span>
+<span id="cb906-2"><a href="11.4-portfolio-return.html#cb906-2" tabindex="-1"></a></span>
+<span id="cb906-3"><a href="11.4-portfolio-return.html#cb906-3" tabindex="-1"></a>portfolio_returns_xts_rebalanced_monthly <span class="ot">&lt;-</span> </span>
+<span id="cb906-4"><a href="11.4-portfolio-return.html#cb906-4" tabindex="-1"></a>  <span class="fu">Return.portfolio</span>(asset_returns_xts, <span class="at">weights =</span> w, <span class="at">rebalance_on =</span> <span class="st">&quot;months&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb906-5"><a href="11.4-portfolio-return.html#cb906-5" tabindex="-1"></a>  <span class="st">`</span><span class="at">colnames&lt;-</span><span class="st">`</span>(<span class="st">&quot;returns&quot;</span>) </span></code></pre></div>
 <p><code>PerformanceAnalytics::Return.portfolio(R=Return_xts, weights=NULL, rebalance_on, verbose=FALSE)</code> Using a time series of returns and any regular or irregular time series of weights for each asset, this function calculates the returns of a portfolio with the same periodicity of the returns data. Returns a time series of returns weighted by the <code>weights</code> parameter, or a list that includes intermediate calculations</p>
 <ul>
 <li><p><code>R</code> An xts, vector, matrix, data frame, timeSeries or zoo object of <strong>asset returns</strong>.</p></li>
@@ -1139,7 +1139,7 @@ Asset B
 </ul></li>
 </ul>
 <p><code>chartSeries</code> plot an OHLC object.</p>
-<div class="sourceCode" id="cb905"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb905-1"><a href="11.4-portfolio-return.html#cb905-1" tabindex="-1"></a><span class="fu">chartSeries</span>(AMZN, <span class="at">type=</span><span class="st">&quot;candlesticks&quot;</span>, <span class="at">subset=</span><span class="st">&#39;2016-05-18::2017-01-30&#39;</span>, <span class="at">theme =</span> <span class="fu">chartTheme</span>(<span class="st">&#39;white&#39;</span>, <span class="at">up.col=</span><span class="st">&#39;green&#39;</span>, <span class="at">dn.col=</span><span class="st">&#39;red&#39;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb907"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb907-1"><a href="11.4-portfolio-return.html#cb907-1" tabindex="-1"></a><span class="fu">chartSeries</span>(AMZN, <span class="at">type=</span><span class="st">&quot;candlesticks&quot;</span>, <span class="at">subset=</span><span class="st">&#39;2016-05-18::2017-01-30&#39;</span>, <span class="at">theme =</span> <span class="fu">chartTheme</span>(<span class="st">&#39;white&#39;</span>, <span class="at">up.col=</span><span class="st">&#39;green&#39;</span>, <span class="at">dn.col=</span><span class="st">&#39;red&#39;</span>))</span></code></pre></div>
 <ul>
 <li><p><code>type="candlesticks"</code> can be <code>line</code>, <code>bar</code>, default to <code>candlesticks</code>.</p>
 <ul>

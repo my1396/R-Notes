@@ -2,7 +2,10 @@
 
 **R Markdown** is a powerful tool for combining analysis and reporting into the same document. R Markdown has grown substantially from a package that supports a few output formats, to an extensive and diverse ecosystem that supports the creation of books, blogs, scientific articles, websites, and even resumes.
 
-Nice documentations 
+Q: Why would I use R Markdown to write reports or papers instead of LaTeX?  
+A: R Markdown (or other markdown language, eg, Quarto) is more flexible, easier syntax. E.g., for bold text, you can use `**bold**` instead of `\textbf{bold}`. LaTeX's advantage is *precision*; Rmd's advantage is *flexibility* and ease of use. For everyday reporting, Rmd/Quarto is more sufficient. For more complex documents, e.g., papers, use LaTeX.
+
+**Nice documentations** 
 
 - **`rmarkdown`** package CRAN
     - [Package CRAN html page](https://cran.r-project.org/web/packages/rmarkdown/index.html)

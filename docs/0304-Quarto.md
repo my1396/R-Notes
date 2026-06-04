@@ -529,18 +529,42 @@ See [Metadata variables](https://pandoc.org/demo/example33/6.2-variables.html) f
 
 
 
-Subkeys for `include-in-header`:
+Subkeys for <span class="env-green">`include-in-header`</span>:
 
 - `file`: path to a file to include at the end of the header.
   
   - Useful if you have template files.
   - Can have several files to include, e.g., `preamble.tex` for package setup and `macros.tex` for custom macros.
+  - You can use relative paths or absolute paths. 
+    
+    <img src="images/solution.png" alt="" width="25" height="25" style="display: inline; height: 1.2em; vertical-align: bottom;"/> Absolute paths can be lengthy, one workaround is to 
+
+    1. put your template files in a shared folder
+    2. create a <span class="env-green">symbolic link</span> to the shared folder in your project directory:
+       
+       ```bash
+       ln -s /path/to/shared/latex/preamble.tex ./latex/preamble.tex
+       ```
+    3. use the symbolic link in your yaml:
+       
+       ```yaml
+       format:
+         pdf:
+           include-in-header:
+             - file: ./latex/preamble.tex
+       ```
 
 - `text: |`: include raw latex content in the YAML header. 
   
   `|` indicates that the content is in multiple lines.
+
 - If you omit `file:` or `text:`, Quarto assumes `file:` by default.
 
+<div class="rmdnote">
+`include-in-header` 优先级最高，高于 Quarto top level `pdf` options. 比如既设置了 `mainfont: Charter`，又在 `include-in-header` 中设置了 `\setmainfont{Georgia Pro}`，两者会冲突，但由于 `include-in-header` 优先级更高，所以最终的字体是 `Georgia Pro`。
+
+如果你的 `include-in-header:file` 也中设置了字体，那么最后定义的字体会覆盖之前的设置。即谁后定义的字体，谁就生效。
+</div>
 
 Use example
 
