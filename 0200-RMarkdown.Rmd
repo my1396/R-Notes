@@ -3,7 +3,7 @@
 **R Markdown** is a powerful tool for combining analysis and reporting into the same document. R Markdown has grown substantially from a package that supports a few output formats, to an extensive and diverse ecosystem that supports the creation of books, blogs, scientific articles, websites, and even resumes.
 
 Q: Why would I use R Markdown to write reports or papers instead of LaTeX?  
-A: R Markdown (or other markdown language, eg, Quarto) is more flexible, easier syntax. E.g., for bold text, you can use `**bold**` instead of `\textbf{bold}`. LaTeX's advantage is *precision*; Rmd's advantage is *flexibility* and ease of use. For everyday reporting, Rmd/Quarto is more sufficient. For more complex documents, e.g., papers, use LaTeX.
+A: R Markdown (or other markdown language, eg, Quarto) is more flexible, easier syntax. E.g., for bold text, you can use `**bold**` instead of `\textbf{bold}`. LaTeX's advantage is *precision*; Rmd's advantage is *flexibility* and ease of use. For everyday reporting, Rmd/Quarto is sufficient. For more complex documents, e.g., papers, use LaTeX.
 
 **Nice documentations** 
 
@@ -1664,9 +1664,9 @@ A:
 
   - After <u>three or more</u> backticks (fenced code blocks), or 
 
-    Can also use tildes (`~`)
+    Can also use <span class="env-green">**tildes** (`~`)</span>
 
-  - Indent the blocks by four spaces (indented code blocks)
+  - **Indent** the blocks by four spaces (indented code blocks)
 
     Special characters do not trigger special formatting, and all spaces and line breaks are preserved. Blank lines in the verbatim text need not begin with four spaces.
 
@@ -1706,6 +1706,8 @@ print ("hello world")
 
 --------------------------------------------------------------------------------
 
+### Add attributes to text output blocks
+
 A shortcut form (without braces) can also be used for specifying the language of the code block:
 
 	```haskell
@@ -1717,11 +1719,14 @@ This is equivalent to:
 	qsort [] = []
 	```
 
-`haskell` is the language class.
+`haskell` is the language class. 
 
-You can add more classes, such as `numberLines` for adding line numbers.
+- If your class is inside braces, you need to add a dot before the language name, e.g., `{.haskell}`. 
+- If add the language name without the braces, you don't need the dot, e.g., `haskell`.
 
-This shortcut form may be combined with attributes:
+You can add more classes, including custom classes for styling. `.className` will be rendered as `class="className"` in the output HTML. Multiple classes can be added by separating them with spaces, e.g., `{.haskell .numberLines}`.
+
+For example, you want to add a class `numberLines` for adding line numbers:
 
 	```haskell {.numberLines}
 	qsort [] = []
@@ -1741,7 +1746,7 @@ and
   filterPrime (p:xs) =
     p : filterPrime [x | x <- xs, x `mod` p /= 0]
   </code>
-</pre>  
+</pre>
 ```
 
 If highlighting is supported for your output format and language, then the code block above will appear highlighted, with [numbered lines](https://bookdown.org/yihui/rmarkdown-cookbook/number-lines.html) starting with 100, 101, and go on. 
@@ -1753,6 +1758,69 @@ If highlighting is supported for your output format and language, then the code 
     p : filterPrime [x | x <- xs, x `mod` p /= 0]
   </code>
 </pre>  
+
+--------------------------------------------------------------------------------
+
+**Add styles directly to code blocks**
+
+You can add any HTML attributes to the code block, such as `width`, `height`, `style`, etc.
+
+For example, you want to change the background color of a code block to pink. 
+
+````markdown
+```{r style="background: pink !important;"}`r ''`
+plot(cars)
+```
+````
+
+The HTML output will be:
+
+```html
+<pre class="r" style="background: pink !important;">
+plot(cars)
+</pre>
+```
+
+will look like
+
+```{style="background: pink !important;"}
+plot(cars)
+```
+
+
+--------------------------------------------------------------------------------
+
+**Impose no wrap for certain code blocks**
+
+1. Define a CSS class `no-wrap` in your CSS file:
+
+```css
+.nowrap {
+  white-space: pre !important;
+}
+```
+
+2. Add this class to the code block:
+
+````markdown
+```{.stata .nowrap}`r ''`
+. sysuse auto, clear
+. regress price mpg
+Long regression output that you don't want to wrap in the output document.
+...
+```
+````
+
+By adding the `nowrap` class, the long regression output will not be wrapped in the output document; syntax highlighting will still work.
+
+This prevents autowrap but will lose syntax highlighting.
+
+```
+<pre class="nowrap"><code>
+</code></pre>
+```
+
+ref: [R Markdown Cookbook: Add attributes to text output blocks](https://pkg.yihui.org/rmarkdown-cookbook/attr-output)
 
 --------------------------------------------------------------------------------
 

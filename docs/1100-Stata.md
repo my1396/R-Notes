@@ -36,6 +36,69 @@ Overview of [Documentation](https://www.stata.com/features/documentation/):
 
   The pdf documentation uses Acrobat Reader as the viewer. Tip: **use finger pinch to zoom in and out**. When using the zoom button or `cmd +`/`cmd -`, the text jumps around, you lose your original position.
 
+--------------------------------------------------------------------------------
+
+### Quick Start {-}
+
+```{.stata .nowrap}
+// load the auto dataset
+. sysuse auto, clear
+(1978 automobile data)
+
+// get summary statistics for price and mpg
+. summarize price mpg
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+       price |         74    6165.257    2949.496       3291      15906
+         mpg |         74     21.2973    5.785503         12         41
+
+// scatter plot of price and mpg
+. scatter price mpg, name(graph1, replace)
+============================================================
+GRAPHS DETECTED: 1 graph(s) created
+============================================================
+  • graph1: path-to-dir/graph1.png
+Displaying 1 graph(s) in VS Code webview
+Displayed 1 graph(s) in VS Code webview
+
+// regress price on mpg
+. reg price mpg
+      Source |       SS           df       MS      Number of obs   =        74
+-------------+----------------------------------   F(1, 72)        =     20.26
+       Model |   139449474         1   139449474   Prob > F        =    0.0000
+    Residual |   495615923        72  6883554.48   R-squared       =    0.2196
+-------------+----------------------------------   Adj R-squared   =    0.2087
+       Total |   635065396        73  8699525.97   Root MSE        =    2623.7
+------------------------------------------------------------------------------
+       price | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         mpg |  -238.8943   53.07669    -4.50   0.000    -344.7008   -133.0879
+       _cons |   11253.06   1170.813     9.61   0.000     8919.088    13587.03
+------------------------------------------------------------------------------
+```
+
+`sysuse dataset-name [, clear]` loads shipped Stata-format datasets. A few datasets are included with Stata and are stored in the system directories. These datasets are
+often used in the help files to demonstrate a certain feature.
+
+- `clear` specifies that it is okay to replace the data in memory, even though the current data have not been saved to disk.
+  
+  Only one dataset can be in memory at a time. If you try to load a dataset when another dataset is already in memory, Stata will return an error unless you specify `clear` to indicate that you want to replace the data in memory.
+
+```stata
+// list all datasets included with Stata
+. sysuse dir
+  auto.dta        bplong.dta      citytemp.dta    lifeexp.dta     nlswide1.dta    surface.dta     uslifeexp2.dta
+  auto16.dta      bpwide.dta      citytemp4.dta   network1.dta    pop2000.dta     tsline1.dta     voter.dta
+  auto2.dta       cancer.dta      educ99gdp.dta   network1a.dta   sandstone.dta   tsline2.dta     xtline1.dta
+  autornd.dta     census.dta      gnp96.dta       nlsw88.dta      sp500.dta       uslifeexp.dta
+```
+
+
+- The dot (`.`) indicates that the current line is a Stata command.
+
+- `>` indicates that the command is not yet complete. You will see this when you have a command that spans multiple lines.
+
+--------------------------------------------------------------------------------
 
 
 Keyboard Shortcuts
@@ -50,6 +113,7 @@ Actually not of much use.
 
 
 
+--------------------------------------------------------------------------------
 
 
 **User interface**
@@ -58,18 +122,9 @@ Within the Stata interface window, there are five windows: Command, Results, His
 
 <img src="https://drive.google.com/thumbnail?id=1VDcZ6w7Ie8lqYKJxF7zJlUiXqH4WxDaw&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
 
+[Other windows](https://www.stata.com/features/overview/graphical-user-interface/) include: Data Editor, Do-file Editor, Graph Editor, Viewer, Variable Manager.
 
-Output appears in the Results window. E.g.,
-
-```stata
-. sysuse auto, clear
-(1978 Automobile Data)
-```
-
-The dot (`.`) indicates that the current line is a Stata command.
-
-`>` indicates that the command is not yet complete. You will see this when you have a command that spans multiple lines.
-
+- Viewer: Help page window.
 
 While Stata can be command-driven by typing code in the Command window, it can also be used in a **point-and-click** manner using the menu bar.
 
@@ -92,7 +147,127 @@ While nearly everything in Stata can be done via the menus, you're better off ty
     all commands in the do file would be sourced.
 
 
+ref: [Stata's interface](https://www.stata.com/features/overview/graphical-user-interface/)
 
+--------------------------------------------------------------------------------
+
+### Run Stata in VS Code {-}
+
+<img src="https://deepecon.gallerycdn.vsassets.io/extensions/deepecon/stata-mcp/0.5.2/1776607086271/Microsoft.VisualStudio.Services.Icons.Default" alt="" width="55" height="55" style="display: inline; vertical-align: middle;" /> You can run Stata in VS Code using the [Stata MCP](https://marketplace.visualstudio.com/items?itemName=DeepEcon.stata-mcp) extension.
+
+
+Use [Stata Language](https://marketplace.visualstudio.com/items?itemName=mdob2k.stata-language) for syntax highlighting.
+
+Q: Why run Stata in VS Code?  
+A: AI integration, code completion, shortcut to run current line, selected lines, etc.
+
+--------------------------------------------------------------------------------
+
+Q: What is MCP?  
+A: Model Context Protocol (MCP) server. 
+
+MCP is a protocol for communication between an LLM (ChatGPT, Claude, etc.) to interact with external tools, applications, databased, etc. It allows the editor to send commands to the LLM and receive responses. The Stata MCP extension implements the MCP protocol to allow AI tools communicate with Stata. 
+
+Without MCP, each AI tool needs its own Stata integration. With MCP, any AI tool that supports MCP can integrate with Stata through the Stata MCP server. The MCP server receives requests, executes the corresponding Stata commands, and returns the results to the AI tool. 
+
+**Further reading:**
+
+- [Pulse: Stata MCP Servers](https://www.pulsemcp.com/servers/hanlulong-stata)
+
+--------------------------------------------------------------------------------
+
+**User case scenario:**
+
+- You write prompts:
+  
+  > Open my panel dataset, winsorize all financial variables at the 1% level, run FE regressions, and export an esttab table.
+
+- Then the following workflow will happen:
+
+  ```
+  User --> LLM --> MCP Server --> Stata --> Results --> MCP Server --> LLM explanation --> User
+  ```
+
+
+--------------------------------------------------------------------------------
+
+**Configuration**
+
+```json
+{
+  "stata-vscode.stataEdition": "se",
+  "stata-vscode.autoStartServer": false,
+  "stata-vscode.mcpServerPort": 7001,
+}
+```
+
+- <span class="env-green">`"stata-vscode.stataEdition": "se"`</span> to specify the Stata edition you have. Defaults to `mp`. 
+  
+  If you have another version other than `mp`, <span class="env-green">**must specify**</span> it accordingly. Otherwise, Stata MCP will not be able to find your Stata executable and activate Stata in VS Code.
+
+- `stata-vscode.autoStartServer`: Automatically start MCP server when extension activates. Defaults to `true`. 
+  
+  Set to `true` for projects using Stata; `false` for projects not using Stata to avoid unnecessary resource usage.
+
+  OUTPUT panel > "MCP: stata-mcp" to see the server status. 
+
+- `stata-vscode.mcpServerPort`: Port for the MCP server, defaults to `4000`.
+  
+  `4000` conflicts with the default port for bundle jekyll server. 
+  
+  So I set stata-mcp default port to `7001` to avoid conflict. 
+  Need to update the port number in your AI tool configuration accordingly, `.vscode/mcp.json`.
+
+  ```json
+  "servers": {
+    "stata-mcp": {
+      "type": "http",
+      // port number must match the one specified in `stata-vscode.mcpServerPort`
+      "url": "http://localhost:7001/mcp-streamable"
+    }
+  }
+  ```
+
+[Detailed Configuration](https://github.com/hanlulong/stata-mcp#detailed-configurations)
+
+
+Connect to **GitHub Copilot**, then Copilot can help you:
+
+- Write and execute Stata commands
+- Analyze your data
+- Generate visualizations
+- Debug Stata code
+- Create statistical reports
+
+Other AI tools that can be integrated with Stata MCP include:
+
+- ✅ Claude Code, OpenAI Codex. 
+- ❌ NO support for Gemini yet.
+
+
+[stata-mcp Skill](https://smithery.ai/skills/tmonk/stata-mcp), [GitHub repo](https://github.com/tmonk/mcp-stata)
+
+
+
+--------------------------------------------------------------------------------
+
+**How-to**
+
+- Stata in interactive mode: OUTPUT > choose "Stata"
+
+- Run Selection / Current Line: ⇧⌘Enter
+
+- Show outline: Use [RegExp Outline](https://marketplace.visualstudio.com/items?itemName=longfish801.regexpOutline) extension and add the following to the "Regexp Outline: Header Rules Each Ext" setting.
+
+  ```
+  [ {"ext": ".do", "rules": [{"level": 1, "format": "^**# (.+)$", "nameIdx": 1, "detail": "H1"}]} ]
+  ```
+  
+  Don't need to specify level 2, 3, etc. They will be automatically detected by the number of `#` in the heading. 
+  - Level 1: `**# Level 1 Heading`
+  - Level 2: `**## Level 2 Heading`
+
+  <img src="/images/stata outline.png" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
 
 --------------------------------------------------------------------------------
 
@@ -158,12 +333,20 @@ Our suggestion is that you keep your do files short enough that when you're work
 - `//` for single line comment; rest-of-line comment; it can be put at any place. 
   
   Commonly used after a command to denote comments on that line.
-- `*` for single line comments; the comment line must begin with `*`;
-- `/* */` for multiple line comment; enclosed comment;
-- `//#` or `**#` add a bookmark
-- `///` line-join indicator
 
-Note that  the `//` comment indicator and the `///` indicator must be preceded by one or more blanks.
+- `*` for single line comments; the comment line must begin with `*`;
+
+- `/* */` for multiple line comment; enclosed comment;
+
+- `//#` or `**#` add a bookmark
+  
+  Multiple level bookmarks: add more `#` to indicate different levels of bookmarks. E.g., `//##` or `**##` for level 2 bookmark, `//###` or `**###` for level 3 bookmark, etc.
+
+- `///` line-join indicator
+  
+  Command panel does <span class="env-orange">NOT</span> support `///` line-join indicator. You can only use `///` in do-files.
+
+Note that the `//` comment indicator and the `///` indicator must be preceded by one or more blanks.
 
 See [[U] 16.1.2 Comments and blank lines in do-files](https://www.stata.com/manuals13/u16.pdf#u16.1.2Commentsandblanklinesindo-files) for more details.
 
@@ -883,26 +1066,34 @@ ref: [U] [12.5 Data: Formats, control how data are displayed](https://www.stata.
 
 Stata contains some demonstration datasets in the system directories.
 
-`sysuse dir`: list the names of shipped datasets.
+- `sysuse dir`: list the names of shipped datasets.
 
-`sysuse lifeexp`: use `lifeexp`
+- `sysuse lifeexp, clear`: use `lifeexp`
 
-Note that `use lifeexp` will return error. Data not found.
+  `clear` allows Stata to replace the data in memory, even though the current data have not been saved to disk.
+  
+  Note that `use lifeexp` will return error. Data not found.
 
+--------------------------------------------------------------------------------
 
 **User datasets**
+
+You can load your own datasets into Stata's memory. Stata supports a variety of data formats, e.g., `.dta`, `csv`, `xlsx`, etc. 
+But `.dta` is the native Stata format, it is much faster to read and write than other formats, and it preserves all the features of Stata datasets, such as variable labels, value labels, etc. 
+So it's recommended to save your datasets in `.dta` format whenever possible.
 
 **`.dta`**
 
 `use myauto [, clear]`: Load `myauto.dta` (Stata-format) into memory.
 
-- `clear`  it is okay to replace the data in memory, even though the current data have not been saved to disk.
+- `clear` it is okay to replace the data in memory, even though the current data have not been saved to disk.
 
 
 `save myauto [, replace]`: Create a Stata data type file `myauto.dta`
 
 - `replace` allows Stata to overwrite existing dataset that is the output from previous attempts to run the do file.
 
+--------------------------------------------------------------------------------
 
 **`.csv`**
 
@@ -1159,7 +1350,7 @@ Use `keep()` to show only selected variables, and use <span class="env-green">`s
 
 #### `esttab` {#esttab}
 
-`esttab` is a wrapper for `estout`. It is a command for publication-style regression tables that display nicely in Stata's results window or, optionally, can be exported to various formats such as CSV, RTF, HTML, or LaTeX.
+<span class="env-green">**`esttab`**</span> is a wrapper for `estout`. It is a command for publication-style regression tables that display nicely in Stata's results window or, optionally, can be exported to various formats such as CSV, RTF, HTML, or LaTeX.
 
 ```stata
 esttab [ namelist ] [ using filename ] [, options estout_options ]
@@ -1169,7 +1360,9 @@ esttab [ namelist ] [ using filename ] [, options estout_options ]
   
   If namelist is omitted, esttab tabulates the estimation sets stored by `eststo`. If no such estimates exist, `esttab` tabulates the most recent estimation results.
 
+- Refer to `estout` for `estout_options` to customize the table output.
 
+  Documentation: [`estout`](http://repec.org/bocode/e/estout/advanced.html)
 
 --------------------------------------------------------------------------------
 
@@ -1259,9 +1452,15 @@ You can customize the test statistics and summary statistics to be displayed in 
 
 <span class="env-green">**Parameter statistics options:**</span>
 
-You can replace the **t-statistics** with standard errors by using the <span class="env-green">`se`</span> option.
+- `se`: You can replace the **t-statistics** with standard errors by using the <span class="env-green">`se`</span> option.
 
-The t-statistics can also be replaced by p-values (option `p`), confidence intervals (option `ci`), or any parameter statistics contained in the estimates (see the `aux()` option). 
+  By default, the t-statistics are shown in parentheses under the coefficient estimates.
+  
+  The t-statistics can also be replaced by:
+  
+  - `p`: p-values, 
+  - `ci`: confidence intervals, or 
+  - `aux()`: any auxiliary parameter statistics contained in the estimates. 
 
 
 If you want to include **multiple parameter statistics** (for later use), you can make use of the `cells()` option. E.g., `cells("b(fmt(%9.4f)) se(fmt(%9.4f) par) t(fmt(%9.2f)) p(fmt(%9.3f) star)")` will display the point estimates, standard errors, t-statistics, and p-values in the specified formats. Note that the significance star will be added to the p-values. By doing so, you can perform calculations using the coefficients.
@@ -1288,7 +1487,11 @@ See the [wide table](#wide_table) below for more details.
 
 **Summary statistics options:** 
 
-R-squared (option `r2`), Adjusted R-squared (option `ar2`), pseudo R-squared (option `pr2`),  Akaike's or Schwarz's information criterion (options `aic` and `sic`).
+- `r2`: R-squared
+- `ar2`: Adjusted R-squared
+- `pr2`: pseudo R-squared
+- `aic`: Akaike's information criterion
+- `sic`: Schwarz's information criterion
 
 --------------------------------------------------------------------------------
 
@@ -1375,6 +1578,8 @@ _cons            1946.069    -5853.696
 
 **Wide table example**
 
+Wide table: show each statistic in a separate column, side by side. This is easier to read when you have a long list of variables.
+
 ```stata
 // better to use "cells("b se t p")" for wide format
 . estout est2, cells("b se t p") 
@@ -1390,6 +1595,7 @@ _cons           -5853.696     3376.987    -1.733408     .0874262
 ----------------------------------------------------------------
 ```
 
+**Labelling**
 
 - `mtitles[(list)]` specifies model titles to be printed as the table header.
   
@@ -1422,7 +1628,7 @@ _cons           -5853.696     3376.987    -1.733408     .0874262
 **Output options:**
 
 - `replace` allows Stata to overwrite existing files.
-- `order` specifies the order of the covariates in the table.
+- `order` specifies the <span class="env-green">order of the covariates</span> in the table.
    
    ```stata
    * specify the order of controls here
@@ -1432,17 +1638,41 @@ _cons           -5853.696     3376.987    -1.733408     .0874262
    esttab model1 model2, order(d_rate hike cut `controls')
    ```
 
+- `rename(old new [old new ...])` <span class="env-green">renaming individual covariates</span>
+   
+   - Make covariate names more descriptive
+     
+     ```stata
+     esttab model1 model2, rename(d_rate "Deposit Rate" hike "Hike" cut "Cut")
+     ```
+
+   - You want winsorized or standardized variables to have the same name as the original variable in the table, e.g., `size_wins` to be displayed in the same row as `size` in the table, otherwise they will be treated as different variables and displayed in different rows.
+     
+     ```stata
+     esttab model_base model_wins, rename(size_wins size)
+     ``` 
+
+- `varlabels(old new [old new ...])` relabel the covariates
+
+  `varlabels(_cons Constant)` will replace each occurrence of `_cons` with "Constant" in the table.
+
+  Difference between `rename` and `varlabels`:
+
+  - `rename` is applied **before** matching the models and equations and can therefore be used to merge different coefficients across models into a single table row.
+  
+  - `varlabels` is applied **after** matching the models and equations
+
 - `addnotes` adds custom notes to the bottom of the table. You can use this to add a note about the SEs, e.g., 
    
     ```stata
     esttab model1 model2, addnotes("Standard errors clustered at firm level.")
     ```
 
-If your variable namess got cut off, you can use 
+If your **variable namess got cut off**, you can use 
 
-- `noabbrev` to prevent variable names from being abbreviated, or
-- `varwidth(#)` to specify the width of variable names in the table. 
-- `modelwidth(#)` to specify the width of model names in the table. 
+- `noabbrev` to <span class="env-green">prevent variable names from being abbreviated</span>, or
+- `varwidth(#)` to specify the <span class="env-green">width of variable names</span> in the table. 
+- `modelwidth(#)` to specify the <span class="env-green">width of model names</span> in the table. 
   
   If you want to add extra space between columns, use `modelwidth()` to increase the width of model names.
 
@@ -1507,24 +1737,68 @@ Easier to use than `esttab` for exporting a regression table; but less flexible.
 
 Stata commands that report results also store the results where they **can be subsequently used** by other commands or programs. This is documented in the Stored results section of the particular command in the reference manuals.
 
-- r-class commands, such as summarize, store their results in `r()`;
+- **r-class commands**: such as summarize, store their results in `r()`;
   
   most commands are r-class.
+  
+  ```stata
+  // for r-class command
+  . reg y x1 x2
+  . return list
+  ```
 
-- e-class commands, such as regress, store their results in `e()`; 
+- **e-class commands**: such as <span class="env-green">regress</span>, store their results in <span class="env-green">`e()`</span>; 
   
   e-class commands are Stata’s model estimation commands.
 
+  Output commands like `eststo`, `esttab`, and `estout` reply heavily on the results stored in `e()`.
+
+  ```stata
+  // for e-class command
+  . reg y x1 x2
+  . ereturn list
+  scalars:
+    e(N)       = 1000
+    e(r2)      = .4521
+    e(df_r)    = 997
+
+  macros:
+    e(cmd)     = "regress"
+    e(depvar)  = "y"
+
+  matrices:
+    e(b)
+    e(V)
+  ```
+
+  Common `e()` results:
+
+  ```stata
+  * Display number of observations
+  . display e(N)
+  
+  * Display coefficient vector
+  . matrix list e(b)
+  e(b)[1,3]
+          x1      x2    _cons
+  y    .1254  -.3021   1.532
+  
+  * Save coefficient vector to a variable
+  . matrix myb = e(b)
+  . matrix list myb
+  
+  * Display variance-covariance matrix
+  . matrix list e(V)
+  e(V)[1,3]
+          x1      x2    _cons
+  x1   .0025  -.0003  -.0012
+  x2  -.0003   .0036   .0008
+  _cons -.0012   .0008   .0100  
+  ```
 
 
 
 
-```stata
-// for r-class command
-return list
-// for e-class command
-ereturn list
-```
 
 
 
