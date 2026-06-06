@@ -3,7 +3,7 @@
 **R Markdown** is a powerful tool for combining analysis and reporting into the same document. R Markdown has grown substantially from a package that supports a few output formats, to an extensive and diverse ecosystem that supports the creation of books, blogs, scientific articles, websites, and even resumes.
 
 Q: Why would I use R Markdown to write reports or papers instead of LaTeX?  
-A: R Markdown (or other markdown language, eg, Quarto) is more flexible, easier syntax. E.g., for bold text, you can use `**bold**` instead of `\textbf{bold}`. LaTeX's advantage is *precision*; Rmd's advantage is *flexibility* and ease of use. For everyday reporting, Rmd/Quarto is sufficient. For more complex documents, e.g., papers, use LaTeX.
+A: R Markdown (or other markdown language, eg, Quarto) is more flexible, easier syntax. E.g., for bold text, you can use `**bold**` instead of `\textbf{bold}`; for making a bullet list, LaTeX needs an environment `\begin{itemize}`, but you can simply use a dash `-` in markdown. LaTeX's advantage is *precision*; Rmd's advantage is *flexibility* and ease of use. For everyday reporting, Rmd/Quarto is sufficient. For more complex documents, e.g., papers, use LaTeX.
 
 **Nice documentations** 
 
