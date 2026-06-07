@@ -575,6 +575,26 @@ Here I renew the <span class="env-green">`\maketitle`</span> command:
   - smaller font size for author and date
 - add `\@thanks` in the footnote to display the email address.
 
+Syntax explain:
+
+- `\makeatletter`: treats `@` as letter; allows the use of `@` in command names.
+  
+  `\makeatother`: treats `@` as other.
+
+- Define a new command `\subtitle` to allow for subtitle in the title page. 
+  
+  ```latex
+  \def\@subtitle{}
+  \renewcommand{\subtitle}[1]{\gdef\@subtitle{#1}}
+  ```
+  
+  - `\def\@subtitle{}` initializes the `\@subtitle` command to be empty.
+  - `\gdef` globally defines `\@subtitle` to be the argument passed to `\subtitle`. This allows you to use `\subtitle{Your Subtitle}` in your .qmd file, and it will be included in the title page.
+  - If you use `scrartcl` document class, it already defines `\subtitle`, the code above is not necessary. 
+    
+    For older document classes, e.g., `article`, you need to define `\subtitle` yourself as shown above.
+
+
 **Format Options**
 
 | PDF Options | Functions                         |
@@ -899,6 +919,57 @@ To show TOC pane in pdf, you can either set in YAML or in preambles.
     bookmarksopenlevel = 2 % level to which bookmarks are open
   }
   ```
+
+
+### YAML templates
+
+**With logo in the title page**
+
+```yaml {.nowrap}
+---
+title: "Your Title"
+subtitle: "Optional Subtitle"
+author: "\\textnormal{Menghan Yuan\\thanks{\\href{mailto:menghan.yuan@nord.no}{menghan.yuan@nord.no}}}"
+date: "2026-06-01"
+date-format: "MMM D, YYYY"
+from: markdown+tex_math_single_backslash
+format: 
+  pdf:
+    include-in-header: 
+      - ../../_shared-resources/latex/preamble.tex
+      - text: |
+          \setmainfont{Georgia Pro}
+          \usepackage{graphicx}
+          \usepackage{fancyhdr}
+          \usepackage{ifthen}
+          \pagestyle{fancy}
+          \fancyhead[L]{\ifthenelse{\value{page}=1}{\includegraphics[height=1.5cm]{nordlogoen.jpg}}{}}
+          \renewcommand{\headrulewidth}{0pt}
+          \makeatletter
+          % Keep KOMA-Script title fonts, but tighten the vertical spacing.
+          \renewcommand{\maketitle}{%
+            \begingroup
+            \vspace*{-1em}%
+            \begin{center}
+              {\usekomafont{title}\huge \@title \par}
+              {\usekomafont{subtitle}\large \@subtitle \par}
+              \vspace{0.35em}
+              {\usekomafont{author}\small \@author \par}
+              \vspace{0.15em}
+              {\usekomafont{date}\small \@date \par}
+            \end{center}
+            \@thanks
+            \endgroup
+          }
+          \makeatother
+    include-before-body:
+      - text: |
+          \thispagestyle{fancy}
+    keep-tex: true
+    fontsize: 12pt
+---
+```
+
 
 --------------------------------------------------------------------------------
 

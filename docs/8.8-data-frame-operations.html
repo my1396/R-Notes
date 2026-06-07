@@ -534,6 +534,7 @@ div.csl-indent {
 <li class="chapter" data-level="6.5.2" data-path="6.5-pdf-options.html"><a href="6.5-pdf-options.html#templates"><i class="fa fa-check"></i><b>6.5.2</b> Templates</a></li>
 <li class="chapter" data-level="6.5.3" data-path="6.5-pdf-options.html"><a href="6.5-pdf-options.html#add-appendices"><i class="fa fa-check"></i><b>6.5.3</b> Add Appendices</a></li>
 <li class="chapter" data-level="6.5.4" data-path="6.5-pdf-options.html"><a href="6.5-pdf-options.html#add-toc"><i class="fa fa-check"></i><b>6.5.4</b> Add TOC</a></li>
+<li class="chapter" data-level="6.5.5" data-path="6.5-pdf-options.html"><a href="6.5-pdf-options.html#yaml-templates"><i class="fa fa-check"></i><b>6.5.5</b> YAML templates</a></li>
 </ul></li>
 <li class="chapter" data-level="6.6" data-path="6.6-html-theming.html"><a href="6.6-html-theming.html"><i class="fa fa-check"></i><b>6.6</b> HTML Theming</a>
 <ul>
@@ -1056,11 +1057,11 @@ document.addEventListener('DOMContentLoaded', function() {
 <li><p><code>x</code> object to be subsetted.</p></li>
 <li><p><code>subset</code> logical expression indicating elements or rows to keep: missing values are taken as false.</p></li>
 <li><p><code>select</code> columns to select from a data frame.</p>
-<div class="sourceCode" id="cb637"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb637-1"><a href="8.8-data-frame-operations.html#cb637-1" tabindex="-1"></a><span class="fu">subset</span>(airquality, Temp <span class="sc">&gt;</span> <span class="dv">80</span>, <span class="at">select =</span> <span class="fu">c</span>(Ozone, Temp))</span>
-<span id="cb637-2"><a href="8.8-data-frame-operations.html#cb637-2" tabindex="-1"></a><span class="fu">subset</span>(airquality, Day <span class="sc">==</span> <span class="dv">1</span>, <span class="at">select =</span> <span class="sc">-</span>Temp)</span>
-<span id="cb637-3"><a href="8.8-data-frame-operations.html#cb637-3" tabindex="-1"></a><span class="fu">subset</span>(airquality, <span class="at">select =</span> Ozone<span class="sc">:</span>Wind)</span>
-<span id="cb637-4"><a href="8.8-data-frame-operations.html#cb637-4" tabindex="-1"></a></span>
-<span id="cb637-5"><a href="8.8-data-frame-operations.html#cb637-5" tabindex="-1"></a><span class="fu">with</span>(airquality, <span class="fu">subset</span>(Ozone, Temp <span class="sc">&gt;</span> <span class="dv">80</span>))</span></code></pre></div></li>
+<div class="sourceCode" id="cb639"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb639-1"><a href="8.8-data-frame-operations.html#cb639-1" tabindex="-1"></a><span class="fu">subset</span>(airquality, Temp <span class="sc">&gt;</span> <span class="dv">80</span>, <span class="at">select =</span> <span class="fu">c</span>(Ozone, Temp))</span>
+<span id="cb639-2"><a href="8.8-data-frame-operations.html#cb639-2" tabindex="-1"></a><span class="fu">subset</span>(airquality, Day <span class="sc">==</span> <span class="dv">1</span>, <span class="at">select =</span> <span class="sc">-</span>Temp)</span>
+<span id="cb639-3"><a href="8.8-data-frame-operations.html#cb639-3" tabindex="-1"></a><span class="fu">subset</span>(airquality, <span class="at">select =</span> Ozone<span class="sc">:</span>Wind)</span>
+<span id="cb639-4"><a href="8.8-data-frame-operations.html#cb639-4" tabindex="-1"></a></span>
+<span id="cb639-5"><a href="8.8-data-frame-operations.html#cb639-5" tabindex="-1"></a><span class="fu">with</span>(airquality, <span class="fu">subset</span>(Ozone, Temp <span class="sc">&gt;</span> <span class="dv">80</span>))</span></code></pre></div></li>
 </ul>
 <div id="columnrow-wise-operations" class="section level3 hasAnchor" number="8.8.1">
 <h3><span class="header-section-number">8.8.1</span> Column/Row-wise Operations<a href="8.8-data-frame-operations.html#columnrow-wise-operations" class="anchor-section" aria-label="Anchor link to header"></a></h3>
@@ -1075,19 +1076,19 @@ document.addEventListener('DOMContentLoaded', function() {
 </ul>
 <p>Alternatively, can use <code>mutate_at</code>. You can perform the operation on selected cols without changing the data structure. By contrast, with <code>sweep</code>, you need to subset the relevant cols, apply the operation, and concatenate them back to the remainder of the columns afterwards.</p>
 <p>Takeaway: Use <code>sweep</code> if the operation is to all cols; use <code>mutate_at</code> if to selected cols.</p>
-<div class="sourceCode" id="cb638"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb638-1"><a href="8.8-data-frame-operations.html#cb638-1" tabindex="-1"></a>center_col <span class="ot">&lt;-</span> <span class="cf">function</span>(data, cols){</span>
-<span id="cb638-2"><a href="8.8-data-frame-operations.html#cb638-2" tabindex="-1"></a>    <span class="do">## Mean center columns in a table</span></span>
-<span id="cb638-3"><a href="8.8-data-frame-operations.html#cb638-3" tabindex="-1"></a>    <span class="co"># @data: table or data frame</span></span>
-<span id="cb638-4"><a href="8.8-data-frame-operations.html#cb638-4" tabindex="-1"></a>    <span class="co"># @col: a vector of selected columns to center</span></span>
-<span id="cb638-5"><a href="8.8-data-frame-operations.html#cb638-5" tabindex="-1"></a>    <span class="co"># @return A data frame with the selected columns mean-centered </span></span>
-<span id="cb638-6"><a href="8.8-data-frame-operations.html#cb638-6" tabindex="-1"></a>    <span class="co">#   (i.e., each value minus its column mean).</span></span>
-<span id="cb638-7"><a href="8.8-data-frame-operations.html#cb638-7" tabindex="-1"></a>    </span>
-<span id="cb638-8"><a href="8.8-data-frame-operations.html#cb638-8" tabindex="-1"></a>    data <span class="sc">%&gt;%</span> </span>
-<span id="cb638-9"><a href="8.8-data-frame-operations.html#cb638-9" tabindex="-1"></a>        <span class="fu">mutate_at</span>(cols, <span class="sc">~</span>.<span class="sc">-</span><span class="fu">mean</span>(., <span class="at">na.rm=</span><span class="cn">TRUE</span>))</span>
-<span id="cb638-10"><a href="8.8-data-frame-operations.html#cb638-10" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb640"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb640-1"><a href="8.8-data-frame-operations.html#cb640-1" tabindex="-1"></a>center_col <span class="ot">&lt;-</span> <span class="cf">function</span>(data, cols){</span>
+<span id="cb640-2"><a href="8.8-data-frame-operations.html#cb640-2" tabindex="-1"></a>    <span class="do">## Mean center columns in a table</span></span>
+<span id="cb640-3"><a href="8.8-data-frame-operations.html#cb640-3" tabindex="-1"></a>    <span class="co"># @data: table or data frame</span></span>
+<span id="cb640-4"><a href="8.8-data-frame-operations.html#cb640-4" tabindex="-1"></a>    <span class="co"># @col: a vector of selected columns to center</span></span>
+<span id="cb640-5"><a href="8.8-data-frame-operations.html#cb640-5" tabindex="-1"></a>    <span class="co"># @return A data frame with the selected columns mean-centered </span></span>
+<span id="cb640-6"><a href="8.8-data-frame-operations.html#cb640-6" tabindex="-1"></a>    <span class="co">#   (i.e., each value minus its column mean).</span></span>
+<span id="cb640-7"><a href="8.8-data-frame-operations.html#cb640-7" tabindex="-1"></a>    </span>
+<span id="cb640-8"><a href="8.8-data-frame-operations.html#cb640-8" tabindex="-1"></a>    data <span class="sc">%&gt;%</span> </span>
+<span id="cb640-9"><a href="8.8-data-frame-operations.html#cb640-9" tabindex="-1"></a>        <span class="fu">mutate_at</span>(cols, <span class="sc">~</span>.<span class="sc">-</span><span class="fu">mean</span>(., <span class="at">na.rm=</span><span class="cn">TRUE</span>))</span>
+<span id="cb640-10"><a href="8.8-data-frame-operations.html#cb640-10" tabindex="-1"></a>}</span></code></pre></div>
 <p><strong>Remove duplicate columns, regardless of column names:</strong></p>
-<div class="sourceCode" id="cb639"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb639-1"><a href="8.8-data-frame-operations.html#cb639-1" tabindex="-1"></a><span class="co"># remove duplicate columns, regardless column names</span></span>
-<span id="cb639-2"><a href="8.8-data-frame-operations.html#cb639-2" tabindex="-1"></a>df[<span class="sc">!</span><span class="fu">duplicated</span>(<span class="fu">lapply</span>(df, summary))] </span></code></pre></div>
+<div class="sourceCode" id="cb641"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb641-1"><a href="8.8-data-frame-operations.html#cb641-1" tabindex="-1"></a><span class="co"># remove duplicate columns, regardless column names</span></span>
+<span id="cb641-2"><a href="8.8-data-frame-operations.html#cb641-2" tabindex="-1"></a>df[<span class="sc">!</span><span class="fu">duplicated</span>(<span class="fu">lapply</span>(df, summary))] </span></code></pre></div>
 <hr />
 </div>
 <div id="process-na-values" class="section level3 hasAnchor" number="8.8.2">
@@ -1110,23 +1111,23 @@ document.addEventListener('DOMContentLoaded', function() {
 <h4><span class="header-section-number">8.8.2.1</span> Find NA values<a href="8.8-data-frame-operations.html#find-na-values" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p><code>complete.cases(x)</code> return a logical vector indicating which cases/<u>rows</u> are complete.</p>
 <p>N.B.: Distinguish from <a href="#balanced_panel"><code>tidyr::complete()</code></a> which is used to complete missing combinations of data.</p>
-<div class="sourceCode" id="cb640"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb640-1"><a href="8.8-data-frame-operations.html#cb640-1" tabindex="-1"></a><span class="co"># count number of rows with NA values</span></span>
-<span id="cb640-2"><a href="8.8-data-frame-operations.html#cb640-2" tabindex="-1"></a>data <span class="sc">%&gt;%</span> <span class="fu">negate</span>(complete.cases)() <span class="sc">%&gt;%</span> <span class="fu">sum</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb642"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb642-1"><a href="8.8-data-frame-operations.html#cb642-1" tabindex="-1"></a><span class="co"># count number of rows with NA values</span></span>
+<span id="cb642-2"><a href="8.8-data-frame-operations.html#cb642-2" tabindex="-1"></a>data <span class="sc">%&gt;%</span> <span class="fu">negate</span>(complete.cases)() <span class="sc">%&gt;%</span> <span class="fu">sum</span>()</span></code></pre></div>
 <p><code>purrr::negate()</code> works similar to <code>base::Negate()</code></p>
 <ul>
 <li>R is case-sensitive.</li>
 </ul>
 <p><code>(!is.na(x)) %&gt;% colSums() %&gt;% sort()</code> returns a vector of the number of non-NA values per column, column names as vector name.</p>
 <p>When you have a long list of columns, vector is hard to read, use <code>as_tibble_row() %&gt;% t()</code> to convert to a tibble column.</p>
-<div class="sourceCode" id="cb641"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb641-1"><a href="8.8-data-frame-operations.html#cb641-1" tabindex="-1"></a><span class="co"># when you have a long list of columns, you can convert to a tibble column for best visualization.</span></span>
-<span id="cb641-2"><a href="8.8-data-frame-operations.html#cb641-2" tabindex="-1"></a>miss_per_col <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span> </span>
-<span id="cb641-3"><a href="8.8-data-frame-operations.html#cb641-3" tabindex="-1"></a>    <span class="fu">filter</span>(date <span class="sc">&gt;</span> <span class="fu">ymd</span>(<span class="st">&quot;2013-01-01&quot;</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb641-4"><a href="8.8-data-frame-operations.html#cb641-4" tabindex="-1"></a>    <span class="fu">is.na</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb641-5"><a href="8.8-data-frame-operations.html#cb641-5" tabindex="-1"></a>        <span class="fu">colSums</span>()</span>
-<span id="cb641-6"><a href="8.8-data-frame-operations.html#cb641-6" tabindex="-1"></a>miss_per_col <span class="ot">&lt;-</span> miss_per_col <span class="sc">%&gt;%</span> <span class="fu">as_tibble_row</span>() <span class="sc">%&gt;%</span> <span class="fu">t</span>()</span>
-<span id="cb641-7"><a href="8.8-data-frame-operations.html#cb641-7" tabindex="-1"></a>miss_per_col <span class="sc">%&gt;%</span> <span class="fu">dim</span>()</span>
-<span id="cb641-8"><a href="8.8-data-frame-operations.html#cb641-8" tabindex="-1"></a>miss_per_col[<span class="dv">1</span><span class="sc">:</span><span class="dv">40</span>, ] <span class="sc">%&gt;%</span> <span class="fu">t</span>() <span class="sc">%&gt;%</span> <span class="fu">t</span>()</span>
-<span id="cb641-9"><a href="8.8-data-frame-operations.html#cb641-9" tabindex="-1"></a>miss_per_col[<span class="dv">41</span><span class="sc">:</span><span class="dv">77</span>, ] <span class="sc">%&gt;%</span> <span class="fu">t</span>() <span class="sc">%&gt;%</span> <span class="fu">t</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb643"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb643-1"><a href="8.8-data-frame-operations.html#cb643-1" tabindex="-1"></a><span class="co"># when you have a long list of columns, you can convert to a tibble column for best visualization.</span></span>
+<span id="cb643-2"><a href="8.8-data-frame-operations.html#cb643-2" tabindex="-1"></a>miss_per_col <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span> </span>
+<span id="cb643-3"><a href="8.8-data-frame-operations.html#cb643-3" tabindex="-1"></a>    <span class="fu">filter</span>(date <span class="sc">&gt;</span> <span class="fu">ymd</span>(<span class="st">&quot;2013-01-01&quot;</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb643-4"><a href="8.8-data-frame-operations.html#cb643-4" tabindex="-1"></a>    <span class="fu">is.na</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb643-5"><a href="8.8-data-frame-operations.html#cb643-5" tabindex="-1"></a>        <span class="fu">colSums</span>()</span>
+<span id="cb643-6"><a href="8.8-data-frame-operations.html#cb643-6" tabindex="-1"></a>miss_per_col <span class="ot">&lt;-</span> miss_per_col <span class="sc">%&gt;%</span> <span class="fu">as_tibble_row</span>() <span class="sc">%&gt;%</span> <span class="fu">t</span>()</span>
+<span id="cb643-7"><a href="8.8-data-frame-operations.html#cb643-7" tabindex="-1"></a>miss_per_col <span class="sc">%&gt;%</span> <span class="fu">dim</span>()</span>
+<span id="cb643-8"><a href="8.8-data-frame-operations.html#cb643-8" tabindex="-1"></a>miss_per_col[<span class="dv">1</span><span class="sc">:</span><span class="dv">40</span>, ] <span class="sc">%&gt;%</span> <span class="fu">t</span>() <span class="sc">%&gt;%</span> <span class="fu">t</span>()</span>
+<span id="cb643-9"><a href="8.8-data-frame-operations.html#cb643-9" tabindex="-1"></a>miss_per_col[<span class="dv">41</span><span class="sc">:</span><span class="dv">77</span>, ] <span class="sc">%&gt;%</span> <span class="fu">t</span>() <span class="sc">%&gt;%</span> <span class="fu">t</span>()</span></code></pre></div>
 <p><code>(!is.na(x)) %&gt;% rowSums() %&gt;% sort()</code> calculate the number of non-NA values per row</p>
 <p><code>tidyr::drop_na(x, any_of(vars))</code> allow you to specify which columns you want to eliminate NA values from; it doesn’t have to be the whole columns;</p>
 <ul>
@@ -1134,25 +1135,25 @@ document.addEventListener('DOMContentLoaded', function() {
 </ul>
 <p><code>which(is.na(data))</code> returns positions of omitted missing values</p>
 <p>A custom function for handling common missing/invalid values:</p>
-<div class="sourceCode" id="cb642"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb642-1"><a href="8.8-data-frame-operations.html#cb642-1" tabindex="-1"></a>cast_na <span class="ot">&lt;-</span> <span class="cf">function</span>(x){</span>
-<span id="cb642-2"><a href="8.8-data-frame-operations.html#cb642-2" tabindex="-1"></a>    <span class="co"># Remove records with nonvalid values, such as NA, Inf, NaN </span></span>
-<span id="cb642-3"><a href="8.8-data-frame-operations.html#cb642-3" tabindex="-1"></a>    <span class="co"># remain x when mask==TRUE</span></span>
-<span id="cb642-4"><a href="8.8-data-frame-operations.html#cb642-4" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">is.null</span>(<span class="fu">dim</span>(x))){</span>
-<span id="cb642-5"><a href="8.8-data-frame-operations.html#cb642-5" tabindex="-1"></a>                <span class="co"># `x` is a vector</span></span>
-<span id="cb642-6"><a href="8.8-data-frame-operations.html#cb642-6" tabindex="-1"></a>        mask <span class="ot">&lt;-</span>  <span class="sc">!</span>(x <span class="sc">%in%</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="cn">NaN</span>, <span class="cn">Inf</span>, <span class="sc">-</span><span class="cn">Inf</span>) )</span>
-<span id="cb642-7"><a href="8.8-data-frame-operations.html#cb642-7" tabindex="-1"></a>        x <span class="ot">&lt;-</span> x[mask]</span>
-<span id="cb642-8"><a href="8.8-data-frame-operations.html#cb642-8" tabindex="-1"></a>    }</span>
-<span id="cb642-9"><a href="8.8-data-frame-operations.html#cb642-9" tabindex="-1"></a>    <span class="cf">else</span> {</span>
-<span id="cb642-10"><a href="8.8-data-frame-operations.html#cb642-10" tabindex="-1"></a>        <span class="co"># `x` is a data.frame</span></span>
-<span id="cb642-11"><a href="8.8-data-frame-operations.html#cb642-11" tabindex="-1"></a>        mask <span class="ot">&lt;-</span> <span class="fu">apply</span>(x, <span class="dv">1</span>, <span class="cf">function</span>(x) <span class="fu">sum</span>(x <span class="sc">%in%</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="cn">NaN</span>, <span class="cn">Inf</span>, <span class="sc">-</span><span class="cn">Inf</span>)))</span>
-<span id="cb642-12"><a href="8.8-data-frame-operations.html#cb642-12" tabindex="-1"></a>        mask <span class="ot">&lt;-</span> (mask <span class="sc">==</span> <span class="dv">0</span>)</span>
-<span id="cb642-13"><a href="8.8-data-frame-operations.html#cb642-13" tabindex="-1"></a>        x <span class="ot">&lt;-</span> x[mask,]}</span>
-<span id="cb642-14"><a href="8.8-data-frame-operations.html#cb642-14" tabindex="-1"></a>    <span class="fu">return</span> (x)</span>
-<span id="cb642-15"><a href="8.8-data-frame-operations.html#cb642-15" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb644"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb644-1"><a href="8.8-data-frame-operations.html#cb644-1" tabindex="-1"></a>cast_na <span class="ot">&lt;-</span> <span class="cf">function</span>(x){</span>
+<span id="cb644-2"><a href="8.8-data-frame-operations.html#cb644-2" tabindex="-1"></a>    <span class="co"># Remove records with nonvalid values, such as NA, Inf, NaN </span></span>
+<span id="cb644-3"><a href="8.8-data-frame-operations.html#cb644-3" tabindex="-1"></a>    <span class="co"># remain x when mask==TRUE</span></span>
+<span id="cb644-4"><a href="8.8-data-frame-operations.html#cb644-4" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">is.null</span>(<span class="fu">dim</span>(x))){</span>
+<span id="cb644-5"><a href="8.8-data-frame-operations.html#cb644-5" tabindex="-1"></a>                <span class="co"># `x` is a vector</span></span>
+<span id="cb644-6"><a href="8.8-data-frame-operations.html#cb644-6" tabindex="-1"></a>        mask <span class="ot">&lt;-</span>  <span class="sc">!</span>(x <span class="sc">%in%</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="cn">NaN</span>, <span class="cn">Inf</span>, <span class="sc">-</span><span class="cn">Inf</span>) )</span>
+<span id="cb644-7"><a href="8.8-data-frame-operations.html#cb644-7" tabindex="-1"></a>        x <span class="ot">&lt;-</span> x[mask]</span>
+<span id="cb644-8"><a href="8.8-data-frame-operations.html#cb644-8" tabindex="-1"></a>    }</span>
+<span id="cb644-9"><a href="8.8-data-frame-operations.html#cb644-9" tabindex="-1"></a>    <span class="cf">else</span> {</span>
+<span id="cb644-10"><a href="8.8-data-frame-operations.html#cb644-10" tabindex="-1"></a>        <span class="co"># `x` is a data.frame</span></span>
+<span id="cb644-11"><a href="8.8-data-frame-operations.html#cb644-11" tabindex="-1"></a>        mask <span class="ot">&lt;-</span> <span class="fu">apply</span>(x, <span class="dv">1</span>, <span class="cf">function</span>(x) <span class="fu">sum</span>(x <span class="sc">%in%</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="cn">NaN</span>, <span class="cn">Inf</span>, <span class="sc">-</span><span class="cn">Inf</span>)))</span>
+<span id="cb644-12"><a href="8.8-data-frame-operations.html#cb644-12" tabindex="-1"></a>        mask <span class="ot">&lt;-</span> (mask <span class="sc">==</span> <span class="dv">0</span>)</span>
+<span id="cb644-13"><a href="8.8-data-frame-operations.html#cb644-13" tabindex="-1"></a>        x <span class="ot">&lt;-</span> x[mask,]}</span>
+<span id="cb644-14"><a href="8.8-data-frame-operations.html#cb644-14" tabindex="-1"></a>    <span class="fu">return</span> (x)</span>
+<span id="cb644-15"><a href="8.8-data-frame-operations.html#cb644-15" tabindex="-1"></a>}</span></code></pre></div>
 <p>Keep rows with least NA’s for duplicated rows</p>
-<div class="sourceCode" id="cb643"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb643-1"><a href="8.8-data-frame-operations.html#cb643-1" tabindex="-1"></a>User_Table <span class="sc">%&gt;%</span></span>
-<span id="cb643-2"><a href="8.8-data-frame-operations.html#cb643-2" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">rowSums</span>(<span class="fu">is.na</span>(.))) <span class="sc">%&gt;%</span>        <span class="co"># sort rows by number of NAs</span></span>
-<span id="cb643-3"><a href="8.8-data-frame-operations.html#cb643-3" tabindex="-1"></a>  <span class="fu">distinct</span>(User_ID, <span class="at">.keep_all =</span> <span class="cn">TRUE</span>)   <span class="co"># keep first row per User_ID only</span></span></code></pre></div>
+<div class="sourceCode" id="cb645"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb645-1"><a href="8.8-data-frame-operations.html#cb645-1" tabindex="-1"></a>User_Table <span class="sc">%&gt;%</span></span>
+<span id="cb645-2"><a href="8.8-data-frame-operations.html#cb645-2" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">rowSums</span>(<span class="fu">is.na</span>(.))) <span class="sc">%&gt;%</span>        <span class="co"># sort rows by number of NAs</span></span>
+<span id="cb645-3"><a href="8.8-data-frame-operations.html#cb645-3" tabindex="-1"></a>  <span class="fu">distinct</span>(User_ID, <span class="at">.keep_all =</span> <span class="cn">TRUE</span>)   <span class="co"># keep first row per User_ID only</span></span></code></pre></div>
 <hr />
 </div>
 <div id="fill-missing-values" class="section level4 hasAnchor" number="8.8.2.2">
@@ -1164,34 +1165,34 @@ document.addEventListener('DOMContentLoaded', function() {
 <li><code>.direction</code> Direction in which to fill missing values. Default: “down”.</li>
 </ul>
 <p>Alternatively, you can use <code>zoo::na.locf</code></p>
-<div class="sourceCode" id="cb644"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb644-1"><a href="8.8-data-frame-operations.html#cb644-1" tabindex="-1"></a><span class="co"># Last obs. carried forward</span></span>
-<span id="cb644-2"><a href="8.8-data-frame-operations.html#cb644-2" tabindex="-1"></a><span class="fu">na.locf</span>(x)                </span>
-<span id="cb644-3"><a href="8.8-data-frame-operations.html#cb644-3" tabindex="-1"></a></span>
-<span id="cb644-4"><a href="8.8-data-frame-operations.html#cb644-4" tabindex="-1"></a><span class="co"># Next obs. carried backward</span></span>
-<span id="cb644-5"><a href="8.8-data-frame-operations.html#cb644-5" tabindex="-1"></a><span class="fu">na.locf</span>(x, <span class="at">fromLast =</span> <span class="cn">TRUE</span>) </span></code></pre></div>
+<div class="sourceCode" id="cb646"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb646-1"><a href="8.8-data-frame-operations.html#cb646-1" tabindex="-1"></a><span class="co"># Last obs. carried forward</span></span>
+<span id="cb646-2"><a href="8.8-data-frame-operations.html#cb646-2" tabindex="-1"></a><span class="fu">na.locf</span>(x)                </span>
+<span id="cb646-3"><a href="8.8-data-frame-operations.html#cb646-3" tabindex="-1"></a></span>
+<span id="cb646-4"><a href="8.8-data-frame-operations.html#cb646-4" tabindex="-1"></a><span class="co"># Next obs. carried backward</span></span>
+<span id="cb646-5"><a href="8.8-data-frame-operations.html#cb646-5" tabindex="-1"></a><span class="fu">na.locf</span>(x, <span class="at">fromLast =</span> <span class="cn">TRUE</span>) </span></code></pre></div>
 <p><code>fromLast</code> defaults to <code>FALSE</code>, carry forward. If set to <code>TRUE</code>, carry backward.</p>
 <hr />
 <p><strong>Replace with specific values</strong></p>
 <p><code>dplyr::na_if(x, y)</code> that replaces any values in <code>x</code> that are equal to <code>y</code> with <code>NA</code>. It is useful if you want to convert an annoying value to <code>NA</code>.</p>
-<div class="sourceCode" id="cb645"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb645-1"><a href="8.8-data-frame-operations.html#cb645-1" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">na_if</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">5</span><span class="sc">:</span><span class="dv">1</span>)</span>
-<span id="cb645-2"><a href="8.8-data-frame-operations.html#cb645-2" tabindex="-1"></a><span class="co"># [1]  1  2 NA  4  5</span></span>
-<span id="cb645-3"><a href="8.8-data-frame-operations.html#cb645-3" tabindex="-1"></a><span class="sc">&gt;</span> y <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;abc&quot;</span>, <span class="st">&quot;def&quot;</span>, <span class="st">&quot;&quot;</span>, <span class="st">&quot;ghi&quot;</span>)</span>
-<span id="cb645-4"><a href="8.8-data-frame-operations.html#cb645-4" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">na_if</span>(y, <span class="st">&quot;&quot;</span>)</span>
-<span id="cb645-5"><a href="8.8-data-frame-operations.html#cb645-5" tabindex="-1"></a><span class="co"># [1] &quot;abc&quot; &quot;def&quot;  NA  &quot;ghi&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb647"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb647-1"><a href="8.8-data-frame-operations.html#cb647-1" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">na_if</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">5</span><span class="sc">:</span><span class="dv">1</span>)</span>
+<span id="cb647-2"><a href="8.8-data-frame-operations.html#cb647-2" tabindex="-1"></a><span class="co"># [1]  1  2 NA  4  5</span></span>
+<span id="cb647-3"><a href="8.8-data-frame-operations.html#cb647-3" tabindex="-1"></a><span class="sc">&gt;</span> y <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;abc&quot;</span>, <span class="st">&quot;def&quot;</span>, <span class="st">&quot;&quot;</span>, <span class="st">&quot;ghi&quot;</span>)</span>
+<span id="cb647-4"><a href="8.8-data-frame-operations.html#cb647-4" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">na_if</span>(y, <span class="st">&quot;&quot;</span>)</span>
+<span id="cb647-5"><a href="8.8-data-frame-operations.html#cb647-5" tabindex="-1"></a><span class="co"># [1] &quot;abc&quot; &quot;def&quot;  NA  &quot;ghi&quot;</span></span></code></pre></div>
 <p><code>tidyr::replace_na(data, replace)</code> Replace NAs with specified values</p>
 <ul>
 <li><p><code>replace</code></p>
 <ul>
 <li><p>If <code>data</code> is a data frame, <code>replace</code> takes a list of values, with one value for each column that has <code>NA</code> values to be replaced.</p>
-<div class="sourceCode" id="cb646"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb646-1"><a href="8.8-data-frame-operations.html#cb646-1" tabindex="-1"></a><span class="co"># Replace NAs in a data frame</span></span>
-<span id="cb646-2"><a href="8.8-data-frame-operations.html#cb646-2" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="cn">NA</span>), <span class="at">y =</span> <span class="fu">c</span>(<span class="st">&quot;a&quot;</span>, <span class="cn">NA</span>, <span class="st">&quot;b&quot;</span>))</span>
-<span id="cb646-3"><a href="8.8-data-frame-operations.html#cb646-3" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">replace_na</span>(<span class="fu">list</span>(<span class="at">x =</span> <span class="dv">0</span>, <span class="at">y =</span> <span class="st">&quot;unknown&quot;</span>))</span></code></pre></div></li>
+<div class="sourceCode" id="cb648"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb648-1"><a href="8.8-data-frame-operations.html#cb648-1" tabindex="-1"></a><span class="co"># Replace NAs in a data frame</span></span>
+<span id="cb648-2"><a href="8.8-data-frame-operations.html#cb648-2" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="cn">NA</span>), <span class="at">y =</span> <span class="fu">c</span>(<span class="st">&quot;a&quot;</span>, <span class="cn">NA</span>, <span class="st">&quot;b&quot;</span>))</span>
+<span id="cb648-3"><a href="8.8-data-frame-operations.html#cb648-3" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">replace_na</span>(<span class="fu">list</span>(<span class="at">x =</span> <span class="dv">0</span>, <span class="at">y =</span> <span class="st">&quot;unknown&quot;</span>))</span></code></pre></div></li>
 <li><p>If <code>data</code> is a vector, <code>replace</code> takes a single value. This single value replaces all of the <code>NA</code> values in the vector.</p>
-<div class="sourceCode" id="cb647"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb647-1"><a href="8.8-data-frame-operations.html#cb647-1" tabindex="-1"></a><span class="co"># Replace NAs in a vector</span></span>
-<span id="cb647-2"><a href="8.8-data-frame-operations.html#cb647-2" tabindex="-1"></a>df <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">x =</span> <span class="fu">replace_na</span>(x, <span class="dv">0</span>))</span>
-<span id="cb647-3"><a href="8.8-data-frame-operations.html#cb647-3" tabindex="-1"></a><span class="co"># OR</span></span>
-<span id="cb647-4"><a href="8.8-data-frame-operations.html#cb647-4" tabindex="-1"></a>df<span class="sc">$</span>x <span class="sc">%&gt;%</span> <span class="fu">replace_na</span>(<span class="dv">0</span>)</span>
-<span id="cb647-5"><a href="8.8-data-frame-operations.html#cb647-5" tabindex="-1"></a>df<span class="sc">$</span>y <span class="sc">%&gt;%</span> <span class="fu">replace_na</span>(<span class="st">&quot;unknown&quot;</span>)</span></code></pre></div></li>
+<div class="sourceCode" id="cb649"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb649-1"><a href="8.8-data-frame-operations.html#cb649-1" tabindex="-1"></a><span class="co"># Replace NAs in a vector</span></span>
+<span id="cb649-2"><a href="8.8-data-frame-operations.html#cb649-2" tabindex="-1"></a>df <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">x =</span> <span class="fu">replace_na</span>(x, <span class="dv">0</span>))</span>
+<span id="cb649-3"><a href="8.8-data-frame-operations.html#cb649-3" tabindex="-1"></a><span class="co"># OR</span></span>
+<span id="cb649-4"><a href="8.8-data-frame-operations.html#cb649-4" tabindex="-1"></a>df<span class="sc">$</span>x <span class="sc">%&gt;%</span> <span class="fu">replace_na</span>(<span class="dv">0</span>)</span>
+<span id="cb649-5"><a href="8.8-data-frame-operations.html#cb649-5" tabindex="-1"></a>df<span class="sc">$</span>y <span class="sc">%&gt;%</span> <span class="fu">replace_na</span>(<span class="st">&quot;unknown&quot;</span>)</span></code></pre></div></li>
 </ul></li>
 </ul>
 <hr />
@@ -1203,39 +1204,39 @@ To make a balanced panel, you can use <code>complete(data, ...)</code> to comple
 <li><p><code>...</code> columns to expand.</p></li>
 <li><p><code>complete(df, firm, year)</code> will find all possible combinations of <code>firm</code> and <code>year</code> in the data frame <code>df</code> (regardless whether or not they appear in the data), and fill missing combinations with <code>NA</code> values.</p></li>
 </ul>
-<div class="sourceCode" id="cb648"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb648-1"><a href="8.8-data-frame-operations.html#cb648-1" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb648-2"><a href="8.8-data-frame-operations.html#cb648-2" tabindex="-1"></a>  <span class="at">firm =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="st">&quot;A&quot;</span>, <span class="dv">3</span>), <span class="fu">rep</span>(<span class="st">&quot;B&quot;</span>, <span class="dv">2</span>)),</span>
-<span id="cb648-3"><a href="8.8-data-frame-operations.html#cb648-3" tabindex="-1"></a>  <span class="at">year =</span> <span class="fu">c</span>(<span class="dv">2010</span>, <span class="dv">2011</span>, <span class="dv">2013</span>, <span class="dv">2010</span>, <span class="dv">2012</span>),</span>
-<span id="cb648-4"><a href="8.8-data-frame-operations.html#cb648-4" tabindex="-1"></a>  <span class="at">value =</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">15</span>, <span class="dv">20</span>, <span class="dv">5</span>, <span class="dv">8</span>)</span>
-<span id="cb648-5"><a href="8.8-data-frame-operations.html#cb648-5" tabindex="-1"></a>)</span>
-<span id="cb648-6"><a href="8.8-data-frame-operations.html#cb648-6" tabindex="-1"></a>df</span>
-<span id="cb648-7"><a href="8.8-data-frame-operations.html#cb648-7" tabindex="-1"></a><span class="co"># A tibble: 5 × 3</span></span>
-<span id="cb648-8"><a href="8.8-data-frame-operations.html#cb648-8" tabindex="-1"></a>  firm   year value</span>
-<span id="cb648-9"><a href="8.8-data-frame-operations.html#cb648-9" tabindex="-1"></a>  <span class="sc">&lt;</span>chr<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span></span>
-<span id="cb648-10"><a href="8.8-data-frame-operations.html#cb648-10" tabindex="-1"></a><span class="dv">1</span> A      <span class="dv">2010</span>    <span class="dv">10</span></span>
-<span id="cb648-11"><a href="8.8-data-frame-operations.html#cb648-11" tabindex="-1"></a><span class="dv">2</span> A      <span class="dv">2011</span>    <span class="dv">15</span></span>
-<span id="cb648-12"><a href="8.8-data-frame-operations.html#cb648-12" tabindex="-1"></a><span class="dv">3</span> A      <span class="dv">2013</span>    <span class="dv">20</span></span>
-<span id="cb648-13"><a href="8.8-data-frame-operations.html#cb648-13" tabindex="-1"></a><span class="dv">4</span> B      <span class="dv">2010</span>     <span class="dv">5</span></span>
-<span id="cb648-14"><a href="8.8-data-frame-operations.html#cb648-14" tabindex="-1"></a><span class="dv">5</span> B      <span class="dv">2012</span>     <span class="dv">8</span></span>
-<span id="cb648-15"><a href="8.8-data-frame-operations.html#cb648-15" tabindex="-1"></a></span>
-<span id="cb648-16"><a href="8.8-data-frame-operations.html#cb648-16" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">complete</span>(firm, year)</span>
-<span id="cb648-17"><a href="8.8-data-frame-operations.html#cb648-17" tabindex="-1"></a><span class="co"># A tibble: 8 × 3</span></span>
-<span id="cb648-18"><a href="8.8-data-frame-operations.html#cb648-18" tabindex="-1"></a>  firm   year value</span>
-<span id="cb648-19"><a href="8.8-data-frame-operations.html#cb648-19" tabindex="-1"></a>  <span class="sc">&lt;</span>chr<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span></span>
-<span id="cb648-20"><a href="8.8-data-frame-operations.html#cb648-20" tabindex="-1"></a><span class="dv">1</span> A      <span class="dv">2010</span>    <span class="dv">10</span></span>
-<span id="cb648-21"><a href="8.8-data-frame-operations.html#cb648-21" tabindex="-1"></a><span class="dv">2</span> A      <span class="dv">2011</span>    <span class="dv">15</span></span>
-<span id="cb648-22"><a href="8.8-data-frame-operations.html#cb648-22" tabindex="-1"></a><span class="dv">3</span> A      <span class="dv">2012</span>    <span class="cn">NA</span></span>
-<span id="cb648-23"><a href="8.8-data-frame-operations.html#cb648-23" tabindex="-1"></a><span class="dv">4</span> A      <span class="dv">2013</span>    <span class="dv">20</span></span>
-<span id="cb648-24"><a href="8.8-data-frame-operations.html#cb648-24" tabindex="-1"></a><span class="dv">5</span> B      <span class="dv">2010</span>     <span class="dv">5</span></span>
-<span id="cb648-25"><a href="8.8-data-frame-operations.html#cb648-25" tabindex="-1"></a><span class="dv">6</span> B      <span class="dv">2011</span>    <span class="cn">NA</span></span>
-<span id="cb648-26"><a href="8.8-data-frame-operations.html#cb648-26" tabindex="-1"></a><span class="dv">7</span> B      <span class="dv">2012</span>     <span class="dv">8</span></span>
-<span id="cb648-27"><a href="8.8-data-frame-operations.html#cb648-27" tabindex="-1"></a><span class="dv">8</span> B      <span class="dv">2013</span>    <span class="cn">NA</span></span>
-<span id="cb648-28"><a href="8.8-data-frame-operations.html#cb648-28" tabindex="-1"></a></span>
-<span id="cb648-29"><a href="8.8-data-frame-operations.html#cb648-29" tabindex="-1"></a><span class="co"># Alternatively, you can group by `firm` first, then complete `year` within each firm.</span></span>
-<span id="cb648-30"><a href="8.8-data-frame-operations.html#cb648-30" tabindex="-1"></a>df <span class="sc">%&gt;%</span> </span>
-<span id="cb648-31"><a href="8.8-data-frame-operations.html#cb648-31" tabindex="-1"></a>  <span class="fu">group_by</span>(firm) <span class="sc">%&gt;%</span></span>
-<span id="cb648-32"><a href="8.8-data-frame-operations.html#cb648-32" tabindex="-1"></a>  <span class="fu">complete</span>(<span class="at">year =</span> <span class="fu">unique</span>(df<span class="sc">$</span>year)) <span class="sc">%&gt;%</span> </span>
-<span id="cb648-33"><a href="8.8-data-frame-operations.html#cb648-33" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb650"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb650-1"><a href="8.8-data-frame-operations.html#cb650-1" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb650-2"><a href="8.8-data-frame-operations.html#cb650-2" tabindex="-1"></a>  <span class="at">firm =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="st">&quot;A&quot;</span>, <span class="dv">3</span>), <span class="fu">rep</span>(<span class="st">&quot;B&quot;</span>, <span class="dv">2</span>)),</span>
+<span id="cb650-3"><a href="8.8-data-frame-operations.html#cb650-3" tabindex="-1"></a>  <span class="at">year =</span> <span class="fu">c</span>(<span class="dv">2010</span>, <span class="dv">2011</span>, <span class="dv">2013</span>, <span class="dv">2010</span>, <span class="dv">2012</span>),</span>
+<span id="cb650-4"><a href="8.8-data-frame-operations.html#cb650-4" tabindex="-1"></a>  <span class="at">value =</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">15</span>, <span class="dv">20</span>, <span class="dv">5</span>, <span class="dv">8</span>)</span>
+<span id="cb650-5"><a href="8.8-data-frame-operations.html#cb650-5" tabindex="-1"></a>)</span>
+<span id="cb650-6"><a href="8.8-data-frame-operations.html#cb650-6" tabindex="-1"></a>df</span>
+<span id="cb650-7"><a href="8.8-data-frame-operations.html#cb650-7" tabindex="-1"></a><span class="co"># A tibble: 5 × 3</span></span>
+<span id="cb650-8"><a href="8.8-data-frame-operations.html#cb650-8" tabindex="-1"></a>  firm   year value</span>
+<span id="cb650-9"><a href="8.8-data-frame-operations.html#cb650-9" tabindex="-1"></a>  <span class="sc">&lt;</span>chr<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span></span>
+<span id="cb650-10"><a href="8.8-data-frame-operations.html#cb650-10" tabindex="-1"></a><span class="dv">1</span> A      <span class="dv">2010</span>    <span class="dv">10</span></span>
+<span id="cb650-11"><a href="8.8-data-frame-operations.html#cb650-11" tabindex="-1"></a><span class="dv">2</span> A      <span class="dv">2011</span>    <span class="dv">15</span></span>
+<span id="cb650-12"><a href="8.8-data-frame-operations.html#cb650-12" tabindex="-1"></a><span class="dv">3</span> A      <span class="dv">2013</span>    <span class="dv">20</span></span>
+<span id="cb650-13"><a href="8.8-data-frame-operations.html#cb650-13" tabindex="-1"></a><span class="dv">4</span> B      <span class="dv">2010</span>     <span class="dv">5</span></span>
+<span id="cb650-14"><a href="8.8-data-frame-operations.html#cb650-14" tabindex="-1"></a><span class="dv">5</span> B      <span class="dv">2012</span>     <span class="dv">8</span></span>
+<span id="cb650-15"><a href="8.8-data-frame-operations.html#cb650-15" tabindex="-1"></a></span>
+<span id="cb650-16"><a href="8.8-data-frame-operations.html#cb650-16" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">complete</span>(firm, year)</span>
+<span id="cb650-17"><a href="8.8-data-frame-operations.html#cb650-17" tabindex="-1"></a><span class="co"># A tibble: 8 × 3</span></span>
+<span id="cb650-18"><a href="8.8-data-frame-operations.html#cb650-18" tabindex="-1"></a>  firm   year value</span>
+<span id="cb650-19"><a href="8.8-data-frame-operations.html#cb650-19" tabindex="-1"></a>  <span class="sc">&lt;</span>chr<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span></span>
+<span id="cb650-20"><a href="8.8-data-frame-operations.html#cb650-20" tabindex="-1"></a><span class="dv">1</span> A      <span class="dv">2010</span>    <span class="dv">10</span></span>
+<span id="cb650-21"><a href="8.8-data-frame-operations.html#cb650-21" tabindex="-1"></a><span class="dv">2</span> A      <span class="dv">2011</span>    <span class="dv">15</span></span>
+<span id="cb650-22"><a href="8.8-data-frame-operations.html#cb650-22" tabindex="-1"></a><span class="dv">3</span> A      <span class="dv">2012</span>    <span class="cn">NA</span></span>
+<span id="cb650-23"><a href="8.8-data-frame-operations.html#cb650-23" tabindex="-1"></a><span class="dv">4</span> A      <span class="dv">2013</span>    <span class="dv">20</span></span>
+<span id="cb650-24"><a href="8.8-data-frame-operations.html#cb650-24" tabindex="-1"></a><span class="dv">5</span> B      <span class="dv">2010</span>     <span class="dv">5</span></span>
+<span id="cb650-25"><a href="8.8-data-frame-operations.html#cb650-25" tabindex="-1"></a><span class="dv">6</span> B      <span class="dv">2011</span>    <span class="cn">NA</span></span>
+<span id="cb650-26"><a href="8.8-data-frame-operations.html#cb650-26" tabindex="-1"></a><span class="dv">7</span> B      <span class="dv">2012</span>     <span class="dv">8</span></span>
+<span id="cb650-27"><a href="8.8-data-frame-operations.html#cb650-27" tabindex="-1"></a><span class="dv">8</span> B      <span class="dv">2013</span>    <span class="cn">NA</span></span>
+<span id="cb650-28"><a href="8.8-data-frame-operations.html#cb650-28" tabindex="-1"></a></span>
+<span id="cb650-29"><a href="8.8-data-frame-operations.html#cb650-29" tabindex="-1"></a><span class="co"># Alternatively, you can group by `firm` first, then complete `year` within each firm.</span></span>
+<span id="cb650-30"><a href="8.8-data-frame-operations.html#cb650-30" tabindex="-1"></a>df <span class="sc">%&gt;%</span> </span>
+<span id="cb650-31"><a href="8.8-data-frame-operations.html#cb650-31" tabindex="-1"></a>  <span class="fu">group_by</span>(firm) <span class="sc">%&gt;%</span></span>
+<span id="cb650-32"><a href="8.8-data-frame-operations.html#cb650-32" tabindex="-1"></a>  <span class="fu">complete</span>(<span class="at">year =</span> <span class="fu">unique</span>(df<span class="sc">$</span>year)) <span class="sc">%&gt;%</span> </span>
+<span id="cb650-33"><a href="8.8-data-frame-operations.html#cb650-33" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span></code></pre></div>
 <p>ref:</p>
 <ul>
 <li><a href="https://tidyr.tidyverse.org/reference/complete.html">Complete a data frame with missing combinations of data</a></li>
