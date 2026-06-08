@@ -215,10 +215,10 @@ Without MCP, each AI tool needs its own Stata integration. With MCP, any AI tool
   
   `4000` conflicts with the default port for bundle jekyll server. 
   
-  So I set stata-mcp default port to `7001` to avoid conflict. 
-  Need to update the port number in your AI tool configuration accordingly, `.vscode/mcp.json`.
+  So I set stata-mcp default port to `7001` to avoid conflict.  
+  Need to update the port number in your AI tool configuration accordingly, <span class="env-green">`.vscode/mcp.json`</span>.
 
-  ```json
+  ```yaml
   "servers": {
     "stata-mcp": {
       "type": "http",
@@ -227,6 +227,29 @@ Without MCP, each AI tool needs its own Stata integration. With MCP, any AI tool
     }
   }
   ```
+
+  Verify local MCP server is listening on. In terminal, run:
+
+  ```bash
+  $curl -s http://localhost:7001/health
+  {"status":"ok","service":"Stata MCP Server","version":"0.4.1","stata_available":true}%
+  ```
+
+  Paste the **set up prompt** below into any MCP-aware assistant — Claude Code, OpenAI Codex, Cursor AI, Copilot Chat, etc. 
+  
+  <div class="rmdnote">
+  Remember to use the correct port number you specified in `stata-vscode.mcpServerPort`.
+  </div>
+  
+  ```
+  Set up the Stata MCP server for me. Endpoint: http://localhost:7001/mcp-streamable — setup guide: https://github.com/hanlulong/stata-mcp#detailed-configurations — if I already have a stata-mcp entry in my MCP config (e.g. using mcp-proxy), replace it rather than appending. When registration succeeds, tell me to restart the client so the stata_run_selection tool becomes available.
+  ```
+  
+  The assistant reads the guide, detects which client it is, writes the right config (or runs the right CLI command), and tells you to restart. 
+  
+  `stata-mcp` will be registered in `~/.codex/config.toml`.
+  The `stata_run_selection` tool becomes visible after the restart — MCP tool lists do not refresh mid-session.
+
 
 [Detailed Configuration](https://github.com/hanlulong/stata-mcp#detailed-configurations)
 
