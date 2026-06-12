@@ -1229,14 +1229,35 @@ The <code>stata_run_selection</code> tool becomes visible after the restart — 
 <ul>
 <li><p>Stata in interactive mode: OUTPUT &gt; choose “Stata”</p></li>
 <li><p>Run Selection / Current Line: ⇧⌘Enter</p></li>
-<li><p>Show outline: Use <a href="https://marketplace.visualstudio.com/items?itemName=longfish801.regexpOutline">RegExp Outline</a> extension and add the following to the “Regexp Outline: Header Rules Each Ext” setting.</p>
-<pre><code>[ {&quot;ext&quot;: &quot;.do&quot;, &quot;rules&quot;: [{&quot;level&quot;: 1, &quot;format&quot;: &quot;^**# (.+)$&quot;, &quot;nameIdx&quot;: 1, &quot;detail&quot;: &quot;H1&quot;}]} ]</code></pre>
-<p>Don’t need to specify level 2, 3, etc. They will be automatically detected by the number of <code>#</code> in the heading.</p>
+<li><p>Show outline:</p>
+<ul>
+<li><p><img src="https://zihaovistonwang.gallerycdn.vsassets.io/extensions/zihaovistonwang/stata-outline/0.2.3/1769462485107/Microsoft.VisualStudio.Services.Icons.Default" alt="" width="55" height="55" style="display: inline; vertical-align: middle;" /> Use <a href="https://marketplace.visualstudio.com/items?itemName=ZihaoVistonWang.stata-outline">Stata Outline</a> extension</p>
+<p>Do NOT need to setup. Use out-of-box. Use from <code>**#</code> to <code>**######</code> as hierarchical headers, supporting up to <strong>6 levels</strong>.</p>
+<p><img src="images/stata%20outline.png" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" /></p>
 <ul>
 <li>Level 1: <code>**# Level 1 Heading</code></li>
 <li>Level 2: <code>**## Level 2 Heading</code></li>
+</ul></li>
+<li><p>Use <a href="https://marketplace.visualstudio.com/items?itemName=longfish801.regexpOutline">RegExp Outline</a> extension and add the following to the “Regexp Outline: Header Rules Each Ext” setting.</p>
+<pre><code>[ {&quot;ext&quot;: &quot;.do&quot;, &quot;rules&quot;: [ {&quot;level&quot;: 1, &quot;format&quot;: &quot;^\\*\\*#(?!#)\\s*(.+)$&quot;, &quot;nameIdx&quot;: 1, &quot;detail&quot;: &quot;H1&quot;}, {&quot;level&quot;: 2, &quot;format&quot;: &quot;^\\*\\*##(?!#)\\s*(.+)$&quot;, &quot;nameIdx&quot;: 1, &quot;detail&quot;: &quot;H2&quot;}, {&quot;level&quot;: 3, &quot;format&quot;: &quot;^\\*\\*###\\s*(.+)$&quot;, &quot;nameIdx&quot;: 1, &quot;detail&quot;: &quot;H3&quot;} ] }]</code></pre>
+<p>Need to escape special characters in the regex pattern:</p>
+<ul>
+<li><code>\</code> needs to be escaped as <code>\\</code></li>
 </ul>
-<p><img src="/images/stata outline.png" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" /></p></li>
+<p>Regex pattern explanation:</p>
+<ul>
+<li><p><code>^</code> asserts the start of a line; <code>$</code> asserts the end of a line.</p></li>
+<li><p><code>*</code> means “match the preceding character zero or more times. <code>A*</code> would match zero or more <code>A</code> characters.</p>
+<p><code>\s*</code> matches zero or more whitespace characters. <code>\s</code> matches any whitespace character.</p></li>
+<li><p><code>\*</code> matches a literal <code>*</code> character;</p></li>
+<li><p><code>.</code> means any character except a newline; <code>.+</code> means one or more of any character.</p></li>
+<li><p><code>()</code> captures the matched content for later use.</p>
+<ul>
+<li><code>(?!#)</code> is a negative lookahead assertion that ensures the next character is not <code>#</code>. This prevents matching lines with more than the specified number of <code>#</code> characters.</li>
+</ul></li>
+</ul>
+<p><a href="https://www.rexegg.com/regex-quickstart.php">regex cheatsheets</a></p></li>
+</ul></li>
 </ul>
 <hr />
 </div>

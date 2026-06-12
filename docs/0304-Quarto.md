@@ -1245,17 +1245,25 @@ But in Quarto, you can use `quarto preview` to see the changes in real time. Sav
 Supported arguments:
 
 - `--port` Suggested port to listen on (defaults to random value between 3000 and 8000).
+  
+  If you have multiple documents to preview, you can use `--port` to specify different ports for each document.
 - `--host` Hostname to bind to (defaults to 127.0.0.1)
 - `--no-browser` Use <span class="env-green">internal viewer</span>, do not open external browser.
-- `--no-watch-inputs` flag specifically prevents Quarto from automatically re-rendering the output when changes are detected in your input source files (e.g., `.qmd` files). This means that if you edit and save your `.qmd` file, the preview in your browser will not automatically update.
+- `--no-watch-inputs` flag specifically prevents Quarto from automatically re-rendering the output when changes are detected in your input source files (e.g., `.qmd` files). 
+  
+  This means that if you edit and save your `.qmd` file, the preview in your browser will NOT automatically update.
   
   To see changes in the preview when using this flag, you would need to manually stop the `quarto preview` process and restart it, or explicitly trigger a re-render using `quarto render`.
 
   Even when using this flag, Quarto will still print the message "Watching file for changes." This means that Quarto is still watching CSS files and `_quarto.yml` for changes, but not the main input files.
 
-`quarto preview [file] --port 7200` Previewing website using a specific port. This is useful when your want to preview multiple documents simultaneously.
+`quarto preview [file] --port 7200 --no-browser` Previewing website using a specific port. This is useful when your want to preview multiple documents simultaneously.
 
-The default "internal" viewer in VS Code opens only one document at a time. Can use [Simple Browser Multi Extension](https://marketplace.visualstudio.com/items?itemName=fermelone.simple-browser-multi) to open multiple internal browsers in VS Code.
+The default "internal" viewer in VS Code opens only one document at a time. 
+
+**Option 1**
+
+Can use [Simple Browser Multi Extension](https://marketplace.visualstudio.com/items?itemName=fermelone.simple-browser-multi) to open multiple internal browsers in VS Code.
 
 **Steps:**
 
@@ -1263,7 +1271,18 @@ The default "internal" viewer in VS Code opens only one document at a time. Can 
 2. Use command `quarto preview 0304-Quarto.Rmd --port 7200` in terminal to start live preivew. This will open the preview in your <span class="env-green">external web browser</span>.
    
    If you don't want automatic re-rendering when you save the file, add `--no-watch-inputs` flag.
+
+   Add `--no-browser` if you don't want to open the preview in external browser.
 3. In VS Code, use command palette `Simple Browser Multi: Show` and enter the url in Step 2 to open the preview in the internal browser.
+
+--------------------------------------------------------------------------------
+
+**Option 2**
+
+[**Tab management**](https://code.visualstudio.com/docs/debugtest/integrated-browser#_tab-management)
+
+`Browser: Quick Open Browser Tab` (⇧⌘A) to quickly switch between open browser tabs. The Quick Pick lists all open tabs grouped by editor group, and you can type to filter by tab name or URL.
+
 
 --------------------------------------------------------------------------------
 

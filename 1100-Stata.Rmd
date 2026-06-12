@@ -280,17 +280,42 @@ Other AI tools that can be integrated with Stata MCP include:
 
 - Run Selection / Current Line: ⇧⌘Enter
 
-- Show outline: Use [RegExp Outline](https://marketplace.visualstudio.com/items?itemName=longfish801.regexpOutline) extension and add the following to the "Regexp Outline: Header Rules Each Ext" setting.
-
-  ```
-  [ {"ext": ".do", "rules": [{"level": 1, "format": "^**# (.+)$", "nameIdx": 1, "detail": "H1"}]} ]
-  ```
+- Show outline: 
   
-  Don't need to specify level 2, 3, etc. They will be automatically detected by the number of `#` in the heading. 
-  - Level 1: `**# Level 1 Heading`
-  - Level 2: `**## Level 2 Heading`
+  - <img src="https://zihaovistonwang.gallerycdn.vsassets.io/extensions/zihaovistonwang/stata-outline/0.2.3/1769462485107/Microsoft.VisualStudio.Services.Icons.Default" alt="" width="55" height="55" style="display: inline; vertical-align: middle;" /> Use [Stata Outline](https://marketplace.visualstudio.com/items?itemName=ZihaoVistonWang.stata-outline) extension
+    
+    Do NOT need to setup. Use out-of-box. Use from `**#` to `**######` as hierarchical headers, supporting up to **6 levels**.
 
-  <img src="/images/stata outline.png" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
+    <img src="images/stata outline.png" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
+
+    - Level 1: `**# Level 1 Heading`
+    - Level 2: `**## Level 2 Heading`
+
+  - Use [RegExp Outline](https://marketplace.visualstudio.com/items?itemName=longfish801.regexpOutline) extension and add the following to the "Regexp Outline: Header Rules Each Ext" setting.
+
+    ```
+    [ {"ext": ".do", "rules": [ {"level": 1, "format": "^\\*\\*#(?!#)\\s*(.+)$", "nameIdx": 1, "detail": "H1"}, {"level": 2, "format": "^\\*\\*##(?!#)\\s*(.+)$", "nameIdx": 1, "detail": "H2"}, {"level": 3, "format": "^\\*\\*###\\s*(.+)$", "nameIdx": 1, "detail": "H3"} ] }]
+    ```
+
+    Need to escape special characters in the regex pattern:
+
+    - `\` needs to be escaped as `\\`
+    
+    Regex pattern explanation:
+
+    - `^` asserts the start of a line; `$` asserts the end of a line. 
+    
+    - `*` means "match the preceding character zero or more times. `A*` would match zero or more `A` characters. 
+
+      `\s*` matches zero or more whitespace characters. `\s` matches any whitespace character.
+
+    - `\*` matches a literal `*` character; 
+
+    - `.` means any character except a newline; `.+` means one or more of any character.
+    - `()` captures the matched content for later use.
+      - `(?!#)` is a negative lookahead assertion that ensures the next character is not `#`. This prevents matching lines with more than the specified number of `#` characters.
+
+    [regex cheatsheets](https://www.rexegg.com/regex-quickstart.php)
 
 --------------------------------------------------------------------------------
 
