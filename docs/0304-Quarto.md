@@ -91,6 +91,8 @@ When you run `quarto render`, Quarto will render all Quarto documents in the pro
 
 <a id="project-metadata"></a>
 
+#### YAML Metadata
+
 Put <span class="env-green">**project metadata**</span> in `_quarto.yml` file. Any document rendered within the project directory will automatically inherit the metadata defined at the project level. Here is an example of what the `_quarto.yml` file might look like
 
 

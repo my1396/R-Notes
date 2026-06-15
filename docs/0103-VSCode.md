@@ -136,7 +136,11 @@ A: Set `"r.lsp.diagnostics": false`. Then in command palette, type "Developer: R
 ## Radian
 
 Q: There is no syntax highlighting in the R terminal. How to fix it? \
-A: Install [**Radian**](https://github.com/randy3k/radian), an improved **R console** REPL interface that corrects many limitations of the official R terminal and supports many features such as *syntax highlighting* and *auto-completion*. 
+A: Install [**Radian**](https://github.com/randy3k/radian), an improved **R console** REPL (Read-Eval-Print-Loop) interface that corrects many limitations of the official R terminal and supports many features such as *syntax highlighting* and *auto-completion*. 
+
+
+Q: What is REPL?  
+A: An interactive programming environment that takes single user inputs (i.e., reads), evaluates them, and returns the result to the user (i.e., prints) and loops back to wait for the next input.
 
 
 <img src="images/radian.png" width="366" />
@@ -311,6 +315,16 @@ Issue: the `restart()` function, cannot use `rstudioapi::` functions.
 
 Workaround: Close R and create a new R terminal manually or use `rstudioapi::restartSession()`.
 
+--------------------------------------------------------------------------------
+
+**Autocompletion**
+
+Radian provides autocompletion for R code. 
+
+Use ↑/↓ to navigate through the autocomplete suggestions, use → to select the suggestion.
+
+
+--------------------------------------------------------------------------------
 
 ### Data Viewer
 

@@ -4,13 +4,13 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 12 Regression | R Notes</title>
+  <title>11.6 Plot TS | R Notes</title>
   <meta name="description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
 set in the _output.yml file.</p>" />
   <meta name="generator" content="bookdown 0.45 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 12 Regression | R Notes" />
+  <meta property="og:title" content="11.6 Plot TS | R Notes" />
   <meta property="og:type" content="book" />
   
   <meta property="og:description" content="<p>This is a minimal example of using the bookdown package to write a book.
@@ -19,7 +19,7 @@ set in the _output.yml file.</p>" />
   <meta name="github-repo" content="my1396/R-Notes" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 12 Regression | R Notes" />
+  <meta name="twitter:title" content="11.6 Plot TS | R Notes" />
   
   <meta name="twitter:description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
@@ -35,8 +35,8 @@ set in the _output.yml file.</p>" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   <link rel="shortcut icon" href="images/r-project-favicon.ico" type="image/x-icon" />
-<link rel="prev" href="11.7-time-series-regression.html"/>
-<link rel="next" href="12.1-ols.html"/>
+<link rel="prev" href="11.5-portfolio-return.html"/>
+<link rel="next" href="11.7-time-series-regression.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -1022,99 +1022,145 @@ document.addEventListener('DOMContentLoaded', function() {
   padding-left: 0; 
 }
 </style>
-<div id="regression" class="section level1 hasAnchor" number="12">
-<h1><span class="header-section-number">Chapter 12</span> Regression<a href="12-regression.html#regression" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<p>Use example:</p>
-<div class="sourceCode" id="cb932"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb932-1"><a href="12-regression.html#cb932-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb932-2"><a href="12-regression.html#cb932-2" tabindex="-1"></a>reg_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;https://raw.githubusercontent.com/my1396/course_dataset/refs/heads/main/META_monthly_factor_model_2014-2024.csv&quot;</span>)</span>
-<span id="cb932-3"><a href="12-regression.html#cb932-3" tabindex="-1"></a>reg_data <span class="ot">&lt;-</span> reg_data <span class="sc">%&gt;%</span> </span>
-<span id="cb932-4"><a href="12-regression.html#cb932-4" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">return =</span> adjusted<span class="sc">/</span><span class="fu">lag</span>(adjusted)<span class="sc">-</span><span class="dv">1</span>,</span>
-<span id="cb932-5"><a href="12-regression.html#cb932-5" tabindex="-1"></a>           <span class="at">eRi =</span> return<span class="sc">-</span>RF)</span>
-<span id="cb932-6"><a href="12-regression.html#cb932-6" tabindex="-1"></a><span class="do">## CAPM</span></span>
-<span id="cb932-7"><a href="12-regression.html#cb932-7" tabindex="-1"></a>capm_ml <span class="ot">&lt;-</span> <span class="fu">lm</span>(eRi<span class="sc">~</span>rmrf, <span class="at">data=</span>reg_data)</span>
-<span id="cb932-8"><a href="12-regression.html#cb932-8" tabindex="-1"></a><span class="fu">summary</span>(capm_ml)</span></code></pre></div>
-<pre><code>## 
-## Call:
-## lm(formula = eRi ~ rmrf, data = reg_data)
-## 
-## Residuals:
-##      Min       1Q   Median       3Q      Max 
-## -0.40895 -0.03482  0.00141  0.03767  0.20600 
-## 
-## Coefficients:
-##             Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept) 0.009747   0.007645   1.275    0.205    
-## rmrf        1.066640   0.166384   6.411  2.8e-09 ***
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## Residual standard error: 0.08343 on 123 degrees of freedom
-##   (1 observation deleted due to missingness)
-## Multiple R-squared:  0.2504, Adjusted R-squared:  0.2444 
-## F-statistic:  41.1 on 1 and 123 DF,  p-value: 2.801e-09</code></pre>
-<p>Get the <strong>coefficient table</strong> with <code>broom::tidy</code>.</p>
-<div class="sourceCode" id="cb934"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb934-1"><a href="12-regression.html#cb934-1" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
-<span id="cb934-2"><a href="12-regression.html#cb934-2" tabindex="-1"></a><span class="fu">tidy</span>(capm_ml)</span></code></pre></div>
-<pre><code>## # A tibble: 2 × 5
-##   term        estimate std.error statistic       p.value
-##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;         &lt;dbl&gt;
-## 1 (Intercept)  0.00975   0.00764      1.27 0.205        
-## 2 rmrf         1.07      0.166        6.41 0.00000000280</code></pre>
-<p>Get the <strong>variance-covariance matrix</strong> with <code>vcov</code>.</p>
-<div class="sourceCode" id="cb936"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb936-1"><a href="12-regression.html#cb936-1" tabindex="-1"></a><span class="fu">vcov</span>(capm_ml)</span></code></pre></div>
-<pre><code>##               (Intercept)          rmrf
-## (Intercept)  5.843866e-05 -0.0002760605
-## rmrf        -2.760605e-04  0.0276835643</code></pre>
-<div class="sourceCode" id="cb938"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb938-1"><a href="12-regression.html#cb938-1" tabindex="-1"></a><span class="co"># verify using coef table</span></span>
-<span id="cb938-2"><a href="12-regression.html#cb938-2" tabindex="-1"></a>capm_ml <span class="sc">%&gt;%</span> </span>
-<span id="cb938-3"><a href="12-regression.html#cb938-3" tabindex="-1"></a>    <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb938-4"><a href="12-regression.html#cb938-4" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">variance=</span>std.error<span class="sc">^</span><span class="dv">2</span>)</span></code></pre></div>
-<pre><code>## # A tibble: 2 × 6
-##   term        estimate std.error statistic       p.value  variance
-##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;         &lt;dbl&gt;     &lt;dbl&gt;
-## 1 (Intercept)  0.00975   0.00764      1.27 0.205         0.0000584
-## 2 rmrf         1.07      0.166        6.41 0.00000000280 0.0277</code></pre>
-<p>We can manually calculate as</p>
-<div class="sourceCode" id="cb940"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb940-1"><a href="12-regression.html#cb940-1" tabindex="-1"></a>df <span class="ot">&lt;-</span> (<span class="fu">nrow</span>(capm_ml<span class="sc">$</span>model)<span class="sc">-</span><span class="dv">2</span>)  <span class="co"># degree of freedom</span></span>
-<span id="cb940-2"><a href="12-regression.html#cb940-2" tabindex="-1"></a>sigma2 <span class="ot">&lt;-</span> <span class="fu">sum</span>(capm_ml<span class="sc">$</span>residuals<span class="sc">^</span><span class="dv">2</span>)<span class="sc">/</span>df  <span class="co"># residual variance</span></span>
-<span id="cb940-3"><a href="12-regression.html#cb940-3" tabindex="-1"></a><span class="co"># 1st column of lm$model is the depend. var.</span></span>
-<span id="cb940-4"><a href="12-regression.html#cb940-4" tabindex="-1"></a>X <span class="ot">&lt;-</span> capm_ml<span class="sc">$</span>model[, <span class="dv">2</span>, drop<span class="ot">=</span><span class="cn">FALSE</span>] <span class="sc">%&gt;%</span> <span class="fu">as.matrix</span>()</span>
-<span id="cb940-5"><a href="12-regression.html#cb940-5" tabindex="-1"></a>X <span class="ot">&lt;-</span> <span class="fu">cbind</span>(<span class="dv">1</span>, X)  <span class="co"># add intercept</span></span>
-<span id="cb940-6"><a href="12-regression.html#cb940-6" tabindex="-1"></a>V <span class="ot">&lt;-</span> <span class="fu">solve</span>(<span class="fu">t</span>(X) <span class="sc">%*%</span> X) <span class="sc">*</span> sigma2</span>
-<span id="cb940-7"><a href="12-regression.html#cb940-7" tabindex="-1"></a>V</span></code></pre></div>
-<pre><code>##                             rmrf
-##       5.843866e-05 -0.0002760605
-## rmrf -2.760605e-04  0.0276835643</code></pre>
-<p>Note that <code>cov.unscaled</code> returns the <strong>unscaled</strong> covariance matrix, <span class="math inline">\((X&#39;X)^{-1}\)</span>.</p>
+<div id="plot-ts" class="section level2 hasAnchor" number="11.6">
+<h2><span class="header-section-number">11.6</span> Plot TS<a href="11.6-plot-ts.html#plot-ts" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="plot.xts" class="section level3 hasAnchor" number="11.6.1">
+<h3><span class="header-section-number">11.6.1</span> <code>plot.xts</code><a href="11.6-plot-ts.html#plot.xts" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div class="sourceCode" id="cb918"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb918-1"><a href="11.6-plot-ts.html#cb918-1" tabindex="-1"></a><span class="fu">plot</span>(msftSbuxMonthlyPrices, <span class="at">main=</span><span class="st">&quot;Monthly Closing Prices&quot;</span>, </span>
+<span id="cb918-2"><a href="11.6-plot-ts.html#cb918-2" tabindex="-1"></a>     <span class="at">legend.loc=</span><span class="st">&quot;topleft&quot;</span>)</span></code></pre></div>
+<p>The default plot style in <code>plot.xts()</code> is a single-panel plot with multiple series. You can also create multi-panel plots by setting the optional argument <code>multi.panel = TRUE</code> in the call to <code>plot.xts()</code>.</p>
+<div class="sourceCode" id="cb919"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb919-1"><a href="11.6-plot-ts.html#cb919-1" tabindex="-1"></a><span class="fu">plot</span>(msftSbuxMonthlyPrices, </span>
+<span id="cb919-2"><a href="11.6-plot-ts.html#cb919-2" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">&quot;Monthly Closing Prices&quot;</span>, </span>
+<span id="cb919-3"><a href="11.6-plot-ts.html#cb919-3" tabindex="-1"></a>     <span class="at">multi.panel =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<p>Add legend to multiple series using <code>addLegend</code></p>
+<div class="sourceCode" id="cb920"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb920-1"><a href="11.6-plot-ts.html#cb920-1" tabindex="-1"></a>plot_data <span class="ot">&lt;-</span> reg_data <span class="sc">%&gt;%</span> </span>
+<span id="cb920-2"><a href="11.6-plot-ts.html#cb920-2" tabindex="-1"></a>    <span class="fu">select</span>(eRi, rmrf) <span class="sc">%&gt;%</span> </span>
+<span id="cb920-3"><a href="11.6-plot-ts.html#cb920-3" tabindex="-1"></a>    <span class="fu">xts</span>(<span class="at">order.by =</span> the_group<span class="sc">$</span>Date)</span>
+<span id="cb920-4"><a href="11.6-plot-ts.html#cb920-4" tabindex="-1"></a>plot_data</span>
+<span id="cb920-5"><a href="11.6-plot-ts.html#cb920-5" tabindex="-1"></a></span>
+<span id="cb920-6"><a href="11.6-plot-ts.html#cb920-6" tabindex="-1"></a>col_vec <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;black&quot;</span>, <span class="st">&quot;red&quot;</span>) <span class="co"># color series</span></span>
+<span id="cb920-7"><a href="11.6-plot-ts.html#cb920-7" tabindex="-1"></a><span class="fu">plot.xts</span>(plot_data, <span class="at">col =</span> col_vec, <span class="at">main =</span> <span class="st">&quot;Excess Return on Asset and Market&quot;</span>)</span>
+<span id="cb920-8"><a href="11.6-plot-ts.html#cb920-8" tabindex="-1"></a><span class="fu">addLegend</span>(</span>
+<span id="cb920-9"><a href="11.6-plot-ts.html#cb920-9" tabindex="-1"></a>  <span class="st">&quot;topright&quot;</span>, </span>
+<span id="cb920-10"><a href="11.6-plot-ts.html#cb920-10" tabindex="-1"></a>  <span class="at">legend.names =</span> <span class="fu">c</span>(<span class="st">&quot;eRi&quot;</span>, <span class="st">&quot;rmrf&quot;</span>), </span>
+<span id="cb920-11"><a href="11.6-plot-ts.html#cb920-11" tabindex="-1"></a>  <span class="at">lty =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>), </span>
+<span id="cb920-12"><a href="11.6-plot-ts.html#cb920-12" tabindex="-1"></a>  <span class="at">lwd =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">2</span>),</span>
+<span id="cb920-13"><a href="11.6-plot-ts.html#cb920-13" tabindex="-1"></a>  <span class="at">col =</span> col_vec,</span>
+<span id="cb920-14"><a href="11.6-plot-ts.html#cb920-14" tabindex="-1"></a>  <span class="at">bg =</span> <span class="st">&quot;white&quot;</span>, <span class="co"># legend background</span></span>
+<span id="cb920-15"><a href="11.6-plot-ts.html#cb920-15" tabindex="-1"></a>  <span class="at">bty =</span> <span class="st">&quot;o&quot;</span>,    <span class="co"># box border style, doesn&#39;t work</span></span>
+<span id="cb920-16"><a href="11.6-plot-ts.html#cb920-16" tabindex="-1"></a>  <span class="at">box.col =</span> <span class="st">&quot;white&quot;</span> <span class="co"># box border color</span></span>
+<span id="cb920-17"><a href="11.6-plot-ts.html#cb920-17" tabindex="-1"></a>)</span></code></pre></div>
+<p><strong>Another example</strong></p>
+<div class="sourceCode" id="cb921"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb921-1"><a href="11.6-plot-ts.html#cb921-1" tabindex="-1"></a><span class="fu">plot</span>(<span class="at">x =</span> basket[,<span class="st">&quot;SPY.Close&quot;</span>], <span class="at">xlab =</span> <span class="st">&quot;Time&quot;</span>, <span class="at">ylab =</span> <span class="st">&quot;Cumulative Return&quot;</span>,</span>
+<span id="cb921-2"><a href="11.6-plot-ts.html#cb921-2" tabindex="-1"></a><span class="at">main =</span> <span class="st">&quot;Cumulative Returns&quot;</span>, <span class="at">ylim =</span> <span class="fu">c</span>(<span class="fl">0.0</span>, <span class="fl">2.5</span>), <span class="at">major.ticks=</span> <span class="st">&quot;years&quot;</span>,</span>
+<span id="cb921-3"><a href="11.6-plot-ts.html#cb921-3" tabindex="-1"></a>        <span class="at">minor.ticks =</span> <span class="cn">FALSE</span>, <span class="at">col =</span> <span class="st">&quot;red&quot;</span>)</span>
+<span id="cb921-4"><a href="11.6-plot-ts.html#cb921-4" tabindex="-1"></a><span class="fu">lines</span>(<span class="at">x =</span> basket[,<span class="st">&quot;QQQ.Close&quot;</span>], <span class="at">col =</span> <span class="st">&quot;darkgreen&quot;</span>)</span>
+<span id="cb921-5"><a href="11.6-plot-ts.html#cb921-5" tabindex="-1"></a><span class="fu">lines</span>(<span class="at">x =</span> basket[,<span class="st">&quot;GDX.Close&quot;</span>], <span class="at">col =</span> <span class="st">&quot;goldenrod&quot;</span>)</span>
+<span id="cb921-6"><a href="11.6-plot-ts.html#cb921-6" tabindex="-1"></a><span class="fu">lines</span>(<span class="at">x =</span> basket[,<span class="st">&quot;DBO.Close&quot;</span>], <span class="at">col =</span> <span class="st">&quot;darkblue&quot;</span>)</span>
+<span id="cb921-7"><a href="11.6-plot-ts.html#cb921-7" tabindex="-1"></a><span class="fu">lines</span>(<span class="at">x =</span> basket[,<span class="st">&quot;VWO.Close&quot;</span>], <span class="at">col =</span> <span class="st">&quot;darkviolet&quot;</span>)</span>
+<span id="cb921-8"><a href="11.6-plot-ts.html#cb921-8" tabindex="-1"></a><span class="fu">legend</span>(<span class="at">x =</span> <span class="st">&#39;topleft&#39;</span>, <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">&quot;SPY&quot;</span>, <span class="st">&quot;QQQ&quot;</span>, <span class="st">&quot;GDX&quot;</span>, <span class="st">&quot;DBO&quot;</span>, <span class="st">&quot;VWO&quot;</span>),</span>
+<span id="cb921-9"><a href="11.6-plot-ts.html#cb921-9" tabindex="-1"></a>      <span class="at">lty =</span> <span class="dv">1</span>, <span class="at">col =</span> myColors)</span></code></pre></div>
 <ul>
-<li>To get estimated covariance matrix for the coefficients, you need to multiply <code>cov.unscaled</code> by the estimate of the error variance.</li>
+<li><code>main.timespan = FALSE</code> to remove the time span label in the top right corner.</li>
 </ul>
-<div class="sourceCode" id="cb942"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb942-1"><a href="12-regression.html#cb942-1" tabindex="-1"></a><span class="fu">solve</span>(<span class="fu">t</span>(X) <span class="sc">%*%</span> X)</span></code></pre></div>
-<pre><code>##                          rmrf
-##       0.008395487 -0.03965975
-## rmrf -0.039659745  3.97711043</code></pre>
-<div class="sourceCode" id="cb944"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb944-1"><a href="12-regression.html#cb944-1" tabindex="-1"></a><span class="fu">summary</span>(capm_ml)<span class="sc">$</span>cov.unscaled</span></code></pre></div>
-<pre><code>##              (Intercept)        rmrf
-## (Intercept)  0.008395487 -0.03965975
-## rmrf        -0.039659745  3.97711043</code></pre>
-<div class="sourceCode" id="cb946"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb946-1"><a href="12-regression.html#cb946-1" tabindex="-1"></a><span class="fu">all.equal</span>(<span class="fu">solve</span>(<span class="fu">t</span>(X) <span class="sc">%*%</span> X), </span>
-<span id="cb946-2"><a href="12-regression.html#cb946-2" tabindex="-1"></a>          <span class="fu">summary</span>(capm_ml)<span class="sc">$</span>cov.unscaled, </span>
-<span id="cb946-3"><a href="12-regression.html#cb946-3" tabindex="-1"></a>          <span class="at">check.attributes =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
-<pre><code>## [1] TRUE</code></pre>
-<p><strong>References</strong>:</p>
+<p><code>plot.xts</code> overrides figure margins set by <code>par</code>. If you want to change figure margins, set it inside <code>plot.xts</code> function.</p>
+<p><code>plot.xts</code> set <code>mar = c(3, 2, 0, 2)</code> by default.</p>
+</div>
+<div id="autoplot" class="section level3 hasAnchor" number="11.6.2">
+<h3><span class="header-section-number">11.6.2</span> <code>autoplot</code><a href="11.6-plot-ts.html#autoplot" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>For plotting <code>xts</code> objects, especially with multiple columns (data series), the <strong>ggplot2</strong> function <span class="env-green"><code>autoplot()</code></span> is especially convenient and easy:</p>
+<p><span class="env-green"><code>facets = NULL</code></span>: plot all series in <strong>one panel</strong>.</p>
+<div class="sourceCode" id="cb922"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb922-1"><a href="11.6-plot-ts.html#cb922-1" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb922-2"><a href="11.6-plot-ts.html#cb922-2" tabindex="-1"></a><span class="co"># all series in one panel</span></span>
+<span id="cb922-3"><a href="11.6-plot-ts.html#cb922-3" tabindex="-1"></a><span class="fu">autoplot</span>(msftSbuxDailyPrices, <span class="at">facets =</span> <span class="cn">NULL</span>) <span class="sc">+</span> </span>
+<span id="cb922-4"><a href="11.6-plot-ts.html#cb922-4" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">&quot;Daily Closing Prices&quot;</span>) <span class="sc">+</span></span>
+<span id="cb922-5"><a href="11.6-plot-ts.html#cb922-5" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">&quot;Closing Price Per Share&quot;</span>) <span class="sc">+</span></span>
+<span id="cb922-6"><a href="11.6-plot-ts.html#cb922-6" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">&quot;Year&quot;</span>)</span></code></pre></div>
+<p>or produce a <strong>multi-panel</strong> plot call <code>autoplot()</code> with <span class="env-green"><code>facets = Series ~ .</code></span>:</p>
+<div class="sourceCode" id="cb923"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb923-1"><a href="11.6-plot-ts.html#cb923-1" tabindex="-1"></a><span class="co"># one panel for each series</span></span>
+<span id="cb923-2"><a href="11.6-plot-ts.html#cb923-2" tabindex="-1"></a><span class="fu">autoplot</span>(msftSbuxDailyPrices, <span class="at">facets =</span> Series <span class="sc">~</span> .) <span class="sc">+</span></span>
+<span id="cb923-3"><a href="11.6-plot-ts.html#cb923-3" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">&quot;Daily Closing Prices&quot;</span>) <span class="sc">+</span></span>
+<span id="cb923-4"><a href="11.6-plot-ts.html#cb923-4" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">&quot;Closing Price Per Share&quot;</span>) <span class="sc">+</span></span>
+<span id="cb923-5"><a href="11.6-plot-ts.html#cb923-5" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">&quot;Year&quot;</span>)</span></code></pre></div>
+<p><strong>More refined setting</strong></p>
+<p><strong>Set colors</strong></p>
+<p>Use <code>scale_[color | fill | linetype]_manual(values = c("key" = "value"), ...)</code> to set colors/fills/linetypes for different series.</p>
+<div class="sourceCode" id="cb924"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb924-1"><a href="11.6-plot-ts.html#cb924-1" tabindex="-1"></a><span class="co"># using autoplot from earlier, I placed it into an object</span></span>
+<span id="cb924-2"><a href="11.6-plot-ts.html#cb924-2" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">autoplot</span>(<span class="fu">prcomp</span>(df), <span class="at">data =</span> iris, <span class="at">colour =</span> <span class="st">&#39;Species&#39;</span>, <span class="at">shape =</span> <span class="st">&#39;Species&#39;</span>, <span class="at">frame =</span> T)</span>
+<span id="cb924-3"><a href="11.6-plot-ts.html#cb924-3" tabindex="-1"></a><span class="co"># then I added on scale_color_manual and scale_fill_manual with the wacky color combos that would never be publishable </span></span>
+<span id="cb924-4"><a href="11.6-plot-ts.html#cb924-4" tabindex="-1"></a>p <span class="sc">+</span> </span>
+<span id="cb924-5"><a href="11.6-plot-ts.html#cb924-5" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">&quot;#FF1BB3&quot;</span>, <span class="st">&quot;#A7FF5B&quot;</span>, <span class="st">&quot;#99554D&quot;</span>)) <span class="sc">+</span> </span>
+<span id="cb924-6"><a href="11.6-plot-ts.html#cb924-6" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">&quot;black&quot;</span>, <span class="st">&quot;white&quot;</span>, <span class="st">&quot;orange&quot;</span>)) </span></code></pre></div>
+<p><strong>Set date breaks</strong></p>
+<p><code>scale_x_date</code> can be used to set date breaks and labels on the x-axis.</p>
+<div class="sourceCode" id="cb925"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb925-1"><a href="11.6-plot-ts.html#cb925-1" tabindex="-1"></a><span class="co"># auto date breaks every 6 mons</span></span>
+<span id="cb925-2"><a href="11.6-plot-ts.html#cb925-2" tabindex="-1"></a><span class="fu">autoplot</span>(plot_data, <span class="at">facets =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb925-3"><a href="11.6-plot-ts.html#cb925-3" tabindex="-1"></a>    <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">&quot;black&quot;</span>, <span class="st">&quot;red&quot;</span>)) <span class="sc">+</span></span>
+<span id="cb925-4"><a href="11.6-plot-ts.html#cb925-4" tabindex="-1"></a>    <span class="fu">scale_x_date</span>(</span>
+<span id="cb925-5"><a href="11.6-plot-ts.html#cb925-5" tabindex="-1"></a>      <span class="at">date_breaks =</span> <span class="st">&quot;6 month&quot;</span>,</span>
+<span id="cb925-6"><a href="11.6-plot-ts.html#cb925-6" tabindex="-1"></a>      <span class="at">date_labels =</span> <span class="st">&quot;%b %y&quot;</span>,</span>
+<span id="cb925-7"><a href="11.6-plot-ts.html#cb925-7" tabindex="-1"></a>      <span class="at">limits =</span> <span class="fu">c</span>(<span class="fu">ymd</span>(<span class="st">&quot;2014-12-30&quot;</span>), <span class="fu">ymd</span>(<span class="st">&quot;2021-12-30&quot;</span>) )</span>
+<span id="cb925-8"><a href="11.6-plot-ts.html#cb925-8" tabindex="-1"></a>    )</span>
+<span id="cb925-9"><a href="11.6-plot-ts.html#cb925-9" tabindex="-1"></a></span>
+<span id="cb925-10"><a href="11.6-plot-ts.html#cb925-10" tabindex="-1"></a><span class="co"># explicit date breaks </span></span>
+<span id="cb925-11"><a href="11.6-plot-ts.html#cb925-11" tabindex="-1"></a><span class="fu">autoplot</span>(plot_data, <span class="at">facets =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb925-12"><a href="11.6-plot-ts.html#cb925-12" tabindex="-1"></a>    <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">&quot;black&quot;</span>, <span class="st">&quot;red&quot;</span>)) <span class="sc">+</span></span>
+<span id="cb925-13"><a href="11.6-plot-ts.html#cb925-13" tabindex="-1"></a>    <span class="fu">scale_x_date</span>(</span>
+<span id="cb925-14"><a href="11.6-plot-ts.html#cb925-14" tabindex="-1"></a>      <span class="at">breaks =</span> <span class="fu">seq</span>(<span class="at">from =</span> <span class="fu">index</span>(plot_data)[<span class="dv">1</span>] <span class="sc">%m-%</span> <span class="fu">months</span>(<span class="dv">1</span>), </span>
+<span id="cb925-15"><a href="11.6-plot-ts.html#cb925-15" tabindex="-1"></a>                   <span class="at">to =</span> <span class="fu">tail</span>(<span class="fu">index</span>(plot_data), <span class="dv">1</span>), </span>
+<span id="cb925-16"><a href="11.6-plot-ts.html#cb925-16" tabindex="-1"></a>                   <span class="at">by =</span> <span class="st">&quot;6 month&quot;</span>),</span>
+<span id="cb925-17"><a href="11.6-plot-ts.html#cb925-17" tabindex="-1"></a>      <span class="at">date_labels =</span> <span class="st">&quot;%b %y&quot;</span>,</span>
+<span id="cb925-18"><a href="11.6-plot-ts.html#cb925-18" tabindex="-1"></a>      <span class="at">limits =</span> <span class="fu">c</span>(<span class="fu">ymd</span>(<span class="st">&quot;2014-12-30&quot;</span>), <span class="fu">ymd</span>(<span class="st">&quot;2021-12-30&quot;</span>) )</span>
+<span id="cb925-19"><a href="11.6-plot-ts.html#cb925-19" tabindex="-1"></a>    )</span></code></pre></div>
+<p>Alternatively, you can use <code>zoo</code> functions</p>
 <ul>
-<li><a href="https://github.com/SurajGupta/r-source/blob/master/src/library/stats/R/vcov.R" class="uri">https://github.com/SurajGupta/r-source/blob/master/src/library/stats/R/vcov.R</a></li>
-<li>stats package: <a href="https://docs.tibco.com/pub/enterprise-runtime-for-R/6.0.1/doc/html/Language_Reference/stats/summary.lm.html" class="uri">https://docs.tibco.com/pub/enterprise-runtime-for-R/6.0.1/doc/html/Language_Reference/stats/summary.lm.html</a></li>
+<li><code>scale_x_yearmon</code> to set date breaks for monthly data.</li>
+<li><code>scale_x_yearqtr</code> to set date breaks for quarterly data.</li>
 </ul>
-<!--chapter:end:0800-Regresssion.Rmd-->
+<p>These functions are more constrained as it requires the index of the <code>xts</code> object to be in <code>yearmon</code> or <code>yearqtr</code> format. Otherwise, you can use <code>zoo::as.yearmon</code> or <code>zoo::as.yearqtr</code> to convert the index to the required format.</p>
+<hr />
+<p><strong>Simulate a autocorrelated time series</strong></p>
+<p><code>arima.sim(model, n, sd = 1)</code></p>
+<ul>
+<li><p><code>model</code> a <code>list</code> with the following elements.</p>
+<ul>
+<li><p><code>order</code> an optional vector of length 3 containing the <code>ARIMA(p, d, q)</code> order</p>
+<ul>
+<li><p><code>p</code> specifies AR order;</p>
+<p><code>order = c(0, 0, 0)</code> will generate White Noise.</p>
+<p><code>order = c(2, 0, 0)</code> will generate an AR(2) series.</p></li>
+<li><p><code>d</code> is the differencing order;</p></li>
+<li><p><code>q</code> specifies MA order. <code>order = c(0, 0, 2)</code> will generate an MA(2) series.</p></li>
+</ul></li>
+</ul>
+<p>The coefficients/parameters must be provided through the elements <code>ar</code> and <code>ma</code>.</p>
+<ul>
+<li><p><code>ar</code> a vector of length <code>p</code> containing the <code>AR(p)</code> coefficients</p></li>
+<li><p><code>ma</code> a vector of length <code>q</code> containing the <code>MA(q)</code> coefficients</p></li>
+</ul></li>
+<li><p><code>n</code> length of simulated time series</p></li>
+<li><p><code>sd</code> the standard deviation of the Gaussian errors. Defaults to 1.</p></li>
+<li><p><code>rand.gen = rnorm</code> can specify a function to generate the innovations. Defaults to normal distribution generator.</p></li>
+<li><p><code>innov = rand.gen(n, ...)</code> can specify your own series of error here.</p></li>
+</ul>
+<div class="sourceCode" id="cb926"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb926-1"><a href="11.6-plot-ts.html#cb926-1" tabindex="-1"></a><span class="co"># AR(1), with rho=0.7</span></span>
+<span id="cb926-2"><a href="11.6-plot-ts.html#cb926-2" tabindex="-1"></a>ar.epsilon <span class="ot">&lt;-</span> <span class="fu">arima.sim</span>(<span class="at">model =</span> <span class="fu">list</span>(<span class="at">order =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>), <span class="at">ar =</span> <span class="fl">0.7</span>), <span class="at">n =</span> <span class="dv">200</span>, <span class="at">sd =</span> <span class="dv">20</span>)</span>
+<span id="cb926-3"><a href="11.6-plot-ts.html#cb926-3" tabindex="-1"></a></span>
+<span id="cb926-4"><a href="11.6-plot-ts.html#cb926-4" tabindex="-1"></a><span class="co"># AR(2), with with parameters 1.5 and -.75</span></span>
+<span id="cb926-5"><a href="11.6-plot-ts.html#cb926-5" tabindex="-1"></a>AR <span class="ot">&lt;-</span> <span class="fu">arima.sim</span>(<span class="at">model =</span> <span class="fu">list</span>(<span class="at">order =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">0</span>, <span class="dv">0</span>), <span class="at">ar =</span> <span class="fu">c</span>(<span class="fl">1.5</span>, <span class="sc">-</span>.<span class="dv">75</span>)), <span class="at">n =</span> <span class="dv">200</span>) </span>
+<span id="cb926-6"><a href="11.6-plot-ts.html#cb926-6" tabindex="-1"></a></span>
+<span id="cb926-7"><a href="11.6-plot-ts.html#cb926-7" tabindex="-1"></a><span class="co"># MA(3), with parameters 0.5, 0.4, and 0.2</span></span>
+<span id="cb926-8"><a href="11.6-plot-ts.html#cb926-8" tabindex="-1"></a>sim_ma3_05 <span class="ot">&lt;-</span> <span class="fu">arima.sim</span>(<span class="at">model =</span> <span class="fu">list</span>(<span class="at">order =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">3</span>), <span class="at">ma =</span> <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="fl">0.4</span>, <span class="fl">0.2</span>)), <span class="at">n=</span><span class="dv">200</span>)</span></code></pre></div>
+
+</div>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-<a href="11.7-time-series-regression.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="12.1-ols.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="11.5-portfolio-return.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="11.7-time-series-regression.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -1145,7 +1191,7 @@ gitbook.start({
     "size": 3
   },
   "edit": {
-    "link": "https://github.com/my1396/R-Notes/edit/main/0801-OLS.Rmd",
+    "link": "https://github.com/my1396/R-Notes/edit/main/0700-Time-Series.Rmd",
     "text": "Edit"
   },
   "history": {
@@ -1156,7 +1202,7 @@ gitbook.start({
     "link": null,
     "text": null
   },
-  "download": ["_main.pdf", "_main.epub", "https://github.com/my1396/R-Notes/raw/main/0801-OLS.Rmd"],
+  "download": ["_main.pdf", "_main.epub", "https://github.com/my1396/R-Notes/raw/main/0700-Time-Series.Rmd"],
   "search": {
     "engine": "fuse",
     "options": null

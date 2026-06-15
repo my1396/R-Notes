@@ -4,13 +4,13 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 12 Regression | R Notes</title>
+  <title>11.7 Time Series Regression | R Notes</title>
   <meta name="description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
 set in the _output.yml file.</p>" />
   <meta name="generator" content="bookdown 0.45 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 12 Regression | R Notes" />
+  <meta property="og:title" content="11.7 Time Series Regression | R Notes" />
   <meta property="og:type" content="book" />
   
   <meta property="og:description" content="<p>This is a minimal example of using the bookdown package to write a book.
@@ -19,7 +19,7 @@ set in the _output.yml file.</p>" />
   <meta name="github-repo" content="my1396/R-Notes" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 12 Regression | R Notes" />
+  <meta name="twitter:title" content="11.7 Time Series Regression | R Notes" />
   
   <meta name="twitter:description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
@@ -35,8 +35,8 @@ set in the _output.yml file.</p>" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   <link rel="shortcut icon" href="images/r-project-favicon.ico" type="image/x-icon" />
-<link rel="prev" href="11.7-time-series-regression.html"/>
-<link rel="next" href="12.1-ols.html"/>
+<link rel="prev" href="11.6-plot-ts.html"/>
+<link rel="next" href="12-regression.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -1022,99 +1022,104 @@ document.addEventListener('DOMContentLoaded', function() {
   padding-left: 0; 
 }
 </style>
-<div id="regression" class="section level1 hasAnchor" number="12">
-<h1><span class="header-section-number">Chapter 12</span> Regression<a href="12-regression.html#regression" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<p>Use example:</p>
-<div class="sourceCode" id="cb932"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb932-1"><a href="12-regression.html#cb932-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb932-2"><a href="12-regression.html#cb932-2" tabindex="-1"></a>reg_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;https://raw.githubusercontent.com/my1396/course_dataset/refs/heads/main/META_monthly_factor_model_2014-2024.csv&quot;</span>)</span>
-<span id="cb932-3"><a href="12-regression.html#cb932-3" tabindex="-1"></a>reg_data <span class="ot">&lt;-</span> reg_data <span class="sc">%&gt;%</span> </span>
-<span id="cb932-4"><a href="12-regression.html#cb932-4" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">return =</span> adjusted<span class="sc">/</span><span class="fu">lag</span>(adjusted)<span class="sc">-</span><span class="dv">1</span>,</span>
-<span id="cb932-5"><a href="12-regression.html#cb932-5" tabindex="-1"></a>           <span class="at">eRi =</span> return<span class="sc">-</span>RF)</span>
-<span id="cb932-6"><a href="12-regression.html#cb932-6" tabindex="-1"></a><span class="do">## CAPM</span></span>
-<span id="cb932-7"><a href="12-regression.html#cb932-7" tabindex="-1"></a>capm_ml <span class="ot">&lt;-</span> <span class="fu">lm</span>(eRi<span class="sc">~</span>rmrf, <span class="at">data=</span>reg_data)</span>
-<span id="cb932-8"><a href="12-regression.html#cb932-8" tabindex="-1"></a><span class="fu">summary</span>(capm_ml)</span></code></pre></div>
-<pre><code>## 
-## Call:
-## lm(formula = eRi ~ rmrf, data = reg_data)
-## 
-## Residuals:
-##      Min       1Q   Median       3Q      Max 
-## -0.40895 -0.03482  0.00141  0.03767  0.20600 
-## 
-## Coefficients:
-##             Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept) 0.009747   0.007645   1.275    0.205    
-## rmrf        1.066640   0.166384   6.411  2.8e-09 ***
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## Residual standard error: 0.08343 on 123 degrees of freedom
-##   (1 observation deleted due to missingness)
-## Multiple R-squared:  0.2504, Adjusted R-squared:  0.2444 
-## F-statistic:  41.1 on 1 and 123 DF,  p-value: 2.801e-09</code></pre>
-<p>Get the <strong>coefficient table</strong> with <code>broom::tidy</code>.</p>
-<div class="sourceCode" id="cb934"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb934-1"><a href="12-regression.html#cb934-1" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
-<span id="cb934-2"><a href="12-regression.html#cb934-2" tabindex="-1"></a><span class="fu">tidy</span>(capm_ml)</span></code></pre></div>
-<pre><code>## # A tibble: 2 × 5
-##   term        estimate std.error statistic       p.value
-##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;         &lt;dbl&gt;
-## 1 (Intercept)  0.00975   0.00764      1.27 0.205        
-## 2 rmrf         1.07      0.166        6.41 0.00000000280</code></pre>
-<p>Get the <strong>variance-covariance matrix</strong> with <code>vcov</code>.</p>
-<div class="sourceCode" id="cb936"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb936-1"><a href="12-regression.html#cb936-1" tabindex="-1"></a><span class="fu">vcov</span>(capm_ml)</span></code></pre></div>
-<pre><code>##               (Intercept)          rmrf
-## (Intercept)  5.843866e-05 -0.0002760605
-## rmrf        -2.760605e-04  0.0276835643</code></pre>
-<div class="sourceCode" id="cb938"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb938-1"><a href="12-regression.html#cb938-1" tabindex="-1"></a><span class="co"># verify using coef table</span></span>
-<span id="cb938-2"><a href="12-regression.html#cb938-2" tabindex="-1"></a>capm_ml <span class="sc">%&gt;%</span> </span>
-<span id="cb938-3"><a href="12-regression.html#cb938-3" tabindex="-1"></a>    <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb938-4"><a href="12-regression.html#cb938-4" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">variance=</span>std.error<span class="sc">^</span><span class="dv">2</span>)</span></code></pre></div>
-<pre><code>## # A tibble: 2 × 6
-##   term        estimate std.error statistic       p.value  variance
-##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;         &lt;dbl&gt;     &lt;dbl&gt;
-## 1 (Intercept)  0.00975   0.00764      1.27 0.205         0.0000584
-## 2 rmrf         1.07      0.166        6.41 0.00000000280 0.0277</code></pre>
-<p>We can manually calculate as</p>
-<div class="sourceCode" id="cb940"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb940-1"><a href="12-regression.html#cb940-1" tabindex="-1"></a>df <span class="ot">&lt;-</span> (<span class="fu">nrow</span>(capm_ml<span class="sc">$</span>model)<span class="sc">-</span><span class="dv">2</span>)  <span class="co"># degree of freedom</span></span>
-<span id="cb940-2"><a href="12-regression.html#cb940-2" tabindex="-1"></a>sigma2 <span class="ot">&lt;-</span> <span class="fu">sum</span>(capm_ml<span class="sc">$</span>residuals<span class="sc">^</span><span class="dv">2</span>)<span class="sc">/</span>df  <span class="co"># residual variance</span></span>
-<span id="cb940-3"><a href="12-regression.html#cb940-3" tabindex="-1"></a><span class="co"># 1st column of lm$model is the depend. var.</span></span>
-<span id="cb940-4"><a href="12-regression.html#cb940-4" tabindex="-1"></a>X <span class="ot">&lt;-</span> capm_ml<span class="sc">$</span>model[, <span class="dv">2</span>, drop<span class="ot">=</span><span class="cn">FALSE</span>] <span class="sc">%&gt;%</span> <span class="fu">as.matrix</span>()</span>
-<span id="cb940-5"><a href="12-regression.html#cb940-5" tabindex="-1"></a>X <span class="ot">&lt;-</span> <span class="fu">cbind</span>(<span class="dv">1</span>, X)  <span class="co"># add intercept</span></span>
-<span id="cb940-6"><a href="12-regression.html#cb940-6" tabindex="-1"></a>V <span class="ot">&lt;-</span> <span class="fu">solve</span>(<span class="fu">t</span>(X) <span class="sc">%*%</span> X) <span class="sc">*</span> sigma2</span>
-<span id="cb940-7"><a href="12-regression.html#cb940-7" tabindex="-1"></a>V</span></code></pre></div>
-<pre><code>##                             rmrf
-##       5.843866e-05 -0.0002760605
-## rmrf -2.760605e-04  0.0276835643</code></pre>
-<p>Note that <code>cov.unscaled</code> returns the <strong>unscaled</strong> covariance matrix, <span class="math inline">\((X&#39;X)^{-1}\)</span>.</p>
-<ul>
-<li>To get estimated covariance matrix for the coefficients, you need to multiply <code>cov.unscaled</code> by the estimate of the error variance.</li>
-</ul>
-<div class="sourceCode" id="cb942"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb942-1"><a href="12-regression.html#cb942-1" tabindex="-1"></a><span class="fu">solve</span>(<span class="fu">t</span>(X) <span class="sc">%*%</span> X)</span></code></pre></div>
-<pre><code>##                          rmrf
-##       0.008395487 -0.03965975
-## rmrf -0.039659745  3.97711043</code></pre>
-<div class="sourceCode" id="cb944"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb944-1"><a href="12-regression.html#cb944-1" tabindex="-1"></a><span class="fu">summary</span>(capm_ml)<span class="sc">$</span>cov.unscaled</span></code></pre></div>
-<pre><code>##              (Intercept)        rmrf
-## (Intercept)  0.008395487 -0.03965975
-## rmrf        -0.039659745  3.97711043</code></pre>
-<div class="sourceCode" id="cb946"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb946-1"><a href="12-regression.html#cb946-1" tabindex="-1"></a><span class="fu">all.equal</span>(<span class="fu">solve</span>(<span class="fu">t</span>(X) <span class="sc">%*%</span> X), </span>
-<span id="cb946-2"><a href="12-regression.html#cb946-2" tabindex="-1"></a>          <span class="fu">summary</span>(capm_ml)<span class="sc">$</span>cov.unscaled, </span>
-<span id="cb946-3"><a href="12-regression.html#cb946-3" tabindex="-1"></a>          <span class="at">check.attributes =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
-<pre><code>## [1] TRUE</code></pre>
-<p><strong>References</strong>:</p>
-<ul>
-<li><a href="https://github.com/SurajGupta/r-source/blob/master/src/library/stats/R/vcov.R" class="uri">https://github.com/SurajGupta/r-source/blob/master/src/library/stats/R/vcov.R</a></li>
-<li>stats package: <a href="https://docs.tibco.com/pub/enterprise-runtime-for-R/6.0.1/doc/html/Language_Reference/stats/summary.lm.html" class="uri">https://docs.tibco.com/pub/enterprise-runtime-for-R/6.0.1/doc/html/Language_Reference/stats/summary.lm.html</a></li>
-</ul>
-<!--chapter:end:0800-Regresssion.Rmd-->
+<div id="time-series-regression" class="section level2 hasAnchor" number="11.7">
+<h2><span class="header-section-number">11.7</span> Time Series Regression<a href="11.7-time-series-regression.html#time-series-regression" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Distributed Lag model using <code>dynlm</code> package, which is useful for dynamic linear models and time series regressions. Lags or differences can directly be specified in the model formula.</p>
+<p>The main function used to estimate our model is the <code>dynlm(formula, data)</code> function. Within this function, <code>d()</code> can be used to specify the <strong>difference</strong> in a variable and <code>L()</code> can be <em>used</em> to compute the desired <strong>lag</strong> of the variable.</p>
+<p><code>d(u, 1)</code> means to calculate the first difference in <code>u</code>; <code>L(g, 0:2)</code> denotes <code>g</code> of the current period and the past two periods, <span class="math inline">\(g\)</span>, <span class="math inline">\(g_{-1}\)</span>, and <span class="math inline">\(g_{-2}\)</span>.</p>
+<p>Note that <code>data</code> must be either a data frame or <code>zoo</code> object. <code>xts</code> returns an error.</p>
+<div class="sourceCode" id="cb927"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb927-1"><a href="11.7-time-series-regression.html#cb927-1" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">library</span>(dynlm)</span>
+<span id="cb927-2"><a href="11.7-time-series-regression.html#cb927-2" tabindex="-1"></a><span class="co"># Finite Distributed Lag Models</span></span>
+<span id="cb927-3"><a href="11.7-time-series-regression.html#cb927-3" tabindex="-1"></a><span class="sc">&gt;</span> okun.lag2 <span class="ot">&lt;-</span> <span class="fu">dynlm</span>(<span class="fu">d</span>(unemp, <span class="dv">1</span>) <span class="sc">~</span> <span class="fu">L</span>(gGDP, <span class="dv">0</span><span class="sc">:</span><span class="dv">2</span>), <span class="at">data =</span> okun2.zoo)  <span class="co"># lag 2</span></span>
+<span id="cb927-4"><a href="11.7-time-series-regression.html#cb927-4" tabindex="-1"></a><span class="sc">&gt;</span> okun.lag3 <span class="ot">&lt;-</span> <span class="fu">dynlm</span>(<span class="fu">d</span>(unemp, <span class="dv">1</span>) <span class="sc">~</span> <span class="fu">L</span>(gGDP, <span class="dv">0</span><span class="sc">:</span><span class="dv">3</span>), <span class="at">data =</span> okun2.zoo)  <span class="co"># lag 3</span></span>
+<span id="cb927-5"><a href="11.7-time-series-regression.html#cb927-5" tabindex="-1"></a><span class="co"># ARDL(1, 1)</span></span>
+<span id="cb927-6"><a href="11.7-time-series-regression.html#cb927-6" tabindex="-1"></a><span class="sc">&gt;</span> okun.ardl <span class="ot">&lt;-</span> <span class="fu">dynlm</span>(<span class="fu">d</span>(unemp, <span class="dv">1</span>) <span class="sc">~</span> <span class="fu">L</span>(<span class="fu">d</span>(unemp, <span class="dv">1</span>), <span class="dv">1</span>) <span class="sc">+</span> <span class="fu">L</span>(gGDP, <span class="dv">0</span><span class="sc">:</span><span class="dv">1</span>), <span class="at">data =</span> okun2.zoo)</span>
+<span id="cb927-7"><a href="11.7-time-series-regression.html#cb927-7" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">summary</span>(okun.ardl)</span>
+<span id="cb927-8"><a href="11.7-time-series-regression.html#cb927-8" tabindex="-1"></a></span>
+<span id="cb927-9"><a href="11.7-time-series-regression.html#cb927-9" tabindex="-1"></a>Time series regression with <span class="st">&quot;zoo&quot;</span> data<span class="sc">:</span></span>
+<span id="cb927-10"><a href="11.7-time-series-regression.html#cb927-10" tabindex="-1"></a>Start <span class="ot">=</span> <span class="dv">1948</span> Q3, End <span class="ot">=</span> <span class="dv">2025</span> Q1</span>
+<span id="cb927-11"><a href="11.7-time-series-regression.html#cb927-11" tabindex="-1"></a></span>
+<span id="cb927-12"><a href="11.7-time-series-regression.html#cb927-12" tabindex="-1"></a>Call<span class="sc">:</span></span>
+<span id="cb927-13"><a href="11.7-time-series-regression.html#cb927-13" tabindex="-1"></a><span class="fu">dynlm</span>(<span class="at">formula =</span> <span class="fu">d</span>(unemp, <span class="dv">1</span>) <span class="sc">~</span> <span class="fu">L</span>(<span class="fu">d</span>(unemp, <span class="dv">1</span>), <span class="dv">1</span>) <span class="sc">+</span> <span class="fu">L</span>(gGDP, <span class="dv">0</span><span class="sc">:</span><span class="dv">1</span>), </span>
+<span id="cb927-14"><a href="11.7-time-series-regression.html#cb927-14" tabindex="-1"></a>    <span class="at">data =</span> okun2.zoo)</span>
+<span id="cb927-15"><a href="11.7-time-series-regression.html#cb927-15" tabindex="-1"></a></span>
+<span id="cb927-16"><a href="11.7-time-series-regression.html#cb927-16" tabindex="-1"></a>Residuals<span class="sc">:</span></span>
+<span id="cb927-17"><a href="11.7-time-series-regression.html#cb927-17" tabindex="-1"></a>    Min      <span class="dv">1</span>Q  Median      <span class="dv">3</span>Q     Max </span>
+<span id="cb927-18"><a href="11.7-time-series-regression.html#cb927-18" tabindex="-1"></a><span class="sc">-</span><span class="fl">1.4662</span> <span class="sc">-</span><span class="fl">0.2198</span> <span class="sc">-</span><span class="fl">0.0218</span>  <span class="fl">0.1686</span>  <span class="fl">4.9875</span> </span>
+<span id="cb927-19"><a href="11.7-time-series-regression.html#cb927-19" tabindex="-1"></a></span>
+<span id="cb927-20"><a href="11.7-time-series-regression.html#cb927-20" tabindex="-1"></a>Coefficients<span class="sc">:</span></span>
+<span id="cb927-21"><a href="11.7-time-series-regression.html#cb927-21" tabindex="-1"></a>                  Estimate Std. Error t value <span class="fu">Pr</span>(<span class="sc">&gt;</span><span class="er">|</span>t<span class="sc">|</span>)    </span>
+<span id="cb927-22"><a href="11.7-time-series-regression.html#cb927-22" tabindex="-1"></a>(Intercept)        <span class="fl">0.42871</span>    <span class="fl">0.03769</span>  <span class="fl">11.374</span>  <span class="sc">&lt;</span> <span class="fl">2e-16</span> <span class="sc">**</span><span class="er">*</span></span>
+<span id="cb927-23"><a href="11.7-time-series-regression.html#cb927-23" tabindex="-1"></a><span class="fu">L</span>(<span class="fu">d</span>(unemp, <span class="dv">1</span>), <span class="dv">1</span>) <span class="sc">-</span><span class="fl">0.05640</span>    <span class="fl">0.05874</span>  <span class="sc">-</span><span class="fl">0.960</span> <span class="fl">0.337736</span>    </span>
+<span id="cb927-24"><a href="11.7-time-series-regression.html#cb927-24" tabindex="-1"></a><span class="fu">L</span>(gGDP, <span class="dv">0</span><span class="sc">:</span><span class="dv">1</span>)<span class="dv">1</span>     <span class="sc">-</span><span class="fl">0.43423</span>    <span class="fl">0.02390</span> <span class="sc">-</span><span class="fl">18.165</span>  <span class="sc">&lt;</span> <span class="fl">2e-16</span> <span class="sc">**</span><span class="er">*</span></span>
+<span id="cb927-25"><a href="11.7-time-series-regression.html#cb927-25" tabindex="-1"></a><span class="fu">L</span>(gGDP, <span class="dv">0</span><span class="sc">:</span><span class="dv">1</span>)<span class="dv">2</span>     <span class="sc">-</span><span class="fl">0.11951</span>    <span class="fl">0.03575</span>  <span class="sc">-</span><span class="fl">3.343</span> <span class="fl">0.000932</span> <span class="sc">**</span><span class="er">*</span></span>
+<span id="cb927-26"><a href="11.7-time-series-regression.html#cb927-26" tabindex="-1"></a><span class="sc">---</span></span>
+<span id="cb927-27"><a href="11.7-time-series-regression.html#cb927-27" tabindex="-1"></a>Signif. codes<span class="sc">:</span>  <span class="dv">0</span> ‘<span class="sc">**</span><span class="er">*</span>’ <span class="fl">0.001</span> ‘<span class="sc">**</span>’ <span class="fl">0.01</span> ‘<span class="sc">*</span>’ <span class="fl">0.05</span> ‘.’ <span class="fl">0.1</span> ‘ ’ <span class="dv">1</span></span>
+<span id="cb927-28"><a href="11.7-time-series-regression.html#cb927-28" tabindex="-1"></a></span>
+<span id="cb927-29"><a href="11.7-time-series-regression.html#cb927-29" tabindex="-1"></a>Residual standard error<span class="sc">:</span> <span class="fl">0.4416</span> on <span class="dv">303</span> degrees of freedom</span>
+<span id="cb927-30"><a href="11.7-time-series-regression.html#cb927-30" tabindex="-1"></a>  (<span class="dv">0</span> observations deleted due to missingness)</span>
+<span id="cb927-31"><a href="11.7-time-series-regression.html#cb927-31" tabindex="-1"></a>Multiple R<span class="sc">-</span>squared<span class="sc">:</span>  <span class="fl">0.5825</span>,    Adjusted R<span class="sc">-</span>squared<span class="sc">:</span>  <span class="fl">0.5784</span> </span>
+<span id="cb927-32"><a href="11.7-time-series-regression.html#cb927-32" tabindex="-1"></a>F<span class="sc">-</span>statistic<span class="sc">:</span> <span class="fl">140.9</span> on <span class="dv">3</span> and <span class="dv">303</span> DF,  p<span class="sc">-</span>value<span class="sc">:</span> <span class="er">&lt;</span> <span class="fl">2.2e-16</span></span></code></pre></div>
+<div id="lag-polynomial" class="section level3 hasAnchor" number="11.7.1">
+<h3><span class="header-section-number">11.7.1</span> Lag Polynomial<a href="11.7-time-series-regression.html#lag-polynomial" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Let <span class="math inline">\(\rho(L)=1-\rho_1L\)</span> and <span class="math inline">\(\beta(L)=\beta_0+\beta_1L.\)</span>
+Now we have <span class="math inline">\(\psi(L)\)</span> such at</p>
+<p><span class="math display">\[
+\rho(L)\psi(L)=\beta(L) .
+\]</span></p>
+<p>We want to find <span class="math inline">\(\psi(L)=\rho(L)^{-1}\beta(L).\)</span></p>
+<div class="sourceCode" id="cb928"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb928-1"><a href="11.7-time-series-regression.html#cb928-1" tabindex="-1"></a><span class="co"># Compute psi(L) = rho(L)^(-1) * beta(L)</span></span>
+<span id="cb928-2"><a href="11.7-time-series-regression.html#cb928-2" tabindex="-1"></a>lag_poly_solution <span class="ot">&lt;-</span> <span class="cf">function</span>(rho1, beta0, beta1, <span class="at">n_terms =</span> <span class="dv">5</span>) {</span>
+<span id="cb928-3"><a href="11.7-time-series-regression.html#cb928-3" tabindex="-1"></a>  <span class="co"># Expand (1 - rho1*L)^(-1) as a power series up to n_terms</span></span>
+<span id="cb928-4"><a href="11.7-time-series-regression.html#cb928-4" tabindex="-1"></a>  <span class="co"># (1 - rho1*L)^(-1) = 1 + rho1*L + rho1^2*L^2 + ... + rho1^n*L^n</span></span>
+<span id="cb928-5"><a href="11.7-time-series-regression.html#cb928-5" tabindex="-1"></a>  rho_inv <span class="ot">&lt;-</span> <span class="fu">sapply</span>(<span class="dv">0</span><span class="sc">:</span>n_terms, <span class="cf">function</span>(k) rho1<span class="sc">^</span>k)</span>
+<span id="cb928-6"><a href="11.7-time-series-regression.html#cb928-6" tabindex="-1"></a>  </span>
+<span id="cb928-7"><a href="11.7-time-series-regression.html#cb928-7" tabindex="-1"></a>  <span class="co"># beta(L) = beta0 + beta1*L</span></span>
+<span id="cb928-8"><a href="11.7-time-series-regression.html#cb928-8" tabindex="-1"></a>  <span class="co"># psi(L) = (1 + rho1*L + rho1^2*L^2 + ...)*(beta0 + beta1*L)</span></span>
+<span id="cb928-9"><a href="11.7-time-series-regression.html#cb928-9" tabindex="-1"></a>  <span class="co">#         = beta0*(1 + rho1*L + ...) + beta1*L*(1 + rho1*L + ...)</span></span>
+<span id="cb928-10"><a href="11.7-time-series-regression.html#cb928-10" tabindex="-1"></a>  <span class="co">#         = beta0*rho_inv + beta1*c(0, rho_inv[1:n_terms])</span></span>
+<span id="cb928-11"><a href="11.7-time-series-regression.html#cb928-11" tabindex="-1"></a>  psi <span class="ot">&lt;-</span> beta0 <span class="sc">*</span> rho_inv</span>
+<span id="cb928-12"><a href="11.7-time-series-regression.html#cb928-12" tabindex="-1"></a>  psi <span class="ot">&lt;-</span> psi <span class="sc">+</span> beta1 <span class="sc">*</span> <span class="fu">c</span>(<span class="dv">0</span>, rho_inv[<span class="dv">1</span><span class="sc">:</span>n_terms])</span>
+<span id="cb928-13"><a href="11.7-time-series-regression.html#cb928-13" tabindex="-1"></a>  </span>
+<span id="cb928-14"><a href="11.7-time-series-regression.html#cb928-14" tabindex="-1"></a>  <span class="co"># Return coefficients: psi0 + psi1*L + psi2*L^2 + ...</span></span>
+<span id="cb928-15"><a href="11.7-time-series-regression.html#cb928-15" tabindex="-1"></a>  <span class="fu">names</span>(psi) <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">&quot;L^&quot;</span>, <span class="dv">0</span><span class="sc">:</span>n_terms)</span>
+<span id="cb928-16"><a href="11.7-time-series-regression.html#cb928-16" tabindex="-1"></a>  <span class="fu">return</span>(psi)</span>
+<span id="cb928-17"><a href="11.7-time-series-regression.html#cb928-17" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb929"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb929-1"><a href="11.7-time-series-regression.html#cb929-1" tabindex="-1"></a><span class="co"># Example usage:</span></span>
+<span id="cb929-2"><a href="11.7-time-series-regression.html#cb929-2" tabindex="-1"></a>psi_coef <span class="ot">&lt;-</span> <span class="fu">lag_poly_solution</span>(<span class="at">rho1 =</span> <span class="fl">0.5</span>, <span class="at">beta0 =</span> <span class="dv">1</span>, <span class="at">beta1 =</span> <span class="dv">2</span>, <span class="at">n_terms =</span> <span class="dv">20</span>)</span>
+<span id="cb929-3"><a href="11.7-time-series-regression.html#cb929-3" tabindex="-1"></a>psi_coef</span></code></pre></div>
+<pre><code>##          L^0          L^1          L^2          L^3          L^4          L^5 
+## 1.000000e+00 2.500000e+00 1.250000e+00 6.250000e-01 3.125000e-01 1.562500e-01 
+##          L^6          L^7          L^8          L^9         L^10         L^11 
+## 7.812500e-02 3.906250e-02 1.953125e-02 9.765625e-03 4.882812e-03 2.441406e-03 
+##         L^12         L^13         L^14         L^15         L^16         L^17 
+## 1.220703e-03 6.103516e-04 3.051758e-04 1.525879e-04 7.629395e-05 3.814697e-05 
+##         L^18         L^19         L^20 
+## 1.907349e-05 9.536743e-06 4.768372e-06</code></pre>
+<p>Plot the lag polynomial coefficients:</p>
+<div class="sourceCode" id="cb931"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb931-1"><a href="11.7-time-series-regression.html#cb931-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb931-2"><a href="11.7-time-series-regression.html#cb931-2" tabindex="-1"></a>psi_df <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb931-3"><a href="11.7-time-series-regression.html#cb931-3" tabindex="-1"></a>  <span class="at">lag =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">21</span>,</span>
+<span id="cb931-4"><a href="11.7-time-series-regression.html#cb931-4" tabindex="-1"></a>  <span class="at">coef =</span> psi_coef</span>
+<span id="cb931-5"><a href="11.7-time-series-regression.html#cb931-5" tabindex="-1"></a>)</span>
+<span id="cb931-6"><a href="11.7-time-series-regression.html#cb931-6" tabindex="-1"></a></span>
+<span id="cb931-7"><a href="11.7-time-series-regression.html#cb931-7" tabindex="-1"></a><span class="co"># Bar plot</span></span>
+<span id="cb931-8"><a href="11.7-time-series-regression.html#cb931-8" tabindex="-1"></a><span class="fu">ggplot</span>(psi_df, <span class="fu">aes</span>(<span class="at">x =</span> lag, <span class="at">y =</span> coef)) <span class="sc">+</span></span>
+<span id="cb931-9"><a href="11.7-time-series-regression.html#cb931-9" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">&quot;identity&quot;</span>, <span class="at">fill =</span> <span class="st">&quot;steelblue&quot;</span>) <span class="sc">+</span></span>
+<span id="cb931-10"><a href="11.7-time-series-regression.html#cb931-10" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Lag&quot;</span>, <span class="at">y =</span> <span class="fu">expression</span>(psi[L]), <span class="at">title =</span> <span class="st">&quot;Lag Polynomial Coefficients&quot;</span>) <span class="sc">+</span></span>
+<span id="cb931-11"><a href="11.7-time-series-regression.html#cb931-11" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
+<p><img src="0701-TS-Regression_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+
 </div>
+</div>
+<!-- </div> -->
             </section>
 
           </div>
         </div>
       </div>
-<a href="11.7-time-series-regression.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="12.1-ols.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="11.6-plot-ts.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="12-regression.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -1145,7 +1150,7 @@ gitbook.start({
     "size": 3
   },
   "edit": {
-    "link": "https://github.com/my1396/R-Notes/edit/main/0801-OLS.Rmd",
+    "link": "https://github.com/my1396/R-Notes/edit/main/0701-TS-Regression.Rmd",
     "text": "Edit"
   },
   "history": {
@@ -1156,7 +1161,7 @@ gitbook.start({
     "link": null,
     "text": null
   },
-  "download": ["_main.pdf", "_main.epub", "https://github.com/my1396/R-Notes/raw/main/0801-OLS.Rmd"],
+  "download": ["_main.pdf", "_main.epub", "https://github.com/my1396/R-Notes/raw/main/0701-TS-Regression.Rmd"],
   "search": {
     "engine": "fuse",
     "options": null

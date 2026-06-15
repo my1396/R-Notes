@@ -4,13 +4,13 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 12 Regression | R Notes</title>
+  <title>11.5 Portfolio Return | R Notes</title>
   <meta name="description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
 set in the _output.yml file.</p>" />
   <meta name="generator" content="bookdown 0.45 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 12 Regression | R Notes" />
+  <meta property="og:title" content="11.5 Portfolio Return | R Notes" />
   <meta property="og:type" content="book" />
   
   <meta property="og:description" content="<p>This is a minimal example of using the bookdown package to write a book.
@@ -19,7 +19,7 @@ set in the _output.yml file.</p>" />
   <meta name="github-repo" content="my1396/R-Notes" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 12 Regression | R Notes" />
+  <meta name="twitter:title" content="11.5 Portfolio Return | R Notes" />
   
   <meta name="twitter:description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
@@ -35,8 +35,8 @@ set in the _output.yml file.</p>" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   <link rel="shortcut icon" href="images/r-project-favicon.ico" type="image/x-icon" />
-<link rel="prev" href="11.7-time-series-regression.html"/>
-<link rel="next" href="12.1-ols.html"/>
+<link rel="prev" href="11.4-technical-analysis.html"/>
+<link rel="next" href="11.6-plot-ts.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -1022,99 +1022,163 @@ document.addEventListener('DOMContentLoaded', function() {
   padding-left: 0; 
 }
 </style>
-<div id="regression" class="section level1 hasAnchor" number="12">
-<h1><span class="header-section-number">Chapter 12</span> Regression<a href="12-regression.html#regression" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<p>Use example:</p>
-<div class="sourceCode" id="cb932"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb932-1"><a href="12-regression.html#cb932-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb932-2"><a href="12-regression.html#cb932-2" tabindex="-1"></a>reg_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;https://raw.githubusercontent.com/my1396/course_dataset/refs/heads/main/META_monthly_factor_model_2014-2024.csv&quot;</span>)</span>
-<span id="cb932-3"><a href="12-regression.html#cb932-3" tabindex="-1"></a>reg_data <span class="ot">&lt;-</span> reg_data <span class="sc">%&gt;%</span> </span>
-<span id="cb932-4"><a href="12-regression.html#cb932-4" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">return =</span> adjusted<span class="sc">/</span><span class="fu">lag</span>(adjusted)<span class="sc">-</span><span class="dv">1</span>,</span>
-<span id="cb932-5"><a href="12-regression.html#cb932-5" tabindex="-1"></a>           <span class="at">eRi =</span> return<span class="sc">-</span>RF)</span>
-<span id="cb932-6"><a href="12-regression.html#cb932-6" tabindex="-1"></a><span class="do">## CAPM</span></span>
-<span id="cb932-7"><a href="12-regression.html#cb932-7" tabindex="-1"></a>capm_ml <span class="ot">&lt;-</span> <span class="fu">lm</span>(eRi<span class="sc">~</span>rmrf, <span class="at">data=</span>reg_data)</span>
-<span id="cb932-8"><a href="12-regression.html#cb932-8" tabindex="-1"></a><span class="fu">summary</span>(capm_ml)</span></code></pre></div>
-<pre><code>## 
-## Call:
-## lm(formula = eRi ~ rmrf, data = reg_data)
-## 
-## Residuals:
-##      Min       1Q   Median       3Q      Max 
-## -0.40895 -0.03482  0.00141  0.03767  0.20600 
-## 
-## Coefficients:
-##             Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept) 0.009747   0.007645   1.275    0.205    
-## rmrf        1.066640   0.166384   6.411  2.8e-09 ***
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## Residual standard error: 0.08343 on 123 degrees of freedom
-##   (1 observation deleted due to missingness)
-## Multiple R-squared:  0.2504, Adjusted R-squared:  0.2444 
-## F-statistic:  41.1 on 1 and 123 DF,  p-value: 2.801e-09</code></pre>
-<p>Get the <strong>coefficient table</strong> with <code>broom::tidy</code>.</p>
-<div class="sourceCode" id="cb934"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb934-1"><a href="12-regression.html#cb934-1" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
-<span id="cb934-2"><a href="12-regression.html#cb934-2" tabindex="-1"></a><span class="fu">tidy</span>(capm_ml)</span></code></pre></div>
-<pre><code>## # A tibble: 2 × 5
-##   term        estimate std.error statistic       p.value
-##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;         &lt;dbl&gt;
-## 1 (Intercept)  0.00975   0.00764      1.27 0.205        
-## 2 rmrf         1.07      0.166        6.41 0.00000000280</code></pre>
-<p>Get the <strong>variance-covariance matrix</strong> with <code>vcov</code>.</p>
-<div class="sourceCode" id="cb936"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb936-1"><a href="12-regression.html#cb936-1" tabindex="-1"></a><span class="fu">vcov</span>(capm_ml)</span></code></pre></div>
-<pre><code>##               (Intercept)          rmrf
-## (Intercept)  5.843866e-05 -0.0002760605
-## rmrf        -2.760605e-04  0.0276835643</code></pre>
-<div class="sourceCode" id="cb938"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb938-1"><a href="12-regression.html#cb938-1" tabindex="-1"></a><span class="co"># verify using coef table</span></span>
-<span id="cb938-2"><a href="12-regression.html#cb938-2" tabindex="-1"></a>capm_ml <span class="sc">%&gt;%</span> </span>
-<span id="cb938-3"><a href="12-regression.html#cb938-3" tabindex="-1"></a>    <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb938-4"><a href="12-regression.html#cb938-4" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">variance=</span>std.error<span class="sc">^</span><span class="dv">2</span>)</span></code></pre></div>
-<pre><code>## # A tibble: 2 × 6
-##   term        estimate std.error statistic       p.value  variance
-##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;         &lt;dbl&gt;     &lt;dbl&gt;
-## 1 (Intercept)  0.00975   0.00764      1.27 0.205         0.0000584
-## 2 rmrf         1.07      0.166        6.41 0.00000000280 0.0277</code></pre>
-<p>We can manually calculate as</p>
-<div class="sourceCode" id="cb940"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb940-1"><a href="12-regression.html#cb940-1" tabindex="-1"></a>df <span class="ot">&lt;-</span> (<span class="fu">nrow</span>(capm_ml<span class="sc">$</span>model)<span class="sc">-</span><span class="dv">2</span>)  <span class="co"># degree of freedom</span></span>
-<span id="cb940-2"><a href="12-regression.html#cb940-2" tabindex="-1"></a>sigma2 <span class="ot">&lt;-</span> <span class="fu">sum</span>(capm_ml<span class="sc">$</span>residuals<span class="sc">^</span><span class="dv">2</span>)<span class="sc">/</span>df  <span class="co"># residual variance</span></span>
-<span id="cb940-3"><a href="12-regression.html#cb940-3" tabindex="-1"></a><span class="co"># 1st column of lm$model is the depend. var.</span></span>
-<span id="cb940-4"><a href="12-regression.html#cb940-4" tabindex="-1"></a>X <span class="ot">&lt;-</span> capm_ml<span class="sc">$</span>model[, <span class="dv">2</span>, drop<span class="ot">=</span><span class="cn">FALSE</span>] <span class="sc">%&gt;%</span> <span class="fu">as.matrix</span>()</span>
-<span id="cb940-5"><a href="12-regression.html#cb940-5" tabindex="-1"></a>X <span class="ot">&lt;-</span> <span class="fu">cbind</span>(<span class="dv">1</span>, X)  <span class="co"># add intercept</span></span>
-<span id="cb940-6"><a href="12-regression.html#cb940-6" tabindex="-1"></a>V <span class="ot">&lt;-</span> <span class="fu">solve</span>(<span class="fu">t</span>(X) <span class="sc">%*%</span> X) <span class="sc">*</span> sigma2</span>
-<span id="cb940-7"><a href="12-regression.html#cb940-7" tabindex="-1"></a>V</span></code></pre></div>
-<pre><code>##                             rmrf
-##       5.843866e-05 -0.0002760605
-## rmrf -2.760605e-04  0.0276835643</code></pre>
-<p>Note that <code>cov.unscaled</code> returns the <strong>unscaled</strong> covariance matrix, <span class="math inline">\((X&#39;X)^{-1}\)</span>.</p>
+<div id="portfolio-return" class="section level2 hasAnchor" number="11.5">
+<h2><span class="header-section-number">11.5</span> Portfolio Return<a href="11.5-portfolio-return.html#portfolio-return" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p><strong>From asset parameters to portfolio parameters</strong></p>
+<p>Given a expected return and volatility for each asset, we can calculate the expected return and volatility of a portfolio by the following formulas:</p>
+<p><span class="math display">\[
+\begin{aligned}
+E[r_{p,t}] &amp;= \sum_{i=1}^k w_{i,t} E[r_{i,t}] \\
+\text{Var}[r_{p,t}] &amp;= \sum_{i=1}^k\sum_{j=1}^k w_{i,t}\,w_{j,t}\,\text{Cov}(r_{i,t}, r_{j,t})
+\end{aligned}
+\]</span></p>
+<p>Given the following set up for two assets A and B:</p>
+<table border="0" cellspacing="0" cellpadding="0">
+<colgroup>
+<col width="100px" />
+<col span="2" width="77" />
+</colgroup>
+<tbody>
+<tr style="border-bottom: 1pt solid black;">
+<td height="21">
+ 
+</td>
+<td style="font-weight: bold; width: 77px; text-align: right;">
+Asset A
+</td>
+<td style="font-weight: bold; width: 97px; text-align: right;">
+Asset B
+</td>
+</tr>
+<tr>
+<td height="21">
+<span class="math inline">\(\mu\)</span>
+</td>
+<td align="right">
+0.175
+</td>
+<td align="right">
+0.055
+</td>
+</tr>
+<tr>
+<td height="21">
+<span class="math inline">\(\sigma\)</span>
+</td>
+<td align="right">
+0.258
+</td>
+<td align="right">
+0.115
+</td>
+</tr>
+<tr style="border-top: 1pt solid black;">
+<td height="21">
+<span class="math inline">\(\rho_{AB}\)</span>
+</td>
+<td style="text-align: center;" colspan="2" align="right">
+-0.164
+</td>
+</tr>
+</tbody>
+</table>
+<p>where <span class="math inline">\(\mu\)</span> is the expected return, <span class="math inline">\(\sigma\)</span> is the volatility (standard deviation) of returns, <span class="math inline">\(\rho\)</span> is the correlation coefficient between assets A and B.</p>
+<div class="sourceCode" id="cb911"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb911-1"><a href="11.5-portfolio-return.html#cb911-1" tabindex="-1"></a><span class="co"># initialize parameters</span></span>
+<span id="cb911-2"><a href="11.5-portfolio-return.html#cb911-2" tabindex="-1"></a>mu.A <span class="ot">=</span> <span class="fl">0.175</span></span>
+<span id="cb911-3"><a href="11.5-portfolio-return.html#cb911-3" tabindex="-1"></a>sig.A <span class="ot">=</span> <span class="fl">0.258</span></span>
+<span id="cb911-4"><a href="11.5-portfolio-return.html#cb911-4" tabindex="-1"></a></span>
+<span id="cb911-5"><a href="11.5-portfolio-return.html#cb911-5" tabindex="-1"></a>mu.B <span class="ot">=</span> <span class="fl">0.055</span></span>
+<span id="cb911-6"><a href="11.5-portfolio-return.html#cb911-6" tabindex="-1"></a>sig.B <span class="ot">=</span> <span class="fl">0.115</span></span>
+<span id="cb911-7"><a href="11.5-portfolio-return.html#cb911-7" tabindex="-1"></a></span>
+<span id="cb911-8"><a href="11.5-portfolio-return.html#cb911-8" tabindex="-1"></a>rho.AB <span class="ot">=</span> <span class="sc">-</span><span class="fl">0.164</span></span></code></pre></div>
+<p><strong>Equally weighted</strong></p>
+<p>First we consider an equally weighted portfolio <span class="math inline">\(p_1\)</span>.</p>
+<p>Asset weights: <span class="math inline">\(w_A = w_B = 0.5\)</span>.</p>
+<div class="sourceCode" id="cb912"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb912-1"><a href="11.5-portfolio-return.html#cb912-1" tabindex="-1"></a>ptf_par <span class="ot">&lt;-</span> <span class="cf">function</span>(x.A, x.B, mu.A, mu.B, sig.A, sig.B, rho.AB) {</span>
+<span id="cb912-2"><a href="11.5-portfolio-return.html#cb912-2" tabindex="-1"></a>  <span class="co"># Calculate portfolio parameters given asset parameters and weights</span></span>
+<span id="cb912-3"><a href="11.5-portfolio-return.html#cb912-3" tabindex="-1"></a>  mu.p <span class="ot">=</span> x.A<span class="sc">*</span>mu.A <span class="sc">+</span> x.B<span class="sc">*</span>mu.B</span>
+<span id="cb912-4"><a href="11.5-portfolio-return.html#cb912-4" tabindex="-1"></a>  sig2.p <span class="ot">=</span> x.A<span class="sc">^</span><span class="dv">2</span> <span class="sc">*</span> sig.A<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> x.B<span class="sc">^</span><span class="dv">2</span> <span class="sc">*</span> sig.B<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> <span class="dv">2</span><span class="sc">*</span>x.A<span class="sc">*</span>x.B<span class="sc">*</span>rho.AB<span class="sc">*</span>sig.A<span class="sc">*</span>sig.B</span>
+<span id="cb912-5"><a href="11.5-portfolio-return.html#cb912-5" tabindex="-1"></a>  sig.p <span class="ot">=</span> <span class="fu">sqrt</span>(sig2.p)</span>
+<span id="cb912-6"><a href="11.5-portfolio-return.html#cb912-6" tabindex="-1"></a>  data.tbl <span class="ot">=</span> <span class="fu">t</span>(<span class="fu">c</span>(<span class="at">mu.p=</span>mu.p, <span class="at">sig.p=</span>sig.p, <span class="at">sig.avg=</span>x.A<span class="sc">*</span>sig.A<span class="sc">+</span>x.B<span class="sc">*</span>sig.B))</span>
+<span id="cb912-7"><a href="11.5-portfolio-return.html#cb912-7" tabindex="-1"></a>  <span class="fu">return</span>(data.tbl)</span>
+<span id="cb912-8"><a href="11.5-portfolio-return.html#cb912-8" tabindex="-1"></a>}</span>
+<span id="cb912-9"><a href="11.5-portfolio-return.html#cb912-9" tabindex="-1"></a></span>
+<span id="cb912-10"><a href="11.5-portfolio-return.html#cb912-10" tabindex="-1"></a><span class="co"># equally weighted portfolio</span></span>
+<span id="cb912-11"><a href="11.5-portfolio-return.html#cb912-11" tabindex="-1"></a><span class="fu">ptf_par</span>(<span class="at">x.A=</span><span class="fl">0.5</span>, <span class="at">x.B=</span><span class="fl">0.5</span>, mu.A, mu.B, sig.A, sig.B, rho.AB)</span></code></pre></div>
+<pre><code>##       mu.p     sig.p sig.avg
+## [1,] 0.115 0.1323416  0.1865</code></pre>
+<p><strong>Long-short portfolio</strong></p>
+<p>We now consider a long-short portfolio <span class="math inline">\(p_2\)</span>.</p>
+<p>Asset weights: <span class="math inline">\(w_A = 1.5\)</span>, <span class="math inline">\(w_B = -0.5\)</span>.</p>
+<div class="sourceCode" id="cb914"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb914-1"><a href="11.5-portfolio-return.html#cb914-1" tabindex="-1"></a><span class="co"># long-short portfolio</span></span>
+<span id="cb914-2"><a href="11.5-portfolio-return.html#cb914-2" tabindex="-1"></a><span class="fu">ptf_par</span>(<span class="at">x.A=</span><span class="fl">1.5</span>, <span class="at">x.B=</span><span class="sc">-</span><span class="fl">0.5</span>, mu.A, mu.B, sig.A, sig.B, rho.AB)</span></code></pre></div>
+<pre><code>##       mu.p     sig.p sig.avg
+## [1,] 0.235 0.4004673  0.3295</code></pre>
+<hr />
+<p><strong>From individual asset returns to portfolio</strong></p>
+<p>Given a data frame of asset returns, we can calculate the portfolio return by <code>PerformanceAnalytics::Return.portfolio()</code>.</p>
+<div class="sourceCode" id="cb916"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb916-1"><a href="11.5-portfolio-return.html#cb916-1" tabindex="-1"></a>w <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.25</span>, <span class="fl">0.25</span>, <span class="fl">0.20</span>, <span class="fl">0.20</span>, <span class="fl">0.10</span>)</span>
+<span id="cb916-2"><a href="11.5-portfolio-return.html#cb916-2" tabindex="-1"></a></span>
+<span id="cb916-3"><a href="11.5-portfolio-return.html#cb916-3" tabindex="-1"></a>portfolio_returns_xts_rebalanced_monthly <span class="ot">&lt;-</span> </span>
+<span id="cb916-4"><a href="11.5-portfolio-return.html#cb916-4" tabindex="-1"></a>  <span class="fu">Return.portfolio</span>(asset_returns_xts, <span class="at">weights =</span> w, <span class="at">rebalance_on =</span> <span class="st">&quot;months&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb916-5"><a href="11.5-portfolio-return.html#cb916-5" tabindex="-1"></a>  <span class="st">`</span><span class="at">colnames&lt;-</span><span class="st">`</span>(<span class="st">&quot;returns&quot;</span>) </span></code></pre></div>
+<p><code>PerformanceAnalytics::Return.portfolio(R=Return_xts, weights=NULL, rebalance_on, verbose=FALSE)</code> Using a time series of returns and any regular or irregular time series of weights for each asset, this function calculates the returns of a portfolio with the same periodicity of the returns data. Returns a time series of returns weighted by the <code>weights</code> parameter, or a list that includes intermediate calculations</p>
 <ul>
-<li>To get estimated covariance matrix for the coefficients, you need to multiply <code>cov.unscaled</code> by the estimate of the error variance.</li>
-</ul>
-<div class="sourceCode" id="cb942"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb942-1"><a href="12-regression.html#cb942-1" tabindex="-1"></a><span class="fu">solve</span>(<span class="fu">t</span>(X) <span class="sc">%*%</span> X)</span></code></pre></div>
-<pre><code>##                          rmrf
-##       0.008395487 -0.03965975
-## rmrf -0.039659745  3.97711043</code></pre>
-<div class="sourceCode" id="cb944"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb944-1"><a href="12-regression.html#cb944-1" tabindex="-1"></a><span class="fu">summary</span>(capm_ml)<span class="sc">$</span>cov.unscaled</span></code></pre></div>
-<pre><code>##              (Intercept)        rmrf
-## (Intercept)  0.008395487 -0.03965975
-## rmrf        -0.039659745  3.97711043</code></pre>
-<div class="sourceCode" id="cb946"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb946-1"><a href="12-regression.html#cb946-1" tabindex="-1"></a><span class="fu">all.equal</span>(<span class="fu">solve</span>(<span class="fu">t</span>(X) <span class="sc">%*%</span> X), </span>
-<span id="cb946-2"><a href="12-regression.html#cb946-2" tabindex="-1"></a>          <span class="fu">summary</span>(capm_ml)<span class="sc">$</span>cov.unscaled, </span>
-<span id="cb946-3"><a href="12-regression.html#cb946-3" tabindex="-1"></a>          <span class="at">check.attributes =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
-<pre><code>## [1] TRUE</code></pre>
-<p><strong>References</strong>:</p>
+<li><p><code>R</code> An xts, vector, matrix, data frame, timeSeries or zoo object of <strong>asset returns</strong>.</p></li>
+<li><p><code>weights</code> A time series or single-row matrix/vector containing asset weights, as decimal percentages, treated as beginning of period (BOP) weights.</p>
 <ul>
-<li><a href="https://github.com/SurajGupta/r-source/blob/master/src/library/stats/R/vcov.R" class="uri">https://github.com/SurajGupta/r-source/blob/master/src/library/stats/R/vcov.R</a></li>
-<li>stats package: <a href="https://docs.tibco.com/pub/enterprise-runtime-for-R/6.0.1/doc/html/Language_Reference/stats/summary.lm.html" class="uri">https://docs.tibco.com/pub/enterprise-runtime-for-R/6.0.1/doc/html/Language_Reference/stats/summary.lm.html</a></li>
+<li><p>If the user does not specify weights, an equal weight portfolio is assumed.</p></li>
+<li><p>if <code>weights</code> is an <code>xts</code> object, then any value passed to <code>rebalance_on</code> is ignored.</p>
+<p>This is useful when you have varying assets across time.</p>
+<p>The <code>weights</code> index specifies the rebalancing dates, therefore a regular rebalancing frequency provided via <code>rebalance_on</code> is not needed and ignored.</p>
+<p>Note that <code>weights</code> and <code>R</code> should be matched by period.</p></li>
+<li><p><strong>Irregular rebalancing</strong> can be done by specifying a time series of weights. The function uses the date index of the weights for xts-style subsetting of rebalancing periods.</p></li>
+</ul></li>
+<li><p><code>rebalance_on</code> Default “none”; alternatively “daily” “weekly” “monthly” “annual” to specify calendar-period rebalancing supported by <code>endpoints</code>.</p>
+<ul>
+<li>Ignored if <code>weights</code> is an xts object that specifies the rebalancing dates.</li>
+</ul></li>
+<li><p><code>verboase</code> If verbose is TRUE, return a list of intermediary calculations, such as asset contribution and asset value through time.</p>
+<ul>
+<li>The resultant list contains <code>$returns</code>, <code>$contributions</code>, <code>$BOP.Weight</code>, <code>$EOP.Weight</code>, <code>$BOP.Value</code>, and <code>$EOP.Value</code>.</li>
+</ul></li>
 </ul>
-<!--chapter:end:0800-Regresssion.Rmd-->
+<p><code>chartSeries</code> plot an OHLC object.</p>
+<div class="sourceCode" id="cb917"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb917-1"><a href="11.5-portfolio-return.html#cb917-1" tabindex="-1"></a><span class="fu">chartSeries</span>(AMZN, <span class="at">type=</span><span class="st">&quot;candlesticks&quot;</span>, <span class="at">subset=</span><span class="st">&#39;2016-05-18::2017-01-30&#39;</span>, <span class="at">theme =</span> <span class="fu">chartTheme</span>(<span class="st">&#39;white&#39;</span>, <span class="at">up.col=</span><span class="st">&#39;green&#39;</span>, <span class="at">dn.col=</span><span class="st">&#39;red&#39;</span>))</span></code></pre></div>
+<ul>
+<li><p><code>type="candlesticks"</code> can be <code>line</code>, <code>bar</code>, default to <code>candlesticks</code>.</p>
+<ul>
+<li><p>A candle has four points of data:</p>
+<ol style="list-style-type: decimal">
+<li><strong>Open</strong> – the first trade during the period specified by the candle</li>
+<li><strong>High</strong> – the highest traded price</li>
+<li><strong>Low</strong> – the lowest traded price</li>
+<li><strong>Close</strong> – the last trade during the period specified by the candle</li>
+</ol>
+<p><img src="https://drive.google.com/thumbnail?id=1d5d3Q2PShsNiPF4rUU2Gk4P-2sUAaDmW&sz=w1000" alt="candle" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" /></p>
+<p>A candle has three parts: body (open/close prices), upper shadow (high price), and lower shadow (low price).</p>
+<p>The color of the body can tell them if the stock price is rising or falling. Usually, red stands for falling and green stands for rising.</p></li>
+</ul></li>
+<li><p><code>theme = chartTheme("black")</code> defaults to black theme.</p>
+<ul>
+<li><code>up.col</code> up bar/candle color</li>
+<li><code>dn.col</code> down bar/candle color</li>
+</ul></li>
+</ul>
+<p><code>charts.RollingPerformance(R, width=12)</code> creates a rolling annualized returns chart, rolling annualized standard deviation chart, and a rolling annualized sharpe ratio chart.</p>
+<p>Note that if your portfolio return is on a daily basis, first <span class="env-green">convert to monthly</span>, then run the rolling function. Otherwise, daily rolling frequency can be too computaionally intensive.</p>
+<p>Rolling window</p>
+<p><img src="https://drive.google.com/thumbnail?id=1eOCGGKfxXJsuExtpVqPS0_NVKQ7RvY6I&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" /></p>
+<p>Rolling window estimation</p>
+<p><img src="https://drive.google.com/thumbnail?id=1qy1FaxutGBxwkXIhGeUVp6JfT69xrmBV&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" /></p>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-<a href="11.7-time-series-regression.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="12.1-ols.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="11.4-technical-analysis.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="11.6-plot-ts.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -1145,7 +1209,7 @@ gitbook.start({
     "size": 3
   },
   "edit": {
-    "link": "https://github.com/my1396/R-Notes/edit/main/0801-OLS.Rmd",
+    "link": "https://github.com/my1396/R-Notes/edit/main/0700-Time-Series.Rmd",
     "text": "Edit"
   },
   "history": {
@@ -1156,7 +1220,7 @@ gitbook.start({
     "link": null,
     "text": null
   },
-  "download": ["_main.pdf", "_main.epub", "https://github.com/my1396/R-Notes/raw/main/0801-OLS.Rmd"],
+  "download": ["_main.pdf", "_main.epub", "https://github.com/my1396/R-Notes/raw/main/0700-Time-Series.Rmd"],
   "search": {
     "engine": "fuse",
     "options": null
