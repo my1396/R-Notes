@@ -31,11 +31,13 @@ Quarto is based on **Pandoc** and uses its variation of markdown as its underlyi
 
 If you have multiple .qmd files in one directory, it's a good practice to create a project for them.
 
-**Benefits of creating a project:** [↩](https://quarto.org/docs/projects/quarto-projects.html)
+🔥 **Benefits of creating a project:** [↩](https://quarto.org/docs/projects/quarto-projects.html)
 
-- Share YAML configuration across multiple .qmd files. 
+- <span class="env-green">Share YAML configuration across multiple `.qmd` files.</span> 
   
-  Sometimes yaml gets very long. Put shared YAML options in [`_quarto.yml`](#project-metadata) file and it will apply to all .qmd files in the same directory. This makes your .qmd files more clean.
+  Sometimes YAML gets very long and cluttered. To makes your `.qmd` files cleaner and neater, put shared YAML options in [`_quarto.yml`](#project-metadata) file and it will apply to all `.qmd` files in the same (sub-)directory.
+
+  In each `.qmd` file, you provide file-specific YAML options, e.g, `title`, `author`, `date`, etc.
 
 - Redirect output to a specific folder.
 - Freeze rendered output, so that only changed files will be re-rendered
@@ -82,7 +84,7 @@ project:
 
 --------------------------------------------------------------------------------
 
-You can <span class="env-green">manually create a project by creating a `_quarto.yml` file</span> in the directory. The presence of `_quarto.yml`, even if empty, signals to Quarto this is a project, and allows you to render without specifying a file. 
+<i class="codicon codicon-lightbulb-sparkle env-green" aria-hidden="true" style="font-size:1.5em; vertical-align: middle;"></i> You can <span class="env-green">manually create a project by creating a `_quarto.yml` file</span> in the directory. The presence of `_quarto.yml`, even if empty, signals to Quarto this is a project, and allows you to render without specifying a file. 
 
 When you run `quarto render`, Quarto will render all Quarto documents in the project.
 
@@ -121,25 +123,30 @@ format:
       body-width: 1000px
 ```
 
+Use <span class="env-green">`format`</span> to specify output formats. This is different from Rmd, which uses `output` to specify output formats.
+See [HERE](https://quarto.org/docs/faq/rmarkdown.html#i-use-x-bookdown-blogdown-etc..-what-is-the-quarto-equivalent) for Quarto equivalents of document formats in Rmd.
+
 
 Some YAML options accepts multiple values, you can specify using the block style with dashes `-` or the inline style with square brackets `[]`.
 
-For example, the `include-in-header` option accepts multiple values. You can specify it in block style as follows:
+For example, the [`include-in-header`](https://quarto.org/docs/output-formats/html-basics.html#includes) option accepts multiple values. Include contents of *file*, verbatim, at the end of the header. This can be used, for example, to include special CSS or JavaScript in HTML documents or to inject commands into the LaTeX preamble.
 
-```yaml
-include-in-header:
-  - mathjax.html
-  - custom-style.css
-```
-Or you can specify it in inline style as follows:
+- You can specify it in **block style** as follows:
 
-```yaml
-include-in-header: [mathjax.html, custom-style.css]
-```
+  ```yaml
+  include-in-header:
+    - mathjax.html
+    - custom-style.css
+  ```
 
-- [`include-in-header`](https://quarto.org/docs/output-formats/html-basics.html#includes): Include contents of *file*, verbatim, at the end of the header. This can be used, for example, to include special CSS or JavaScript in HTML documents or to inject commands into the LaTeX preamble.
-  
-  `css` official option can also be used to include CSS files in HTML documents. 
+  `css` official option can also be used to include CSS files in HTML documents.
+
+- Or you can specify it in **inline style** as follows:
+
+  ```yaml
+  include-in-header: [mathjax.html, custom-style.css]
+  ```
+
 
 --------------------------------------------------------------------------------
 
@@ -166,8 +173,8 @@ For more on available markdown extensions see the [Pandoc Markdown specificatio
 
 Note that Rmd enables Markdown extensions differently than Quarto. 
 
-- Rmd uses the `md_extensions` option.
-- Quarto uses the `from` option. 
+- **Rmd** uses the `md_extensions` option.
+- **Quarto** uses the <span class="env-green">`from`</span> option. 
 
 Both options can be specified under specific output formats, e.g., `html` or `pdf`, **or** as top-level options that apply to all output formats.
 
@@ -268,7 +275,18 @@ There are drawbacks: some files may not be updated in time.
 
 ## Book Structure
 
+`book` type projects are designed for authoring books. 
+It combines multiple documents (chapters) into a single manuscript.
+It supports a variety of formats: PDF, HTML, EPUB, DOCX, etc.
+
+Best to use `book` if you want both PDF and HTML outputs.
+
+The `_quarto.yml` file contains the book project structure.
+
 ```yaml
+project:
+  type: book
+
 book:
   chapters:
     - index.qmd
@@ -287,14 +305,28 @@ book:
   appendices:
     - tools.qmd
     - resources.qmd
+
+bibliography: references.bib
+
+format:
+  html:
+    theme: cosmo
+  pdf:
+    documentclass: scrreprt
+  epub:
+    cover-image: cover.png
 ```
 
-- The `index.qmd` file is required (because Quarto books also produce a website in HTML format). This page should include the preface, acknowledgements, etc.
+- <span class="env-green">The `index.qmd` file is **required**</span> (because Quarto books also produce a website in HTML format). This page should include the preface, acknowledgements, etc.
 
-- The remainder of `chapters` includes one or more book chapters.
+- `book` specifies title, author, chatperters, and other book-level metadata.
+
+  - `chapters` property includes one or more book chapters.
 
   You can divide your book into parts using `part` within the book `chapters`. 
 
+  - The `references.qmd` file will include the generated bibliography (see [References](https://quarto.org/docs/books/book-structure.html#references) below for details).
+  
   Note that the markdown files `dice.qmd` and `cards.qmd` contain the part title (as a level one heading) as well as some introductory content for the part. 
 
   If you just need a part title then you can alternatively use this syntax:
@@ -310,8 +342,14 @@ book:
           - packages.qmd
   ```
 
-- The `references.qmd` file will include the generated bibliography (see [References](https://quarto.org/docs/books/book-structure.html#references) below for details).
+- `format` specifies output formats and their options. 
+  
+  For example, you can specify themes for HTML and pdf macros.
 
+
+ref: 
+
+- [Book Structure](https://quarto.org/docs/books/book-structure.html)
 
 ## Course Folder Structure
 
@@ -485,7 +523,7 @@ ref: <https://quarto.org/docs/computations/execution-options.html#knitr-options>
 
 Use the `pdf` format to create PDF output. For example:
 
-```yaml
+```{.yaml .nowrap}
 ---
 title: "Lab 1: Solutions"
 format: 
@@ -496,6 +534,8 @@ format:
           \setmainfont{Georgia Pro}
     fontsize: 12pt                    # top level option
     pdf-engine: xelatex
+    from: markdown+tex_math_single_backslash+markdown_in_html_blocks
+    keep-tex: true                    # makes debugging easier by keeping the .tex file
 ---
 ```
 
@@ -503,7 +543,97 @@ See [HERE](https://quarto.org/docs/reference/formats/pdf.html) for all available
 
 See [Metadata variables](https://pandoc.org/demo/example33/6.2-variables.html) for yaml options that Pandoc recognizes.
 
+--------------------------------------------------------------------------------
 
+### Common Compatibility Issues
+
+When you have both HTML and PDF outputs, you have to deal with particular details that are supported by html but not by pdf.
+
+- `\hat` accepts only simple macros without braces, e.g., `\hat y` is fine, but if you have custom macros for your variables, e.g., `\hat\bbeta`, it will throw an error in pdf output. 
+
+  Fix: put custom macro in braces, e.g., `\hat{\bbeta}`.
+
+- Colored equations `\color{#...}` does not work in pdf output. 
+  
+  Fix: write a lua filter to convert `\color{#...}` to `\color[html]{..}`.
+
+  ```lua
+  -- This filter ensures colored equations are properly formatted for LaTeX/PDF output by converting \color{#...} to \color[HTML]{...}.
+  function Math(el)
+    -- Check if the output format is PDF or LaTeX
+    if FORMAT:match("latex") or FORMAT:match("pdf") then
+      -- Find \color{#...} and replace it with \color[HTML]{...}
+      el.text = el.text:gsub("\\color{#(%w+)}", "\\color[HTML]{%1}")
+      return el
+    end
+  end
+  ```
+
+- `knitr::include_graphics` does NOT work for files with spaces in the file name. 
+
+  Fix: rename the file to remove spaces, e.g., `my plot.png` → `my_plot.png`.
+
+- Note that the extensions need to be loaded within the `from` option for the PDF output. First-level `from` does NOT work for pdf output.
+
+- Sections start with level 2 headings, i.e., `##`. Level 1 headings, i.e., `#`, are reserved for the title page or chapter titles.
+
+- For `stargazer` tables, use `type="text"` for best compatibility.
+  
+  Otherwise, use `type = ifelse(knitr::is_html_output(), "html", "latex")` to specify different output types for html and pdf outputs.
+
+- GIF needs to be converted to static images for pdf output.
+  
+  ```r
+  #' Conditionally include a GIF or a static PNG based on output format
+  #'
+  #' @param path The file path to the original GIF.
+  #' @param frame The frame number to extract for the PDF (default is 1).
+  #' @param ... Additional arguments passed to knitr::include_graphics().
+  #' @return A knitr::asis_output object for the appropriate image.
+  include_gif <- function(path, frame = 1, ...) {
+    # Check if we are knitting to PDF/LaTeX
+    if (knitr::is_latex_output()) {
+      
+      # Create a new filename by swapping the extension to _static.png
+      # e.g., "images/my_plot.gif" becomes "images/my_plot_static.png"
+      png_path <- paste0(tools::file_path_sans_ext(path), "_static.png")
+      
+      # If the static image doesn't exist yet, create it
+      if (!file.exists(png_path)) {
+        
+        # Ensure the magick package is installed
+        if (!requireNamespace("magick", quietly = TRUE)) {
+          stop("The 'magick' package is required to convert GIFs. Please install it.")
+        }
+        
+        # Read the GIF
+        img <- magick::image_read(path)
+        
+        # Failsafe: If you ask for frame 50 but there are only 20 frames, grab the last one
+        if (frame > length(img)) {
+          warning(sprintf("Requested frame %d exceeds GIF length. Using the last frame.", frame))
+          frame <- length(img)
+        }
+        
+        # Extract the specified frame and save as PNG
+        magick::image_write(img[frame], path = png_path, format = "png")
+      }
+      
+      # Feed the newly created static PNG to LaTeX
+      knitr::include_graphics(png_path, ...)
+      
+    } else {
+      # If compiling to HTML/Word, just use the original animated GIF
+      knitr::include_graphics(path, ...)
+    }
+  }
+  #
+  # Use example
+  # include_gif("path-to-image.gif")
+  #
+  # you can choose which frame to extract for the PDF version by setting the frame argument
+  # include_gif("path-to-image.gif", frame = 10) # extracts the 10th frame for the PDF version
+  ```
 
 --------------------------------------------------------------------------------
 
@@ -1024,6 +1154,28 @@ format:
   ```
 
   `$font-size-base` is used by Bootstrap to set the base font size for the body text. When you reset `$font-size-base`, all other font sizes that are defined in terms of it will also be updated accordingly.
+
+- <span class="env-green">[`self-contained: true`](https://quarto.org/docs/output-formats/html-basics.html#self-contained)</span> will embed all resources (CSS, JS, images) directly into the HTML file, making it portable and easy to share. However, it can increase the file size significantly, especially if you have large images or complex styles.
+
+  By default, when you render a `.qmd` file, it will generate a `_files` folder that contains all the resources (CSS, JS, images) needed for the HTML output. If you move the HTML file without the `_files` folder, it will break the links to those resources and cause rendering issues.
+
+  For example, if you render report.qmd to HTML:
+
+  ```bash
+  quarto render report.qmd --to html
+  ```
+  Then the following output will be generated:
+
+  ```
+  report.html
+  report_files/
+  ```
+
+  If you have `self-contained: true` in your YAML, the standalone `report.html` will include all the resources embedded within it.
+
+  <div class="rmdnote">
+  If you have embeded external CSS style sheets, e.g., `css: /path/to/custom-style.css`, in order to render your qmd successfully, you need to set `self-contained: true` to embed the CSS file into the HTML output. Otherwise, you will get an error like `Error: /path/to/custom-style.css (404 Not found)`.
+  </div>
 
 - `gird/body-width`: set the max width of the page content. By default, Quarto uses 800px. If you want to use the full width of the page, use `page-layout: full` instead.
 
@@ -1791,6 +1943,19 @@ Fix: For pdf outputs, use the `twemoji` or `newunicodechar` approach instead. Se
 
 [**twemoji**](https://github.com/twitter/twemoji/tree/master)
 
+Use Lua filter to replace emojis with Twemoji images.
+
+Load the filter in YAML:
+
+```yaml
+filters:
+  - filters/emoji.lua
+```
+
+Make sure `make_img` function has correct path to your emoji directory. Defaults to `emoji/` in the project directory.
+
+If you put the emoji images in a different directory, e.g., `filters/emoji/`, update the path in `make_img` function in `emoji.lua` accordingly.
+
 <span class="env-green">**Four steps**</span> to add more emojis in the future:
 
 1. Open `twemoji_manifest.json` and append new code points to the emoji object
@@ -1884,6 +2049,8 @@ Now these will work: ∀x (Fx → Gx)
 % \newfontfamily\symbolfont{DejaVu Sans}  % DejaVu Sans also has good unicode support, distributed with TeX Live, no additional installation needed
 
 \newunicodechar{→}{{\symbolfont →}}       % This looks better (shorter) than the math symbol \ensuremath{\rightarrow}
+\newunicodechar{≈}{{\symbolfont ≈}}       % almost equal to
+\newunicodechar{⨯}{{\symbolfont ⨯}}       % vector cross product
 \newunicodechar{♂}{{\symbolfont ♂}}
 \newunicodechar{♀}{{\symbolfont ♀}}
 \newunicodechar{♪}{{\symbolfont ♪}}

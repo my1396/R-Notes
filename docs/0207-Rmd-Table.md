@@ -297,7 +297,7 @@ To show the `tibble` information (number of row/columns, and group information) 
 ```yaml
 ---
 title: "Use caption with df_print set to page"
-date: "2026-06-16"
+date: "2026-06-19"
 output:
   bookdown::html_document2:
     df_print: paged
@@ -469,7 +469,11 @@ Note:               *p<0.1; **p<0.05; ***p<0.01
 
 HTML table can be obtained by specifying `stargazer(model, type = "html")`.
 
-Note that you need to specify <span class="env-green">`results="asis"`</span> in the code chunk options. This option tells `knitr` to treat verbatim code blocks "as is." Otherwise, instead of your table, you will see the raw html or latex code.
+Note that you need to specify <span class="env-green">`results="asis"`</span> in the code **chunk options**. This option tells `knitr` to treat verbatim code blocks "as is." Otherwise, instead of your table, you will see the raw html or latex code.
+
+<div class="rmdimportant">
+Update (June 2026): The stars annotation has been fixed!
+</div>
 
 - Note that <span class="env-orange">`*`'s do **NOT** show properly in html output</span>, see Fig. \@ref(fig:stargazer1), need to specify in the footnote (`notes`) manually.
 
@@ -502,6 +506,63 @@ After correcting the significance codes, the output looks like Fig. \@ref(fig:st
 <p class="caption">(\#fig:stargazer2)Correct significance codes.</p>
 </div>
 
+--------------------------------------------------------------------------------
+
+**Html and pdf output compatibility**
+
+To ensure compatibility between HTML and PDF outputs, you must specify <span class="env-green">`type = ifelse(knitr::is_html_output(), "html", "latex")`</span> in the `stargazer` function. 
+
+````markdown
+```{r stargazer-html-pdf, echo=FALSE, results="asis"}
+library(stargazer)
+
+# Run three models
+model1 <- lm(mpg ~ wt, data = mtcars)
+model2 <- lm(mpg ~ wt + cyl, data = mtcars)
+model3 <- lm(mpg ~ wt + cyl + hp, data = mtcars)
+
+# Generate table in text format
+stargazer(
+  model1, model2, model3, 
+  title = "Regression Results", 
+  type = ifelse(knitr::is_html_output(), "html", "latex"),
+  dep.var.labels = "Miles Per Gallon (mpg)", 
+  covariate.labels = c("Weight (lbs)", "Cylinders", "Horsepower"), 
+  digits = 2,
+  notes = "Standard errors in parentheses.",
+  notes.append = TRUE
+)
+```
+````
+
+Will be rendered as follows:
+
+
+<table style="text-align:center"><caption><strong>Regression Results</strong></caption>
+<tr><td colspan="4" style="border-bottom: 1px solid black"></td></tr><tr><td style="text-align:left"></td><td colspan="3"><em>Dependent variable:</em></td></tr>
+<tr><td></td><td colspan="3" style="border-bottom: 1px solid black"></td></tr>
+<tr><td style="text-align:left"></td><td colspan="3">Miles Per Gallon (mpg)</td></tr>
+<tr><td style="text-align:left"></td><td>(1)</td><td>(2)</td><td>(3)</td></tr>
+<tr><td colspan="4" style="border-bottom: 1px solid black"></td></tr><tr><td style="text-align:left">Weight (lbs)</td><td>-5.34<sup>***</sup></td><td>-3.19<sup>***</sup></td><td>-3.17<sup>***</sup></td></tr>
+<tr><td style="text-align:left"></td><td>(0.56)</td><td>(0.76)</td><td>(0.74)</td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td></tr>
+<tr><td style="text-align:left">Cylinders</td><td></td><td>-1.51<sup>***</sup></td><td>-0.94<sup>*</sup></td></tr>
+<tr><td style="text-align:left"></td><td></td><td>(0.41)</td><td>(0.55)</td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td></tr>
+<tr><td style="text-align:left">Horsepower</td><td></td><td></td><td>-0.02</td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td>(0.01)</td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td></tr>
+<tr><td style="text-align:left">Constant</td><td>37.29<sup>***</sup></td><td>39.69<sup>***</sup></td><td>38.75<sup>***</sup></td></tr>
+<tr><td style="text-align:left"></td><td>(1.88)</td><td>(1.71)</td><td>(1.79)</td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td></tr>
+<tr><td colspan="4" style="border-bottom: 1px solid black"></td></tr><tr><td style="text-align:left">Observations</td><td>32</td><td>32</td><td>32</td></tr>
+<tr><td style="text-align:left">R<sup>2</sup></td><td>0.75</td><td>0.83</td><td>0.84</td></tr>
+<tr><td style="text-align:left">Adjusted R<sup>2</sup></td><td>0.74</td><td>0.82</td><td>0.83</td></tr>
+<tr><td style="text-align:left">Residual Std. Error</td><td>3.05 (df = 30)</td><td>2.57 (df = 29)</td><td>2.51 (df = 28)</td></tr>
+<tr><td style="text-align:left">F Statistic</td><td>91.38<sup>***</sup> (df = 1; 30)</td><td>70.91<sup>***</sup> (df = 2; 29)</td><td>50.17<sup>***</sup> (df = 3; 28)</td></tr>
+<tr><td colspan="4" style="border-bottom: 1px solid black"></td></tr><tr><td style="text-align:left"><em>Note:</em></td><td colspan="3" style="text-align:right"><sup>*</sup>p<0.1; <sup>**</sup>p<0.05; <sup>***</sup>p<0.01</td></tr>
+<tr><td style="text-align:left"></td><td colspan="3" style="text-align:right">Standard errors in parentheses.</td></tr>
+</table>
 
 --------------------------------------------------------------------------------
 
@@ -510,12 +571,26 @@ After correcting the significance codes, the output looks like Fig. \@ref(fig:st
 <span class="env-green">**Table general formatting options:**</span>
 
 - `type = "latex" | "html" | "text"` specify output table format.
+  
+  Defaults to `"latex"`. You <span class="env-green">MUST specify correct `type`</span> accordingly. 
+
+  If you want automatically determine the output type based on the output format of the document, you can use `type = ifelse(knitr::is_html_output(), "html", "latex")` to generate html tables for html output and latex tables for pdf output.
 
 - `digits = 3` an integer that indicates how many decimal places should be used. Defaults to 3 digits.
   
   A value of `NULL` indicates that no rounding should be done at all, and that all available decimal places should be reported. 
 
 - `notes` a character vector containing notes to be included below the table.
+  
+  A commonly used combination is to specify that the number in parentheses below each coefficient is the standard error, e.g.,
+
+  ```r
+  stargazer(
+    model1, model2, model3,
+    notes = "Standard errors in parentheses.",
+    notes.append = TRUE
+  )
+  ```
 
 - `notes.append = FALSE` a logical value that indicates whether `notes` should be appended to the existing standard note(s) associated with the table's `style` (typically an explanation of significance cutoffs). 
   - Defaults to `TRUE`.
@@ -571,6 +646,8 @@ ___
     ```
     
     This approach is simple, but less readable.
+
+- `float.env = "table"`  specify the floating environment for LaTeX tables. Default is `"table"`. Set to `sidewaystable` for landscape tables. Need to load `\usepackage{rotating}` in LaTeX preamble.
 
 ___
 
@@ -646,7 +723,9 @@ ___
 
   ❗️ Note that you need to specify <span class="env-green">`results="asis"`</span> in the code chunk options. Omitting this options will result in failing to compile tex.
   
-  - <span class="env-green">`header=FALSE`</span> is to suppress the `% Table created by stargazer` header. This applies to only `latex` tables.
+  - <span class="env-green">`header=FALSE`</span> is to suppress the `% Table created by stargazer` header. 
+    
+    This applies to <span class="env-green">ONLY `latex`</span> tables.
   
     ```markdown
     % Table created by stargazer v.5.2.3 by Marek Hlavac, Social Policy Institute. E-mail: marek.hlavac at gmail.com
@@ -686,7 +765,7 @@ ___
             type = ifelse(knitr::is_latex_output(),"latex","html"),
             notes = "<span>&#42;</span>: p<0.1; <span>&#42;&#42;</span>: <strong>p<0.05</strong>; <span>&#42;&#42;&#42;</span>: p<0.01 <br> Standard errors in parentheses.",
             notes.append = F,
-            header = F
+            header = FALSE
             )
   ```
   
@@ -729,7 +808,7 @@ ___
     label = paste0("tab:", knitr::opts_current$get("label")),
     title = ifelse(knitr::is_latex_output(), tit, tit_html),
     type = ifelse(knitr::is_latex_output(),"latex","html"),
-    header = F
+    header = FALSE
     )
   ```
   
@@ -744,6 +823,46 @@ ___
 
 - However, when working with HTML output, you need to add CSS styling to adjust the table. 
 
+--------------------------------------------------------------------------------
+
+Do NOT have trailing comma in the function! Otherwise, will have the following error:
+
+```bash
+Error in `.stargazer.wrap()`:
+! argument is missing, with no default
+```
+
+--------------------------------------------------------------------------------
+
+**Sidewaystable**
+
+If your table is wide and goes beyond the page width in pdf, use `\usepackage{rotating}` and set `float.env=sidewaystable`
+
+To further adjust the table, you can set `font.size` and `column.sep.width` to make the table more compact.
+
+````markdown
+```{r sidewaystable-for-pdf, results="asis"}
+is_html <- knitr::is_html_output()       # check if the output format is HTML
+out_env <- ifelse(is_html, "table", "sidewaystable")
+out_font <- ifelse(is_html, NULL, "small") # small font size for pdf
+out_sep <- ifelse(is_html, "", "1pt")      # No column separation for HTML, 1pt for LaTeX
+
+stargazer(spec1, spec2, spec3, spec4, spec5,
+    type = ifelse(knitr::is_html_output(), "html", "latex"),
+    se = rob_se,
+    digits = 3,
+    header = FALSE,
+    column.labels = c("(I)", "(II)", "(III)", "(IV)", "(V)"),
+    model.numbers = FALSE,
+    float.env = out_env,
+    font.size = out_font,
+    column.sep.width = out_sep
+)
+```
+````
+
+
+--------------------------------------------------------------------------------
 
 References:
 
@@ -801,7 +920,7 @@ print(xtab, type = "html", include.rownames = TRUE)
 ```
 
 <!-- html table generated in R 4.5.1 by xtable 1.8-4 package -->
-<!-- Tue Jun 16 09:03:44 2026 -->
+<!-- Fri Jun 19 18:41:48 2026 -->
 <table border=1>
 <caption align="bottom"> Asset Parameters </caption>
 <tr> <th>  </th> <th> Asset </th> <th> Mu </th> <th> Sigma </th>  </tr>
@@ -821,7 +940,7 @@ print(xtab_model, type = "html", digits = 3)
 ```
 
 <!-- html table generated in R 4.5.1 by xtable 1.8-4 package -->
-<!-- Tue Jun 16 09:03:44 2026 -->
+<!-- Fri Jun 19 18:41:48 2026 -->
 <table border=1>
 <caption align="bottom"> Regression of mpg on hp and wt </caption>
 <tr> <th>  </th> <th> Estimate </th> <th> Std. Error </th> <th> t value </th> <th> Pr(&gt;|t|) </th>  </tr>
