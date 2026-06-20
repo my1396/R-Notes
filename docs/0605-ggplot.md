@@ -47,9 +47,11 @@ mytheme <- theme(
   legend.spacing.y = unit(0, 'mm'), # spacing between legend title and legend items
   legend.key.height = unit(0.8,"line"), # vertical spacing between legend items
   legend.margin = margin(t=0, b=0, unit="mm"), # legend box margins
-  title = element_text(size=8),
+  legend.text = element_text(size=rel(1.2)),   # legend text size
+  legend.title = element_text(size=rel(1.2)),  # legend title size
+  title = element_text(size=rel(1.2)),
   axis.title = element_text(size=rel(1.2)), # use `rel()` to change proportionally to base font size; or a number to specify absolute size as follows;
-  axis.text = element_text(size=8), # tick labels along axes
+  axis.text = element_text(size=8),  # tick labels along axes
   panel.grid.minor = element_blank() # remove minor gridlines
   )
 # p is a ggplot() subject

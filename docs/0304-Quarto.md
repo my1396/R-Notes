@@ -472,8 +472,17 @@ Note that <span class="env-green">Quarto accepts Rmd's way of specifying chunk o
 ```
 ````
 
-❗️ Note that NOT all Rmd chunk options are supported in Quarto. See [Quarto Chunk Options](https://quarto.org/docs/computations/execution-options.html) for all available options.
+❗️ Note that NOT all Rmd chunk options are supported in Quarto, e.g., Rmd's `results` are replaced with `output` in Quarto. See [Quarto Chunk Options](https://quarto.org/docs/computations/execution-options.html) for all available options.
 
+
+--------------------------------------------------------------------------------
+
+**Load default chunk options** from a separate file, e.g., `_chunk-opt.qmd`:
+
+````markdown
+```{r setup, child = "../_chunk-opt.qmd", include=FALSE}
+```
+````
 
 
 **Quarto chunk options available for customizing output include:**
@@ -906,7 +915,13 @@ A: [Unresolved] for a single file. For a project with multiple files, you can se
 --------------------------------------------------------------------------------
 
 Q: How to print dollar sign in pdf output?  
-A: `qmd` supports `$` directly. No need to escape. If it fails, try `\$` or `\\$`.
+A: In pdf output, `qmd` supports `$` directly. No need to escape. 
+
+In html output, `$` will be treated as inline math.
+If you have both pdf and html outputs, use `\$` to print `$` in both outputs.
+
+If it still doesn't work, use `\\$`. 
+
 
 --------------------------------------------------------------------------------
 
@@ -1377,6 +1392,10 @@ But in Quarto, you can use `quarto preview` to see the changes in real time. Sav
   ```bash
   $quarto render 0304-Quarto.Rmd --to html
   ```
+  
+  [**Options:**](https://quarto.org/docs/cli/render.html)
+  
+  - `--to` or `-t`: specify the output format(s). You can specify multiple formats by separating them with commas, e.g., `--to html,pdf`. If you don't specify any format, Quarto will render the default format.
 
 - <span class="env-green">Quarto Preview</span>: display output in the **external web browser**.
 

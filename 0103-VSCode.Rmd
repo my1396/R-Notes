@@ -930,9 +930,63 @@ ref:
 - [Most useful keyboard shortcuts for Notebook & Lab](https://discourse.jupyter.org/t/most-useful-keyboard-shortcuts-for-notebook-lab/18113)
 - [Jupyter Tutorial](https://jupyter-tutorial.readthedocs.io/en/24.1.0/notebook/shortcuts.html)
 
+### Load packages silently
+
+```r
+# -------- Setup: packages --------
+# Unified required package list
+pkgs <- c("tidyverse", "data.table", "ggsci", "moments", "knitr", "kableExtra", "IRdisplay")
+missing <- setdiff(pkgs, rownames(installed.packages()))
+if (length(missing) > 0) install.packages(missing)
+
+# Load all packages (silently)
+invisible(lapply(pkgs, function(pkg) {
+  suppressWarnings(suppressPackageStartupMessages(library(pkg, character.only = TRUE)))
+}))
+
+# Set default options for figures in Jupyter Notebook
+options(repr.plot.width = 12, repr.plot.height = 4)  # wider default figures
+
+message("\nSetup complete (packages loaded: ", paste(pkgs, collapse = ", "), ").")
+```
+
+--------------------------------------------------------------------------------
+
+### Chunk Options
+
+Use Quarto's way `#|` to specify chunk options in Jupyter notebooks. 
+
+These chunk options will not show up in the notebook rendered output, but they will control the behavior of the code cell and its output.
+
+```r
+#| echo: false
+#| message: false
+#| warning: false
+#| fig-dpi: 300
+#| fig-width: 6
+#| fig-height: 4
+#| fig-align: center
+#| out-width: 70%
+
+# generate a plot
+p <- ggplot(mtcars, aes(x = wt, y = mpg)) +
+  geom_point() +
+  theme_bw(base_size = 16)
+p
+```
+
+`fig-width` and `fig-height` control the aspect ratio of the plot, while `out-width` controls the display width of the plot in the notebook. Setting `out-width` to a percentage value (e.g., `70%`) allows the plot to scale responsively within the notebook layout.
+
+
+--------------------------------------------------------------------------------
+
 ### Insert Image
 
 The built-in image rendering in Jupyter notebooks is not very flexible. It renders images using the default width and height (about 50% of page width and almost square), which might be too large or too small for your needs, and very often, you want a specific aspect ratio.
+
+--------------------------------------------------------------------------------
+
+**Save and load images**
 
 Use `IRdisplay` to control plot size in Jupyter notebooks: ✅
 
@@ -957,6 +1011,82 @@ Alternatively, use markdown syntax
 ```markdown
 ![Alt text](temp-plot.png){width=70%}
 ```
+
+--------------------------------------------------------------------------------
+
+**Big image**
+
+- html: scrollable image container
+- pdf: 100% page width
+
+Create a markdown cell and add the following fenced div:
+
+```markdown
+::: {.content-visible when-format="html"}
+::: {.scroll-img}
+![](path-to-image.png){width=120%}
+:::
+:::
+
+::: {.content-visible when-format="pdf"}
+![](path-to-image.png){width=100%}
+:::
+```
+
+Define `scroll-img` class in your CSS file to make the image scrollable when it exceeds the page width:
+
+```css
+// Make images wider than container scrollable with horizontal overflow
+.scroll-img {
+  overflow-x: auto;
+}
+
+.scroll-img img {
+  max-width: none;
+  display: block;
+}
+```
+
+
+--------------------------------------------------------------------------------
+
+**Control plot size as you plot**
+
+- Use `repr` options to control the size of plots in Jupyter notebooks output cell.
+  
+  Set `repr.plot.width` and `repr.plot.height` options to control the width and height of plots in inches. This will affect *all subsequent plots* in the notebook. → NOT good.
+
+  ```
+  options(repr.plot.width = 12, repr.plot.height = 8) # controls the size of plots in the notebook output cell, but not the rendered plot size in HTML/PDF
+  plot(mtcars$wt, mtcars$mpg)
+  ```
+
+  Limitations: `repr.plot.width/height` decides how large the image looks in the notebook output cell. It does <span class="env-orange">NOT</span> control how the image is rendered in that interactive context when you export to HTML or PDF. Your plot size settings will be ignored when you `quarto render notebook.ipynb` to HTML or PDF. ❌
+
+  Fix: best to fix aspect ratio and use relative width (e.g., `out-width: 70%`) to control the display size of the plot in the notebook. ✅
+
+- Use chunk options to control the size of plots in Jupyter notebooks. This is more flexible as you can control the size of each plot separately.
+  
+  ```r
+  #| fig-dpi: 300
+  #| out-width: "80%"
+  #| fig-width: 9
+  #| fig-height: 6
+  
+  options(repr.plot.width = 8, repr.plot.height = 7)  # controls cell output size, but not the rendered plot size in HTML/PDF
+  plot(mtcars$wt, mtcars$mpg)
+  ```
+
+  `fig-` options control the aspect ratio of the plot when you render the notebook, while `out-width` sets the display width of the plot being 80% of the page width. 
+  
+  `out-width: "80%"` will become:
+
+  - HTML: `width: 80%`
+  - PDF: `\includegraphics[width=0.8\linewidth]{...}`
+  
+  Use `repr.plot.width` and `repr.plot.height` options to control the size of the plot in the notebook output cell.
+
+ref:
 
 - [Plot size with IRKernel](https://groups.google.com/g/jupyter/c/623EFF2_yQg?pli=1)
 
@@ -996,6 +1126,47 @@ Other output representations
 
 See [repr CRAN](https://cran.r-project.org/web/packages/repr/refman/repr.html) for all available options.
 
+
+--------------------------------------------------------------------------------
+
+### Print table output
+
+By default, Jupyter notebooks will print the table as a plain text output, which is not very readable. You can use <span class="env-green">`IRdisplay::display_html()`</span> to display the table as an HTML table, which is more readable and allows you to control the formatting.
+
+```r
+library(IRdisplay)
+library(knitr)
+results <- lapply(asset_df, quick_summary) %>%
+    do.call(rbind, .) %>%
+    kable(format = "html", digits = 2, caption = "Descriptive Statistics of Asset Returns")
+display_html(as.character(results)) 
+```
+
+`IRdisplay::display_html()` print html as it is, equivalent to `results="asis"` chunk option in R Markdown.
+
+- One additional benefit is that it will print LaTeX table when your output format is PDF.
+
+A bulletproof way to explicitly control the output format of tables depending on the output format of your document is to use `IRdisplay::publish_mimebundle()`. It saves a bundle of different formats (called MIME types) for that single output, and then lets the viewing environment decide which one to use.
+
+`publish_mimebundle()` takes a named list of MIME types and their corresponding content. For example, you can provide both an HTML version and a LaTeX version of the same table, and the Jupyter frontend will automatically choose which one to render based on the current environment.
+
+- `text/html`: raw HTML code
+- `text/latex`: raw LaTeX code
+
+```r
+summary_df <- lapply(asset_df, quick_summary) %>%
+    do.call(rbind, .)
+html_table <- kable(summary_df, format = "html", digits = 2, 
+    caption = "Descriptive Statistics of Asset Returns")
+latex_table <- kable(summary_df, format = "latex", digits = 2, 
+    booktabs = TRUE, caption = "Descriptive Statistics of Asset Returns")
+
+# Jupyter frontend automatically decides which one to render based on the current environment
+publish_mimebundle(list(
+    'text/html' = as.character(html_table),
+    'text/latex' = as.character(latex_table)
+))
+```
 
 --------------------------------------------------------------------------------
 

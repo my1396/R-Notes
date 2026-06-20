@@ -18,17 +18,25 @@
 **Check if a file/folder exists**
 
 ```R
-if (!dir.exists("output")){
-  dir.create("output")
+library(glue)
+dir_path <- "output/images"
+# informative way
+if (!dir.exists(dir_path)){
+  dir.create(dir_path, recursive = TRUE)
+  message(glue("The '{dir_path}/' directory has been created."))
 } else{
-  print("dir exists")
+  message(glue("The '{dir_path}/' directory already exists."))
 }
+
+# concise way
+if (!dir.exists(dir_path)) dir.create(dir_path, recursive = TRUE)
 
 data <- 'my_data.csv'
 if(file.exists(data)){
   df <- read.csv(data)
+  message(glue("'{data}' has been loaded successfully."))
 } else {
-  print('Does not exist')
+  message(glue("'{data}' does NOT exist. Please check the file path and try again."))
 }
 ```
 
