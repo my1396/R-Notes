@@ -39,19 +39,33 @@ If you have multiple .qmd files in one directory, it's a good practice to create
 
   In each `.qmd` file, you provide file-specific YAML options, e.g, `title`, `author`, `date`, etc.
 
+  <div class="rmdnote">
+  <i class="codicon codicon-lightbulb-sparkle env-green" aria-hidden="true" style="font-size:1.5em; vertical-align: middle;"></i> Always create a `_quarto.yml` file in the root of your project directory and put your shared YAML options there. 
+  </div>
+
 - Redirect output to a specific folder.
 - Freeze rendered output, so that only changed files will be re-rendered
 
 **Types of projects:**
 
-- `default`: default type; plain project, no linking between files. 
+- <span class="env-green">`default`</span>: default type; plain project, no linking between files. 
   
-   This is useful if you just want to render multiple .qmd files in the same directory.
+   This is useful if you just want to render multiple `.qmd` files in the same directory.
   
    If the file `_quarto.yml` is empty, or if `type` is unspecified, the `type` is assumed to be `default`. 
 
-- `book`: enforce chapters, build everything together
-- `website`: create navigation, expect `index.qmd` as the homepage.
+- <span class="env-green">`book`</span>: enforce chapters, build everything together.
+  
+  `book` type supports multiple output formats, e.g., PDF, HTML, EPUB, DOCX, etc. 
+  HTML books are a special type of Quarto Website. So they support all Quarto Website features.
+
+  One distinction between `book` and `website` is that when you have pdf output, `book` will compile all chapters into a single pdf file, while `website` will compile each chapter into a separate pdf file.
+
+  <div class="rmdnote">
+  <i class="codicon codicon-lightbulb-sparkle env-green" aria-hidden="true" style="font-size:1.5em; vertical-align: middle;"></i> Use `book` type for course materials so that you have a single pdf file for the whole course. 
+  </div>
+
+- `website`: create navigation bar, expect `index.qmd` as the homepage.
 - `blog`
 - `manuscript` and `confluence`
 
@@ -95,7 +109,9 @@ When you run `quarto render`, Quarto will render all Quarto documents in the pro
 
 ### YAML Metadata {-}
 
-Put <span class="env-green">**project metadata**</span> in `_quarto.yml` file. Any document rendered within the project directory will automatically inherit the metadata defined at the project level. Here is an example of what the `_quarto.yml` file might look like
+Put <span class="env-green">**project metadata**</span> in `_quarto.yml` file. Any document rendered within the project directory will automatically inherit the metadata defined at the project level. 
+
+Here is an example of what the `_quarto.yml` file might look like:
 
 
 ```yaml
