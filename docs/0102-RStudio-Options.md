@@ -181,6 +181,8 @@ This can be convenient for loading commonly used packages in some <span class="e
 
 --------------------------------------------------------------------------------
 
+**Change default settings globally for all R sessions**
+
 Quitting R will erase the default theme setting. If you load `ggplot2` in a future session it will revert to the default gray theme. If you’d like for `ggplot2` to always use a different theme (either yours or one of the built-in ones), you can set a load hook and put it in your `.Rprofile` file. For example, the following hook sets the default theme to be `theme_minimal()` every time the `ggplot2` package is loaded.
 
 ```R
@@ -190,7 +192,33 @@ setHook(packageEvent("ggplot2", "onLoad"),
 
 Of course, you can always override this default theme by adding a theme object to any of your plots that you construct in `ggplot2`.
 
+--------------------------------------------------------------------------------
 
+Set `stargazer` default output type to identify output type automatically
+
+`stargazer` use `type="latex"` by default, which will throw an error when you render your document to HTML. But if you specify `stargazer(..., type = "html")`, it will have problems when you render your document to PDF. So it is better to set the output type automatically based on the output format of the document.
+
+Set `type = ifelse(knitr::is_html_output(), "html", "latex")` by default.
+
+```r
+# Set stargazer to automatically detect output type (html or latex) 
+# based on the output format of the document
+setHook(
+  packageEvent("stargazer", "attach"),
+  function(...) {
+    assign(
+      "stargazer",
+      function(...,
+               type = if (knitr::is_html_output()) "html" else "latex") {
+        stargazer::stargazer(..., type = type)
+      },
+      envir = .GlobalEnv
+    )
+  }
+)
+```
+
+An easy workaround is to set `type="text"`, which will work for both HTML and PDF outputs, but the table will not be as pretty as the HTML or LaTeX output. `text` output is a simple ASCII table (monospaced) that is suitable for console output. Good readability but moderate aesthetics. `type="text"` is a good option for quick previews, but NOT suitable for publication.
 
 --------------------------------------------------------------------------------
 

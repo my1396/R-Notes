@@ -575,7 +575,12 @@ div.csl-indent {
 <li class="chapter" data-level="6.11.2" data-path="6.11-divs-and-spans.html"><a href="6.11-divs-and-spans.html#inline-attributes"><i class="fa fa-check"></i><b>6.11.2</b> Inline Attributes</a></li>
 </ul></li>
 <li class="chapter" data-level="6.12" data-path="6.12-theorems-2.html"><a href="6.12-theorems-2.html"><i class="fa fa-check"></i><b>6.12</b> Theorems</a></li>
-<li class="chapter" data-level="6.13" data-path="6.13-quarto-tables.html"><a href="6.13-quarto-tables.html"><i class="fa fa-check"></i><b>6.13</b> Tables</a></li>
+<li class="chapter" data-level="6.13" data-path="6.13-quarto-tables.html"><a href="6.13-quarto-tables.html"><i class="fa fa-check"></i><b>6.13</b> Tables</a>
+<ul>
+<li class="chapter" data-level="6.13.1" data-path="6.13-quarto-tables.html"><a href="6.13-quarto-tables.html#tables-in-latex"><i class="fa fa-check"></i><b>6.13.1</b> Tables in Latex</a></li>
+<li class="chapter" data-level="6.13.2" data-path="6.13-quarto-tables.html"><a href="6.13-quarto-tables.html#tables-in-markdown"><i class="fa fa-check"></i><b>6.13.2</b> Tables in Markdown</a></li>
+<li class="chapter" data-level="6.13.3" data-path="6.13-quarto-tables.html"><a href="6.13-quarto-tables.html#stargazer-tables-1"><i class="fa fa-check"></i><b>6.13.3</b> Stargazer tables</a></li>
+</ul></li>
 <li class="chapter" data-level="6.14" data-path="6.14-raw-content.html"><a href="6.14-raw-content.html"><i class="fa fa-check"></i><b>6.14</b> Raw Content</a></li>
 <li class="chapter" data-level="6.15" data-path="6.15-lists.html"><a href="6.15-lists.html"><i class="fa fa-check"></i><b>6.15</b> Lists</a></li>
 <li class="chapter" data-level="6.16" data-path="6.16-callouts.html"><a href="6.16-callouts.html"><i class="fa fa-check"></i><b>6.16</b> Callouts</a>
@@ -1088,10 +1093,31 @@ document.addEventListener('DOMContentLoaded', function() {
 <li>Note that it is recommended to <strong>load packages individually and explicitly</strong> if you are working on a research project, where reproducibility is important and in case of collaboration.</li>
 </ul>
 <hr />
+<p><strong>Change default settings globally for all R sessions</strong></p>
 <p>Quitting R will erase the default theme setting. If you load <code>ggplot2</code> in a future session it will revert to the default gray theme. If you’d like for <code>ggplot2</code> to always use a different theme (either yours or one of the built-in ones), you can set a load hook and put it in your <code>.Rprofile</code> file. For example, the following hook sets the default theme to be <code>theme_minimal()</code> every time the <code>ggplot2</code> package is loaded.</p>
 <div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb55-1"><a href="2.9-r-startup.html#cb55-1" tabindex="-1"></a><span class="fu">setHook</span>(<span class="fu">packageEvent</span>(<span class="st">&quot;ggplot2&quot;</span>, <span class="st">&quot;onLoad&quot;</span>), </span>
 <span id="cb55-2"><a href="2.9-r-startup.html#cb55-2" tabindex="-1"></a>        <span class="cf">function</span>(...) ggplot2<span class="sc">::</span><span class="fu">theme_set</span>(ggplot2<span class="sc">::</span><span class="fu">theme_bw</span>()))</span></code></pre></div>
 <p>Of course, you can always override this default theme by adding a theme object to any of your plots that you construct in <code>ggplot2</code>.</p>
+<hr />
+<p>Set <code>stargazer</code> default output type to identify output type automatically</p>
+<p><code>stargazer</code> use <code>type="latex"</code> by default, which will throw an error when you render your document to HTML. But if you specify <code>stargazer(..., type = "html")</code>, it will have problems when you render your document to PDF. So it is better to set the output type automatically based on the output format of the document.</p>
+<p>Set <code>type = ifelse(knitr::is_html_output(), "html", "latex")</code> by default.</p>
+<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="2.9-r-startup.html#cb56-1" tabindex="-1"></a><span class="co"># Set stargazer to automatically detect output type (html or latex) </span></span>
+<span id="cb56-2"><a href="2.9-r-startup.html#cb56-2" tabindex="-1"></a><span class="co"># based on the output format of the document</span></span>
+<span id="cb56-3"><a href="2.9-r-startup.html#cb56-3" tabindex="-1"></a><span class="fu">setHook</span>(</span>
+<span id="cb56-4"><a href="2.9-r-startup.html#cb56-4" tabindex="-1"></a>  <span class="fu">packageEvent</span>(<span class="st">&quot;stargazer&quot;</span>, <span class="st">&quot;attach&quot;</span>),</span>
+<span id="cb56-5"><a href="2.9-r-startup.html#cb56-5" tabindex="-1"></a>  <span class="cf">function</span>(...) {</span>
+<span id="cb56-6"><a href="2.9-r-startup.html#cb56-6" tabindex="-1"></a>    <span class="fu">assign</span>(</span>
+<span id="cb56-7"><a href="2.9-r-startup.html#cb56-7" tabindex="-1"></a>      <span class="st">&quot;stargazer&quot;</span>,</span>
+<span id="cb56-8"><a href="2.9-r-startup.html#cb56-8" tabindex="-1"></a>      <span class="cf">function</span>(...,</span>
+<span id="cb56-9"><a href="2.9-r-startup.html#cb56-9" tabindex="-1"></a>               <span class="at">type =</span> <span class="cf">if</span> (knitr<span class="sc">::</span><span class="fu">is_html_output</span>()) <span class="st">&quot;html&quot;</span> <span class="cf">else</span> <span class="st">&quot;latex&quot;</span>) {</span>
+<span id="cb56-10"><a href="2.9-r-startup.html#cb56-10" tabindex="-1"></a>        stargazer<span class="sc">::</span><span class="fu">stargazer</span>(..., <span class="at">type =</span> type)</span>
+<span id="cb56-11"><a href="2.9-r-startup.html#cb56-11" tabindex="-1"></a>      },</span>
+<span id="cb56-12"><a href="2.9-r-startup.html#cb56-12" tabindex="-1"></a>      <span class="at">envir =</span> .GlobalEnv</span>
+<span id="cb56-13"><a href="2.9-r-startup.html#cb56-13" tabindex="-1"></a>    )</span>
+<span id="cb56-14"><a href="2.9-r-startup.html#cb56-14" tabindex="-1"></a>  }</span>
+<span id="cb56-15"><a href="2.9-r-startup.html#cb56-15" tabindex="-1"></a>)</span></code></pre></div>
+<p>An easy workaround is to set <code>type="text"</code>, which will work for both HTML and PDF outputs, but the table will not be as pretty as the HTML or LaTeX output. <code>text</code> output is a simple ASCII table (monospaced) that is suitable for console output. Good readability but moderate aesthetics. <code>type="text"</code> is a good option for quick previews, but NOT suitable for publication.</p>
 <hr />
 </div>
 <div id="renviron" class="section level3 hasAnchor" number="2.9.2">
@@ -1105,14 +1131,14 @@ Key2=value2
 <p>The <code>.Renviron</code> file is most useful for defining sensitive information such as API keys (such as GitHub, Twitter, or Posit Connect) as well as R specific environment variables like the history size (<code>R_HISTSIZE=100000</code>) and default library locations <code>R_LIBS_USER</code>.</p>
 <hr />
 <p><a href="https://community.rstudio.com/t/rcpp-compilation-breaks-in-r-4-1-0-running-on-big-sur-11-4/109744">Rcpp compilation breaks in R 4.1.0</a></p>
-<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb57-1"><a href="2.9-r-startup.html#cb57-1" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">build</span>(<span class="st">&quot;my_package&quot;</span>)</span>
-<span id="cb57-2"><a href="2.9-r-startup.html#cb57-2" tabindex="-1"></a>Error<span class="sc">:</span> Could not find tools necessary to compile a package</span>
-<span id="cb57-3"><a href="2.9-r-startup.html#cb57-3" tabindex="-1"></a>Call <span class="st">`</span><span class="at">pkgbuild::check_build_tools(debug = TRUE)</span><span class="st">`</span> to diagnose the problem.</span></code></pre></div>
+<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="2.9-r-startup.html#cb58-1" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">build</span>(<span class="st">&quot;my_package&quot;</span>)</span>
+<span id="cb58-2"><a href="2.9-r-startup.html#cb58-2" tabindex="-1"></a>Error<span class="sc">:</span> Could not find tools necessary to compile a package</span>
+<span id="cb58-3"><a href="2.9-r-startup.html#cb58-3" tabindex="-1"></a>Call <span class="st">`</span><span class="at">pkgbuild::check_build_tools(debug = TRUE)</span><span class="st">`</span> to diagnose the problem.</span></code></pre></div>
 <ul>
 <li><p>In RStudio, I am continually prompted to install additional build tools and I can’t install the build tool. <span class="math inline">\(\rightarrow\)</span> Bypass the option <code>options(buildtools.check = function(action) TRUE)</code>.</p></li>
 <li><p>Turns out R was pointing to an old clang version in my Makevars.</p>
 <p>I just deleted it using <a href="6.7-render-quarto.html#in-terminal">in Terminal</a></p>
-<div class="sourceCode" id="cb58"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb58-1"><a href="2.9-r-startup.html#cb58-1" tabindex="-1"></a><span class="fu">sudo</span> rm ~/.R/Makevars</span></code></pre></div></li>
+<div class="sourceCode" id="cb59"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb59-1"><a href="2.9-r-startup.html#cb59-1" tabindex="-1"></a><span class="fu">sudo</span> rm ~/.R/Makevars</span></code></pre></div></li>
 </ul>
 <p><strong>Install SDK command line tool</strong></p>
 <p>Download from developer.apple.com. Software development kit.</p>

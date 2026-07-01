@@ -551,18 +551,32 @@ Use the `pdf` format to create PDF output. For example:
 ```{.yaml .nowrap}
 ---
 title: "Lab 1: Solutions"
+
+# lua filters (1st level YAML)
+filters:
+  - ../filters/color-text.lua
+  - ../filters/col-eqn.lua
+  - ../filters/emoji.lua
+  - ../filters/unlisted-sections.lua
+  - ../filters/nested-ordered-list.lua
+
 format: 
   pdf:
-    include-in-header: 
+    documentclass: scrartcl
+    pdf-engine: xelatex
+    fontsize: 12pt                    # top level option
+    include-in-header:
       - ../latex/preamble.tex         # tex template file, header file, can be used to overwrite default settings
       - text: |                       # raw LaTeX preamble added after your header file above
           \setmainfont{Georgia Pro}
-    fontsize: 12pt                    # top level option
-    pdf-engine: xelatex
+          \setmathfont{Cambria Math}
+          \setmathrm{Georgia Pro}
     from: markdown+tex_math_single_backslash+markdown_in_html_blocks
     keep-tex: true                    # makes debugging easier by keeping the .tex file
 ---
 ```
+
+Metadata such as `filters` and `format` can be specified in the <span class="env-green">`_quarto.yml`</span> file so that all `.qmd` will inherit the same options, or in the individual `.qmd` files. YAML options specified in the individual `.qmd` files will override those in `_quarto.yml`.
 
 See [HERE](https://quarto.org/docs/reference/formats/pdf.html) for all available PDF options. All PDF options go inside the `format:` → `pdf:` chunk of the YAML.
 
@@ -572,7 +586,7 @@ See [Metadata variables](https://pandoc.org/demo/example33/6.2-variables.html) f
 
 ### Common Compatibility Issues
 
-When you have both HTML and PDF outputs, you have to deal with particular details that are supported by html but not by pdf.
+When you have <span class="env-orange">both HTML and PDF outputs</span>, you have to deal with particular details that are supported by html but not by pdf.
 
 - `\hat` accepts only simple macros without braces, e.g., `\hat y` is fine, but if you have custom macros for your variables, e.g., `\hat\bbeta`, it will throw an error in pdf output. 
 
@@ -602,9 +616,17 @@ When you have both HTML and PDF outputs, you have to deal with particular detail
 
 - Sections start with level 2 headings, i.e., `##`. Level 1 headings, i.e., `#`, are reserved for the title page or chapter titles.
 
-- For `stargazer` tables, use `type="text"` for best compatibility.
+- For <span class="env-orange">`stargazer` tables</span>, use `type="text"` for best compatibility.
   
-  Otherwise, use `type = ifelse(knitr::is_html_output(), "html", "latex")` to specify different output types for html and pdf outputs.
+  Otherwise, use <span class="env-green">`type = ifelse(knitr::is_html_output(), "html", "latex")`</span> to specify different output types for html and pdf outputs.
+  
+  ```r
+  model1 <- lm(mpg ~ wt, data = mtcars)
+  stargazer::stargazer(
+    model1, 
+    type = ifelse(knitr::is_html_output(), "html", "latex")
+  )
+  ```
 
 - GIF needs to be converted to static images for pdf output.
   
@@ -2443,7 +2465,7 @@ crossref:
 
 ## Tables {#quarto-tables}
 
-**Tables in Latex**
+### Tables in Latex
 
 Tables in raw LaTeX can be included in Quarto documents using fenced divs or <span class="env-green">**code chunks**</span> with `{=latex}`. 
 
@@ -2522,7 +2544,7 @@ ref: <https://github.com/quarto-dev/quarto-cli/discussions/6734#discussioncommen
 
 --------------------------------------------------------------------------------
 
-**Tables in Markdown**
+### Tables in Markdown
 
 You can create tables using standard Markdown syntax.
 
@@ -2556,6 +2578,60 @@ See @tbl-letters for the table.
   ```
 
 ref: <https://quarto.org/docs/authoring/tables.html#markdown-tables>
+
+--------------------------------------------------------------------------------
+
+### Stargazer tables
+
+An example of a `stargazer` landscape table that supports both HTML and PDF output.
+
+````
+```{r alterative-models, eval=FALSE}`r ''`
+library(stargazer)
+
+# Run three models
+model1 <- lm(mpg ~ wt, data = mtcars)
+model2 <- lm(mpg ~ wt + cyl, data = mtcars)
+model3 <- lm(mpg ~ wt + cyl + hp, data = mtcars)
+
+# generate a summarizing table using stargazer
+stargazer(
+  model1, model2, model3, 
+  title = "Regression Results", 
+  type = ifelse(knitr::is_html_output(), "html", "latex"),
+  dep.var.labels = "Miles Per Gallon (mpg)", 
+  covariate.labels = c("Weight (lbs)", "Cylinders", "Horsepower"), 
+  digits = 2,
+  notes = "Standard errors in parentheses.",
+  notes.append = TRUE
+)
+```
+````
+
+The code above is only displayed (eval=FALSE); the chunk below re-runs it via <span class="env-green">`ref.label`</span> and prints the table. For PDF the table sits on a landscape page and is scaled with `adjustbox`. The raw-LaTeX wrappers are kept as literal `{=latex}` blocks (not cat() from R) so Quarto passes them through reliably; only the table -- not the echoed source code -- goes inside adjustbox, otherwise the verbatim listing breaks the box. In HTML these blocks are dropped and a normal table is shown. 
+
+
+~~~~markdown
+::: {.content-visible when-format="pdf"}
+```{=latex}
+\begin{landscape}
+\begin{adjustbox}{width=\linewidth,center}
+```
+:::
+
+```{r alterative-models-out, ref.label='alterative-models', echo=FALSE, results='asis'} `r ''`
+```
+
+::: {.content-visible when-format="pdf"}
+```{=latex}
+\end{adjustbox}
+\end{landscape}
+```
+:::
+~~~~
+
+The fenced divs with `{=latex}` only appear in the PDF output, and are dropped in HTML output. 
+See [`.content-visible`](#conditional-content) for more details on how to conditionally show content based on metadata.
 
 --------------------------------------------------------------------------------
 
@@ -2782,6 +2858,8 @@ Prefixes for callout cross-references
 Cross-referencing callouts is currently only supported for HTML, PDF and MS Word.
 
 --------------------------------------------------------------------------------
+
+<a name="conditional-content"></a>
 
 ## Conditional Content
 
