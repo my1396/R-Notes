@@ -1018,7 +1018,20 @@ ___
     
     This approach is simple, but less readable.
 
-- `float.env = "table"`  specify the floating environment for LaTeX tables. Default is `"table"`. Set to `sidewaystable` for landscape tables. Need to load `\usepackage{rotating}` in LaTeX preamble.
+- `float.env = "table"`  specify the floating environment for LaTeX tables. Default is `"table"`. 
+  
+  Set to `sidewaystable` for landscape tables. Need to load `\usepackage{rotating}` in LaTeX preamble.
+
+  ✅ A more robust way to specify landscape table is to use `lscape` package and wrap the table in `\begin{landscape} ... \end{landscape}`. 
+  Refer to [Quarto: Stargazer](#quarto-stargazer-widetable) for details.
+
+- `float = TRUE` whether the resulting table will be a floating table. Defaults to `TRUE`.
+
+  - `float = TRUE`: the table will be placed in a floating environment (e.g., `table` or `sidewaystable`), which allows LaTeX to determine the best placement for the table. 
+  
+  - `float = FALSE`: the output will be a bare `tabular` environment without any floating.
+    
+    The table will be placed exactly where it is in the document.
 
 ___
 
@@ -1291,7 +1304,7 @@ print(xtab, type = "html", include.rownames = TRUE)
 ```
 
 <!-- html table generated in R 4.5.1 by xtable 1.8-4 package -->
-<!-- Thu Jul  2 16:15:37 2026 -->
+<!-- Thu Jul  2 16:44:24 2026 -->
 <table border=1>
 <caption align="bottom"> Asset Parameters </caption>
 <tr> <th>  </th> <th> Asset </th> <th> Mu </th> <th> Sigma </th>  </tr>
@@ -1311,7 +1324,7 @@ print(xtab_model, type = "html", digits = 3)
 ```
 
 <!-- html table generated in R 4.5.1 by xtable 1.8-4 package -->
-<!-- Thu Jul  2 16:15:37 2026 -->
+<!-- Thu Jul  2 16:44:24 2026 -->
 <table border=1>
 <caption align="bottom"> Regression of mpg on hp and wt </caption>
 <tr> <th>  </th> <th> Estimate </th> <th> Std. Error </th> <th> t value </th> <th> Pr(&gt;|t|) </th>  </tr>
