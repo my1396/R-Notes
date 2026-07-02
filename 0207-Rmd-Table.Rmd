@@ -8,7 +8,7 @@ source("setup.R")
 If you have some data in R and you want to display them as nice tables, you can use `knitr::kable()`, `knitr::kableExtra`, or `xtable` packages.
 
 
-But if you a table already, you can just copy-and-paste the table into your Rmd file. It can be either in 
+If you a table already, you can just copy-and-paste the table into your Rmd file. It can be either in 
 
 - Markdown table, or
   
@@ -41,6 +41,9 @@ But if you a table already, you can just copy-and-paste the table into your Rmd 
 
   `=latex` tells Pandoc to treat the content as raw LaTeX code.
 
+For regression results, [`stargazer`](#stargazer-tables) package is a good option to produce regression tables in LaTeX or HTML format.
+
+
 --------------------------------------------------------------------------------
 
 <span class="env-green">**Cross reference tables**</span>
@@ -63,7 +66,13 @@ Refer to the Table \@ref(tab:mtcars).
 knitr::kable(mtcars[1:5, 1:5], caption = "The mtcars data.")
 ```
 
+--------------------------------------------------------------------------------
+
+`knitr::kable(x, format="pipe")` is useful when you want to copy-and-paste R output from console to markdown.
+
+
 ```{r, echo=FALSE}
+# define helper function "kat" to
 # print kable() results as text instead of real tables
 kat = function(x, ...) {
   if (length(x) > 0) x[1] = gsub('^\n+', '', x[1])
@@ -72,12 +81,14 @@ kat = function(x, ...) {
 }
 ```
 
---------------------------------------------------------------------------------
-
-`knitr::kable(x, format="pipe")` is useful when you want to copy-and-paste R output from console to other document, e.g., markdown.
-
 ```{r mtcars-pipe, echo=TRUE, comment='', render=kat, class.output='md', collapse = TRUE}
 knitr::kable(mtcars[1:5, 1:5], format = "pipe")
+```
+
+For Plain tables in txt, `knitr::kable(x, format = "simple")` is useful.
+
+```{r mtcars-simple, echo=TRUE, comment='', render=kat, class.output='md', collapse = TRUE}
+knitr::kable(mtcars[1:5, 1:5], format = "simple")
 ```
 
 
@@ -85,17 +96,58 @@ knitr::kable(mtcars[1:5, 1:5], format = "pipe")
 
 ### `knitr::kable`
 
-[`knitr::kable(x, digits, caption=NULL, escape=TRUE)`](https://bookdown.org/yihui/rmarkdown-cookbook/kable.html) Create tables in LaTeX, HTML, Markdown and reStructuredText.
+[`knitr::kable(x, format, caption=NULL, digits, escape=TRUE)`](https://bookdown.org/yihui/rmarkdown-cookbook/kable.html) Create tables in LaTeX, HTML, Markdown and reStructuredText.
 
-It **adjusts column widths automatically** based on content.
+**Arguments:**
 
-- `caption` The table caption. In order to number the table, mut specify the `caption` argument.
+- **`format`** Possible values are `latex`, `html`, `pipe` (Pandoc's pipe tables), `simple` (Pandoc's simple tables), `rst`, and `jira`. 
 
-- `format`  Possible values are `latex`, `html`, `pipe` (Pandoc's pipe tables), `simple` (Pandoc's simple tables), `rst`, and `jira`. 
-
-  The value of this argument will be <span class="env-green">automatically determined</span> if the function is called within a **knitr** document. 
+  ✅ The value of this argument will be <span class="env-green">**automatically determined**</span> if the function is called within a **knitr** document. 
 
   If the tables is not rendered properly, you can specify the format manually.
+
+  When output is PDF, you can use `booktabs=TRUE` to use the `booktabs` package for better table formatting.
+
+  ```r
+  # use the booktabs package
+  kable(mtcars[1:5, 1:5], format = "latex", booktabs = TRUE)
+  # \begin{tabular}{lrrrrr}
+  # \toprule
+  #   & mpg & cyl & disp & hp & drat\\
+  # \midrule
+  # Mazda RX4 & 21.0 & 6 & 160 & 110 & 3.90\\
+  # Mazda RX4 Wag & 21.0 & 6 & 160 & 110 & 3.90\\
+  # Datsun 710 & 22.8 & 4 & 108 & 93 & 3.85\\
+  # Hornet 4 Drive & 21.4 & 6 & 258 & 110 & 3.08\\
+  # Hornet Sportabout & 18.7 & 8 & 360 & 175 & 3.15\\
+  # \bottomrule
+  # \end{tabular}
+  
+  # use the longtable package
+  kable(matrix(1000, ncol = 5), format = "latex", digits = 2, longtable = TRUE)
+  ```
+
+  `knitr::kable()` with no `format` argument will produce a markdown table, which Pandoc then converts to LaTeX or HTML depending on the output format.
+
+  Pandoc by default wrap tables in `longtable` environment; this could collapse with other LaTeX macros, e.g., `adjustbox`. If you have `adjustbox` without specifying `format = "latex"`, you may get an error like:
+
+  ```bash
+  Missing \endgroup inserted.
+  <inserted text> 
+                  \endgroup 
+  l.532 \end{longtable}
+  ```
+
+  <div class="rmdnote">
+  🔥 A more robust option which supports both HTML and LaTeX output is to use <span class="env-green">`format = if (knitr::is_latex_output()) "latex" else "pipe"`</span>. `latex` format will use `tabular` environment instead of `longtable` environment.
+
+  You also need to specify `booktabs = TRUE` when you overwrite the `format` argument. Otherwise, all cell borders will be drawn.
+  </div>
+
+
+- `caption` The table caption. 
+  
+  In order to number the table, mut specify the `caption` argument.
 
 - <span class="env-green">`digits`</span>  Maximum number of digits for numeric columns, passed to `round()`. 
 
@@ -155,43 +207,18 @@ It **adjusts column widths automatically** based on content.
   
   If you want to display them with other characters, you can set the option `knitr.kable.NA`, e.g. <span class="env-green">`options(knitr.kable.NA = '')`</span> in the YAML to hide `NA` values.
 
-- <span class="env-green">`booktabs = TRUE`</span>   use the booktabs package. Default to `FALSE`.
+- <span class="env-green">`booktabs = TRUE`</span>  use the booktabs package. Default to `FALSE`.
   
-  | `booktabs`       | `True`                                                       | `FALSE`                                        |
-  | ---------------- | ------------------------------------------------------------ | ---------------------------------------------- |
+  | `booktabs`       | `True`             | `FALSE`        |
+  | ---------------- | ------------------ | -------------- |
   | Column separator | No vertical lines in the table, you can add via `vline` option | Table columns are separated by vertical lines. |
-  | Horizontal lines | Only has horizontal lines for the table header and the bottom row. <br />- Use `\toprule`, `\midrule`, and `\bottomrule` | Use `\hline`                                   |
-  | Row behavior     | A line space is added to every five rows by default.<br />Disable it with `linesep = ""`. |                                                |
-  
-  
-  
+  | Horizontal lines | - Only has horizontal lines for the table header and the bottom row. <br />- Use `\toprule`, `\midrule`, and `\bottomrule` | Use `\hline`  |
+  | Row behavior     | A line space is added to every five rows by default.<br />Disable it with `linesep = ""`. | Border for each row. |
+
 - `linesep = ""` remove the extra space after every five rows in kable output (with `booktabs` option)
 
   `linesep = c("", "", "", "", "\\addlinespace")` default value; empty line space every 5 rows.
 
-```r
-# For Markdown tables, use `pipe` format
-> knitr::kable(head(mtcars[, 1:4]), format = "pipe")
-|                  |  mpg| cyl| disp|  hp|
-|:-----------------|----:|---:|----:|---:|
-|Mazda RX4         | 21.0|   6|  160| 110|
-|Mazda RX4 Wag     | 21.0|   6|  160| 110|
-|Datsun 710        | 22.8|   4|  108|  93|
-|Hornet 4 Drive    | 21.4|   6|  258| 110|
-|Hornet Sportabout | 18.7|   8|  360| 175|
-|Valiant           | 18.1|   6|  225| 105|
-
-# For Plain tables in txt, `simple` is useful
-> knitr::kable(head(mtcars[, 1:4]), format = "simple") 
-                      mpg   cyl   disp    hp
-------------------  -----  ----  -----  ----
-Mazda RX4            21.0     6    160   110
-Mazda RX4 Wag        21.0     6    160   110
-Datsun 710           22.8     4    108    93
-Hornet 4 Drive       21.4     6    258   110
-Hornet Sportabout    18.7     8    360   175
-Valiant              18.1     6    225   105
-```
 
 --------------------------------------------------------------------------------
 
@@ -268,6 +295,227 @@ kable(df, escape = FALSE, booktabs = TRUE)
 
 --------------------------------------------------------------------------------
 
+### `kableExtra`
+
+The [**kableExtra**](https://bookdown.org/yihui/rmarkdown-cookbook/kableextra.html) package is designed to extend the basic functionality of tables produced using `knitr::kable()`.
+
+`kableExtra::kbl()` extends `knitr::kable()`, with some additional features.
+
+```r
+# pipe kabe output to the styling function of kableExtra
+kable(iris) %>%
+  kable_styling(latex_options = "striped")
+```
+
+
+
+`kableExtra::kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)`
+
+- `bootstrap_options` A character vector for bootstrap table options; for HTML output only.
+  
+  Please see [package vignette](https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html) or visit the w3schools' [Bootstrap Page](https://www.w3schools.com/bootstrap/bootstrap_tables.asp) for more information. 
+  
+  Possible options include `basic`, `striped`, `bordered`, `hover`, `condensed`, `responsive` and `none`.
+
+  | Arguments       | Meanings                    |
+  | --------------- | --------------------------- |
+  | `striped`       | Add alternative row colors to the table. It will imports `LaTeX` package `xcolor` if enabled.  |
+  | `hover`         | Use the `:hover` selector on `tr` (table row) to <span class="env-green">highlight table rows</span> on mouse over. |
+  | `condensed`     | Make tables more compact by reducing row height. |
+
+
+- `latex_options`  A character vector for **LaTeX** table options, i.e., won't have effect on HTML tables. 
+
+  Possible options:
+
+  | Arguments       | Meanings                    |
+  | --------------- | --------------------------- |
+  | `striped`       | Alternating row colors.     |
+  | `scale_down`    | useful for super <span class="env-green">**wide**</span> tables. It will automatically adjust the table to <span class="env-green">fit the page width</span>.  |
+  | `repeat_header` | only meaningful in a **long** table environment. It will let the header row repeat on every page in that long table.  |
+  | `hold_position` | "hold" the floating table to the exact position. It is useful when the `LaTeX` table is contained in a `table` environment after you specified captions in `kable()`. It will force the table to stay in the position where it was created in the document. |
+  | `HOLD_position` | A stronger version of `hold_position`. Requires the float package and specifies ⁠[H]⁠.  |
+
+
+Wide tables can be scaled down to fit the page width by using `latex_options = "scale_down"`.
+
+````
+```{r echo=FALSE, results='asis'} `r ''`
+library(knitr)
+library(kableExtra)
+# Create a wide table with 10 columns
+wide_table <- data.frame(matrix(1:100, nrow=10, ncol=10))
+colnames(wide_table) <- paste0("Col", 1:10)
+kable(wide_table) %>% 
+  kable_styling(latex_options = "scale_down")
+```
+````
+
+- `full_width`  A `TRUE` or `FALSE` variable controlling whether the HTML table should have 100% the preferable format for `full_width`. If not specified, 
+
+  - `TRUE` for a HTML table , will have full width by default but 
+  - this option will be set to `FALSE` for a LaTeX table.
+
+
+Rows and columns can be grouped via the functions `pack_rows()` and `add_header_above()`, respectively. 
+
+`scroll_box(width = "100%", height = "500px")`  let you create a fixed height table while **making it scrollable**. This function only works for html long tables.
+
+```r
+# commonly used settings 
+table %>% 
+    knitr::kable(digits = 5) %>%
+    kable_styling(
+      bootstrap_options = c("striped", "hover"), 
+      full_width = FALSE, 
+      latex_options = "scale_down"
+    ) %>% 
+    scroll_box(width = "100%", height = "500px")
+```
+
+
+```r
+# escape=TRUE, this makes your life easier, will output the table exactly as it is
+result <- read_csv("~/Documents/GDP/data/reg_result/IFE_result.csv")
+result %>%
+  knitr::kable(digits = 5, escape=T) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE, latex_options="scale_down")
+```
+
+
+```r
+# escape=FALSE, have to specify escape by replace `*` to `\\\\*`
+result <- read_csv("~/Documents/GDP/data/reg_result/IFE_result.csv")
+result <- result %>% 
+  mutate(pval.symbol = gsub("[*]", "\\\\*", pval.symbol) )
+result %>%
+  knitr::kable(digits = 5, escape=FALSE) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE, latex_options="scale_down")
+```
+
+
+
+#### tables in pdf output
+
+```r
+reg_data %>% 
+    select(Date, adjusted, eRi, rmrf) %>%
+    head(10) %>% 
+    knitr::kable(digits = c(0,2,4,4), escape=T, format = "latex", booktabs = TRUE, linesep = "" ) %>%
+    kable_styling(latex_options = c("striped"), full_width = FALSE, stripe_color = "gray!15")
+```
+
+`knitr::kable()` arguments
+
+- `format = "latex"` specifies the output format.
+
+- `align = "l"` specifies column alignment.
+
+- <span class="env-green">`booktabs = TRUE`</span> is generally recommended for formatting LaTeX tables.
+
+- `linesep = ""` prevents default behavior of extra space every five rows.
+
+--------------------------------------------------------------------------------
+
+`kableExtra::kable_styling()` arguments
+
+- `position = "left"` places table on left hand side of page.
+- `latex_options = c("striped", "repeat_header")` implements table striping with repeated headers for tables that span multiple pages.
+- `stripe_color = "gray!15"` species the stripe color using LaTeX color specification from the [xcolor package](https://mirror.mwt.me/ctan/macros/latex/contrib/xcolor/xcolor.pdf) - this specifies a mix of 15% gray and 85% white.
+
+--------------------------------------------------------------------------------
+
+`linebreak(x, align = "l", double_escape = F, linebreaker = "\n")`  Make linebreak in LaTeX Table cells.
+
+- `align="l"`  Choose from "l", "c" or "r". Defaults to "l".
+
+--------------------------------------------------------------------------------
+
+
+#### Customize the looks for columns/rows
+
+`kableExtra::column_spec(kable_input, column)` this function allows users to select a column and then specify its look.
+
+```r
+# specify the width of the first two columns to be 5cm
+table %>%
+  knitr::kable() %>%
+  column_spec(1:2, width = "5cm") 
+```
+
+- `kable_input`: Output of `knitr::kable()`
+
+- `column`: A numeric value or vector indicating which column(s) to be selected.
+
+  E.g., to format the 1st and 3rd columns: `column_spec(c(1, 3), width = "5cm") `.
+
+
+
+`row_spec()` works similar with `column_spec()` but defines specifications for rows. 
+
+- For the position of the target row, you don’t need to count in header rows or the group labeling rows.
+- `row_spec(row = 0, align='c')` specify format of the header row. Here I want to center align headers.
+
+--------------------------------------------------------------------------------
+
+#### Add header rows to group columns
+
+`add_header_above()`: The header variable is supposed to be a named character with the names as new column names and values as column span. 
+
+For your convenience, if column span equals to 1, you can ignore the `=1` part so the function below can be written as `add_header_above(c("", "Group 1" = 2, "Group 2" = 2, "Group 3" = 2))`.
+
+```r
+kbl(dt) %>%
+  kable_classic() %>%
+  add_header_above(c(" " = 1, "Group 1" = 2, "Group 2" = 2, "Group 3" = 2))
+```
+
+<img src="https://drive.google.com/thumbnail?id=1YGxysn1yorC6RzJq7m2KAvA6SWhdpZKx&sz=w1000" alt="group columns1" style="zoom:100%;" />
+
+You can add another row of header on top.
+
+--------------------------------------------------------------------------------
+
+#### Group rows
+
+`collapse_rows` will put <u>repeating cells in columns</u> into multi-row cells. The vertical alignment of the cell is controlled by `valign` with default as “top”.
+
+- Not working for html output.
+
+```r
+collapse_rows_dt <- data.frame(C1 = c(rep("a", 10), rep("b", 5)),
+                 C2 = c(rep("c", 7), rep("d", 3), rep("c", 2), rep("d", 3)),
+                 C3 = 1:15,
+                 C4 = sample(c(0,1), 15, replace = TRUE))
+
+kableExtra::kbl(collapse_rows_dt, align = "c") %>%
+  kable_paper(full_width = F) %>%
+  column_spec(1, bold = T) %>%
+  collapse_rows(columns = 1:2, valign = "top")
+```
+
+<img src="https://drive.google.com/thumbnail?id=12STz3rDkTL-d2bDW5etwX5o-g6_zhcnj&sz=w1000" alt="group columns2" style="zoom:100%;" />
+
+Empty string as column name in `tibble`: use `setNames` or `attr`
+
+```r
+df <- tibble(" "=1)
+setNames(df, "")
+# # A tibble: 1 x 1
+#      ``
+#   <dbl>
+# 1     1
+
+attr(df, "names") <- c("")
+```
+
+`footnote()` add footnotes to tables. 
+
+- There are four notation systems in `footnote`, namely `general` (no prefix for footnotes), `number`, `alphabet` and `symbol`. 
+
+--------------------------------------------------------------------------------
+
+
 ### Data frame printing
 
 To show the `tibble` information (number of row/columns, and group information) along with paged output, we can write a custom function by modifying the [`print.paged_df`](https://github.com/rstudio/rmarkdown/blob/main/R/html_paged.R#L241-L248) function (which is used internally by rmarkdown for the `df_print` feature) and use CSS to nicely format the output.
@@ -293,13 +541,13 @@ When the `df_print` option is set to `paged`, tables are printed as HTML tables 
 
 The possible values of the `df_print` option for the `html_document` format.
 
-| Option                                 | Description                                                  |
-| -------------------------------------- | ------------------------------------------------------------ |
-| `default`                              | Call the `print.data.frame` generic method; console output prefixed by `##`; |
+| Option                                 | Description                                                                                                                                                                  |
+| -------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `default`                              | Call the `print.data.frame` generic method; console output prefixed by `##`;                                                                                                 |
 | <span class="env-green">`kable`</span> | Use the `knitr::kable` function; looks nice but with no navigation for rows and columns, neither column types.<br /><span class="env-green">Suggested for pdf output.</span> |
-| `tibble`                               | Use the `tibble::print.tbl_df` function, this provides groups and counts of rows and columns info as if printing a `tibble`. |
-| <span class="env-green">`paged`</span> | Use `rmarkdown::paged_table` to create a pageable table; `paged` looks best but slows down compilation significantly; |
-| A custom function                      | Use the function to create the table                         |
+| `tibble`                               | Use the `tibble::print.tbl_df` function, this provides groups and counts of rows and columns info as if printing a `tibble`.                                                 |
+| <span class="env-green">`paged`</span> | Use `rmarkdown::paged_table` to create a pageable table; `paged` looks best but slows down compilation significantly;                                                        |
+| A custom function                      | Use the function to create the table                                                                                                                                         |
 
 The possible values of the `df_print` option for the `pdf_document` format: `default`, `kable`, `tibble`, `paged`, or a custom function.
 
@@ -349,6 +597,8 @@ mtcars
 ```
 ~~~
 
+--------------------------------------------------------------------------------
+
 
 For **pdf_document**, it is possible to write LaTex code directly.
 
@@ -366,17 +616,68 @@ Do not forget the equal sign before `latex`, i.e., it is `=latex` instead of `la
 
 --------------------------------------------------------------------------------
 
+<a name="stargazer-tables"></a>
 
-### Stargazer {#stargazer-tables}
+### Stargazer
 
-[`stargazer`](https://www.rdocumentation.org/packages/stargazer/versions/5.2.3/topics/stargazer) print nice tables in `Rmd` documents and `R` scripts:
+[`stargazer`](https://www.rdocumentation.org/packages/stargazer/versions/5.2.3/topics/stargazer) print nice tables in `Rmd` documents and `R` scripts.
+
+Support tables output in multiple formats: `text`, `latex`, and `html`.
+In `R` scripts, use `type = "text"` for a quick view of results. 
+
+- Print a raw table data
+  
+  You have to specify `summary = FALSE` to print the raw data instead of summary statistics. By default, `summary = TRUE`.
+
+  `header = FALSE` suppresses the table header.
+
+  ```{r stargazer-ex1, echo=TRUE, eval=FALSE}
+  library(stargazer)
+  stargazer(
+    mtcars[1:5, 1:5], 
+    type = ifelse(knitr::is_html_output(), "html", "latex"),
+    summary = FALSE,
+    header = FALSE
+    )
+  ```
+  
+  `stargazer` will produce the following table in LaTeX output.
+  
+  ```latex
+  \begin{table}[!htbp] \centering 
+  \caption{} 
+  \label{} 
+  \begin{tabular}{@{\extracolsep{5pt}} cccccc} 
+  \\[-1.8ex]\hline 
+  \hline \\[-1.8ex] 
+  & mpg & cyl & disp & hp & drat \\ 
+  \hline \\[-1.8ex] 
+  Mazda RX4 & $21$ & $6$ & $160$ & $110$ & $3.900$ \\ 
+  Mazda RX4 Wag & $21$ & $6$ & $160$ & $110$ & $3.900$ \\ 
+  Datsun 710 & $22.800$ & $4$ & $108$ & $93$ & $3.850$ \\ 
+  Hornet 4 Drive & $21.400$ & $6$ & $258$ & $110$ & $3.080$ \\ 
+  Hornet Sportabout & $18.700$ & $8$ & $360$ & $175$ & $3.150$ \\ 
+  \hline \\[-1.8ex] 
+  \end{tabular} 
+  \end{table}
+  ```
+
+  Will be rendered as the following table in HTML output.
+
+  ```{r stargazer-ex1-out, ref.label='stargazer-ex1', echo=FALSE, results='asis'}
+  ```
 
 - Passing a data frame to stargazer package creates a <span class="env-green">**summary statistic table**</span>. 
+  
+  ```{r echo=TRUE, results='asis'}
+  stargazer(
+    mtcars[1:5, 1:5], 
+    type = ifelse(knitr::is_html_output(), "html", "latex"),
+    header = FALSE
+    )
+  ```
 
 - Passing a regression object creates a nice <span class="env-green">**regression table**</span>.  
-
-- Support tables output in multiple formats: `text`, `latex`, and `html`.
-    - In `R` scripts, use `type = "text"` for a quick view of results. 
 
 - `stargaer` does NOT work with `anova` table, use `pander::pander` instead.
 
@@ -908,199 +1209,6 @@ print(xtab_model, type = "html", digits = 3)
 
 --------------------------------------------------------------------------------
 
-### `kableExtra`
-
-The [**kableExtra**](https://bookdown.org/yihui/rmarkdown-cookbook/kableextra.html) package is designed to extend the basic functionality of tables produced using `knitr::kable()`.
-
-`kableExtra::kbl()` extends `knitr::kable()`, with some additional features.
-
-```r
-# pipe kabe output to the styling function of kableExtra
-kable(iris) %>%
-  kable_styling(latex_options = "striped")
-```
-
-
-
-`kableExtra::kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)`
-
-- `bootstrap_options` 	A character vector for bootstrap table options. Please see package vignette or visit the w3schools' [Bootstrap Page](https://www.w3schools.com/bootstrap/bootstrap_tables.asp) for more information. Possible options include `basic`, `striped`, `bordered`, `hover`, `condensed`, `responsive` and `none`.
-
-  - `striped`   alternating row colors
-  - `hover` Use the `:hover` selector on `tr` (table row) to <span class="env-green">highlight table rows</span> on mouse over.
-
-- `full_width`  A `TRUE` or `FALSE` variable controlling whether the HTML table should have 100% the preferable format for `full_width`. If not specified, 
-
-  - `TRUE` for a HTML table , will have full width by default but 
-  - this option will be set to `FALSE` for a LaTeX table.
-
-- `latex_options` 	A character vector for **LaTeX** table options, i.e., won't have effect on html tables. 
-
-  Possible options:
-
-  | Arguments       | Meanings                                                     |
-  | --------------- | ------------------------------------------------------------ |
-  | `striped`       | Add alternative row colors to the table. It will imports `LaTeX` package `xcolor` if enabled. |
-  | `scale_down`    | useful for super **wide** table. It will automatically adjust the table to <span class="env-green">fit the page width</span>. |
-  | `repeat_header` | only meaningful in a **long** table environment. It will let the header row repeat on every page in that long table. |
-  | `hold_position` | "hold" the floating table to the exact position. It is useful when the `LaTeX` table is contained in a `table` environment after you specified captions in `kable()`. It will force the table to stay in the position where it was created in the document. |
-  | `HOLD_position` | A stronger version of `hold_position`. Requires the float package and specifies ⁠[H]⁠. |
-
-
-
-Rows and columns can be grouped via the functions `pack_rows()` and `add_header_above()`, respectively. 
-
-`scroll_box(width = "100%", height = "500px")`  let you create a fixed height table while **making it scrollable**. This function only works for html long tables.
-
-```r
-# commonly used settings 
-table %>% 
-    knitr::kable(digits = 5) %>%
-    kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE, latex_options="scale_down") %>% 
-    scroll_box(width = "100%", height = "500px")
-```
-
-
-```r
-# escape=TRUE, this makes your life easier, will output the table exactly as it is
-result <- read_csv("~/Documents/GDP/data/reg_result/IFE_result.csv")
-result %>%
-  knitr::kable(digits = 5, escape=T) %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE, latex_options="scale_down")
-```
-
-
-```r
-# escape=FALSE, have to specify escape by replace `*` to `\\\\*`
-result <- read_csv("~/Documents/GDP/data/reg_result/IFE_result.csv")
-result <- result %>% 
-  mutate(pval.symbol = gsub("[*]", "\\\\*", pval.symbol) )
-result %>%
-  knitr::kable(digits = 5, escape=FALSE) %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE, latex_options="scale_down")
-```
-
-
-
-#### tables in pdf output
-
-```r
-reg_data %>% 
-    select(Date, adjusted, eRi, rmrf) %>%
-    head(10) %>% 
-    knitr::kable(digits = c(0,2,4,4), escape=T, format = "latex", booktabs = TRUE, linesep = "" ) %>%
-    kable_styling(latex_options = c("striped"), full_width = FALSE, stripe_color = "gray!15")
-```
-
-`knitr::kable()` arguments
-
-- `format = "latex"` specifies the output format.
-
-- `align = "l"` specifies column alignment.
-
-- `booktabs = TRUE` is generally recommended for formatting LaTeX tables.
-
-- `linesep = ""` prevents default behavior of extra space every five rows.
-
---------------------------------------------------------------------------------
-
-`kableExtra::kable_styling()` arguments
-
-- `position = "left"` places table on left hand side of page.
-- `latex_options = c("striped", "repeat_header")` implements table striping with repeated headers for tables that span multiple pages.
-- `stripe_color = "gray!15"` species the stripe color using LaTeX color specification from the [xcolor package](https://mirror.mwt.me/ctan/macros/latex/contrib/xcolor/xcolor.pdf) - this specifies a mix of 15% gray and 85% white.
-
---------------------------------------------------------------------------------
-
-`linebreak(x, align = "l", double_escape = F, linebreaker = "\n")`  Make linebreak in LaTeX Table cells.
-
-- `align="l"`  Choose from "l", "c" or "r". Defaults to "l".
-
---------------------------------------------------------------------------------
-
-
-#### Customize the looks for columns/rows
-
-`kableExtra::column_spec(kable_input, column)` this function allows users to select a column and then specify its look.
-
-```r
-# specify the width of the first two columns to be 5cm
-table %>%
-  knitr::kable() %>%
-  column_spec(1:2, width = "5cm") 
-```
-
-- `kable_input`: Output of `knitr::kable()`
-
-- `column`: A numeric value or vector indicating which column(s) to be selected.
-
-  E.g., to format the 1st and 3rd columns: `column_spec(c(1, 3), width = "5cm") `.
-
-
-
-`row_spec()` works similar with `column_spec()` but defines specifications for rows. 
-
-- For the position of the target row, you don’t need to count in header rows or the group labeling rows.
-- `row_spec(row = 0, align='c')` specify format of the header row. Here I want to center align headers.
-
---------------------------------------------------------------------------------
-
-#### Add header rows to group columns
-
-`add_header_above()`: The header variable is supposed to be a named character with the names as new column names and values as column span. 
-
-For your convenience, if column span equals to 1, you can ignore the `=1` part so the function below can be written as `add_header_above(c("", "Group 1" = 2, "Group 2" = 2, "Group 3" = 2))`.
-
-```r
-kbl(dt) %>%
-  kable_classic() %>%
-  add_header_above(c(" " = 1, "Group 1" = 2, "Group 2" = 2, "Group 3" = 2))
-```
-
-<img src="https://drive.google.com/thumbnail?id=1YGxysn1yorC6RzJq7m2KAvA6SWhdpZKx&sz=w1000" alt="group columns1" style="zoom:100%;" />
-
-You can add another row of header on top.
-
---------------------------------------------------------------------------------
-
-#### Group rows
-
-`collapse_rows` will put <u>repeating cells in columns</u> into multi-row cells. The vertical alignment of the cell is controlled by `valign` with default as “top”.
-
-- Not working for html output.
-
-```r
-collapse_rows_dt <- data.frame(C1 = c(rep("a", 10), rep("b", 5)),
-                 C2 = c(rep("c", 7), rep("d", 3), rep("c", 2), rep("d", 3)),
-                 C3 = 1:15,
-                 C4 = sample(c(0,1), 15, replace = TRUE))
-
-kableExtra::kbl(collapse_rows_dt, align = "c") %>%
-  kable_paper(full_width = F) %>%
-  column_spec(1, bold = T) %>%
-  collapse_rows(columns = 1:2, valign = "top")
-```
-
-<img src="https://drive.google.com/thumbnail?id=12STz3rDkTL-d2bDW5etwX5o-g6_zhcnj&sz=w1000" alt="group columns2" style="zoom:100%;" />
-
-Empty string as column name in `tibble`: use `setNames` or `attr`
-
-```r
-df <- tibble(" "=1)
-setNames(df, "")
-# # A tibble: 1 x 1
-#      ``
-#   <dbl>
-# 1     1
-
-attr(df, "names") <- c("")
-```
-
-`footnote()` add footnotes to tables. 
-
-- There are four notation systems in `footnote`, namely `general` (no prefix for footnotes), `number`, `alphabet` and `symbol`. 
-
---------------------------------------------------------------------------------
 
 ### huxtable
 

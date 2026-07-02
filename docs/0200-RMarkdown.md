@@ -1173,7 +1173,7 @@ You may use `knitr::opts_chunk$set()` to change the default values of chunk opti
 | -------------------- | ------------------------------------------------------------ |
 | `echo=TRUE`          | Whether to display the **source code** in the output document.<br />Use this when you want to show the output but NOT the source code itself. |
 | `eval=TRUE`          | Whether to evaluate the code chunk.                          |
-| `include=TRUE`       | Whether to include the <span style='color:#32CD32'>chunk **code and output**</span> in the output document—including source code, text output, messages, warnings, and plots. <br />If `FALSE`, nothing will be written into the output document, but the code is <u>still evaluated</u> and plot files are generated if there are any plots in the chunk, so you can manually insert figures later. |
+| `include=TRUE`       | Whether to include the <span style='color:#32CD32'>chunk **code and output**</span> in the output document—including source code, text output, messages, warnings, and plots. <br />If `FALSE`, nothing will be written into the output document, but the code is <u>still evaluated</u> and plot files are generated if there are any plots in the chunk, so you can manually insert figures later. <br>Useful for [global chunk options](#global-config-files) setup. |
 | `message=TRUE`       | Whether to preserve messages emitted by `message()`          |
 | `warning=TRUE`       | Whether to show warnings in the output produced by `warning()`. |
 | `results='markup'`   | Controls how to display the text results. <br />When `results='asis'` that is to write text output as-is, i.e., write the raw text results directly into the output document without any markups.<br />Useful when printing `stargazer` tables. |
@@ -1341,6 +1341,41 @@ You may use `knitr::opts_chunk$set()` to change the default values of chunk opti
   Often used to suppress messages from packages that are not relevant to the output document, such as package loading messages.
 
 --------------------------------------------------------------------------------
+
+<span class="env-green">`ref.label`</span> refer to the label of another chunk. 
+
+**Use scenarios:**
+
+- Reuse the same code in multiple chunks without duplicating the code.
+- Do not run the code immediately, but run it later in another chunk. 
+  
+  **Code chunk 1** with label `for-display` contains the code to be reused, but it is not executed immediately.
+
+  **Code chunk 2** with option `ref.label='for-display'` will reuse the code from chunk 1, but it will be executed in this chunk.
+
+  ````
+  Code chunk 1: `for-display` (not executed immediately)
+  ```{r for-display, echo=TRUE, eval=FALSE}
+  library(stargazer)
+  stargazer(
+    mtcars[1:5, 1:5], 
+    type = ifelse(knitr::is_html_output(), "html", "latex"),
+    summary = FALSE,
+    header = FALSE
+    )
+  ```
+  Some text in between the two chunks.
+
+  Now you want to display the output of chunk 1, but you don't want to repeat the code. You can use `ref.label=""` to refer to the label of chunk 1.
+
+  ```{r for-output, ref.label='for-display', echo=FALSE, eval=TRUE, results='asis'}
+  ```
+  ````
+
+
+--------------------------------------------------------------------------------
+
+<a id="global-config-files"></a>
 
 ### External Config Files
 
@@ -1643,8 +1678,7 @@ will be rendered as:
 Code chunks are executable blocks of code. But somtimes, you may want to display R code chunks verbatim in your output document, without executing them.
 
 
-One solution for including verbatim R code chunks (see below for more) is to insert hidden inline R code (`` `r
-  ''` ``) immediately <u>before or after</u> your R code chunk. 
+One solution for including verbatim R code chunks (see below for more) is to insert hidden inline R code (`` `r␣''` ``, backtick + r + space + quotex2 + backtick) immediately <u>before or after</u> your R code chunk. 
 
 - The hidden inline R code will be evaluated as an inline expression to an empty string by knitr.
 

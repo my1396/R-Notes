@@ -2582,11 +2582,11 @@ ref: <https://quarto.org/docs/authoring/tables.html#markdown-tables>
 
 --------------------------------------------------------------------------------
 
-### Stargazer tables
+### Stargazer
 
 An example of a `stargazer` landscape table that supports both HTML and PDF output.
 
-````
+````r
 ```{r alterative-models, eval=FALSE}
 library(stargazer)
 
@@ -2612,7 +2612,7 @@ stargazer(
 The code above is only displayed (eval=FALSE); the chunk below re-runs it via <span class="env-green">`ref.label`</span> and prints the table. For PDF the table sits on a landscape page and is scaled with `adjustbox`. The raw-LaTeX wrappers are kept as literal `{=latex}` blocks (not cat() from R) so Quarto passes them through reliably; only the table -- not the echoed source code -- goes inside adjustbox, otherwise the verbatim listing breaks the box. In HTML these blocks are dropped and a normal table is shown. 
 
 
-~~~~markdown
+~~~~tex
 ::: {.content-visible when-format="pdf"}
 ```{=latex}
 \begin{landscape}
@@ -2868,11 +2868,13 @@ In some cases you may want to create content that only displays for a given outp
 
 E.g., you have a home assignment file and you want to have two versions of it: one for questions only, and the other for questions and solutions.
 
-You can set a metadata variable in yaml, e.g., `solutions: true` or `solutions: false`.
+**Example 1**
+
+You can set a top-level metadata variable in yaml, e.g., `solution: true` or `solution: false`.
 
 ```yaml
 ---
-title: "Quiz: Linear Regression and Hypothesis Testing (p1)"
+title: "Quiz: Linear Regression and Hypothesis Testing"
 from: markdown+tex_math_single_backslash
 solution: false
 # solution: true
@@ -2883,11 +2885,11 @@ format:
 ---
 ```
 
-Then, in the body of your document, you can use the following syntax to conditionally include or exclude content based on the value of the `solutions` variable.
+Then, in the body of your document, you can use the following syntax to conditionally include or exclude content based on the value of the `solution` variable.
 
 ```markdown
-::: {.content-visible when-meta="solutions"}
-This content will only be visible if `solutions` is set to `true`.
+::: {.content-visible when-meta="solution"}
+This content will only be visible if `solution` is set to `true`.
 
 Put your solutions here.
 :::
@@ -2895,11 +2897,16 @@ Put your solutions here.
 
 Expected behavior:
 
-- If `solutions: true`, the content will be displayed.
-- If `solutions: false`, the content will be hidden.
+- If `solution: true`, the content will be displayed.
+- If `solution: false`, the content will be hidden.
 
+--------------------------------------------------------------------------------
 
-You can use multiple levels of metadata keys separated by periods. For example, 
+**Multiple levels of metadata keys**
+
+You can use multiple levels of metadata keys separated by periods. 
+
+**Example 2**
 
 ````markdown
 ::: {.content-hidden unless-meta="path.to.metadata"}
@@ -2915,8 +2922,20 @@ path:
 :::
 ````
 
-You need to use `unless-meta="path.to.metadata"` to refer to your 
-user defined metadata key.
+You need to use `unless-meta="path.to.metadata"` to refer to your user defined metadata key.
+
+--------------------------------------------------------------------------------
+
+In the following example, we define `solution` under `params` in the YAML header. Then, we can use `when-meta="params.solution"` to conditionally include or exclude content based on the value of the `solution` parameter.
+
+```yml
+---
+title: "Quiz: Models with a Binary Dependent Variable"
+params:
+  solution: false
+#   solution: true
+---
+```
 
 Change file name based on metadata:
 
@@ -2930,6 +2949,36 @@ Work flow:
 - When editing the quiz, use `quarto render` (⇧ + ⌘ + K) to preview the quiz.
 - When ready to generate the final files, run `render-quiz file.qmd` in terminal to generate files with specific suffixes (`_solution.pdf` or `_question.pdf`).
 
+--------------------------------------------------------------------------------
+
+Another important use of conditional content is to print different content based on the output format. This is supported by `when-format=""` attribute. For example, you can use `when-format="html"` to include content only for HTML output, and `when-format="pdf"` to include content only for PDF output.
+
+
+The following example shows how to wrap a table in an `adjustbox` environment for PDF output.
+This is useful when you have a wide table that needs to be scaled down to fit the page width in PDF output, while keeping the table at its original size in HTML output.
+
+````markdown
+::: {.content-visible when-format="pdf"}
+```{=latex}
+\begin{adjustbox}{width=\linewidth,center}
+```
+:::
+
+```{r wide-table, echo=FALSE, results='asis'} 
+library(knitr)
+# Create a wide table with 10 columns
+wide_table <- data.frame(matrix(1:100, nrow=10, ncol=10))
+colnames(wide_table) <- paste0("Col", 1:10)
+# Print the table using kable
+kable(wide_table, booktabs = TRUE)
+```
+
+::: {.content-visible when-format="pdf"}
+```{=latex}
+\end{adjustbox}
+```
+:::
+````
 
 
 
