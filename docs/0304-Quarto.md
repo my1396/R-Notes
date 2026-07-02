@@ -2635,7 +2635,6 @@ stargazer(
   digits = 2,
   notes = "Standard errors in parentheses.",
   notes.append = TRUE,
-  header = FALSE,  # PDF: suppress the LaTeX header, % Table created by stargazer...
   float = is_html, # PDF: emit a bare tabular so it fits inside adjustbox
   font.size = if (is_html) NULL else "small", # PDF: reduce font size
   column.sep.width = if (is_html) "" else "1pt"
@@ -2673,8 +2672,7 @@ See [`.content-visible`](#conditional-content) for more details on how to condit
 
 ## Raw Content
 
-Raw content can be included directly without Quarto parsing it using [Pandoc's raw attribute](https://pandoc.org/MANUAL.html#extension-raw_attribute). 
-A raw block starts with ````{=` followed by a format and closing `}`, e.g. here's a raw HTML block:
+Raw content can be included directly without Quarto parsing it using [Pandoc's raw attribute](https://pandoc.org/MANUAL.html#extension-raw_attribute). A raw block starts with ````{=` followed by a format and closing `}`, e.g. here's a raw HTML block:
 
 ````
 ```{=html}
