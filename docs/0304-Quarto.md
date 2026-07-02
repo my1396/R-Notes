@@ -1399,7 +1399,7 @@ For example:
 
 --------------------------------------------------------------------------------
 
-### Docx Document
+### Docx Document {-}
 
 Quarto supports docx output. You can use a custom docx template to control the styles of your document.
 
@@ -2625,15 +2625,19 @@ model2 <- lm(mpg ~ wt + cyl, data = mtcars)
 model3 <- lm(mpg ~ wt + cyl + hp, data = mtcars)
 
 # generate a summarizing table using stargazer
+is_html <- knitr::is_html_output()
 stargazer(
   model1, model2, model3, 
   title = "Regression Results", 
-  type = ifelse(knitr::is_html_output(), "html", "latex"),
+  type = if (is_html) "html" else "latex",
   dep.var.labels = "Miles Per Gallon (mpg)", 
   covariate.labels = c("Weight (lbs)", "Cylinders", "Horsepower"), 
   digits = 2,
   notes = "Standard errors in parentheses.",
-  notes.append = TRUE
+  notes.append = TRUE,
+  float = is_html, # PDF: emit a bare tabular so it fits inside adjustbox
+  font.size = if (is_html) NULL else "small", # PDF: reduce font size
+  column.sep.width = if (is_html) "" else "1pt"
 )
 ```
 ````
