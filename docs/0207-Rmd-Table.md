@@ -5,6 +5,9 @@
 
 If you have some data in R and you want to display them as nice tables, you can use `knitr::kable()`, `knitr::kableExtra`, or `xtable` packages.
 
+For regression results, [`stargazer`](#stargazer-tables) package is a good option to produce regression tables in LaTeX or HTML format.
+
+Overall, `knitr::kable()` is good for both html and pdf output, while `stargazer` is best for pdf output, especially for displying regression results.
 
 If you a table already, you can just copy-and-paste the table into your Rmd file. It can be either in 
 
@@ -38,8 +41,6 @@ If you a table already, you can just copy-and-paste the table into your Rmd file
   Do not forget the equal sign before `latex`, i.e., it is `=latex` instead of `latex`.
 
   `=latex` tells Pandoc to treat the content as raw LaTeX code.
-
-For regression results, [`stargazer`](#stargazer-tables) package is a good option to produce regression tables in LaTeX or HTML format.
 
 
 --------------------------------------------------------------------------------
@@ -173,7 +174,7 @@ Hornet Sportabout    18.7     8    360   175   3.15
   ```r
   sci_cols <- c("max", "min")
   result %>% 
-    mutate(across(all_of(sci+cols), ~ formatC(.x, format = "e", digits = 2))) %>%
+    mutate(across(all_of(sci_cols), ~ formatC(.x, format = "e", digits = 2))) %>%
     kable(digits = 4) %>%
     kable_styling(bootstrap_options = "striped", full_width = FALSE)
   ```
@@ -684,8 +685,11 @@ In `R` scripts, use `type = "text"` for a quick view of results.
   \end{tabular} 
   \end{table}
   ```
+  
+  PDF output:
+  <img src="images/stargazer-pdf.png" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:60%;" />
 
-  Will be rendered as the following table in HTML output.
+  HTML output:
 
   
   <table style="text-align:center"><tr><td colspan="6" style="border-bottom: 1px solid black"></td></tr><tr><td style="text-align:left"></td><td>mpg</td><td>cyl</td><td>disp</td><td>hp</td><td>drat</td></tr>
@@ -697,7 +701,7 @@ In `R` scripts, use `type = "text"` for a quick view of results.
   <tr><td colspan="6" style="border-bottom: 1px solid black"></td></tr></table>
 
 - Passing a data frame to stargazer package creates a <span class="env-green">**summary statistic table**</span>. 
-  
+
   
   ``` r
   stargazer(
@@ -706,7 +710,13 @@ In `R` scripts, use `type = "text"` for a quick view of results.
     header = FALSE
     )
   ```
-  
+
+  PDF output:
+
+  <img src="images/stargazer-pdf-summary.png" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:60%;" />
+
+  HTML output:
+
   
   <table style="text-align:center"><tr><td colspan="6" style="border-bottom: 1px solid black"></td></tr><tr><td style="text-align:left">Statistic</td><td>N</td><td>Mean</td><td>St. Dev.</td><td>Min</td><td>Max</td></tr>
   <tr><td colspan="6" style="border-bottom: 1px solid black"></td></tr><tr><td style="text-align:left">mpg</td><td>5</td><td>20.980</td><td>1.474</td><td>18.700</td><td>22.800</td></tr>
@@ -721,6 +731,42 @@ In `R` scripts, use `type = "text"` for a quick view of results.
 - `stargaer` does NOT work with `anova` table, use `pander::pander` instead.
 
 --------------------------------------------------------------------------------
+
+**Change defult options** for `stargazer` 
+
+- `type = if (knitr::is_html_output()) "html" else "latex"`: Automatically detect output type (html or latex) based on the output format of the document;
+
+- `header = FALSE`: Suppress the header info `% Table created by stargazer …`
+
+
+Add the following to your `~/.Rprofile` file
+
+```r
+## Stargazer change default options
+# - Automatically detect output type (html or latex) 
+#     based on the output format of the document;
+# - Suppress the header info % Table created by stargazer …
+setHook(
+  packageEvent("stargazer", "attach"),
+  function(...) {
+    assign(
+      "stargazer",
+      function(
+        ...,
+        type = if (knitr::is_html_output()) "html" else "latex",
+        header = FALSE
+        ) {
+        stargazer::stargazer(..., type = type, header = header)
+      },
+      envir = .GlobalEnv
+    )
+  }
+)
+```
+
+
+--------------------------------------------------------------------------------
+
 
 #### Text table
 
@@ -1245,7 +1291,7 @@ print(xtab, type = "html", include.rownames = TRUE)
 ```
 
 <!-- html table generated in R 4.5.1 by xtable 1.8-4 package -->
-<!-- Thu Jul  2 13:10:03 2026 -->
+<!-- Thu Jul  2 13:37:08 2026 -->
 <table border=1>
 <caption align="bottom"> Asset Parameters </caption>
 <tr> <th>  </th> <th> Asset </th> <th> Mu </th> <th> Sigma </th>  </tr>
@@ -1265,7 +1311,7 @@ print(xtab_model, type = "html", digits = 3)
 ```
 
 <!-- html table generated in R 4.5.1 by xtable 1.8-4 package -->
-<!-- Thu Jul  2 13:10:03 2026 -->
+<!-- Thu Jul  2 13:37:08 2026 -->
 <table border=1>
 <caption align="bottom"> Regression of mpg on hp and wt </caption>
 <tr> <th>  </th> <th> Estimate </th> <th> Std. Error </th> <th> t value </th> <th> Pr(&gt;|t|) </th>  </tr>
