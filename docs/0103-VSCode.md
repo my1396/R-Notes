@@ -813,6 +813,19 @@ It sounds like R Markdown.
 
 You can use `quarto` to convert Jupyter notebooks (`.ipynb`) to other formats such as HTML, PDF, or Markdown. It uses the document YAML to decide which format to convert to.
 
+In your Jupyter notebook:
+
+```yml
+---
+title: "Jupyter Notebook"
+format:
+  html:
+    toc: true
+---
+```
+
+In terminal, run the following command to render the notebook:
+
 ```bash
 quarto render notebook.ipynb
 ```
@@ -1004,7 +1017,7 @@ Use `IRdisplay` to control plot size in Jupyter notebooks: ✅
    display_html(paste0('<div style="text-align: center;"><img src="', f_name, '" style="width: 70%; height: auto;"></div>'))
    ```
 
-Alternatively, use markdown syntax
+Alternatively, use markdown syntax. This supports both HTML and PDF output.
 
 ```markdown
 ![Alt text](temp-plot.png){width=70%}
@@ -1054,7 +1067,7 @@ Define `scroll-img` class in your CSS file to make the image scrollable when it 
   
   Set `repr.plot.width` and `repr.plot.height` options to control the width and height of plots in inches. This will affect *all subsequent plots* in the notebook. → NOT good.
 
-  ```
+  ```r
   options(repr.plot.width = 12, repr.plot.height = 8) # controls the size of plots in the notebook output cell, but not the rendered plot size in HTML/PDF
   plot(mtcars$wt, mtcars$mpg)
   ```

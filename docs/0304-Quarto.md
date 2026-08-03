@@ -576,6 +576,22 @@ format:
 ---
 ```
 
+Output options can be specified in multiple places in addition to the Pandoc default options. There are precedence rules from low to high:
+
+- `include-in-header/file`
+- `include-in-header/text`
+- Quarto/Pandoc default options
+- first-level YAML options under `format/pdf`, e.g.
+  
+  ```yml
+  format:
+    pdf:
+      colorlinks: true
+      linkcolor: blue
+  ```
+
+  Note that Quarto by default set `hikelinks=true` for `hyperref` package. If you want to override this, specify `colorlinks: true` in the YAML front matter.
+
 Metadata such as `filters` and `format` can be specified in the <span class="env-green">`_quarto.yml`</span> file so that all `.qmd` will inherit the same options, or in the individual `.qmd` files. YAML options specified in the individual `.qmd` files will override those in `_quarto.yml`.
 
 See [HERE](https://quarto.org/docs/reference/formats/pdf.html) for all available PDF options. All PDF options go inside the `format:` → `pdf:` chunk of the YAML.
@@ -681,6 +697,19 @@ When you have <span class="env-orange">both HTML and PDF outputs</span>, you hav
   # you can choose which frame to extract for the PDF version by setting the frame argument
   # include_gif("path-to-image.gif", frame = 10) # extracts the 10th frame for the PDF version
   ```
+  
+  PDF does NOT support SVGs either. Convert to PNG and then use conditional content to include the appropriate image based on output format.
+
+
+  ```bash
+  magick -background none -density 288 icon-google-colab.svg -depth 8 icon-google-colab.png && identify icon-google-colab.png
+  ```
+  
+  Insert the icon using the following code:
+
+  
+  `` `r if (knitr::is_html_output()) '<img src="images/icon-google-colab.svg" alt="" style="display: inline; height: 1.5em; vertical-align: bottom;" />' else '\\raisebox{-0.2em}{\\includegraphics[height=1.5em]{images/icon-google-colab.png}}'` ``
+  
 
 --------------------------------------------------------------------------------
 
@@ -2616,7 +2645,7 @@ ref: <https://quarto.org/docs/authoring/tables.html#markdown-tables>
 An example of a `stargazer` landscape table that supports both HTML and PDF output.
 
 ````r
-```{r alterative-models, eval=FALSE}
+```{r alterative-models, echo=TRUE, eval=FALSE}
 library(stargazer)
 
 # Run three models
@@ -2627,24 +2656,31 @@ model3 <- lm(mpg ~ wt + cyl + hp, data = mtcars)
 # generate a summarizing table using stargazer
 is_html <- knitr::is_html_output()
 stargazer(
-  model1, model2, model3, 
-  title = "Regression Results", 
-  type = if (is_html) "html" else "latex",
-  dep.var.labels = "Miles Per Gallon (mpg)", 
-  covariate.labels = c("Weight (lbs)", "Cylinders", "Horsepower"), 
-  digits = 2,
-  notes = "Standard errors in parentheses.",
-  notes.append = TRUE,
-  float = is_html, # PDF: emit a bare tabular so it fits inside adjustbox
-  font.size = if (is_html) NULL else "small", # PDF: reduce font size
-  column.sep.width = if (is_html) "" else "1pt"
+    model1, model2, model3, 
+    title = "Regression Results", 
+    type = if (is_html) "html" else "latex",
+    dep.var.labels = "Miles Per Gallon (mpg)", 
+    covariate.labels = c("Weight (lbs)", "Cylinders", "Horsepower"), 
+    digits = 2,
+    notes = "Standard errors in parentheses.",
+    notes.append = TRUE,
+    header = FALSE,  # PDF: suppress the LaTeX header, % Table created by stargazer...
+    float = is_html, # PDF: emit a bare tabular so it fits inside adjustbox
+    font.size = if (is_html) NULL else "small", # PDF: reduce font size
+    column.sep.width = if (is_html) "" else "1pt"
 )
 ```
 ````
 
-The code above is only displayed (eval=FALSE); the chunk below re-runs it via <span class="env-green">`ref.label`</span> and prints the table. For PDF the table sits on a landscape page and is scaled with `adjustbox`. The raw-LaTeX wrappers are kept as literal `{=latex}` blocks (not cat() from R) so Quarto passes them through reliably; only the table -- not the echoed source code -- goes inside adjustbox, otherwise the verbatim listing breaks the box. In HTML these blocks are dropped and a normal table is shown. 
+The code above is only displayed (`eval=FALSE`); the chunk below re-runs it via <span class="env-green">`ref.label`</span> and prints the table. 
 
-Note that you need to load `lscale` and `adjustbox` packages in the preamble for PDF output. 
+For PDF the table sits on a landscape page and is scaled with `adjustbox`. The raw-LaTeX wrappers are kept as literal `{=latex}` blocks so Quarto passes them through reliably; only the table -- not the echoed source code -- goes inside adjustbox, otherwise the verbatim listing breaks the box. 
+In HTML these blocks are dropped and a normal table is shown. 
+
+The fenced divs with `{=latex}` only appear in the PDF output, and are dropped in HTML output. 
+See [`.content-visible`](#conditional-content) for more details on how to conditionally show content based on metadata. 
+
+Note that you need to load `lscale` and `adjustbox` packages in the preamble for the PDF output. 
 
 ~~~~tex
 ::: {.content-visible when-format="pdf"}
@@ -2665,8 +2701,7 @@ Note that you need to load `lscale` and `adjustbox` packages in the preamble for
 :::
 ~~~~
 
-The fenced divs with `{=latex}` only appear in the PDF output, and are dropped in HTML output. 
-See [`.content-visible`](#conditional-content) for more details on how to conditionally show content based on metadata.
+
 
 --------------------------------------------------------------------------------
 
@@ -3147,7 +3182,7 @@ your comment goes here
 
 --------------------------------------------------------------------------------
 
-Q: How to add a page break in Quarto markdown?
+Q: How to add a page break in Quarto markdown?  
 A: use <span class="env-green">`{{< pagebreak >}}`</span> shortcode. This words across all output formats (PDF, Word). 
 
 

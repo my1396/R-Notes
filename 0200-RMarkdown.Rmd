@@ -1171,7 +1171,7 @@ You may use `knitr::opts_chunk$set()` to change the default values of chunk opti
 
 | Options              | Definitions                                                  |
 | -------------------- | ------------------------------------------------------------ |
-| `echo=TRUE`          | Whether to display the **source code** in the output document.<br />Use this when you want to show the output but NOT the source code itself. |
+| `echo=TRUE`          | Whether to display the **source code** in the output document.<br />Set `echo=TRUE` when you want to show the output but NOT the source code itself. |
 | `eval=TRUE`          | Whether to evaluate the code chunk.                          |
 | `include=TRUE`       | Whether to include the <span style='color:#32CD32'>chunk **code and output**</span> in the output document—including source code, text output, messages, warnings, and plots. <br />If `FALSE`, nothing will be written into the output document, but the code is <u>still evaluated</u> and plot files are generated if there are any plots in the chunk, so you can manually insert figures later. <br>Useful for [global chunk options](#global-config-files) setup. |
 | `message=TRUE`       | Whether to preserve messages emitted by `message()`          |
