@@ -55,6 +55,8 @@ destring logd_gdp-rad, replace ignore(`"NA"')
 
 --------------------------------------------------------------------------------
 
+### `xtreg`
+
 `xtreg` is Stata's feature for fitting linear models for panel data.
 
 `xtreg, fe` estimates the parameters of fixed-effects models:
@@ -66,12 +68,58 @@ xtreg depvar [indepvars] [if] [in] [weight] , fe [FE_options]
 
 Menu: Statistics > Longitudinal/panel data > Linear models > Linear regression (FE, RE, PA, BE, CRE)
 
-Options
+**Options:**
 
-- `vce(robust)` use clustered variance that allows for intragroup correlation within
-  groups.
+- `vce(robust)` use clustered variance that allows for intragroup correlation within groups.
   
-    By default, SE uses OLS estimates.
+  `vce` stands for variance-covariance estimation.
+
+  By default, SE uses OLS estimates, which is invalid in presence of heteroskedasticity or serial correlation. Use `vce(robust)` to get robust SE.
+
+  Other vce types include `vce(bootstrap)` and `vce(jackknife)`. 
+
+- `vce(cluster clustvar)` use cluster-robust variance that allows for intragroup correlation within groups. 
+
+  The `clustvar` variable must be a variable that identifies the clusters.
+
+What `xtreg, fe` does is known as the within estimator to the following model:
+
+$$
+y_{it} = \alpha + \bx_{it}\bbeta' + \nu_i + \varepsilon_{it}
+$$
+
+where $\nu_i$ is the unobserved individual effect; $\varepsilon_{it}$ is the error term with the usual assumptions (mean 0, uncorrelated with itself, uncorrelated with $\bx$, uncorrelated with $\nu$, and homoskedastic).
+
+#### Goodness-of-fit
+
+Three versions of R-squared are reported in the output of `xtreg, fe`:
+
+| R-squared | Description |
+| ---------- | ----------- |
+| Regular $R^2 = \frac{\var(\hat{y}_{it})}{\var(y)_{it}}$ | $\hat{y}_{it} = \hat{\alpha} + \hat{\bx}_{it}\hat{\bbeta}'$ | 
+| Between $R^2 = \frac{\var(\hat{\bar{y}}_i)}{\var(\bar{y}_t)}$ | $\hat{\bar{y}}_i = \hat{\alpha} + \bar{\bx}_{it}\hat{\bbeta}'$ |
+| Within $R^2 = \frac{\var(\hat{\tilde{y}}_{it})}{\var(\tilde{y}_{it})}$ | $\hat{\tilde{y}}_{it} = \hat{y}_{it} - \hat{\bar{y}}_i = (\bx_{it} - \bar{\bx}_i)\hat{\bbeta}'$ |
+
+where 
+
+$$
+\bar{y}_i = \frac{1}{T_i}\sum_{t=1}^{T_i} y_{it}, 
+$$
+
+and
+
+$$
+\bar{\bx}_i = \frac{1}{T_i}\sum_{t=1}^{T_i} \bx_{it}.
+$$
+
+`estat mundlak` performs a Mundlak specification test to help decide whether to use a fixed-effects or random-effects model. The null hypothesis is that the random-effects model is appropriate.
+
+### High-dimensional fixed effects
+
+For instance, we may want to study the effect of import tariffs (`imports`) on yearly trade volume (`trade`) and include year, country, and industry as controls.
+
+This can be achieved using `xtreg, fe absorb(year country industry)`, but it is slower than `areg` or `reghdfe`. 
+
 
 
 ### Test for serial correlation

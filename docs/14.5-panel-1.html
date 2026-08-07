@@ -858,7 +858,9 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="14.5" data-path="14.5-panel-1.html"><a href="14.5-panel-1.html"><i class="fa fa-check"></i><b>14.5</b> Panel</a>
 <ul>
-<li class="chapter" data-level="14.5.1" data-path="14.5-panel-1.html"><a href="14.5-panel-1.html#test-for-serial-correlation"><i class="fa fa-check"></i><b>14.5.1</b> Test for serial correlation</a></li>
+<li class="chapter" data-level="14.5.1" data-path="14.5-panel-1.html"><a href="14.5-panel-1.html#xtreg"><i class="fa fa-check"></i><b>14.5.1</b> <code>xtreg</code></a></li>
+<li class="chapter" data-level="14.5.2" data-path="14.5-panel-1.html"><a href="14.5-panel-1.html#high-dimensional-fixed-effects"><i class="fa fa-check"></i><b>14.5.2</b> High-dimensional fixed effects</a></li>
+<li class="chapter" data-level="14.5.3" data-path="14.5-panel-1.html"><a href="14.5-panel-1.html#test-for-serial-correlation"><i class="fa fa-check"></i><b>14.5.3</b> Test for serial correlation</a></li>
 </ul></li>
 <li class="chapter" data-level="14.6" data-path="14.6-arellano-bond-estimator.html"><a href="14.6-arellano-bond-estimator.html"><i class="fa fa-check"></i><b>14.6</b> Arellano-Bond Estimator</a>
 <ul>
@@ -1045,15 +1047,15 @@ document.addEventListener('DOMContentLoaded', function() {
 </ul>
 <p><strong>Example</strong></p>
 <p>To set a panel dataset:</p>
-<div class="sourceCode" id="cb1112"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb1112-1"><a href="14.5-panel-1.html#cb1112-1" tabindex="-1"></a><span class="co">// string variables not allowed in varlist; need to convert them to numeric</span></span>
-<span id="cb1112-2"><a href="14.5-panel-1.html#cb1112-2" tabindex="-1"></a>. <span class="kw">egen</span> <span class="kw">float</span> country_id = <span class="fu">group</span>(iso)</span>
-<span id="cb1112-3"><a href="14.5-panel-1.html#cb1112-3" tabindex="-1"></a>. <span class="kw">egen</span> <span class="kw">float</span> year_id = <span class="fu">group</span>(<span class="fu">year</span>)</span>
-<span id="cb1112-4"><a href="14.5-panel-1.html#cb1112-4" tabindex="-1"></a></span>
-<span id="cb1112-5"><a href="14.5-panel-1.html#cb1112-5" tabindex="-1"></a>. xtset country_id year_id, <span class="fu">yearly</span></span>
-<span id="cb1112-6"><a href="14.5-panel-1.html#cb1112-6" tabindex="-1"></a></span>
-<span id="cb1112-7"><a href="14.5-panel-1.html#cb1112-7" tabindex="-1"></a>Panel <span class="kw">variable</span>: country_id (strongly balanced)</span>
-<span id="cb1112-8"><a href="14.5-panel-1.html#cb1112-8" tabindex="-1"></a> Time <span class="kw">variable</span>: year_id, 1 to 59</span>
-<span id="cb1112-9"><a href="14.5-panel-1.html#cb1112-9" tabindex="-1"></a>         Delta: 1 <span class="fu">year</span></span></code></pre></div>
+<div class="sourceCode" id="cb1113"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb1113-1"><a href="14.5-panel-1.html#cb1113-1" tabindex="-1"></a><span class="co">// string variables not allowed in varlist; need to convert them to numeric</span></span>
+<span id="cb1113-2"><a href="14.5-panel-1.html#cb1113-2" tabindex="-1"></a>. <span class="kw">egen</span> <span class="kw">float</span> country_id = <span class="fu">group</span>(iso)</span>
+<span id="cb1113-3"><a href="14.5-panel-1.html#cb1113-3" tabindex="-1"></a>. <span class="kw">egen</span> <span class="kw">float</span> year_id = <span class="fu">group</span>(<span class="fu">year</span>)</span>
+<span id="cb1113-4"><a href="14.5-panel-1.html#cb1113-4" tabindex="-1"></a></span>
+<span id="cb1113-5"><a href="14.5-panel-1.html#cb1113-5" tabindex="-1"></a>. xtset country_id year_id, <span class="fu">yearly</span></span>
+<span id="cb1113-6"><a href="14.5-panel-1.html#cb1113-6" tabindex="-1"></a></span>
+<span id="cb1113-7"><a href="14.5-panel-1.html#cb1113-7" tabindex="-1"></a>Panel <span class="kw">variable</span>: country_id (strongly balanced)</span>
+<span id="cb1113-8"><a href="14.5-panel-1.html#cb1113-8" tabindex="-1"></a> Time <span class="kw">variable</span>: year_id, 1 to 59</span>
+<span id="cb1113-9"><a href="14.5-panel-1.html#cb1113-9" tabindex="-1"></a>         Delta: 1 <span class="fu">year</span></span></code></pre></div>
 <p><strong>Menu</strong></p>
 <p>Statistics &gt; Longitudinal/panel data &gt; Setup and utilities &gt; Declare dataset to be panel data</p>
 <ul>
@@ -1062,34 +1064,89 @@ document.addEventListener('DOMContentLoaded', function() {
 </ul>
 <p>Use <code>describe</code> to show an overview of data structure.</p>
 <p>Sometimes numbers will get recorded as string variables, making it impossible to do almost any command.</p>
-<div class="sourceCode" id="cb1113"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb1113-1"><a href="14.5-panel-1.html#cb1113-1" tabindex="-1"></a><span class="kw">destring</span> [<span class="kw">varlist</span>], {<span class="kw">gen</span>(newvarlist) | <span class="kw">replace</span>} [options]</span></code></pre></div>
+<div class="sourceCode" id="cb1114"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb1114-1"><a href="14.5-panel-1.html#cb1114-1" tabindex="-1"></a><span class="kw">destring</span> [<span class="kw">varlist</span>], {<span class="kw">gen</span>(newvarlist) | <span class="kw">replace</span>} [options]</span></code></pre></div>
 <ul>
 <li><code>gen(newvarlist)</code> generate new variables for each variable in <code>varlist</code>.</li>
 <li><code>replace</code> replace string variables with numeric variables</li>
 <li><code>ignore("chars")</code> specifies nonnumeric characters be removed.</li>
 </ul>
-<div class="sourceCode" id="cb1114"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb1114-1"><a href="14.5-panel-1.html#cb1114-1" tabindex="-1"></a><span class="co">// from logd_gdp to rad, convert to numeric, replace &quot;NA&quot; with missing</span></span>
-<span id="cb1114-2"><a href="14.5-panel-1.html#cb1114-2" tabindex="-1"></a><span class="kw">destring</span> logd_gdp-rad, <span class="kw">replace</span> ignore(<span class="st">`&quot;</span>NA<span class="st">&quot;&#39;)</span></span></code></pre></div>
+<div class="sourceCode" id="cb1115"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb1115-1"><a href="14.5-panel-1.html#cb1115-1" tabindex="-1"></a><span class="co">// from logd_gdp to rad, convert to numeric, replace &quot;NA&quot; with missing</span></span>
+<span id="cb1115-2"><a href="14.5-panel-1.html#cb1115-2" tabindex="-1"></a><span class="kw">destring</span> logd_gdp-rad, <span class="kw">replace</span> ignore(<span class="st">`&quot;</span>NA<span class="st">&quot;&#39;)</span></span></code></pre></div>
 <hr />
+<div id="xtreg" class="section level3 hasAnchor" number="14.5.1">
+<h3><span class="header-section-number">14.5.1</span> <code>xtreg</code><a href="14.5-panel-1.html#xtreg" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p><code>xtreg</code> is Stata’s feature for fitting linear models for panel data.</p>
 <p><code>xtreg, fe</code> estimates the parameters of fixed-effects models:</p>
-<div class="sourceCode" id="cb1115"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb1115-1"><a href="14.5-panel-1.html#cb1115-1" tabindex="-1"></a><span class="kw">xtreg</span> depvar [indepvars] [<span class="kw">if</span>] [<span class="kw">in</span>] [<span class="kw">weight</span>] , <span class="kw">fe</span> [FE_options]</span></code></pre></div>
+<div class="sourceCode" id="cb1116"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb1116-1"><a href="14.5-panel-1.html#cb1116-1" tabindex="-1"></a><span class="kw">xtreg</span> depvar [indepvars] [<span class="kw">if</span>] [<span class="kw">in</span>] [<span class="kw">weight</span>] , <span class="kw">fe</span> [FE_options]</span></code></pre></div>
 <p>Menu: Statistics &gt; Longitudinal/panel data &gt; Linear models &gt; Linear regression (FE, RE, PA, BE, CRE)</p>
-<p>Options</p>
+<p><strong>Options:</strong></p>
 <ul>
-<li><p><code>vce(robust)</code> use clustered variance that allows for intragroup correlation within
-groups.</p>
-<p>By default, SE uses OLS estimates.</p></li>
+<li><p><code>vce(robust)</code> use clustered variance that allows for intragroup correlation within groups.</p>
+<p><code>vce</code> stands for variance-covariance estimation.</p>
+<p>By default, SE uses OLS estimates, which is invalid in presence of heteroskedasticity or serial correlation. Use <code>vce(robust)</code> to get robust SE.</p>
+<p>Other vce types include <code>vce(bootstrap)</code> and <code>vce(jackknife)</code>.</p></li>
+<li><p><code>vce(cluster clustvar)</code> use cluster-robust variance that allows for intragroup correlation within groups.</p>
+<p>The <code>clustvar</code> variable must be a variable that identifies the clusters.</p></li>
 </ul>
-<div id="test-for-serial-correlation" class="section level3 hasAnchor" number="14.5.1">
-<h3><span class="header-section-number">14.5.1</span> Test for serial correlation<a href="14.5-panel-1.html#test-for-serial-correlation" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>What <code>xtreg, fe</code> does is known as the within estimator to the following model:</p>
+<p><span class="math display">\[
+y_{it} = \alpha + \bx_{it}\bbeta&#39; + \nu_i + \varepsilon_{it}
+\]</span></p>
+<p>where <span class="math inline">\(\nu_i\)</span> is the unobserved individual effect; <span class="math inline">\(\varepsilon_{it}\)</span> is the error term with the usual assumptions (mean 0, uncorrelated with itself, uncorrelated with <span class="math inline">\(\bx\)</span>, uncorrelated with <span class="math inline">\(\nu\)</span>, and homoskedastic).</p>
+<div id="goodness-of-fit" class="section level4 hasAnchor" number="14.5.1.1">
+<h4><span class="header-section-number">14.5.1.1</span> Goodness-of-fit<a href="14.5-panel-1.html#goodness-of-fit" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>Three versions of R-squared are reported in the output of <code>xtreg, fe</code>:</p>
+<table>
+<colgroup>
+<col width="47%" />
+<col width="52%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>R-squared</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Regular <span class="math inline">\(R^2 = \frac{\var(\hat{y}_{it})}{\var(y)_{it}}\)</span></td>
+<td><span class="math inline">\(\hat{y}_{it} = \hat{\alpha} + \hat{\bx}_{it}\hat{\bbeta}&#39;\)</span></td>
+</tr>
+<tr class="even">
+<td>Between <span class="math inline">\(R^2 = \frac{\var(\hat{\bar{y}}_i)}{\var(\bar{y}_t)}\)</span></td>
+<td><span class="math inline">\(\hat{\bar{y}}_i = \hat{\alpha} + \bar{\bx}_{it}\hat{\bbeta}&#39;\)</span></td>
+</tr>
+<tr class="odd">
+<td>Within <span class="math inline">\(R^2 = \frac{\var(\hat{\tilde{y}}_{it})}{\var(\tilde{y}_{it})}\)</span></td>
+<td><span class="math inline">\(\hat{\tilde{y}}_{it} = \hat{y}_{it} - \hat{\bar{y}}_i = (\bx_{it} - \bar{\bx}_i)\hat{\bbeta}&#39;\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>where</p>
+<p><span class="math display">\[
+\bar{y}_i = \frac{1}{T_i}\sum_{t=1}^{T_i} y_{it},
+\]</span></p>
+<p>and</p>
+<p><span class="math display">\[
+\bar{\bx}_i = \frac{1}{T_i}\sum_{t=1}^{T_i} \bx_{it}.
+\]</span></p>
+<p><code>estat mundlak</code> performs a Mundlak specification test to help decide whether to use a fixed-effects or random-effects model. The null hypothesis is that the random-effects model is appropriate.</p>
+</div>
+</div>
+<div id="high-dimensional-fixed-effects" class="section level3 hasAnchor" number="14.5.2">
+<h3><span class="header-section-number">14.5.2</span> High-dimensional fixed effects<a href="14.5-panel-1.html#high-dimensional-fixed-effects" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>For instance, we may want to study the effect of import tariffs (<code>imports</code>) on yearly trade volume (<code>trade</code>) and include year, country, and industry as controls.</p>
+<p>This can be achieved using <code>xtreg, fe absorb(year country industry)</code>, but it is slower than <code>areg</code> or <code>reghdfe</code>.</p>
+</div>
+<div id="test-for-serial-correlation" class="section level3 hasAnchor" number="14.5.3">
+<h3><span class="header-section-number">14.5.3</span> Test for serial correlation<a href="14.5-panel-1.html#test-for-serial-correlation" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>However, Wooldridge (2002, 319–320) derives a simple test for autocorrelation in panel-data models. Drukker (2003) provides simulation results showing that the test has good size and power properties in reasonably sized samples.</p>
 <p>There is a community-contributed program, called <strong>xtserial</strong>, written by David Drukker to perform this test in Stata. To install this community-contributed program, type</p>
-<div class="sourceCode" id="cb1116"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb1116-1"><a href="14.5-panel-1.html#cb1116-1" tabindex="-1"></a>. <span class="kw">search</span> xtserial</span>
-<span id="cb1116-2"><a href="14.5-panel-1.html#cb1116-2" tabindex="-1"></a>. net sj 3-2 st0039         (<span class="kw">or</span> click <span class="kw">on</span> st0039)</span>
-<span id="cb1116-3"><a href="14.5-panel-1.html#cb1116-3" tabindex="-1"></a>. net install st0039        (<span class="kw">or</span> click <span class="kw">on</span> click here to install)</span></code></pre></div>
+<div class="sourceCode" id="cb1117"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb1117-1"><a href="14.5-panel-1.html#cb1117-1" tabindex="-1"></a>. <span class="kw">search</span> xtserial</span>
+<span id="cb1117-2"><a href="14.5-panel-1.html#cb1117-2" tabindex="-1"></a>. net sj 3-2 st0039         (<span class="kw">or</span> click <span class="kw">on</span> st0039)</span>
+<span id="cb1117-3"><a href="14.5-panel-1.html#cb1117-3" tabindex="-1"></a>. net install st0039        (<span class="kw">or</span> click <span class="kw">on</span> click here to install)</span></code></pre></div>
 <p>To use <strong>xtserial</strong>, you simply specify the dependent and independent variables:</p>
-<div class="sourceCode" id="cb1117"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb1117-1"><a href="14.5-panel-1.html#cb1117-1" tabindex="-1"></a>. xtserial depvar indepvars </span></code></pre></div>
+<div class="sourceCode" id="cb1118"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb1118-1"><a href="14.5-panel-1.html#cb1118-1" tabindex="-1"></a>. xtserial depvar indepvars </span></code></pre></div>
 <p>A significant test statistic indicates the presence of serial correlation.</p>
 
 </div>

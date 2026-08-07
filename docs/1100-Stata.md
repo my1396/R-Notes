@@ -101,9 +101,9 @@ often used in the help files to demonstrate a certain feature.
 --------------------------------------------------------------------------------
 
 
-Keyboard Shortcuts
+Stata Keyboard Shortcuts
 
-Actually not of much use.
+Actually not of much use. → Use [Stata MCP](https://marketplace.visualstudio.com/items?itemName=DeepEcon.stata-mcp) extension in VS Code to run Stata commands. It is much more flexible and supports keyboard shortcuts that are actually useful, such as run selected lines. Refer to [Run Stata in VS Code](#stata-vscode) section to configure Stata in VS Code.
 
 | Keyboard Shortcut | Description   |
 | ----------------- | ------------- |
@@ -150,6 +150,8 @@ While nearly everything in Stata can be done via the menus, you're better off ty
 ref: [Stata's interface](https://www.stata.com/features/overview/graphical-user-interface/)
 
 --------------------------------------------------------------------------------
+
+<a id="stata-vscode"></a>
 
 ### Run Stata in VS Code {-}
 
@@ -268,6 +270,16 @@ Other AI tools that can be integrated with Stata MCP include:
 - ❌ NO support for Gemini yet.
 
 
+--------------------------------------------------------------------------------
+
+**Configure Claude Code**
+
+```
+claude mcp add --transport http stata-mcp http://localhost:7001/mcp-streamable --scope user;
+```
+
+replace the port number with the one you specified in `stata-vscode.mcpServerPort`.
+
 [stata-mcp Skill](https://smithery.ai/skills/tmonk/stata-mcp), [GitHub repo](https://github.com/tmonk/mcp-stata)
 
 
@@ -276,20 +288,38 @@ Other AI tools that can be integrated with Stata MCP include:
 
 **How-to**
 
-- Stata in interactive mode: OUTPUT > choose "Stata"
+Create a `.do` file, then the toolbar will show as below.
 
-- Run Selection / Current Line: ⇧⌘Enter
+<img src="images/stata mcp toolbar.png" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
+
+❶ Run selection
+
+❷ View Data
+
+❸ Interactive Mode (Take a while to load Interactive Stata)
+
+<img src="images/stata interactive.png" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
+
+Alternatively, use Command Palette to run commands: "Stata: Interactive Mode" to open interactive Stata.
+
+- Run Selection / Current Line Shortcut: ⇧⌘Enter
 
 - Show outline: 
+  
+  Lines start with two stars and one or more `#` characters will be recognized as outline headers. 
+  
+  - Level 1: `**# Level 1 Heading`
+  - Level 2: `**## Level 2 Heading`
+  
+  <hr/>
+  
+  Two extensions can be used:
   
   - <img src="https://zihaovistonwang.gallerycdn.vsassets.io/extensions/zihaovistonwang/stata-outline/0.2.3/1769462485107/Microsoft.VisualStudio.Services.Icons.Default" alt="" width="55" height="55" style="display: inline; vertical-align: middle;" /> Use [Stata Outline](https://marketplace.visualstudio.com/items?itemName=ZihaoVistonWang.stata-outline) extension
     
     Do NOT need to setup. Use out-of-box. Use from `**#` to `**######` as hierarchical headers, supporting up to **6 levels**.
 
     <img src="images/stata outline.png" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
-
-    - Level 1: `**# Level 1 Heading`
-    - Level 2: `**## Level 2 Heading`
 
   - Use [RegExp Outline](https://marketplace.visualstudio.com/items?itemName=longfish801.regexpOutline) extension and add the following to the "Regexp Outline: Header Rules Each Ext" setting.
 
