@@ -154,7 +154,7 @@ This is equivalent to `file.path("data", "my_data.csv")`.
 ```
 
 The benefit of `here()` is that it will always be relative to your project root. 
-By contrast, `file.path()` fust concatenates paths safely, does not know where your project root is.
+By contrast, `file.path()` just concatenates paths safely in a platform independent way (windows vs. linux), does not know where your project root is.
 In short, `here()` is more robust to changes in the working directory. 
 In case of you accidentally change the working directory, `here()` will still point to the correct file, while `file.path()` will break.
 
@@ -167,6 +167,14 @@ source(here("fun_script.R"))
 data_dir <- "data"
 f_name <- here(data_dir, "my_data.csv")
 my_data <- read.csv(f_name)
+```
+
+If you want to use `file.path()`, it is safer to explicitly set the project root
+
+```r
+root_dir <- "~/Documents/GDP/Shared folder"
+setwd(root_dir)
+out_dir <- file.path(root_dir, "Revision_2026Aug", "output")
 ```
 
 ref:

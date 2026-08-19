@@ -212,6 +212,30 @@ Both options can be specified under specific output formats, e.g., `html` or `pd
   md_extensions: -autolink_bare_uris+hard_line_breaks
   ```
 
+Quotes in the title allow escape characters, e.g., `#` and `:` have special meaning in YAML, so you need to use quotes to escape them. Quotes are NOT required if the title does not contain special characters.
+
+
+Use `title: |` to allow **line breaks** in the title. `|` (pipe symbol) is called the literal block scalar. The pipe indicates that (except for the indentation) the scalar value should be interpreted literally in such a way that preserves newlines. See [the YAML spec](http://www.yaml.org/spec/1.2/spec.html#id2795688).
+
+It will escape special characters, so you can use `\` to insert line breaks in the title. 
+
+```yaml
+title: |
+  Quarto: \
+  A Practical Guide
+```
+
+Alternatively, you can use
+
+```yaml
+title: |
+  Quarto:
+
+  A Practical Guide
+```
+
+
+
 --------------------------------------------------------------------------------
 
 
@@ -475,9 +499,9 @@ Alternatively, you can write chunk options in the body of a code chunk after <sp
 **Options format:**
 
 - space after `#|` and colon `:`
-- Logical values in YAML can be any of: `true/false`, `yes/no`, and `on/off`. 
+- <span class="env-green">Logical values in YAML can be any of: `true/false`, `yes/no`, and `on/off`</span>. 
   - They all equivalent to `TRUE/FALSE` (uppercase) in Rmd.
-  - Note that TRUE/FALSE need to be in uppercase in **Rmd**.
+  - Note that TRUE/FALSE need to be in <span class="env-green">uppercase in **Rmd**</span>.
 
 Note that <span class="env-green">Quarto accepts Rmd's way of specifying chunk options</span>. The **difference** is that <span class="env-green">Quarto's label for figures</span> must start with `fig-`, while Rmd accepts any labels.
 
@@ -500,6 +524,13 @@ Note that <span class="env-green">Quarto accepts Rmd's way of specifying chunk o
 ```
 ````
 
+Note if you use `tag=value` in the chunk header, `TRUE`/`FALSE` must be in uppercase. If you use `#| tag: value` in the body of the chunk, `true`/`false` should be be in lowercase.
+
+Alternatively, use shortcode `{{< shortcode ... >}}` to include a file in Quarto: ✅
+
+```markdown
+{{< include ../_chunk-opt.qmd >}}
+```
 
 **Quarto chunk options available for customizing output include:**
 
@@ -510,7 +541,7 @@ Note that <span class="env-green">Quarto accepts Rmd's way of specifying chunk o
 | <span class="env-green">`output`</span>$^{[1]}$     | Include the results of executing the code in the output (`true`, `false`, or `asis` to indicate that the output is raw markdown and should not have any of Quarto’s standard enclosing markdown). |
 | `warning`    | Include warnings in the output.                              |
 | `error`      | Include errors in the output (note that this implies that errors executing code will not halt processing of the document). |
-| `include`    | Catch all for preventing any output (code or results) from being included (e.g. `include: false`suppresses all output from the code block). |
+| `include`    | Defaults to `true`. Catch all for preventing any output (code or results) from being included (e.g. `include: false`suppresses all output from the code block). |
 | `renderings` | Specify rendering names for the plot or table outputs of the cell, e.g. `[light, dark]` |
 
 $^{[1]}$ `output` is similar to `results` in Rmd. You <span class="env-orange">**cannot**</span> use `results='hide'` in Quarto, use `output: false` instead.
@@ -1676,11 +1707,14 @@ Note: Quarto support cross-references across documents in the same project.
 Cross-reference to a figure:
 
 ````markdown
-```{r #fig-scatter, fig.cap="Scatter plots example"} 
-  # scatter plot example
-  plot(1:10)
+```{r #fig-scatter, fig.cap="Scatter plots example", out.width="80%"} 
+# scatter plot example
+plot(1:10)
 ```
 ````
+
+Note that you have to use <span class="env-green">code chunk headers</span> to label the figure, i.e., `#fig-scatter`. Note that `#` is required. 
+The `#|` syntax does <span class="env-orange">NOT</span> work.
 
 <div class="figure">
 <img src="0304-Quarto_files/figure-html/fig-scatter-1.png" alt="Scatter plots example" width="50%" />
@@ -2523,6 +2557,11 @@ crossref:
 ## Tables {#quarto-tables}
 
 ### Tables in Latex
+
+<div class="rmdcaution">
+Tables in raw LaTeX work ONLY when the output format is PDF.
+In HTML output, the LaTeX code will be ignored and the table won't show.
+</div>
 
 Tables in raw LaTeX can be included in Quarto documents using fenced divs or <span class="env-green">**code chunks**</span> with `{=latex}`. 
 

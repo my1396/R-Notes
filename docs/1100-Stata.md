@@ -347,6 +347,20 @@ Alternatively, use Command Palette to run commands: "Stata: Interactive Mode" to
 
     [regex cheatsheets](https://www.rexegg.com/regex-quickstart.php)
 
+**Stata Data Viewer**
+
+Stata MCP provides a data viewer but it is NOT flexible enough. I recommend [Stata Viewer extension](https://marketplace.visualstudio.com/items?itemName=DiegoMenares.stata-viewer). 
+
+<img src="images/stata data viewer.png" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
+
+You can have an overview of the variables in the sidebar, quick sort and filter, summarize the dataset, etc.
+
+Click "**Explore**" in the variable list to have a quick summary of the variable, including its distribution, missing values, and summary statistics.
+
+<img src="images/stata explore variable.png" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
+
+
+
 --------------------------------------------------------------------------------
 
 ### Do-file {.unlisted .unnumbered}

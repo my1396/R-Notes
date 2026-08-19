@@ -29,6 +29,22 @@ When you decide to use `xaringan`, read tutorials [HERE](https://bookdown.org/yi
 
 --------------------------------------------------------------------------------
 
+**Keyboard shortcuts:**
+
+| Keyboard shortcut | Function |
+| ----------- | ---------------------- |
+| `f` | Toggle full screen |
+| <span class="env-green">`o`</span> | Toggle slide overview/tile view grid, supported by `xaringanExtra::use_tile_view()` |
+| `c` | Clone the slides to a second screen (e.g., projector) |
+| `p` | Toggle presenter mode (with notes) |
+| **Search** | |
+| `ctrl + F` | Search through slides, supported by `xaringanExtra::use_search()` |
+| `ctrl + G` | Go to next match in search mode |
+| `ctrl + shift + G` | Go to previous match in search mode |
+| `Esc` | Exit search mode |
+
+--------------------------------------------------------------------------------
+
 [`revealjs`](https://quarto.org/docs/presentations/revealjs/) is a more powerful and feature-rich alternative to `xaringan`. It is based on the `reveal.js` framework.
 
 
@@ -181,7 +197,7 @@ Features that are provided in Pandoc but missing in remark.js's Markdown:
 ### Create a New Slide
 
 - Every new slide is created under three dashes (`---`).
-- Two dashes (`--`) create a new fragment (incremental reveal) within the same slide.
+- Two dashes (`--`) create a new fragment (<span class="env-green">incremental reveal</span>) within the same slide.
   
   - Blank lines before and after the two and three dashes are required.
   - No whitespace after the dashes.
@@ -247,6 +263,10 @@ will be rendered as:
 ```html
 <span class="class">text to be styled</span>
 ```
+
+<div class="rmdnote">
+A good practice is to all a blank line before `.class[` and after its closing `]` when the block sits next to ordinary text.
+</div>
 
 Nested inline attributes:
 
@@ -534,6 +554,21 @@ cat(tbl_html)
 
 ## Images
 
+Use html `<img>` tag to insert images. Note, there is no leading `/` in the path. `/` refers to the root directory of your computer. Xaringan is strict about `/`.
+
+```html
+<img src="images/fig.png" alt="alternative text to show" style="display: block; margin-right: auto; margin-left: auto; width:85%;" />
+```
+
+Alternative, you can use Markdown syntax to insert images:
+
+```markdown
+![alternative text to show](images/fig.png)
+
+Add classes `.center[ ]` to center an image
+.center[![description of the image](images/foo.png)]
+```
+
 Issue: Image resolution too low.
 
 Fix: Add `fig.retina=3` to chunk options for html output. Use `dpi=300` for pdf output.
@@ -572,15 +607,20 @@ a whole lifetime...
 This is notes for presenter only.
 ```
 
+- Blank line under `???` is NOT required.
+
 --------------------------------------------------------------------------------
 
-Q: **What is the behavior of presenter mode?**
-
+Q: **What is the behavior of presenter mode?**  
 A: The presenter mode shows thumbnails of the current slide and the next slide on the left, presenter notes on the right (see Section [7.3.5](https://bookdown.org/yihui/rmarkdown/xaringan-format.html#xaringan-notes)), and also a timer on the top right. 
 
-The keys `c` and `p` can be very useful when you present with your own computer connected to a second screen (such as a projector). 
+The keys `c` (clone) and `p` (presenter mode) can be very useful when you present with your own computer connected to a second screen (such as a projector). 
 
-On the second screen, you can show the normal slides, while **cloning the slides to your own computer** screen and using the presenter mode. 
+1. Press `c` to clone the slides to a second screen (e.g., projector).
+2. On your own computer, press `p` to toggle presenter mode.
+3. When you present, you can see the presenter notes and the time on your own computer, while the audience sees only the slides on the projector.
+   
+   When you nevigate across slides on your own computer, the two screens are synchronized, so the audience sees the same slide as you do.
 
 Only you can see the presenter mode, which means only you can see presenter notes and the time, and preview the next slide. You may press `t` to restart the timer at any time.
 
@@ -593,7 +633,78 @@ The figure below shows the **Displays** settings on macOS for extended display m
 
 <img src="https://bookdown.org/yihui/rmarkdown/images/mirror-display.png" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
 
-Ref: [R Markdown: The Definitive Guide, Section 7.3.5](https://bookdown.org/yihui/rmarkdown/xaringan-format.html#xaringan-notes)
+### Print to PDF with presenter notes
+
+**Need two files:**
+
+- [`theme/print-notes.css`](https://github.com/my1396/EK369E/blob/main/Slides/theme/print-notes.css): CSS file to style the print layout, which is used by `print-notes.R` to generate the PDF with notes.
+- [`print-notes.R`](https://github.com/my1396/EK369E/blob/main/Slides/print-notes.R): R script to render the slides and print to PDF with notes.
+
+
+One command, works for any xaringan deck in the repo:
+
+```bash
+# assume both print-notes.R and your .Rmd are in Slides/
+cd Slides
+./print-notes.R <deck>.Rmd
+```
+
+That writes `<deck>_notes.pdf` next to the deck. E.g., `./print-notes.R equity_valuation.Rmd` → `equity_valuation_notes.pdf`.
+
+It also runs fine from the repo root, which is handy if you're not in `Slides/`:
+
+```bash
+Rscript Slides/print-notes.R Slides/equity_valuation.Rmd
+```
+
+- `Rscript` is the a command-line program to run R scripts. 
+
+
+**Flags** (all optional):
+
+| Flag | Effect |
+| --- |  --------------------------- |
+| `--render`   | Re-knit the `.Rmd` first. Without it, the existing `.html` is printed as-is (fast). |
+| `-o FILE`    | Choose the output path instead of `<deck>_notes.pdf`. |
+| `--zoom 0.5` | Shrink the slide on the page to make room for long notes (default `0.58`). |
+| `--wait 15`  | Extra seconds for MathJax to finish on heavy decks (default `10`). |
+
+Typical workflow after editing a deck: 
+
+- **Approach 1:** Render first, then print to PDF with notes. This is the most common workflow. ✅
+  
+  ```bash
+  # Render first, this creates <deck>.html and <deck>.pdf
+  renderthis::to_pdf('<deck>.Rmd')
+
+  # Print PDF with notes. This creates <deck>_notes.pdf.
+  # without --render, the existing <deck>.html will be used 
+  # to print to PDF with notes; fast
+  ./print-notes.R <deck>.Rmd
+  ```
+
+- Approach 2: Use `--render` to render and print in one command. 
+
+  ```bash
+  # render and print; creates <deck>_notes.pdf directly from the latest <deck>.Rmd
+  ./print-notes.R <deck>.Rmd --render
+  ```
+
+<span class="env-green">`--render`</span> makes sure the R chunks are re-run and the `.html` is up-to-date before printing to PDF. Otherwise, you may get a PDF with stale content.
+
+If no `<deck>.html` exists, `--render` is implied. A render will be conducted before printing to PDF.
+
+Three things to keep in mind:
+
+-   **Notes come from `???` blocks.** Everything between `???` and the next `---` in the `.Rmd` becomes that slide's notes. A deck with no `???` still prints --- you just get portrait pages with a slide and no notes box (I tested `mkt_efficiency.Rmd`, which has zero notes: 55 pages, slides only). For a slides-only PDF keep using your normal landscape print.
+-   **`theme/print-notes.css` must stay next to the script**, since the script looks for it at `<script dir>/theme/print-notes.css`. Edit that file to change fonts, the "Presenter notes" label, or the slide border permanently.
+-   **Console noise is normal.** Some decks log JS warnings during printing (`mkt_efficiency.Rmd` prints a `\$ is not defined` from `kePrint.js`); the PDF is still produced. Only trust the final `✓ <path>` line.
+
+
+**Ref:**
+
+- [R Markdown: The Definitive Guide, Section 7.3.5](https://bookdown.org/yihui/rmarkdown/xaringan-format.html#xaringan-notes)
+
 
 ## CSS and themes
 

@@ -59,6 +59,10 @@ destring logd_gdp-rad, replace ignore(`"NA"')
 
 `xtreg` is Stata's feature for fitting linear models for panel data.
 
+<div class="rmdcaution">
+<code>xtreg</code> is only used for one-way cluster SE estimation, such as individual, firm, or country fixed effects. For two-way cluster SE estimation, use the <code>reghdfe</code> command
+</div>
+
 `xtreg, fe` estimates the parameters of fixed-effects models:
 
 
