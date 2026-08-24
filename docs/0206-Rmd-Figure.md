@@ -17,12 +17,15 @@ Use code chunk label to cross reference, e.g., <span style='color:#00CC66'>`Fig.
   - If you want to keep the original quality, use html tag `<img>` instead.
   - With `<img>`, a caveat is that you need to manually add figure caption and numbering, and the numbering will be messed up if you change the order of figures in your document.
 
+--------------------------------------------------------------------------------
 
+Alternatively, if you don't need to save the figure:
 
-Alternatively, use `fig.width` to fix the figure width, and `fig.asp` to fix the aspect ratio (height:width).
+- use `fig.width` to fix the figure width, and `fig.asp` to fix the aspect ratio (height:width).
+- Use `out.width` to scale the figure to fit the page width.
 
 ~~~~markdown
-```{r car-plot2, fig.width=6, fig.asp=0.6, fig.cap="Caption here." }
+```{r car-plot2, fig.width=6, fig.asp=0.6, out.width="100%", fig.cap="Caption here." }
 library(AER)
 data(CASchools)
 library(ggplot2)
@@ -37,7 +40,7 @@ ggplot(CASchools, aes(x = expenditure)) +
 
 
 <div class="figure">
-<img src="0206-Rmd-Figure_files/figure-html/histogram-1.png" alt="Historgram of Expenditure per Student. Fixed `fig.width` and `fig.asp`." width="576" />
+<img src="0206-Rmd-Figure_files/figure-html/histogram-1.png" alt="Historgram of Expenditure per Student. Fixed `fig.width` and `fig.asp`." width="100%" />
 <p class="caption">(\#fig:histogram)Historgram of Expenditure per Student. Fixed `fig.width` and `fig.asp`.</p>
 </div>
 

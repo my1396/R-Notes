@@ -407,6 +407,9 @@ httpgd server running at:
 # Create a figure
 > x = seq(0, 3 * pi, by = 0.1)
 > plot(x, sin(x), type = "l")
+
+# Close the httpgd device
+dev.off()
 ```
 
 Q: Plot viewer is missing or you accidentally closed it. \

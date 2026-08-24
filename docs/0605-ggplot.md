@@ -1,5 +1,7 @@
 ## ggplot
 
+
+
 - [Package Reference](https://ggplot2.tidyverse.org/reference/index.html)
 - [R graph gallery](https://r-graph-gallery.com/ggplot2-package.html)
 - [Cheatsheet](https://rstudio.github.io/cheatsheets/html/data-visualization.html?_gl=1*qjpdg3*_ga*NTc0NDA2OTQ0LjE3NTQwMzAyMjI.*_ga_2C0WZ1JHG0*czE3NTYyMTA0NDMkbzEyJGcwJHQxNzU2MjEwNDQzJGo2MCRsMCRoMA..#labels-and-legends)
@@ -42,25 +44,87 @@ Create a <span class="env-green">**customized figure theme**</span> code snippet
 `theme()` note that when you call it, just use `+ mytheme`  w/o parentheses as it is not a function — it is a theme setting.
 
 ```R
-mytheme <- theme(
-  legend.position = "none", # disable legend
-  legend.spacing.y = unit(0, 'mm'), # spacing between legend title and legend items
-  legend.key.height = unit(0.8,"line"), # vertical spacing between legend items
-  legend.margin = margin(t=0, b=0, unit="mm"), # legend box margins
-  legend.text = element_text(size=rel(1.2)),   # legend text size
-  legend.title = element_text(size=rel(1.2)),  # legend title size
-  title = element_text(size=rel(1.2)),
-  axis.title = element_text(size=rel(1.2)), # use `rel()` to change proportionally to base font size; or a number to specify absolute size as follows;
-  axis.text = element_text(size=8),  # tick labels along axes
-  panel.grid.minor = element_blank() # remove minor gridlines
+mytheme <- theme_minimal(base_size = BASE_SIZE) +
+  theme(
+    legend.position = "none", # disable legend
+    legend.spacing.y = unit(0, 'mm'), # spacing between legend title and legend items
+    legend.key.height = unit(0.8,"line"), # vertical spacing between legend items
+    legend.margin = margin(t=0, b=0, unit="mm"), # legend box margins
+    legend.text = element_text(size=rel(1.2)),   # legend text size
+    legend.title = element_text(size=rel(1.2)),  # legend title size
+    title = element_text(size=rel(1.2)),
+    axis.title = element_text(size=rel(1.2)), # use `rel()` to change proportionally to base font size; or a number to specify absolute size as follows;
+    axis.text = element_text(size=8),  # tick labels along axes
+    panel.grid.minor = element_blank() # remove minor gridlines
   )
 # p is a ggplot() subject
 p + mytheme
 ```
 
-`rel(x)` 	specify sizes relative to the parent.
+**A nice custom theme:**
 
-<span class="env-green">`theme_bw(base_size = 14)`</span> the default font size is 11 pt, which can be too small. Set `base_size=14` to enlarge the font size for a specific theme.
+
+``` r
+library(tidyverse)
+BASE_SIZE <- 11
+INK <- "#0b0b0b"
+INK_SOFT <- "#52514e"
+INK_MUTED <- "#8a8985"
+
+my_theme <- theme_minimal(base_size = BASE_SIZE) +
+  theme(
+    legend.position  = "top",
+    legend.box       = "horizontal",
+    legend.title     = element_text(size = rel(1)),
+    legend.text      = element_text(size = rel(1)),
+    legend.key.width = unit(24, "pt"),
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_line(colour = "#e6e5e1", linewidth = 0.3),
+    panel.spacing    = unit(13, "pt"),
+    # facet lables if you have multiple panels
+    strip.text       = element_text(face = "bold", colour = INK, size = rel(1.05)),
+    plot.title       = element_text(face = "bold", size = rel(1.20), hjust = 0.5),
+    plot.subtitle    = element_text(colour = INK_SOFT, size = rel(0.95)),
+    axis.title       = element_text(colour = INK_SOFT, size = rel(0.95)),
+    axis.text        = element_text(colour = INK_SOFT, size = rel(0.90)),
+    plot.caption = element_text(
+      colour = INK_MUTED, hjust = 0,
+      margin = margin(t = 10)
+    )
+  )
+```
+
+
+
+
+``` r
+# Use default theme
+p_base
+```
+
+<img src="0605-ggplot_files/figure-html/unnamed-chunk-3-1.png" width="100%" style="display: block; margin: auto;" />
+
+
+
+
+``` r
+# With custom theme
+# Make important information more readable (bold and darker)
+# trivial info readable but not distracting
+# thinner major gridlines
+p_mytheme <- p_base +
+  my_theme
+p_mytheme
+```
+
+<img src="0605-ggplot_files/figure-html/unnamed-chunk-5-1.png" width="100%" style="display: block; margin: auto;" />
+
+`rel(x)` specify sizes relative to the parent. The base font size is set by the `base_size` argument of the theme function. 
+
+<span class="env-green">`theme_bw(base_size = 11)`</span> the default font size is 11 pt, which can be too small. Change `BASE_SIZE` to enlarge the font size for specific purposes, e.g., 
+
+- `BASE_SIZE <- 14` for presentations;
+- `BASE_SIZE <- 12` for papers.
 
 `theme_get()` returns the current active theme. 
 
@@ -68,6 +132,8 @@ p + mytheme
 # get default values of theme parameters
 theme_get()$plot.margin 
 ```
+
+---
 
 **Check default options for a specific theme**
 

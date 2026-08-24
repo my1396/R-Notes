@@ -1,6 +1,8 @@
 # xaringan Presentation
 
-- Get Start: <https://slides.yihui.org/xaringan/#1>
+- Get Start: 
+  - <https://slides.yihui.org/xaringan/#1>
+  - [R Markdown: The Definitive Guide, xaringan Presentations](https://pkg.yihui.org/rmarkdown-book/xaringan)
 - `xaringan` package 
   - cran: <https://cran.r-project.org/web/packages/xaringan/refman/xaringan.html#moon_reader>
   - rdrr.io: <https://rdrr.io/cran/xaringan/api/>

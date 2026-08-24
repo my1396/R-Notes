@@ -326,8 +326,17 @@ The `_quarto.yml` file contains the book project structure.
 ```yaml
 project:
   type: book
+  output-dir: docs
+  resources: 
+    - "filters/emoji/*.png"
+
+# only render changed files
+execute:
+  freeze: auto
 
 book:
+  title: "Title of the Book"
+  site-url: "https://your-username.github.io/your-repo-name/"
   chapters:
     - index.qmd
     - preface.qmd
@@ -358,6 +367,8 @@ format:
 ```
 
 - <span class="env-green">The `index.qmd` file is **required**</span> (because Quarto books also produce a website in HTML format). This page should include the preface, acknowledgements, etc.
+
+- <span class="env-green">`site-url`</span>: support RSS feeds, generates `docs/sitemap.xml` (for Google indexing).
 
 - `book` specifies title, author, chatperters, and other book-level metadata.
 
