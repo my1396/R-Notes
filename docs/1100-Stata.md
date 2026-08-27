@@ -40,6 +40,12 @@ Overview of [Documentation](https://www.stata.com/features/documentation/):
 
 ### Quick Start {-}
 
+- **Comment**: `*` and `//` for single line comment; `/* */` for multiple line comment.
+  
+  `**#` (VS Code) or `//#` (Stata) add a **bookmark**. Multiple level bookmarks: add more `#` to indicate different levels of bookmarks. E.g., `**##` or `//##` for level 2 bookmark, `**###` or `//###` for level 3 bookmark, etc.
+
+- Line continuation: `///` line-join indicator
+
 ```{.stata .nowrap}
 // load the auto dataset
 . sysuse auto, clear
@@ -154,6 +160,14 @@ ref: [Stata's interface](https://www.stata.com/features/overview/graphical-user-
 <a id="stata-vscode"></a>
 
 ### Run Stata in VS Code {-}
+
+**Keyboard shortcuts**
+
+| Keyboard Shortcut | Description   |
+| ----------- | ---------------------------- |
+| ⇧⌘Enter     | Run selection / current line |
+
+
 
 <img src="https://deepecon.gallerycdn.vsassets.io/extensions/deepecon/stata-mcp/0.5.2/1776607086271/Microsoft.VisualStudio.Services.Icons.Default" alt="" width="55" height="55" style="display: inline; vertical-align: middle;" /> You can run Stata in VS Code using the [Stata MCP](https://marketplace.visualstudio.com/items?itemName=DeepEcon.stata-mcp) extension.
 
@@ -302,7 +316,7 @@ Create a `.do` file, then the toolbar will show as below.
 
 Alternatively, use Command Palette to run commands: "Stata: Interactive Mode" to open interactive Stata.
 
-- Run Selection / Current Line Shortcut: ⇧⌘Enter
+- Run Selection / Current Line Shortcut: <span class="env-green">⇧⌘Enter</span>
 
 - Show outline: 
   
@@ -357,7 +371,7 @@ You can have an overview of the variables in the sidebar, quick sort and filter,
 
 Click "**Explore**" in the variable list to have a quick summary of the variable, including its distribution, missing values, and summary statistics.
 
-<img src="images/stata explore variable.png" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
+<img src="images/stata explore variable.png" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:60%;" />
 
 
 

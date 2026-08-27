@@ -3061,6 +3061,13 @@ Change file name based on metadata:
 - when `params.solution` is true, render to `quiz-solutions.pdf`
 - when `params.solution` is false, render to `quiz-question.pdf`
 - both files can be generated using `render-quiz.sh` script, see the shared library.
+  
+  To make `render-quiz.sh` available regardless of your current working directory, add a symlink to your `PATH` environment variable, e.g.,
+
+  ```bash
+  ln -s /path/to/render-quiz.sh ~/.local/bin/render-quiz.sh
+  ```
+
 - To support Quarto Preview, create symlinks that link solution/question files to `quiz.pdf`. The file name `quiz.pdf` is used in Quarto Preview to load files; it has to be consistent with `quiz.qmd`.
 
 Work flow:

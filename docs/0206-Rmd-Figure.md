@@ -3,7 +3,7 @@
 The idea is to generate the figure, output to local, then reload using the following code. 
 
 ~~~~markdown
-```{r car-plot, eval=TRUE, echo=FALSE, out.width="80%", fig.cap="Caption here." }
+```{r car-plot, eval=TRUE, echo=FALSE, out.width="80%", fig.align="center", fig.cap="Caption here." }
 knitr::include_graphics(img1_path) 
 ```
 ~~~~
