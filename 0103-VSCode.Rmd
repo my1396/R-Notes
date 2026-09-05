@@ -833,6 +833,7 @@ It sounds like R Markdown.
      It should look something like this:
      <img src="https://www.practicaldatascience.org/_images/vscode_r_kernel.png" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
 
+
 ## Render Jupyter notebook
 
 You can use `quarto` to convert Jupyter notebooks (`.ipynb`) to other formats such as HTML, PDF, or Markdown. It uses the document YAML to decide which format to convert to.
@@ -854,14 +855,16 @@ In terminal, run the following command to render the notebook:
 quarto render notebook.ipynb
 ```
 
+--------------------------------------------------------------------------------
+
 You can specify multiple formats in a markdown cell of your notebook:
   
 ```yml
 ---
 title: "Jupyter Notebook with R Kernel"
-format: 
- html: default
- pdf: default
+format:
+  html: default
+  pdf: default
 ---
 ```
 
@@ -874,6 +877,22 @@ Note that when rendering an `.ipynb` <span class="env-orange">Quarto will **NOT*
 The presumption is that you have already executed them while editing the notebook.
 </div>
 
+--------------------------------------------------------------------------------
+
+**Add theme to your notebook** by specifying the theme in the YAML header:
+
+```yml
+---
+title: "Jupyter Notebook with R Kernel"
+format: 
+  html: 
+    theme:
+      light: flatly
+      dark: darkly
+    respect-user-color-scheme: true
+  pdf: default
+---
+```
 
 
 --------------------------------------------------------------------------------
@@ -1347,6 +1366,45 @@ display_html(as.character(results))
 `IRdisplay::display_html()` print html as it is, <span class="env-green">equivalent to `results="asis"`</span> chunk option in R Markdown.
 
 - One additional benefit is that it will print LaTeX table when your output format is PDF. → PDF robust. ✅
+
+--------------------------------------------------------------------------------
+
+**Show numbers in percent**
+
+<span class="env-green">`scales::percent(x, accuracy)`</span> takes a numeric vector `x` and returns a *character* vector with the values formatted as percentages.
+
+- `accuracy`: a number to round to. For example, `accuracy = 0.01` will round to the nearest 0.01 (1%).
+
+```r
+library(scales)
+summary_stats %>% 
+  mutate(across(min:sd, ~ percent(., accuracy = 0.01)))
+```
+
+will format columns between `min` and `sd` as percentages with 2 decimal places.
+
+<div class="rmd-note">
+Note: `scales` is a dependency of `tidyverse`, so you don't need to install it separately if you have `tidyverse` installed. However, you need to load it with `library(scales)` to use the `percent()` function. When you have `library(tidyverse)`, it won't load `scales` automatically, so you need to load it explicitly.
+</div>
+
+Another common use case is to format `ggplot2` axis labels as percentages. You can use `scale_y_continuous(labels = scales::percent_format)` to format the y-axis labels as percentages.
+
+```{r out.width="50%"}
+library(ggplot2)
+
+df <- data.frame(
+  x = 1:4,
+  y = c(0.15, 0.30, 0.45, 0.60)
+)
+
+ggplot(df, aes(x, y)) +
+  geom_line() +
+  scale_y_continuous(
+    labels = scales::percent_format()
+  ) +
+  theme_minimal(base_size = 14)
+```
+
 
 --------------------------------------------------------------------------------
 
