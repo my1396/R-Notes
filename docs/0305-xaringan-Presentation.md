@@ -266,7 +266,7 @@ will be rendered as:
 <span class="class">text to be styled</span>
 ```
 
-<div class="rmdnote">
+<div class="rmd-note">
 A good practice is to all a blank line before `.class[` and after its closing `]` when the block sits next to ordinary text.
 </div>
 

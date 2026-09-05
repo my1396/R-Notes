@@ -1048,7 +1048,7 @@ ggplot(the_variable, aes(x=Water_receive, y=water_stress, fill=year)) +
    -   These are values that are unusually high or low relative to the bulk of the data.
 
 
-::: {.rmdnote}
+::: {.rmd-note}
 **Summary of boxplot**
 
 - Box: middle 50% of the data

@@ -1,5 +1,6 @@
 # Quarto
 
+**Install:** <https://quarto.org/docs/get-started/>
 
 **Useful resources:**
 
@@ -39,7 +40,7 @@ If you have multiple .qmd files in one directory, it's a good practice to create
 
   In each `.qmd` file, you provide file-specific YAML options, e.g, `title`, `author`, `date`, etc.
 
-  <div class="rmdnote">
+  <div class="rmd-note">
   <i class="codicon codicon-lightbulb-sparkle env-green" aria-hidden="true" style="font-size:1.5em; vertical-align: middle;"></i> Always create a `_quarto.yml` file in the root of your project directory and put your shared YAML options there. 
   </div>
 
@@ -61,7 +62,7 @@ If you have multiple .qmd files in one directory, it's a good practice to create
 
   One distinction between `book` and `website` is that when you have pdf output, `book` will compile all chapters into a single pdf file, while `website` will compile each chapter into a separate pdf file.
 
-  <div class="rmdnote">
+  <div class="rmd-note">
   <i class="codicon codicon-lightbulb-sparkle env-green" aria-hidden="true" style="font-size:1.5em; vertical-align: middle;"></i> Use `book` type for course materials so that you have a single pdf file for the whole course. 
   </div>
 
@@ -398,7 +399,12 @@ format:
   For example, you can specify themes for HTML and pdf macros.
 
 
-ref: 
+::: {.callout-tip}
+If you would like to specify common metadata for documents inside a sub-directory our your project, you can do so by adding a file called <span class="env-green">`_metadata.yml`</span> to the sub-directory. Read more in the Quarto Documentation at [Directory Metadata](https://quarto.org/docs/projects/quarto-projects.html#directory-metadata).
+:::
+
+
+ref:
 
 - [Book Structure](https://quarto.org/docs/books/book-structure.html)
 
@@ -903,7 +909,7 @@ Subkeys for <span class="env-green">`include-in-header`</span>:
 
 - If you omit `file:` or `text:`, Quarto assumes `file:` by default.
 
-<div class="rmdnote">
+<div class="rmd-note">
 `include-in-header` 优先级最高，高于 Quarto top level `pdf` options. 比如既设置了 `mainfont: Charter`，又在 `include-in-header` 中设置了 `\setmainfont{Georgia Pro}`，两者会冲突，但由于 `include-in-header` 优先级更高，所以最终的字体是 `Georgia Pro`。
 
 如果你的 `include-in-header:file` 也中设置了字体，那么最后定义的字体会覆盖之前的设置。即谁后定义的字体，谁就生效。
@@ -1024,12 +1030,16 @@ A: [Unresolved] for a single file. For a project with multiple files, you can se
 --------------------------------------------------------------------------------
 
 Q: How to print dollar sign in pdf output?  
-A: In pdf output, `qmd` supports `$` directly. No need to escape. 
+A: 
 
-In html output, `$` will be treated as inline math.
-If you have both pdf and html outputs, use `\$` to print `$` in both outputs.
+- In pdf output, `qmd` supports `$` directly. No need to escape. 
 
-If it still doesn't work, use `\\$`. 
+- In html output, `$` will be treated as inline math, use `\\$` to print `$`.
+
+- If you have both pdf and html outputs, use `[\$200].{.mathjax_ignore}` or `<span class="mathjax_ignore">\$200</span>`.
+
+  `.mathjax_ignore` is a class name used to mark elements whose contents should NOT be processed by MathJax.
+ 
 
 
 --------------------------------------------------------------------------------
@@ -1297,7 +1307,7 @@ format:
 
   If you have `self-contained: true` in your YAML, the standalone `report.html` will include all the resources embedded within it.
 
-  <div class="rmdnote">
+  <div class="rmd-note">
   If you have embeded external CSS style sheets, e.g., `css: /path/to/custom-style.css`, in order to render your qmd successfully, you need to set `self-contained: true` to embed the CSS file into the HTML output. Otherwise, you will get an error like `Error: /path/to/custom-style.css (404 Not found)`.
   </div>
 
@@ -1514,7 +1524,7 @@ Difference btw a standalone webpage from a component of a `qmd` project
 
 --------------------------------------------------------------------------------
 
-### In terminal {-}
+### In terminal
 
 I think using terminal is the most convienient way to render Quarto documents/projects.
 
@@ -1531,7 +1541,22 @@ But in Quarto, you can use `quarto preview` to see the changes in real time. Sav
   
   [**Options:**](https://quarto.org/docs/cli/render.html)
   
-  - `--to` or `-t`: specify the output format(s). You can specify multiple formats by separating them with commas, e.g., `--to html,pdf`. If you don't specify any format, Quarto will render the default format.
+  - `--to` or `-t`: specify the output format(s). You can specify multiple formats by separating them with commas, e.g., `--to html,pdf`. 
+  
+  - <span class="env-green">If you don't specify any format, Quarto will render the default format.</span>
+
+
+<div class="rmd-note">
+<i class="codicon codicon-lightbulb-sparkle env-green" aria-hidden="true" style="font-size:1.5em; vertical-align: middle;"></i> For fast render, add the following to your `_quarto.yml` file:
+
+```yaml
+execute: 
+  freeze: auto
+```
+
+This will only re-render the changed files in your project, which can save a lot of time when you have a large project with many files.
+</div>
+
 
 - <span class="env-green">Quarto Preview</span>: display output in the **external web browser**.
 
@@ -1595,7 +1620,7 @@ Can use [Simple Browser Multi Extension](https://marketplace.visualstudio.com/it
 
 --------------------------------------------------------------------------------
 
-### In VS Code {-}
+### In VS Code
 
 
 <span class="env-orange">By default Quarto does NOT automatically render</span> `.qmd` or `.ipynb` files when you save them. This is because rendering might be very time consuming (e.g. it could include long running computations) and it's good to have the option to save periodically without doing a full render.
@@ -1662,11 +1687,13 @@ Copy and paste the url to the internal browser in VS Code. The command supports 
 
 --------------------------------------------------------------------------------
 
-### In R {-}
+### In R
 
 `quarto::quarto_render(input = NULL, output_format = "html")` can be used to render a Quarto document or project in R.
 
 - If `input` is not specified, it will render the current Quarto project. If `input` is specified, it will render the specified Quarto document.
+  
+  `quarto_render()` supports <span class="env-green">`.Rmd`, `.qmd`, and `.ipynb</span>` files.
 
 - If `output_format` is not specified, it will render the document to HTML. You can specify other formats such as PDF or Word. 
   - `output_format = "all"` will render all formats specified in the `_quarto.yml` file.
@@ -1687,6 +1714,32 @@ quarto::quarto_render(output_format = "pdf")
 ```
 
 Alternatively, you can use the **Render** button in RStudio. The Render button will render the first format listed in the document YAML. If no format is specified, then it will render to HTML.
+
+<a id="quarto-render-in-R"></a>
+
+#### Render `.ipynb`
+
+```r
+# Render a Jupyter notebook
+quarto_render("jupyter-r.ipynb")
+
+# Re-execute and render
+quarto_render("jupyter-r.ipynb", execute = TRUE)
+```
+
+By default, `quarto_render()` will <span class="env-orange">NOT</span> re-execute the notebook. If you want to re-execute the notebook, set <span class="env-green">`execute = TRUE`</span>.
+
+<div class="rmd-note">
+Execute the notebook using `quarto_render()` requires `QUARTO_PYTHON` environment variable to be set to the path of the Python executable that has Jupyter stack and `pyyaml` installed. 
+</div>
+
+In my case, create a `~/.Renviron` file and add the following line:
+
+```bash
+QUARTO_PYTHON=/Users/menghan/anaconda3/bin/python
+```
+
+This will be available to all R sessions.
 
 --------------------------------------------------------------------------------
 
@@ -2569,7 +2622,7 @@ crossref:
 
 ### Tables in Latex
 
-<div class="rmdcaution">
+<div class="rmd-caution">
 Tables in raw LaTeX work ONLY when the output format is PDF.
 In HTML output, the LaTeX code will be ignored and the table won't show.
 </div>
@@ -3256,6 +3309,10 @@ The undersore in the file name indicates that it is a helper file that is not me
 It is just a nice convention for the included files.
 You should always use an underscore prefix with included files so that they are automatically ignored (i.e. not treated as standalone files) by a `quarto render` of a project.
 
+<div class="rmd-note">
+You can use relative path to include the `_setup.qmd` file, e.g., `{{< include ../_setup.qmd >}}` if the `_setup.qmd` file is in the parent directory.
+</div>
+
 I think this is the most concise way to include shared chunk options. Other options: put the shared chunk options in a separate `.R` file and source it in the setup chunk of your `.qmd` file:
 
 ````markdown 
@@ -3272,7 +3329,7 @@ If you have
 {{< include _setup.R >}}
 ```
 
-the `_setup.R` will <span class="env-orange">NOT be executed it NOT inserted</span>. For inserting the content of an `.R` file, you need to quote the shortcode with triple backticks as follows.
+the `_setup.R` will <span class="env-orange">NOT be executed or inserted</span>. For inserting the content of an `.R` file, you need to quote the shortcode with triple backticks as follows.
 
 --------------------------------------------------------------------------------
 

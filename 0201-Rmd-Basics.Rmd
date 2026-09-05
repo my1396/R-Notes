@@ -112,14 +112,14 @@ will be converted to the HTML code below:
 You need to add custom CSS for the class `greeting` and `message` to style the block.
 
 
-Use example: define `rmdnote` class in CSS, then use `::: {.rmdnote}` to create a note block.
+Use example: define `rmd-note` class in CSS, then use `::: {.rmd-note}` to create a note block.
 
 
 
 Add to your CSS file:
 
 ```css
-.rmdnote, .rmdtip, .rmdwarning, .rmdimportant, .rmdcaution {
+.rmd-note, .rmd-tip, .rmd-warning, .rmd-important, .rmd-caution {
   padding: 10px 15px;
   margin: 1.2em 0;
   border-radius: 5px;
@@ -127,14 +127,14 @@ Add to your CSS file:
 }
 
 /* Light theme */
-.rmdnote {
+.rmd-note {
   background-color: #e8f4fd;
   border-left-color: #3498db;
   color: #1a3a4a;
 }
 
 /* Night theme overrides */
-.book.color-theme-2 .rmdnote {
+.book.color-theme-2 .rmd-note {
   background-color: #1a2e3a;
   color: #a8d4f0;
   border-left-color: #3498db;
@@ -145,31 +145,31 @@ Add to your CSS file:
 To create a note block, use:
 
 ```markdown
-::: {.rmdnote}
+::: {.rmd-note}
 This is a note.
 :::
 ```
 
 will be rendered as:
 
-::: {.rmdnote}
+::: {.rmd-note}
 This is a note.
 :::
 
 
-::: {.rmdtip}
+::: {.rmd-tip}
 This is a tip.
 :::
 
-::: {.rmdwarning}
+::: {.rmd-warning}
 This is a warning.
 :::
 
-::: {.rmdimportant}
+::: {.rmd-important}
 This is important.
 :::
 
-::: {.rmdcaution}
+::: {.rmd-caution}
 This is caution.
 :::
 

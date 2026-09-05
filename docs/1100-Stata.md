@@ -253,7 +253,7 @@ Without MCP, each AI tool needs its own Stata integration. With MCP, any AI tool
 
   Paste the **set up prompt** below into any MCP-aware assistant — Claude Code, OpenAI Codex, Cursor AI, Copilot Chat, etc. 
   
-  <div class="rmdnote">
+  <div class="rmd-note">
   Remember to use the correct port number you specified in `stata-vscode.mcpServerPort`.
   </div>
   

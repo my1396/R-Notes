@@ -1,6 +1,6 @@
 # VS Code
 
-[`vscode-R`](https://github.com/REditorSupport/vscode-R/wiki) is the R Extension for Visual Studio Code. The extension is mainly focused on providing language service based on static code analysis and user interactivity between VS Code and R sessions.
+[`vscode-R`](https://github.com/REditorSupport/vscode-R/wiki) is the **R Extension** for Visual Studio Code. The extension is mainly focused on providing language service based on static code analysis and user interactivity between VS Code and R sessions.
 
 You can run R in VS Code. Simply open the folder containing your R scripts in VS Code, and then open the command palette (`Cmd+Shift+P`) and type "R: Create R terminal". This will start an R session in the terminal.
 
@@ -150,35 +150,35 @@ A: In the terminal, run
 
 ```bash
 $pipx install radian
-  installed package radian 0.6.15, installed using Python 3.13.5
-  These apps are now globally available
+  
+installed package radian 0.6.15, installed using Python 3.13.5
+These apps are now globally available
     - radian
-⚠️  Note: '/Users/menghan/.local/bin' is not on your PATH environment variable. These apps will not be globally
-    accessible until your PATH is updated. Run `pipx ensurepath` to automatically add it, or manually modify your PATH in
-    your shell's config file (e.g. ~/.bashrc).
+⚠️  Note: '/Users/menghan/.local/bin' is not on your PATH environment variable. These apps will not be globally accessible until your PATH is updated. Run `pipx ensurepath` to automatically add it, or manually modify your PATH in your shell's config file (e.g. ~/.bashrc).
 done! ✨ 🌟 ✨
-
-$pipx ensurepath
-
-/Users/menghan/.local/bin has been been added to PATH, but you need to open a new terminal or re-login for this PATH
-    change to take effect. Alternatively, you can source your shell's config file with e.g. 'source ~/.bashrc'.
-
-You will need to open a new terminal or re-login for the PATH changes to take effect. Alternatively, you can source your
-shell's config file with e.g. 'source ~/.bashrc'.
 ```
 
-N.B. If you have `zsh` as your shell, you need to run `source ~/.zshrc` instead of `source ~/.bashrc`.
+```bash
+$pipx ensurepath
+
+/Users/menghan/.local/bin has been been added to PATH. 
+You will need to open a new terminal or re-login for the PATH changes to take effect. Alternatively, you can source your shell's config file with e.g. 'source ~/.bashrc'.
+```
+
+N.B. If you have `zsh` as your shell, you need to run <span class="env-green">`source ~/.zshrc`</span> instead of `source ~/.bashrc`.
+
+--------------------------------------------------------------------------------
 
 To find where `radian` is installed, you can run:
 
 ```bash
-which radian
+$which radian
 /Users/menghan/.local/bin/radian
 ```
 
 This is the path to the `radian` executable.
 
-After adding Radian to your PATH, you can invoke it in the terminal by simply typing `radian`.
+<span class="env-green">After adding Radian to your PATH</span>, you can invoke it in the terminal by simply typing <span class="env-green">`radian`</span>.
 
 ```bash
 $radian
@@ -209,8 +209,12 @@ Add the following settings to your `settings.json` file:
 
 **Options:**
 
-- `r.rterm.mac`: Path to the Radian executable.
+<a id="r-rterm-mac"></a>
+
+- <span class="env-green">`r.rterm.mac`</span>: Path to the Radian executable. 
+
 - `r.bracketedPaste`: Enables bracketed paste mode, which allows pasting code without executing it immediately. This is useful if you want to paste multiple lines of code into the console at once.
+
 - `r.sessionWatcher`: Enables [session watcher](https://github-wiki-see.page/m/REditorSupport/vscode-R/wiki/R-Session-watcher) to monitor the R session. Specifically, 
   
     - Show value of session symbols on hover
@@ -783,7 +787,9 @@ It sounds like R Markdown.
 
   This is nice in part because qmd (like Rmd) is more easily handled by **version control** and with shell commands than the JSON format of `.ipynb` files.
 
-**Tutorial:**
+--------------------------------------------------------------------------------
+
+**Tutorials:**
 
 - [IRkernel Install](https://irkernel.github.io/installation/)
 - [IRkernel CRAN Documentation](https://cran.r-project.org/web/packages/IRkernel/refman/IRkernel.html)
@@ -792,20 +798,33 @@ It sounds like R Markdown.
 - [Jupyter Tutorial](https://jupyter-tutorial.readthedocs.io/en/24.1.0/kernels/r.html)
 - [repr options](https://irkernel.github.io/docs/repr/0.6/repr-options.html)
   
-  [`repr`](https://irkernel.github.io/docs/repr/0.9/) is a package that provides rich representations for R objects in Jupyter notebooks. It allows you to customize how R objects are displayed in the notebook, including options for controlling the size and format of plots, tables, and other output.
+  [`repr`](https://irkernel.github.io/docs/repr/0.9/) is a package that provides rich representations for R objects in Jupyter notebooks. 
+  
+  It allows you to customize how R objects are displayed in the notebook, including options for controlling the size and format of plots, tables, and other output.
 
   [repr CRAN Documentation](https://cran.r-project.org/web/packages/repr/index.html)
 
+--------------------------------------------------------------------------------
+
+**Set up R kernel in Jupyter notebook:**
 
 1. Install [IRkernel](https://github.com/IRkernel/IRkernel)
+   
    ```r
    install.packages("IRkernel")
    IRkernel::installspec() 
    ```
    
    - Note this needs to be run in the R terminal or Radian (running in RStudio does not work).
-   - `IRkernel::installspec()` makes the R kernel available to Jupyter. It lets Jupyter to use the default system R kernel instead of the R provided by Anaconda.
-2. Reload window. Open command palette and type "**Jupyter: Create New Blank Notebook**" to create a new Jupyter notebook.
+     
+     `install.packages("IRkernel")` will automatically install the dependencies `repr` and `IRdisplay`.
+   
+   - `IRkernel::installspec()` makes the R kernel available to Jupyter. → This step is important, don't forget to run it.
+     
+     It lets Jupyter to use the default system R kernel instead of the R provided by Anaconda.
+
+2. Reload window. Then open command palette and type "**Jupyter: Create New Blank Notebook**" to create a new Jupyter notebook.
+
 3. Click on the button right below ellipsis in upper right corner to choose kernel
    - Select **Jupyter Kernels** > **R** to use the R kernel.
      
@@ -833,7 +852,33 @@ In terminal, run the following command to render the notebook:
 quarto render notebook.ipynb
 ```
 
-Note that when rendering an `.ipynb` Quarto will **NOT** execute the cells within the notebook by default (the presumption being that you already executed them while editing the notebook). If you want to execute the cells you can pass the `--execute` flag to render:
+You can specify multiple formats in a markdown cell of your notebook:
+  
+```yml
+---
+title: "Jupyter Notebook with R Kernel"
+format: 
+ html: default
+ pdf: default
+---
+```
+
+Then when you run `quarto render notebook.ipynb` in Terminal, it will generate both HTML and PDF outputs.
+
+
+<div class="rmd-caution">
+Note that when rendering an `.ipynb` <span class="env-orange">Quarto will **NOT** execute the cells within the notebook **by default**</span>. 
+
+The presumption is that you have already executed them while editing the notebook.
+</div>
+
+
+
+--------------------------------------------------------------------------------
+
+**Re-execute when rendering a Jupyter notebook**
+
+If you want to re-execute the cells you can pass the `--execute` flag to render:
 
 ```bash
 quarto render notebook.ipynb --execute
@@ -857,7 +902,137 @@ path
 [NotebookContext]: Starting Cleanup
 ```
 
-Not resolved...
+The root cause is Quarto’s own notebook runner (`Applications/quarto/share/jupyter/notebook.py`). Quarto looks for a language-specific helper directory under `Applications/quarto/share/jupyter/lang`. These are small setup/cleanup templates Quarto injects around notebook execution. 
+
+My notebook specifies the R kernel, but there is no helper directory for R under `Applications/quarto/share/jupyter/lang`. There are only helper directories for Python and Julia by default.
+
+Fix: In your notebook's metadata, add `metadata.kernelspec.path` pointing to your installed **IR kernelspec directory** as follows:
+
+Before modification:
+
+```json
+{
+  "metadata": {
+    "kernelspec": {
+    "display_name": "R",
+    "language": "R",
+    "name": "ir"
+    },
+  }
+}
+```
+**After modification:**
+
+```json
+{
+  "metadata": {
+     "kernelspec": {
+      "display_name": "R",
+      "language": "R",
+      "name": "ir",
+      "path": "/Users/menghan/Library/Jupyter/kernels/ir"
+     },
+  }
+}
+```
+
+Use `jq` and `sponge` to modify the notebook metadata:
+
+1. Install `moreutils` (for `sponge`) if you don't have them:
+   
+   ```bash
+   $brew install moreutils
+   # verify installation
+   $which sponge
+   ```
+
+   Usually `jq` is already installed on MacOS. If not, install it with `brew install jq`.
+
+   Use `jq --version` to check if you have it installed.
+
+<a id="jq-update-notebook-kernelspec"></a>
+
+2. Run the following command to update the notebook metadata. Replace `<notebook>` with your notebook file name:
+   
+   ```bash
+   jq '.metadata.kernelspec.path = "/Users/menghan/Library/Jupyter/kernels/ir"' \
+     <notebook>.ipynb | sponge <notebook>.ipynb
+   ```
+
+`/Users/menghan/Library/Jupyter/kernels/ir` is Jupyter's default location for the IR kernel. 
+
+<div class="rmd-caution">
+Quarto's shipped helper directory are lowercase names like `python` and `julia`. But in R notebook's metadata (`metadata.kernelspec.language` and `metadata.language_info.name`), the language name is capitalized as `R`. 
+This mismatch will cause Quarto to fail to find the helper directory for R.
+</div>
+
+When kernelspec path is set correctly, if you run `quarto render <notebook>.ipynb --execute`, it will show the following output in the terminal:
+
+```bash
+$quarto render "jupyter-r.ipynb" --execute 
+
+Starting ir kernel...Done
+
+Executing 'jupyter-r.ipynb'
+  Cell 1/9: ''...Done
+  Cell 2/9: ''...Done
+  Cell 3/9: ''...Done
+  ...
+```
+
+**Troubleshooting:** ModuleNotFoundError like the following
+
+```
+ModuleNotFoundError: No module named 'yaml'
+Python 3 installation:
+  Version: 3.14.7 (Conda)
+  Path: /Users/menghan/Library/CloudStorage/OneDrive-Norduniversitet/FIN5005/.conda/bin/python
+  Jupyter: (None)
+
+Jupyter is not available in this Python installation.
+Install with conda install jupyter
+```
+
+**Cause:** If you have multiple virtual environments, Quarto may be using a different Python environment than the one you installed Jupyter in.
+
+**Fix:** Specify `QUARTO_PYTHON` environment variable to point to the Python environment where Jupyter is installed. 
+
+Add the following to your `~/.zshrc` file:
+
+```bash
+# Quarto's Jupyter engine needs a Python with pyyaml + the jupyter stack.
+# Auto-activated project envs are often bare, and quarto would otherwise
+# pick them off PATH. QUARTO_PYTHON overrides that detection.
+export QUARTO_PYTHON=/Users/menghan/anaconda3/bin/python
+```
+
+--------------------------------------------------------------------------------
+
+It is possible to use `quarto::quarto_render()` in R to render a Jupyter notebook. You need to specify the correct Python environment in [`~/.Renviron`](#quarto-render-in-R).
+
+```r
+# render jupyter notebook in R
+library(quarto)
+
+# this won't re-execute the notebook, it will just render the notebook with the current output
+quarto_render("jupyter-r.ipynb")
+
+# re-execute the notebook and render it
+quarto_render("jupyter-r.ipynb", execute = TRUE)
+```
+
+--------------------------------------------------------------------------------
+
+If you need a system-wide fix, you can add a patch to Quarto's `notebook.py` file to handle the R kernel. But this solution is brittle and will be overwritten when Quarto is updated.
+
+Add a Quarto helper directory for R (in `Applications/quarto/share/jupyter/lang`), so that `metadata.kernelspec.path` is set to "/Users/menghan/Library/Jupyter/kernels/ir".
+
+Or is it possible to change the Jupyter template to add `metadata.kernelspec.path` when creating a new notebook?
+
+To be continued ...
+
+At the moment, I just manually add the [`metadata.kernelspec.path`](#jq-update-notebook-kernelspec) to the notebook metadata after creating a new notebook.
+
 
 --------------------------------------------------------------------------------
 
@@ -976,11 +1151,6 @@ These chunk options will not show up in the notebook rendered output, but they w
 #| echo: false
 #| message: false
 #| warning: false
-#| fig-dpi: 300
-#| fig-width: 6
-#| fig-height: 4
-#| fig-align: center
-#| out-width: 70%
 
 # generate a plot
 p <- ggplot(mtcars, aes(x = wt, y = mpg)) +
@@ -988,9 +1158,6 @@ p <- ggplot(mtcars, aes(x = wt, y = mpg)) +
   theme_bw(base_size = 16)
 p
 ```
-
-`fig-width` and `fig-height` control the aspect ratio of the plot, while `out-width` controls the display width of the plot in the notebook. Setting `out-width` to a percentage value (e.g., `70%`) allows the plot to scale responsively within the notebook layout.
-
 
 --------------------------------------------------------------------------------
 
@@ -1000,31 +1167,46 @@ The built-in image rendering in Jupyter notebooks is not very flexible. It rende
 
 --------------------------------------------------------------------------------
 
+<a name="jupyter-save-load-images"></a>
+
 **Save and load images**
 
-Use `IRdisplay` to control plot size in Jupyter notebooks: ✅
+For precise control over the size of the image and best display quality, the best option is to save the image to a file and then load it into the notebook with controlled width.
 
-1. generate the image and save it to a file, e.g., `temp-plot.png`
+1. Generate the image and save it to a file, e.g., `temp-plot.png`
    
+   Specify the width and height in inches.
+
    ```r
    ggsave(f_name, p, width = 6, height = 4, dpi = 300, units = "in")
    ```
-2. insert a code cell and load the image using `IRdisplay::display_html()`
 
-   ```r
-   #| echo: false
-   # Display the image with controlled width using HTML
-   library(IRdisplay)
-   display_html(paste0('<img src="', f_name, '" style="width: 70%; height: auto;">'))
-   # center the image
-   display_html(paste0('<div style="text-align: center;"><img src="', f_name, '" style="width: 70%; height: auto;"></div>'))
-   ```
+2. Load the image with relative width.
+   
+   - Use markdown syntax. ✅
 
-Alternatively, use markdown syntax. This supports both HTML and PDF output.
+     ```markdown
+     ![Alt text](temp-plot.png){width=70%}
+     ```
+     
+     This supports both HTML and PDF output. 
+   
+   - **Alternatively**, use `IRdisplay::display_html()`
 
-```markdown
-![Alt text](temp-plot.png){width=70%}
-```
+     ```r
+     #| echo: false
+     # Display the image with controlled width using HTML
+     library(IRdisplay)
+     display_html(paste0('<img src="', f_name, '" style="width: 70%; height: auto;">'))
+     # center the image
+     display_html(paste0('<div style="text-align: center;"><img src="', f_name, '" style="width: 70%; height: auto;"></div>'))
+     ```
+
+     `IRdisplay` has a `display_png()` function, but you have to specify the width and height in pixels, which is not ideal. ❌
+
+     Q: Why absolute width in pixels/inches is not ideal?  
+     A: For one, it is hard to know which size is suitable. Secondly, pixels depend on the DPI/PPI of the output device. Higher DPI/PPI will make the image smaller, while lower DPI/PPI will make the image larger. → Just tricky to control with absolute width.
+
 
 --------------------------------------------------------------------------------
 
@@ -1066,39 +1248,36 @@ Define `scroll-img` class in your CSS file to make the image scrollable when it 
 
 **Control plot size as you plot**
 
-- Use `repr` options to control the size of plots in Jupyter notebooks output cell.
+- Use R options (`repr`) to control the size of plots in Jupyter notebooks **output cell** and the output document.
   
-  Set `repr.plot.width` and `repr.plot.height` options to control the width and height of plots in inches. This will affect *all subsequent plots* in the notebook. → NOT good.
+  Set `repr.plot.width` and `repr.plot.height` options to control the width and height of plots in <span class="env-green">inches</span>. This will affect *all subsequent plots* in the notebook. → NOT good. ❌
+
+  If you specify `repr.plot.width` wider than the page width (> 8.25 inches for A4 page), the plot will be cropped in the output document. ❌
 
   ```r
-  options(repr.plot.width = 12, repr.plot.height = 8) # controls the size of plots in the notebook output cell, but not the rendered plot size in HTML/PDF
+  options(repr.plot.width = 6, repr.plot.height = 6)
   plot(mtcars$wt, mtcars$mpg)
   ```
 
-  Limitations: `repr.plot.width/height` decides how large the image looks in the notebook output cell. It does <span class="env-orange">NOT</span> control how the image is rendered in that interactive context when you export to HTML or PDF. Your plot size settings will be ignored when you `quarto render notebook.ipynb` to HTML or PDF. ❌
+  Another caveat is that the <span class="env-green">figure element does NOT scale proportionally</span> with the figure size. ❌
 
-  Fix: best to fix aspect ratio and use relative width (e.g., `out-width: 70%`) to control the display size of the plot in the notebook. ✅
-
-- Use chunk options to control the size of plots in Jupyter notebooks. This is more flexible as you can control the size of each plot separately.
+  <div class="rmd-caution">
+  Just too many limitations of using `repr.plot.width` and `repr.plot.height` to control the size of plots in Jupyter notebooks. → NOT recommended. ❌
   
+  It is best to **save** the plot to a file and then **load** it into the notebook with controlled width. [↩](#jupyter-save-load-images)
+  </div>
+
+- Chunk options to control the size of plots will be <span class="env-orange">ignored</span> in Jupyter notebooks. 
+  
+  ❌ The following chunk options will **NOT** work in Jupyter notebooks:
+
   ```r
   #| fig-dpi: 300
-  #| out-width: "80%"
   #| fig-width: 9
   #| fig-height: 6
   
-  options(repr.plot.width = 8, repr.plot.height = 7)  # controls cell output size, but not the rendered plot size in HTML/PDF
   plot(mtcars$wt, mtcars$mpg)
   ```
-
-  `fig-` options control the aspect ratio of the plot when you render the notebook, while `out-width` sets the display width of the plot being 80% of the page width. 
-  
-  `out-width: "80%"` will become:
-
-  - HTML: `width: 80%`
-  - PDF: `\includegraphics[width=0.8\linewidth]{...}`
-  
-  Use `repr.plot.width` and `repr.plot.height` options to control the size of the plot in the notebook output cell.
 
 ref:
 
@@ -1143,26 +1322,37 @@ See [repr CRAN](https://cran.r-project.org/web/packages/repr/refman/repr.html) f
 
 --------------------------------------------------------------------------------
 
-### Print table output
+### Print Table
 
 By default, Jupyter notebooks will print the table as a plain text output, which is not very readable. You can use <span class="env-green">`IRdisplay::display_html()`</span> to display the table as an HTML table, which is more readable and allows you to control the formatting.
 
 ```r
 library(IRdisplay)
 library(knitr)
+
 results <- lapply(asset_df, quick_summary) %>%
     do.call(rbind, .) %>%
-    kable(format = "html", digits = 2, caption = "Descriptive Statistics of Asset Returns")
+    kable(
+      format = "html", 
+      digits = 2, 
+      caption = "Descriptive Statistics of Asset Returns"
+    )
+
+# as.character() is needed to convert the kable object to a character string, which can be passed to display_html()
 display_html(as.character(results)) 
 ```
 
-`IRdisplay::display_html()` print html as it is, equivalent to `results="asis"` chunk option in R Markdown.
+`IRdisplay::display_html()` print html as it is, <span class="env-green">equivalent to `results="asis"`</span> chunk option in R Markdown.
 
-- One additional benefit is that it will print LaTeX table when your output format is PDF.
+- One additional benefit is that it will print LaTeX table when your output format is PDF. → PDF robust. ✅
 
-A bulletproof way to explicitly control the output format of tables depending on the output format of your document is to use `IRdisplay::publish_mimebundle()`. It saves a bundle of different formats (called MIME types) for that single output, and then lets the viewing environment decide which one to use.
+--------------------------------------------------------------------------------
 
-`publish_mimebundle()` takes a named list of MIME types and their corresponding content. For example, you can provide both an HTML version and a LaTeX version of the same table, and the Jupyter frontend will automatically choose which one to render based on the current environment.
+If you want provide specific LaTeX options to `kable()` and `kable_styling()`, you can use `IRdisplay::publish_mimebundle()` to provide both HTML and LaTeX versions of the table.
+
+It saves a bundle of different formats (called MIME types) for that single output, and then lets the viewing environment decide which one to use.
+
+<span class="env-green">`publish_mimebundle()`</span> takes a named `list` of MIME types and their corresponding content. For example, you can provide both an HTML version and a LaTeX version of the same table, and the Jupyter frontend will automatically choose which one to render based on the current environment.
 
 - `text/html`: raw HTML code
 - `text/latex`: raw LaTeX code
@@ -1170,10 +1360,16 @@ A bulletproof way to explicitly control the output format of tables depending on
 ```r
 summary_df <- lapply(asset_df, quick_summary) %>%
     do.call(rbind, .)
+
+# HTML styling
 html_table <- kable(summary_df, format = "html", digits = 2, 
     caption = "Descriptive Statistics of Asset Returns")
+
+# LaTeX styling
 latex_table <- kable(summary_df, format = "latex", digits = 2, 
-    booktabs = TRUE, caption = "Descriptive Statistics of Asset Returns")
+    booktabs = TRUE, linesep = "", 
+    caption = "Descriptive Statistics of Asset Returns") %>% 
+    kable_styling(latex_options = "scale_down")
 
 # Jupyter frontend automatically decides which one to render based on the current environment
 publish_mimebundle(list(
@@ -1181,6 +1377,11 @@ publish_mimebundle(list(
     'text/latex' = as.character(latex_table)
 ))
 ```
+
+**For LaTeX tables:**
+
+- `booktabs = TRUE, linesep = ""` removes extra spacing every five rows.
+- `latex_options = "scale_down"` scales down the table to fit within the page width → Useful for wide tables. Otherwise, the table will be cropped if it exceeds the page width.
 
 --------------------------------------------------------------------------------
 
@@ -1389,6 +1590,70 @@ The following tables shows the icons that you most commonly see in the OUTLINE v
 
 - Constant <i class="codicon codicon-symbol-constant" style="font-size: 1.2em;vertical-align: middle;"></i> applies to Quarto sections. Need to set `"outline.showConstants": true,` to show sections properly in the OUTLINE view.
 
+--------------------------------------------------------------------------------
+
+**R terminal launch error:**
+
+```
+The terminal process "/Users/menghan/.local/bin/radian '--no-save', '--no-restore'" terminated with exit code: 1.
+```
+
+Check if can run 
+
+```bash
+/Users/menghan/.local/bin/radian
+```
+
+if it starts fine, then it is an environment issue, i.e., missing PATH problem.
+
+**Fix:** Add to `settings.json`:
+
+```json
+"terminal.integrated.env.osx": {
+  "PATH": "/usr/local/bin:/Library/TeX/texbin:/Applications/quarto/bin:${env:HOME}/.local/bin:${env:PATH}"
+}
+```
+
+This expands the PATH for the integrated terminal in VS Code, so that it can find R and radian.
+
+**Explanation:**
+
+- VS Code being launched from the Dock (`launchd` never reads `~/.zprofile`), inheriting only the bare launchd PATH. 
+
+  ```
+  launchd → VS Code (`PATH=/usr/bin:/bin:/usr/sbin:/sbin`)  →  radian   ❌ inherits that
+  ```
+
+  R exists in `/usr/local/bin/R`, but that is not in the launchd PATH. So radian cannot find R and fails to start.
+
+- Launching with <span class="env-green">`code .`</span> from a terminal sidesteps the entire class of problem, since VS Code then inherits your real environment. 
+
+  ```
+  Terminal.app  →  zsh -l  →  reads profiles, builds PATH  →  radian   ✅ inherits full PATH
+  ```
+  
+  Changing `terminal.integrated.env.osx` adds the four directories to VS Code's own PATH. But it is static. If you change your PATH in your shell profile (e.g., `~/.zprofile`), VS Code will not see the change until you update `terminal.integrated.env.osx` again.
+  
+  If you'd rather have it self-maintaining, the alternative is pointing [`r.rterm.mac`](#r-rterm-mac) at a `#!/bin/zsh -l` wrapper that execs radian.
+
+--------------------------------------------------------------------------------
+
+To let `r.rterm.mac` point to a wrapper script, create a file `~/.local/bin/radian-vscode`:
+
+```bash
+#!/bin/zsh -l
+exec /Users/menghan/.local/bin/radian "$@"
+```
+
+`chmod +x` it, and set `"r.rterm.mac": "/Users/menghan/.local/bin/radian-vscode"` in `settings.json`.
+
+`radian` now inherits whatever your login files produce at the moment you open the terminal, so it stays correct on its own.
+
+Reading it piece by piece:
+
+- `#!/bin/zsh -l`: VS Code launches this file; the kernel starts `/bin/zsh` with `-l`, making it a *login* shell, so it reads `~/.zshenv`, `~/.zprofile`, `~/.zlogin` and builds your real PATH.
+- `exec`: replaces the zsh process with radian rather than spawning a child. No leftover shell wrapping your session, so `q()`, Ctrl-D, and signals behave exactly as they do now.
+- `"\$@"`: forwards the `--no-save --no-restore` that the extension appends.
 
 --------------------------------------------------------------------------------
 

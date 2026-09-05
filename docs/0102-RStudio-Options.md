@@ -234,10 +234,28 @@ Key2=value2
 
 And then `Sys.getenv("Key1")` will return `"value1"` in an R session.
 
-Like with the `.Rprofile` file, `.Renviron` files can be at either the user or project level. If there is a project-level `.Renviron`, the user-level file will not be sourced. The [usethis](https://usethis.r-lib.org/) package includes a helper function for editing `.Renviron` files from an R session with `usethis::edit_r_environ()`.
+Like with the `.Rprofile` file, `.Renviron` files can be at either the user or project level. 
+
+1. Project-level: `./.Renviron` (in the root of the project directory) 
+2. User-level: `~/.Renviron` 
+
+<div class="rmd-caution">
+There is a hirerachy in sourcing `.Renviron` files. 
+If there is a project-level `.Renviron`, the user-level file will <span class="env-orange">NOT</span> be sourced.
+They won't be merged.
+</div>
+
+The [usethis](https://usethis.r-lib.org/) package includes a helper function for editing `.Renviron` files from an R session with `usethis::edit_r_environ()`.
 
 The `.Renviron` file is most useful for defining sensitive information such as API keys (such as GitHub, Twitter, or Posit Connect) as well as R specific environment variables like the history size (`R_HISTSIZE=100000`) and default library locations `R_LIBS_USER`.
 
+My `~/.Renviron` file looks like this:
+
+```
+QUARTO_PYTHON=/Users/menghan/anaconda3/bin/python
+```
+
+This sets the default Python interpreter for Quarto to use.
 
 
 --------------------------------------------------------------------------------

@@ -30,7 +30,7 @@
   My experience is that it's easier to specify `bins` at first to get a rough idea of the range of the axis. 
   Then specify `binwidth` to get more control over the binning.
 
-  ::: {.rmdimportant}
+  ::: {.rmd-important}
   If you have both `bins` and `boundary` specified, `boundary` might be ignored. 
 
   Use `binwidth` and `boundary` together to ensure that the bins are aligned with the specified boundary.

@@ -105,6 +105,90 @@ Hornet 4 Drive       21.4     6    258   110   3.08
 Hornet Sportabout    18.7     8    360   175   3.15
 ```
 
+--------------------------------------------------------------------------------
+
+### Math in rmd tables
+
+`knitr::kable(x, escape=TRUE)` 
+
+- `escape=TRUE` whether to escape special characters when producing HTML or LaTeX tables. Refer to [`kable` arguments](#escape) for more details.
+  
+  - Defaults to `TRUE`.
+
+    All characters will be printed literally.
+  
+  - When you have LaTeX equations in your table, use `escape = FALSE`.
+    
+    You have to make sure that special characters will not trigger syntax errors in LaTeX or HTML. E.g., if you don't escape `\`, it will cause an error.
+    
+    You need to <span class="env-green">escape backslashes (`\`) passed into the table data</span>.
+
+
+
+
+--------------------------------------------------------------------------------
+
+<a name="escape-example"></a>
+**Example 1 of escaping special characters:** 
+
+
+````markdown
+```{r, echo=FALSE}
+library(knitr)
+
+mathy.df <- data.frame(site = c("A", "B"), 
+                       b0 = c(3, 4), 
+                       BA = c(1, 2))
+
+colnames(mathy.df) <- c("Site", "$\\beta_0$", "$\\beta_A$")
+
+kable(mathy.df, escape=FALSE)
+```
+````
+
+<img src="https://drive.google.com/thumbnail?id=1dD-dt1UDgHAOGtiQ7BHyf86N19Tq9HhA&sz=w1000" alt="rmd table" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
+
+
+
+If your target output is pdf, it is possible to edit Latex table directly in `Rmd`.
+
+- Don't enclose in `$$`.
+- Use `\begin{table}` and start your table data.
+
+--------------------------------------------------------------------------------
+
+
+**Example 2 of escaping special characters:**
+
+
+``` r
+library(knitr)
+
+df <- data.frame(
+  Variable = c("Return", "Variance", "Literal symbols"),
+  Formula = c("$r_t = \\frac{P_t}{P_{t-1}} - 1$", 
+              "$\\sigma^2 = Var(r_t)$",
+              "\\$, \\%, \\_, \\#")
+)
+
+kable(df, escape = FALSE, booktabs = TRUE)
+```
+
+
+
+|Variable        |Formula                         |
+|:---------------|:-------------------------------|
+|Return          |$r_t = \frac{P_t}{P_{t-1}} - 1$ |
+|Variance        |$\sigma^2 = Var(r_t)$           |
+|Literal symbols |\$, \%, \_, \#                  |
+
+
+**Expected behaviors:**
+
+- `Return` row → LaTeX math `$r_t ...$` renders properly.
+- `Variance` row → works with superscripts and variance notation.
+- `Literal symbols` row → shows `$ % _ #` as text in the PDF.
+
 
 --------------------------------------------------------------------------------
 
@@ -152,7 +236,7 @@ Hornet Sportabout    18.7     8    360   175   3.15
   l.532 \end{longtable}
   ```
 
-  <div class="rmdnote">
+  <div class="rmd-note">
   🔥 A more robust option which supports both HTML and LaTeX output is to use <span class="env-green">`format = if (knitr::is_latex_output()) "latex" else "pipe"`</span>. `latex` format will use `tabular` environment instead of `longtable` environment.
 
   You also need to specify `booktabs = TRUE` when you overwrite the `format` argument. Otherwise, all cell borders will be drawn.
@@ -229,94 +313,13 @@ Hornet Sportabout    18.7     8    360   175   3.15
   | Horizontal lines | - Only has horizontal lines for the table header and the bottom row. <br />- Use `\toprule`, `\midrule`, and `\bottomrule` | Use `\hline`  |
   | Row behavior     | A line space is added to every five rows by default.<br />Disable it with `linesep = ""`. | Border for each row. |
 
-- `linesep = ""` remove the extra space after every five rows in kable output (with `booktabs` option)
+- <span class="env-green">`linesep = ""`</span> remove the extra space after every five rows in kable output (with `booktabs` option)
 
   `linesep = c("", "", "", "", "\\addlinespace")` default value; empty line space every 5 rows.
 
-
---------------------------------------------------------------------------------
-
-#### Math in rmd tables
-
-`knitr::kable(x, escape=TRUE)` 
-
-- `escape=TRUE` 	whether to escape special characters when producing HTML or LaTeX tables. Refer to [`kable` arguments](#escape) for more details.
-  - Defaults to `TRUE`.
-  - When `escape = FALSE`, you have to make sure that special characters will not trigger syntax errors in LaTeX or HTML. E.g., if you don't escape `\`, it will cause an error.
+  Note that `linesep = ""` needs to be accompanied with <span class="env-green">`format = "latex"`</span> so that `linesep` will be honored. Otherwise, `kable` will return a markdown table and `linesep` will be ignored.
 
 
-You need to escape backslashes (`\`) passed into the table data.
-
---------------------------------------------------------------------------------
-
-<a name="escape-example"></a>
-**Example 1 of escaping special characters:** 
-
-
-````markdown
-```{r, echo=FALSE}
-library(knitr)
-
-mathy.df <- data.frame(site = c("A", "B"), 
-                       b0 = c(3, 4), 
-                       BA = c(1, 2))
-
-colnames(mathy.df) <- c("Site", "$\\beta_0$", "$\\beta_A$")
-
-kable(mathy.df, escape=FALSE)
-```
-````
-
-<img src="https://drive.google.com/thumbnail?id=1dD-dt1UDgHAOGtiQ7BHyf86N19Tq9HhA&sz=w1000" alt="rmd table" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
-
-
-
-If your target output is pdf, it is possible to edit Latex table directly in `Rmd`.
-
-- Don't enclose in `$$`.
-- Use `\begin{table}` and start your table data.
-
---------------------------------------------------------------------------------
-
-
-**Example 2 of escaping special characters:**
-
-
-``` r
-library(knitr)
-
-df <- data.frame(
-  Variable = c("Return", "Variance", "Literal symbols"),
-  Formula = c("$r_t = \\frac{P_t}{P_{t-1}} - 1$", 
-              "$\\sigma^2 = Var(r_t)$",
-              "\\$, \\%, \\_, \\#")
-)
-
-kable(df, escape = FALSE, booktabs = TRUE)
-```
-
-
-
-|Variable        |Formula                         |
-|:---------------|:-------------------------------|
-|Return          |$r_t = \frac{P_t}{P_{t-1}} - 1$ |
-|Variance        |$\sigma^2 = Var(r_t)$           |
-|Literal symbols |\$, \%, \_, \#                  |
-
-
-**Expected behaviors:**
-
-- `Return` row → LaTeX math `$r_t ...$` renders properly.
-- `Variance` row → works with superscripts and variance notation.
-- `Literal symbols` row → shows `$ % _ #` as text in the PDF.
-
-
-
-
-
-
-
---------------------------------------------------------------------------------
 
 ### `kableExtra`
 
@@ -332,9 +335,9 @@ kable(iris) %>%
 
 
 
-`kableExtra::kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)`
+<span class="env-green">`kableExtra::kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)`</span>
 
-- `bootstrap_options` A character vector for bootstrap table options; for HTML output only.
+- <span class="env-green">`bootstrap_options`</span> A character vector for bootstrap table options; for <span class="env-green">**HTML** output only</span>.
   
   Please see [package vignette](https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html) or visit the w3schools' [Bootstrap Page](https://www.w3schools.com/bootstrap/bootstrap_tables.asp) for more information. 
   
@@ -347,7 +350,7 @@ kable(iris) %>%
   | `condensed`     | Make tables more compact by reducing row height. |
 
 
-- `latex_options`  A character vector for **LaTeX** table options, i.e., won't have effect on HTML tables. 
+- <span class="env-green">`latex_options`</span>  A character vector for <span class="env-green">**LaTeX** table only</span>, i.e., won't have effect on HTML tables. 
 
   Possible options:
 
@@ -374,10 +377,9 @@ kable(wide_table) %>%
 ```
 ````
 
-- `full_width`  A `TRUE` or `FALSE` variable controlling whether the HTML table should have 100% the preferable format for `full_width`. If not specified, 
+- `full_width`  A `TRUE` or `FALSE` variable controlling whether the <span class="env-green">HTML</span> table should have 100% the preferable format for `full_width`. If not specified, 
 
-  - `TRUE` for a HTML table , will have full width by default but 
-  - this option will be set to `FALSE` for a LaTeX table.
+  - `TRUE` for a HTML table , will have full width by default.
 
 
 Rows and columns can be grouped via the functions `pack_rows()` and `add_header_above()`, respectively. 
@@ -418,14 +420,14 @@ result %>%
 
 
 
-#### tables in pdf output
+#### Tables in pdf output
 
 ```r
 reg_data %>% 
     select(Date, adjusted, eRi, rmrf) %>%
     head(10) %>% 
-    knitr::kable(digits = c(0,2,4,4), escape=T, format = "latex", booktabs = TRUE, linesep = "" ) %>%
-    kable_styling(latex_options = c("striped"), full_width = FALSE, stripe_color = "gray!15")
+    knitr::kable(digits = c(0,2,4,4), escape = TRUE, format = "latex", booktabs = TRUE, linesep = "" ) %>%
+    kable_styling(latex_options = c("striped", "scale_down"), stripe_color = "gray!15")
 ```
 
 `knitr::kable()` arguments
@@ -437,6 +439,7 @@ reg_data %>%
 - <span class="env-green">`booktabs = TRUE`</span> is generally recommended for formatting LaTeX tables.
 
 - `linesep = ""` prevents default behavior of extra space every five rows.
+
 
 --------------------------------------------------------------------------------
 
@@ -506,10 +509,12 @@ You can add another row of header on top.
 - Not working for html output.
 
 ```r
-collapse_rows_dt <- data.frame(C1 = c(rep("a", 10), rep("b", 5)),
-                 C2 = c(rep("c", 7), rep("d", 3), rep("c", 2), rep("d", 3)),
-                 C3 = 1:15,
-                 C4 = sample(c(0,1), 15, replace = TRUE))
+collapse_rows_dt <- data.frame(
+  C1 = c(rep("a", 10), rep("b", 5)),
+  C2 = c(rep("c", 7), rep("d", 3), rep("c", 2), rep("d", 3)),
+  C3 = 1:15,
+  C4 = sample(c(0,1), 15, replace = TRUE)
+  )
 
 kableExtra::kbl(collapse_rows_dt, align = "c") %>%
   kable_paper(full_width = F) %>%
@@ -553,7 +558,7 @@ To show the `tibble` information (number of row/columns, and group information) 
 ```yaml
 ---
 title: "Use caption with df_print set to page"
-date: "2026-08-27"
+date: "2026-09-05"
 output:
   bookdown::html_document2:
     df_print: paged
@@ -842,7 +847,7 @@ HTML table can be obtained by specifying `stargazer(model, type = "html")`.
 
 Note that you need to specify <span class="env-green">`results="asis"`</span> in the code **chunk options**. This option tells `knitr` to treat verbatim code blocks "as is." Otherwise, instead of your table, you will see the raw html or latex code.
 
-<div class="rmdimportant">
+<div class="rmd-important">
 Update (June 2026): The stars annotation has been fixed!
 </div>
 
@@ -1304,7 +1309,7 @@ print(xtab, type = "html", include.rownames = TRUE)
 ```
 
 <!-- html table generated in R 4.5.1 by xtable 1.8-4 package -->
-<!-- Thu Aug 27 18:37:11 2026 -->
+<!-- Sat Sep  5 19:19:55 2026 -->
 <table border=1>
 <caption align="bottom"> Asset Parameters </caption>
 <tr> <th>  </th> <th> Asset </th> <th> Mu </th> <th> Sigma </th>  </tr>
@@ -1324,7 +1329,7 @@ print(xtab_model, type = "html", digits = 3)
 ```
 
 <!-- html table generated in R 4.5.1 by xtable 1.8-4 package -->
-<!-- Thu Aug 27 18:37:11 2026 -->
+<!-- Sat Sep  5 19:19:55 2026 -->
 <table border=1>
 <caption align="bottom"> Regression of mpg on hp and wt </caption>
 <tr> <th>  </th> <th> Estimate </th> <th> Std. Error </th> <th> t value </th> <th> Pr(&gt;|t|) </th>  </tr>

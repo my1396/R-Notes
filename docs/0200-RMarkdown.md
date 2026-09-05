@@ -751,6 +751,29 @@ header-includes:
 
 Ex.3
 
+`header-includes` with `bookdown::pdf_document2`
+
+```yml
+---
+title: "Lab 0: Solution Sketch"
+fontsize: 12pt
+header-includes:
+  - \input{../latex/preamble.tex}
+  - \setmainfont{GeorgiaPro-Regular}
+  - \setmathfont{Cambria Math}
+  - \setmathrm{GeorgiaPro-Regular}
+output:
+  bookdown::pdf_document2:
+    toc: false
+    number_sections: false
+    keep_tex: true
+    latex_engine: xelatex
+---
+```
+
+
+Ex.4
+
 To override or extend some CSS for just one document, include for example:
 
 ```yml
