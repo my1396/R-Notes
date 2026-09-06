@@ -1,6 +1,6 @@
 # Quarto
 
-**Install:** <https://quarto.org/docs/get-started/>
+<span class="env-green">**Install:**</span> <https://quarto.org/docs/get-started/>
 
 **Useful resources:**
 
@@ -143,6 +143,49 @@ format:
 Use <span class="env-green">`format`</span> to specify output formats. This is different from Rmd, which uses `output` to specify output formats.
 See [HERE](https://quarto.org/docs/faq/rmarkdown.html#i-use-x-bookdown-blogdown-etc..-what-is-the-quarto-equivalent) for Quarto equivalents of document formats in Rmd.
 
+--------------------------------------------------------------------------------
+
+Multiple output formats can be specified in the `format` section. For example, you can specify both `html` and `pdf` outputs as follows:
+
+```yaml
+---
+title: "My Document"
+format:
+  html: default
+  pdf: default
+---
+```
+
+Then when you run `quarto render my-document.qmd`, Quarto will render both HTML and PDF outputs.
+
+If you want to render only one format, you can specify the format in the command line, e.g.,
+
+```bash
+# Render only HTML output
+quarto render my-document.qmd --to html
+
+# Render only PDF output
+quarto render my-document.qmd --to pdf
+```
+
+--------------------------------------------------------------------------------
+
+If you want to specify options for each format:
+
+```yaml
+---
+title: "My Document"
+format:
+  html:
+    theme: cosmo
+  pdf:
+    documentclass: scrreprt
+---
+```
+
+--------------------------------------------------------------------------------
+
+
 
 Some YAML options accepts multiple values, you can specify using the block style with dashes `-` or the inline style with square brackets `[]`.
 
@@ -261,7 +304,7 @@ touch .nojekyll
 --------------------------------------------------------------------------------
 
 
-### Only re-render changed files {.unnumbered .unlisted #incremental-rendering}
+### Only re-render changed files {.unnumbered #incremental-rendering}
 
 You can add the following to your `_quarto.yml` file to only re-render changed files:
 
@@ -271,6 +314,8 @@ execute:
 ```
 
 When `freeze: auto` is enabled, Quarto checks for modifications in the source files of your computational documents. If no changes are detected, Quarto will utilize the cached results from previous computations, skipping the re-execution of code chunks. 
+
+A folder named `_freeze` will be created in the project directory to store the cached results. It lets Quarto render without re-executing every code chunk.
 
 This <span class="env-green">significantly speeds up rendering times</span>, especially for large projects with many computational documents. ✅
 
@@ -1555,6 +1600,7 @@ execute:
 ```
 
 This will only re-render the changed files in your project, which can save a lot of time when you have a large project with many files.
+See [Incremental Rendering](#incremental-rendering) for details.
 </div>
 
 

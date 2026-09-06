@@ -75,25 +75,124 @@ Where do the YAML fields in rmd come from?
 
 YAML can set values of the template variables, such as `title`, `author`, and `date` of the document. 
 
-- The `output` field is used by rmarkdown to apply the <span class="env-green">**output format function**</span> `rmarkdown::html_document()` in the rendering process.
+An example of YAML metadata:
 
-  There are two types of output formats in the **rmarkdown** package: documents (e.g., `pdf_document`), and presentations (e.g., `beamer_presentation`).
+```yaml
+---
+title: "YAML metadata for R Markdown with examples"
+subtitle: "YAML header"
+author: John Doe
+date: "2018-06-01"
+output: pdf_document
+abstract: YAML is a human-readable and easy to write language to define data structures.
+keywords: ["YAML", "Rmd"]
+subject: Medicine
+lang: "en-US" 
+---
+```
 
-  Supported output format examples: `html_document`, `pdf_document`.
+**Useful tutorials for output formats:**
 
-  R Markdown documents (`html_documents`) and R Notebook documents (`html_notebook`) are very similar; in fact, an R Notebook document is a special type of R Markdown document. The main difference is using R Markdown document (`html_documents`) you have to knit (render) the entire document each time you want to preview the document, even if you have made a minor change. However, using an R Notebook document (`html_notebook`) you can view a preview of the final document without rendering the entire document.
+- [YAML metadata for R Markdown with examples, by Hao Liang](https://github.com/hao203/rmarkdown-YAML)
   
-  **Troubleshooting**
+  A nice summary of commonly YAML keys for different output formats. 👍
+
+- [YAML metadata, R Markdown Cookbook](https://pkg.yihui.org/rmarkdown-cookbook/rmarkdown-anatomy)
+
+- [Output format, R Markdown: The Definitive Guide](https://pkg.yihui.org/rmarkdown-book/output-formats)
+
+- [Bookdown CRAN](https://cran.r-project.org/web/packages/bookdown/index.html)
   
-  Issue: `bookdown` always output html, even if specified to pdf. \
-  Cause: If it produces HTML, the output format must have been provided somewhere. \
-  Fix: Check if you have a `_output.yml` under the root directory of your book project. If you do, you may delete it. Then bookdown will use the output field that you specified in the YAML frontmatter of your Rmd document.
-  
-  If there are two output formats, `rmarkdown::render()` defaults to use the first output type. If you want another, specify the type, e.g.,  `rmarkdown::render("0100-RStudio.Rmd", 'pdf_document')`. 
+  [bookdown.html](https://cran.r-project.org/web/packages/bookdown/refman/bookdown.html#gitbook)
+
+
+### Output format
+
+The `output` field is used by rmarkdown to apply the <span class="env-green">**output format function**</span> `rmarkdown::html_document()` in the rendering process.
+
+#### Base `rmarkdown` formats
+
+There are two types of output formats in the `rmarkdown` package: 
+
+- documents (e.g., `pdf_document`), and 
+- presentations (e.g., `beamer_presentation`).
+
+Supported output format examples: `html_document`, `pdf_document`.
 
 --------------------------------------------------------------------------------
 
-**`bookdown` wrappers** of base markdown format
+**Multiple output formats** can be specified:
+
+```yaml
+---
+title: "My Document"
+output:
+  html_document: default
+  pdf_document: default
+---
+```
+
+You can specify different options for each output format:
+
+```yaml
+---
+title: "My Document"
+output:
+  html_document:
+    theme: cosmo
+  pdf_document:
+    latex_engine: xelatex
+---
+```
+
+<div class="rmd-note">
+<img src="images/solution.png" alt="" style="display: inline; height: 1.5em; vertical-align: bottom;" /> The default LaTeX engine is `pdflatex`. If you use `fontspec` package, you need to use `xelatex` or `lualatex`. 
+Change LaTeX engine using `latex_engine`.
+</div>
+
+
+<div class="rmd-caution">
+Note Quarto uses `pdf-engine` instead of `latex_engine` to specify the LaTeX engine.
+</div>
+
+
+
+--------------------------------------------------------------------------------
+
+**Notebooks**
+
+R Markdown documents (`html_documents`) and [R Notebook documents](https://pkg.yihui.org/rmarkdown-book/notebook) (`html_notebook`) are very similar; in fact, an R Notebook document is a special type of R Markdown document. The main difference is using R Markdown document (`html_documents`) you have to knit (render) the entire document each time you want to preview the document, even if you have made a minor change. However, using an R Notebook document (`html_notebook`) you can view a preview of the final document without rendering the entire document.
+
+**Create a Notebook**
+
+```yaml
+---
+title: "My Notebook"
+output: html_notebook
+---
+```
+
+The following figure shows an example of an R Notebook document (`html_notebook`).
+It is like a Jupyter Notebook.
+
+<img src="https://pkg.yihui.org/rmarkdown-book/images/notebook-demo.png" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
+
+
+--------------------------------------------------------------------------------
+
+**Troubleshooting**
+
+Issue: `bookdown` always output html, even if specified to pdf. \
+Cause: If it produces HTML, the output format must have been provided somewhere. \
+Fix: Check if you have a `_output.yml` under the root directory of your book project. If you do, you may delete it. Then bookdown will use the output field that you specified in the YAML frontmatter of your Rmd document.
+
+If there are two output formats, `rmarkdown::render()` defaults to use the first output type. If you want another, specify the type, e.g.,  `rmarkdown::render("0100-RStudio.Rmd", 'pdf_document')`. 
+
+--------------------------------------------------------------------------------
+
+#### `bookdown` formats
+
+**`bookdown` wrappers** of base Markdown format
 
 <span class="env-green">`bookdown` output formats</span> allow numbering and cross-referencing figures/tables/equations. It takes the format `html_document2`, in general, `markdown_document2` is a wrapper for the base format `markdown_document`. With the `bookdown` output format, you can cross-reference sections by their ID's using the same syntax when sections are numbered. 
 
@@ -313,7 +412,7 @@ All documents located in the same directory as `_output.yml` will inherit its 
 
 --------------------------------------------------------------------------------
 
-#### Parameters {-}
+#### Parameters
 
 We can include variables and R expressions in this header that can be referenced throughout our R Markdown document. For example, the following header defines `start_date` and `end_date` parameters, which will be reflected in a list called `params` later in the R Markdown document. 
 
@@ -393,7 +492,7 @@ knitr::opts_chunk$set(echo = params$printcode)
 
 --------------------------------------------------------------------------------
 
-#### File options {-}
+#### File options
 
 
 Some aspects of markdown output can be customized via global, project, or file-level options, including:
@@ -527,7 +626,7 @@ output:
 
 --------------------------------------------------------------------------------
 
-### Loading LaTeX packages {.unlisted .unnumbered}
+### Loading LaTeX packages
 
 We can load additional LaTeX packages using the [`extra_dependencies`](https://bookdown.org/yihui/rmarkdown-cookbook/latex-extra.html) option <span class="env-green">**within** the `pdf_document`</span> YAML settings. 
 
@@ -568,9 +667,9 @@ The advantage of using the `extra_dependencies` argument over the `includes` arg
 
 --------------------------------------------------------------------------------
 
-### Includes {.unlisted .unnumbered}
+### Includes
 
-#### HTML Output {.unnumbered}
+#### HTML Output
 
 `html_document` converts R Markdown documents to HTML using Pandoc.
 
@@ -606,7 +705,7 @@ An example `header.html` to load a MathJax extension `textmacros`.
 
 --------------------------------------------------------------------------------
 
-#### PDF Output {.unnumbered}
+#### PDF Output
 
 
 For example, to support Chinese characters.
@@ -711,7 +810,7 @@ Ref:
 
 --------------------------------------------------------------------------------
 
-#### `header-includes` {.unnumbered}
+#### `header-includes`
 
 Tex style and package loading can also put in `header-includes`.
 
@@ -799,10 +898,9 @@ header-includes: |
 
 --------------------------------------------------------------------------------
 
-### Change Font {.unlisted .unnumbered}
+### Change Font
 
-
-The default font is `\usepackage{lmodern}` in bookdown.
+The default font is `\usepackage{lmodern}` in `bookdown::pdf_document2`.
 
 Can specify alternative fonts in `preamble.tex` as follows:
 
@@ -875,7 +973,90 @@ rmarkdown::render("0304-Quarto.Rmd",
 
 Note that sometimes the bookdown cross references in Rmd are not rendered when using the `Knit` button. The rendered html shows `Fig. \@ref(fig:ar-res) ` (without the backslash). In this case, using `rmarkdown::render()` **with `output_format = bookdown::html_document2()`** might help.
 
+--------------------------------------------------------------------------------
 
+**Issue:** `No LaTeX installation detected` or `xelatex not found`.
+
+**Fix:** Need to install a TeX engine to compile the intermediate `.tex` file to PDF. Two options:
+
+- **TinyTeX** (`~/Library/TinyTeX`) → Lightweight TeX Live distribution (150 MB); sufficient for R Markdown and Quarto.
+  
+  <div class="rmd-tip">
+  <img src="images/solution.png" alt="" style="display: inline; height: 1.5em; vertical-align: bottom;" /> Students should use TinyTeX.
+  Add a TinyTeX's auto-install snippet for Rmds shared with students.
+  </div>
+
+  Install TinyTeX via R:
+  
+  ```r
+  # Install TinyTeX R package
+  install.packages("tinytex")
+  
+  # Install the actual TeX distribution
+  tinytex::install_tinytex()
+  ```
+  
+  After installation, you have the following structure:
+
+  ```
+  R
+  │
+  ├── tinytex R package
+  │
+  └── TinyTeX
+       └── TeX Live
+            ├── xelatex
+            ├── lualatex
+            ├── pdflatex
+            ├── tlmgr
+            └── LaTeX packages
+  ```
+
+  Then restart R. You should be able to render Rmd to PDF now.
+
+  TinyTeX <span class="env-green">auto-installs missing LaTeX packages when in need</span>. 
+  
+  By contrast, a full TeX Live installation ships with a large number of LaTeX packages. This saves you from having to install packages frequently, but it takes up a lot of disk space.
+
+- **System TeX Live** (`/usr/local/texlive/2026`) → This is a full TeX distribution (6 GB). If you work with LaTeX documents frequently, you may want to install the full TeX Live distribution.
+
+  <div class="rmd-note">
+  👍 I only use **system TeX Live**. Both `quarto render` and LaTeX Workshop use the system TeX Live installation. Co-existence of TinyTeX and system TeX Live has compatibility risk. See [below](#tinytex-vs-texlive).
+  </div>
+
+  **How to install:**
+
+  - [Tutorial: Install LaTeX on MacOS](https://my1396.github.io/Econ-Study/2024/08/11/Latex-Install.html)
+  
+  - [TeX Live: all platforms](https://tug.org/texlive/)
+
+    [Mac installer: MacTeX](https://tug.org/mactex/)
+
+
+--------------------------------------------------------------------------------
+
+<a id="tinytex-vs-texlive"></a>
+
+Q: If I have both TinyTeX and TeX Live installed, which one will be used?
+
+A: 
+
+| How you compile | What it actually uses |
+| --- | ------------------------------ |
+| `quarto render` (also `quarto preview`, RStudio's Render button) | **TinyTeX** at `~/Library/TinyTeX` --- confirmed by catching the live process: `.../TinyTeX/bin/universal-darwin/lualatex ... index.tex`. Quarto prefers its self-managed TinyTeX over anything on `PATH`, even now that `PATH` also has a working install. |
+| Direct terminal commands (`lualatex foo.tex`, `tlmgr install ...`) | **System TeX Live 2026** at `/usr/local/texlive/2026`, since `/Library/TeX/texbin` (on your `PATH`) now symlinks there. |
+| VS Code's LaTeX Workshop or any extension that shells out to `lualatex`/`latexmk` by bare name | Also **system TeX Live 2026**  |
+
+
+--------------------------------------------------------------------------------
+
+**Choose one canonical TeX installation and stick with it**
+
+TinyTeX and system TeX Live 2026 started from the same release, but each will drift as it individually auto-installs or updates packages --- `quarto render` pulls into TinyTeX's tree, a terminal `tlmgr install` pulls into the system tree. Over time that can produce exactly the confusing "renders fine in Quarto but fails when I compile the `.tex` directly" (or vice versa) symptom, because the two trees silently stop having identical package sets.
+
+<div class="rmd-note">
+Principle: a single, consistent TeX distribution for everything --- Quarto, direct terminal `lualatex`, and any editor extension.
+</div>
 
 --------------------------------------------------------------------------------
 

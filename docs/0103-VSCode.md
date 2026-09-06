@@ -927,7 +927,27 @@ My notebook specifies the R kernel, but there is no helper directory for R under
 
 Fix: In your notebook's metadata, add `metadata.kernelspec.path` pointing to your installed **IR kernelspec directory** as follows:
 
-Before modification:
+Q: How to find the IR kernelspec directory?
+
+1. Active the Python environment where you installed Jupyter and IRkernel. 
+   
+   ```bash
+   $conda activate /Users/menghan/anaconda3
+   ```
+2. Run the following command to list all installed kernelspecs and their paths.
+
+   ```bash
+   # Intel MBP16
+   $jupyter kernelspec list
+   Available kernels:
+   ir            /Users/menghan/Library/Jupyter/kernels/ir
+   powershell    /Users/menghan/Library/Jupyter/kernels/powershell
+   python3       /Users/menghan/.local/share/jupyter/kernels/python3
+   ```
+   
+   Both Intel and M-series MBP have the same path for IR kernel: `/Users/menghan/Library/Jupyter/kernels/ir`.
+
+**Before modification:**
 
 ```json
 {
@@ -1025,9 +1045,75 @@ Add the following to your `~/.zshrc` file:
 export QUARTO_PYTHON=/Users/menghan/anaconda3/bin/python
 ```
 
+Use `quarto check jupyter` to verify that Quarto is using the correct Python environment.
+
+```bash
+$quarto check
+
+Quarto 1.7.31
+[✓] Checking environment information...
+      Quarto cache location: /Users/menghan/Library/Caches/quarto
+[✓] Checking versions of quarto binary dependencies...
+      Pandoc version 3.6.3: OK
+      Dart Sass version 1.85.1: OK
+      Deno version 1.46.3: OK
+      Typst version 0.13.0: OK
+[✓] Checking versions of quarto dependencies......OK
+[✓] Checking Quarto installation......OK
+      Version: 1.7.31
+      Path: /Applications/quarto/bin
+
+[✓] Checking tools....................OK
+      TinyTeX: (not installed)
+      Chromium: (not installed)
+
+[✓] Checking LaTeX....................OK
+      Using: Installation From Path
+      Path: /Library/TeX/texbin
+      Version: 2026
+
+[✓] Checking Chrome Headless....................OK
+      Using: Chrome found on system
+      Path: /Applications/Google Chrome.app/Contents/MacOS/Google Chrome
+      Source: MacOS known location
+
+[✓] Checking basic markdown render....OK
+
+[✓] Checking Python 3 installation....OK
+      Version: 3.11.4 (Conda)
+      Path: /Users/menghan/anaconda3/bin/python
+      Jupyter: 5.3.0
+      Kernels: ir, powershell, python3
+
+[✓] Checking Jupyter engine render....OK
+
+[✓] Checking R installation...........OK
+      Version: 4.5.1
+      Path: /Library/Frameworks/R.framework/Resources
+      LibPaths:
+        - /Library/Frameworks/R.framework/Versions/4.5-x86_64/Resources/library
+      knitr: 1.50
+      rmarkdown: 2.30
+
+[✓] Checking Knitr engine render......OK
+```
+
+<div class="rmd-note">
+On M-series chip Macbooks, the path is different.
+
+```bash
+export QUARTO_PYTHON=/opt/miniconda3/bin/python
+```
+</div>
+
+
 --------------------------------------------------------------------------------
 
+**Configure R to use the same Python environment as Quarto's Jupyter engine**
+
 It is possible to use `quarto::quarto_render()` in R to render a Jupyter notebook. You need to specify the correct Python environment in [`~/.Renviron`](#quarto-render-in-R).
+
+Then you can use `execute = TRUE` to re-execute the notebook and render it.
 
 ```r
 # render jupyter notebook in R
