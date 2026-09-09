@@ -251,6 +251,7 @@ Radian can be customized by specifying the below options in various locations:
 - `$HOME/.config/radian/profile`
 - `.radian_profile` in the working directory
 
+After creating/editing the profile file, restart Radian to apply the changes.
 
 Example of a radian [profile](https://github.com/randy3k/radian?tab=readme-ov-file#settings)
 
@@ -895,13 +896,52 @@ format:
 
 --------------------------------------------------------------------------------
 
-**Re-execute when rendering a Jupyter notebook**
+### Re-execute before render
 
+**Re-execute code chunks when rendering a Jupyter notebook**
+
+
+<div class="rmd-caution">
+Note: it requires a whole set of setup to make `--execute` work. 
+If you don't bother to setup, a workaround is to manually run the notebook in Jupyter and then render it with `quarto render notebook.ipynb`.
+
+Q: When you really want `--execute`?  
+A: You render frequently to ensure the output is what you expect.
+</div>
+
+
+By default, Quarto will not execute the cells in the notebook when rendering. 
 If you want to re-execute the cells you can pass the `--execute` flag to render:
 
 ```bash
 quarto render notebook.ipynb --execute
 ```
+
+Three things to setup before you can use `--execute`:
+
+1. Insert `metadata.kernelspec.path` to the notebook metadata to avoid path error.
+   
+   ```bash
+   jq '.metadata.kernelspec.path = "/Users/menghan/Library/Jupyter/kernels/ir"' \
+  <notebook>.ipynb | sponge <notebook>.ipynb
+   ```
+
+   Check the path for IR kernelspec [HERE](#IR-kernelspec-path).
+
+1. In `~/.zshrc`, set `QUARTO_PYTHON` to point to the Python environment where Jupyter is installed.
+   
+   ```bash
+   export QUARTO_PYTHON=/Users/menghan/anaconda3/bin/python
+   ```
+
+   You have to check the path per machine and per Python environment. 
+
+2. IN `~/.Renviron`, set `QUARTO_PYTHON` to the same Python environment in Step 2.
+
+
+See below for details. If you don't need to re-execute the notebook, you can skip these steps. `quarto render notebook.ipynb` will simply render the notebook without executing the cells.
+
+--------------------------------------------------------------------------------
 
 Path error when rendering `.ipynb` file with `quarto --execute`:
 
@@ -925,9 +965,12 @@ The root cause is Quarto’s own notebook runner (`Applications/quarto/share/jup
 
 My notebook specifies the R kernel, but there is no helper directory for R under `Applications/quarto/share/jupyter/lang`. There are only helper directories for Python and Julia by default.
 
-Fix: In your notebook's metadata, add `metadata.kernelspec.path` pointing to your installed **IR kernelspec directory** as follows:
+Fix: In your notebook's metadata, add `metadata.kernelspec.path` pointing to your installed **IR kernelspec directory**.
 
-Q: How to find the IR kernelspec directory?
+--------------------------------------------------------------------------------
+
+<a id="IR-kernelspec-path"></a>
+Q: How to find the <span class="env-green">IR kernelspec directory</span>?
 
 1. Active the Python environment where you installed Jupyter and IRkernel. 
    
@@ -991,7 +1034,9 @@ Use `jq` and `sponge` to modify the notebook metadata:
 
 <a id="jq-update-notebook-kernelspec"></a>
 
-2. Run the following command to update the notebook metadata. Replace `<notebook>` with your notebook file name:
+2. Run the following command to update the notebook metadata. 
+   
+   Replace `<notebook>` with your notebook file name:
    
    ```bash
    jq '.metadata.kernelspec.path = "/Users/menghan/Library/Jupyter/kernels/ir"' \

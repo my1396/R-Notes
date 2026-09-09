@@ -359,6 +359,17 @@ mtcars %>%
 
 `dplyr::group_modify()` and `dplyr::group_map()` are purrr-style functions that can be used to iterate on <span class="env-green"><u>grouped tibbles</u></span>. 
 
+<div class="rmd-note">
+- `group_modify()` keeps the groupping key, use `ungroup()` to return a regular tibble.
+  
+  <span class="env-green">Keeps groupping key</span>, but strict on returning a data frame or tibble.
+
+- `group_map()` returns a list of results, list names are the group keys. Use `bind_rows()` or `do.call(rbind, ...)` to combine the list of results into a tibble. → Caveat: the grouping key is NOT included in the results, you need to add it back manually.
+
+  Need to insert groupping key, but more <span class="env-green">flexible</span> on returning any type of object, not just data frame or tibble.
+</div>
+
+
 - Note that `purrr::map`, `purrr::map_dfr`, and `purrr::map_dfc` does NOT work on groupped tibbles. You must do `group_split` to a list, then you can apply the purrr-style functions.
 
   - Convenient for multistep operations, **easy to debug**.
@@ -398,7 +409,7 @@ mtcars %>%
 
     - <span class="env-green"> **`.y`**</span> to refer to the <span class="env-green">**group key**</span>, a one row `tibble` with one column per grouping variable that identifies the group
 
-- `...`        Additional arguments passed on to `.f`
+- `...` Additional arguments passed on to `.f`
 
 - `.keep=FALSE`  whether the grouping variables are kept in `.x`. 
 
@@ -533,7 +544,7 @@ data_group %>%
 
 `group_modify` code snippets
 
-```r
+<pre class="nowrap"><code>
 # Apply a regression
 iris %>%
   group_by(Species) %>%
@@ -573,7 +584,7 @@ iris %>%
 #> 9 virginica  75%       5.88
 
 # `fivenum()` returns min, lower-hinge (Q1), median (Q1), 
-# 	upper-hinge (Q3), and max
+#   upper-hinge (Q3), and max
 iris %>%
   group_by(Species) %>%
   group_modify(~ {
@@ -600,8 +611,7 @@ iris %>%
 #> 13 virginica           6.5         3           5.55         2   median
 #> 14 virginica           6.9         3.2         5.9          2.3 Q3    
 #> 15 virginica           7.9         3.8         6.9          2.5 max   
-
-```
+</code></pre>
 
 
 

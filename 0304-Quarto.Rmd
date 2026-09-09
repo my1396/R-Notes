@@ -324,12 +324,27 @@ There are drawbacks: some files may not be updated in time.
 - Use `freeze: false` to force re-rendering of all files when you are able to submit your changes.
 - Use `freeze: auto` when you are editing actively and want to see your changes in time.
 
+`.quarto/` is a build directory that contains the intermediate files generated during the rendering process. It stores things related to the project's internal processing, generated state. Each render will create a large number of changes in `.quarto/` folder. It is safe to delete it, as Quarto will regenerate it during the next render.
+
+Given the large number of changes in `.quarto/` folder, never sync it. For git, add `.quarto/` to your `.gitignore` file. For OneDrive, 
+
+1. Create a new `~/.quarto-cache/` directory on local disk,
+2. Create a symbolic link `.quarto` in your project directory to point to the new cache directory. 
+
+This way, when you render the project, the intermediate files will be stored in the new cache directory, and not synced to OneDrive. See [HERE](https://my1396.github.io/Econ-Study/2025/08/13/UgreenNAS-QuickStart.html#我的备份策略) for more details.
+
+
 --------------------------------------------------------------------------------
 
 
 **Strengths of Quarto:**
 
-- hoverable citations and cross-references, easy to read
+- Live preview. 
+  
+  This is <span class="env-orange">NOT</span> supported in Rmd.
+
+- Hoverable citations and cross-references, easy to read
+
 - [easy subplots](https://quarto.org/docs/authoring/cross-references.html#subfigures)
 
 
@@ -448,6 +463,9 @@ format:
 If you would like to specify common metadata for documents inside a sub-directory our your project, you can do so by adding a file called <span class="env-green">`_metadata.yml`</span> to the sub-directory. Read more in the Quarto Documentation at [Directory Metadata](https://quarto.org/docs/projects/quarto-projects.html#directory-metadata).
 :::
 
+- `_metadata.yml` will be merged to root `_quarto.yml` file, and will override any conflicting options in the root `_quarto.yml` file. → You can have distinct metadata for different sub-directories in your project.
+- Another option is to use subfolder `_quarto.yml`. This will isolate your subfolder into a standalone project, and will not inherit any metadata from the root `_quarto.yml` file.
+
 
 ref:
 
@@ -529,31 +547,43 @@ For more courses, follow the structure below:
 
 ___
 
+<a id="quarto-code-chunk-options"></a>
+
 ## Code chunks
 
-Both R markdown and Quarto can use the following ways to specify chunk options:
+Quarto can use the following ways to specify chunk options:
 
-Use `tag=value` in the chunk header ```` ```{r} ````.
+- R Markdown style: Use `tag=value` in the chunk header ```` ```{r} ````.
 
-~~~~markdown
-```{r my-label, fig.cap = caption}`r ''`
+  ~~~~markdown
+  ```{r #fig-my-label, out.width="100%", fig.cap = caption}`r ''`
+  f_name <- "images/Logistic_drill_sim.png"
+  knitr::include_graphics(f_name)
+  ```
+  @fig-my-label shows the logistic drill simulation
+  ~~~~
 
-# R code
-```
-~~~~
+- Quarto style: Use `#| tag: value`
+  
+  Alternatively, you can write chunk options in the body of a code chunk after <span class="env-green">`#|`</span>, e.g., 
 
+  ````markdown
+  ```{r}`r ''`
+  #| label: fig-my-label
+  #| fig-cap: caption 
 
-Alternatively, you can write chunk options in the body of a code chunk after <span class="env-green">`#|`</span>, e.g., 
+  f_name <- "images/Logistic_drill_sim.png"
+  knitr::include_graphics(f_name)
+  ```
+  ````
 
+<div class="rmd-caution">
+The labels are different when you use the R Markdown style vs. the Quarto style.
 
-````markdown
-```{r}`r ''`
-#| label: fig-my-label
-#| fig-cap: caption 
+- R Markdown style: `#fig-my-label` (with `#` in front of the label)
+- Quarto style: `fig-my-label` (without `#` in front of the label)
+</div>
 
-# R code
-```
-````
 
 `tag: value` is the YAML syntax. 
 
@@ -575,6 +605,37 @@ Note that <span class="env-green">Quarto accepts Rmd's way of specifying chunk o
 ````
 
 ❗️ Note that NOT all Rmd chunk options are supported in Quarto, e.g., Rmd's `results` are replaced with `output` in Quarto. See [Quarto Chunk Options](https://quarto.org/docs/computations/execution-options.html) for all available options.
+
+
+--------------------------------------------------------------------------------
+
+**Tables**
+
+Tables are complicated by there are multiple ways to specify captions and float positions. You can use chunk options, or `knitr::kable(caption)` and `kableExtra::kable_styling(booststrap_options = c("hold_position")`.
+
+Use the following snippet for tables cross-references in Quarto:
+
+````markdown
+```{r}`r ''`
+#| label: tbl-summary-stat
+#| tbl-cap: "Summary Statistics"
+#| tbl-pos: H
+summary_stats %>% 
+  knitr::kable(format="latex", booktabs=TRUE, linesep="") %>%  ← add kable options here, eg digits, booktabs, format, etc.
+  kableExtra::kable_styling(latex_options = c("striped")) ← add kableExtra options here, eg striped, scale_down, repeat_header, etc.
+```
+@tbl-summary-stat shows the summary statistics
+````
+
+**Note:**
+
+- No `#` in front of the label, and must start with `tbl-`.
+
+- Use code chunks to specify caption (`tbl-cap`) and float position (`tbl-pos`)
+  
+  ‼️ Do <span class="env-orange">NOT</span> use ~~`knitr::kable(caption)`~~ to specify caption. This will generate an error in Quarto.
+
+- use `@tbl-summary-stat` to reference the table in the text.
 
 
 --------------------------------------------------------------------------------
@@ -1360,6 +1421,31 @@ format:
 
 --------------------------------------------------------------------------------
 
+### Pin MathJax Version
+
+
+<div class="rmd-caution">
+Quarto has its own default MathJax (`mathjax@4/tex-chtml.js`), but when Quarto updates, it changes the default MathJaX version silently, it can break your existing documents. 
+To avoid this, you can **pin a specific version** of MathJax in your `_quarto.yml` file.
+</div>
+
+In `_quarto.yml`, under `format: html:`:
+
+```yml
+format:
+  html:
+    html-math-method:
+      method: mathjax
+      url: "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js"
+
+```
+
+My website was working fine with `colorV2` in MathJax 3. But after Quarto updated to using MathJax 4, the `colorV2` option was replaced with `colorv2`, and my website broke. 
+So I decide to pin the MathJax version to 3.
+
+
+--------------------------------------------------------------------------------
+
 Enable **dark and light** modes
 
 ```yaml
@@ -1578,7 +1664,7 @@ This will provide <span class="env-green">**live preview**</span> of the documen
 In Rmd, you have to render the document every time you want to see the changes at least in VS Code. ❌
 But in Quarto, you can use `quarto preview` to see the changes in real time. Saves lots of troubles of rendering the whole document every time you make a change. ✅
 
-- Render a Quarto document to HTML using the command line:
+- Render a Quarto **document** to HTML using the command line:
 
   ```bash
   $quarto render 0304-Quarto.Rmd --to html
@@ -1586,7 +1672,9 @@ But in Quarto, you can use `quarto preview` to see the changes in real time. Sav
   
   [**Options:**](https://quarto.org/docs/cli/render.html)
   
-  - `--to` or `-t`: specify the output format(s). You can specify multiple formats by separating them with commas, e.g., `--to html,pdf`. 
+  - `--to` or `-t`: specify the output format(s). 
+    
+    You can specify multiple formats by separating them with commas, e.g., `--to html,pdf`. 
   
   - <span class="env-green">If you don't specify any format, Quarto will render the default format.</span>
 
@@ -1603,6 +1691,13 @@ This will only re-render the changed files in your project, which can save a lot
 See [Incremental Rendering](#incremental-rendering) for details.
 </div>
 
+- You can also render a Quarto **project** using:
+
+  ```bash
+  $quarto render --to html
+  ```
+
+  If you are in the project directory, `quarto render` without specifying a file will render the entire project. This can be time-consuming (even with `freeze: auto`), use this when you are done with your edits and want to render the whole project for publishing.
 
 - <span class="env-green">Quarto Preview</span>: display output in the **external web browser**.
 
@@ -1614,11 +1709,23 @@ See [Incremental Rendering](#incremental-rendering) for details.
   - Note that `quarto render` can be used to Rmd files too.
   - Run `quarto preview help` to see its complete syntax.
 
-- You can also render a Quarto project using:
+  <div class="rmd-caution">
+  If you two watcher on the same project, you will get an error like `ERROR: NotFound: No such file or direcotry (os error 2) readfile /Users/.../file-name.log`.
+  
+  Use `pkill -f 'quarto\.js preview'` to kill all the watchers and restart the preview.
+  </div>
 
-  ```bash
-  $quarto render --to html
-  ```
+
+
+<div class="rmd-caution">
+Q: How good is `quarto preview`?  
+A: Use enormous amount of RAM; slow; keep refreshing but not showing the latest changes. 
+
+I'd suggest a full re-render and open the html/pdf output ([⌘B](#open-html-in-internal-browser)) to see the changes. 
+This is reliable and computationally efficient.
+</div>
+
+ref: [Quarto website preview server hacks](https://danmackinlay.name/notebook/quarto_website_preview_server.html)
 
 `quarto preview [file] [args]` first provide file name, then additional arguments.
 
@@ -1628,7 +1735,7 @@ Supported arguments:
   
   If you have multiple documents to preview, you can use `--port` to specify different ports for each document.
 - `--host` Hostname to bind to (defaults to 127.0.0.1)
-- `--no-browser` Use <span class="env-green">internal viewer</span>, do not open external browser.
+- <span class="env-green">`--no-browser`</span> Use <span class="env-green">internal viewer</span>, do not open external browser.
 - `--no-watch-inputs` flag specifically prevents Quarto from automatically re-rendering the output when changes are detected in your input source files (e.g., `.qmd` files). 
   
   This means that if you edit and save your `.qmd` file, the preview in your browser will NOT automatically update.
@@ -1637,7 +1744,7 @@ Supported arguments:
 
   Even when using this flag, Quarto will still print the message "Watching file for changes." This means that Quarto is still watching CSS files and `_quarto.yml` for changes, but not the main input files.
 
-`quarto preview [file] --port 7200 --no-browser` Previewing website using a specific port. This is useful when your want to preview multiple documents simultaneously.
+<span class="env-green">`quarto preview [file] --port 7200 --no-browser`</span> Previewing website using a specific port. This is useful when your want to preview multiple documents simultaneously.
 
 The default "internal" viewer in VS Code opens only one document at a time. 
 
@@ -1663,6 +1770,18 @@ Can use [Simple Browser Multi Extension](https://marketplace.visualstudio.com/it
 
 `Browser: Quick Open Browser Tab` (⇧⌘A) to quickly switch between open browser tabs. The Quick Pick lists all open tabs grouped by editor group, and you can type to filter by tab name or URL.
 
+--------------------------------------------------------------------------------
+
+<a id="open-html-in-internal-browser"></a>
+
+**Option 3**
+
+Options 1 and 2 <span class="env-green">require a local web server running</span>, such as at`http://localhost:7200/0304-Quarto.html`. If simply want to open the html, the easiest way is to use the [open in browser](https://marketplace.visualstudio.com/items?itemName=techer.open-in-browser) extension. ⌘P and find your html file, ⌥B to open in browser. → This is useful when your `docs/` directory contains many html files and it is hard to spot the one you want to open. 
+
+Another benefit of opening the html file directly is that it won't self-refresh when you save your `qmd` file. 
+I find the self-refreshing hard on the eyes as the page keeps blinking.
+
+You can render your page and then ⌘R to refresh in your browser to see the changes. 👍
 
 --------------------------------------------------------------------------------
 
@@ -1741,8 +1860,20 @@ Copy and paste the url to the internal browser in VS Code. The command supports 
   
   `quarto_render()` supports <span class="env-green">`.Rmd`, `.qmd`, and `.ipynb</span>` files.
 
+  By contrast, `rmarkdown::render()` only supports `.Rmd` files.
+
 - If `output_format` is not specified, it will render the document to HTML. You can specify other formats such as PDF or Word. 
+  
   - `output_format = "all"` will render all formats specified in the `_quarto.yml` file.
+  - If your document is inside a Quarto project, without specifying `output_format`, Quarto will fall back to the default format specified in the `_quarto.yml` file. The whole project and all specified formats will be rendered. → ‼️ Too slow, you don't want this.
+    
+    Always specify `output_format` when rendering a single document in a Quarto project. This allows you to have a quick preview of the document without rendering the whole project.
+
+    ```r
+    quarto::quarto_render("01_introduction.qmd", output_format = "html")
+    ```
+
+    
 
 
 ```r
@@ -1794,8 +1925,10 @@ This will be available to all R sessions.
 1. **Add labels**
    
    Two options:
-   - **Code cell:** add option `label: prefix-LABEL`
-   - **Markdown:** add attribute `#prefix-LABEL`
+   
+   - **Code cell:** add option `label: prefix-LABEL` → 👍 most robust
+   
+   - **Markdown:** add attribute `#prefix-LABEL` → can fail, `#` can be tricky
      - Note that <span class="env-green">the prefix should be connected to the label with a hyphen `-`.</span>
      - Note that the hash sign `#` is required.
 
@@ -1840,6 +1973,24 @@ crossref:
   fig-prefix: "Fig"   # (default is "Figure")
 ---
 ```
+
+--------------------------------------------------------------------------------
+
+**Table example**
+
+````markdown
+```{r}`r ''`
+#| label: tbl-summary-stat
+#| tbl-cap: "Summary Statistics"
+#| tbl-pos: H
+summary_stats %>% 
+  knitr::kable(format="latex", booktabs=TRUE, linesep="") %>%  ← add kable options here, eg digits, booktabs, format, etc.
+  kableExtra::kable_styling(latex_options = c("striped")) ← add kableExtra options here, eg striped, scale_down, repeat_header, etc.
+```
+@tbl-summary-stat shows the summary statistics
+````
+
+See [HERE](#quarto-code-chunk-options) for more details about code chunk options.
 
 --------------------------------------------------------------------------------
 

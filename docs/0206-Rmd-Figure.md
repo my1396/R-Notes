@@ -186,6 +186,17 @@ invisible(dev.off())     # opt1
 whatever <- dev.off()    # opt2
 ```
 
+`plot_png()` should be defined as follows:
+
+```r
+plot_png <- function(p, fn, width=5.5, height=4, ppi=300){
+    png(fn, width=width*ppi, height=height*ppi, res=ppi)
+    print (p)
+    invisible(dev.off()) ← This is the fix.
+}
+```
+
+
 --------------------------------------------------------------------------------
 
 ### Control figure size
@@ -254,6 +265,11 @@ See [HERE](https://yihui.org/knitr/options/#plots) for a full list of chunk opti
 
    ````markdown
    ```{r echo=FALSE, include=FALSE}
+   plot_png <- function(p, fn, width=5.5, height=4, ppi=300){
+     png(fn, width=width*ppi, height=height*ppi, res=ppi)
+     print (p)
+     invisible(dev.off())  # invisible() stops knitr printing "pdf 2"
+   }
    p <- ggplot(contingency_table %>% 
               as_tibble() %>% 
               mutate(chd69=factor(chd69, levels=c("non-developed", "developed"))), 
@@ -267,14 +283,18 @@ See [HERE](https://yihui.org/knitr/options/#plots) for a full list of chunk opti
    ```
    ````
 
-   Specify chunk options <span style='color:#00CC66'>`include=FALSE`</span> (Do not include code output) to suppress the graphic window information like the following.
+   If you see output like the following, it means you did not suppress the output of `dev.off()`.
 
    ```r
    ## quartz_off_screen 
    ##                 2
    ```
+   
+   <span class="env-green">`invisible(dev.off())`</span> in the `plot_png()` fixes this issue.`
 
-2. Add the figure using 
+   Alternatively, specify chunk options <span style='color:#00CC66'>`include=FALSE`</span> to suppress the graphic window information.
+
+1. Add the figure using 
 
    ````markdown
    ```{r scatter-plot, echo=FALSE, fig.cap="Scatter plot of avearge wage against experience.", out.width = "80%"}
@@ -282,7 +302,7 @@ See [HERE](https://yihui.org/knitr/options/#plots) for a full list of chunk opti
    ```
    ````
 
-3. Cross reference 
+2. Cross reference 
 
    - `pdf_document`: using `\autoref{fig:scatter-plot}` from `hyperref` package or `Fig. \ref{fig:scatter-plot}` from base latex.
 

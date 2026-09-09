@@ -152,7 +152,36 @@ What is `.Rprofile`?
 - User-level `.Rprofile` files live in the base of the user's <span style='color:#00CC66'>home directory</span>, and 
 - project-level `.Rprofile` files live in the base of the project directory. 
 
-R will source only one `.Rprofile` file.  If there is a project-level `.Rprofile`, the user-level file will <span style='color:#FF9900'>NOT</span> be sourced, i.e., the project-level config file takes priority.
+<span class="env-green">R will source only one `.Rprofile` file.</span> 
+If there is a project-level `.Rprofile`, the user-level file will <span style='color:#FF9900'>NOT</span> be sourced, i.e., the project-level config file takes priority.
+
+If your project contains more than one `.Rprofile` file, R will source only the one in the working directory where the R session is started.
+
+```
+/Users/menghan/
+└── .Rprofile        ← user-level
+
+Project_A/
+│
+├── .Rprofile        ← R starts here → USES this one
+│
+└── git-repo/
+    └── .Rprofile    ← NOT used if R starts in Project_A/
+
+Project_B/
+│
+├── analysis/
+│   
+└── helper_scripts/
+```
+
+- If you start at `Project_A/`, R will source the project-level `Project_A/.Rprofile` file.
+
+- If you start at `Project_A/git-repo/`, R will source the one in `Project_A/git-repo/.Rprofile`.
+
+  If I want to use `Project_A/.Rprofile`, you can explicitly source it with `source("../.Rprofile")`.
+
+- If you start at any level of `Project_B/`, R will source the user-level `~/.Rprofile` file.
 
 So if you have both a project-specific `.Rprofile` file and a user `.Rprofile` file that you want to use, you <span class="env-green">**explicitly source**</span> the user-level `.Rprofile` at the top of your project-level `.Rprofile` with `source("~/.Rprofile")`.
 
@@ -166,7 +195,10 @@ Here is an example project-level `.Rprofile` file that
 - optionally, sets some options and environment variables specific to the project.
 
 ```r
-cat("This is the local user .Rprofile file\n")
+# Replace <proj-name> with your project name to 
+#   help identify which .Rprofile file is being sourced
+cat("This is the local user .Rprofile file for <proj-name>\n")
+
 # Source the global user .Rprofile
 source("~/.Rprofile")
 
