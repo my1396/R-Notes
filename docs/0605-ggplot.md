@@ -13,6 +13,8 @@
 theme_set(theme_bw()) # change default theme to theme_bw() globally
 ```
 
+`theme_set()` accepts custom themes, e.g., `theme_set(my_theme)` to set `my_theme` as the default theme for all subsequent plots.
+
 You start with `ggplot()`, supply a dataset and aesthetic mapping (with `aes()`). You then add on layers (like `geom_point()` or `geom_histogram()`), scales (like `scale_colour_brewer()`), faceting specifications (like `facet_wrap()`) and coordinate systems (like `coord_flip()`).
 
 Default theme: `theme_gray()` grey background and white gridlines.
@@ -118,6 +120,8 @@ p_mytheme
 ```
 
 <img src="0605-ggplot_files/figure-html/unnamed-chunk-5-1.png" width="100%" style="display: block; margin: auto;" />
+
+You can use <span class="env-green">`theme_set(my_theme)`</span> to set `my_theme` as the default theme for all subsequent plots.
 
 `rel(x)` specify sizes relative to the parent. The base font size is set by the `base_size` argument of the theme function. 
 

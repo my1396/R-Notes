@@ -39,6 +39,7 @@ If you have multiple .qmd files in one directory, it's a good practice to create
   Sometimes YAML gets very long and cluttered. To makes your `.qmd` files cleaner and neater, put shared YAML options in [`_quarto.yml`](#project-metadata) file and it will apply to all `.qmd` files in the same (sub-)directory.
 
   In each `.qmd` file, you provide file-specific YAML options, e.g, `title`, `author`, `date`, etc.
+  You can also <span class="env-green">**override**</span> project-level YAML options in the individual `.qmd` files.
 
   <div class="rmd-note">
   <i class="codicon codicon-lightbulb-sparkle env-green" aria-hidden="true" style="font-size:1.5em; vertical-align: middle;"></i> Always create a `_quarto.yml` file in the root of your project directory and put your shared YAML options there. 
@@ -1755,12 +1756,24 @@ Can use [Simple Browser Multi Extension](https://marketplace.visualstudio.com/it
 **Steps:**
 
 1. Install Simple Browser Multi Extension.
+
 2. Use command `quarto preview 0304-Quarto.Rmd --port 7200` in terminal to start live preivew. This will open the preview in your <span class="env-green">external web browser</span>.
    
    If you don't want automatic re-rendering when you save the file, add `--no-watch-inputs` flag.
 
    Add `--no-browser` if you don't want to open the preview in external browser.
+   
+   `quarto preview` will start a local web server and provide a URL like `http://localhost:7200/0304-Quarto.html`. Copy this URL.
+
 3. In VS Code, use command palette `Simple Browser Multi: Show` and enter the url in Step 2 to open the preview in the internal browser.
+
+You can also use `file://full-path-to-document.html` if you want to open the html file directly in the internal browser.
+
+`file://` protocol is used to access files on your local computer.
+
+`full-path-to-document.html` is the absolute path to the html file on your local computer. For example, if your html file is located at `/Users/username/Documents/project/output.html`, you would use `file:///Users/username/Documents/project/output.html` to open it in the internal browser.
+
+Note there is a triple slash `///` after `file:`. The first two slashes are part of the `file://` protocol, and the third slash indicates the root directory of your file system.
 
 --------------------------------------------------------------------------------
 
@@ -1776,7 +1789,12 @@ Can use [Simple Browser Multi Extension](https://marketplace.visualstudio.com/it
 
 **Option 3**
 
-Options 1 and 2 <span class="env-green">require a local web server running</span>, such as at`http://localhost:7200/0304-Quarto.html`. If simply want to open the html, the easiest way is to use the [open in browser](https://marketplace.visualstudio.com/items?itemName=techer.open-in-browser) extension. ⌘P and find your html file, ⌥B to open in browser. → This is useful when your `docs/` directory contains many html files and it is hard to spot the one you want to open. 
+
+Options 1 and 2 requires either a live web server or you know the full path to the html file. 
+
+[Open in browser](https://marketplace.visualstudio.com/items?itemName=techer.open-in-browser) extension provides a shortcut to open the html using internal browser. 
+
+First ⌘P and find your html file, then ⌥B to open in browser. → This is useful when your `docs/` directory contains many html files and it is hard to spot the one you want to open. 
 
 Another benefit of opening the html file directly is that it won't self-refresh when you save your `qmd` file. 
 I find the self-refreshing hard on the eyes as the page keeps blinking.
@@ -1864,17 +1882,43 @@ Copy and paste the url to the internal browser in VS Code. The command supports 
 
 - If `output_format` is not specified, it will render the document to HTML. You can specify other formats such as PDF or Word. 
   
+  `output_format=NULL` by default.
+  
   - `output_format = "all"` will render all formats specified in the `_quarto.yml` file.
   - If your document is inside a Quarto project, without specifying `output_format`, Quarto will fall back to the default format specified in the `_quarto.yml` file. The whole project and all specified formats will be rendered. → ‼️ Too slow, you don't want this.
     
-    Always specify `output_format` when rendering a single document in a Quarto project. This allows you to have a quick preview of the document without rendering the whole project.
+    <span class="env-green">Always specify `output_format` when rendering a single document</span> in a Quarto project. 
+    This allows you to have a quick preview of the document without rendering the whole project.
 
     ```r
     quarto::quarto_render("01_introduction.qmd", output_format = "html")
     ```
-
     
+    <div class="rmd-tip">
+    If you have a Quarto <span class="env-green">`book`</span> project, then it is impossible to render a single document to pdf without rendering the whole book. 
+    You can <span class="env-orange">ONLY</span> render a single document to <span class="env-green">HTML</span>. 
+    </div>
 
+    Q: How to set `quarto::quarto_render(output_format = "html")` by default?  
+    A: Add the following lines to your `~/.Rprofile` file. 
+
+    ```r
+    ## quarto::quarto_render() set output_format to "HTML" by default
+    setHook(
+      packageEvent("quarto", "attach"),
+      function(...) {
+        assign(
+          "quarto_render",
+          function(input = NULL, output_format = "html", ...) {
+            quarto::quarto_render(input = input, output_format = output_format, ...)
+          },
+          envir = .GlobalEnv
+        )
+      }
+    )
+    ```
+    
+    Then when you run `quarto::quarto_render("01_introduction.qmd")`, it will render this single document to HTML without rendering the whole project. → much faster. 👍
 
 ```r
 # Render a Quarto document to HTML
@@ -1950,7 +1994,7 @@ Note: Quarto support cross-references across documents in the same project.
 Cross-reference to a figure:
 
 ````markdown
-```{r #fig-scatter, fig.cap="Scatter plots example", out.width="80%"} 
+```{r #fig-scatter, echo=FALSE, fig.cap="Scatter plots example", out.width="80%", fig.align="center", fig.pos="H"} 
 # scatter plot example
 plot(1:10)
 ```

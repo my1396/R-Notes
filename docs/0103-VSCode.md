@@ -854,6 +854,11 @@ In terminal, run the following command to render the notebook:
 quarto render notebook.ipynb
 ```
 
+<div class="rmd-caution">
+You cannot have a R script with the same name as your notebook in the same directory. Otherwise, <span class="env-orange">your notebook will not render properly</span>.
+</div>
+
+
 --------------------------------------------------------------------------------
 
 You can specify multiple formats in a markdown cell of your notebook:

@@ -1059,9 +1059,9 @@ document.addEventListener('DOMContentLoaded', function() {
 <p>If two variables are provided, then <u>unique combinations of the two</u> are used as key and the first row of each key is preserved.</p></li>
 <li><p><code>.keep_all</code>: If <code>TRUE</code>, keep all variables in <code>df</code></p></li>
 </ul>
-<div class="sourceCode" id="cb762"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb762-1"><a href="9.1-basic-operations-on-tibbles.html#cb762-1" tabindex="-1"></a><span class="co"># unique locations</span></span>
-<span id="cb762-2"><a href="9.1-basic-operations-on-tibbles.html#cb762-2" tabindex="-1"></a>data <span class="sc">%&gt;%</span> </span>
-<span id="cb762-3"><a href="9.1-basic-operations-on-tibbles.html#cb762-3" tabindex="-1"></a>    <span class="fu">distinct</span>(lat, lon)</span></code></pre></div>
+<div class="sourceCode" id="cb763"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb763-1"><a href="9.1-basic-operations-on-tibbles.html#cb763-1" tabindex="-1"></a><span class="co"># unique locations</span></span>
+<span id="cb763-2"><a href="9.1-basic-operations-on-tibbles.html#cb763-2" tabindex="-1"></a>data <span class="sc">%&gt;%</span> </span>
+<span id="cb763-3"><a href="9.1-basic-operations-on-tibbles.html#cb763-3" tabindex="-1"></a>    <span class="fu">distinct</span>(lat, lon)</span></code></pre></div>
 <p><span class="env-green"><code>dplyr::setdiff(x, y)</code></span> element that is in <code>x</code> but not in <code>y</code>.</p>
 <ul>
 <li><code>x</code> and <code>y</code> are supposed to have the same structure, i.e., same columns if for data frames.</li>
@@ -1069,14 +1069,14 @@ document.addEventListener('DOMContentLoaded', function() {
 <p><strong>Count frequency of unique values in a column</strong></p>
 <ul>
 <li><p>use <code>plyr::count</code>: <span class="env-green"><strong>must</strong></span> quote the column name</p>
-<div class="sourceCode" id="cb763"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb763-1"><a href="9.1-basic-operations-on-tibbles.html#cb763-1" tabindex="-1"></a>plyr<span class="sc">::</span><span class="fu">count</span>(mtcars, <span class="st">&quot;cyl&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb764"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb764-1"><a href="9.1-basic-operations-on-tibbles.html#cb764-1" tabindex="-1"></a>plyr<span class="sc">::</span><span class="fu">count</span>(mtcars, <span class="st">&quot;cyl&quot;</span>)</span></code></pre></div>
 <pre><code>##   cyl freq
 ## 1   4   11
 ## 2   6    7
 ## 3   8   14</code></pre>
 <p>The output has two columns: <code>cyl</code> and <code>freq</code>, where <code>freq</code> is the count of each unique value in <code>cyl</code>.</p></li>
 <li><p>use <code>dplyr::count</code>: must <span class="env-orange"><strong>NOT</strong></span> quote the column name</p>
-<div class="sourceCode" id="cb765"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb765-1"><a href="9.1-basic-operations-on-tibbles.html#cb765-1" tabindex="-1"></a>dplyr<span class="sc">::</span><span class="fu">count</span>(mtcars, cyl)</span></code></pre></div>
+<div class="sourceCode" id="cb766"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb766-1"><a href="9.1-basic-operations-on-tibbles.html#cb766-1" tabindex="-1"></a>dplyr<span class="sc">::</span><span class="fu">count</span>(mtcars, cyl)</span></code></pre></div>
 <pre><code>##   cyl  n
 ## 1   4 11
 ## 2   6  7
@@ -1089,32 +1089,32 @@ If you load both packages, make sure to specify the package name when calling fu
 If you are not careful, unexpected errors may occur.</p>
 </blockquote>
 <p><strong>Check unique combinations of multiple columns:</strong></p>
-<div class="sourceCode" id="cb767"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb767-1"><a href="9.1-basic-operations-on-tibbles.html#cb767-1" tabindex="-1"></a><span class="co"># count unique combinations of companyID and ISIN</span></span>
-<span id="cb767-2"><a href="9.1-basic-operations-on-tibbles.html#cb767-2" tabindex="-1"></a>data <span class="sc">%&gt;%</span></span>
-<span id="cb767-3"><a href="9.1-basic-operations-on-tibbles.html#cb767-3" tabindex="-1"></a>    <span class="fu">count</span>(companyID, ISIN)</span>
-<span id="cb767-4"><a href="9.1-basic-operations-on-tibbles.html#cb767-4" tabindex="-1"></a><span class="co"># one-to-more mappting btw companyID and ISIN, but financial variables are the same for the same companyID, so we can just keep one row for each companyID and Year</span></span>
-<span id="cb767-5"><a href="9.1-basic-operations-on-tibbles.html#cb767-5" tabindex="-1"></a><span class="co"># keep the first row of unique combinations of companyID and Year</span></span>
-<span id="cb767-6"><a href="9.1-basic-operations-on-tibbles.html#cb767-6" tabindex="-1"></a>data <span class="sc">%&gt;%</span></span>
-<span id="cb767-7"><a href="9.1-basic-operations-on-tibbles.html#cb767-7" tabindex="-1"></a>    <span class="fu">group_by</span>(companyID, Year) <span class="sc">%&gt;%</span></span>
-<span id="cb767-8"><a href="9.1-basic-operations-on-tibbles.html#cb767-8" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), <span class="sc">~</span> <span class="fu">first</span>(.x)), <span class="at">.groups =</span> <span class="st">&quot;drop&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb768"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb768-1"><a href="9.1-basic-operations-on-tibbles.html#cb768-1" tabindex="-1"></a><span class="co"># count unique combinations of companyID and ISIN</span></span>
+<span id="cb768-2"><a href="9.1-basic-operations-on-tibbles.html#cb768-2" tabindex="-1"></a>data <span class="sc">%&gt;%</span></span>
+<span id="cb768-3"><a href="9.1-basic-operations-on-tibbles.html#cb768-3" tabindex="-1"></a>    <span class="fu">count</span>(companyID, ISIN)</span>
+<span id="cb768-4"><a href="9.1-basic-operations-on-tibbles.html#cb768-4" tabindex="-1"></a><span class="co"># one-to-more mappting btw companyID and ISIN, but financial variables are the same for the same companyID, so we can just keep one row for each companyID and Year</span></span>
+<span id="cb768-5"><a href="9.1-basic-operations-on-tibbles.html#cb768-5" tabindex="-1"></a><span class="co"># keep the first row of unique combinations of companyID and Year</span></span>
+<span id="cb768-6"><a href="9.1-basic-operations-on-tibbles.html#cb768-6" tabindex="-1"></a>data <span class="sc">%&gt;%</span></span>
+<span id="cb768-7"><a href="9.1-basic-operations-on-tibbles.html#cb768-7" tabindex="-1"></a>    <span class="fu">group_by</span>(companyID, Year) <span class="sc">%&gt;%</span></span>
+<span id="cb768-8"><a href="9.1-basic-operations-on-tibbles.html#cb768-8" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), <span class="sc">~</span> <span class="fu">first</span>(.x)), <span class="at">.groups =</span> <span class="st">&quot;drop&quot;</span>)</span></code></pre></div>
 <p><code>group_by</code> and <code>first</code> is slow due to a large number of groups.</p>
 <p>A faster way is to use <code>distinct</code> then join back the ISINs you want to keep:</p>
-<div class="sourceCode" id="cb768"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb768-1"><a href="9.1-basic-operations-on-tibbles.html#cb768-1" tabindex="-1"></a>isin_map <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span></span>
-<span id="cb768-2"><a href="9.1-basic-operations-on-tibbles.html#cb768-2" tabindex="-1"></a>    <span class="fu">group_by</span>(companyID) <span class="sc">%&gt;%</span></span>
-<span id="cb768-3"><a href="9.1-basic-operations-on-tibbles.html#cb768-3" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">ISIN =</span> <span class="fu">first</span>(ISIN), <span class="at">.groups =</span> <span class="st">&quot;drop&quot;</span>)</span>
-<span id="cb768-4"><a href="9.1-basic-operations-on-tibbles.html#cb768-4" tabindex="-1"></a>isin_map</span>
-<span id="cb768-5"><a href="9.1-basic-operations-on-tibbles.html#cb768-5" tabindex="-1"></a></span>
-<span id="cb768-6"><a href="9.1-basic-operations-on-tibbles.html#cb768-6" tabindex="-1"></a>data <span class="sc">%&gt;%</span></span>
-<span id="cb768-7"><a href="9.1-basic-operations-on-tibbles.html#cb768-7" tabindex="-1"></a>    <span class="fu">select</span>(<span class="sc">-</span>ISIN) <span class="sc">%&gt;%</span></span>
-<span id="cb768-8"><a href="9.1-basic-operations-on-tibbles.html#cb768-8" tabindex="-1"></a>    <span class="fu">distinct</span>(companyID, Year, <span class="at">.keep_all =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb768-9"><a href="9.1-basic-operations-on-tibbles.html#cb768-9" tabindex="-1"></a>    <span class="fu">left_join</span>(isin_map, <span class="at">by =</span> <span class="st">&quot;companyID&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb769"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb769-1"><a href="9.1-basic-operations-on-tibbles.html#cb769-1" tabindex="-1"></a>isin_map <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span></span>
+<span id="cb769-2"><a href="9.1-basic-operations-on-tibbles.html#cb769-2" tabindex="-1"></a>    <span class="fu">group_by</span>(companyID) <span class="sc">%&gt;%</span></span>
+<span id="cb769-3"><a href="9.1-basic-operations-on-tibbles.html#cb769-3" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">ISIN =</span> <span class="fu">first</span>(ISIN), <span class="at">.groups =</span> <span class="st">&quot;drop&quot;</span>)</span>
+<span id="cb769-4"><a href="9.1-basic-operations-on-tibbles.html#cb769-4" tabindex="-1"></a>isin_map</span>
+<span id="cb769-5"><a href="9.1-basic-operations-on-tibbles.html#cb769-5" tabindex="-1"></a></span>
+<span id="cb769-6"><a href="9.1-basic-operations-on-tibbles.html#cb769-6" tabindex="-1"></a>data <span class="sc">%&gt;%</span></span>
+<span id="cb769-7"><a href="9.1-basic-operations-on-tibbles.html#cb769-7" tabindex="-1"></a>    <span class="fu">select</span>(<span class="sc">-</span>ISIN) <span class="sc">%&gt;%</span></span>
+<span id="cb769-8"><a href="9.1-basic-operations-on-tibbles.html#cb769-8" tabindex="-1"></a>    <span class="fu">distinct</span>(companyID, Year, <span class="at">.keep_all =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb769-9"><a href="9.1-basic-operations-on-tibbles.html#cb769-9" tabindex="-1"></a>    <span class="fu">left_join</span>(isin_map, <span class="at">by =</span> <span class="st">&quot;companyID&quot;</span>)</span></code></pre></div>
 </div>
 <div id="column-names" class="section level3 hasAnchor" number="9.1.2">
 <h3><span class="header-section-number">9.1.2</span> Column Names<a href="9.1-basic-operations-on-tibbles.html#column-names" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p><code>rename()</code> replaces an old name with a new one.</p>
-<div class="sourceCode" id="cb769"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb769-1"><a href="9.1-basic-operations-on-tibbles.html#cb769-1" tabindex="-1"></a>world <span class="sc">%&gt;%</span> </span>
-<span id="cb769-2"><a href="9.1-basic-operations-on-tibbles.html#cb769-2" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">name =</span> name_long)</span>
-<span id="cb769-3"><a href="9.1-basic-operations-on-tibbles.html#cb769-3" tabindex="-1"></a><span class="co"># renames the lengthy name_long column to simply name</span></span></code></pre></div>
+<div class="sourceCode" id="cb770"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb770-1"><a href="9.1-basic-operations-on-tibbles.html#cb770-1" tabindex="-1"></a>world <span class="sc">%&gt;%</span> </span>
+<span id="cb770-2"><a href="9.1-basic-operations-on-tibbles.html#cb770-2" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">name =</span> name_long)</span>
+<span id="cb770-3"><a href="9.1-basic-operations-on-tibbles.html#cb770-3" tabindex="-1"></a><span class="co"># renames the lengthy name_long column to simply name</span></span></code></pre></div>
 <p><code>magrittr</code> package provides a series of aliases which can be more pleasant to use when composing chains using the <code>%&gt;%</code>operator.</p>
 <table>
 <thead>
@@ -1155,32 +1155,32 @@ If you are not careful, unexpected errors may occur.</p>
 </ul>
 <p>Q: What is data-masking?</p>
 <p>A: <a href="https://rlang.r-lib.org/reference/topic-data-mask.html">Data-masking</a> is a technique that allows you to refer to variables in a data frame directly by their names without using the <code>$</code> operator or quoting the variable names. See examples below.</p>
-<div class="sourceCode" id="cb770"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb770-1"><a href="9.1-basic-operations-on-tibbles.html#cb770-1" tabindex="-1"></a><span class="co"># Unmasked programming</span></span>
-<span id="cb770-2"><a href="9.1-basic-operations-on-tibbles.html#cb770-2" tabindex="-1"></a><span class="fu">mean</span>(mtcars<span class="sc">$</span>cyl <span class="sc">+</span> mtcars<span class="sc">$</span>am)</span>
-<span id="cb770-3"><a href="9.1-basic-operations-on-tibbles.html#cb770-3" tabindex="-1"></a><span class="co">#&gt; [1] 6.59375</span></span>
-<span id="cb770-4"><a href="9.1-basic-operations-on-tibbles.html#cb770-4" tabindex="-1"></a></span>
-<span id="cb770-5"><a href="9.1-basic-operations-on-tibbles.html#cb770-5" tabindex="-1"></a><span class="co"># Referring to columns is an error - Where is the data?</span></span>
-<span id="cb770-6"><a href="9.1-basic-operations-on-tibbles.html#cb770-6" tabindex="-1"></a><span class="fu">mean</span>(cyl <span class="sc">+</span> am)</span>
-<span id="cb770-7"><a href="9.1-basic-operations-on-tibbles.html#cb770-7" tabindex="-1"></a><span class="co">#&gt; Error:</span></span>
-<span id="cb770-8"><a href="9.1-basic-operations-on-tibbles.html#cb770-8" tabindex="-1"></a><span class="co">#&gt; ! object &#39;cyl&#39; not found</span></span>
-<span id="cb770-9"><a href="9.1-basic-operations-on-tibbles.html#cb770-9" tabindex="-1"></a></span>
-<span id="cb770-10"><a href="9.1-basic-operations-on-tibbles.html#cb770-10" tabindex="-1"></a><span class="co"># Data-masking</span></span>
-<span id="cb770-11"><a href="9.1-basic-operations-on-tibbles.html#cb770-11" tabindex="-1"></a><span class="fu">with</span>(mtcars, <span class="fu">mean</span>(cyl <span class="sc">+</span> am))</span>
-<span id="cb770-12"><a href="9.1-basic-operations-on-tibbles.html#cb770-12" tabindex="-1"></a><span class="co">#&gt; [1] 6.59375</span></span></code></pre></div>
+<div class="sourceCode" id="cb771"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb771-1"><a href="9.1-basic-operations-on-tibbles.html#cb771-1" tabindex="-1"></a><span class="co"># Unmasked programming</span></span>
+<span id="cb771-2"><a href="9.1-basic-operations-on-tibbles.html#cb771-2" tabindex="-1"></a><span class="fu">mean</span>(mtcars<span class="sc">$</span>cyl <span class="sc">+</span> mtcars<span class="sc">$</span>am)</span>
+<span id="cb771-3"><a href="9.1-basic-operations-on-tibbles.html#cb771-3" tabindex="-1"></a><span class="co">#&gt; [1] 6.59375</span></span>
+<span id="cb771-4"><a href="9.1-basic-operations-on-tibbles.html#cb771-4" tabindex="-1"></a></span>
+<span id="cb771-5"><a href="9.1-basic-operations-on-tibbles.html#cb771-5" tabindex="-1"></a><span class="co"># Referring to columns is an error - Where is the data?</span></span>
+<span id="cb771-6"><a href="9.1-basic-operations-on-tibbles.html#cb771-6" tabindex="-1"></a><span class="fu">mean</span>(cyl <span class="sc">+</span> am)</span>
+<span id="cb771-7"><a href="9.1-basic-operations-on-tibbles.html#cb771-7" tabindex="-1"></a><span class="co">#&gt; Error:</span></span>
+<span id="cb771-8"><a href="9.1-basic-operations-on-tibbles.html#cb771-8" tabindex="-1"></a><span class="co">#&gt; ! object &#39;cyl&#39; not found</span></span>
+<span id="cb771-9"><a href="9.1-basic-operations-on-tibbles.html#cb771-9" tabindex="-1"></a></span>
+<span id="cb771-10"><a href="9.1-basic-operations-on-tibbles.html#cb771-10" tabindex="-1"></a><span class="co"># Data-masking</span></span>
+<span id="cb771-11"><a href="9.1-basic-operations-on-tibbles.html#cb771-11" tabindex="-1"></a><span class="fu">with</span>(mtcars, <span class="fu">mean</span>(cyl <span class="sc">+</span> am))</span>
+<span id="cb771-12"><a href="9.1-basic-operations-on-tibbles.html#cb771-12" tabindex="-1"></a><span class="co">#&gt; [1] 6.59375</span></span></code></pre></div>
 <p>Q: Which functions support data-masking?</p>
 <p>A: <code>dplyr</code> verbs, such as <code>filter()</code>, <code>mutate()</code>, <code>summarise()</code>, <code>arrange()</code>, and <code>select()</code> support data-masking.</p>
-<div class="sourceCode" id="cb771"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb771-1"><a href="9.1-basic-operations-on-tibbles.html#cb771-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb771-2"><a href="9.1-basic-operations-on-tibbles.html#cb771-2" tabindex="-1"></a>DT <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">a =</span> <span class="fu">rnorm</span>(<span class="dv">1000</span>), <span class="at">b =</span> <span class="fu">rnorm</span>(<span class="dv">1000</span>))</span>
-<span id="cb771-3"><a href="9.1-basic-operations-on-tibbles.html#cb771-3" tabindex="-1"></a></span>
-<span id="cb771-4"><a href="9.1-basic-operations-on-tibbles.html#cb771-4" tabindex="-1"></a>DT <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">id =</span> <span class="fu">row_number</span>())</span>
-<span id="cb771-5"><a href="9.1-basic-operations-on-tibbles.html#cb771-5" tabindex="-1"></a>DT <span class="sc">%&gt;%</span> <span class="fu">add_column</span>(<span class="at">id =</span> <span class="fu">row_number</span>())</span>
-<span id="cb771-6"><a href="9.1-basic-operations-on-tibbles.html#cb771-6" tabindex="-1"></a>Error <span class="cf">in</span> <span class="st">`</span><span class="at">n()</span><span class="st">`</span><span class="sc">:</span></span>
-<span id="cb771-7"><a href="9.1-basic-operations-on-tibbles.html#cb771-7" tabindex="-1"></a><span class="sc">!</span> Must only be used inside data<span class="sc">-</span>masking verbs like <span class="st">`</span><span class="at">mutate()</span><span class="st">`</span>, <span class="st">`</span><span class="at">filter()</span><span class="st">`</span>, and <span class="st">`</span><span class="at">group_by()</span><span class="st">`</span>.</span>
-<span id="cb771-8"><a href="9.1-basic-operations-on-tibbles.html#cb771-8" tabindex="-1"></a>Run <span class="st">`</span><span class="at">rlang::last_trace()</span><span class="st">`</span> to see where the error occurred.</span>
-<span id="cb771-9"><a href="9.1-basic-operations-on-tibbles.html#cb771-9" tabindex="-1"></a></span>
-<span id="cb771-10"><a href="9.1-basic-operations-on-tibbles.html#cb771-10" tabindex="-1"></a>DT <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">diff =</span> b <span class="sc">-</span> a)</span>
-<span id="cb771-11"><a href="9.1-basic-operations-on-tibbles.html#cb771-11" tabindex="-1"></a>DT <span class="sc">%&gt;%</span> <span class="fu">add_column</span>(<span class="at">diff =</span> b <span class="sc">-</span> a)</span>
-<span id="cb771-12"><a href="9.1-basic-operations-on-tibbles.html#cb771-12" tabindex="-1"></a>Error<span class="sc">:</span> object <span class="st">&#39;b&#39;</span> not found</span></code></pre></div>
+<div class="sourceCode" id="cb772"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb772-1"><a href="9.1-basic-operations-on-tibbles.html#cb772-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb772-2"><a href="9.1-basic-operations-on-tibbles.html#cb772-2" tabindex="-1"></a>DT <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">a =</span> <span class="fu">rnorm</span>(<span class="dv">1000</span>), <span class="at">b =</span> <span class="fu">rnorm</span>(<span class="dv">1000</span>))</span>
+<span id="cb772-3"><a href="9.1-basic-operations-on-tibbles.html#cb772-3" tabindex="-1"></a></span>
+<span id="cb772-4"><a href="9.1-basic-operations-on-tibbles.html#cb772-4" tabindex="-1"></a>DT <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">id =</span> <span class="fu">row_number</span>())</span>
+<span id="cb772-5"><a href="9.1-basic-operations-on-tibbles.html#cb772-5" tabindex="-1"></a>DT <span class="sc">%&gt;%</span> <span class="fu">add_column</span>(<span class="at">id =</span> <span class="fu">row_number</span>())</span>
+<span id="cb772-6"><a href="9.1-basic-operations-on-tibbles.html#cb772-6" tabindex="-1"></a>Error <span class="cf">in</span> <span class="st">`</span><span class="at">n()</span><span class="st">`</span><span class="sc">:</span></span>
+<span id="cb772-7"><a href="9.1-basic-operations-on-tibbles.html#cb772-7" tabindex="-1"></a><span class="sc">!</span> Must only be used inside data<span class="sc">-</span>masking verbs like <span class="st">`</span><span class="at">mutate()</span><span class="st">`</span>, <span class="st">`</span><span class="at">filter()</span><span class="st">`</span>, and <span class="st">`</span><span class="at">group_by()</span><span class="st">`</span>.</span>
+<span id="cb772-8"><a href="9.1-basic-operations-on-tibbles.html#cb772-8" tabindex="-1"></a>Run <span class="st">`</span><span class="at">rlang::last_trace()</span><span class="st">`</span> to see where the error occurred.</span>
+<span id="cb772-9"><a href="9.1-basic-operations-on-tibbles.html#cb772-9" tabindex="-1"></a></span>
+<span id="cb772-10"><a href="9.1-basic-operations-on-tibbles.html#cb772-10" tabindex="-1"></a>DT <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">diff =</span> b <span class="sc">-</span> a)</span>
+<span id="cb772-11"><a href="9.1-basic-operations-on-tibbles.html#cb772-11" tabindex="-1"></a>DT <span class="sc">%&gt;%</span> <span class="fu">add_column</span>(<span class="at">diff =</span> b <span class="sc">-</span> a)</span>
+<span id="cb772-12"><a href="9.1-basic-operations-on-tibbles.html#cb772-12" tabindex="-1"></a>Error<span class="sc">:</span> object <span class="st">&#39;b&#39;</span> not found</span></code></pre></div>
 <hr />
 <p><a id="mutate"></a>
 <code>mutate(.data, ..., .before, .after)</code> create, modify, and delete columns.</p>
@@ -1194,38 +1194,38 @@ If you are not careful, unexpected errors may occur.</p>
 <div id="order-by-columns" class="section level4 unnumbered unlisted hasAnchor">
 <h4>Order by Columns<a href="9.1-basic-operations-on-tibbles.html#order-by-columns" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p><code>arrange()</code> reorders data frame based on specified columns.</p>
-<div class="sourceCode" id="cb772"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb772-1"><a href="9.1-basic-operations-on-tibbles.html#cb772-1" tabindex="-1"></a><span class="co"># sort mtcars by disp in ascending order</span></span>
-<span id="cb772-2"><a href="9.1-basic-operations-on-tibbles.html#cb772-2" tabindex="-1"></a><span class="fu">arrange</span>(mtcars, disp)</span>
-<span id="cb772-3"><a href="9.1-basic-operations-on-tibbles.html#cb772-3" tabindex="-1"></a><span class="co"># sort mtcars by disp in descending order</span></span>
-<span id="cb772-4"><a href="9.1-basic-operations-on-tibbles.html#cb772-4" tabindex="-1"></a><span class="fu">arrange</span>(mtcars, <span class="fu">desc</span>(disp))</span></code></pre></div>
+<div class="sourceCode" id="cb773"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb773-1"><a href="9.1-basic-operations-on-tibbles.html#cb773-1" tabindex="-1"></a><span class="co"># sort mtcars by disp in ascending order</span></span>
+<span id="cb773-2"><a href="9.1-basic-operations-on-tibbles.html#cb773-2" tabindex="-1"></a><span class="fu">arrange</span>(mtcars, disp)</span>
+<span id="cb773-3"><a href="9.1-basic-operations-on-tibbles.html#cb773-3" tabindex="-1"></a><span class="co"># sort mtcars by disp in descending order</span></span>
+<span id="cb773-4"><a href="9.1-basic-operations-on-tibbles.html#cb773-4" tabindex="-1"></a><span class="fu">arrange</span>(mtcars, <span class="fu">desc</span>(disp))</span></code></pre></div>
 <p><code>arrange</code> by column position</p>
-<div class="sourceCode" id="cb773"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb773-1"><a href="9.1-basic-operations-on-tibbles.html#cb773-1" tabindex="-1"></a><span class="co"># sort by first column in the data</span></span>
-<span id="cb773-2"><a href="9.1-basic-operations-on-tibbles.html#cb773-2" tabindex="-1"></a>data <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(.[<span class="dv">1</span>])</span></code></pre></div>
+<div class="sourceCode" id="cb774"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb774-1"><a href="9.1-basic-operations-on-tibbles.html#cb774-1" tabindex="-1"></a><span class="co"># sort by first column in the data</span></span>
+<span id="cb774-2"><a href="9.1-basic-operations-on-tibbles.html#cb774-2" tabindex="-1"></a>data <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(.[<span class="dv">1</span>])</span></code></pre></div>
 </div>
 </div>
 <div id="mutate" class="section level3 hasAnchor" number="9.1.4">
 <h3><span class="header-section-number">9.1.4</span> <code>mutate</code><a href="9.1-basic-operations-on-tibbles.html#mutate" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p><code>mutate()</code> adds new columns at the penultimate (second last) position in the <code>sf</code> object (the last one is reserved for the geometry):</p>
-<div class="sourceCode" id="cb774"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb774-1"><a href="9.1-basic-operations-on-tibbles.html#cb774-1" tabindex="-1"></a>world <span class="sc">%&gt;%</span> </span>
-<span id="cb774-2"><a href="9.1-basic-operations-on-tibbles.html#cb774-2" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">pop_dens =</span> pop <span class="sc">/</span> area_km2)</span></code></pre></div>
+<div class="sourceCode" id="cb775"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb775-1"><a href="9.1-basic-operations-on-tibbles.html#cb775-1" tabindex="-1"></a>world <span class="sc">%&gt;%</span> </span>
+<span id="cb775-2"><a href="9.1-basic-operations-on-tibbles.html#cb775-2" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">pop_dens =</span> pop <span class="sc">/</span> area_km2)</span></code></pre></div>
 <p>To calculate row means of multiple columns,</p>
-<div class="sourceCode" id="cb775"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb775-1"><a href="9.1-basic-operations-on-tibbles.html#cb775-1" tabindex="-1"></a><span class="co"># common mistake: use mean() directly</span></span>
-<span id="cb775-2"><a href="9.1-basic-operations-on-tibbles.html#cb775-2" tabindex="-1"></a><span class="sc">&gt;</span> X_demo <span class="sc">%&gt;%</span> </span>
-<span id="cb775-3"><a href="9.1-basic-operations-on-tibbles.html#cb775-3" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">ptf_mean =</span> <span class="fu">mean</span>(Asset_A, Asset_B))</span>
-<span id="cb775-4"><a href="9.1-basic-operations-on-tibbles.html#cb775-4" tabindex="-1"></a></span>
-<span id="cb775-5"><a href="9.1-basic-operations-on-tibbles.html#cb775-5" tabindex="-1"></a>Error <span class="cf">in</span> <span class="st">`</span><span class="at">mutate()</span><span class="st">`</span><span class="sc">:</span></span>
-<span id="cb775-6"><a href="9.1-basic-operations-on-tibbles.html#cb775-6" tabindex="-1"></a>ℹ In argument<span class="sc">:</span> <span class="st">`</span><span class="at">ptf_mean = mean(Asset_A, Asset_B)</span><span class="st">`</span>.</span>
-<span id="cb775-7"><a href="9.1-basic-operations-on-tibbles.html#cb775-7" tabindex="-1"></a>Caused by error <span class="cf">in</span> <span class="st">`</span><span class="at">mean.default()</span><span class="st">`</span><span class="sc">:</span></span>
-<span id="cb775-8"><a href="9.1-basic-operations-on-tibbles.html#cb775-8" tabindex="-1"></a><span class="sc">!</span> <span class="st">&#39;trim&#39;</span> must be numeric of length one</span>
-<span id="cb775-9"><a href="9.1-basic-operations-on-tibbles.html#cb775-9" tabindex="-1"></a>Run <span class="st">`</span><span class="at">rlang::last_trace()</span><span class="st">`</span> to see where the error occurred.</span></code></pre></div>
+<div class="sourceCode" id="cb776"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb776-1"><a href="9.1-basic-operations-on-tibbles.html#cb776-1" tabindex="-1"></a><span class="co"># common mistake: use mean() directly</span></span>
+<span id="cb776-2"><a href="9.1-basic-operations-on-tibbles.html#cb776-2" tabindex="-1"></a><span class="sc">&gt;</span> X_demo <span class="sc">%&gt;%</span> </span>
+<span id="cb776-3"><a href="9.1-basic-operations-on-tibbles.html#cb776-3" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">ptf_mean =</span> <span class="fu">mean</span>(Asset_A, Asset_B))</span>
+<span id="cb776-4"><a href="9.1-basic-operations-on-tibbles.html#cb776-4" tabindex="-1"></a></span>
+<span id="cb776-5"><a href="9.1-basic-operations-on-tibbles.html#cb776-5" tabindex="-1"></a>Error <span class="cf">in</span> <span class="st">`</span><span class="at">mutate()</span><span class="st">`</span><span class="sc">:</span></span>
+<span id="cb776-6"><a href="9.1-basic-operations-on-tibbles.html#cb776-6" tabindex="-1"></a>ℹ In argument<span class="sc">:</span> <span class="st">`</span><span class="at">ptf_mean = mean(Asset_A, Asset_B)</span><span class="st">`</span>.</span>
+<span id="cb776-7"><a href="9.1-basic-operations-on-tibbles.html#cb776-7" tabindex="-1"></a>Caused by error <span class="cf">in</span> <span class="st">`</span><span class="at">mean.default()</span><span class="st">`</span><span class="sc">:</span></span>
+<span id="cb776-8"><a href="9.1-basic-operations-on-tibbles.html#cb776-8" tabindex="-1"></a><span class="sc">!</span> <span class="st">&#39;trim&#39;</span> must be numeric of length one</span>
+<span id="cb776-9"><a href="9.1-basic-operations-on-tibbles.html#cb776-9" tabindex="-1"></a>Run <span class="st">`</span><span class="at">rlang::last_trace()</span><span class="st">`</span> to see where the error occurred.</span></code></pre></div>
 <p>Note that the error happens because <code>mean(Asset_A, Asset_B)</code> is interpreted as <code>mean(c(Asset_A), trim = Asset_B)</code>, which is not what we want.</p>
 <p>Fixes:</p>
 <ul>
 <li><p>Easiest way: Use <code>rowMeans(X_demo[c("Asset_A", "Asset_B")])</code> to calculate row means of selected columns.</p>
 <p>Returns a vector.</p></li>
 <li><p>If want to use <code>mutate</code>; this creates a new column; looks better as ptf and assets returns are side by side;</p>
-<div class="sourceCode" id="cb776"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb776-1"><a href="9.1-basic-operations-on-tibbles.html#cb776-1" tabindex="-1"></a>X_demo <span class="sc">%&gt;%</span> </span>
-<span id="cb776-2"><a href="9.1-basic-operations-on-tibbles.html#cb776-2" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ptf_mean =</span> <span class="fu">rowMeans</span>(<span class="fu">select</span>(., Asset_A, Asset_B)))</span></code></pre></div></li>
+<div class="sourceCode" id="cb777"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb777-1"><a href="9.1-basic-operations-on-tibbles.html#cb777-1" tabindex="-1"></a>X_demo <span class="sc">%&gt;%</span> </span>
+<span id="cb777-2"><a href="9.1-basic-operations-on-tibbles.html#cb777-2" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ptf_mean =</span> <span class="fu">rowMeans</span>(<span class="fu">select</span>(., Asset_A, Asset_B)))</span></code></pre></div></li>
 </ul>
 <p><code>mutate_at(.tbl, .vars, .funs)</code> applies a function to given columns:</p>
 <ul>
@@ -1233,17 +1233,17 @@ If you are not careful, unexpected errors may occur.</p>
 <li><code>.vars</code> A list of columns generated by <code>vars()</code>, a character vector of <u>column names</u>, a numeric vector of <u>column positions</u>, or NULL.</li>
 <li><code>.fun</code> A function fun, a quosure style lambda <code>~ fun(.)</code> or a list of either form.</li>
 </ul>
-<div class="sourceCode" id="cb777"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb777-1"><a href="9.1-basic-operations-on-tibbles.html#cb777-1" tabindex="-1"></a>mtcars <span class="ot">&lt;-</span> mtcars <span class="sc">%&gt;%</span></span>
-<span id="cb777-2"><a href="9.1-basic-operations-on-tibbles.html#cb777-2" tabindex="-1"></a>  <span class="fu">mutate_at</span>(<span class="fu">c</span>(<span class="st">&quot;hp_wt&quot;</span>, <span class="st">&quot;mpg_wt&quot;</span>), log) </span>
-<span id="cb777-3"><a href="9.1-basic-operations-on-tibbles.html#cb777-3" tabindex="-1"></a></span>
-<span id="cb777-4"><a href="9.1-basic-operations-on-tibbles.html#cb777-4" tabindex="-1"></a><span class="co"># note that `across` use together with `mutate`</span></span>
-<span id="cb777-5"><a href="9.1-basic-operations-on-tibbles.html#cb777-5" tabindex="-1"></a>mtcars <span class="ot">&lt;-</span> mtcars <span class="sc">%&gt;%</span></span>
-<span id="cb777-6"><a href="9.1-basic-operations-on-tibbles.html#cb777-6" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(<span class="st">&quot;hp_wt&quot;</span>, <span class="st">&quot;mpg_wt&quot;</span>), log)) </span>
-<span id="cb777-7"><a href="9.1-basic-operations-on-tibbles.html#cb777-7" tabindex="-1"></a></span>
-<span id="cb777-8"><a href="9.1-basic-operations-on-tibbles.html#cb777-8" tabindex="-1"></a><span class="co"># `mutate_at` is more concise, don&#39;t need to put everything in `across(.cols, .fnc)`</span></span>
-<span id="cb777-9"><a href="9.1-basic-operations-on-tibbles.html#cb777-9" tabindex="-1"></a><span class="co"># factor as numeric, except for `ISO_C3`</span></span>
-<span id="cb777-10"><a href="9.1-basic-operations-on-tibbles.html#cb777-10" tabindex="-1"></a>agg_dummy <span class="sc">%&gt;%</span> </span>
-<span id="cb777-11"><a href="9.1-basic-operations-on-tibbles.html#cb777-11" tabindex="-1"></a>    <span class="fu">mutate_at</span>(<span class="fu">vars</span>(<span class="sc">-</span>ISO_C3), <span class="sc">~</span><span class="fu">as.numeric</span>(<span class="fu">levels</span>(.)[.]))</span></code></pre></div>
+<div class="sourceCode" id="cb778"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb778-1"><a href="9.1-basic-operations-on-tibbles.html#cb778-1" tabindex="-1"></a>mtcars <span class="ot">&lt;-</span> mtcars <span class="sc">%&gt;%</span></span>
+<span id="cb778-2"><a href="9.1-basic-operations-on-tibbles.html#cb778-2" tabindex="-1"></a>  <span class="fu">mutate_at</span>(<span class="fu">c</span>(<span class="st">&quot;hp_wt&quot;</span>, <span class="st">&quot;mpg_wt&quot;</span>), log) </span>
+<span id="cb778-3"><a href="9.1-basic-operations-on-tibbles.html#cb778-3" tabindex="-1"></a></span>
+<span id="cb778-4"><a href="9.1-basic-operations-on-tibbles.html#cb778-4" tabindex="-1"></a><span class="co"># note that `across` use together with `mutate`</span></span>
+<span id="cb778-5"><a href="9.1-basic-operations-on-tibbles.html#cb778-5" tabindex="-1"></a>mtcars <span class="ot">&lt;-</span> mtcars <span class="sc">%&gt;%</span></span>
+<span id="cb778-6"><a href="9.1-basic-operations-on-tibbles.html#cb778-6" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(<span class="st">&quot;hp_wt&quot;</span>, <span class="st">&quot;mpg_wt&quot;</span>), log)) </span>
+<span id="cb778-7"><a href="9.1-basic-operations-on-tibbles.html#cb778-7" tabindex="-1"></a></span>
+<span id="cb778-8"><a href="9.1-basic-operations-on-tibbles.html#cb778-8" tabindex="-1"></a><span class="co"># `mutate_at` is more concise, don&#39;t need to put everything in `across(.cols, .fnc)`</span></span>
+<span id="cb778-9"><a href="9.1-basic-operations-on-tibbles.html#cb778-9" tabindex="-1"></a><span class="co"># factor as numeric, except for `ISO_C3`</span></span>
+<span id="cb778-10"><a href="9.1-basic-operations-on-tibbles.html#cb778-10" tabindex="-1"></a>agg_dummy <span class="sc">%&gt;%</span> </span>
+<span id="cb778-11"><a href="9.1-basic-operations-on-tibbles.html#cb778-11" tabindex="-1"></a>    <span class="fu">mutate_at</span>(<span class="fu">vars</span>(<span class="sc">-</span>ISO_C3), <span class="sc">~</span><span class="fu">as.numeric</span>(<span class="fu">levels</span>(.)[.]))</span></code></pre></div>
 <p><span class="env-green"><code>across(.cols, .fnc, .names=NULL)</code></span> apply the same transformation to multiple <span class="env-green"><strong>columns</strong></span>, allowing you to use <code>select()</code> semantics inside in “data-masking” functions like <code>summarise()</code> and <code>mutate()</code>.</p>
 <ul>
 <li><p><code>.cols</code> Columns to transform. You can NOT select grouping columns because they are already automatically handled by the verb.</p>
@@ -1252,8 +1252,8 @@ If you are not careful, unexpected errors may occur.</p>
 <ul>
 <li><p>A function, e.g. <code>mean</code>.</p></li>
 <li><p><span class="env-green">A purrr-style lambda, e.g. <code>~ mean(.x, na.rm = TRUE)</code></span></p>
-<div class="sourceCode" id="cb778"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb778-1"><a href="9.1-basic-operations-on-tibbles.html#cb778-1" tabindex="-1"></a><span class="co"># divide each col by 100, except for the Date column.</span></span>
-<span id="cb778-2"><a href="9.1-basic-operations-on-tibbles.html#cb778-2" tabindex="-1"></a>FF_factor <span class="sc">%&gt;%</span> <span class="fu">mutate_at</span>(<span class="fu">vars</span>(<span class="sc">-</span>Date), <span class="sc">~</span>.<span class="sc">/</span><span class="dv">100</span>)</span></code></pre></div></li>
+<div class="sourceCode" id="cb779"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb779-1"><a href="9.1-basic-operations-on-tibbles.html#cb779-1" tabindex="-1"></a><span class="co"># divide each col by 100, except for the Date column.</span></span>
+<span id="cb779-2"><a href="9.1-basic-operations-on-tibbles.html#cb779-2" tabindex="-1"></a>FF_factor <span class="sc">%&gt;%</span> <span class="fu">mutate_at</span>(<span class="fu">vars</span>(<span class="sc">-</span>Date), <span class="sc">~</span>.<span class="sc">/</span><span class="dv">100</span>)</span></code></pre></div></li>
 <li><p>A named list of functions or lambdas, e.g. <code>⁠list(mean = mean, n_miss = ~ sum(is.na(.x))⁠</code>. Each function is applied to each column, and the output is named by combining the function name and the column name using the glue specification in <code>.names</code>.</p></li>
 </ul></li>
 </ul>
@@ -1274,9 +1274,9 @@ If you are not careful, unexpected errors may occur.</p>
 </ul></li>
 <li><p><code>.before</code>, <code>.after</code> specify the position where you want to add the new row/rows.</p></li>
 </ul>
-<div class="sourceCode" id="cb779"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb779-1"><a href="9.1-basic-operations-on-tibbles.html#cb779-1" tabindex="-1"></a><span class="co"># add_row ---------------------------------</span></span>
-<span id="cb779-2"><a href="9.1-basic-operations-on-tibbles.html#cb779-2" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">x =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="at">y =</span> <span class="dv">3</span><span class="sc">:</span><span class="dv">1</span>)</span>
-<span id="cb779-3"><a href="9.1-basic-operations-on-tibbles.html#cb779-3" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">add_row</span>(<span class="at">x =</span> <span class="dv">4</span>, <span class="at">y =</span> <span class="dv">0</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb780"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb780-1"><a href="9.1-basic-operations-on-tibbles.html#cb780-1" tabindex="-1"></a><span class="co"># add_row ---------------------------------</span></span>
+<span id="cb780-2"><a href="9.1-basic-operations-on-tibbles.html#cb780-2" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">x =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="at">y =</span> <span class="dv">3</span><span class="sc">:</span><span class="dv">1</span>)</span>
+<span id="cb780-3"><a href="9.1-basic-operations-on-tibbles.html#cb780-3" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">add_row</span>(<span class="at">x =</span> <span class="dv">4</span>, <span class="at">y =</span> <span class="dv">0</span>)</span></code></pre></div>
 <p><strong><code>bind_rows(..., .id = NULL)</code></strong> This is an efficient implementation of the common pattern of <code>do.call(rbind, dfs)</code>. Match by <span class="env-green">column names</span>.</p>
 <p>The output of <code>bind_rows()</code> will contain a column if that column appears in any of the inputs. <code>rbind</code> will throw errors if columns do not match.</p>
 <ul>
@@ -1296,12 +1296,12 @@ If you are not careful, unexpected errors may occur.</p>
 <li>When <code>.id</code> is supplied, a new column of identifiers is created to link each row to its original data frame. The labels are taken from the named arguments to <code>bind_rows()</code>. When a list of data frames is supplied, the labels are taken from the names of the list. If no names are found a numeric sequence is used instead.</li>
 </ul></li>
 </ul>
-<div class="sourceCode" id="cb780"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb780-1"><a href="9.1-basic-operations-on-tibbles.html#cb780-1" tabindex="-1"></a>res <span class="ot">=</span> <span class="cn">NULL</span></span>
-<span id="cb780-2"><a href="9.1-basic-operations-on-tibbles.html#cb780-2" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> tibbleList)</span>
-<span id="cb780-3"><a href="9.1-basic-operations-on-tibbles.html#cb780-3" tabindex="-1"></a>   res <span class="ot">=</span> <span class="fu">bind_rows</span>(res, i)</span>
-<span id="cb780-4"><a href="9.1-basic-operations-on-tibbles.html#cb780-4" tabindex="-1"></a></span>
-<span id="cb780-5"><a href="9.1-basic-operations-on-tibbles.html#cb780-5" tabindex="-1"></a><span class="co"># or, equivalently,</span></span>
-<span id="cb780-6"><a href="9.1-basic-operations-on-tibbles.html#cb780-6" tabindex="-1"></a><span class="fu">bind_rows</span>(tibbleList) <span class="co"># combine all tibbles in the list</span></span></code></pre></div>
+<div class="sourceCode" id="cb781"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb781-1"><a href="9.1-basic-operations-on-tibbles.html#cb781-1" tabindex="-1"></a>res <span class="ot">=</span> <span class="cn">NULL</span></span>
+<span id="cb781-2"><a href="9.1-basic-operations-on-tibbles.html#cb781-2" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> tibbleList)</span>
+<span id="cb781-3"><a href="9.1-basic-operations-on-tibbles.html#cb781-3" tabindex="-1"></a>   res <span class="ot">=</span> <span class="fu">bind_rows</span>(res, i)</span>
+<span id="cb781-4"><a href="9.1-basic-operations-on-tibbles.html#cb781-4" tabindex="-1"></a></span>
+<span id="cb781-5"><a href="9.1-basic-operations-on-tibbles.html#cb781-5" tabindex="-1"></a><span class="co"># or, equivalently,</span></span>
+<span id="cb781-6"><a href="9.1-basic-operations-on-tibbles.html#cb781-6" tabindex="-1"></a><span class="fu">bind_rows</span>(tibbleList) <span class="co"># combine all tibbles in the list</span></span></code></pre></div>
 <hr />
 </div>
 <div id="data-subsetting-1" class="section level3 hasAnchor" number="9.1.6">
@@ -1321,14 +1321,14 @@ If you are not careful, unexpected errors may occur.</p>
 Only rows for which all conditions evaluate to <code>TRUE</code> are kept.</p></li>
 <li><p><code>.preserve</code> Relevant when the <code>.data</code> input is grouped. If <code>.preserve = FALSE</code> (the default), the grouping structure is recalculated based on the resulting data, otherwise the grouping is kept as is.</p></li>
 </ul>
-<div class="sourceCode" id="cb781"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb781-1"><a href="9.1-basic-operations-on-tibbles.html#cb781-1" tabindex="-1"></a><span class="co"># Countries with a life expectancy longer than 82 years</span></span>
-<span id="cb781-2"><a href="9.1-basic-operations-on-tibbles.html#cb781-2" tabindex="-1"></a>world6 <span class="ot">&lt;-</span> world <span class="sc">%&gt;%</span> <span class="fu">filter</span>(lifeExp <span class="sc">&gt;</span> <span class="dv">82</span>)</span>
-<span id="cb781-3"><a href="9.1-basic-operations-on-tibbles.html#cb781-3" tabindex="-1"></a></span>
-<span id="cb781-4"><a href="9.1-basic-operations-on-tibbles.html#cb781-4" tabindex="-1"></a><span class="co"># Countries with a life expectancy longer than 82 years AND a population larger than 10 million</span></span>
-<span id="cb781-5"><a href="9.1-basic-operations-on-tibbles.html#cb781-5" tabindex="-1"></a>world7 <span class="ot">=</span> world <span class="sc">%&gt;%</span> <span class="fu">filter</span>(lifeExp <span class="sc">&gt;</span> <span class="dv">82</span>, pop <span class="sc">&gt;</span> <span class="dv">10</span>)</span>
-<span id="cb781-6"><a href="9.1-basic-operations-on-tibbles.html#cb781-6" tabindex="-1"></a></span>
-<span id="cb781-7"><a href="9.1-basic-operations-on-tibbles.html#cb781-7" tabindex="-1"></a><span class="co"># filter based on vector</span></span>
-<span id="cb781-8"><a href="9.1-basic-operations-on-tibbles.html#cb781-8" tabindex="-1"></a>diamonds <span class="sc">%&gt;%</span> <span class="fu">filter</span>(cut <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&#39;Ideal&#39;</span>, <span class="st">&#39;Premium&#39;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb782"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb782-1"><a href="9.1-basic-operations-on-tibbles.html#cb782-1" tabindex="-1"></a><span class="co"># Countries with a life expectancy longer than 82 years</span></span>
+<span id="cb782-2"><a href="9.1-basic-operations-on-tibbles.html#cb782-2" tabindex="-1"></a>world6 <span class="ot">&lt;-</span> world <span class="sc">%&gt;%</span> <span class="fu">filter</span>(lifeExp <span class="sc">&gt;</span> <span class="dv">82</span>)</span>
+<span id="cb782-3"><a href="9.1-basic-operations-on-tibbles.html#cb782-3" tabindex="-1"></a></span>
+<span id="cb782-4"><a href="9.1-basic-operations-on-tibbles.html#cb782-4" tabindex="-1"></a><span class="co"># Countries with a life expectancy longer than 82 years AND a population larger than 10 million</span></span>
+<span id="cb782-5"><a href="9.1-basic-operations-on-tibbles.html#cb782-5" tabindex="-1"></a>world7 <span class="ot">=</span> world <span class="sc">%&gt;%</span> <span class="fu">filter</span>(lifeExp <span class="sc">&gt;</span> <span class="dv">82</span>, pop <span class="sc">&gt;</span> <span class="dv">10</span>)</span>
+<span id="cb782-6"><a href="9.1-basic-operations-on-tibbles.html#cb782-6" tabindex="-1"></a></span>
+<span id="cb782-7"><a href="9.1-basic-operations-on-tibbles.html#cb782-7" tabindex="-1"></a><span class="co"># filter based on vector</span></span>
+<span id="cb782-8"><a href="9.1-basic-operations-on-tibbles.html#cb782-8" tabindex="-1"></a>diamonds <span class="sc">%&gt;%</span> <span class="fu">filter</span>(cut <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&#39;Ideal&#39;</span>, <span class="st">&#39;Premium&#39;</span>))</span></code></pre></div>
 <p>Useful filter functions:</p>
 <ul>
 <li><code>==</code>, <code>&gt;</code>, <code>&gt;=</code> etc</li>
@@ -1340,49 +1340,49 @@ Only rows for which all conditions evaluate to <code>TRUE</code> are kept.</p></
 <p>Ex. <code>x[between(x, -1, 1)]</code></p>
 <hr />
 <p><code>select()</code> subsets by column, <strong><code>slice</code></strong> subsets by <strong>rows</strong>. <strong><code>select()</code></strong> selects <strong>columns</strong> by name or position.</p>
-<div class="sourceCode" id="cb782"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb782-1"><a href="9.1-basic-operations-on-tibbles.html#cb782-1" tabindex="-1"></a>world1 <span class="ot">=</span> dplyr<span class="sc">::</span><span class="fu">select</span>(world, name_long, pop)</span>
-<span id="cb782-2"><a href="9.1-basic-operations-on-tibbles.html#cb782-2" tabindex="-1"></a><span class="fu">names</span>(world1)</span>
-<span id="cb782-3"><a href="9.1-basic-operations-on-tibbles.html#cb782-3" tabindex="-1"></a><span class="co">#&gt; [1] &quot;name_long&quot; &quot;pop&quot;       &quot;geom&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb783"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb783-1"><a href="9.1-basic-operations-on-tibbles.html#cb783-1" tabindex="-1"></a>world1 <span class="ot">=</span> dplyr<span class="sc">::</span><span class="fu">select</span>(world, name_long, pop)</span>
+<span id="cb783-2"><a href="9.1-basic-operations-on-tibbles.html#cb783-2" tabindex="-1"></a><span class="fu">names</span>(world1)</span>
+<span id="cb783-3"><a href="9.1-basic-operations-on-tibbles.html#cb783-3" tabindex="-1"></a><span class="co">#&gt; [1] &quot;name_long&quot; &quot;pop&quot;       &quot;geom&quot;</span></span></code></pre></div>
 <p><code>select()</code> also allows subsetting of a range of columns with the help of the <code>:</code> operator:</p>
-<div class="sourceCode" id="cb783"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb783-1"><a href="9.1-basic-operations-on-tibbles.html#cb783-1" tabindex="-1"></a><span class="co"># all columns between name_long and pop (inclusive)</span></span>
-<span id="cb783-2"><a href="9.1-basic-operations-on-tibbles.html#cb783-2" tabindex="-1"></a>world2 <span class="ot">=</span> dplyr<span class="sc">::</span><span class="fu">select</span>(world, name_long<span class="sc">:</span>pop)</span></code></pre></div>
+<div class="sourceCode" id="cb784"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb784-1"><a href="9.1-basic-operations-on-tibbles.html#cb784-1" tabindex="-1"></a><span class="co"># all columns between name_long and pop (inclusive)</span></span>
+<span id="cb784-2"><a href="9.1-basic-operations-on-tibbles.html#cb784-2" tabindex="-1"></a>world2 <span class="ot">=</span> dplyr<span class="sc">::</span><span class="fu">select</span>(world, name_long<span class="sc">:</span>pop)</span></code></pre></div>
 <p><code>select()</code> can be used to <strong>reorder</strong>/drop variables.</p>
-<div class="sourceCode" id="cb784"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb784-1"><a href="9.1-basic-operations-on-tibbles.html#cb784-1" tabindex="-1"></a><span class="fu">select</span>(df, year, var, state)   <span class="co"># reverses the columns</span></span>
-<span id="cb784-2"><a href="9.1-basic-operations-on-tibbles.html#cb784-2" tabindex="-1"></a><span class="fu">select</span>(df, <span class="sc">-</span>state) <span class="co"># drop column by name &#39;state&#39; </span></span></code></pre></div>
+<div class="sourceCode" id="cb785"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb785-1"><a href="9.1-basic-operations-on-tibbles.html#cb785-1" tabindex="-1"></a><span class="fu">select</span>(df, year, var, state)   <span class="co"># reverses the columns</span></span>
+<span id="cb785-2"><a href="9.1-basic-operations-on-tibbles.html#cb785-2" tabindex="-1"></a><span class="fu">select</span>(df, <span class="sc">-</span>state) <span class="co"># drop column by name &#39;state&#39; </span></span></code></pre></div>
 <p>If you only know you want <strong><code>var</code> in the <em>front</em></strong> and don’t care about the order of the rest, you can do [<em>move one variable in the front</em>]</p>
-<div class="sourceCode" id="cb785"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb785-1"><a href="9.1-basic-operations-on-tibbles.html#cb785-1" tabindex="-1"></a>df <span class="sc">%&gt;%</span></span>
-<span id="cb785-2"><a href="9.1-basic-operations-on-tibbles.html#cb785-2" tabindex="-1"></a>  <span class="fu">select</span>(var, <span class="fu">everything</span>())</span></code></pre></div>
+<div class="sourceCode" id="cb786"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb786-1"><a href="9.1-basic-operations-on-tibbles.html#cb786-1" tabindex="-1"></a>df <span class="sc">%&gt;%</span></span>
+<span id="cb786-2"><a href="9.1-basic-operations-on-tibbles.html#cb786-2" tabindex="-1"></a>  <span class="fu">select</span>(var, <span class="fu">everything</span>())</span></code></pre></div>
 <p><code>all_of(vars)</code> is used together with <code>select</code> for <em>strict selection</em>. If any of the variables in the character vector is missing, an error is thrown.</p>
 <ul>
 <li><code>vars</code> A vector of character names or numeric locations.</li>
 </ul>
 <p><code>any_of(vars)</code> doesn’t check for missing variables. It is especially <strong>useful with negative selections</strong>, when you would like to make sure a variable is removed.</p>
-<div class="sourceCode" id="cb786"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb786-1"><a href="9.1-basic-operations-on-tibbles.html#cb786-1" tabindex="-1"></a><span class="co"># select columns may or may not exist</span></span>
-<span id="cb786-2"><a href="9.1-basic-operations-on-tibbles.html#cb786-2" tabindex="-1"></a>the_country <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">any_of</span>(<span class="fu">c</span>(<span class="st">&quot;isoa2&quot;</span>, <span class="st">&quot;countryCode&quot;</span>)) )</span>
-<span id="cb786-3"><a href="9.1-basic-operations-on-tibbles.html#cb786-3" tabindex="-1"></a><span class="co"># remove columns may or may not exist</span></span>
-<span id="cb786-4"><a href="9.1-basic-operations-on-tibbles.html#cb786-4" tabindex="-1"></a>the_country <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span><span class="fu">any_of</span>(<span class="fu">c</span>(<span class="st">&quot;isoa2&quot;</span>, <span class="st">&quot;countryCode&quot;</span>)) )</span></code></pre></div>
+<div class="sourceCode" id="cb787"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb787-1"><a href="9.1-basic-operations-on-tibbles.html#cb787-1" tabindex="-1"></a><span class="co"># select columns may or may not exist</span></span>
+<span id="cb787-2"><a href="9.1-basic-operations-on-tibbles.html#cb787-2" tabindex="-1"></a>the_country <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">any_of</span>(<span class="fu">c</span>(<span class="st">&quot;isoa2&quot;</span>, <span class="st">&quot;countryCode&quot;</span>)) )</span>
+<span id="cb787-3"><a href="9.1-basic-operations-on-tibbles.html#cb787-3" tabindex="-1"></a><span class="co"># remove columns may or may not exist</span></span>
+<span id="cb787-4"><a href="9.1-basic-operations-on-tibbles.html#cb787-4" tabindex="-1"></a>the_country <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span><span class="fu">any_of</span>(<span class="fu">c</span>(<span class="st">&quot;isoa2&quot;</span>, <span class="st">&quot;countryCode&quot;</span>)) )</span></code></pre></div>
 <p>This flexibility is useful because it won’t return an error if the variable is not found.</p>
 <p><strong>Selection with conditions</strong></p>
 <p>Functions work together with <code>select</code> to choose cols matching certain conditions: <span class="env-green"><code>starts_with()</code></span>, <span class="env-green"><code>ends_with()</code></span>, <code>contains()</code>. These are selection helpers which match variables according to a given pattern.</p>
-<div class="sourceCode" id="cb787"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb787-1"><a href="9.1-basic-operations-on-tibbles.html#cb787-1" tabindex="-1"></a><span class="sc">&gt;</span> iris <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">starts_with</span>(<span class="st">&quot;Sepal&quot;</span>))</span>
-<span id="cb787-2"><a href="9.1-basic-operations-on-tibbles.html#cb787-2" tabindex="-1"></a><span class="co">#&gt; # A tibble: 150 x 2</span></span>
-<span id="cb787-3"><a href="9.1-basic-operations-on-tibbles.html#cb787-3" tabindex="-1"></a><span class="co">#&gt;   Sepal.Length Sepal.Width</span></span>
-<span id="cb787-4"><a href="9.1-basic-operations-on-tibbles.html#cb787-4" tabindex="-1"></a><span class="co">#&gt;          &lt;dbl&gt;       &lt;dbl&gt;</span></span>
-<span id="cb787-5"><a href="9.1-basic-operations-on-tibbles.html#cb787-5" tabindex="-1"></a><span class="co">#&gt; 1          5.1         3.5</span></span>
-<span id="cb787-6"><a href="9.1-basic-operations-on-tibbles.html#cb787-6" tabindex="-1"></a><span class="co">#&gt; 2          4.9         3  </span></span>
-<span id="cb787-7"><a href="9.1-basic-operations-on-tibbles.html#cb787-7" tabindex="-1"></a><span class="co">#&gt; 3          4.7         3.2</span></span>
-<span id="cb787-8"><a href="9.1-basic-operations-on-tibbles.html#cb787-8" tabindex="-1"></a><span class="co">#&gt; 4          4.6         3.1</span></span>
-<span id="cb787-9"><a href="9.1-basic-operations-on-tibbles.html#cb787-9" tabindex="-1"></a><span class="co">#&gt; # i 146 more rows</span></span>
-<span id="cb787-10"><a href="9.1-basic-operations-on-tibbles.html#cb787-10" tabindex="-1"></a></span>
-<span id="cb787-11"><a href="9.1-basic-operations-on-tibbles.html#cb787-11" tabindex="-1"></a><span class="sc">&gt;</span> iris <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">ends_with</span>(<span class="st">&quot;Width&quot;</span>))</span>
-<span id="cb787-12"><a href="9.1-basic-operations-on-tibbles.html#cb787-12" tabindex="-1"></a><span class="co">#&gt; # A tibble: 150 x 2</span></span>
-<span id="cb787-13"><a href="9.1-basic-operations-on-tibbles.html#cb787-13" tabindex="-1"></a><span class="co">#&gt;   Sepal.Width Petal.Width</span></span>
-<span id="cb787-14"><a href="9.1-basic-operations-on-tibbles.html#cb787-14" tabindex="-1"></a><span class="co">#&gt;         &lt;dbl&gt;       &lt;dbl&gt;</span></span>
-<span id="cb787-15"><a href="9.1-basic-operations-on-tibbles.html#cb787-15" tabindex="-1"></a><span class="co">#&gt; 1         3.5         0.2</span></span>
-<span id="cb787-16"><a href="9.1-basic-operations-on-tibbles.html#cb787-16" tabindex="-1"></a><span class="co">#&gt; 2         3           0.2</span></span>
-<span id="cb787-17"><a href="9.1-basic-operations-on-tibbles.html#cb787-17" tabindex="-1"></a><span class="co">#&gt; 3         3.2         0.2</span></span>
-<span id="cb787-18"><a href="9.1-basic-operations-on-tibbles.html#cb787-18" tabindex="-1"></a><span class="co">#&gt; 4         3.1         0.2</span></span>
-<span id="cb787-19"><a href="9.1-basic-operations-on-tibbles.html#cb787-19" tabindex="-1"></a><span class="co">#&gt; # i 146 more rows</span></span></code></pre></div>
+<div class="sourceCode" id="cb788"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb788-1"><a href="9.1-basic-operations-on-tibbles.html#cb788-1" tabindex="-1"></a><span class="sc">&gt;</span> iris <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">starts_with</span>(<span class="st">&quot;Sepal&quot;</span>))</span>
+<span id="cb788-2"><a href="9.1-basic-operations-on-tibbles.html#cb788-2" tabindex="-1"></a><span class="co">#&gt; # A tibble: 150 x 2</span></span>
+<span id="cb788-3"><a href="9.1-basic-operations-on-tibbles.html#cb788-3" tabindex="-1"></a><span class="co">#&gt;   Sepal.Length Sepal.Width</span></span>
+<span id="cb788-4"><a href="9.1-basic-operations-on-tibbles.html#cb788-4" tabindex="-1"></a><span class="co">#&gt;          &lt;dbl&gt;       &lt;dbl&gt;</span></span>
+<span id="cb788-5"><a href="9.1-basic-operations-on-tibbles.html#cb788-5" tabindex="-1"></a><span class="co">#&gt; 1          5.1         3.5</span></span>
+<span id="cb788-6"><a href="9.1-basic-operations-on-tibbles.html#cb788-6" tabindex="-1"></a><span class="co">#&gt; 2          4.9         3  </span></span>
+<span id="cb788-7"><a href="9.1-basic-operations-on-tibbles.html#cb788-7" tabindex="-1"></a><span class="co">#&gt; 3          4.7         3.2</span></span>
+<span id="cb788-8"><a href="9.1-basic-operations-on-tibbles.html#cb788-8" tabindex="-1"></a><span class="co">#&gt; 4          4.6         3.1</span></span>
+<span id="cb788-9"><a href="9.1-basic-operations-on-tibbles.html#cb788-9" tabindex="-1"></a><span class="co">#&gt; # i 146 more rows</span></span>
+<span id="cb788-10"><a href="9.1-basic-operations-on-tibbles.html#cb788-10" tabindex="-1"></a></span>
+<span id="cb788-11"><a href="9.1-basic-operations-on-tibbles.html#cb788-11" tabindex="-1"></a><span class="sc">&gt;</span> iris <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">ends_with</span>(<span class="st">&quot;Width&quot;</span>))</span>
+<span id="cb788-12"><a href="9.1-basic-operations-on-tibbles.html#cb788-12" tabindex="-1"></a><span class="co">#&gt; # A tibble: 150 x 2</span></span>
+<span id="cb788-13"><a href="9.1-basic-operations-on-tibbles.html#cb788-13" tabindex="-1"></a><span class="co">#&gt;   Sepal.Width Petal.Width</span></span>
+<span id="cb788-14"><a href="9.1-basic-operations-on-tibbles.html#cb788-14" tabindex="-1"></a><span class="co">#&gt;         &lt;dbl&gt;       &lt;dbl&gt;</span></span>
+<span id="cb788-15"><a href="9.1-basic-operations-on-tibbles.html#cb788-15" tabindex="-1"></a><span class="co">#&gt; 1         3.5         0.2</span></span>
+<span id="cb788-16"><a href="9.1-basic-operations-on-tibbles.html#cb788-16" tabindex="-1"></a><span class="co">#&gt; 2         3           0.2</span></span>
+<span id="cb788-17"><a href="9.1-basic-operations-on-tibbles.html#cb788-17" tabindex="-1"></a><span class="co">#&gt; 3         3.2         0.2</span></span>
+<span id="cb788-18"><a href="9.1-basic-operations-on-tibbles.html#cb788-18" tabindex="-1"></a><span class="co">#&gt; 4         3.1         0.2</span></span>
+<span id="cb788-19"><a href="9.1-basic-operations-on-tibbles.html#cb788-19" tabindex="-1"></a><span class="co">#&gt; # i 146 more rows</span></span></code></pre></div>
 <hr />
 </div>
 <div id="indirection" class="section level3 hasAnchor" number="9.1.7">
@@ -1390,17 +1390,17 @@ Only rows for which all conditions evaluate to <code>TRUE</code> are kept.</p></
 <p>Indirection is when you want to get the data-variable from an env-variable instead of directly typing the data-variable’s name. There are two main cases:</p>
 <ul>
 <li><p>When you have the data-variable in a function argument, you need to <strong>embrace</strong> the argument by surrounding it in doubled braces, like <code>filter(df, {{ var }})</code>.</p>
-<div class="sourceCode" id="cb788"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb788-1"><a href="9.1-basic-operations-on-tibbles.html#cb788-1" tabindex="-1"></a>var_summary <span class="ot">&lt;-</span> <span class="cf">function</span>(data, var) {</span>
-<span id="cb788-2"><a href="9.1-basic-operations-on-tibbles.html#cb788-2" tabindex="-1"></a>data <span class="sc">%&gt;%</span></span>
-<span id="cb788-3"><a href="9.1-basic-operations-on-tibbles.html#cb788-3" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">n =</span> <span class="fu">n</span>(), <span class="at">min =</span> <span class="fu">min</span>({{ var }}), <span class="at">max =</span> <span class="fu">max</span>({{ var }}))</span>
-<span id="cb788-4"><a href="9.1-basic-operations-on-tibbles.html#cb788-4" tabindex="-1"></a>}</span>
-<span id="cb788-5"><a href="9.1-basic-operations-on-tibbles.html#cb788-5" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> </span>
-<span id="cb788-6"><a href="9.1-basic-operations-on-tibbles.html#cb788-6" tabindex="-1"></a>  <span class="fu">group_by</span>(cyl) <span class="sc">%&gt;%</span> </span>
-<span id="cb788-7"><a href="9.1-basic-operations-on-tibbles.html#cb788-7" tabindex="-1"></a>  <span class="fu">var_summary</span>(mpg)</span></code></pre></div></li>
+<div class="sourceCode" id="cb789"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb789-1"><a href="9.1-basic-operations-on-tibbles.html#cb789-1" tabindex="-1"></a>var_summary <span class="ot">&lt;-</span> <span class="cf">function</span>(data, var) {</span>
+<span id="cb789-2"><a href="9.1-basic-operations-on-tibbles.html#cb789-2" tabindex="-1"></a>data <span class="sc">%&gt;%</span></span>
+<span id="cb789-3"><a href="9.1-basic-operations-on-tibbles.html#cb789-3" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">n =</span> <span class="fu">n</span>(), <span class="at">min =</span> <span class="fu">min</span>({{ var }}), <span class="at">max =</span> <span class="fu">max</span>({{ var }}))</span>
+<span id="cb789-4"><a href="9.1-basic-operations-on-tibbles.html#cb789-4" tabindex="-1"></a>}</span>
+<span id="cb789-5"><a href="9.1-basic-operations-on-tibbles.html#cb789-5" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> </span>
+<span id="cb789-6"><a href="9.1-basic-operations-on-tibbles.html#cb789-6" tabindex="-1"></a>  <span class="fu">group_by</span>(cyl) <span class="sc">%&gt;%</span> </span>
+<span id="cb789-7"><a href="9.1-basic-operations-on-tibbles.html#cb789-7" tabindex="-1"></a>  <span class="fu">var_summary</span>(mpg)</span></code></pre></div></li>
 <li><p>When you have an env-variable that is a character vector, you need to index into the <code>.data</code> pronoun with <code>[[</code>.</p>
-<div class="sourceCode" id="cb789"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb789-1"><a href="9.1-basic-operations-on-tibbles.html#cb789-1" tabindex="-1"></a><span class="cf">for</span> (var <span class="cf">in</span> <span class="fu">names</span>(mtcars)) {</span>
-<span id="cb789-2"><a href="9.1-basic-operations-on-tibbles.html#cb789-2" tabindex="-1"></a>  mtcars <span class="sc">%&gt;%</span> <span class="fu">count</span>(.data[[var]]) <span class="sc">%&gt;%</span> <span class="fu">print</span>()</span>
-<span id="cb789-3"><a href="9.1-basic-operations-on-tibbles.html#cb789-3" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb790"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb790-1"><a href="9.1-basic-operations-on-tibbles.html#cb790-1" tabindex="-1"></a><span class="cf">for</span> (var <span class="cf">in</span> <span class="fu">names</span>(mtcars)) {</span>
+<span id="cb790-2"><a href="9.1-basic-operations-on-tibbles.html#cb790-2" tabindex="-1"></a>  mtcars <span class="sc">%&gt;%</span> <span class="fu">count</span>(.data[[var]]) <span class="sc">%&gt;%</span> <span class="fu">print</span>()</span>
+<span id="cb790-3"><a href="9.1-basic-operations-on-tibbles.html#cb790-3" tabindex="-1"></a>}</span></code></pre></div>
 <p>Note that <code>.data</code> is not a data frame; it’s a special construct, a pronoun, that allows you to access the current variables either directly, with <code>.data$x</code> or indirectly with<code>.data[[var]]</code>.</p></li>
 </ul>
 <p>ref: <a href="https://dplyr.tidyverse.org/articles/programming.html?q=curly%20braces#indirection">Programming with dplyr: Indirection</a></p>
@@ -1409,39 +1409,39 @@ Only rows for which all conditions evaluate to <code>TRUE</code> are kept.</p></
 <div id="dynamic-selection" class="section level3 hasAnchor" number="9.1.8">
 <h3><span class="header-section-number">9.1.8</span> Dynamic Selection<a href="9.1-basic-operations-on-tibbles.html#dynamic-selection" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>A <strong><span style="color:red">dynamic</span> subset of variables</strong> when using <code>select</code></p>
-<div class="sourceCode" id="cb790"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb790-1"><a href="9.1-basic-operations-on-tibbles.html#cb790-1" tabindex="-1"></a>dynamic_var <span class="ot">&lt;-</span> <span class="st">&#39;state&#39;</span></span>
-<span id="cb790-2"><a href="9.1-basic-operations-on-tibbles.html#cb790-2" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">select</span>(year, var, <span class="fu">eval</span>(dynamic_var)) <span class="co"># dynamic_var will be parsed as state</span></span>
-<span id="cb790-3"><a href="9.1-basic-operations-on-tibbles.html#cb790-3" tabindex="-1"></a></span>
-<span id="cb790-4"><a href="9.1-basic-operations-on-tibbles.html#cb790-4" tabindex="-1"></a><span class="co"># --- dplyr version 0.7+---</span></span>
-<span id="cb790-5"><a href="9.1-basic-operations-on-tibbles.html#cb790-5" tabindex="-1"></a>multipetal <span class="ot">&lt;-</span> <span class="cf">function</span>(df, n) {</span>
-<span id="cb790-6"><a href="9.1-basic-operations-on-tibbles.html#cb790-6" tabindex="-1"></a>    varname <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="st">&quot;petal&quot;</span>, n , <span class="at">sep=</span><span class="st">&quot;.&quot;</span>)</span>
-<span id="cb790-7"><a href="9.1-basic-operations-on-tibbles.html#cb790-7" tabindex="-1"></a>    <span class="fu">mutate</span>(df, <span class="sc">!!</span><span class="at">varname :=</span> Petal.Width <span class="sc">*</span> n)</span>
-<span id="cb790-8"><a href="9.1-basic-operations-on-tibbles.html#cb790-8" tabindex="-1"></a>}</span>
-<span id="cb790-9"><a href="9.1-basic-operations-on-tibbles.html#cb790-9" tabindex="-1"></a><span class="co"># !! unquote</span></span>
-<span id="cb790-10"><a href="9.1-basic-operations-on-tibbles.html#cb790-10" tabindex="-1"></a><span class="co"># using := to dynamically assign/change parameter names</span></span></code></pre></div>
+<div class="sourceCode" id="cb791"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb791-1"><a href="9.1-basic-operations-on-tibbles.html#cb791-1" tabindex="-1"></a>dynamic_var <span class="ot">&lt;-</span> <span class="st">&#39;state&#39;</span></span>
+<span id="cb791-2"><a href="9.1-basic-operations-on-tibbles.html#cb791-2" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">select</span>(year, var, <span class="fu">eval</span>(dynamic_var)) <span class="co"># dynamic_var will be parsed as state</span></span>
+<span id="cb791-3"><a href="9.1-basic-operations-on-tibbles.html#cb791-3" tabindex="-1"></a></span>
+<span id="cb791-4"><a href="9.1-basic-operations-on-tibbles.html#cb791-4" tabindex="-1"></a><span class="co"># --- dplyr version 0.7+---</span></span>
+<span id="cb791-5"><a href="9.1-basic-operations-on-tibbles.html#cb791-5" tabindex="-1"></a>multipetal <span class="ot">&lt;-</span> <span class="cf">function</span>(df, n) {</span>
+<span id="cb791-6"><a href="9.1-basic-operations-on-tibbles.html#cb791-6" tabindex="-1"></a>    varname <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="st">&quot;petal&quot;</span>, n , <span class="at">sep=</span><span class="st">&quot;.&quot;</span>)</span>
+<span id="cb791-7"><a href="9.1-basic-operations-on-tibbles.html#cb791-7" tabindex="-1"></a>    <span class="fu">mutate</span>(df, <span class="sc">!!</span><span class="at">varname :=</span> Petal.Width <span class="sc">*</span> n)</span>
+<span id="cb791-8"><a href="9.1-basic-operations-on-tibbles.html#cb791-8" tabindex="-1"></a>}</span>
+<span id="cb791-9"><a href="9.1-basic-operations-on-tibbles.html#cb791-9" tabindex="-1"></a><span class="co"># !! unquote</span></span>
+<span id="cb791-10"><a href="9.1-basic-operations-on-tibbles.html#cb791-10" tabindex="-1"></a><span class="co"># using := to dynamically assign/change parameter names</span></span></code></pre></div>
 <p>variables in the left hand side</p>
-<div class="sourceCode" id="cb791"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb791-1"><a href="9.1-basic-operations-on-tibbles.html#cb791-1" tabindex="-1"></a>plot_v <span class="ot">&lt;-</span> <span class="st">&quot;maize&quot;</span></span>
-<span id="cb791-2"><a href="9.1-basic-operations-on-tibbles.html#cb791-2" tabindex="-1"></a>plot_data <span class="ot">&lt;-</span> plot_data <span class="sc">%&gt;%</span> </span>
-<span id="cb791-3"><a href="9.1-basic-operations-on-tibbles.html#cb791-3" tabindex="-1"></a>    <span class="fu">select</span>(year, plot_v, tmx, pre, rad) <span class="sc">%&gt;%</span> </span>
-<span id="cb791-4"><a href="9.1-basic-operations-on-tibbles.html#cb791-4" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="sc">!!</span><span class="at">plot_v :=</span> <span class="fu">log</span>(<span class="fu">eval</span>(<span class="fu">parse</span>(<span class="at">text =</span> plot_v)) )) <span class="sc">%&gt;%</span> </span>
-<span id="cb791-5"><a href="9.1-basic-operations-on-tibbles.html#cb791-5" tabindex="-1"></a>    <span class="fu">group_by</span>(year) <span class="sc">%&gt;%</span> </span>
-<span id="cb791-6"><a href="9.1-basic-operations-on-tibbles.html#cb791-6" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), <span class="sc">~</span><span class="fu">mean</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) ) )</span>
-<span id="cb791-7"><a href="9.1-basic-operations-on-tibbles.html#cb791-7" tabindex="-1"></a>plot_data    </span></code></pre></div>
+<div class="sourceCode" id="cb792"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb792-1"><a href="9.1-basic-operations-on-tibbles.html#cb792-1" tabindex="-1"></a>plot_v <span class="ot">&lt;-</span> <span class="st">&quot;maize&quot;</span></span>
+<span id="cb792-2"><a href="9.1-basic-operations-on-tibbles.html#cb792-2" tabindex="-1"></a>plot_data <span class="ot">&lt;-</span> plot_data <span class="sc">%&gt;%</span> </span>
+<span id="cb792-3"><a href="9.1-basic-operations-on-tibbles.html#cb792-3" tabindex="-1"></a>    <span class="fu">select</span>(year, plot_v, tmx, pre, rad) <span class="sc">%&gt;%</span> </span>
+<span id="cb792-4"><a href="9.1-basic-operations-on-tibbles.html#cb792-4" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="sc">!!</span><span class="at">plot_v :=</span> <span class="fu">log</span>(<span class="fu">eval</span>(<span class="fu">parse</span>(<span class="at">text =</span> plot_v)) )) <span class="sc">%&gt;%</span> </span>
+<span id="cb792-5"><a href="9.1-basic-operations-on-tibbles.html#cb792-5" tabindex="-1"></a>    <span class="fu">group_by</span>(year) <span class="sc">%&gt;%</span> </span>
+<span id="cb792-6"><a href="9.1-basic-operations-on-tibbles.html#cb792-6" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), <span class="sc">~</span><span class="fu">mean</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) ) )</span>
+<span id="cb792-7"><a href="9.1-basic-operations-on-tibbles.html#cb792-7" tabindex="-1"></a>plot_data    </span></code></pre></div>
 <p>Use <code>!!</code> to unquote a single argument in a function call. <code>!!</code> takes a single expression, evaluates it, and inlines the result in the AST.</p>
-<div class="sourceCode" id="cb792"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb792-1"><a href="9.1-basic-operations-on-tibbles.html#cb792-1" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">expr</span>(<span class="sc">-</span><span class="dv">1</span>)</span>
-<span id="cb792-2"><a href="9.1-basic-operations-on-tibbles.html#cb792-2" tabindex="-1"></a><span class="fu">expr</span>(<span class="fu">f</span>(<span class="sc">!!</span>x, y))</span>
-<span id="cb792-3"><a href="9.1-basic-operations-on-tibbles.html#cb792-3" tabindex="-1"></a><span class="co">#&gt; f(-1, y)</span></span></code></pre></div>
+<div class="sourceCode" id="cb793"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb793-1"><a href="9.1-basic-operations-on-tibbles.html#cb793-1" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">expr</span>(<span class="sc">-</span><span class="dv">1</span>)</span>
+<span id="cb793-2"><a href="9.1-basic-operations-on-tibbles.html#cb793-2" tabindex="-1"></a><span class="fu">expr</span>(<span class="fu">f</span>(<span class="sc">!!</span>x, y))</span>
+<span id="cb793-3"><a href="9.1-basic-operations-on-tibbles.html#cb793-3" tabindex="-1"></a><span class="co">#&gt; f(-1, y)</span></span></code></pre></div>
 <p><span style="color:red"><code>rlang::sym(x)</code></span> take a string as input and turn it into symbols</p>
 <p>string <code>x</code> -&gt; expression <code>expr(x)</code> -&gt; evaluate<code>!!expr(x)</code></p>
 <p><strong><code>!!!</code></strong> the behaviour of <code>!!!</code> is known as “spatting” in Ruby, Go, PHP, and Julia. It is closely related to <code>*args</code> (star-args) and <code>**kwarg</code> (star-star-kwargs) in Python, which are sometimes called argument unpacking.</p>
 <p><span style="color:red"><strong><code>:=</code></strong> </span> rather than interpreting <code>var</code> literally (pronounced colon-equals), we want to use the value stored in the variable called <code>var</code>.</p>
-<div class="sourceCode" id="cb793"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb793-1"><a href="9.1-basic-operations-on-tibbles.html#cb793-1" tabindex="-1"></a>tibble<span class="sc">::</span><span class="fu">tibble</span>(<span class="sc">!!</span><span class="at">var :=</span> val)</span>
-<span id="cb793-2"><a href="9.1-basic-operations-on-tibbles.html#cb793-2" tabindex="-1"></a><span class="co">#&gt; # A tibble: 3 x 1</span></span>
-<span id="cb793-3"><a href="9.1-basic-operations-on-tibbles.html#cb793-3" tabindex="-1"></a><span class="co">#&gt;       x</span></span>
-<span id="cb793-4"><a href="9.1-basic-operations-on-tibbles.html#cb793-4" tabindex="-1"></a><span class="co">#&gt;   &lt;dbl&gt;</span></span>
-<span id="cb793-5"><a href="9.1-basic-operations-on-tibbles.html#cb793-5" tabindex="-1"></a><span class="co">#&gt; 1     4</span></span>
-<span id="cb793-6"><a href="9.1-basic-operations-on-tibbles.html#cb793-6" tabindex="-1"></a><span class="co">#&gt; 2     3</span></span>
-<span id="cb793-7"><a href="9.1-basic-operations-on-tibbles.html#cb793-7" tabindex="-1"></a><span class="co">#&gt; 3     9</span></span></code></pre></div>
+<div class="sourceCode" id="cb794"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb794-1"><a href="9.1-basic-operations-on-tibbles.html#cb794-1" tabindex="-1"></a>tibble<span class="sc">::</span><span class="fu">tibble</span>(<span class="sc">!!</span><span class="at">var :=</span> val)</span>
+<span id="cb794-2"><a href="9.1-basic-operations-on-tibbles.html#cb794-2" tabindex="-1"></a><span class="co">#&gt; # A tibble: 3 x 1</span></span>
+<span id="cb794-3"><a href="9.1-basic-operations-on-tibbles.html#cb794-3" tabindex="-1"></a><span class="co">#&gt;       x</span></span>
+<span id="cb794-4"><a href="9.1-basic-operations-on-tibbles.html#cb794-4" tabindex="-1"></a><span class="co">#&gt;   &lt;dbl&gt;</span></span>
+<span id="cb794-5"><a href="9.1-basic-operations-on-tibbles.html#cb794-5" tabindex="-1"></a><span class="co">#&gt; 1     4</span></span>
+<span id="cb794-6"><a href="9.1-basic-operations-on-tibbles.html#cb794-6" tabindex="-1"></a><span class="co">#&gt; 2     3</span></span>
+<span id="cb794-7"><a href="9.1-basic-operations-on-tibbles.html#cb794-7" tabindex="-1"></a><span class="co">#&gt; 3     9</span></span></code></pre></div>
 <p>Note the use of <code>:=</code> (pronounced colon-equals) rather than <code>=</code>. Unfortunately we need this new operation because R’s grammar does not allow expressions as argument names:</p>
 <p><code>:=</code> is like a vestigial organ: it’s recognized by R’s parser, but it doesn’t have any code associated with it. It looks like an <code>=</code> but allows expressions on either side, making it a more flexible alternative to <code>=</code>. It is used in data.table for similar reasons.</p>
 <p>ref:</p>
@@ -1454,72 +1454,72 @@ Only rows for which all conditions evaluate to <code>TRUE</code> are kept.</p></
 <p><a href="https://dplyr.tidyverse.org/reference/se-deprecated.html" class="uri">https://dplyr.tidyverse.org/reference/se-deprecated.html</a></p>
 <p>dplyr used to offer twin versions of each verb suffixed with an underscore. These versions had standard evaluation (SE) semantics: rather than taking arguments by code, like NSE verbs, they took arguments by value. Their purpose was to make it possible to program with dplyr.</p>
 <p>However, dplyr now uses tidy evaluation semantics. NSE verbs still capture their arguments, but you can now unquote parts of these arguments. This offers full programmability with NSE verbs. Thus, the underscored versions are now superfluous.</p>
-<div class="sourceCode" id="cb794"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb794-1"><a href="9.1-basic-operations-on-tibbles.html#cb794-1" tabindex="-1"></a>gcm_name <span class="ot">&lt;-</span> <span class="st">&quot;CanESM5&quot;</span></span>
-<span id="cb794-2"><a href="9.1-basic-operations-on-tibbles.html#cb794-2" tabindex="-1"></a>mergeData <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="fu">get</span>(gcm_name)<span class="sc">&lt;</span><span class="dv">35</span> )</span>
-<span id="cb794-3"><a href="9.1-basic-operations-on-tibbles.html#cb794-3" tabindex="-1"></a>mergeData <span class="sc">%&gt;%</span> <span class="fu">filter_</span>(<span class="fu">sprintf</span>( <span class="st">&quot;%s&lt;35&quot;</span>, gcm_name ) ) <span class="co"># SE version</span></span>
-<span id="cb794-4"><a href="9.1-basic-operations-on-tibbles.html#cb794-4" tabindex="-1"></a>mergeData <span class="sc">%&gt;%</span> <span class="fu">select_</span>(gcm_name) <span class="co"># SE version</span></span></code></pre></div>
+<div class="sourceCode" id="cb795"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb795-1"><a href="9.1-basic-operations-on-tibbles.html#cb795-1" tabindex="-1"></a>gcm_name <span class="ot">&lt;-</span> <span class="st">&quot;CanESM5&quot;</span></span>
+<span id="cb795-2"><a href="9.1-basic-operations-on-tibbles.html#cb795-2" tabindex="-1"></a>mergeData <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="fu">get</span>(gcm_name)<span class="sc">&lt;</span><span class="dv">35</span> )</span>
+<span id="cb795-3"><a href="9.1-basic-operations-on-tibbles.html#cb795-3" tabindex="-1"></a>mergeData <span class="sc">%&gt;%</span> <span class="fu">filter_</span>(<span class="fu">sprintf</span>( <span class="st">&quot;%s&lt;35&quot;</span>, gcm_name ) ) <span class="co"># SE version</span></span>
+<span id="cb795-4"><a href="9.1-basic-operations-on-tibbles.html#cb795-4" tabindex="-1"></a>mergeData <span class="sc">%&gt;%</span> <span class="fu">select_</span>(gcm_name) <span class="co"># SE version</span></span></code></pre></div>
 <p><code>select_(.data, .dots=list() )</code></p>
 <ul>
 <li><code>.data</code> A data frame.</li>
 <li><code>.dots</code>, <code>...</code> Pair/values of expressions coercible to lazy objects.</li>
 </ul>
-<div class="sourceCode" id="cb795"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb795-1"><a href="9.1-basic-operations-on-tibbles.html#cb795-1" tabindex="-1"></a>vars <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="fu">list</span>(<span class="st">&#39;cyl&#39;</span>, <span class="st">&#39;mpg&#39;</span>), <span class="fu">list</span>(<span class="st">&#39;vs&#39;</span>, <span class="st">&#39;disp&#39;</span>))</span>
-<span id="cb795-2"><a href="9.1-basic-operations-on-tibbles.html#cb795-2" tabindex="-1"></a><span class="cf">for</span> (v <span class="cf">in</span> vars) {</span>
-<span id="cb795-3"><a href="9.1-basic-operations-on-tibbles.html#cb795-3" tabindex="-1"></a>  <span class="fu">print</span>(mtcars <span class="sc">%&gt;%</span> <span class="fu">select_</span>(<span class="at">.dots =</span> v) <span class="sc">%&gt;%</span> head)</span>
-<span id="cb795-4"><a href="9.1-basic-operations-on-tibbles.html#cb795-4" tabindex="-1"></a>}</span>
-<span id="cb795-5"><a href="9.1-basic-operations-on-tibbles.html#cb795-5" tabindex="-1"></a>                  cyl  mpg</span>
-<span id="cb795-6"><a href="9.1-basic-operations-on-tibbles.html#cb795-6" tabindex="-1"></a>Mazda RX4           <span class="dv">6</span> <span class="fl">21.0</span></span>
-<span id="cb795-7"><a href="9.1-basic-operations-on-tibbles.html#cb795-7" tabindex="-1"></a>Mazda RX4 Wag       <span class="dv">6</span> <span class="fl">21.0</span></span>
-<span id="cb795-8"><a href="9.1-basic-operations-on-tibbles.html#cb795-8" tabindex="-1"></a>Datsun <span class="dv">710</span>          <span class="dv">4</span> <span class="fl">22.8</span></span>
-<span id="cb795-9"><a href="9.1-basic-operations-on-tibbles.html#cb795-9" tabindex="-1"></a>Hornet <span class="dv">4</span> Drive      <span class="dv">6</span> <span class="fl">21.4</span></span>
-<span id="cb795-10"><a href="9.1-basic-operations-on-tibbles.html#cb795-10" tabindex="-1"></a>Hornet Sportabout   <span class="dv">8</span> <span class="fl">18.7</span></span>
-<span id="cb795-11"><a href="9.1-basic-operations-on-tibbles.html#cb795-11" tabindex="-1"></a>Valiant             <span class="dv">6</span> <span class="fl">18.1</span></span>
-<span id="cb795-12"><a href="9.1-basic-operations-on-tibbles.html#cb795-12" tabindex="-1"></a>                  vs disp</span>
-<span id="cb795-13"><a href="9.1-basic-operations-on-tibbles.html#cb795-13" tabindex="-1"></a>Mazda RX4          <span class="dv">0</span>  <span class="dv">160</span></span>
-<span id="cb795-14"><a href="9.1-basic-operations-on-tibbles.html#cb795-14" tabindex="-1"></a>Mazda RX4 Wag      <span class="dv">0</span>  <span class="dv">160</span></span>
-<span id="cb795-15"><a href="9.1-basic-operations-on-tibbles.html#cb795-15" tabindex="-1"></a>Datsun <span class="dv">710</span>         <span class="dv">1</span>  <span class="dv">108</span></span>
-<span id="cb795-16"><a href="9.1-basic-operations-on-tibbles.html#cb795-16" tabindex="-1"></a>Hornet <span class="dv">4</span> Drive     <span class="dv">1</span>  <span class="dv">258</span></span>
-<span id="cb795-17"><a href="9.1-basic-operations-on-tibbles.html#cb795-17" tabindex="-1"></a>Hornet Sportabout  <span class="dv">0</span>  <span class="dv">360</span></span>
-<span id="cb795-18"><a href="9.1-basic-operations-on-tibbles.html#cb795-18" tabindex="-1"></a>Valiant            <span class="dv">1</span>  <span class="dv">225</span></span></code></pre></div>
+<div class="sourceCode" id="cb796"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb796-1"><a href="9.1-basic-operations-on-tibbles.html#cb796-1" tabindex="-1"></a>vars <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="fu">list</span>(<span class="st">&#39;cyl&#39;</span>, <span class="st">&#39;mpg&#39;</span>), <span class="fu">list</span>(<span class="st">&#39;vs&#39;</span>, <span class="st">&#39;disp&#39;</span>))</span>
+<span id="cb796-2"><a href="9.1-basic-operations-on-tibbles.html#cb796-2" tabindex="-1"></a><span class="cf">for</span> (v <span class="cf">in</span> vars) {</span>
+<span id="cb796-3"><a href="9.1-basic-operations-on-tibbles.html#cb796-3" tabindex="-1"></a>  <span class="fu">print</span>(mtcars <span class="sc">%&gt;%</span> <span class="fu">select_</span>(<span class="at">.dots =</span> v) <span class="sc">%&gt;%</span> head)</span>
+<span id="cb796-4"><a href="9.1-basic-operations-on-tibbles.html#cb796-4" tabindex="-1"></a>}</span>
+<span id="cb796-5"><a href="9.1-basic-operations-on-tibbles.html#cb796-5" tabindex="-1"></a>                  cyl  mpg</span>
+<span id="cb796-6"><a href="9.1-basic-operations-on-tibbles.html#cb796-6" tabindex="-1"></a>Mazda RX4           <span class="dv">6</span> <span class="fl">21.0</span></span>
+<span id="cb796-7"><a href="9.1-basic-operations-on-tibbles.html#cb796-7" tabindex="-1"></a>Mazda RX4 Wag       <span class="dv">6</span> <span class="fl">21.0</span></span>
+<span id="cb796-8"><a href="9.1-basic-operations-on-tibbles.html#cb796-8" tabindex="-1"></a>Datsun <span class="dv">710</span>          <span class="dv">4</span> <span class="fl">22.8</span></span>
+<span id="cb796-9"><a href="9.1-basic-operations-on-tibbles.html#cb796-9" tabindex="-1"></a>Hornet <span class="dv">4</span> Drive      <span class="dv">6</span> <span class="fl">21.4</span></span>
+<span id="cb796-10"><a href="9.1-basic-operations-on-tibbles.html#cb796-10" tabindex="-1"></a>Hornet Sportabout   <span class="dv">8</span> <span class="fl">18.7</span></span>
+<span id="cb796-11"><a href="9.1-basic-operations-on-tibbles.html#cb796-11" tabindex="-1"></a>Valiant             <span class="dv">6</span> <span class="fl">18.1</span></span>
+<span id="cb796-12"><a href="9.1-basic-operations-on-tibbles.html#cb796-12" tabindex="-1"></a>                  vs disp</span>
+<span id="cb796-13"><a href="9.1-basic-operations-on-tibbles.html#cb796-13" tabindex="-1"></a>Mazda RX4          <span class="dv">0</span>  <span class="dv">160</span></span>
+<span id="cb796-14"><a href="9.1-basic-operations-on-tibbles.html#cb796-14" tabindex="-1"></a>Mazda RX4 Wag      <span class="dv">0</span>  <span class="dv">160</span></span>
+<span id="cb796-15"><a href="9.1-basic-operations-on-tibbles.html#cb796-15" tabindex="-1"></a>Datsun <span class="dv">710</span>         <span class="dv">1</span>  <span class="dv">108</span></span>
+<span id="cb796-16"><a href="9.1-basic-operations-on-tibbles.html#cb796-16" tabindex="-1"></a>Hornet <span class="dv">4</span> Drive     <span class="dv">1</span>  <span class="dv">258</span></span>
+<span id="cb796-17"><a href="9.1-basic-operations-on-tibbles.html#cb796-17" tabindex="-1"></a>Hornet Sportabout  <span class="dv">0</span>  <span class="dv">360</span></span>
+<span id="cb796-18"><a href="9.1-basic-operations-on-tibbles.html#cb796-18" tabindex="-1"></a>Valiant            <span class="dv">1</span>  <span class="dv">225</span></span></code></pre></div>
 <p>Let’s make something more practical. For each list of variable arguments, we want to group using the first variable and then summarise the grouped data frame by calculating the mean of the second variable. Here, dynamic argument construction really comes into account, because we programmatically construct the arguments of <code>summarise_()</code>, e.g. <code>mean_mpg = mean(mpg)</code> using string concatenation and <code>setNames()</code>:</p>
-<div class="sourceCode" id="cb796"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb796-1"><a href="9.1-basic-operations-on-tibbles.html#cb796-1" tabindex="-1"></a>summarise_vars <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="fu">list</span>(<span class="st">&#39;cyl&#39;</span>, <span class="st">&#39;mpg&#39;</span>), <span class="fu">list</span>(<span class="st">&#39;vs&#39;</span>, <span class="st">&#39;disp&#39;</span>))</span>
-<span id="cb796-2"><a href="9.1-basic-operations-on-tibbles.html#cb796-2" tabindex="-1"></a></span>
-<span id="cb796-3"><a href="9.1-basic-operations-on-tibbles.html#cb796-3" tabindex="-1"></a><span class="cf">for</span> (v <span class="cf">in</span> summarise_vars) {</span>
-<span id="cb796-4"><a href="9.1-basic-operations-on-tibbles.html#cb796-4" tabindex="-1"></a>  group_var <span class="ot">&lt;-</span> v[<span class="dv">1</span>]   <span class="co"># group by this variable</span></span>
-<span id="cb796-5"><a href="9.1-basic-operations-on-tibbles.html#cb796-5" tabindex="-1"></a>  summ <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">&#39;mean(&#39;</span>, v[<span class="dv">2</span>], <span class="st">&#39;)&#39;</span>)  <span class="co"># construct summary method, e.g. mean(mpg)</span></span>
-<span id="cb796-6"><a href="9.1-basic-operations-on-tibbles.html#cb796-6" tabindex="-1"></a>  summ_name <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">&#39;mean_&#39;</span>, v[<span class="dv">2</span>])  <span class="co"># construct summary variable name, e.g. mean_mpg</span></span>
-<span id="cb796-7"><a href="9.1-basic-operations-on-tibbles.html#cb796-7" tabindex="-1"></a></span>
-<span id="cb796-8"><a href="9.1-basic-operations-on-tibbles.html#cb796-8" tabindex="-1"></a>  <span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">&#39;grouping by&#39;</span>, group_var, <span class="st">&#39;and summarising&#39;</span>, summ))</span>
-<span id="cb796-9"><a href="9.1-basic-operations-on-tibbles.html#cb796-9" tabindex="-1"></a></span>
-<span id="cb796-10"><a href="9.1-basic-operations-on-tibbles.html#cb796-10" tabindex="-1"></a>  df_summ <span class="ot">&lt;-</span> mtcars <span class="sc">%&gt;%</span></span>
-<span id="cb796-11"><a href="9.1-basic-operations-on-tibbles.html#cb796-11" tabindex="-1"></a>    <span class="fu">group_by_</span>(<span class="at">.dots =</span> group_var) <span class="sc">%&gt;%</span></span>
-<span id="cb796-12"><a href="9.1-basic-operations-on-tibbles.html#cb796-12" tabindex="-1"></a>    <span class="fu">summarise_</span>(<span class="at">.dots =</span> <span class="fu">setNames</span>(summ, summ_name))</span>
-<span id="cb796-13"><a href="9.1-basic-operations-on-tibbles.html#cb796-13" tabindex="-1"></a></span>
-<span id="cb796-14"><a href="9.1-basic-operations-on-tibbles.html#cb796-14" tabindex="-1"></a>  <span class="fu">print</span>(df_summ)</span>
-<span id="cb796-15"><a href="9.1-basic-operations-on-tibbles.html#cb796-15" tabindex="-1"></a>}</span>
-<span id="cb796-16"><a href="9.1-basic-operations-on-tibbles.html#cb796-16" tabindex="-1"></a></span>
-<span id="cb796-17"><a href="9.1-basic-operations-on-tibbles.html#cb796-17" tabindex="-1"></a><span class="co"># output</span></span>
-<span id="cb796-18"><a href="9.1-basic-operations-on-tibbles.html#cb796-18" tabindex="-1"></a>[<span class="dv">1</span>] <span class="st">&quot;grouping by cyl and summarising mean(mpg)&quot;</span></span>
-<span id="cb796-19"><a href="9.1-basic-operations-on-tibbles.html#cb796-19" tabindex="-1"></a><span class="co"># A tibble: 3 × 2</span></span>
-<span id="cb796-20"><a href="9.1-basic-operations-on-tibbles.html#cb796-20" tabindex="-1"></a>    cyl mean_mpg</span>
-<span id="cb796-21"><a href="9.1-basic-operations-on-tibbles.html#cb796-21" tabindex="-1"></a></span>
-<span id="cb796-22"><a href="9.1-basic-operations-on-tibbles.html#cb796-22" tabindex="-1"></a><span class="dv">1</span>     <span class="dv">4</span> <span class="fl">26.66364</span></span>
-<span id="cb796-23"><a href="9.1-basic-operations-on-tibbles.html#cb796-23" tabindex="-1"></a><span class="dv">2</span>     <span class="dv">6</span> <span class="fl">19.74286</span></span>
-<span id="cb796-24"><a href="9.1-basic-operations-on-tibbles.html#cb796-24" tabindex="-1"></a><span class="dv">3</span>     <span class="dv">8</span> <span class="fl">15.10000</span></span>
-<span id="cb796-25"><a href="9.1-basic-operations-on-tibbles.html#cb796-25" tabindex="-1"></a>[<span class="dv">1</span>] <span class="st">&quot;grouping by vs and summarising mean(disp)&quot;</span></span>
-<span id="cb796-26"><a href="9.1-basic-operations-on-tibbles.html#cb796-26" tabindex="-1"></a><span class="co"># A tibble: 2 × 2</span></span>
-<span id="cb796-27"><a href="9.1-basic-operations-on-tibbles.html#cb796-27" tabindex="-1"></a>     vs mean_disp</span>
-<span id="cb796-28"><a href="9.1-basic-operations-on-tibbles.html#cb796-28" tabindex="-1"></a></span>
-<span id="cb796-29"><a href="9.1-basic-operations-on-tibbles.html#cb796-29" tabindex="-1"></a><span class="dv">1</span>     <span class="dv">0</span>  <span class="fl">307.1500</span></span>
-<span id="cb796-30"><a href="9.1-basic-operations-on-tibbles.html#cb796-30" tabindex="-1"></a><span class="dv">2</span>     <span class="dv">1</span>  <span class="fl">132.4571</span></span></code></pre></div>
-<div class="sourceCode" id="cb797"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb797-1"><a href="9.1-basic-operations-on-tibbles.html#cb797-1" tabindex="-1"></a><span class="co"># To refer to column names that are stored as strings, use the `.data` pronoun:</span></span>
-<span id="cb797-2"><a href="9.1-basic-operations-on-tibbles.html#cb797-2" tabindex="-1"></a>vars <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;mass&quot;</span>, <span class="st">&quot;height&quot;</span>)</span>
-<span id="cb797-3"><a href="9.1-basic-operations-on-tibbles.html#cb797-3" tabindex="-1"></a>cond <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">80</span>, <span class="dv">150</span>)</span>
-<span id="cb797-4"><a href="9.1-basic-operations-on-tibbles.html#cb797-4" tabindex="-1"></a>starwars <span class="sc">%&gt;%</span></span>
-<span id="cb797-5"><a href="9.1-basic-operations-on-tibbles.html#cb797-5" tabindex="-1"></a>  <span class="fu">filter</span>(</span>
-<span id="cb797-6"><a href="9.1-basic-operations-on-tibbles.html#cb797-6" tabindex="-1"></a>    .data[[vars[[<span class="dv">1</span>]]]] <span class="sc">&gt;</span> cond[[<span class="dv">1</span>]],</span>
-<span id="cb797-7"><a href="9.1-basic-operations-on-tibbles.html#cb797-7" tabindex="-1"></a>    .data[[vars[[<span class="dv">2</span>]]]] <span class="sc">&gt;</span> cond[[<span class="dv">2</span>]]</span>
-<span id="cb797-8"><a href="9.1-basic-operations-on-tibbles.html#cb797-8" tabindex="-1"></a>  )</span></code></pre></div>
+<div class="sourceCode" id="cb797"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb797-1"><a href="9.1-basic-operations-on-tibbles.html#cb797-1" tabindex="-1"></a>summarise_vars <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="fu">list</span>(<span class="st">&#39;cyl&#39;</span>, <span class="st">&#39;mpg&#39;</span>), <span class="fu">list</span>(<span class="st">&#39;vs&#39;</span>, <span class="st">&#39;disp&#39;</span>))</span>
+<span id="cb797-2"><a href="9.1-basic-operations-on-tibbles.html#cb797-2" tabindex="-1"></a></span>
+<span id="cb797-3"><a href="9.1-basic-operations-on-tibbles.html#cb797-3" tabindex="-1"></a><span class="cf">for</span> (v <span class="cf">in</span> summarise_vars) {</span>
+<span id="cb797-4"><a href="9.1-basic-operations-on-tibbles.html#cb797-4" tabindex="-1"></a>  group_var <span class="ot">&lt;-</span> v[<span class="dv">1</span>]   <span class="co"># group by this variable</span></span>
+<span id="cb797-5"><a href="9.1-basic-operations-on-tibbles.html#cb797-5" tabindex="-1"></a>  summ <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">&#39;mean(&#39;</span>, v[<span class="dv">2</span>], <span class="st">&#39;)&#39;</span>)  <span class="co"># construct summary method, e.g. mean(mpg)</span></span>
+<span id="cb797-6"><a href="9.1-basic-operations-on-tibbles.html#cb797-6" tabindex="-1"></a>  summ_name <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">&#39;mean_&#39;</span>, v[<span class="dv">2</span>])  <span class="co"># construct summary variable name, e.g. mean_mpg</span></span>
+<span id="cb797-7"><a href="9.1-basic-operations-on-tibbles.html#cb797-7" tabindex="-1"></a></span>
+<span id="cb797-8"><a href="9.1-basic-operations-on-tibbles.html#cb797-8" tabindex="-1"></a>  <span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">&#39;grouping by&#39;</span>, group_var, <span class="st">&#39;and summarising&#39;</span>, summ))</span>
+<span id="cb797-9"><a href="9.1-basic-operations-on-tibbles.html#cb797-9" tabindex="-1"></a></span>
+<span id="cb797-10"><a href="9.1-basic-operations-on-tibbles.html#cb797-10" tabindex="-1"></a>  df_summ <span class="ot">&lt;-</span> mtcars <span class="sc">%&gt;%</span></span>
+<span id="cb797-11"><a href="9.1-basic-operations-on-tibbles.html#cb797-11" tabindex="-1"></a>    <span class="fu">group_by_</span>(<span class="at">.dots =</span> group_var) <span class="sc">%&gt;%</span></span>
+<span id="cb797-12"><a href="9.1-basic-operations-on-tibbles.html#cb797-12" tabindex="-1"></a>    <span class="fu">summarise_</span>(<span class="at">.dots =</span> <span class="fu">setNames</span>(summ, summ_name))</span>
+<span id="cb797-13"><a href="9.1-basic-operations-on-tibbles.html#cb797-13" tabindex="-1"></a></span>
+<span id="cb797-14"><a href="9.1-basic-operations-on-tibbles.html#cb797-14" tabindex="-1"></a>  <span class="fu">print</span>(df_summ)</span>
+<span id="cb797-15"><a href="9.1-basic-operations-on-tibbles.html#cb797-15" tabindex="-1"></a>}</span>
+<span id="cb797-16"><a href="9.1-basic-operations-on-tibbles.html#cb797-16" tabindex="-1"></a></span>
+<span id="cb797-17"><a href="9.1-basic-operations-on-tibbles.html#cb797-17" tabindex="-1"></a><span class="co"># output</span></span>
+<span id="cb797-18"><a href="9.1-basic-operations-on-tibbles.html#cb797-18" tabindex="-1"></a>[<span class="dv">1</span>] <span class="st">&quot;grouping by cyl and summarising mean(mpg)&quot;</span></span>
+<span id="cb797-19"><a href="9.1-basic-operations-on-tibbles.html#cb797-19" tabindex="-1"></a><span class="co"># A tibble: 3 × 2</span></span>
+<span id="cb797-20"><a href="9.1-basic-operations-on-tibbles.html#cb797-20" tabindex="-1"></a>    cyl mean_mpg</span>
+<span id="cb797-21"><a href="9.1-basic-operations-on-tibbles.html#cb797-21" tabindex="-1"></a></span>
+<span id="cb797-22"><a href="9.1-basic-operations-on-tibbles.html#cb797-22" tabindex="-1"></a><span class="dv">1</span>     <span class="dv">4</span> <span class="fl">26.66364</span></span>
+<span id="cb797-23"><a href="9.1-basic-operations-on-tibbles.html#cb797-23" tabindex="-1"></a><span class="dv">2</span>     <span class="dv">6</span> <span class="fl">19.74286</span></span>
+<span id="cb797-24"><a href="9.1-basic-operations-on-tibbles.html#cb797-24" tabindex="-1"></a><span class="dv">3</span>     <span class="dv">8</span> <span class="fl">15.10000</span></span>
+<span id="cb797-25"><a href="9.1-basic-operations-on-tibbles.html#cb797-25" tabindex="-1"></a>[<span class="dv">1</span>] <span class="st">&quot;grouping by vs and summarising mean(disp)&quot;</span></span>
+<span id="cb797-26"><a href="9.1-basic-operations-on-tibbles.html#cb797-26" tabindex="-1"></a><span class="co"># A tibble: 2 × 2</span></span>
+<span id="cb797-27"><a href="9.1-basic-operations-on-tibbles.html#cb797-27" tabindex="-1"></a>     vs mean_disp</span>
+<span id="cb797-28"><a href="9.1-basic-operations-on-tibbles.html#cb797-28" tabindex="-1"></a></span>
+<span id="cb797-29"><a href="9.1-basic-operations-on-tibbles.html#cb797-29" tabindex="-1"></a><span class="dv">1</span>     <span class="dv">0</span>  <span class="fl">307.1500</span></span>
+<span id="cb797-30"><a href="9.1-basic-operations-on-tibbles.html#cb797-30" tabindex="-1"></a><span class="dv">2</span>     <span class="dv">1</span>  <span class="fl">132.4571</span></span></code></pre></div>
+<div class="sourceCode" id="cb798"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb798-1"><a href="9.1-basic-operations-on-tibbles.html#cb798-1" tabindex="-1"></a><span class="co"># To refer to column names that are stored as strings, use the `.data` pronoun:</span></span>
+<span id="cb798-2"><a href="9.1-basic-operations-on-tibbles.html#cb798-2" tabindex="-1"></a>vars <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;mass&quot;</span>, <span class="st">&quot;height&quot;</span>)</span>
+<span id="cb798-3"><a href="9.1-basic-operations-on-tibbles.html#cb798-3" tabindex="-1"></a>cond <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">80</span>, <span class="dv">150</span>)</span>
+<span id="cb798-4"><a href="9.1-basic-operations-on-tibbles.html#cb798-4" tabindex="-1"></a>starwars <span class="sc">%&gt;%</span></span>
+<span id="cb798-5"><a href="9.1-basic-operations-on-tibbles.html#cb798-5" tabindex="-1"></a>  <span class="fu">filter</span>(</span>
+<span id="cb798-6"><a href="9.1-basic-operations-on-tibbles.html#cb798-6" tabindex="-1"></a>    .data[[vars[[<span class="dv">1</span>]]]] <span class="sc">&gt;</span> cond[[<span class="dv">1</span>]],</span>
+<span id="cb798-7"><a href="9.1-basic-operations-on-tibbles.html#cb798-7" tabindex="-1"></a>    .data[[vars[[<span class="dv">2</span>]]]] <span class="sc">&gt;</span> cond[[<span class="dv">2</span>]]</span>
+<span id="cb798-8"><a href="9.1-basic-operations-on-tibbles.html#cb798-8" tabindex="-1"></a>  )</span></code></pre></div>
 <hr />
 </div>
 </div>
