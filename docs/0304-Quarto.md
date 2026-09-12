@@ -1641,6 +1641,13 @@ See [HERE](https://quarto.org/docs/reference/formats/docx.html) for a complete l
 
 ## Render Quarto
 
+<div class="rmd-note">
+My rendering strategy:
+
+- Use terminal to render the whole project
+- Use R `quarto::quarto_render()` to render a single file to html to check the changes quickly. 
+</div>
+
 
 Rendering the whole website is slow. When you are editing a new section/page, you may want to edit as a standalone webpage and when you are finished, you add the `qmd` file to the `_quarto.yml` file index.
 
