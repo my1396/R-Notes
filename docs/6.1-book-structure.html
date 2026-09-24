@@ -1117,12 +1117,42 @@ It supports a variety of formats: PDF, HTML, EPUB, DOCX, etc.</p>
 <li><p><code>format</code> specifies output formats and their options.</p>
 <p>For example, you can specify themes for HTML and pdf macros.</p></li>
 </ul>
-<div class="callout-tip">
+<p><a id="directory-metadata"></a></p>
+<div class="rmd-note">
 <p>If you would like to specify common metadata for documents inside a sub-directory our your project, you can do so by adding a file called <span class="env-green"><code>_metadata.yml</code></span> to the sub-directory. Read more in the Quarto Documentation at <a href="https://quarto.org/docs/projects/quarto-projects.html#directory-metadata">Directory Metadata</a>.</p>
 </div>
 <ul>
-<li><code>_metadata.yml</code> will be merged to root <code>_quarto.yml</code> file, and will override any conflicting options in the root <code>_quarto.yml</code> file. → You can have distinct metadata for different sub-directories in your project.</li>
-<li>Another option is to use subfolder <code>_quarto.yml</code>. This will isolate your subfolder into a standalone project, and will not inherit any metadata from the root <code>_quarto.yml</code> file.</li>
+<li><p><code>_metadata.yml</code> will be merged to root <code>_quarto.yml</code> file (if there is one), and will override any conflicting options in the root <code>_quarto.yml</code> file. → You can have distinct metadata for different sub-directories in your project.</p>
+<p><code>_metadta.yml</code> can exist <span class="env-green">without</span> a root <code>_quarto.yml</code> file.</p>
+<p>Benefits of using <code>_metadata.yml</code>:</p>
+<ul>
+<li><p>it allows you to specify metadata for a sub-directory without affecting the rest of the project.</p></li>
+<li><p>it will not create <code>.quarto/</code> cache folder, which can potentially cause issues with Cloud service syncing due to frequent changes and a large number of files tracked.</p></li>
+<li><p>in short, <code>_metadata.yml</code> is lightweight and more specific.</p>
+<p>By contrast, <code>_quarto.yml</code> is more general and applies to the whole project.</p></li>
+</ul>
+<pre><code>my-project/
+├── _metadata.yml
+├── lecture1.qmd
+└── lecture2.qmd</code></pre>
+<p>and <code>_metadata.yml</code> can contain:</p>
+<div class="sourceCode" id="cb436"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb436-1"><a href="6.1-book-structure.html#cb436-1" tabindex="-1"></a><span class="fu">resources</span><span class="kw">:</span></span>
+<span id="cb436-2"><a href="6.1-book-structure.html#cb436-2" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="st">&quot;../latex/filters/emoji/*.png&quot;</span></span>
+<span id="cb436-3"><a href="6.1-book-structure.html#cb436-3" tabindex="-1"></a></span>
+<span id="cb436-4"><a href="6.1-book-structure.html#cb436-4" tabindex="-1"></a><span class="co"># Pandoc Extensions</span></span>
+<span id="cb436-5"><a href="6.1-book-structure.html#cb436-5" tabindex="-1"></a><span class="fu">from</span><span class="kw">:</span><span class="at"> markdown+tex_math_single_backslash</span></span>
+<span id="cb436-6"><a href="6.1-book-structure.html#cb436-6" tabindex="-1"></a><span class="fu">filters</span><span class="kw">:</span></span>
+<span id="cb436-7"><a href="6.1-book-structure.html#cb436-7" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> ../latex/filters/color-text.lua</span></span>
+<span id="cb436-8"><a href="6.1-book-structure.html#cb436-8" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> ../latex/filters/nested-ordered-list.lua</span></span>
+<span id="cb436-9"><a href="6.1-book-structure.html#cb436-9" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> ../../_shared-resources/filters/unlisted-sections.lua</span></span>
+<span id="cb436-10"><a href="6.1-book-structure.html#cb436-10" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> ../latex/filters/emoji.lua</span></span>
+<span id="cb436-11"><a href="6.1-book-structure.html#cb436-11" tabindex="-1"></a><span class="fu">format</span><span class="kw">:</span></span>
+<span id="cb436-12"><a href="6.1-book-structure.html#cb436-12" tabindex="-1"></a><span class="at">  </span><span class="fu">pdf</span><span class="kw">:</span></span>
+<span id="cb436-13"><a href="6.1-book-structure.html#cb436-13" tabindex="-1"></a><span class="at">    </span><span class="fu">include-in-header</span><span class="kw">:</span><span class="at"> ../latex/preamble.tex</span></span>
+<span id="cb436-14"><a href="6.1-book-structure.html#cb436-14" tabindex="-1"></a><span class="at">    </span><span class="fu">pdf-engine</span><span class="kw">:</span><span class="at"> xelatex</span></span>
+<span id="cb436-15"><a href="6.1-book-structure.html#cb436-15" tabindex="-1"></a><span class="at">    </span><span class="fu">fontsize</span><span class="kw">:</span><span class="at"> 12pt</span></span>
+<span id="cb436-16"><a href="6.1-book-structure.html#cb436-16" tabindex="-1"></a><span class="co">  #  keep-tex: true</span></span></code></pre></div></li>
+<li><p>Another option is to use subfolder <code>_quarto.yml</code>. This will isolate your subfolder into a standalone project, and will not inherit any metadata from the root <code>_quarto.yml</code> file.</p></li>
 </ul>
 <p>ref:</p>
 <ul>

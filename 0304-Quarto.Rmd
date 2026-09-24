@@ -38,15 +38,22 @@ If you have multiple .qmd files in one directory, it's a good practice to create
   
   Sometimes YAML gets very long and cluttered. To makes your `.qmd` files cleaner and neater, put shared YAML options in [`_quarto.yml`](#project-metadata) file and it will apply to all `.qmd` files in the same (sub-)directory.
 
+  <div class="rmd-note">
+  <p><code>_quarto.yml</code> will create a Quarto project and the YAML options will be applied to all in the project. </p>
+  
+  <p>If you want specific YAML options for a certian sub-directory, you can create a <a href="#directory-metadata"><code>_metadata.yml</code></a> file in that sub-directory.</p>
+  </div>
+  
   In each `.qmd` file, you provide file-specific YAML options, e.g, `title`, `author`, `date`, etc.
   You can also <span class="env-green">**override**</span> project-level YAML options in the individual `.qmd` files.
 
-  <div class="rmd-note">
-  <i class="codicon codicon-lightbulb-sparkle env-green" aria-hidden="true" style="font-size:1.5em; vertical-align: middle;"></i> Always create a `_quarto.yml` file in the root of your project directory and put your shared YAML options there. 
-  </div>
+- **Redirect output** to a specific folder. 
+  
+  `output-dir: docs` will redirect all output files to `docs` folder, which is useful for GitHub Pages.
 
-- Redirect output to a specific folder.
-- Freeze rendered output, so that only changed files will be re-rendered
+- **Freeze rendered output**, so that only changed files will be re-rendered.
+  
+  `execute.freeze: auto` will create a `_freeze` folder to store cached results. When you run `quarto render`, Quarto will only execute code chunks in changed files, and will use cached results for unchanged files. This significantly speeds up rendering time for large projects.
 
 **Types of projects:**
 
@@ -460,11 +467,54 @@ format:
   For example, you can specify themes for HTML and pdf macros.
 
 
-::: {.callout-tip}
-If you would like to specify common metadata for documents inside a sub-directory our your project, you can do so by adding a file called <span class="env-green">`_metadata.yml`</span> to the sub-directory. Read more in the Quarto Documentation at [Directory Metadata](https://quarto.org/docs/projects/quarto-projects.html#directory-metadata).
-:::
+<a id="directory-metadata"></a>
 
-- `_metadata.yml` will be merged to root `_quarto.yml` file, and will override any conflicting options in the root `_quarto.yml` file. → You can have distinct metadata for different sub-directories in your project.
+<div class="rmd-note">
+If you would like to specify common metadata for documents inside a sub-directory our your project, you can do so by adding a file called <span class="env-green">`_metadata.yml`</span> to the sub-directory. Read more in the Quarto Documentation at [Directory Metadata](https://quarto.org/docs/projects/quarto-projects.html#directory-metadata).
+</div>
+
+- `_metadata.yml` will be merged to root `_quarto.yml` file (if there is one), and will override any conflicting options in the root `_quarto.yml` file. → You can have distinct metadata for different sub-directories in your project.
+  
+  `_metadta.yml` can exist <span class="env-green">without</span> a root `_quarto.yml` file. 
+  
+  Benefits of using `_metadata.yml`:
+  
+  - it allows you to specify metadata for a sub-directory without affecting the rest of the project. 
+  
+  - it will not create `.quarto/` cache folder, which can potentially cause issues with Cloud service syncing due to frequent changes and a large number of files tracked.
+  
+  - in short, `_metadata.yml` is lightweight and more specific. 
+    
+    By contrast, `_quarto.yml` is more general and applies to the whole project.
+  
+  ```
+  my-project/
+  ├── _metadata.yml
+  ├── lecture1.qmd
+  └── lecture2.qmd
+  ```
+
+  and `_metadata.yml` can contain:
+
+  ```yaml
+  resources:
+    - "../latex/filters/emoji/*.png"
+
+  # Pandoc Extensions
+  from: markdown+tex_math_single_backslash
+  filters:
+    - ../latex/filters/color-text.lua
+    - ../latex/filters/nested-ordered-list.lua
+    - ../../_shared-resources/filters/unlisted-sections.lua
+    - ../latex/filters/emoji.lua
+  format:
+    pdf:
+      include-in-header: ../latex/preamble.tex
+      pdf-engine: xelatex
+      fontsize: 12pt
+    #  keep-tex: true
+  ```
+
 - Another option is to use subfolder `_quarto.yml`. This will isolate your subfolder into a standalone project, and will not inherit any metadata from the root `_quarto.yml` file.
 
 
@@ -728,6 +778,10 @@ format:
           \setmathrm{Georgia Pro}
     from: markdown+tex_math_single_backslash+markdown_in_html_blocks
     keep-tex: true                    # makes debugging easier by keeping the .tex file
+
+# Put the section number in front of each PDF bookmark.
+hyperrefoptions:
+  - bookmarksnumbered=true
 ---
 ```
 
@@ -748,6 +802,13 @@ Output options can be specified in multiple places in addition to the Pandoc def
   Note that Quarto by default set `hikelinks=true` for `hyperref` package. If you want to override this, specify `colorlinks: true` in the YAML front matter.
 
 Metadata such as `filters` and `format` can be specified in the <span class="env-green">`_quarto.yml`</span> file so that all `.qmd` will inherit the same options, or in the individual `.qmd` files. YAML options specified in the individual `.qmd` files will override those in `_quarto.yml`.
+
+Use `hyperrefoptions` to specify options for the `hyperref` package. For example, to put the section number in front of each PDF bookmark, add the following to your YAML:
+
+```yml
+hyperrefoptions:
+  - bookmarksnumbered=true
+```
 
 See [HERE](https://quarto.org/docs/reference/formats/pdf.html) for all available PDF options. All PDF options go inside the `format:` → `pdf:` chunk of the YAML.
 
@@ -2985,6 +3046,30 @@ See @tbl-letters for the table.
   ```
 
 ref: <https://quarto.org/docs/authoring/tables.html#markdown-tables>
+
+--------------------------------------------------------------------------------
+
+**Prevent page breaks inside markdown tables**
+
+Pandoc wraps markdown tables in a `longtable` environment for PDF output, which allows tables to span multiple pages. 
+If you want to prevent page breaks inside a markdown table, use <span class="env-green">`\needspace`</span> to ensure enough space is available on the current page before the table starts.
+
+~~~~markdown
+```{=latex}
+\needspace{10\baselineskip} % Adjust the number of lines as needed
+```
+Start your markdown table here:
+
+| Col1 | Col2 | Col3 |
+| ---- | ---- | ---- |
+| A    | B    | C    |
+...
+...
+~~~~
+
+`\needspace{10\baselineskip}` ensures that at least 10 lines of space are available on the current page before the table starts. 
+The number of `\baselineskip` needs to be the number of lines in the table plus <span class="env-green">some buffer for the caption and spacing</span>.
+If there isn't enough space, LaTeX will automatically move the table to the next page, preventing it from being split across pages. 
 
 --------------------------------------------------------------------------------
 

@@ -1385,9 +1385,11 @@ You may use `knitr::opts_chunk$set()` to change the default values of chunk opti
 | `comment='##'`       | The prefix to be added before each line of the text output. <br />Set `comment = ''` remove the default `##`. |
 | `collapse=FALSE`     | Whether to, if possible, collapse all the source and output blocks from one code chunk into a single block (by default, they are written to separate blocks). <br />This option only applies to Markdown documents. |
 | `fig.keep='high'`    | How plots in chunks should be kept. <br />`high`: Only keep high-level plots (merge low-level changes into high-level plots). <br />`none`: Discard all plots. <br />`all`: Keep all plots (low-level plot changes may produce new plots). <br />`first`: Only keep the first plot. <br />`last`: Only keep the last plot. <br />If set to a numeric vector, the values are indices of (low-level) plots to keep.<br />If you want to choose the second to the fourth plots, you could use `fig.keep = 2:4` (or remove the first plot via `fig.keep = -1`). |
-| `fig.align="center"` | Figure alignment.                                            |
+| `fig.align="center"` | Figure alignment.       |
 | `fig.pos="H"`        | A character string for the figure position arrangement to be used in `\begin{figure}[]`. |
-| `fig.cap`            | Figure caption.                                              |
+| `fig.cap`            | Figure caption.         |
+| `fig.retina=3`       | Improve the resolution of figures in HTML output. |
+
 
 
 

@@ -35,11 +35,11 @@ When you decide to use `xaringan`, read tutorials [HERE](https://bookdown.org/yi
 
 | Keyboard shortcut | Function |
 | ----------- | ---------------------- |
-| `f` | Toggle full screen |
+| `f` | <span class="env-green">Toggle full screen</span> |
 | <span class="env-green">`o`</span> | Toggle slide overview/tile view grid, supported by `xaringanExtra::use_tile_view()` |
 | `c` | Clone the slides to a second screen (e.g., projector) |
 | `p` | Toggle presenter mode (with notes) |
-| **Search** | |
+| **Search** | Modifier key: ⌃ |
 | `ctrl + F` | Search through slides, supported by `xaringanExtra::use_search()` |
 | `ctrl + G` | Go to next match in search mode |
 | `ctrl + shift + G` | Go to previous match in search mode |

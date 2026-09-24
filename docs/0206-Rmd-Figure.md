@@ -127,7 +127,12 @@ plot(aapl$AAPL.Close)
 <p class="caption">(\#fig:unnamed-chunk-4)Set `fig.width`. Note that text font does NOT scale with figure, BUT the figure title got cropped.</p>
 </div>
 
+- Use `fig.retina=3` to improve the resolution of figures in HTML output. 
 
+<div class="figure">
+<img src="0206-Rmd-Figure_files/figure-html/unnamed-chunk-5-1.png" alt="Set `fig.retina=3`." width="480" />
+<p class="caption">(\#fig:unnamed-chunk-5)Set `fig.retina=3`.</p>
+</div>
 
 --------------------------------------------------------------------------------
 
@@ -153,7 +158,7 @@ knitr::include_graphics(f_name)
 
 <div class="figure">
 <img src="images/aapl.png" alt="include_graphics with `out.width`=50%." width="50%" />
-<p class="caption">(\#fig:unnamed-chunk-6)include_graphics with `out.width`=50%.</p>
+<p class="caption">(\#fig:unnamed-chunk-7)include_graphics with `out.width`=50%.</p>
 </div>
 
 --------------------------------------------------------------------------------
@@ -166,7 +171,7 @@ knitr::include_graphics(f_name)
 
 <div class="figure">
 <img src="images/aapl.png" alt="include_graphics with `out.width`=100%." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-7)include_graphics with `out.width`=100%.</p>
+<p class="caption">(\#fig:unnamed-chunk-8)include_graphics with `out.width`=100%.</p>
 </div>
 
 
