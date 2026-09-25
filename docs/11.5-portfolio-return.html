@@ -1315,86 +1315,6 @@ where <span class="math inline">\(V_t=\Pi_{s=1}^t(1+R_S)\)</span> is the cumulat
 <li><p>To add the drawdown as a separate panel below, add <code>p &lt;- addSeries(dd, col = "#43418A", type = "h", lwd = 2, main = "Drawdown from high-water mark")</code> before <code>print(p)</code>.</p></li>
 </ul>
 <hr />
-<p><strong>Downside risk measures</strong></p>
-<p>Semi-deviation, Value at Risk (VaR), and Expected Shortfall (ES) are downside risk measures that focus on the negative returns of a portfolio.</p>
-<div class="sourceCode" id="cb1026"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1026-1"><a href="11.5-portfolio-return.html#cb1026-1" tabindex="-1"></a><span class="co"># Downside risk measures</span></span>
-<span id="cb1026-2"><a href="11.5-portfolio-return.html#cb1026-2" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb1026-3"><a href="11.5-portfolio-return.html#cb1026-3" tabindex="-1"></a>stats <span class="ot">&lt;-</span> <span class="fu">table.Stats</span>(ret_xts, <span class="at">digits =</span> <span class="dv">4</span>)</span>
-<span id="cb1026-4"><a href="11.5-portfolio-return.html#cb1026-4" tabindex="-1"></a><span class="fu">rbind</span>(</span>
-<span id="cb1026-5"><a href="11.5-portfolio-return.html#cb1026-5" tabindex="-1"></a>  stats[<span class="st">&quot;Stdev&quot;</span>, ],</span>
-<span id="cb1026-6"><a href="11.5-portfolio-return.html#cb1026-6" tabindex="-1"></a>  <span class="fu">SemiDeviation</span>(ret_xts),</span>
-<span id="cb1026-7"><a href="11.5-portfolio-return.html#cb1026-7" tabindex="-1"></a>  <span class="fu">VaR</span>(ret_xts, <span class="at">p =</span> <span class="fl">0.05</span>),</span>
-<span id="cb1026-8"><a href="11.5-portfolio-return.html#cb1026-8" tabindex="-1"></a>  <span class="fu">ES</span>(ret_xts, <span class="at">p =</span> <span class="fl">0.05</span>)</span>
-<span id="cb1026-9"><a href="11.5-portfolio-return.html#cb1026-9" tabindex="-1"></a>) <span class="sc">%&gt;%</span> </span>
-<span id="cb1026-10"><a href="11.5-portfolio-return.html#cb1026-10" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">digit =</span> <span class="dv">4</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb1026-11"><a href="11.5-portfolio-return.html#cb1026-11" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">full_width =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
-<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
-<thead>
-<tr>
-<th style="text-align:left;">
-</th>
-<th style="text-align:right;">
-ARK Innovation
-</th>
-<th style="text-align:right;">
-S&amp;P 500
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-Stdev
-</td>
-<td style="text-align:right;">
-0.1045
-</td>
-<td style="text-align:right;">
-0.0442
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Semi-Deviation
-</td>
-<td style="text-align:right;">
-0.0710
-</td>
-<td style="text-align:right;">
-0.0330
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-VaR
-</td>
-<td style="text-align:right;">
--0.1487
-</td>
-<td style="text-align:right;">
--0.0655
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-ES
-</td>
-<td style="text-align:right;">
--0.1897
-</td>
-<td style="text-align:right;">
--0.0910
-</td>
-</tr>
-</tbody>
-</table>
-<ul>
-<li><p><strong>Standard deviation</strong> measures total risk; <strong>semi-deviation</strong> only the downside volatility.</p></li>
-<li><p><span class="math inline">\(\text{VaR(5%)}_{\text{ARK}}=15.87\%\)</span>: There is a 5% chance that ARK loses more than
-<span class="math inline">\(14.87\%\)</span> over one month. Or, equivalently, there is a 95% chance that ARK loses less than <span class="math inline">\(14.87\%\)</span> over one month. The index’s VaR is <span class="math inline">\(6.55\%\)</span>.</p></li>
-<li><p><span class="math inline">\(\text{ES(5%)}_{\text{ARK}}=18.97\%\)</span>: <em>given</em> that ARK is in the worst 5% of months, it will lose on average <span class="math inline">\(18.97\%\)</span>. The index’s ES is <span class="math inline">\(9.95\%\)</span>.</p></li>
-</ul>
-<hr />
 </div>
 <div id="rolling-performance" class="section level3 hasAnchor" number="11.5.2">
 <h3><span class="header-section-number">11.5.2</span> Rolling performance<a href="11.5-portfolio-return.html#rolling-performance" class="anchor-section" aria-label="Anchor link to header"></a></h3>
@@ -1405,23 +1325,24 @@ ES
 <p>Rolling window estimation</p>
 <p><img src="https://drive.google.com/thumbnail?id=1qy1FaxutGBxwkXIhGeUVp6JfT69xrmBV&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" /></p>
 <p><strong>Example:</strong></p>
-<div class="sourceCode" id="cb1027"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1027-1"><a href="11.5-portfolio-return.html#cb1027-1" tabindex="-1"></a>f_name <span class="ot">&lt;-</span> <span class="st">&quot;images/etf_ret_rolling.png&quot;</span></span>
-<span id="cb1027-2"><a href="11.5-portfolio-return.html#cb1027-2" tabindex="-1"></a><span class="fu">plot_png_base</span>(</span>
-<span id="cb1027-3"><a href="11.5-portfolio-return.html#cb1027-3" tabindex="-1"></a>  <span class="fu">charts.RollingPerformance</span>(</span>
-<span id="cb1027-4"><a href="11.5-portfolio-return.html#cb1027-4" tabindex="-1"></a>    <span class="at">R =</span> ret_xts, <span class="at">Rf =</span> rf_xts<span class="sc">$</span>rf, <span class="at">width =</span> <span class="dv">12</span>,</span>
-<span id="cb1027-5"><a href="11.5-portfolio-return.html#cb1027-5" tabindex="-1"></a>    <span class="at">legend.loc =</span> <span class="st">&quot;topleft&quot;</span>, <span class="at">colorset =</span> <span class="fu">c</span>(<span class="st">&quot;#b2182b&quot;</span>, <span class="st">&quot;#43418A&quot;</span>)</span>
-<span id="cb1027-6"><a href="11.5-portfolio-return.html#cb1027-6" tabindex="-1"></a>  ),</span>
-<span id="cb1027-7"><a href="11.5-portfolio-return.html#cb1027-7" tabindex="-1"></a>  f_name, <span class="dv">9</span>, <span class="dv">7</span></span>
-<span id="cb1027-8"><a href="11.5-portfolio-return.html#cb1027-8" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb1026"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1026-1"><a href="11.5-portfolio-return.html#cb1026-1" tabindex="-1"></a>f_name <span class="ot">&lt;-</span> <span class="st">&quot;images/etf_ret_rolling.png&quot;</span></span>
+<span id="cb1026-2"><a href="11.5-portfolio-return.html#cb1026-2" tabindex="-1"></a><span class="fu">plot_png_base</span>(</span>
+<span id="cb1026-3"><a href="11.5-portfolio-return.html#cb1026-3" tabindex="-1"></a>  <span class="fu">charts.RollingPerformance</span>(</span>
+<span id="cb1026-4"><a href="11.5-portfolio-return.html#cb1026-4" tabindex="-1"></a>    <span class="at">R =</span> ret_xts, <span class="at">Rf =</span> rf_xts<span class="sc">$</span>rf, <span class="at">width =</span> <span class="dv">12</span>,</span>
+<span id="cb1026-5"><a href="11.5-portfolio-return.html#cb1026-5" tabindex="-1"></a>    <span class="at">legend.loc =</span> <span class="st">&quot;topleft&quot;</span>, <span class="at">colorset =</span> <span class="fu">c</span>(<span class="st">&quot;#b2182b&quot;</span>, <span class="st">&quot;#43418A&quot;</span>)</span>
+<span id="cb1026-6"><a href="11.5-portfolio-return.html#cb1026-6" tabindex="-1"></a>  ),</span>
+<span id="cb1026-7"><a href="11.5-portfolio-return.html#cb1026-7" tabindex="-1"></a>  f_name, <span class="dv">9</span>, <span class="dv">7</span></span>
+<span id="cb1026-8"><a href="11.5-portfolio-return.html#cb1026-8" tabindex="-1"></a>)</span></code></pre></div>
 <p><img src="images/etf_ret_rolling.png" width="100%" style="display: block; margin: auto;" /></p>
+<hr />
 </div>
 <div id="monthly-summary-statistics" class="section level3 hasAnchor" number="11.5.3">
 <h3><span class="header-section-number">11.5.3</span> Monthly summary statistics<a href="11.5-portfolio-return.html#monthly-summary-statistics" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Use <code>PerformanceAnalytics::table.Stats()</code> to calculate summary statistics for a portfolio.</p>
-<div class="sourceCode" id="cb1028"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1028-1"><a href="11.5-portfolio-return.html#cb1028-1" tabindex="-1"></a>stats <span class="ot">&lt;-</span> <span class="fu">table.Stats</span>(ret_xts, <span class="at">digits =</span> <span class="dv">4</span>)</span>
-<span id="cb1028-2"><a href="11.5-portfolio-return.html#cb1028-2" tabindex="-1"></a>stats <span class="sc">%&gt;%</span></span>
-<span id="cb1028-3"><a href="11.5-portfolio-return.html#cb1028-3" tabindex="-1"></a>  <span class="fu">kable</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb1028-4"><a href="11.5-portfolio-return.html#cb1028-4" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">full_width =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb1027"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1027-1"><a href="11.5-portfolio-return.html#cb1027-1" tabindex="-1"></a>stats <span class="ot">&lt;-</span> <span class="fu">table.Stats</span>(ret_xts, <span class="at">digits =</span> <span class="dv">4</span>)</span>
+<span id="cb1027-2"><a href="11.5-portfolio-return.html#cb1027-2" tabindex="-1"></a>stats <span class="sc">%&gt;%</span></span>
+<span id="cb1027-3"><a href="11.5-portfolio-return.html#cb1027-3" tabindex="-1"></a>  <span class="fu">kable</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb1027-4"><a href="11.5-portfolio-return.html#cb1027-4" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">full_width =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -1624,6 +1545,87 @@ where <span class="math inline">\(c_{\alpha/2}\)</span> is the critical value, i
 <span class="math display">\[\text{UCL Mean} = \bar{r}_p + \text{SE Mean} \times c_{\alpha/2}\]</span></p></li>
 <li><p><code>Kurtosis</code>: Excess Kurtosis.</p></li>
 </ul>
+<hr />
+<p><span class="env-green"><strong>Downside risk measures</strong></span></p>
+<p>Semi-deviation, Value at Risk (VaR), and Expected Shortfall (ES) are downside risk measures that focus on the negative returns of a portfolio.</p>
+<div class="sourceCode" id="cb1028"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1028-1"><a href="11.5-portfolio-return.html#cb1028-1" tabindex="-1"></a><span class="co"># Downside risk measures</span></span>
+<span id="cb1028-2"><a href="11.5-portfolio-return.html#cb1028-2" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1028-3"><a href="11.5-portfolio-return.html#cb1028-3" tabindex="-1"></a>stats <span class="ot">&lt;-</span> <span class="fu">table.Stats</span>(ret_xts, <span class="at">digits =</span> <span class="dv">4</span>)</span>
+<span id="cb1028-4"><a href="11.5-portfolio-return.html#cb1028-4" tabindex="-1"></a><span class="fu">rbind</span>(</span>
+<span id="cb1028-5"><a href="11.5-portfolio-return.html#cb1028-5" tabindex="-1"></a>  stats[<span class="st">&quot;Stdev&quot;</span>, ],</span>
+<span id="cb1028-6"><a href="11.5-portfolio-return.html#cb1028-6" tabindex="-1"></a>  <span class="fu">SemiDeviation</span>(ret_xts),</span>
+<span id="cb1028-7"><a href="11.5-portfolio-return.html#cb1028-7" tabindex="-1"></a>  <span class="fu">VaR</span>(ret_xts, <span class="at">p =</span> <span class="fl">0.05</span>),</span>
+<span id="cb1028-8"><a href="11.5-portfolio-return.html#cb1028-8" tabindex="-1"></a>  <span class="fu">ES</span>(ret_xts, <span class="at">p =</span> <span class="fl">0.05</span>)</span>
+<span id="cb1028-9"><a href="11.5-portfolio-return.html#cb1028-9" tabindex="-1"></a>) <span class="sc">%&gt;%</span> </span>
+<span id="cb1028-10"><a href="11.5-portfolio-return.html#cb1028-10" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">digit =</span> <span class="dv">4</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb1028-11"><a href="11.5-portfolio-return.html#cb1028-11" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">full_width =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+ARK Innovation
+</th>
+<th style="text-align:right;">
+S&amp;P 500
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Stdev
+</td>
+<td style="text-align:right;">
+0.1045
+</td>
+<td style="text-align:right;">
+0.0442
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Semi-Deviation
+</td>
+<td style="text-align:right;">
+0.0710
+</td>
+<td style="text-align:right;">
+0.0330
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+VaR
+</td>
+<td style="text-align:right;">
+-0.1487
+</td>
+<td style="text-align:right;">
+-0.0655
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ES
+</td>
+<td style="text-align:right;">
+-0.1897
+</td>
+<td style="text-align:right;">
+-0.0910
+</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><p><strong>Standard deviation</strong> measures total risk; <strong>semi-deviation</strong> only the downside volatility.</p></li>
+<li><p><span class="math inline">\(\text{VaR(5%)}_{\text{ARK}}=15.87\%\)</span>: There is a 5% chance that ARK loses more than
+<span class="math inline">\(14.87\%\)</span> over one month. Or, equivalently, there is a 95% chance that ARK loses less than <span class="math inline">\(14.87\%\)</span> over one month. The index’s VaR is <span class="math inline">\(6.55\%\)</span>.</p></li>
+<li><p><span class="math inline">\(\text{ES(5%)}_{\text{ARK}}=18.97\%\)</span>: <em>given</em> that ARK is in the worst 5% of months, it will lose on average <span class="math inline">\(18.97\%\)</span>. The index’s ES is <span class="math inline">\(9.95\%\)</span>.</p></li>
+</ul>
+<hr />
 </div>
 <div id="risk-adjusted-performance-measures" class="section level3 hasAnchor" number="11.5.4">
 <h3><span class="header-section-number">11.5.4</span> Risk-adjusted performance measures<a href="11.5-portfolio-return.html#risk-adjusted-performance-measures" class="anchor-section" aria-label="Anchor link to header"></a></h3>

@@ -1366,65 +1366,6 @@ plot_png_base({
 - To add the drawdown as a separate panel below, add `p <- addSeries(dd, col = "#43418A", type = "h", lwd = 2, main = "Drawdown from high-water mark")` before `print(p)`.
 
 
---------------------------------------------------------------------------------
-
-**Downside risk measures**
-
-Semi-deviation, Value at Risk (VaR), and Expected Shortfall (ES) are downside risk measures that focus on the negative returns of a portfolio.  
-
-
-``` r
-# Downside risk measures
-library(tidyverse)
-stats <- table.Stats(ret_xts, digits = 4)
-rbind(
-  stats["Stdev", ],
-  SemiDeviation(ret_xts),
-  VaR(ret_xts, p = 0.05),
-  ES(ret_xts, p = 0.05)
-) %>% 
-  kable(digit = 4) %>%
-  kable_styling(full_width = FALSE)
-```
-
-<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
- <thead>
-  <tr>
-   <th style="text-align:left;">  </th>
-   <th style="text-align:right;"> ARK Innovation </th>
-   <th style="text-align:right;"> S&amp;P 500 </th>
-  </tr>
- </thead>
-<tbody>
-  <tr>
-   <td style="text-align:left;"> Stdev </td>
-   <td style="text-align:right;"> 0.1045 </td>
-   <td style="text-align:right;"> 0.0442 </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> Semi-Deviation </td>
-   <td style="text-align:right;"> 0.0710 </td>
-   <td style="text-align:right;"> 0.0330 </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> VaR </td>
-   <td style="text-align:right;"> -0.1487 </td>
-   <td style="text-align:right;"> -0.0655 </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> ES </td>
-   <td style="text-align:right;"> -0.1897 </td>
-   <td style="text-align:right;"> -0.0910 </td>
-  </tr>
-</tbody>
-</table>
-
-- **Standard deviation** measures total risk; **semi-deviation** only the downside volatility.
-
-- $\text{VaR(5%)}_{\text{ARK}}=15.87\%$: There is a 5% chance that ARK loses more than
-  $14.87\%$ over one month. Or, equivalently, there is a 95% chance that ARK loses less than $14.87\%$ over one month. The index's VaR is $6.55\%$.
-
-- $\text{ES(5%)}_{\text{ARK}}=18.97\%$: *given* that ARK is in the worst 5% of months, it will lose on average $18.97\%$. The index's ES is $9.95\%$.
 
 --------------------------------------------------------------------------------
 
@@ -1458,6 +1399,7 @@ plot_png_base(
 
 <img src="images/etf_ret_rolling.png" width="100%" style="display: block; margin: auto;" />
 
+--------------------------------------------------------------------------------
 
 ### Monthly summary statistics
 
@@ -1574,6 +1516,68 @@ stats %>%
    $$\text{UCL Mean} = \bar{r}_p + \text{SE Mean} \times c_{\alpha/2}$$
 
 - `Kurtosis`: Excess Kurtosis.
+
+--------------------------------------------------------------------------------
+
+<span class="env-green">**Downside risk measures**</span>
+
+Semi-deviation, Value at Risk (VaR), and Expected Shortfall (ES) are downside risk measures that focus on the negative returns of a portfolio.  
+
+
+``` r
+# Downside risk measures
+library(tidyverse)
+stats <- table.Stats(ret_xts, digits = 4)
+rbind(
+  stats["Stdev", ],
+  SemiDeviation(ret_xts),
+  VaR(ret_xts, p = 0.05),
+  ES(ret_xts, p = 0.05)
+) %>% 
+  kable(digit = 4) %>%
+  kable_styling(full_width = FALSE)
+```
+
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+ <thead>
+  <tr>
+   <th style="text-align:left;">  </th>
+   <th style="text-align:right;"> ARK Innovation </th>
+   <th style="text-align:right;"> S&amp;P 500 </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> Stdev </td>
+   <td style="text-align:right;"> 0.1045 </td>
+   <td style="text-align:right;"> 0.0442 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Semi-Deviation </td>
+   <td style="text-align:right;"> 0.0710 </td>
+   <td style="text-align:right;"> 0.0330 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> VaR </td>
+   <td style="text-align:right;"> -0.1487 </td>
+   <td style="text-align:right;"> -0.0655 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> ES </td>
+   <td style="text-align:right;"> -0.1897 </td>
+   <td style="text-align:right;"> -0.0910 </td>
+  </tr>
+</tbody>
+</table>
+
+- **Standard deviation** measures total risk; **semi-deviation** only the downside volatility.
+
+- $\text{VaR(5%)}_{\text{ARK}}=15.87\%$: There is a 5% chance that ARK loses more than
+  $14.87\%$ over one month. Or, equivalently, there is a 95% chance that ARK loses less than $14.87\%$ over one month. The index's VaR is $6.55\%$.
+
+- $\text{ES(5%)}_{\text{ARK}}=18.97\%$: *given* that ARK is in the worst 5% of months, it will lose on average $18.97\%$. The index's ES is $9.95\%$.
+
+--------------------------------------------------------------------------------
 
 ### Risk-adjusted performance measures
 
