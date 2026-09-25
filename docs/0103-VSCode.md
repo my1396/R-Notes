@@ -143,7 +143,7 @@ Q: What is REPL?
 A: An interactive programming environment that takes single user inputs (i.e., reads), evaluates them, and returns the result to the user (i.e., prints) and loops back to wait for the next input.
 
 
-<img src="images/radian.png" width="366" />
+<img src="images/radian.png" width="80%" style="display: block; margin: auto;" />
 
 Q: How to install Radian? \
 A: In the terminal, run
@@ -1540,7 +1540,7 @@ ggplot(df, aes(x, y)) +
   theme_minimal(base_size = 14)
 ```
 
-<img src="0103-VSCode_files/figure-html/unnamed-chunk-1-1.png" width="50%" />
+<img src="0103-VSCode_files/figure-html/unnamed-chunk-1-1.png" width="50%" style="display: block; margin: auto;" />
 
 
 --------------------------------------------------------------------------------

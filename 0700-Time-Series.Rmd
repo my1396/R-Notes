@@ -1,7 +1,5 @@
 # Time Series
 
-
-
 <http://r-statistics.co/Time-Series-Analysis-With-R.html>
 
 Commonly used R packages for processing Financial data:
@@ -1049,6 +1047,9 @@ returns <- prices_monthly %>%
 
 ## Portfolio Return
 
+[PerformanceAnalytics](https://timelyportfolio.github.io/PerformanceAnalytics/articles/pa-charts.html#color-palettes) is useful for portfolio analysis and performance analytics. It has functions to calculate portfolio return, risk, and performance metrics. Also good at visualizing portfolio performance and risk.
+
+
 **From asset parameters to portfolio parameters**
 
 Given a expected return and volatility for each asset, we can calculate the expected return and volatility of a portfolio by the following formulas:
@@ -1202,11 +1203,181 @@ chartSeries(AMZN, type="candlesticks", subset='2016-05-18::2017-01-30', theme = 
 
 
 
+### Plot portfolio return
+
+Use `PerformanceAnalytics::charts.PerformanceSummary` to plot the cumulative return, monthly return, and drawdown of a portfolio.
+
+```{r message=FALSE, warning=FALSE}
+library(PerformanceAnalytics)
+library(xts)
+
+plot_png_base <- function(expr, f_name, width, height, ppi = 300,
+                          trim = TRUE, pad = 8) {
+  # For base-graphics plots (PerformanceAnalytics, plot.xts, ...), which draw
+  # as a side effect rather than returning an object to print.
+  #
+  # trim = TRUE crops the blank border the device leaves around the plot.
+  # charts.PerformanceSummary in particular reserves room for a title it is
+  # not drawing, so a 9x7 canvas comes back 13% blank at the top -- which on a
+  # slide reads as an unexplained gap between the figure and the text above.
+  png(f_name, width = width * ppi, height = height * ppi, res = ppi)
+  on.exit({
+    invisible(dev.off())
+    if (trim) trim_png(f_name, pad = pad)
+  }, add = TRUE)
+  force(expr) # the promise evaluates here, with the device open
+  invisible(NULL)
+}
+
+trim_png <- function(f_name, pad = 8) {
+  # Crop the uniform border off a png, then give it back `pad` pixels so the
+  # ink does not touch the edge. Silently a no-op if magick is unavailable.
+  if (!requireNamespace("magick", quietly = TRUE)) return(invisible(FALSE))
+  img <- magick::image_read(f_name)
+  img <- magick::image_trim(img)
+  img <- magick::image_border(img, color = "white",
+                              geometry = paste0(pad, "x", pad))
+  magick::image_write(img, f_name)
+  invisible(TRUE)
+}
+
+ret <- read.csv("data/etf_ARKK_case_study_monthly.csv")
+ret$Date <- as.Date(ret$Date)
+
+# Convert to xts
+# col1: ptf return, col2: benchmark return
+ret_xts <- xts(ret[, c("ptf_ret", "bmk_ret")], order.by = ret$Date)
+colnames(ret_xts) <- c("ARK Innovation", "S&P 500")
+# Risk-free rate for risk-adjusted performance measures
+rf_xts <- xts(ret$rf, order.by = ret$Date)
+colnames(rf_xts) <- "rf"
+
+f_name <- "images/etf_ret_summary.png"
+plot_png_base(
+  charts.PerformanceSummary(ret_xts,
+    main = "", legend.loc = "topleft",
+    colorset = c("#b2182b", "#43418A")
+  ),
+  f_name, 9, 7
+)
+```
+
+```{r echo=FALSE, out.width='100%', fig.align='center', fig.cap=""}
+knitr::include_graphics(f_name)
+```
+
+- <span class="env-green">`legend.loc`</span>: legend location, without it, the legend won't show.
+  
+  There are nine locations that can be specified by keyword: “bottomright”, “bottom”, “bottomleft”, “left”, “topleft”, “top”, “topright”, “right” and “center”. 
+
+- `colorset`: color palette to use. You can specify a vector of colors, or use one of the built-in color palettes.
+  
+  Legend is ordered by the order of the columns.
+  `colorset = c("#b2182b", "#43418A")` will set the first series to `#b2182b` and the second series to `#43418A`.
+
+--------------------------------------------------------------------------------
+
+**Drawdown analysis:** <https://metricgate.com/docs/drawdown-analysis/>
+
+- Drawdown: It is the level of losses from the last value of peak equity attained.
+  $$
+  D_t = \frac{V_t-\text{max}_{s<t}V_s}{\text{max}_{s<t}V_s}
+  $$
+  where $V_t=\Pi_{s=1}^t(1+R_S)$ is the cumulative portfolio value at time $t$ and $\text{max}_{s<t}V_s$ is the maximum cumulative portfolio value attained prior to time $t$.
+
+  Since drawdown represents a loss, $D_t\le 0$ always.
+
+- Maximum Drawdown: minimum value of the drawdown over a specified time period.
+  $$
+  \text{Max Drawdown} = \min_t(D_t)
+  $$
+
+```{r}
+table.Drawdowns(ret_xts[,1])
+```
+
+- Trough: The lowest point reached during a drawdown episode before recovery begins.
+
+- Drawdown Duration: The full length of a drawdown episode from peak to the next new peak, encompassing both the decline and recovery phases.
+
+- High-Water Mark: The highest cumulative value ever achieved; drawdown is always measured relative to this level.
+  
+  The drawdown at any particular time point is simply the distance from the current variable value to the “surface of the water” or the high water mark at that time point.
+
+Plot the high-water mark together with the wealth index:
+
+```{r}
+wealth <- cumprod(1 + ret_xts[, 1]) # wealth index, $1 invested at the start
+hwm <- cummax(wealth) # high-water mark, the running max of the wealth index
+dd <- wealth / hwm - 1 # drawdown, identical to Drawdowns(ret_xts[, 1])
+
+wi <- merge(wealth, hwm)
+colnames(wi) <- c("Wealth index", "High-water mark")
+band <- merge(hwm, wealth) # upper bound first, lower bound second
+
+f_name <- "images/etf_hwm.png"
+plot_png_base({
+  p <- plot(wi,
+    col = c("black", "blue"), lwd = c(2, 1.5),
+    main = "", legend.loc = "topleft"
+  )
+  # shade the underwater area, i.e. the gap between the two lines
+  p <- addPolygon(band, col = adjustcolor("blue", alpha.f = 0.15), on = 1)
+  print(p)
+}, f_name, 11, 6, trim = FALSE)
+```
+
+```{r echo=FALSE, out.width='100%', fig.align='center', fig.cap=""}
+knitr::include_graphics(f_name)
+```
+
+- `cumprod` and `cummax` are applied <span class="env-green">column by column</span> on an `xts` object, so the same two lines work on all columns of `ret_xts` at once.
+
+- Rename the columns of the merged object, otherwise both series are labelled `ARK.Innovation` in the legend.
+
+- `addPolygon` fills the area between the <span class="env-green">first two columns</span> of the object it is given, the first being the upper bound and the second the lower bound. `on = 1` draws it on the existing panel; without it the polygon goes into a new panel below.
+
+  Use a transparent fill (`adjustcolor(col, alpha.f = 0.15)`), since layers are drawn in the order they are added and the polygon lands on top of the two lines.
+
+- `addPolygon` and `addSeries` <span class="env-green">return</span> the plot object instead of drawing it, so it has to be `print`ed. Inside a knitr chunk this is needed for `plot` as well, since auto-printing does not happen there.
+
+- To add the drawdown as a separate panel below, add `p <- addSeries(dd, col = "#43418A", type = "h", lwd = 2, main = "Drawdown from high-water mark")` before `print(p)`.
+
+
+--------------------------------------------------------------------------------
+
+**Downside risk measures**
+
+Semi-deviation, Value at Risk (VaR), and Expected Shortfall (ES) are downside risk measures that focus on the negative returns of a portfolio.  
+
+```{r}
+# Downside risk measures
+library(tidyverse)
+stats <- table.Stats(ret_xts, digits = 4)
+rbind(
+  stats["Stdev", ],
+  SemiDeviation(ret_xts),
+  VaR(ret_xts, p = 0.05),
+  ES(ret_xts, p = 0.05)
+) %>% 
+  kable(digit = 4) %>%
+  kable_styling(full_width = FALSE)
+```
+
+- **Standard deviation** measures total risk; **semi-deviation** only the downside volatility.
+
+- $\text{VaR(5%)}_{\text{ARK}}=15.87\%$: There is a 5% chance that ARK loses more than
+  $14.87\%$ over one month. Or, equivalently, there is a 95% chance that ARK loses less than $14.87\%$ over one month. The index's VaR is $6.55\%$.
+
+- $\text{ES(5%)}_{\text{ARK}}=18.97\%$: *given* that ARK is in the worst 5% of months, it will lose on average $18.97\%$. The index's ES is $9.95\%$.
+
+--------------------------------------------------------------------------------
+
+### Rolling performance
+
 `charts.RollingPerformance(R, width=12)`  creates a rolling annualized returns chart, rolling annualized standard deviation chart, and a rolling annualized sharpe ratio chart.
 
-Note that if your portfolio return is on a daily basis, first <span class="env-green">convert to monthly</span>, then run the rolling function. Otherwise, daily rolling frequency can be too computaionally intensive.
-
-
+Note that if your portfolio return is on a daily basis, first <span class="env-green">convert to monthly</span>, then run the rolling function. Otherwise, daily rolling frequency can be too computationally intensive.
 
 Rolling window
 
@@ -1216,6 +1387,142 @@ Rolling window estimation
 
 <img src="https://drive.google.com/thumbnail?id=1qy1FaxutGBxwkXIhGeUVp6JfT69xrmBV&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
 
+**Example:**
+
+```{r}
+f_name <- "images/etf_ret_rolling.png"
+plot_png_base(
+  charts.RollingPerformance(
+    R = ret_xts, Rf = rf_xts$rf, width = 12,
+    legend.loc = "topleft", colorset = c("#b2182b", "#43418A")
+  ),
+  f_name, 9, 7
+)
+```
+
+```{r echo=FALSE, out.width='100%', fig.align='center', fig.cap=""}
+knitr::include_graphics(f_name)
+```
+
+
+### Monthly summary statistics
+
+Use `PerformanceAnalytics::table.Stats()` to calculate summary statistics for a portfolio.
+
+```{r message=FALSE, warning=FALSE}
+stats <- table.Stats(ret_xts, digits = 4)
+stats %>%
+  kable() %>%
+  kable_styling(full_width = FALSE)
+```
+
+- `SE Mean`: Standard Error of the average return. 
+   $$\text{SE Mean} = \frac{\sigma_p}{\sqrt{T}}$$
+
+- `LCL Mean`: Lower Confidence Level (LCL) of the mean, defaults to 95% confidence level.
+   $$\text{LCL Mean} = \bar{r}_p - \text{SE Mean} \times c_{\alpha/2}$$
+   where $c_{\alpha/2}$ is the critical value, i.e., $\left(1-\frac{\alpha}{2}\right)$ quantile of the $t$ distribution with $(T-1)$ degrees of freedom.
+
+- `UCL Mean`: Upper Confidence Level (UCL) of the mean, defaults to 95% confidence level.
+   $$\text{UCL Mean} = \bar{r}_p + \text{SE Mean} \times c_{\alpha/2}$$
+
+- `Kurtosis`: Excess Kurtosis.
+
+### Risk-adjusted performance measures
+
+**Sharpe ratio**
+
+```{r message=FALSE, warning=FALSE}
+sharpe <- SharpeRatio(ret_xts, Rf = rf_xts, geometric = FALSE)
+sharpe %>% 
+  kable(digits = 4) %>% 
+  kable_styling(full_width = FALSE)
+```
+
+**Annualized Sharpe ratio**
+
+```{r message=FALSE, warning=FALSE}
+sharpe_ann <- SharpeRatio.annualized(ret_xts, Rf = rf_xts, geometric = FALSE)
+sharpe_ann %>%
+  kable(digits = 4) %>%
+  kable_styling(full_width = FALSE)
+```
+
+**CAPM-related performance measures**
+
+Calculate Beta, Alpha, R-squared, Information ratio, Treynor ratio of a portfolio against a benchmark.
+
+`table.CAPM(Ra, Rb, scale = NA, Rf = 0, digits = 4)` or `table.SFM` will show statistics pertaining to an asset against a set of benchmarks, or statistics for a set of assets against a benchmark.
+
+- `Ra`: a vector of asset returns to be examined
+- `Rb`: a matrix of benchmark returns to test the asset against
+- `Rf`: risk-free rate of return, defaults to 0
+- `scale`: number of periods in a year (daily scale = 252, monthly scale = 12, quarterly scale = 4)
+- `digits`: number of decimal places to round to, 
+
+```{r message=FALSE, warning=FALSE}
+capm <- table.CAPM(
+  Ra = ret_xts[, 1], Rb = ret_xts[, 2],
+  Rf = rf_xts$rf, scale = 12, digits = 4
+)
+capm %>%
+  kable() %>%
+  kable_styling(full_width = FALSE)
+```
+
+**Returned values**
+
+- `Beta`: beta coefficient of CAPM
+- `Beta +`: `CAPM.beta.bull` is a regression for only positive market returns, which can be used to understand the behavior of the asset or portfolio in positive or 'bull' markets.
+- `Beta -`: `CAPM.beta.bear` provides the calculation on negative market returns.
+- `Active Premium`: performance premium provided by an investment over a passive strategy (the benchmark), which is the investment's annualized return minus the benchmark's annualized return. Also called "Active Return."
+  $$
+  \text{Active Premium} = \bar{r}_p-\bar{r}_m
+  $$
+- `Tracking Error`: the unexplained portion of the investment's performance relative to a benchmark, defined as the standard deviation of the active return.
+    $$
+    \begin{aligned}
+    \text{Tracking Error} &= \sigma_{p-m} \\
+    &= \sqrt{\frac{\sum(r_{p}-r_{m})^{2}}{T-1}} \times \sqrt{\text{scale}}
+    \end{aligned}
+    $$
+    $\text{scale}$ is the number of periods in a year (daily scale = 252, weekly scale = 52, monthly scale = 12, quarterly scale = 4, annually sacle = 1).
+
+- `Information Ratio` is defined as the `Active Premium` divided by the `Tracking Error`.
+  $$
+  \begin{aligned}
+  \text{IR}_p &= \frac{\text{Active Premium}}{\text{Tracking Error}} \\
+  &= \frac{\bar{r}_p-\bar{r}_m}{\sigma_{p-m}}
+  \end{aligned}
+  $$
+
+--------------------------------------------------------------------------------
+
+**Risk decomposition** of the return distribution. 
+
+- Specific risk is the annualized standard deviation of the error term in the CAPM regression equation.
+
+- Systematic risk, as defined by Bacon (2008), is the product of beta by market risk.
+  $$
+  \sigma_s = \beta * \sigma_m
+  $$
+  Market risk, $\sigma_m$, is the annualized standard deviation of the benchmark. $\beta$ is the regression beta.
+
+- Total risk is defined as
+  $$
+  \text{Total Risk} = \sqrt{\text{Systematic Risk}^2 + \text{Specific Risk}^2}
+  $$
+
+```{r}
+# Risk decomposition
+risk <- table.SpecificRisk(
+  Ra = ret_xts[, 1], Rb = ret_xts[, 2],
+  Rf = rf_xts$rf, digits = 4
+)
+risk %>% 
+  kable() %>%
+  kable_styling(full_width = FALSE)
+```
 
 
 ## Plot TS

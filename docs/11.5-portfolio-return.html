@@ -793,7 +793,13 @@ div.csl-indent {
 <li class="chapter" data-level="11.3.2" data-path="11.3-process-data.html"><a href="11.3-process-data.html#from-tibble-to-xts"><i class="fa fa-check"></i><b>11.3.2</b> From tibble to <code>xts</code></a></li>
 </ul></li>
 <li class="chapter" data-level="11.4" data-path="11.4-technical-analysis.html"><a href="11.4-technical-analysis.html"><i class="fa fa-check"></i><b>11.4</b> Technical Analysis</a></li>
-<li class="chapter" data-level="11.5" data-path="11.5-portfolio-return.html"><a href="11.5-portfolio-return.html"><i class="fa fa-check"></i><b>11.5</b> Portfolio Return</a></li>
+<li class="chapter" data-level="11.5" data-path="11.5-portfolio-return.html"><a href="11.5-portfolio-return.html"><i class="fa fa-check"></i><b>11.5</b> Portfolio Return</a>
+<ul>
+<li class="chapter" data-level="11.5.1" data-path="11.5-portfolio-return.html"><a href="11.5-portfolio-return.html#plot-portfolio-return"><i class="fa fa-check"></i><b>11.5.1</b> Plot portfolio return</a></li>
+<li class="chapter" data-level="11.5.2" data-path="11.5-portfolio-return.html"><a href="11.5-portfolio-return.html#rolling-performance"><i class="fa fa-check"></i><b>11.5.2</b> Rolling performance</a></li>
+<li class="chapter" data-level="11.5.3" data-path="11.5-portfolio-return.html"><a href="11.5-portfolio-return.html#monthly-summary-statistics"><i class="fa fa-check"></i><b>11.5.3</b> Monthly summary statistics</a></li>
+<li class="chapter" data-level="11.5.4" data-path="11.5-portfolio-return.html"><a href="11.5-portfolio-return.html#risk-adjusted-performance-measures"><i class="fa fa-check"></i><b>11.5.4</b> Risk-adjusted performance measures</a></li>
+</ul></li>
 <li class="chapter" data-level="11.6" data-path="11.6-plot-ts.html"><a href="11.6-plot-ts.html"><i class="fa fa-check"></i><b>11.6</b> Plot TS</a>
 <ul>
 <li class="chapter" data-level="11.6.1" data-path="11.6-plot-ts.html"><a href="11.6-plot-ts.html#plot.xts"><i class="fa fa-check"></i><b>11.6.1</b> <code>plot.xts</code></a></li>
@@ -1048,6 +1054,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </style>
 <div id="portfolio-return" class="section level2 hasAnchor" number="11.5">
 <h2><span class="header-section-number">11.5</span> Portfolio Return<a href="11.5-portfolio-return.html#portfolio-return" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p><a href="https://timelyportfolio.github.io/PerformanceAnalytics/articles/pa-charts.html#color-palettes">PerformanceAnalytics</a> is useful for portfolio analysis and performance analytics. It has functions to calculate portfolio return, risk, and performance metrics. Also good at visualizing portfolio performance and risk.</p>
 <p><strong>From asset parameters to portfolio parameters</strong></p>
 <p>Given a expected return and volatility for each asset, we can calculate the expected return and volatility of a portfolio by the following formulas:</p>
 <p><span class="math display">\[
@@ -1107,45 +1114,45 @@ Asset B
 </tbody>
 </table>
 <p>where <span class="math inline">\(\mu\)</span> is the expected return, <span class="math inline">\(\sigma\)</span> is the volatility (standard deviation) of returns, <span class="math inline">\(\rho\)</span> is the correlation coefficient between assets A and B.</p>
-<div class="sourceCode" id="cb1013"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1013-1"><a href="11.5-portfolio-return.html#cb1013-1" tabindex="-1"></a><span class="co"># initialize parameters</span></span>
-<span id="cb1013-2"><a href="11.5-portfolio-return.html#cb1013-2" tabindex="-1"></a>mu.A <span class="ot">=</span> <span class="fl">0.175</span></span>
-<span id="cb1013-3"><a href="11.5-portfolio-return.html#cb1013-3" tabindex="-1"></a>sig.A <span class="ot">=</span> <span class="fl">0.258</span></span>
-<span id="cb1013-4"><a href="11.5-portfolio-return.html#cb1013-4" tabindex="-1"></a></span>
-<span id="cb1013-5"><a href="11.5-portfolio-return.html#cb1013-5" tabindex="-1"></a>mu.B <span class="ot">=</span> <span class="fl">0.055</span></span>
-<span id="cb1013-6"><a href="11.5-portfolio-return.html#cb1013-6" tabindex="-1"></a>sig.B <span class="ot">=</span> <span class="fl">0.115</span></span>
-<span id="cb1013-7"><a href="11.5-portfolio-return.html#cb1013-7" tabindex="-1"></a></span>
-<span id="cb1013-8"><a href="11.5-portfolio-return.html#cb1013-8" tabindex="-1"></a>rho.AB <span class="ot">=</span> <span class="sc">-</span><span class="fl">0.164</span></span></code></pre></div>
+<div class="sourceCode" id="cb1015"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1015-1"><a href="11.5-portfolio-return.html#cb1015-1" tabindex="-1"></a><span class="co"># initialize parameters</span></span>
+<span id="cb1015-2"><a href="11.5-portfolio-return.html#cb1015-2" tabindex="-1"></a>mu.A <span class="ot">=</span> <span class="fl">0.175</span></span>
+<span id="cb1015-3"><a href="11.5-portfolio-return.html#cb1015-3" tabindex="-1"></a>sig.A <span class="ot">=</span> <span class="fl">0.258</span></span>
+<span id="cb1015-4"><a href="11.5-portfolio-return.html#cb1015-4" tabindex="-1"></a></span>
+<span id="cb1015-5"><a href="11.5-portfolio-return.html#cb1015-5" tabindex="-1"></a>mu.B <span class="ot">=</span> <span class="fl">0.055</span></span>
+<span id="cb1015-6"><a href="11.5-portfolio-return.html#cb1015-6" tabindex="-1"></a>sig.B <span class="ot">=</span> <span class="fl">0.115</span></span>
+<span id="cb1015-7"><a href="11.5-portfolio-return.html#cb1015-7" tabindex="-1"></a></span>
+<span id="cb1015-8"><a href="11.5-portfolio-return.html#cb1015-8" tabindex="-1"></a>rho.AB <span class="ot">=</span> <span class="sc">-</span><span class="fl">0.164</span></span></code></pre></div>
 <p><strong>Equally weighted</strong></p>
 <p>First we consider an equally weighted portfolio <span class="math inline">\(p_1\)</span>.</p>
 <p>Asset weights: <span class="math inline">\(w_A = w_B = 0.5\)</span>.</p>
-<div class="sourceCode" id="cb1014"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1014-1"><a href="11.5-portfolio-return.html#cb1014-1" tabindex="-1"></a>ptf_par <span class="ot">&lt;-</span> <span class="cf">function</span>(x.A, x.B, mu.A, mu.B, sig.A, sig.B, rho.AB) {</span>
-<span id="cb1014-2"><a href="11.5-portfolio-return.html#cb1014-2" tabindex="-1"></a>  <span class="co"># Calculate portfolio parameters given asset parameters and weights</span></span>
-<span id="cb1014-3"><a href="11.5-portfolio-return.html#cb1014-3" tabindex="-1"></a>  mu.p <span class="ot">=</span> x.A<span class="sc">*</span>mu.A <span class="sc">+</span> x.B<span class="sc">*</span>mu.B</span>
-<span id="cb1014-4"><a href="11.5-portfolio-return.html#cb1014-4" tabindex="-1"></a>  sig2.p <span class="ot">=</span> x.A<span class="sc">^</span><span class="dv">2</span> <span class="sc">*</span> sig.A<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> x.B<span class="sc">^</span><span class="dv">2</span> <span class="sc">*</span> sig.B<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> <span class="dv">2</span><span class="sc">*</span>x.A<span class="sc">*</span>x.B<span class="sc">*</span>rho.AB<span class="sc">*</span>sig.A<span class="sc">*</span>sig.B</span>
-<span id="cb1014-5"><a href="11.5-portfolio-return.html#cb1014-5" tabindex="-1"></a>  sig.p <span class="ot">=</span> <span class="fu">sqrt</span>(sig2.p)</span>
-<span id="cb1014-6"><a href="11.5-portfolio-return.html#cb1014-6" tabindex="-1"></a>  data.tbl <span class="ot">=</span> <span class="fu">t</span>(<span class="fu">c</span>(<span class="at">mu.p=</span>mu.p, <span class="at">sig.p=</span>sig.p, <span class="at">sig.avg=</span>x.A<span class="sc">*</span>sig.A<span class="sc">+</span>x.B<span class="sc">*</span>sig.B))</span>
-<span id="cb1014-7"><a href="11.5-portfolio-return.html#cb1014-7" tabindex="-1"></a>  <span class="fu">return</span>(data.tbl)</span>
-<span id="cb1014-8"><a href="11.5-portfolio-return.html#cb1014-8" tabindex="-1"></a>}</span>
-<span id="cb1014-9"><a href="11.5-portfolio-return.html#cb1014-9" tabindex="-1"></a></span>
-<span id="cb1014-10"><a href="11.5-portfolio-return.html#cb1014-10" tabindex="-1"></a><span class="co"># equally weighted portfolio</span></span>
-<span id="cb1014-11"><a href="11.5-portfolio-return.html#cb1014-11" tabindex="-1"></a><span class="fu">ptf_par</span>(<span class="at">x.A=</span><span class="fl">0.5</span>, <span class="at">x.B=</span><span class="fl">0.5</span>, mu.A, mu.B, sig.A, sig.B, rho.AB)</span></code></pre></div>
+<div class="sourceCode" id="cb1016"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1016-1"><a href="11.5-portfolio-return.html#cb1016-1" tabindex="-1"></a>ptf_par <span class="ot">&lt;-</span> <span class="cf">function</span>(x.A, x.B, mu.A, mu.B, sig.A, sig.B, rho.AB) {</span>
+<span id="cb1016-2"><a href="11.5-portfolio-return.html#cb1016-2" tabindex="-1"></a>  <span class="co"># Calculate portfolio parameters given asset parameters and weights</span></span>
+<span id="cb1016-3"><a href="11.5-portfolio-return.html#cb1016-3" tabindex="-1"></a>  mu.p <span class="ot">=</span> x.A<span class="sc">*</span>mu.A <span class="sc">+</span> x.B<span class="sc">*</span>mu.B</span>
+<span id="cb1016-4"><a href="11.5-portfolio-return.html#cb1016-4" tabindex="-1"></a>  sig2.p <span class="ot">=</span> x.A<span class="sc">^</span><span class="dv">2</span> <span class="sc">*</span> sig.A<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> x.B<span class="sc">^</span><span class="dv">2</span> <span class="sc">*</span> sig.B<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> <span class="dv">2</span><span class="sc">*</span>x.A<span class="sc">*</span>x.B<span class="sc">*</span>rho.AB<span class="sc">*</span>sig.A<span class="sc">*</span>sig.B</span>
+<span id="cb1016-5"><a href="11.5-portfolio-return.html#cb1016-5" tabindex="-1"></a>  sig.p <span class="ot">=</span> <span class="fu">sqrt</span>(sig2.p)</span>
+<span id="cb1016-6"><a href="11.5-portfolio-return.html#cb1016-6" tabindex="-1"></a>  data.tbl <span class="ot">=</span> <span class="fu">t</span>(<span class="fu">c</span>(<span class="at">mu.p=</span>mu.p, <span class="at">sig.p=</span>sig.p, <span class="at">sig.avg=</span>x.A<span class="sc">*</span>sig.A<span class="sc">+</span>x.B<span class="sc">*</span>sig.B))</span>
+<span id="cb1016-7"><a href="11.5-portfolio-return.html#cb1016-7" tabindex="-1"></a>  <span class="fu">return</span>(data.tbl)</span>
+<span id="cb1016-8"><a href="11.5-portfolio-return.html#cb1016-8" tabindex="-1"></a>}</span>
+<span id="cb1016-9"><a href="11.5-portfolio-return.html#cb1016-9" tabindex="-1"></a></span>
+<span id="cb1016-10"><a href="11.5-portfolio-return.html#cb1016-10" tabindex="-1"></a><span class="co"># equally weighted portfolio</span></span>
+<span id="cb1016-11"><a href="11.5-portfolio-return.html#cb1016-11" tabindex="-1"></a><span class="fu">ptf_par</span>(<span class="at">x.A=</span><span class="fl">0.5</span>, <span class="at">x.B=</span><span class="fl">0.5</span>, mu.A, mu.B, sig.A, sig.B, rho.AB)</span></code></pre></div>
 <pre><code>##       mu.p     sig.p sig.avg
 ## [1,] 0.115 0.1323416  0.1865</code></pre>
 <p><strong>Long-short portfolio</strong></p>
 <p>We now consider a long-short portfolio <span class="math inline">\(p_2\)</span>.</p>
 <p>Asset weights: <span class="math inline">\(w_A = 1.5\)</span>, <span class="math inline">\(w_B = -0.5\)</span>.</p>
-<div class="sourceCode" id="cb1016"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1016-1"><a href="11.5-portfolio-return.html#cb1016-1" tabindex="-1"></a><span class="co"># long-short portfolio</span></span>
-<span id="cb1016-2"><a href="11.5-portfolio-return.html#cb1016-2" tabindex="-1"></a><span class="fu">ptf_par</span>(<span class="at">x.A=</span><span class="fl">1.5</span>, <span class="at">x.B=</span><span class="sc">-</span><span class="fl">0.5</span>, mu.A, mu.B, sig.A, sig.B, rho.AB)</span></code></pre></div>
+<div class="sourceCode" id="cb1018"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1018-1"><a href="11.5-portfolio-return.html#cb1018-1" tabindex="-1"></a><span class="co"># long-short portfolio</span></span>
+<span id="cb1018-2"><a href="11.5-portfolio-return.html#cb1018-2" tabindex="-1"></a><span class="fu">ptf_par</span>(<span class="at">x.A=</span><span class="fl">1.5</span>, <span class="at">x.B=</span><span class="sc">-</span><span class="fl">0.5</span>, mu.A, mu.B, sig.A, sig.B, rho.AB)</span></code></pre></div>
 <pre><code>##       mu.p     sig.p sig.avg
 ## [1,] 0.235 0.4004673  0.3295</code></pre>
 <hr />
 <p><strong>From individual asset returns to portfolio</strong></p>
 <p>Given a data frame of asset returns, we can calculate the portfolio return by <code>PerformanceAnalytics::Return.portfolio()</code>.</p>
-<div class="sourceCode" id="cb1018"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1018-1"><a href="11.5-portfolio-return.html#cb1018-1" tabindex="-1"></a>w <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.25</span>, <span class="fl">0.25</span>, <span class="fl">0.20</span>, <span class="fl">0.20</span>, <span class="fl">0.10</span>)</span>
-<span id="cb1018-2"><a href="11.5-portfolio-return.html#cb1018-2" tabindex="-1"></a></span>
-<span id="cb1018-3"><a href="11.5-portfolio-return.html#cb1018-3" tabindex="-1"></a>portfolio_returns_xts_rebalanced_monthly <span class="ot">&lt;-</span> </span>
-<span id="cb1018-4"><a href="11.5-portfolio-return.html#cb1018-4" tabindex="-1"></a>  <span class="fu">Return.portfolio</span>(asset_returns_xts, <span class="at">weights =</span> w, <span class="at">rebalance_on =</span> <span class="st">&quot;months&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb1018-5"><a href="11.5-portfolio-return.html#cb1018-5" tabindex="-1"></a>  <span class="st">`</span><span class="at">colnames&lt;-</span><span class="st">`</span>(<span class="st">&quot;returns&quot;</span>) </span></code></pre></div>
+<div class="sourceCode" id="cb1020"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1020-1"><a href="11.5-portfolio-return.html#cb1020-1" tabindex="-1"></a>w <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.25</span>, <span class="fl">0.25</span>, <span class="fl">0.20</span>, <span class="fl">0.20</span>, <span class="fl">0.10</span>)</span>
+<span id="cb1020-2"><a href="11.5-portfolio-return.html#cb1020-2" tabindex="-1"></a></span>
+<span id="cb1020-3"><a href="11.5-portfolio-return.html#cb1020-3" tabindex="-1"></a>portfolio_returns_xts_rebalanced_monthly <span class="ot">&lt;-</span> </span>
+<span id="cb1020-4"><a href="11.5-portfolio-return.html#cb1020-4" tabindex="-1"></a>  <span class="fu">Return.portfolio</span>(asset_returns_xts, <span class="at">weights =</span> w, <span class="at">rebalance_on =</span> <span class="st">&quot;months&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb1020-5"><a href="11.5-portfolio-return.html#cb1020-5" tabindex="-1"></a>  <span class="st">`</span><span class="at">colnames&lt;-</span><span class="st">`</span>(<span class="st">&quot;returns&quot;</span>) </span></code></pre></div>
 <p><code>PerformanceAnalytics::Return.portfolio(R=Return_xts, weights=NULL, rebalance_on, verbose=FALSE)</code> Using a time series of returns and any regular or irregular time series of weights for each asset, this function calculates the returns of a portfolio with the same periodicity of the returns data. Returns a time series of returns weighted by the <code>weights</code> parameter, or a list that includes intermediate calculations</p>
 <ul>
 <li><p><code>R</code> An xts, vector, matrix, data frame, timeSeries or zoo object of <strong>asset returns</strong>.</p></li>
@@ -1168,7 +1175,7 @@ Asset B
 </ul></li>
 </ul>
 <p><code>chartSeries</code> plot an OHLC object.</p>
-<div class="sourceCode" id="cb1019"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1019-1"><a href="11.5-portfolio-return.html#cb1019-1" tabindex="-1"></a><span class="fu">chartSeries</span>(AMZN, <span class="at">type=</span><span class="st">&quot;candlesticks&quot;</span>, <span class="at">subset=</span><span class="st">&#39;2016-05-18::2017-01-30&#39;</span>, <span class="at">theme =</span> <span class="fu">chartTheme</span>(<span class="st">&#39;white&#39;</span>, <span class="at">up.col=</span><span class="st">&#39;green&#39;</span>, <span class="at">dn.col=</span><span class="st">&#39;red&#39;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb1021"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1021-1"><a href="11.5-portfolio-return.html#cb1021-1" tabindex="-1"></a><span class="fu">chartSeries</span>(AMZN, <span class="at">type=</span><span class="st">&quot;candlesticks&quot;</span>, <span class="at">subset=</span><span class="st">&#39;2016-05-18::2017-01-30&#39;</span>, <span class="at">theme =</span> <span class="fu">chartTheme</span>(<span class="st">&#39;white&#39;</span>, <span class="at">up.col=</span><span class="st">&#39;green&#39;</span>, <span class="at">dn.col=</span><span class="st">&#39;red&#39;</span>))</span></code></pre></div>
 <ul>
 <li><p><code>type="candlesticks"</code> can be <code>line</code>, <code>bar</code>, default to <code>candlesticks</code>.</p>
 <ul>
@@ -1189,12 +1196,785 @@ Asset B
 <li><code>dn.col</code> down bar/candle color</li>
 </ul></li>
 </ul>
+<div id="plot-portfolio-return" class="section level3 hasAnchor" number="11.5.1">
+<h3><span class="header-section-number">11.5.1</span> Plot portfolio return<a href="11.5-portfolio-return.html#plot-portfolio-return" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Use <code>PerformanceAnalytics::charts.PerformanceSummary</code> to plot the cumulative return, monthly return, and drawdown of a portfolio.</p>
+<div class="sourceCode" id="cb1022"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1022-1"><a href="11.5-portfolio-return.html#cb1022-1" tabindex="-1"></a><span class="fu">library</span>(PerformanceAnalytics)</span>
+<span id="cb1022-2"><a href="11.5-portfolio-return.html#cb1022-2" tabindex="-1"></a><span class="fu">library</span>(xts)</span>
+<span id="cb1022-3"><a href="11.5-portfolio-return.html#cb1022-3" tabindex="-1"></a></span>
+<span id="cb1022-4"><a href="11.5-portfolio-return.html#cb1022-4" tabindex="-1"></a>plot_png_base <span class="ot">&lt;-</span> <span class="cf">function</span>(expr, f_name, width, height, <span class="at">ppi =</span> <span class="dv">300</span>,</span>
+<span id="cb1022-5"><a href="11.5-portfolio-return.html#cb1022-5" tabindex="-1"></a>                          <span class="at">trim =</span> <span class="cn">TRUE</span>, <span class="at">pad =</span> <span class="dv">8</span>) {</span>
+<span id="cb1022-6"><a href="11.5-portfolio-return.html#cb1022-6" tabindex="-1"></a>  <span class="co"># For base-graphics plots (PerformanceAnalytics, plot.xts, ...), which draw</span></span>
+<span id="cb1022-7"><a href="11.5-portfolio-return.html#cb1022-7" tabindex="-1"></a>  <span class="co"># as a side effect rather than returning an object to print.</span></span>
+<span id="cb1022-8"><a href="11.5-portfolio-return.html#cb1022-8" tabindex="-1"></a>  <span class="co">#</span></span>
+<span id="cb1022-9"><a href="11.5-portfolio-return.html#cb1022-9" tabindex="-1"></a>  <span class="co"># trim = TRUE crops the blank border the device leaves around the plot.</span></span>
+<span id="cb1022-10"><a href="11.5-portfolio-return.html#cb1022-10" tabindex="-1"></a>  <span class="co"># charts.PerformanceSummary in particular reserves room for a title it is</span></span>
+<span id="cb1022-11"><a href="11.5-portfolio-return.html#cb1022-11" tabindex="-1"></a>  <span class="co"># not drawing, so a 9x7 canvas comes back 13% blank at the top -- which on a</span></span>
+<span id="cb1022-12"><a href="11.5-portfolio-return.html#cb1022-12" tabindex="-1"></a>  <span class="co"># slide reads as an unexplained gap between the figure and the text above.</span></span>
+<span id="cb1022-13"><a href="11.5-portfolio-return.html#cb1022-13" tabindex="-1"></a>  <span class="fu">png</span>(f_name, <span class="at">width =</span> width <span class="sc">*</span> ppi, <span class="at">height =</span> height <span class="sc">*</span> ppi, <span class="at">res =</span> ppi)</span>
+<span id="cb1022-14"><a href="11.5-portfolio-return.html#cb1022-14" tabindex="-1"></a>  <span class="fu">on.exit</span>({</span>
+<span id="cb1022-15"><a href="11.5-portfolio-return.html#cb1022-15" tabindex="-1"></a>    <span class="fu">invisible</span>(<span class="fu">dev.off</span>())</span>
+<span id="cb1022-16"><a href="11.5-portfolio-return.html#cb1022-16" tabindex="-1"></a>    <span class="cf">if</span> (trim) <span class="fu">trim_png</span>(f_name, <span class="at">pad =</span> pad)</span>
+<span id="cb1022-17"><a href="11.5-portfolio-return.html#cb1022-17" tabindex="-1"></a>  }, <span class="at">add =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1022-18"><a href="11.5-portfolio-return.html#cb1022-18" tabindex="-1"></a>  <span class="fu">force</span>(expr) <span class="co"># the promise evaluates here, with the device open</span></span>
+<span id="cb1022-19"><a href="11.5-portfolio-return.html#cb1022-19" tabindex="-1"></a>  <span class="fu">invisible</span>(<span class="cn">NULL</span>)</span>
+<span id="cb1022-20"><a href="11.5-portfolio-return.html#cb1022-20" tabindex="-1"></a>}</span>
+<span id="cb1022-21"><a href="11.5-portfolio-return.html#cb1022-21" tabindex="-1"></a></span>
+<span id="cb1022-22"><a href="11.5-portfolio-return.html#cb1022-22" tabindex="-1"></a>trim_png <span class="ot">&lt;-</span> <span class="cf">function</span>(f_name, <span class="at">pad =</span> <span class="dv">8</span>) {</span>
+<span id="cb1022-23"><a href="11.5-portfolio-return.html#cb1022-23" tabindex="-1"></a>  <span class="co"># Crop the uniform border off a png, then give it back `pad` pixels so the</span></span>
+<span id="cb1022-24"><a href="11.5-portfolio-return.html#cb1022-24" tabindex="-1"></a>  <span class="co"># ink does not touch the edge. Silently a no-op if magick is unavailable.</span></span>
+<span id="cb1022-25"><a href="11.5-portfolio-return.html#cb1022-25" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">requireNamespace</span>(<span class="st">&quot;magick&quot;</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>)) <span class="fu">return</span>(<span class="fu">invisible</span>(<span class="cn">FALSE</span>))</span>
+<span id="cb1022-26"><a href="11.5-portfolio-return.html#cb1022-26" tabindex="-1"></a>  img <span class="ot">&lt;-</span> magick<span class="sc">::</span><span class="fu">image_read</span>(f_name)</span>
+<span id="cb1022-27"><a href="11.5-portfolio-return.html#cb1022-27" tabindex="-1"></a>  img <span class="ot">&lt;-</span> magick<span class="sc">::</span><span class="fu">image_trim</span>(img)</span>
+<span id="cb1022-28"><a href="11.5-portfolio-return.html#cb1022-28" tabindex="-1"></a>  img <span class="ot">&lt;-</span> magick<span class="sc">::</span><span class="fu">image_border</span>(img, <span class="at">color =</span> <span class="st">&quot;white&quot;</span>,</span>
+<span id="cb1022-29"><a href="11.5-portfolio-return.html#cb1022-29" tabindex="-1"></a>                              <span class="at">geometry =</span> <span class="fu">paste0</span>(pad, <span class="st">&quot;x&quot;</span>, pad))</span>
+<span id="cb1022-30"><a href="11.5-portfolio-return.html#cb1022-30" tabindex="-1"></a>  magick<span class="sc">::</span><span class="fu">image_write</span>(img, f_name)</span>
+<span id="cb1022-31"><a href="11.5-portfolio-return.html#cb1022-31" tabindex="-1"></a>  <span class="fu">invisible</span>(<span class="cn">TRUE</span>)</span>
+<span id="cb1022-32"><a href="11.5-portfolio-return.html#cb1022-32" tabindex="-1"></a>}</span>
+<span id="cb1022-33"><a href="11.5-portfolio-return.html#cb1022-33" tabindex="-1"></a></span>
+<span id="cb1022-34"><a href="11.5-portfolio-return.html#cb1022-34" tabindex="-1"></a>ret <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">&quot;data/etf_ARKK_case_study_monthly.csv&quot;</span>)</span>
+<span id="cb1022-35"><a href="11.5-portfolio-return.html#cb1022-35" tabindex="-1"></a>ret<span class="sc">$</span>Date <span class="ot">&lt;-</span> <span class="fu">as.Date</span>(ret<span class="sc">$</span>Date)</span>
+<span id="cb1022-36"><a href="11.5-portfolio-return.html#cb1022-36" tabindex="-1"></a></span>
+<span id="cb1022-37"><a href="11.5-portfolio-return.html#cb1022-37" tabindex="-1"></a><span class="co"># Convert to xts</span></span>
+<span id="cb1022-38"><a href="11.5-portfolio-return.html#cb1022-38" tabindex="-1"></a><span class="co"># col1: ptf return, col2: benchmark return</span></span>
+<span id="cb1022-39"><a href="11.5-portfolio-return.html#cb1022-39" tabindex="-1"></a>ret_xts <span class="ot">&lt;-</span> <span class="fu">xts</span>(ret[, <span class="fu">c</span>(<span class="st">&quot;ptf_ret&quot;</span>, <span class="st">&quot;bmk_ret&quot;</span>)], <span class="at">order.by =</span> ret<span class="sc">$</span>Date)</span>
+<span id="cb1022-40"><a href="11.5-portfolio-return.html#cb1022-40" tabindex="-1"></a><span class="fu">colnames</span>(ret_xts) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;ARK Innovation&quot;</span>, <span class="st">&quot;S&amp;P 500&quot;</span>)</span>
+<span id="cb1022-41"><a href="11.5-portfolio-return.html#cb1022-41" tabindex="-1"></a><span class="co"># Risk-free rate for risk-adjusted performance measures</span></span>
+<span id="cb1022-42"><a href="11.5-portfolio-return.html#cb1022-42" tabindex="-1"></a>rf_xts <span class="ot">&lt;-</span> <span class="fu">xts</span>(ret<span class="sc">$</span>rf, <span class="at">order.by =</span> ret<span class="sc">$</span>Date)</span>
+<span id="cb1022-43"><a href="11.5-portfolio-return.html#cb1022-43" tabindex="-1"></a><span class="fu">colnames</span>(rf_xts) <span class="ot">&lt;-</span> <span class="st">&quot;rf&quot;</span></span>
+<span id="cb1022-44"><a href="11.5-portfolio-return.html#cb1022-44" tabindex="-1"></a></span>
+<span id="cb1022-45"><a href="11.5-portfolio-return.html#cb1022-45" tabindex="-1"></a>f_name <span class="ot">&lt;-</span> <span class="st">&quot;images/etf_ret_summary.png&quot;</span></span>
+<span id="cb1022-46"><a href="11.5-portfolio-return.html#cb1022-46" tabindex="-1"></a><span class="fu">plot_png_base</span>(</span>
+<span id="cb1022-47"><a href="11.5-portfolio-return.html#cb1022-47" tabindex="-1"></a>  <span class="fu">charts.PerformanceSummary</span>(ret_xts,</span>
+<span id="cb1022-48"><a href="11.5-portfolio-return.html#cb1022-48" tabindex="-1"></a>    <span class="at">main =</span> <span class="st">&quot;&quot;</span>, <span class="at">legend.loc =</span> <span class="st">&quot;topleft&quot;</span>,</span>
+<span id="cb1022-49"><a href="11.5-portfolio-return.html#cb1022-49" tabindex="-1"></a>    <span class="at">colorset =</span> <span class="fu">c</span>(<span class="st">&quot;#b2182b&quot;</span>, <span class="st">&quot;#43418A&quot;</span>)</span>
+<span id="cb1022-50"><a href="11.5-portfolio-return.html#cb1022-50" tabindex="-1"></a>  ),</span>
+<span id="cb1022-51"><a href="11.5-portfolio-return.html#cb1022-51" tabindex="-1"></a>  f_name, <span class="dv">9</span>, <span class="dv">7</span></span>
+<span id="cb1022-52"><a href="11.5-portfolio-return.html#cb1022-52" tabindex="-1"></a>)</span></code></pre></div>
+<p><img src="images/etf_ret_summary.png" width="100%" style="display: block; margin: auto;" /></p>
+<ul>
+<li><p><span class="env-green"><code>legend.loc</code></span>: legend location, without it, the legend won’t show.</p>
+<p>There are nine locations that can be specified by keyword: “bottomright”, “bottom”, “bottomleft”, “left”, “topleft”, “top”, “topright”, “right” and “center”.</p></li>
+<li><p><code>colorset</code>: color palette to use. You can specify a vector of colors, or use one of the built-in color palettes.</p>
+<p>Legend is ordered by the order of the columns.
+<code>colorset = c("#b2182b", "#43418A")</code> will set the first series to <code>#b2182b</code> and the second series to <code>#43418A</code>.</p></li>
+</ul>
+<hr />
+<p><strong>Drawdown analysis:</strong> <a href="https://metricgate.com/docs/drawdown-analysis/" class="uri">https://metricgate.com/docs/drawdown-analysis/</a></p>
+<ul>
+<li><p>Drawdown: It is the level of losses from the last value of peak equity attained.
+<span class="math display">\[
+D_t = \frac{V_t-\text{max}_{s&lt;t}V_s}{\text{max}_{s&lt;t}V_s}
+\]</span>
+where <span class="math inline">\(V_t=\Pi_{s=1}^t(1+R_S)\)</span> is the cumulative portfolio value at time <span class="math inline">\(t\)</span> and <span class="math inline">\(\text{max}_{s&lt;t}V_s\)</span> is the maximum cumulative portfolio value attained prior to time <span class="math inline">\(t\)</span>.</p>
+<p>Since drawdown represents a loss, <span class="math inline">\(D_t\le 0\)</span> always.</p></li>
+<li><p>Maximum Drawdown: minimum value of the drawdown over a specified time period.
+<span class="math display">\[
+\text{Max Drawdown} = \min_t(D_t)
+\]</span></p></li>
+</ul>
+<div class="sourceCode" id="cb1023"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1023-1"><a href="11.5-portfolio-return.html#cb1023-1" tabindex="-1"></a><span class="fu">table.Drawdowns</span>(ret_xts[,<span class="dv">1</span>])</span></code></pre></div>
+<pre><code>##         From     Trough         To   Depth Length To Trough Recovery
+## 1 2021-02-28 2022-12-31       &lt;NA&gt; -0.7708     48        23       NA
+## 2 2018-09-30 2018-12-31 2019-07-31 -0.2277     11         4        7
+## 3 2015-06-30 2016-01-31 2016-09-30 -0.2075     16         8        8
+## 4 2020-03-31 2020-03-31 2020-04-30 -0.1673      2         1        1
+## 5 2019-08-31 2019-09-30 2019-11-30 -0.1149      4         2        2</code></pre>
+<ul>
+<li><p>Trough: The lowest point reached during a drawdown episode before recovery begins.</p></li>
+<li><p>Drawdown Duration: The full length of a drawdown episode from peak to the next new peak, encompassing both the decline and recovery phases.</p></li>
+<li><p>High-Water Mark: The highest cumulative value ever achieved; drawdown is always measured relative to this level.</p>
+<p>The drawdown at any particular time point is simply the distance from the current variable value to the “surface of the water” or the high water mark at that time point.</p></li>
+</ul>
+<p>Plot the high-water mark together with the wealth index:</p>
+<div class="sourceCode" id="cb1025"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1025-1"><a href="11.5-portfolio-return.html#cb1025-1" tabindex="-1"></a>wealth <span class="ot">&lt;-</span> <span class="fu">cumprod</span>(<span class="dv">1</span> <span class="sc">+</span> ret_xts[, <span class="dv">1</span>]) <span class="co"># wealth index, $1 invested at the start</span></span>
+<span id="cb1025-2"><a href="11.5-portfolio-return.html#cb1025-2" tabindex="-1"></a>hwm <span class="ot">&lt;-</span> <span class="fu">cummax</span>(wealth) <span class="co"># high-water mark, the running max of the wealth index</span></span>
+<span id="cb1025-3"><a href="11.5-portfolio-return.html#cb1025-3" tabindex="-1"></a>dd <span class="ot">&lt;-</span> wealth <span class="sc">/</span> hwm <span class="sc">-</span> <span class="dv">1</span> <span class="co"># drawdown, identical to Drawdowns(ret_xts[, 1])</span></span>
+<span id="cb1025-4"><a href="11.5-portfolio-return.html#cb1025-4" tabindex="-1"></a></span>
+<span id="cb1025-5"><a href="11.5-portfolio-return.html#cb1025-5" tabindex="-1"></a>wi <span class="ot">&lt;-</span> <span class="fu">merge</span>(wealth, hwm)</span>
+<span id="cb1025-6"><a href="11.5-portfolio-return.html#cb1025-6" tabindex="-1"></a><span class="fu">colnames</span>(wi) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Wealth index&quot;</span>, <span class="st">&quot;High-water mark&quot;</span>)</span>
+<span id="cb1025-7"><a href="11.5-portfolio-return.html#cb1025-7" tabindex="-1"></a>band <span class="ot">&lt;-</span> <span class="fu">merge</span>(hwm, wealth) <span class="co"># upper bound first, lower bound second</span></span>
+<span id="cb1025-8"><a href="11.5-portfolio-return.html#cb1025-8" tabindex="-1"></a></span>
+<span id="cb1025-9"><a href="11.5-portfolio-return.html#cb1025-9" tabindex="-1"></a>f_name <span class="ot">&lt;-</span> <span class="st">&quot;images/etf_hwm.png&quot;</span></span>
+<span id="cb1025-10"><a href="11.5-portfolio-return.html#cb1025-10" tabindex="-1"></a><span class="fu">plot_png_base</span>({</span>
+<span id="cb1025-11"><a href="11.5-portfolio-return.html#cb1025-11" tabindex="-1"></a>  p <span class="ot">&lt;-</span> <span class="fu">plot</span>(wi,</span>
+<span id="cb1025-12"><a href="11.5-portfolio-return.html#cb1025-12" tabindex="-1"></a>    <span class="at">col =</span> <span class="fu">c</span>(<span class="st">&quot;black&quot;</span>, <span class="st">&quot;blue&quot;</span>), <span class="at">lwd =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="fl">1.5</span>),</span>
+<span id="cb1025-13"><a href="11.5-portfolio-return.html#cb1025-13" tabindex="-1"></a>    <span class="at">main =</span> <span class="st">&quot;&quot;</span>, <span class="at">legend.loc =</span> <span class="st">&quot;topleft&quot;</span></span>
+<span id="cb1025-14"><a href="11.5-portfolio-return.html#cb1025-14" tabindex="-1"></a>  )</span>
+<span id="cb1025-15"><a href="11.5-portfolio-return.html#cb1025-15" tabindex="-1"></a>  <span class="co"># shade the underwater area, i.e. the gap between the two lines</span></span>
+<span id="cb1025-16"><a href="11.5-portfolio-return.html#cb1025-16" tabindex="-1"></a>  p <span class="ot">&lt;-</span> <span class="fu">addPolygon</span>(band, <span class="at">col =</span> <span class="fu">adjustcolor</span>(<span class="st">&quot;blue&quot;</span>, <span class="at">alpha.f =</span> <span class="fl">0.15</span>), <span class="at">on =</span> <span class="dv">1</span>)</span>
+<span id="cb1025-17"><a href="11.5-portfolio-return.html#cb1025-17" tabindex="-1"></a>  <span class="fu">print</span>(p)</span>
+<span id="cb1025-18"><a href="11.5-portfolio-return.html#cb1025-18" tabindex="-1"></a>}, f_name, <span class="dv">11</span>, <span class="dv">6</span>, <span class="at">trim =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<p><img src="images/etf_hwm.png" width="100%" style="display: block; margin: auto;" /></p>
+<ul>
+<li><p><code>cumprod</code> and <code>cummax</code> are applied <span class="env-green">column by column</span> on an <code>xts</code> object, so the same two lines work on all columns of <code>ret_xts</code> at once.</p></li>
+<li><p>Rename the columns of the merged object, otherwise both series are labelled <code>ARK.Innovation</code> in the legend.</p></li>
+<li><p><code>addPolygon</code> fills the area between the <span class="env-green">first two columns</span> of the object it is given, the first being the upper bound and the second the lower bound. <code>on = 1</code> draws it on the existing panel; without it the polygon goes into a new panel below.</p>
+<p>Use a transparent fill (<code>adjustcolor(col, alpha.f = 0.15)</code>), since layers are drawn in the order they are added and the polygon lands on top of the two lines.</p></li>
+<li><p><code>addPolygon</code> and <code>addSeries</code> <span class="env-green">return</span> the plot object instead of drawing it, so it has to be <code>print</code>ed. Inside a knitr chunk this is needed for <code>plot</code> as well, since auto-printing does not happen there.</p></li>
+<li><p>To add the drawdown as a separate panel below, add <code>p &lt;- addSeries(dd, col = "#43418A", type = "h", lwd = 2, main = "Drawdown from high-water mark")</code> before <code>print(p)</code>.</p></li>
+</ul>
+<hr />
+<p><strong>Downside risk measures</strong></p>
+<p>Semi-deviation, Value at Risk (VaR), and Expected Shortfall (ES) are downside risk measures that focus on the negative returns of a portfolio.</p>
+<div class="sourceCode" id="cb1026"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1026-1"><a href="11.5-portfolio-return.html#cb1026-1" tabindex="-1"></a><span class="co"># Downside risk measures</span></span>
+<span id="cb1026-2"><a href="11.5-portfolio-return.html#cb1026-2" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1026-3"><a href="11.5-portfolio-return.html#cb1026-3" tabindex="-1"></a>stats <span class="ot">&lt;-</span> <span class="fu">table.Stats</span>(ret_xts, <span class="at">digits =</span> <span class="dv">4</span>)</span>
+<span id="cb1026-4"><a href="11.5-portfolio-return.html#cb1026-4" tabindex="-1"></a><span class="fu">rbind</span>(</span>
+<span id="cb1026-5"><a href="11.5-portfolio-return.html#cb1026-5" tabindex="-1"></a>  stats[<span class="st">&quot;Stdev&quot;</span>, ],</span>
+<span id="cb1026-6"><a href="11.5-portfolio-return.html#cb1026-6" tabindex="-1"></a>  <span class="fu">SemiDeviation</span>(ret_xts),</span>
+<span id="cb1026-7"><a href="11.5-portfolio-return.html#cb1026-7" tabindex="-1"></a>  <span class="fu">VaR</span>(ret_xts, <span class="at">p =</span> <span class="fl">0.05</span>),</span>
+<span id="cb1026-8"><a href="11.5-portfolio-return.html#cb1026-8" tabindex="-1"></a>  <span class="fu">ES</span>(ret_xts, <span class="at">p =</span> <span class="fl">0.05</span>)</span>
+<span id="cb1026-9"><a href="11.5-portfolio-return.html#cb1026-9" tabindex="-1"></a>) <span class="sc">%&gt;%</span> </span>
+<span id="cb1026-10"><a href="11.5-portfolio-return.html#cb1026-10" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">digit =</span> <span class="dv">4</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb1026-11"><a href="11.5-portfolio-return.html#cb1026-11" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">full_width =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+ARK Innovation
+</th>
+<th style="text-align:right;">
+S&amp;P 500
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Stdev
+</td>
+<td style="text-align:right;">
+0.1045
+</td>
+<td style="text-align:right;">
+0.0442
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Semi-Deviation
+</td>
+<td style="text-align:right;">
+0.0710
+</td>
+<td style="text-align:right;">
+0.0330
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+VaR
+</td>
+<td style="text-align:right;">
+-0.1487
+</td>
+<td style="text-align:right;">
+-0.0655
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ES
+</td>
+<td style="text-align:right;">
+-0.1897
+</td>
+<td style="text-align:right;">
+-0.0910
+</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><p><strong>Standard deviation</strong> measures total risk; <strong>semi-deviation</strong> only the downside volatility.</p></li>
+<li><p><span class="math inline">\(\text{VaR(5%)}_{\text{ARK}}=15.87\%\)</span>: There is a 5% chance that ARK loses more than
+<span class="math inline">\(14.87\%\)</span> over one month. Or, equivalently, there is a 95% chance that ARK loses less than <span class="math inline">\(14.87\%\)</span> over one month. The index’s VaR is <span class="math inline">\(6.55\%\)</span>.</p></li>
+<li><p><span class="math inline">\(\text{ES(5%)}_{\text{ARK}}=18.97\%\)</span>: <em>given</em> that ARK is in the worst 5% of months, it will lose on average <span class="math inline">\(18.97\%\)</span>. The index’s ES is <span class="math inline">\(9.95\%\)</span>.</p></li>
+</ul>
+<hr />
+</div>
+<div id="rolling-performance" class="section level3 hasAnchor" number="11.5.2">
+<h3><span class="header-section-number">11.5.2</span> Rolling performance<a href="11.5-portfolio-return.html#rolling-performance" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p><code>charts.RollingPerformance(R, width=12)</code> creates a rolling annualized returns chart, rolling annualized standard deviation chart, and a rolling annualized sharpe ratio chart.</p>
-<p>Note that if your portfolio return is on a daily basis, first <span class="env-green">convert to monthly</span>, then run the rolling function. Otherwise, daily rolling frequency can be too computaionally intensive.</p>
+<p>Note that if your portfolio return is on a daily basis, first <span class="env-green">convert to monthly</span>, then run the rolling function. Otherwise, daily rolling frequency can be too computationally intensive.</p>
 <p>Rolling window</p>
 <p><img src="https://drive.google.com/thumbnail?id=1eOCGGKfxXJsuExtpVqPS0_NVKQ7RvY6I&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" /></p>
 <p>Rolling window estimation</p>
 <p><img src="https://drive.google.com/thumbnail?id=1qy1FaxutGBxwkXIhGeUVp6JfT69xrmBV&sz=w1000" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" /></p>
+<p><strong>Example:</strong></p>
+<div class="sourceCode" id="cb1027"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1027-1"><a href="11.5-portfolio-return.html#cb1027-1" tabindex="-1"></a>f_name <span class="ot">&lt;-</span> <span class="st">&quot;images/etf_ret_rolling.png&quot;</span></span>
+<span id="cb1027-2"><a href="11.5-portfolio-return.html#cb1027-2" tabindex="-1"></a><span class="fu">plot_png_base</span>(</span>
+<span id="cb1027-3"><a href="11.5-portfolio-return.html#cb1027-3" tabindex="-1"></a>  <span class="fu">charts.RollingPerformance</span>(</span>
+<span id="cb1027-4"><a href="11.5-portfolio-return.html#cb1027-4" tabindex="-1"></a>    <span class="at">R =</span> ret_xts, <span class="at">Rf =</span> rf_xts<span class="sc">$</span>rf, <span class="at">width =</span> <span class="dv">12</span>,</span>
+<span id="cb1027-5"><a href="11.5-portfolio-return.html#cb1027-5" tabindex="-1"></a>    <span class="at">legend.loc =</span> <span class="st">&quot;topleft&quot;</span>, <span class="at">colorset =</span> <span class="fu">c</span>(<span class="st">&quot;#b2182b&quot;</span>, <span class="st">&quot;#43418A&quot;</span>)</span>
+<span id="cb1027-6"><a href="11.5-portfolio-return.html#cb1027-6" tabindex="-1"></a>  ),</span>
+<span id="cb1027-7"><a href="11.5-portfolio-return.html#cb1027-7" tabindex="-1"></a>  f_name, <span class="dv">9</span>, <span class="dv">7</span></span>
+<span id="cb1027-8"><a href="11.5-portfolio-return.html#cb1027-8" tabindex="-1"></a>)</span></code></pre></div>
+<p><img src="images/etf_ret_rolling.png" width="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="monthly-summary-statistics" class="section level3 hasAnchor" number="11.5.3">
+<h3><span class="header-section-number">11.5.3</span> Monthly summary statistics<a href="11.5-portfolio-return.html#monthly-summary-statistics" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Use <code>PerformanceAnalytics::table.Stats()</code> to calculate summary statistics for a portfolio.</p>
+<div class="sourceCode" id="cb1028"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1028-1"><a href="11.5-portfolio-return.html#cb1028-1" tabindex="-1"></a>stats <span class="ot">&lt;-</span> <span class="fu">table.Stats</span>(ret_xts, <span class="at">digits =</span> <span class="dv">4</span>)</span>
+<span id="cb1028-2"><a href="11.5-portfolio-return.html#cb1028-2" tabindex="-1"></a>stats <span class="sc">%&gt;%</span></span>
+<span id="cb1028-3"><a href="11.5-portfolio-return.html#cb1028-3" tabindex="-1"></a>  <span class="fu">kable</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb1028-4"><a href="11.5-portfolio-return.html#cb1028-4" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">full_width =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+ARK Innovation
+</th>
+<th style="text-align:right;">
+S&amp;P 500
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Observations
+</td>
+<td style="text-align:right;">
+120.0000
+</td>
+<td style="text-align:right;">
+120.0000
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NAs
+</td>
+<td style="text-align:right;">
+0.0000
+</td>
+<td style="text-align:right;">
+0.0000
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Minimum
+</td>
+<td style="text-align:right;">
+-0.2890
+</td>
+<td style="text-align:right;">
+-0.1249
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Quartile 1
+</td>
+<td style="text-align:right;">
+-0.0535
+</td>
+<td style="text-align:right;">
+-0.0164
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Median
+</td>
+<td style="text-align:right;">
+0.0083
+</td>
+<td style="text-align:right;">
+0.0165
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Arithmetic Mean
+</td>
+<td style="text-align:right;">
+0.0150
+</td>
+<td style="text-align:right;">
+0.0112
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Geometric Mean
+</td>
+<td style="text-align:right;">
+0.0097
+</td>
+<td style="text-align:right;">
+0.0103
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Quartile 3
+</td>
+<td style="text-align:right;">
+0.0774
+</td>
+<td style="text-align:right;">
+0.0370
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Maximum
+</td>
+<td style="text-align:right;">
+0.3144
+</td>
+<td style="text-align:right;">
+0.1270
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SE Mean
+</td>
+<td style="text-align:right;">
+0.0095
+</td>
+<td style="text-align:right;">
+0.0040
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+LCL Mean (0.95)
+</td>
+<td style="text-align:right;">
+-0.0039
+</td>
+<td style="text-align:right;">
+0.0032
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+UCL Mean (0.95)
+</td>
+<td style="text-align:right;">
+0.0339
+</td>
+<td style="text-align:right;">
+0.0192
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Variance
+</td>
+<td style="text-align:right;">
+0.0109
+</td>
+<td style="text-align:right;">
+0.0020
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Stdev
+</td>
+<td style="text-align:right;">
+0.1045
+</td>
+<td style="text-align:right;">
+0.0442
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Skewness
+</td>
+<td style="text-align:right;">
+0.2209
+</td>
+<td style="text-align:right;">
+-0.3871
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Kurtosis
+</td>
+<td style="text-align:right;">
+0.4032
+</td>
+<td style="text-align:right;">
+0.4356
+</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><p><code>SE Mean</code>: Standard Error of the average return.
+<span class="math display">\[\text{SE Mean} = \frac{\sigma_p}{\sqrt{T}}\]</span></p></li>
+<li><p><code>LCL Mean</code>: Lower Confidence Level (LCL) of the mean, defaults to 95% confidence level.
+<span class="math display">\[\text{LCL Mean} = \bar{r}_p - \text{SE Mean} \times c_{\alpha/2}\]</span>
+where <span class="math inline">\(c_{\alpha/2}\)</span> is the critical value, i.e., <span class="math inline">\(\left(1-\frac{\alpha}{2}\right)\)</span> quantile of the <span class="math inline">\(t\)</span> distribution with <span class="math inline">\((T-1)\)</span> degrees of freedom.</p></li>
+<li><p><code>UCL Mean</code>: Upper Confidence Level (UCL) of the mean, defaults to 95% confidence level.
+<span class="math display">\[\text{UCL Mean} = \bar{r}_p + \text{SE Mean} \times c_{\alpha/2}\]</span></p></li>
+<li><p><code>Kurtosis</code>: Excess Kurtosis.</p></li>
+</ul>
+</div>
+<div id="risk-adjusted-performance-measures" class="section level3 hasAnchor" number="11.5.4">
+<h3><span class="header-section-number">11.5.4</span> Risk-adjusted performance measures<a href="11.5-portfolio-return.html#risk-adjusted-performance-measures" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p><strong>Sharpe ratio</strong></p>
+<div class="sourceCode" id="cb1029"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1029-1"><a href="11.5-portfolio-return.html#cb1029-1" tabindex="-1"></a>sharpe <span class="ot">&lt;-</span> <span class="fu">SharpeRatio</span>(ret_xts, <span class="at">Rf =</span> rf_xts, <span class="at">geometric =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb1029-2"><a href="11.5-portfolio-return.html#cb1029-2" tabindex="-1"></a>sharpe <span class="sc">%&gt;%</span> </span>
+<span id="cb1029-3"><a href="11.5-portfolio-return.html#cb1029-3" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">4</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb1029-4"><a href="11.5-portfolio-return.html#cb1029-4" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">full_width =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+ARK Innovation
+</th>
+<th style="text-align:right;">
+S&amp;P 500
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+StdDev Sharpe (Rf=0.1%, p=95%):
+</td>
+<td style="text-align:right;">
+0.1301
+</td>
+<td style="text-align:right;">
+0.2226
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+VaR Sharpe (Rf=0.1%, p=95%):
+</td>
+<td style="text-align:right;">
+0.0914
+</td>
+<td style="text-align:right;">
+0.1502
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ES Sharpe (Rf=0.1%, p=95%):
+</td>
+<td style="text-align:right;">
+0.0716
+</td>
+<td style="text-align:right;">
+0.1082
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SemiSD Sharpe (Rf=0.1%, p=95%):
+</td>
+<td style="text-align:right;">
+0.1352
+</td>
+<td style="text-align:right;">
+0.2110
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Annualized Sharpe ratio</strong></p>
+<div class="sourceCode" id="cb1030"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1030-1"><a href="11.5-portfolio-return.html#cb1030-1" tabindex="-1"></a>sharpe_ann <span class="ot">&lt;-</span> <span class="fu">SharpeRatio.annualized</span>(ret_xts, <span class="at">Rf =</span> rf_xts, <span class="at">geometric =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb1030-2"><a href="11.5-portfolio-return.html#cb1030-2" tabindex="-1"></a>sharpe_ann <span class="sc">%&gt;%</span></span>
+<span id="cb1030-3"><a href="11.5-portfolio-return.html#cb1030-3" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">4</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb1030-4"><a href="11.5-portfolio-return.html#cb1030-4" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">full_width =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+ARK Innovation
+</th>
+<th style="text-align:right;">
+S&amp;P 500
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Annualized Sharpe Ratio (Rf=1.7%)
+</td>
+<td style="text-align:right;">
+0.4506
+</td>
+<td style="text-align:right;">
+0.771
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>CAPM-related performance measures</strong></p>
+<p>Calculate Beta, Alpha, R-squared, Information ratio, Treynor ratio of a portfolio against a benchmark.</p>
+<p><code>table.CAPM(Ra, Rb, scale = NA, Rf = 0, digits = 4)</code> or <code>table.SFM</code> will show statistics pertaining to an asset against a set of benchmarks, or statistics for a set of assets against a benchmark.</p>
+<ul>
+<li><code>Ra</code>: a vector of asset returns to be examined</li>
+<li><code>Rb</code>: a matrix of benchmark returns to test the asset against</li>
+<li><code>Rf</code>: risk-free rate of return, defaults to 0</li>
+<li><code>scale</code>: number of periods in a year (daily scale = 252, monthly scale = 12, quarterly scale = 4)</li>
+<li><code>digits</code>: number of decimal places to round to,</li>
+</ul>
+<div class="sourceCode" id="cb1031"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1031-1"><a href="11.5-portfolio-return.html#cb1031-1" tabindex="-1"></a>capm <span class="ot">&lt;-</span> <span class="fu">table.CAPM</span>(</span>
+<span id="cb1031-2"><a href="11.5-portfolio-return.html#cb1031-2" tabindex="-1"></a>  <span class="at">Ra =</span> ret_xts[, <span class="dv">1</span>], <span class="at">Rb =</span> ret_xts[, <span class="dv">2</span>],</span>
+<span id="cb1031-3"><a href="11.5-portfolio-return.html#cb1031-3" tabindex="-1"></a>  <span class="at">Rf =</span> rf_xts<span class="sc">$</span>rf, <span class="at">scale =</span> <span class="dv">12</span>, <span class="at">digits =</span> <span class="dv">4</span></span>
+<span id="cb1031-4"><a href="11.5-portfolio-return.html#cb1031-4" tabindex="-1"></a>)</span>
+<span id="cb1031-5"><a href="11.5-portfolio-return.html#cb1031-5" tabindex="-1"></a>capm <span class="sc">%&gt;%</span></span>
+<span id="cb1031-6"><a href="11.5-portfolio-return.html#cb1031-6" tabindex="-1"></a>  <span class="fu">kable</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb1031-7"><a href="11.5-portfolio-return.html#cb1031-7" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">full_width =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+ARK Innovation to S&amp;P 500
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Alpha
+</td>
+<td style="text-align:right;">
+-0.0032
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Beta
+</td>
+<td style="text-align:right;">
+1.7053
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Alpha Robust
+</td>
+<td style="text-align:right;">
+-0.0038
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Beta Robust
+</td>
+<td style="text-align:right;">
+1.6880
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Beta+
+</td>
+<td style="text-align:right;">
+1.8379
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Beta-
+</td>
+<td style="text-align:right;">
+1.5617
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Beta+ Robust
+</td>
+<td style="text-align:right;">
+1.8070
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Beta- Robust
+</td>
+<td style="text-align:right;">
+1.6146
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+R-squared
+</td>
+<td style="text-align:right;">
+0.5205
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+R-squared Robust
+</td>
+<td style="text-align:right;">
+0.4704
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Annualized Alpha
+</td>
+<td style="text-align:right;">
+-0.0377
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Correlation
+</td>
+<td style="text-align:right;">
+0.7215
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Correlation p-value
+</td>
+<td style="text-align:right;">
+0.0000
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Tracking Error
+</td>
+<td style="text-align:right;">
+0.2728
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Active Premium
+</td>
+<td style="text-align:right;">
+-0.0082
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Information Ratio
+</td>
+<td style="text-align:right;">
+-0.0301
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Treynor Ratio
+</td>
+<td style="text-align:right;">
+0.0608
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returned values</strong></p>
+<ul>
+<li><p><code>Beta</code>: beta coefficient of CAPM</p></li>
+<li><p><code>Beta +</code>: <code>CAPM.beta.bull</code> is a regression for only positive market returns, which can be used to understand the behavior of the asset or portfolio in positive or ‘bull’ markets.</p></li>
+<li><p><code>Beta -</code>: <code>CAPM.beta.bear</code> provides the calculation on negative market returns.</p></li>
+<li><p><code>Active Premium</code>: performance premium provided by an investment over a passive strategy (the benchmark), which is the investment’s annualized return minus the benchmark’s annualized return. Also called “Active Return.”
+<span class="math display">\[
+\text{Active Premium} = \bar{r}_p-\bar{r}_m
+\]</span></p></li>
+<li><p><code>Tracking Error</code>: the unexplained portion of the investment’s performance relative to a benchmark, defined as the standard deviation of the active return.
+<span class="math display">\[
+  \begin{aligned}
+  \text{Tracking Error} &amp;= \sigma_{p-m} \\
+  &amp;= \sqrt{\frac{\sum(r_{p}-r_{m})^{2}}{T-1}} \times \sqrt{\text{scale}}
+  \end{aligned}
+  \]</span>
+<span class="math inline">\(\text{scale}\)</span> is the number of periods in a year (daily scale = 252, weekly scale = 52, monthly scale = 12, quarterly scale = 4, annually sacle = 1).</p></li>
+<li><p><code>Information Ratio</code> is defined as the <code>Active Premium</code> divided by the <code>Tracking Error</code>.
+<span class="math display">\[
+\begin{aligned}
+\text{IR}_p &amp;= \frac{\text{Active Premium}}{\text{Tracking Error}} \\
+&amp;= \frac{\bar{r}_p-\bar{r}_m}{\sigma_{p-m}}
+\end{aligned}
+\]</span></p></li>
+</ul>
+<hr />
+<p><strong>Risk decomposition</strong> of the return distribution.</p>
+<ul>
+<li><p>Specific risk is the annualized standard deviation of the error term in the CAPM regression equation.</p></li>
+<li><p>Systematic risk, as defined by Bacon (2008), is the product of beta by market risk.
+<span class="math display">\[
+\sigma_s = \beta * \sigma_m
+\]</span>
+Market risk, <span class="math inline">\(\sigma_m\)</span>, is the annualized standard deviation of the benchmark. <span class="math inline">\(\beta\)</span> is the regression beta.</p></li>
+<li><p>Total risk is defined as
+<span class="math display">\[
+\text{Total Risk} = \sqrt{\text{Systematic Risk}^2 + \text{Specific Risk}^2}
+\]</span></p></li>
+</ul>
+<div class="sourceCode" id="cb1032"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1032-1"><a href="11.5-portfolio-return.html#cb1032-1" tabindex="-1"></a><span class="co"># Risk decomposition</span></span>
+<span id="cb1032-2"><a href="11.5-portfolio-return.html#cb1032-2" tabindex="-1"></a>risk <span class="ot">&lt;-</span> <span class="fu">table.SpecificRisk</span>(</span>
+<span id="cb1032-3"><a href="11.5-portfolio-return.html#cb1032-3" tabindex="-1"></a>  <span class="at">Ra =</span> ret_xts[, <span class="dv">1</span>], <span class="at">Rb =</span> ret_xts[, <span class="dv">2</span>],</span>
+<span id="cb1032-4"><a href="11.5-portfolio-return.html#cb1032-4" tabindex="-1"></a>  <span class="at">Rf =</span> rf_xts<span class="sc">$</span>rf, <span class="at">digits =</span> <span class="dv">4</span></span>
+<span id="cb1032-5"><a href="11.5-portfolio-return.html#cb1032-5" tabindex="-1"></a>)</span>
+<span id="cb1032-6"><a href="11.5-portfolio-return.html#cb1032-6" tabindex="-1"></a>risk <span class="sc">%&gt;%</span> </span>
+<span id="cb1032-7"><a href="11.5-portfolio-return.html#cb1032-7" tabindex="-1"></a>  <span class="fu">kable</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb1032-8"><a href="11.5-portfolio-return.html#cb1032-8" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">full_width =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+ARK Innovation
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Specific Risk
+</td>
+<td style="text-align:right;">
+0.2495
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Systematic Risk
+</td>
+<td style="text-align:right;">
+0.2611
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Total Risk
+</td>
+<td style="text-align:right;">
+0.3630
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
             </section>
 

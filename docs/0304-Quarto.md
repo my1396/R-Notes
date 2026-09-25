@@ -2071,7 +2071,7 @@ plot(1:10)
 Note that you have to use <span class="env-green">code chunk headers</span> to label the figure, i.e., `#fig-scatter`. Note that `#` is required. 
 The `#|` syntax does <span class="env-orange">NOT</span> work.
 
-<div class="figure">
+<div class="figure" style="text-align: center">
 <img src="0304-Quarto_files/figure-html/fig-scatter-1.png" alt="Scatter plots example" width="50%" />
 <p class="caption">(\#fig:fig-scatter)Scatter plots example</p>
 </div>

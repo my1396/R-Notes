@@ -26,8 +26,8 @@ Note that the **minimum requirement for any [R Markdown website](https://bookdow
 
 - <a href="#index">`index.Rmd`</a> provides the content for the home page of your website.
 
-<div class="figure">
-<img src="images/site-page.png" alt="Minimal example of a R Markdown website." width="601" />
+<div class="figure" style="text-align: center">
+<img src="images/site-page.png" alt="Minimal example of a R Markdown website." width="80%" />
 <p class="caption">(\#fig:unnamed-chunk-1)Minimal example of a R Markdown website.</p>
 </div>
 
@@ -151,7 +151,7 @@ A full example of `index.Rmd`. You may use this when you want to write complex c
 ---
 title: "R Notes"
 author: "Menghan Yuan"
-date: "2026-09-24"
+date: "2026-09-25"
 site: rmarkdown::default_site
 documentclass: book
 bibliography: [book.bib, packages.bib]
@@ -241,8 +241,8 @@ You may have common fragments of R Markdown that you want to share across pages 
 
 To render <span style='color:#00CC66'>**all of the pages**</span> in the website, you use the `Build` pane, which calls `rmarkdown::render_site()` to build and then preview the entire site.
 
-<div class="figure">
-<img src="images/site-build.png" alt="Build an entire website in RStudio." width="602" />
+<div class="figure" style="text-align: center">
+<img src="images/site-build.png" alt="Build an entire website in RStudio." width="80%" />
 <p class="caption">(\#fig:unnamed-chunk-2)Build an entire website in RStudio.</p>
 </div>
 
@@ -254,8 +254,8 @@ As you work on the <span style='color:#00CC66'>**individual pages**</span> of yo
 
 - Using the `Knit` button just as you do with conventional standalone R Markdown documents.
 
-    <div class="figure">
-    <img src="images/site-page.png" alt="Knit a single page of a website." width="601" />
+    <div class="figure" style="text-align: center">
+    <img src="images/site-page.png" alt="Knit a single page of a website." width="80%" />
     <p class="caption">(\#fig:unnamed-chunk-3)Knit a single page of a website.</p>
     </div>
 

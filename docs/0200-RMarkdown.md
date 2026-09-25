@@ -349,13 +349,25 @@ All documents located in the same directory as `_output.yml` will inherit its 
 
     - Chinese/Japanese support
 
-    ````yaml
-    ---
-    output: pdf_document
-    header-includes:
-      - \usepackage{ctex}
-    ---
-    ````
+      ````yaml
+      ---
+      output: pdf_document
+      header-includes:
+        - \usepackage{ctex}
+      ---
+      ````
+    
+    - Add numbers to bookmarks through `hyperref` package options
+      
+      ````yaml
+      ---
+      output: 
+      pdf_document:
+        number_sections: true
+      header-includes:
+        - \usepackage[bookmarksnumbered=true]{hyperref}
+      ---
+      ````
 
     [Related pandoc render options:](https://pandoc.org/MANUAL.html#reader-options)
 
@@ -1587,15 +1599,49 @@ You may use `knitr::opts_chunk$set()` to change the default values of chunk opti
 
 Put flobal `knitr` options in a separate file, or load external R scripts or `.Rmd` files into a chunk.
 
+<div class="rmd-tip">
+<img src="images/solution.png" alt="" style="display: inline; height: 1.5em; vertical-align: bottom;" />
 If you have many R Markdown documents in a project, you may want to put common `knitr` options in a separate file and load this file in each document. This way, you can maintain the options in one place and ensure consistency across documents.
+</div>
+
+**How to load shared R code in a bookdown project:**
+
+1. Put your shared R code in a separate file, e.g., `setup.R`, and then include it `_bookdown.yml`.
+
+   `setup.R` example:
+
+   ```r
+   knitr::opts_chunk$set(
+     # display options
+     echo = TRUE,
+     warning = FALSE,
+     message = FALSE,
+     # figure options
+     fig.align = "center",
+     out.width = "80%"
+   )
+   library(knitr)
+   library(kableExtra)
+   library(tidyverse)
+   ```
+
+2. Add the following to `_bookdown.yml`:
+
+   ```yml
+   before_chapter_script: setup.R    # sourced before 
+   ```
 
 First check your configuration (`_bookdown.yml`)
 
-- when you are using `new_session = FALSE`, use `index.Rmd` to set global options. It will be applied to all files in the book.
+- When you are using `new_session = FALSE`, use `index.Rmd` to set global options. It will be applied to all files in the book.
 
-- if you are using `new_session = TRUE`, you need to <span style="color: #008B45;">apply them per file</span> because each file is knitted independently.
+- If you are using `new_session = TRUE`, two options:
   
-  You can create a file with the common R code and load this file in each document.
+  - Option 1: <span class="env-green">apply them per file</span> because each file is knitted independently.
+  
+  You can create a file with the common R code and load this file in each document. → 每个文件都要单独写一个 code chunk `source("setup.R")`，啰唆麻烦。
+  
+  - ✅ Option 2: apply them globally by using the <span class="env-green">`before_chapter_script`</span> option in `_bookdown.yml`. This will source the R script before each chapter is rendered, so the options will be applied to all chapters.
 
 --------------------------------------------------------------------------------
 

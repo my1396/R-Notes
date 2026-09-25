@@ -405,6 +405,9 @@ bookdown 中文书籍 `_output.yml` 范例: <https://github.com/yihui/bookdown-c
   When set to `yes`, it uses "Knit and Merge" (K–M), and creates a new R session for each chapter, which is useful for avoiding conflicts between packages or variables across chapters.
 
   The default is `no`, which uses "Merge and Knit" (M-K), where all chapters are knitted in one R session.
+- <span class="env-green">`before_chapter_script: setup.R`</span> :Shared R code to be executed before each chapter is knitted. 
+  
+  This is useful for loading packages, defining functions, or setting global options that are needed in multiple chapters.
 - Change themes
 - Change the chapter name
 - Change [chapter order](https://rstudio4edu.github.io/rstudio4edu-book/book-yours.html#book-order)
@@ -414,7 +417,8 @@ bookdown 中文书籍 `_output.yml` 范例: <https://github.com/yihui/bookdown-c
 ```yml
 delete_merged_file: true
 output_dir: "docs"
-new_session: yes
+new_session: yes # Knit-and-Merge approach
+before_chapter_script: setup.R  # sourced before each chapter is knitted
 language:
   ui:
     chapter_name: "Chapter "

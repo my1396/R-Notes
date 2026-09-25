@@ -39,7 +39,7 @@ ggplot(CASchools, aes(x = expenditure)) +
 ~~~~
 
 
-<div class="figure">
+<div class="figure" style="text-align: center">
 <img src="0206-Rmd-Figure_files/figure-html/histogram-1.png" alt="Historgram of Expenditure per Student. Fixed `fig.width` and `fig.asp`." width="100%" />
 <p class="caption">(\#fig:histogram)Historgram of Expenditure per Student. Fixed `fig.width` and `fig.asp`.</p>
 </div>
@@ -58,13 +58,6 @@ Load data.
 
 ``` r
 library(quantmod)
-```
-
-```
-## Warning: package 'xts' was built under R version 4.5.2
-```
-
-``` r
 aapl <- getSymbols("AAPL", 
            src = 'yahoo', 
            from = "2014-08-01", 
@@ -86,7 +79,7 @@ plot(aapl$AAPL.Close)
 ~~~~
 
 
-<div class="figure">
+<div class="figure" style="text-align: center">
 <img src="0206-Rmd-Figure_files/figure-html/unnamed-chunk-2-1.png" alt="`out.width`=50%, fig.asp set to 0.62. Note that text font scales too, hard to read.test" width="50%" />
 <p class="caption">(\#fig:unnamed-chunk-2)`out.width`=50%, fig.asp set to 0.62. Note that text font scales too, hard to read.test</p>
 </div>
@@ -104,7 +97,7 @@ plot(aapl$AAPL.Close)
 ```
 ~~~~
 
-<div class="figure">
+<div class="figure" style="text-align: center">
 <img src="0206-Rmd-Figure_files/figure-html/unnamed-chunk-3-1.png" alt="`out.width`=100%, fig.asp set to 0.6. Note that the plot text got zoomed too, can be too large." width="100%" />
 <p class="caption">(\#fig:unnamed-chunk-3)`out.width`=100%, fig.asp set to 0.6. Note that the plot text got zoomed too, can be too large.</p>
 </div>
@@ -122,15 +115,15 @@ plot(aapl$AAPL.Close)
 ```
 ~~~~
 
-<div class="figure">
-<img src="0206-Rmd-Figure_files/figure-html/unnamed-chunk-4-1.png" alt="Set `fig.width`. Note that text font does NOT scale with figure, BUT the figure title got cropped." width="480" />
+<div class="figure" style="text-align: center">
+<img src="0206-Rmd-Figure_files/figure-html/unnamed-chunk-4-1.png" alt="Set `fig.width`. Note that text font does NOT scale with figure, BUT the figure title got cropped." width="80%" />
 <p class="caption">(\#fig:unnamed-chunk-4)Set `fig.width`. Note that text font does NOT scale with figure, BUT the figure title got cropped.</p>
 </div>
 
 - Use `fig.retina=3` to improve the resolution of figures in HTML output. 
 
-<div class="figure">
-<img src="0206-Rmd-Figure_files/figure-html/unnamed-chunk-5-1.png" alt="Set `fig.retina=3`." width="480" />
+<div class="figure" style="text-align: center">
+<img src="0206-Rmd-Figure_files/figure-html/unnamed-chunk-5-1.png" alt="Set `fig.retina=3`." width="80%" />
 <p class="caption">(\#fig:unnamed-chunk-5)Set `fig.retina=3`.</p>
 </div>
 
@@ -156,7 +149,7 @@ knitr::include_graphics(f_name)
 ```
 ~~~~
 
-<div class="figure">
+<div class="figure" style="text-align: center">
 <img src="images/aapl.png" alt="include_graphics with `out.width`=50%." width="50%" />
 <p class="caption">(\#fig:unnamed-chunk-7)include_graphics with `out.width`=50%.</p>
 </div>
@@ -169,7 +162,7 @@ knitr::include_graphics(f_name)
 ```
 ~~~~
 
-<div class="figure">
+<div class="figure" style="text-align: center">
 <img src="images/aapl.png" alt="include_graphics with `out.width`=100%." width="100%" />
 <p class="caption">(\#fig:unnamed-chunk-8)include_graphics with `out.width`=100%.</p>
 </div>
@@ -344,7 +337,7 @@ See [HERE](https://yihui.org/knitr/options/#plots) for a full list of chunk opti
     
     Will generate the following Fig \@ref(fig:fig1).
     
-    <div class="figure">
+    <div class="figure" style="text-align: center">
     <img src="images/Phi_b.png" alt="The $\Phi$ and $\phi$ ($f_Z(.)$) functions (CDF and pdf of standard normal)." width="70%" />
     <p class="caption">(\#fig:fig1)The $\Phi$ and $\phi$ ($f_Z(.)$) functions (CDF and pdf of standard normal).</p>
     </div>
@@ -389,7 +382,7 @@ plot_A
 ````
 <br>
 
-<div class="figure">
+<div class="figure" style="text-align: center">
 <img src="0206-Rmd-Figure_files/figure-html/firstplot-1.png" alt="Source Figure to be referenced. **Note that when specifying `out.width=60%`, the text in the figure is scaled too small.**" width="60%" />
 <p class="caption">(\#fig:firstplot)Source Figure to be referenced. **Note that when specifying `out.width=60%`, the text in the figure is scaled too small.**</p>
 </div>
@@ -404,8 +397,8 @@ plot_A + geom_line(alpha = .75,col = "red")
 
 <br>
 
-<div class="figure">
-<img src="0206-Rmd-Figure_files/figure-html/secondplot-1.png" alt="This is the same as Fig.: \@ref(fig:firstplot) but now with a red line and `out.width=100%`." width="672" />
+<div class="figure" style="text-align: center">
+<img src="0206-Rmd-Figure_files/figure-html/secondplot-1.png" alt="This is the same as Fig.: \@ref(fig:firstplot) but now with a red line and `out.width=100%`." width="80%" />
 <p class="caption">(\#fig:secondplot)This is the same as Fig.: \@ref(fig:firstplot) but now with a red line and `out.width=100%`.</p>
 </div>
 

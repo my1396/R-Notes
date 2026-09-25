@@ -354,6 +354,14 @@ $$E = mc^2$$
 
 - If using `$...$`, there are backticks surrounding the math after rendering...
 
+
+--------------------------------------------------------------------------------
+
+**Issue:** Inline maths inside html tags are surrounded by **backticks** after rendering.
+
+**Fix:** Use <span class="env-green">`\( ... \)`</span> for inline math and `\[ ... \]` for display math inside html tags.
+
+
 --------------------------------------------------------------------------------
 
 ### Color equations

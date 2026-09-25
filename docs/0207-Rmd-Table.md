@@ -268,6 +268,11 @@ kable(df, escape = FALSE, booktabs = TRUE)
 
 - `col.names` Rename columns.
 
+- `row.names = TRUE` Whether to include row names in the table. Default is `TRUE`. If you don't want to include row names, set `row.names = FALSE`.
+  
+  Row names are only availale for data frames.
+  Row names can be helpful to identify the number of rows in the table.
+
 - <span class="env-orange">`escape = TRUE`</span>  Whether to escape special characters when producing HTML or LaTeX tables. <a name="escape"></a>
   
   Default is `TRUE`, will treat characters literally; special characters will either be escaped or substituted; no special characters will be interpreted.
@@ -319,6 +324,24 @@ kable(df, escape = FALSE, booktabs = TRUE)
 
   Note that `linesep = ""` needs to be accompanied with <span class="env-green">`format = "latex"`</span> so that `linesep` will be honored. Otherwise, `kable` will return a markdown table and `linesep` will be ignored.
 
+```r
+# Example of using kable to format a table with booktabs and linesep options
+performance_by_year %>%
+  as.data.frame() %>%
+  mutate(
+    across(
+      c(`Annualized Return`, `Annualized Std Dev`),
+      ~ percent(.x, accuracy = 0.01)
+    ),
+    `Annualized Sharpe` = number(`Annualized Sharpe`, accuracy = 0.01)
+  ) %>%
+  kable(align = "r", booktabs = TRUE, format = "latex", linesep = "") %>%
+  kable_styling(latex_options = "HOLD_position")
+```
+
+- `scales::percent()` and `scales::number()` are used to format numeric values as percentages and numbers with specified accuracy, respectively. 
+  
+  `accuracy = 0.01` means rounding to two decimal places. For example, `0.1234` will be formatted as `12.34%` with `scales::percent(0.1234, accuracy = 0.01)`.
 
 
 ### `kableExtra`
@@ -439,6 +462,8 @@ reg_data %>%
 - <span class="env-green">`booktabs = TRUE`</span> is generally recommended for formatting LaTeX tables.
 
 - `linesep = ""` prevents default behavior of extra space every five rows.
+  
+  <span class="env-green">Must also specify `format = "latex"`</span> so that `linesep` will be honored. 
 
 
 --------------------------------------------------------------------------------
@@ -558,7 +583,7 @@ To show the `tibble` information (number of row/columns, and group information) 
 ```yaml
 ---
 title: "Use caption with df_print set to page"
-date: "2026-09-24"
+date: "2026-09-25"
 output:
   bookdown::html_document2:
     df_print: paged
@@ -1309,7 +1334,7 @@ print(xtab, type = "html", include.rownames = TRUE)
 ```
 
 <!-- html table generated in R 4.5.1 by xtable 1.8-4 package -->
-<!-- Thu Sep 24 08:36:16 2026 -->
+<!-- Fri Sep 25 12:27:00 2026 -->
 <table border=1>
 <caption align="bottom"> Asset Parameters </caption>
 <tr> <th>  </th> <th> Asset </th> <th> Mu </th> <th> Sigma </th>  </tr>
@@ -1329,7 +1354,7 @@ print(xtab_model, type = "html", digits = 3)
 ```
 
 <!-- html table generated in R 4.5.1 by xtable 1.8-4 package -->
-<!-- Thu Sep 24 08:36:16 2026 -->
+<!-- Fri Sep 25 12:27:00 2026 -->
 <table border=1>
 <caption align="bottom"> Regression of mpg on hp and wt </caption>
 <tr> <th>  </th> <th> Estimate </th> <th> Std. Error </th> <th> t value </th> <th> Pr(&gt;|t|) </th>  </tr>

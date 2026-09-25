@@ -793,7 +793,13 @@ div.csl-indent {
 <li class="chapter" data-level="11.3.2" data-path="11.3-process-data.html"><a href="11.3-process-data.html#from-tibble-to-xts"><i class="fa fa-check"></i><b>11.3.2</b> From tibble to <code>xts</code></a></li>
 </ul></li>
 <li class="chapter" data-level="11.4" data-path="11.4-technical-analysis.html"><a href="11.4-technical-analysis.html"><i class="fa fa-check"></i><b>11.4</b> Technical Analysis</a></li>
-<li class="chapter" data-level="11.5" data-path="11.5-portfolio-return.html"><a href="11.5-portfolio-return.html"><i class="fa fa-check"></i><b>11.5</b> Portfolio Return</a></li>
+<li class="chapter" data-level="11.5" data-path="11.5-portfolio-return.html"><a href="11.5-portfolio-return.html"><i class="fa fa-check"></i><b>11.5</b> Portfolio Return</a>
+<ul>
+<li class="chapter" data-level="11.5.1" data-path="11.5-portfolio-return.html"><a href="11.5-portfolio-return.html#plot-portfolio-return"><i class="fa fa-check"></i><b>11.5.1</b> Plot portfolio return</a></li>
+<li class="chapter" data-level="11.5.2" data-path="11.5-portfolio-return.html"><a href="11.5-portfolio-return.html#rolling-performance"><i class="fa fa-check"></i><b>11.5.2</b> Rolling performance</a></li>
+<li class="chapter" data-level="11.5.3" data-path="11.5-portfolio-return.html"><a href="11.5-portfolio-return.html#monthly-summary-statistics"><i class="fa fa-check"></i><b>11.5.3</b> Monthly summary statistics</a></li>
+<li class="chapter" data-level="11.5.4" data-path="11.5-portfolio-return.html"><a href="11.5-portfolio-return.html#risk-adjusted-performance-measures"><i class="fa fa-check"></i><b>11.5.4</b> Risk-adjusted performance measures</a></li>
+</ul></li>
 <li class="chapter" data-level="11.6" data-path="11.6-plot-ts.html"><a href="11.6-plot-ts.html"><i class="fa fa-check"></i><b>11.6</b> Plot TS</a>
 <ul>
 <li class="chapter" data-level="11.6.1" data-path="11.6-plot-ts.html"><a href="11.6-plot-ts.html#plot.xts"><i class="fa fa-check"></i><b>11.6.1</b> <code>plot.xts</code></a></li>
@@ -1051,22 +1057,22 @@ document.addEventListener('DOMContentLoaded', function() {
 <div id="group_by" class="section level3 hasAnchor" number="9.4.1">
 <h3><span class="header-section-number">9.4.1</span> <code>group_by()</code><a href="9.4-group-and-apply-functions.html#group_by" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p><code>group_by</code> grouping <em>doesn’t change how the data looks</em>, it changes how it acts with the other dplyr verbs.</p>
-<div class="sourceCode" id="cb815"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb815-1"><a href="9.4-group-and-apply-functions.html#cb815-1" tabindex="-1"></a>by_cyl <span class="ot">&lt;-</span> mtcars <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(cyl)</span>
-<span id="cb815-2"><a href="9.4-group-and-apply-functions.html#cb815-2" tabindex="-1"></a><span class="co"># conflict with plyr, specify which to use</span></span>
-<span id="cb815-3"><a href="9.4-group-and-apply-functions.html#cb815-3" tabindex="-1"></a>summarise <span class="ot">&lt;-</span> dplyr<span class="sc">::</span>summarise</span>
-<span id="cb815-4"><a href="9.4-group-and-apply-functions.html#cb815-4" tabindex="-1"></a>summarize <span class="ot">&lt;-</span> dplyr<span class="sc">::</span>summarize</span>
-<span id="cb815-5"><a href="9.4-group-and-apply-functions.html#cb815-5" tabindex="-1"></a>by_cyl <span class="sc">%&gt;%</span> </span>
-<span id="cb815-6"><a href="9.4-group-and-apply-functions.html#cb815-6" tabindex="-1"></a>    <span class="fu">summarise</span>(</span>
-<span id="cb815-7"><a href="9.4-group-and-apply-functions.html#cb815-7" tabindex="-1"></a>        <span class="at">disp =</span> <span class="fu">mean</span>(disp),</span>
-<span id="cb815-8"><a href="9.4-group-and-apply-functions.html#cb815-8" tabindex="-1"></a>        <span class="at">hp =</span> <span class="fu">mean</span>(hp),</span>
-<span id="cb815-9"><a href="9.4-group-and-apply-functions.html#cb815-9" tabindex="-1"></a>        <span class="at">count =</span> <span class="fu">n</span>() <span class="co"># count the size of each group</span></span>
-<span id="cb815-10"><a href="9.4-group-and-apply-functions.html#cb815-10" tabindex="-1"></a>        )</span>
-<span id="cb815-11"><a href="9.4-group-and-apply-functions.html#cb815-11" tabindex="-1"></a><span class="co"># A tibble: 3 × 4</span></span>
-<span id="cb815-12"><a href="9.4-group-and-apply-functions.html#cb815-12" tabindex="-1"></a>    cyl  disp    hp count</span>
-<span id="cb815-13"><a href="9.4-group-and-apply-functions.html#cb815-13" tabindex="-1"></a>  <span class="sc">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>int<span class="sc">&gt;</span></span>
-<span id="cb815-14"><a href="9.4-group-and-apply-functions.html#cb815-14" tabindex="-1"></a><span class="dv">1</span>     <span class="dv">4</span>  <span class="fl">105.</span>  <span class="fl">82.6</span>    <span class="dv">11</span></span>
-<span id="cb815-15"><a href="9.4-group-and-apply-functions.html#cb815-15" tabindex="-1"></a><span class="dv">2</span>     <span class="dv">6</span>  <span class="fl">183.</span> <span class="fl">122.</span>      <span class="dv">7</span></span>
-<span id="cb815-16"><a href="9.4-group-and-apply-functions.html#cb815-16" tabindex="-1"></a><span class="dv">3</span>     <span class="dv">8</span>  <span class="fl">353.</span> <span class="fl">209.</span>     <span class="dv">14</span></span></code></pre></div>
+<div class="sourceCode" id="cb817"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb817-1"><a href="9.4-group-and-apply-functions.html#cb817-1" tabindex="-1"></a>by_cyl <span class="ot">&lt;-</span> mtcars <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(cyl)</span>
+<span id="cb817-2"><a href="9.4-group-and-apply-functions.html#cb817-2" tabindex="-1"></a><span class="co"># conflict with plyr, specify which to use</span></span>
+<span id="cb817-3"><a href="9.4-group-and-apply-functions.html#cb817-3" tabindex="-1"></a>summarise <span class="ot">&lt;-</span> dplyr<span class="sc">::</span>summarise</span>
+<span id="cb817-4"><a href="9.4-group-and-apply-functions.html#cb817-4" tabindex="-1"></a>summarize <span class="ot">&lt;-</span> dplyr<span class="sc">::</span>summarize</span>
+<span id="cb817-5"><a href="9.4-group-and-apply-functions.html#cb817-5" tabindex="-1"></a>by_cyl <span class="sc">%&gt;%</span> </span>
+<span id="cb817-6"><a href="9.4-group-and-apply-functions.html#cb817-6" tabindex="-1"></a>    <span class="fu">summarise</span>(</span>
+<span id="cb817-7"><a href="9.4-group-and-apply-functions.html#cb817-7" tabindex="-1"></a>        <span class="at">disp =</span> <span class="fu">mean</span>(disp),</span>
+<span id="cb817-8"><a href="9.4-group-and-apply-functions.html#cb817-8" tabindex="-1"></a>        <span class="at">hp =</span> <span class="fu">mean</span>(hp),</span>
+<span id="cb817-9"><a href="9.4-group-and-apply-functions.html#cb817-9" tabindex="-1"></a>        <span class="at">count =</span> <span class="fu">n</span>() <span class="co"># count the size of each group</span></span>
+<span id="cb817-10"><a href="9.4-group-and-apply-functions.html#cb817-10" tabindex="-1"></a>        )</span>
+<span id="cb817-11"><a href="9.4-group-and-apply-functions.html#cb817-11" tabindex="-1"></a><span class="co"># A tibble: 3 × 4</span></span>
+<span id="cb817-12"><a href="9.4-group-and-apply-functions.html#cb817-12" tabindex="-1"></a>    cyl  disp    hp count</span>
+<span id="cb817-13"><a href="9.4-group-and-apply-functions.html#cb817-13" tabindex="-1"></a>  <span class="sc">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>int<span class="sc">&gt;</span></span>
+<span id="cb817-14"><a href="9.4-group-and-apply-functions.html#cb817-14" tabindex="-1"></a><span class="dv">1</span>     <span class="dv">4</span>  <span class="fl">105.</span>  <span class="fl">82.6</span>    <span class="dv">11</span></span>
+<span id="cb817-15"><a href="9.4-group-and-apply-functions.html#cb817-15" tabindex="-1"></a><span class="dv">2</span>     <span class="dv">6</span>  <span class="fl">183.</span> <span class="fl">122.</span>      <span class="dv">7</span></span>
+<span id="cb817-16"><a href="9.4-group-and-apply-functions.html#cb817-16" tabindex="-1"></a><span class="dv">3</span>     <span class="dv">8</span>  <span class="fl">353.</span> <span class="fl">209.</span>     <span class="dv">14</span></span></code></pre></div>
 <p><code>n()</code> gives the current group size. Only works inside <code>summarise()</code>.</p>
 <p><span class="env-green"><strong>Information about the “current” group or variable</strong></span></p>
 <p>These functions return information about the “current” group or “current” variable, so only work inside specific contexts like <code>summarise()</code> and <code>mutate()</code>.</p>
@@ -1087,118 +1093,118 @@ document.addEventListener('DOMContentLoaded', function() {
 <p>Equivalent to <code>.I</code> in <code>data.table</code>.</p></li>
 <li><p><code>cur_column()</code> gives the name of the current column (in <code>across()</code> only).</p></li>
 </ul>
-<div class="sourceCode" id="cb816"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb816-1"><a href="9.4-group-and-apply-functions.html#cb816-1" tabindex="-1"></a><span class="co"># prioritize functions in `dplyr` to avoid conflicts with `plyr`</span></span>
-<span id="cb816-2"><a href="9.4-group-and-apply-functions.html#cb816-2" tabindex="-1"></a><span class="sc">&gt;</span> needs<span class="sc">::</span><span class="fu">prioritize</span>(dplyr)</span>
-<span id="cb816-3"><a href="9.4-group-and-apply-functions.html#cb816-3" tabindex="-1"></a><span class="sc">&gt;</span> by_cyl <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">id =</span> <span class="fu">cur_group_id</span>())</span>
-<span id="cb816-4"><a href="9.4-group-and-apply-functions.html#cb816-4" tabindex="-1"></a><span class="co"># A tibble: 32 × 12</span></span>
-<span id="cb816-5"><a href="9.4-group-and-apply-functions.html#cb816-5" tabindex="-1"></a><span class="co"># Groups:   cyl [3]</span></span>
-<span id="cb816-6"><a href="9.4-group-and-apply-functions.html#cb816-6" tabindex="-1"></a>     mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb    id</span>
-<span id="cb816-7"><a href="9.4-group-and-apply-functions.html#cb816-7" tabindex="-1"></a>   <span class="sc">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>int<span class="sc">&gt;</span></span>
-<span id="cb816-8"><a href="9.4-group-and-apply-functions.html#cb816-8" tabindex="-1"></a> <span class="dv">1</span>  <span class="dv">21</span>       <span class="dv">6</span>  <span class="dv">160</span>    <span class="dv">110</span>  <span class="fl">3.9</span>   <span class="fl">2.62</span>  <span class="fl">16.5</span>     <span class="dv">0</span>     <span class="dv">1</span>     <span class="dv">4</span>     <span class="dv">4</span>     <span class="dv">2</span></span>
-<span id="cb816-9"><a href="9.4-group-and-apply-functions.html#cb816-9" tabindex="-1"></a> <span class="dv">2</span>  <span class="dv">21</span>       <span class="dv">6</span>  <span class="dv">160</span>    <span class="dv">110</span>  <span class="fl">3.9</span>   <span class="fl">2.88</span>  <span class="fl">17.0</span>     <span class="dv">0</span>     <span class="dv">1</span>     <span class="dv">4</span>     <span class="dv">4</span>     <span class="dv">2</span></span>
-<span id="cb816-10"><a href="9.4-group-and-apply-functions.html#cb816-10" tabindex="-1"></a> <span class="dv">3</span>  <span class="fl">22.8</span>     <span class="dv">4</span>  <span class="dv">108</span>     <span class="dv">93</span>  <span class="fl">3.85</span>  <span class="fl">2.32</span>  <span class="fl">18.6</span>     <span class="dv">1</span>     <span class="dv">1</span>     <span class="dv">4</span>     <span class="dv">1</span>     <span class="dv">1</span></span>
-<span id="cb816-11"><a href="9.4-group-and-apply-functions.html#cb816-11" tabindex="-1"></a> <span class="dv">4</span>  <span class="fl">21.4</span>     <span class="dv">6</span>  <span class="dv">258</span>    <span class="dv">110</span>  <span class="fl">3.08</span>  <span class="fl">3.22</span>  <span class="fl">19.4</span>     <span class="dv">1</span>     <span class="dv">0</span>     <span class="dv">3</span>     <span class="dv">1</span>     <span class="dv">2</span></span>
-<span id="cb816-12"><a href="9.4-group-and-apply-functions.html#cb816-12" tabindex="-1"></a> <span class="dv">5</span>  <span class="fl">18.7</span>     <span class="dv">8</span>  <span class="dv">360</span>    <span class="dv">175</span>  <span class="fl">3.15</span>  <span class="fl">3.44</span>  <span class="fl">17.0</span>     <span class="dv">0</span>     <span class="dv">0</span>     <span class="dv">3</span>     <span class="dv">2</span>     <span class="dv">3</span></span>
-<span id="cb816-13"><a href="9.4-group-and-apply-functions.html#cb816-13" tabindex="-1"></a> <span class="dv">6</span>  <span class="fl">18.1</span>     <span class="dv">6</span>  <span class="dv">225</span>    <span class="dv">105</span>  <span class="fl">2.76</span>  <span class="fl">3.46</span>  <span class="fl">20.2</span>     <span class="dv">1</span>     <span class="dv">0</span>     <span class="dv">3</span>     <span class="dv">1</span>     <span class="dv">2</span></span>
-<span id="cb816-14"><a href="9.4-group-and-apply-functions.html#cb816-14" tabindex="-1"></a> <span class="dv">7</span>  <span class="fl">14.3</span>     <span class="dv">8</span>  <span class="dv">360</span>    <span class="dv">245</span>  <span class="fl">3.21</span>  <span class="fl">3.57</span>  <span class="fl">15.8</span>     <span class="dv">0</span>     <span class="dv">0</span>     <span class="dv">3</span>     <span class="dv">4</span>     <span class="dv">3</span></span>
-<span id="cb816-15"><a href="9.4-group-and-apply-functions.html#cb816-15" tabindex="-1"></a> <span class="dv">8</span>  <span class="fl">24.4</span>     <span class="dv">4</span>  <span class="fl">147.</span>    <span class="dv">62</span>  <span class="fl">3.69</span>  <span class="fl">3.19</span>  <span class="dv">20</span>       <span class="dv">1</span>     <span class="dv">0</span>     <span class="dv">4</span>     <span class="dv">2</span>     <span class="dv">1</span></span>
-<span id="cb816-16"><a href="9.4-group-and-apply-functions.html#cb816-16" tabindex="-1"></a> <span class="dv">9</span>  <span class="fl">22.8</span>     <span class="dv">4</span>  <span class="fl">141.</span>    <span class="dv">95</span>  <span class="fl">3.92</span>  <span class="fl">3.15</span>  <span class="fl">22.9</span>     <span class="dv">1</span>     <span class="dv">0</span>     <span class="dv">4</span>     <span class="dv">2</span>     <span class="dv">1</span></span>
-<span id="cb816-17"><a href="9.4-group-and-apply-functions.html#cb816-17" tabindex="-1"></a><span class="dv">10</span>  <span class="fl">19.2</span>     <span class="dv">6</span>  <span class="fl">168.</span>   <span class="dv">123</span>  <span class="fl">3.92</span>  <span class="fl">3.44</span>  <span class="fl">18.3</span>     <span class="dv">1</span>     <span class="dv">0</span>     <span class="dv">4</span>     <span class="dv">4</span>     <span class="dv">2</span></span>
-<span id="cb816-18"><a href="9.4-group-and-apply-functions.html#cb816-18" tabindex="-1"></a><span class="co"># ℹ 22 more rows</span></span>
-<span id="cb816-19"><a href="9.4-group-and-apply-functions.html#cb816-19" tabindex="-1"></a><span class="co"># ℹ Use `print(n = ...)` to see more rows</span></span>
-<span id="cb816-20"><a href="9.4-group-and-apply-functions.html#cb816-20" tabindex="-1"></a></span>
-<span id="cb816-21"><a href="9.4-group-and-apply-functions.html#cb816-21" tabindex="-1"></a><span class="sc">&gt;</span> by_cyl <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(<span class="at">id =</span> <span class="fu">cur_group_id</span>())</span>
-<span id="cb816-22"><a href="9.4-group-and-apply-functions.html#cb816-22" tabindex="-1"></a><span class="co"># A tibble: 3 × 2</span></span>
-<span id="cb816-23"><a href="9.4-group-and-apply-functions.html#cb816-23" tabindex="-1"></a>    cyl    id</span>
-<span id="cb816-24"><a href="9.4-group-and-apply-functions.html#cb816-24" tabindex="-1"></a>  <span class="sc">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>int<span class="sc">&gt;</span></span>
-<span id="cb816-25"><a href="9.4-group-and-apply-functions.html#cb816-25" tabindex="-1"></a><span class="dv">1</span>     <span class="dv">4</span>     <span class="dv">1</span></span>
-<span id="cb816-26"><a href="9.4-group-and-apply-functions.html#cb816-26" tabindex="-1"></a><span class="dv">2</span>     <span class="dv">6</span>     <span class="dv">2</span></span>
-<span id="cb816-27"><a href="9.4-group-and-apply-functions.html#cb816-27" tabindex="-1"></a><span class="dv">3</span>     <span class="dv">8</span>     <span class="dv">3</span></span>
-<span id="cb816-28"><a href="9.4-group-and-apply-functions.html#cb816-28" tabindex="-1"></a></span>
-<span id="cb816-29"><a href="9.4-group-and-apply-functions.html#cb816-29" tabindex="-1"></a><span class="sc">&gt;</span> by_cyl <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(<span class="at">data =</span> <span class="fu">cur_group</span>())</span>
-<span id="cb816-30"><a href="9.4-group-and-apply-functions.html#cb816-30" tabindex="-1"></a><span class="co"># A tibble: 3 × 2</span></span>
-<span id="cb816-31"><a href="9.4-group-and-apply-functions.html#cb816-31" tabindex="-1"></a>    cyl data<span class="sc">$</span>cyl</span>
-<span id="cb816-32"><a href="9.4-group-and-apply-functions.html#cb816-32" tabindex="-1"></a>  <span class="sc">&lt;</span>dbl<span class="sc">&gt;</span>    <span class="er">&lt;</span>dbl<span class="sc">&gt;</span></span>
-<span id="cb816-33"><a href="9.4-group-and-apply-functions.html#cb816-33" tabindex="-1"></a><span class="dv">1</span>     <span class="dv">4</span>        <span class="dv">4</span></span>
-<span id="cb816-34"><a href="9.4-group-and-apply-functions.html#cb816-34" tabindex="-1"></a><span class="dv">2</span>     <span class="dv">6</span>        <span class="dv">6</span></span>
-<span id="cb816-35"><a href="9.4-group-and-apply-functions.html#cb816-35" tabindex="-1"></a><span class="dv">3</span>     <span class="dv">8</span>        <span class="dv">8</span></span></code></pre></div>
-<div class="sourceCode" id="cb817"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb817-1"><a href="9.4-group-and-apply-functions.html#cb817-1" tabindex="-1"></a><span class="sc">&gt;</span> df <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb817-2"><a href="9.4-group-and-apply-functions.html#cb817-2" tabindex="-1"></a>    <span class="at">g =</span> <span class="fu">sample</span>(<span class="fu">rep</span>(letters[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>], <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>)),</span>
-<span id="cb817-3"><a href="9.4-group-and-apply-functions.html#cb817-3" tabindex="-1"></a>    <span class="at">x =</span> <span class="fu">runif</span>(<span class="dv">6</span>),</span>
-<span id="cb817-4"><a href="9.4-group-and-apply-functions.html#cb817-4" tabindex="-1"></a>    <span class="at">y =</span> <span class="fu">runif</span>(<span class="dv">6</span>)</span>
-<span id="cb817-5"><a href="9.4-group-and-apply-functions.html#cb817-5" tabindex="-1"></a>        )</span>
-<span id="cb817-6"><a href="9.4-group-and-apply-functions.html#cb817-6" tabindex="-1"></a><span class="sc">&gt;</span> gf <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(g)</span>
-<span id="cb817-7"><a href="9.4-group-and-apply-functions.html#cb817-7" tabindex="-1"></a><span class="sc">&gt;</span> gf</span>
-<span id="cb817-8"><a href="9.4-group-and-apply-functions.html#cb817-8" tabindex="-1"></a><span class="co"># A tibble: 6 × 3</span></span>
-<span id="cb817-9"><a href="9.4-group-and-apply-functions.html#cb817-9" tabindex="-1"></a><span class="co"># Groups:   g [3]</span></span>
-<span id="cb817-10"><a href="9.4-group-and-apply-functions.html#cb817-10" tabindex="-1"></a>  g          x     y</span>
-<span id="cb817-11"><a href="9.4-group-and-apply-functions.html#cb817-11" tabindex="-1"></a>  <span class="sc">&lt;</span>chr<span class="sc">&gt;</span>  <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span></span>
-<span id="cb817-12"><a href="9.4-group-and-apply-functions.html#cb817-12" tabindex="-1"></a><span class="dv">1</span> b     <span class="fl">0.0246</span> <span class="fl">0.143</span></span>
-<span id="cb817-13"><a href="9.4-group-and-apply-functions.html#cb817-13" tabindex="-1"></a><span class="dv">2</span> c     <span class="fl">0.478</span>  <span class="fl">0.415</span></span>
-<span id="cb817-14"><a href="9.4-group-and-apply-functions.html#cb817-14" tabindex="-1"></a><span class="dv">3</span> a     <span class="fl">0.758</span>  <span class="fl">0.414</span></span>
-<span id="cb817-15"><a href="9.4-group-and-apply-functions.html#cb817-15" tabindex="-1"></a><span class="dv">4</span> c     <span class="fl">0.216</span>  <span class="fl">0.369</span></span>
-<span id="cb817-16"><a href="9.4-group-and-apply-functions.html#cb817-16" tabindex="-1"></a><span class="dv">5</span> c     <span class="fl">0.318</span>  <span class="fl">0.152</span></span>
-<span id="cb817-17"><a href="9.4-group-and-apply-functions.html#cb817-17" tabindex="-1"></a><span class="dv">6</span> b     <span class="fl">0.232</span>  <span class="fl">0.139</span></span>
-<span id="cb817-18"><a href="9.4-group-and-apply-functions.html#cb817-18" tabindex="-1"></a></span>
-<span id="cb817-19"><a href="9.4-group-and-apply-functions.html#cb817-19" tabindex="-1"></a><span class="co"># get row indices for the current group</span></span>
-<span id="cb817-20"><a href="9.4-group-and-apply-functions.html#cb817-20" tabindex="-1"></a><span class="sc">&gt;</span> gf <span class="sc">%&gt;%</span> <span class="fu">reframe</span>(<span class="at">row=</span><span class="fu">cur_group_rows</span>())</span>
-<span id="cb817-21"><a href="9.4-group-and-apply-functions.html#cb817-21" tabindex="-1"></a><span class="co"># A tibble: 6 × 2</span></span>
-<span id="cb817-22"><a href="9.4-group-and-apply-functions.html#cb817-22" tabindex="-1"></a>  g       row</span>
-<span id="cb817-23"><a href="9.4-group-and-apply-functions.html#cb817-23" tabindex="-1"></a>  <span class="sc">&lt;</span>chr<span class="sc">&gt;</span> <span class="er">&lt;</span>int<span class="sc">&gt;</span></span>
-<span id="cb817-24"><a href="9.4-group-and-apply-functions.html#cb817-24" tabindex="-1"></a><span class="dv">1</span> a         <span class="dv">3</span></span>
-<span id="cb817-25"><a href="9.4-group-and-apply-functions.html#cb817-25" tabindex="-1"></a><span class="dv">2</span> b         <span class="dv">1</span></span>
-<span id="cb817-26"><a href="9.4-group-and-apply-functions.html#cb817-26" tabindex="-1"></a><span class="dv">3</span> b         <span class="dv">6</span></span>
-<span id="cb817-27"><a href="9.4-group-and-apply-functions.html#cb817-27" tabindex="-1"></a><span class="dv">4</span> c         <span class="dv">2</span></span>
-<span id="cb817-28"><a href="9.4-group-and-apply-functions.html#cb817-28" tabindex="-1"></a><span class="dv">5</span> c         <span class="dv">4</span></span>
-<span id="cb817-29"><a href="9.4-group-and-apply-functions.html#cb817-29" tabindex="-1"></a><span class="dv">6</span> c         <span class="dv">5</span></span></code></pre></div>
+<div class="sourceCode" id="cb818"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb818-1"><a href="9.4-group-and-apply-functions.html#cb818-1" tabindex="-1"></a><span class="co"># prioritize functions in `dplyr` to avoid conflicts with `plyr`</span></span>
+<span id="cb818-2"><a href="9.4-group-and-apply-functions.html#cb818-2" tabindex="-1"></a><span class="sc">&gt;</span> needs<span class="sc">::</span><span class="fu">prioritize</span>(dplyr)</span>
+<span id="cb818-3"><a href="9.4-group-and-apply-functions.html#cb818-3" tabindex="-1"></a><span class="sc">&gt;</span> by_cyl <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">id =</span> <span class="fu">cur_group_id</span>())</span>
+<span id="cb818-4"><a href="9.4-group-and-apply-functions.html#cb818-4" tabindex="-1"></a><span class="co"># A tibble: 32 × 12</span></span>
+<span id="cb818-5"><a href="9.4-group-and-apply-functions.html#cb818-5" tabindex="-1"></a><span class="co"># Groups:   cyl [3]</span></span>
+<span id="cb818-6"><a href="9.4-group-and-apply-functions.html#cb818-6" tabindex="-1"></a>     mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb    id</span>
+<span id="cb818-7"><a href="9.4-group-and-apply-functions.html#cb818-7" tabindex="-1"></a>   <span class="sc">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>int<span class="sc">&gt;</span></span>
+<span id="cb818-8"><a href="9.4-group-and-apply-functions.html#cb818-8" tabindex="-1"></a> <span class="dv">1</span>  <span class="dv">21</span>       <span class="dv">6</span>  <span class="dv">160</span>    <span class="dv">110</span>  <span class="fl">3.9</span>   <span class="fl">2.62</span>  <span class="fl">16.5</span>     <span class="dv">0</span>     <span class="dv">1</span>     <span class="dv">4</span>     <span class="dv">4</span>     <span class="dv">2</span></span>
+<span id="cb818-9"><a href="9.4-group-and-apply-functions.html#cb818-9" tabindex="-1"></a> <span class="dv">2</span>  <span class="dv">21</span>       <span class="dv">6</span>  <span class="dv">160</span>    <span class="dv">110</span>  <span class="fl">3.9</span>   <span class="fl">2.88</span>  <span class="fl">17.0</span>     <span class="dv">0</span>     <span class="dv">1</span>     <span class="dv">4</span>     <span class="dv">4</span>     <span class="dv">2</span></span>
+<span id="cb818-10"><a href="9.4-group-and-apply-functions.html#cb818-10" tabindex="-1"></a> <span class="dv">3</span>  <span class="fl">22.8</span>     <span class="dv">4</span>  <span class="dv">108</span>     <span class="dv">93</span>  <span class="fl">3.85</span>  <span class="fl">2.32</span>  <span class="fl">18.6</span>     <span class="dv">1</span>     <span class="dv">1</span>     <span class="dv">4</span>     <span class="dv">1</span>     <span class="dv">1</span></span>
+<span id="cb818-11"><a href="9.4-group-and-apply-functions.html#cb818-11" tabindex="-1"></a> <span class="dv">4</span>  <span class="fl">21.4</span>     <span class="dv">6</span>  <span class="dv">258</span>    <span class="dv">110</span>  <span class="fl">3.08</span>  <span class="fl">3.22</span>  <span class="fl">19.4</span>     <span class="dv">1</span>     <span class="dv">0</span>     <span class="dv">3</span>     <span class="dv">1</span>     <span class="dv">2</span></span>
+<span id="cb818-12"><a href="9.4-group-and-apply-functions.html#cb818-12" tabindex="-1"></a> <span class="dv">5</span>  <span class="fl">18.7</span>     <span class="dv">8</span>  <span class="dv">360</span>    <span class="dv">175</span>  <span class="fl">3.15</span>  <span class="fl">3.44</span>  <span class="fl">17.0</span>     <span class="dv">0</span>     <span class="dv">0</span>     <span class="dv">3</span>     <span class="dv">2</span>     <span class="dv">3</span></span>
+<span id="cb818-13"><a href="9.4-group-and-apply-functions.html#cb818-13" tabindex="-1"></a> <span class="dv">6</span>  <span class="fl">18.1</span>     <span class="dv">6</span>  <span class="dv">225</span>    <span class="dv">105</span>  <span class="fl">2.76</span>  <span class="fl">3.46</span>  <span class="fl">20.2</span>     <span class="dv">1</span>     <span class="dv">0</span>     <span class="dv">3</span>     <span class="dv">1</span>     <span class="dv">2</span></span>
+<span id="cb818-14"><a href="9.4-group-and-apply-functions.html#cb818-14" tabindex="-1"></a> <span class="dv">7</span>  <span class="fl">14.3</span>     <span class="dv">8</span>  <span class="dv">360</span>    <span class="dv">245</span>  <span class="fl">3.21</span>  <span class="fl">3.57</span>  <span class="fl">15.8</span>     <span class="dv">0</span>     <span class="dv">0</span>     <span class="dv">3</span>     <span class="dv">4</span>     <span class="dv">3</span></span>
+<span id="cb818-15"><a href="9.4-group-and-apply-functions.html#cb818-15" tabindex="-1"></a> <span class="dv">8</span>  <span class="fl">24.4</span>     <span class="dv">4</span>  <span class="fl">147.</span>    <span class="dv">62</span>  <span class="fl">3.69</span>  <span class="fl">3.19</span>  <span class="dv">20</span>       <span class="dv">1</span>     <span class="dv">0</span>     <span class="dv">4</span>     <span class="dv">2</span>     <span class="dv">1</span></span>
+<span id="cb818-16"><a href="9.4-group-and-apply-functions.html#cb818-16" tabindex="-1"></a> <span class="dv">9</span>  <span class="fl">22.8</span>     <span class="dv">4</span>  <span class="fl">141.</span>    <span class="dv">95</span>  <span class="fl">3.92</span>  <span class="fl">3.15</span>  <span class="fl">22.9</span>     <span class="dv">1</span>     <span class="dv">0</span>     <span class="dv">4</span>     <span class="dv">2</span>     <span class="dv">1</span></span>
+<span id="cb818-17"><a href="9.4-group-and-apply-functions.html#cb818-17" tabindex="-1"></a><span class="dv">10</span>  <span class="fl">19.2</span>     <span class="dv">6</span>  <span class="fl">168.</span>   <span class="dv">123</span>  <span class="fl">3.92</span>  <span class="fl">3.44</span>  <span class="fl">18.3</span>     <span class="dv">1</span>     <span class="dv">0</span>     <span class="dv">4</span>     <span class="dv">4</span>     <span class="dv">2</span></span>
+<span id="cb818-18"><a href="9.4-group-and-apply-functions.html#cb818-18" tabindex="-1"></a><span class="co"># ℹ 22 more rows</span></span>
+<span id="cb818-19"><a href="9.4-group-and-apply-functions.html#cb818-19" tabindex="-1"></a><span class="co"># ℹ Use `print(n = ...)` to see more rows</span></span>
+<span id="cb818-20"><a href="9.4-group-and-apply-functions.html#cb818-20" tabindex="-1"></a></span>
+<span id="cb818-21"><a href="9.4-group-and-apply-functions.html#cb818-21" tabindex="-1"></a><span class="sc">&gt;</span> by_cyl <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(<span class="at">id =</span> <span class="fu">cur_group_id</span>())</span>
+<span id="cb818-22"><a href="9.4-group-and-apply-functions.html#cb818-22" tabindex="-1"></a><span class="co"># A tibble: 3 × 2</span></span>
+<span id="cb818-23"><a href="9.4-group-and-apply-functions.html#cb818-23" tabindex="-1"></a>    cyl    id</span>
+<span id="cb818-24"><a href="9.4-group-and-apply-functions.html#cb818-24" tabindex="-1"></a>  <span class="sc">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>int<span class="sc">&gt;</span></span>
+<span id="cb818-25"><a href="9.4-group-and-apply-functions.html#cb818-25" tabindex="-1"></a><span class="dv">1</span>     <span class="dv">4</span>     <span class="dv">1</span></span>
+<span id="cb818-26"><a href="9.4-group-and-apply-functions.html#cb818-26" tabindex="-1"></a><span class="dv">2</span>     <span class="dv">6</span>     <span class="dv">2</span></span>
+<span id="cb818-27"><a href="9.4-group-and-apply-functions.html#cb818-27" tabindex="-1"></a><span class="dv">3</span>     <span class="dv">8</span>     <span class="dv">3</span></span>
+<span id="cb818-28"><a href="9.4-group-and-apply-functions.html#cb818-28" tabindex="-1"></a></span>
+<span id="cb818-29"><a href="9.4-group-and-apply-functions.html#cb818-29" tabindex="-1"></a><span class="sc">&gt;</span> by_cyl <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(<span class="at">data =</span> <span class="fu">cur_group</span>())</span>
+<span id="cb818-30"><a href="9.4-group-and-apply-functions.html#cb818-30" tabindex="-1"></a><span class="co"># A tibble: 3 × 2</span></span>
+<span id="cb818-31"><a href="9.4-group-and-apply-functions.html#cb818-31" tabindex="-1"></a>    cyl data<span class="sc">$</span>cyl</span>
+<span id="cb818-32"><a href="9.4-group-and-apply-functions.html#cb818-32" tabindex="-1"></a>  <span class="sc">&lt;</span>dbl<span class="sc">&gt;</span>    <span class="er">&lt;</span>dbl<span class="sc">&gt;</span></span>
+<span id="cb818-33"><a href="9.4-group-and-apply-functions.html#cb818-33" tabindex="-1"></a><span class="dv">1</span>     <span class="dv">4</span>        <span class="dv">4</span></span>
+<span id="cb818-34"><a href="9.4-group-and-apply-functions.html#cb818-34" tabindex="-1"></a><span class="dv">2</span>     <span class="dv">6</span>        <span class="dv">6</span></span>
+<span id="cb818-35"><a href="9.4-group-and-apply-functions.html#cb818-35" tabindex="-1"></a><span class="dv">3</span>     <span class="dv">8</span>        <span class="dv">8</span></span></code></pre></div>
+<div class="sourceCode" id="cb819"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb819-1"><a href="9.4-group-and-apply-functions.html#cb819-1" tabindex="-1"></a><span class="sc">&gt;</span> df <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb819-2"><a href="9.4-group-and-apply-functions.html#cb819-2" tabindex="-1"></a>    <span class="at">g =</span> <span class="fu">sample</span>(<span class="fu">rep</span>(letters[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>], <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>)),</span>
+<span id="cb819-3"><a href="9.4-group-and-apply-functions.html#cb819-3" tabindex="-1"></a>    <span class="at">x =</span> <span class="fu">runif</span>(<span class="dv">6</span>),</span>
+<span id="cb819-4"><a href="9.4-group-and-apply-functions.html#cb819-4" tabindex="-1"></a>    <span class="at">y =</span> <span class="fu">runif</span>(<span class="dv">6</span>)</span>
+<span id="cb819-5"><a href="9.4-group-and-apply-functions.html#cb819-5" tabindex="-1"></a>        )</span>
+<span id="cb819-6"><a href="9.4-group-and-apply-functions.html#cb819-6" tabindex="-1"></a><span class="sc">&gt;</span> gf <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(g)</span>
+<span id="cb819-7"><a href="9.4-group-and-apply-functions.html#cb819-7" tabindex="-1"></a><span class="sc">&gt;</span> gf</span>
+<span id="cb819-8"><a href="9.4-group-and-apply-functions.html#cb819-8" tabindex="-1"></a><span class="co"># A tibble: 6 × 3</span></span>
+<span id="cb819-9"><a href="9.4-group-and-apply-functions.html#cb819-9" tabindex="-1"></a><span class="co"># Groups:   g [3]</span></span>
+<span id="cb819-10"><a href="9.4-group-and-apply-functions.html#cb819-10" tabindex="-1"></a>  g          x     y</span>
+<span id="cb819-11"><a href="9.4-group-and-apply-functions.html#cb819-11" tabindex="-1"></a>  <span class="sc">&lt;</span>chr<span class="sc">&gt;</span>  <span class="er">&lt;</span>dbl<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span></span>
+<span id="cb819-12"><a href="9.4-group-and-apply-functions.html#cb819-12" tabindex="-1"></a><span class="dv">1</span> b     <span class="fl">0.0246</span> <span class="fl">0.143</span></span>
+<span id="cb819-13"><a href="9.4-group-and-apply-functions.html#cb819-13" tabindex="-1"></a><span class="dv">2</span> c     <span class="fl">0.478</span>  <span class="fl">0.415</span></span>
+<span id="cb819-14"><a href="9.4-group-and-apply-functions.html#cb819-14" tabindex="-1"></a><span class="dv">3</span> a     <span class="fl">0.758</span>  <span class="fl">0.414</span></span>
+<span id="cb819-15"><a href="9.4-group-and-apply-functions.html#cb819-15" tabindex="-1"></a><span class="dv">4</span> c     <span class="fl">0.216</span>  <span class="fl">0.369</span></span>
+<span id="cb819-16"><a href="9.4-group-and-apply-functions.html#cb819-16" tabindex="-1"></a><span class="dv">5</span> c     <span class="fl">0.318</span>  <span class="fl">0.152</span></span>
+<span id="cb819-17"><a href="9.4-group-and-apply-functions.html#cb819-17" tabindex="-1"></a><span class="dv">6</span> b     <span class="fl">0.232</span>  <span class="fl">0.139</span></span>
+<span id="cb819-18"><a href="9.4-group-and-apply-functions.html#cb819-18" tabindex="-1"></a></span>
+<span id="cb819-19"><a href="9.4-group-and-apply-functions.html#cb819-19" tabindex="-1"></a><span class="co"># get row indices for the current group</span></span>
+<span id="cb819-20"><a href="9.4-group-and-apply-functions.html#cb819-20" tabindex="-1"></a><span class="sc">&gt;</span> gf <span class="sc">%&gt;%</span> <span class="fu">reframe</span>(<span class="at">row=</span><span class="fu">cur_group_rows</span>())</span>
+<span id="cb819-21"><a href="9.4-group-and-apply-functions.html#cb819-21" tabindex="-1"></a><span class="co"># A tibble: 6 × 2</span></span>
+<span id="cb819-22"><a href="9.4-group-and-apply-functions.html#cb819-22" tabindex="-1"></a>  g       row</span>
+<span id="cb819-23"><a href="9.4-group-and-apply-functions.html#cb819-23" tabindex="-1"></a>  <span class="sc">&lt;</span>chr<span class="sc">&gt;</span> <span class="er">&lt;</span>int<span class="sc">&gt;</span></span>
+<span id="cb819-24"><a href="9.4-group-and-apply-functions.html#cb819-24" tabindex="-1"></a><span class="dv">1</span> a         <span class="dv">3</span></span>
+<span id="cb819-25"><a href="9.4-group-and-apply-functions.html#cb819-25" tabindex="-1"></a><span class="dv">2</span> b         <span class="dv">1</span></span>
+<span id="cb819-26"><a href="9.4-group-and-apply-functions.html#cb819-26" tabindex="-1"></a><span class="dv">3</span> b         <span class="dv">6</span></span>
+<span id="cb819-27"><a href="9.4-group-and-apply-functions.html#cb819-27" tabindex="-1"></a><span class="dv">4</span> c         <span class="dv">2</span></span>
+<span id="cb819-28"><a href="9.4-group-and-apply-functions.html#cb819-28" tabindex="-1"></a><span class="dv">5</span> c         <span class="dv">4</span></span>
+<span id="cb819-29"><a href="9.4-group-and-apply-functions.html#cb819-29" tabindex="-1"></a><span class="dv">6</span> c         <span class="dv">5</span></span></code></pre></div>
 <p><code>group_by</code> then count <code>non-NA</code> values</p>
-<div class="sourceCode" id="cb818"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb818-1"><a href="9.4-group-and-apply-functions.html#cb818-1" tabindex="-1"></a>gdp_df <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(year) <span class="sc">%&gt;%</span> <span class="fu">summarise_all</span>(<span class="sc">~</span> <span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(.)))</span></code></pre></div>
+<div class="sourceCode" id="cb820"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb820-1"><a href="9.4-group-and-apply-functions.html#cb820-1" tabindex="-1"></a>gdp_df <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(year) <span class="sc">%&gt;%</span> <span class="fu">summarise_all</span>(<span class="sc">~</span> <span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(.)))</span></code></pre></div>
 <p><code>group_split()</code> split <code>data.frame</code> by groups, good friend with <code>group_by</code>, i.e. it used grouping structure from <code>group_by()</code> and therefore is subject to the data mask.</p>
 <p>It returns a list of tibbles. Each tibble contains the rows of <code>.tbl</code> for the associated group and all the columns, including the grouping variables.</p>
-<div class="sourceCode" id="cb819"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb819-1"><a href="9.4-group-and-apply-functions.html#cb819-1" tabindex="-1"></a>ir <span class="ot">&lt;-</span> iris <span class="sc">%&gt;%</span></span>
-<span id="cb819-2"><a href="9.4-group-and-apply-functions.html#cb819-2" tabindex="-1"></a>    <span class="fu">group_by</span>(Species) </span>
-<span id="cb819-3"><a href="9.4-group-and-apply-functions.html#cb819-3" tabindex="-1"></a></span>
-<span id="cb819-4"><a href="9.4-group-and-apply-functions.html#cb819-4" tabindex="-1"></a><span class="co"># returns a list of groups</span></span>
-<span id="cb819-5"><a href="9.4-group-and-apply-functions.html#cb819-5" tabindex="-1"></a>ir <span class="sc">%&gt;%</span> <span class="fu">group_split</span>()</span>
-<span id="cb819-6"><a href="9.4-group-and-apply-functions.html#cb819-6" tabindex="-1"></a></span>
-<span id="cb819-7"><a href="9.4-group-and-apply-functions.html#cb819-7" tabindex="-1"></a><span class="co"># returns a tibble of group keys</span></span>
-<span id="cb819-8"><a href="9.4-group-and-apply-functions.html#cb819-8" tabindex="-1"></a>ir <span class="sc">%&gt;%</span> <span class="fu">group_keys</span>()</span>
-<span id="cb819-9"><a href="9.4-group-and-apply-functions.html#cb819-9" tabindex="-1"></a><span class="co"># A tibble: 3 x 1</span></span>
-<span id="cb819-10"><a href="9.4-group-and-apply-functions.html#cb819-10" tabindex="-1"></a>  Species   </span>
-<span id="cb819-11"><a href="9.4-group-and-apply-functions.html#cb819-11" tabindex="-1"></a>  <span class="sc">&lt;</span>fct<span class="sc">&gt;</span>     </span>
-<span id="cb819-12"><a href="9.4-group-and-apply-functions.html#cb819-12" tabindex="-1"></a><span class="dv">1</span> setosa    </span>
-<span id="cb819-13"><a href="9.4-group-and-apply-functions.html#cb819-13" tabindex="-1"></a><span class="dv">2</span> versicolor</span>
-<span id="cb819-14"><a href="9.4-group-and-apply-functions.html#cb819-14" tabindex="-1"></a><span class="dv">3</span> virginica </span>
-<span id="cb819-15"><a href="9.4-group-and-apply-functions.html#cb819-15" tabindex="-1"></a></span>
-<span id="cb819-16"><a href="9.4-group-and-apply-functions.html#cb819-16" tabindex="-1"></a><span class="co"># get group_keys() with index, so you can access each specific group with group info</span></span>
-<span id="cb819-17"><a href="9.4-group-and-apply-functions.html#cb819-17" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(ID) <span class="sc">%&gt;%</span> <span class="fu">group_keys</span>() <span class="sc">%&gt;%</span> <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span> <span class="fu">t</span>()</span>
-<span id="cb819-18"><a href="9.4-group-and-apply-functions.html#cb819-18" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(ID) <span class="sc">%&gt;%</span> <span class="fu">group_keys</span>() <span class="sc">%&gt;%</span> <span class="fu">pull</span>(Species)</span>
-<span id="cb819-19"><a href="9.4-group-and-apply-functions.html#cb819-19" tabindex="-1"></a></span>
-<span id="cb819-20"><a href="9.4-group-and-apply-functions.html#cb819-20" tabindex="-1"></a><span class="co"># assgin a index column to indicate the group number</span></span>
-<span id="cb819-21"><a href="9.4-group-and-apply-functions.html#cb819-21" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(ID) <span class="sc">%&gt;%</span> <span class="fu">group_keys</span>() <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">id =</span> <span class="fu">row_number</span>())</span>
-<span id="cb819-22"><a href="9.4-group-and-apply-functions.html#cb819-22" tabindex="-1"></a><span class="co"># equivalently</span></span>
-<span id="cb819-23"><a href="9.4-group-and-apply-functions.html#cb819-23" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(ID) <span class="sc">%&gt;%</span> <span class="fu">group_keys</span>() <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">id =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">n</span>() )</span></code></pre></div>
+<div class="sourceCode" id="cb821"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb821-1"><a href="9.4-group-and-apply-functions.html#cb821-1" tabindex="-1"></a>ir <span class="ot">&lt;-</span> iris <span class="sc">%&gt;%</span></span>
+<span id="cb821-2"><a href="9.4-group-and-apply-functions.html#cb821-2" tabindex="-1"></a>    <span class="fu">group_by</span>(Species) </span>
+<span id="cb821-3"><a href="9.4-group-and-apply-functions.html#cb821-3" tabindex="-1"></a></span>
+<span id="cb821-4"><a href="9.4-group-and-apply-functions.html#cb821-4" tabindex="-1"></a><span class="co"># returns a list of groups</span></span>
+<span id="cb821-5"><a href="9.4-group-and-apply-functions.html#cb821-5" tabindex="-1"></a>ir <span class="sc">%&gt;%</span> <span class="fu">group_split</span>()</span>
+<span id="cb821-6"><a href="9.4-group-and-apply-functions.html#cb821-6" tabindex="-1"></a></span>
+<span id="cb821-7"><a href="9.4-group-and-apply-functions.html#cb821-7" tabindex="-1"></a><span class="co"># returns a tibble of group keys</span></span>
+<span id="cb821-8"><a href="9.4-group-and-apply-functions.html#cb821-8" tabindex="-1"></a>ir <span class="sc">%&gt;%</span> <span class="fu">group_keys</span>()</span>
+<span id="cb821-9"><a href="9.4-group-and-apply-functions.html#cb821-9" tabindex="-1"></a><span class="co"># A tibble: 3 x 1</span></span>
+<span id="cb821-10"><a href="9.4-group-and-apply-functions.html#cb821-10" tabindex="-1"></a>  Species   </span>
+<span id="cb821-11"><a href="9.4-group-and-apply-functions.html#cb821-11" tabindex="-1"></a>  <span class="sc">&lt;</span>fct<span class="sc">&gt;</span>     </span>
+<span id="cb821-12"><a href="9.4-group-and-apply-functions.html#cb821-12" tabindex="-1"></a><span class="dv">1</span> setosa    </span>
+<span id="cb821-13"><a href="9.4-group-and-apply-functions.html#cb821-13" tabindex="-1"></a><span class="dv">2</span> versicolor</span>
+<span id="cb821-14"><a href="9.4-group-and-apply-functions.html#cb821-14" tabindex="-1"></a><span class="dv">3</span> virginica </span>
+<span id="cb821-15"><a href="9.4-group-and-apply-functions.html#cb821-15" tabindex="-1"></a></span>
+<span id="cb821-16"><a href="9.4-group-and-apply-functions.html#cb821-16" tabindex="-1"></a><span class="co"># get group_keys() with index, so you can access each specific group with group info</span></span>
+<span id="cb821-17"><a href="9.4-group-and-apply-functions.html#cb821-17" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(ID) <span class="sc">%&gt;%</span> <span class="fu">group_keys</span>() <span class="sc">%&gt;%</span> <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span> <span class="fu">t</span>()</span>
+<span id="cb821-18"><a href="9.4-group-and-apply-functions.html#cb821-18" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(ID) <span class="sc">%&gt;%</span> <span class="fu">group_keys</span>() <span class="sc">%&gt;%</span> <span class="fu">pull</span>(Species)</span>
+<span id="cb821-19"><a href="9.4-group-and-apply-functions.html#cb821-19" tabindex="-1"></a></span>
+<span id="cb821-20"><a href="9.4-group-and-apply-functions.html#cb821-20" tabindex="-1"></a><span class="co"># assgin a index column to indicate the group number</span></span>
+<span id="cb821-21"><a href="9.4-group-and-apply-functions.html#cb821-21" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(ID) <span class="sc">%&gt;%</span> <span class="fu">group_keys</span>() <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">id =</span> <span class="fu">row_number</span>())</span>
+<span id="cb821-22"><a href="9.4-group-and-apply-functions.html#cb821-22" tabindex="-1"></a><span class="co"># equivalently</span></span>
+<span id="cb821-23"><a href="9.4-group-and-apply-functions.html#cb821-23" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(ID) <span class="sc">%&gt;%</span> <span class="fu">group_keys</span>() <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">id =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">n</span>() )</span></code></pre></div>
 <p>Group by and count the number of observations in each group with <code>tally</code></p>
-<div class="sourceCode" id="cb820"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb820-1"><a href="9.4-group-and-apply-functions.html#cb820-1" tabindex="-1"></a><span class="co"># count the number of rows per group</span></span>
-<span id="cb820-2"><a href="9.4-group-and-apply-functions.html#cb820-2" tabindex="-1"></a>ir <span class="sc">%&gt;%</span> <span class="fu">tally</span>(<span class="at">sort=</span><span class="cn">TRUE</span>) <span class="co">#  same as ir %&gt;% summarize(count=n())</span></span>
-<span id="cb820-3"><a href="9.4-group-and-apply-functions.html#cb820-3" tabindex="-1"></a><span class="co"># A tibble: 3 × 2</span></span>
-<span id="cb820-4"><a href="9.4-group-and-apply-functions.html#cb820-4" tabindex="-1"></a>  Species        n</span>
-<span id="cb820-5"><a href="9.4-group-and-apply-functions.html#cb820-5" tabindex="-1"></a>  <span class="sc">&lt;</span>fct<span class="sc">&gt;</span>      <span class="er">&lt;</span>int<span class="sc">&gt;</span></span>
-<span id="cb820-6"><a href="9.4-group-and-apply-functions.html#cb820-6" tabindex="-1"></a><span class="dv">1</span> setosa        <span class="dv">50</span></span>
-<span id="cb820-7"><a href="9.4-group-and-apply-functions.html#cb820-7" tabindex="-1"></a><span class="dv">2</span> versicolor    <span class="dv">50</span></span>
-<span id="cb820-8"><a href="9.4-group-and-apply-functions.html#cb820-8" tabindex="-1"></a><span class="dv">3</span> virginica     <span class="dv">50</span></span></code></pre></div>
+<div class="sourceCode" id="cb822"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb822-1"><a href="9.4-group-and-apply-functions.html#cb822-1" tabindex="-1"></a><span class="co"># count the number of rows per group</span></span>
+<span id="cb822-2"><a href="9.4-group-and-apply-functions.html#cb822-2" tabindex="-1"></a>ir <span class="sc">%&gt;%</span> <span class="fu">tally</span>(<span class="at">sort=</span><span class="cn">TRUE</span>) <span class="co">#  same as ir %&gt;% summarize(count=n())</span></span>
+<span id="cb822-3"><a href="9.4-group-and-apply-functions.html#cb822-3" tabindex="-1"></a><span class="co"># A tibble: 3 × 2</span></span>
+<span id="cb822-4"><a href="9.4-group-and-apply-functions.html#cb822-4" tabindex="-1"></a>  Species        n</span>
+<span id="cb822-5"><a href="9.4-group-and-apply-functions.html#cb822-5" tabindex="-1"></a>  <span class="sc">&lt;</span>fct<span class="sc">&gt;</span>      <span class="er">&lt;</span>int<span class="sc">&gt;</span></span>
+<span id="cb822-6"><a href="9.4-group-and-apply-functions.html#cb822-6" tabindex="-1"></a><span class="dv">1</span> setosa        <span class="dv">50</span></span>
+<span id="cb822-7"><a href="9.4-group-and-apply-functions.html#cb822-7" tabindex="-1"></a><span class="dv">2</span> versicolor    <span class="dv">50</span></span>
+<span id="cb822-8"><a href="9.4-group-and-apply-functions.html#cb822-8" tabindex="-1"></a><span class="dv">3</span> virginica     <span class="dv">50</span></span></code></pre></div>
 <p><code>dplyr::row_number(x)</code> gives every input a unique rank to a vector <code>x</code>, so that <code>c(10, 20, 20, 30)</code> would get ranks <code>c(1, 2, 3, 4)</code>. From smallest to largest.</p>
 <ul>
 <li><p>To rank by multiple columns at once, supply a data frame <code>x</code>.</p>
 <p>Rank by value, ascending:</p>
-<div class="sourceCode" id="cb821"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb821-1"><a href="9.4-group-and-apply-functions.html#cb821-1" tabindex="-1"></a>data <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">rank =</span> <span class="fu">row_number</span>(value) )</span></code></pre></div></li>
+<div class="sourceCode" id="cb823"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb823-1"><a href="9.4-group-and-apply-functions.html#cb823-1" tabindex="-1"></a>data <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">rank =</span> <span class="fu">row_number</span>(value) )</span></code></pre></div></li>
 <li><p>If want descending, use <code>row_number(desc(.)</code></p>
-<div class="sourceCode" id="cb822"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb822-1"><a href="9.4-group-and-apply-functions.html#cb822-1" tabindex="-1"></a>data <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">rank =</span> <span class="fu">row_number</span>(<span class="fu">desc</span>(value) ) )</span>
-<span id="cb822-2"><a href="9.4-group-and-apply-functions.html#cb822-2" tabindex="-1"></a><span class="co"># equivalently, with a - before value</span></span>
-<span id="cb822-3"><a href="9.4-group-and-apply-functions.html#cb822-3" tabindex="-1"></a>data <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">rank =</span> <span class="fu">row_number</span>(<span class="sc">-</span>value) )</span></code></pre></div></li>
+<div class="sourceCode" id="cb824"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb824-1"><a href="9.4-group-and-apply-functions.html#cb824-1" tabindex="-1"></a>data <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">rank =</span> <span class="fu">row_number</span>(<span class="fu">desc</span>(value) ) )</span>
+<span id="cb824-2"><a href="9.4-group-and-apply-functions.html#cb824-2" tabindex="-1"></a><span class="co"># equivalently, with a - before value</span></span>
+<span id="cb824-3"><a href="9.4-group-and-apply-functions.html#cb824-3" tabindex="-1"></a>data <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">rank =</span> <span class="fu">row_number</span>(<span class="sc">-</span>value) )</span></code></pre></div></li>
 <li><p>Another use is to add row number to a data frame.</p>
 <p>Here, we assign row number to a variable or column name “row_id”.</p>
-<div class="sourceCode" id="cb823"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb823-1"><a href="9.4-group-and-apply-functions.html#cb823-1" tabindex="-1"></a>data <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">row_id =</span> <span class="fu">row_number</span>())</span></code></pre></div></li>
+<div class="sourceCode" id="cb825"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb825-1"><a href="9.4-group-and-apply-functions.html#cb825-1" tabindex="-1"></a>data <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">row_id =</span> <span class="fu">row_number</span>())</span></code></pre></div></li>
 </ul>
 </div>
 <div id="subset-rows" class="section level3 hasAnchor" number="9.4.2">
@@ -1208,16 +1214,16 @@ document.addEventListener('DOMContentLoaded', function() {
 <li><code>slice_sample()</code> randomly selects rows.</li>
 <li><code>slice_min(.data, order_by, n)</code> and <code>slice_max()</code> select rows with the smallest or largest values of a variable.</li>
 </ul>
-<div class="sourceCode" id="cb824"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb824-1"><a href="9.4-group-and-apply-functions.html#cb824-1" tabindex="-1"></a><span class="co"># Similar to head(mtcars, 1):</span></span>
-<span id="cb824-2"><a href="9.4-group-and-apply-functions.html#cb824-2" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> <span class="fu">slice</span>(<span class="dv">1</span><span class="dt">L</span>)</span>
-<span id="cb824-3"><a href="9.4-group-and-apply-functions.html#cb824-3" tabindex="-1"></a><span class="co"># first two rows every group</span></span>
-<span id="cb824-4"><a href="9.4-group-and-apply-functions.html#cb824-4" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(group) <span class="sc">%&gt;%</span> <span class="fu">slice_head</span>(<span class="at">n =</span> <span class="dv">2</span>)</span>
-<span id="cb824-5"><a href="9.4-group-and-apply-functions.html#cb824-5" tabindex="-1"></a><span class="co"># first row</span></span>
-<span id="cb824-6"><a href="9.4-group-and-apply-functions.html#cb824-6" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="fu">row_number</span>() <span class="sc">==</span> <span class="dv">1</span><span class="dt">L</span>)</span>
-<span id="cb824-7"><a href="9.4-group-and-apply-functions.html#cb824-7" tabindex="-1"></a><span class="co"># last row</span></span>
-<span id="cb824-8"><a href="9.4-group-and-apply-functions.html#cb824-8" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="fu">row_number</span>() <span class="sc">==</span> <span class="fu">n</span>())</span>
-<span id="cb824-9"><a href="9.4-group-and-apply-functions.html#cb824-9" tabindex="-1"></a><span class="co"># Rows with minimum values of a variable</span></span>
-<span id="cb824-10"><a href="9.4-group-and-apply-functions.html#cb824-10" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> <span class="fu">slice_min</span>(mpg, <span class="at">n =</span> <span class="dv">5</span>) </span></code></pre></div>
+<div class="sourceCode" id="cb826"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb826-1"><a href="9.4-group-and-apply-functions.html#cb826-1" tabindex="-1"></a><span class="co"># Similar to head(mtcars, 1):</span></span>
+<span id="cb826-2"><a href="9.4-group-and-apply-functions.html#cb826-2" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> <span class="fu">slice</span>(<span class="dv">1</span><span class="dt">L</span>)</span>
+<span id="cb826-3"><a href="9.4-group-and-apply-functions.html#cb826-3" tabindex="-1"></a><span class="co"># first two rows every group</span></span>
+<span id="cb826-4"><a href="9.4-group-and-apply-functions.html#cb826-4" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(group) <span class="sc">%&gt;%</span> <span class="fu">slice_head</span>(<span class="at">n =</span> <span class="dv">2</span>)</span>
+<span id="cb826-5"><a href="9.4-group-and-apply-functions.html#cb826-5" tabindex="-1"></a><span class="co"># first row</span></span>
+<span id="cb826-6"><a href="9.4-group-and-apply-functions.html#cb826-6" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="fu">row_number</span>() <span class="sc">==</span> <span class="dv">1</span><span class="dt">L</span>)</span>
+<span id="cb826-7"><a href="9.4-group-and-apply-functions.html#cb826-7" tabindex="-1"></a><span class="co"># last row</span></span>
+<span id="cb826-8"><a href="9.4-group-and-apply-functions.html#cb826-8" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="fu">row_number</span>() <span class="sc">==</span> <span class="fu">n</span>())</span>
+<span id="cb826-9"><a href="9.4-group-and-apply-functions.html#cb826-9" tabindex="-1"></a><span class="co"># Rows with minimum values of a variable</span></span>
+<span id="cb826-10"><a href="9.4-group-and-apply-functions.html#cb826-10" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> <span class="fu">slice_min</span>(mpg, <span class="at">n =</span> <span class="dv">5</span>) </span></code></pre></div>
 </div>
 <div id="summarize" class="section level3 hasAnchor" number="9.4.3">
 <h3><span class="header-section-number">9.4.3</span> Summarize<a href="9.4-group-and-apply-functions.html#summarize" class="anchor-section" aria-label="Anchor link to header"></a></h3>
@@ -1232,33 +1238,33 @@ document.addEventListener('DOMContentLoaded', function() {
 <li><code>.fun</code> A function fun, a quosure style lambda <code>~ fun(.)</code> or a list of either form.</li>
 <li><code>...</code> Additional arguments for the function calls in <code>.funs</code>.</li>
 </ul>
-<div class="sourceCode" id="cb825"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb825-1"><a href="9.4-group-and-apply-functions.html#cb825-1" tabindex="-1"></a><span class="co"># `summarize_at` affects variables selected with a character vector or vars()</span></span>
-<span id="cb825-2"><a href="9.4-group-and-apply-functions.html#cb825-2" tabindex="-1"></a>error_continent_all <span class="sc">%&gt;%</span> </span>
-<span id="cb825-3"><a href="9.4-group-and-apply-functions.html#cb825-3" tabindex="-1"></a>    <span class="fu">group_by</span>(pct, CON) <span class="sc">%&gt;%</span> </span>
-<span id="cb825-4"><a href="9.4-group-and-apply-functions.html#cb825-4" tabindex="-1"></a>    <span class="fu">summarize</span>(<span class="fu">across</span>(<span class="sc">-</span>r_no, <span class="sc">~</span><span class="fu">mean</span>(.x, <span class="at">na.rm=</span><span class="cn">TRUE</span>)) )</span>
-<span id="cb825-5"><a href="9.4-group-and-apply-functions.html#cb825-5" tabindex="-1"></a></span>
-<span id="cb825-6"><a href="9.4-group-and-apply-functions.html#cb825-6" tabindex="-1"></a>starwars <span class="sc">%&gt;%</span></span>
-<span id="cb825-7"><a href="9.4-group-and-apply-functions.html#cb825-7" tabindex="-1"></a>  <span class="fu">summarise_if</span>(is.numeric, mean, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb825-8"><a href="9.4-group-and-apply-functions.html#cb825-8" tabindex="-1"></a>starwars <span class="sc">%&gt;%</span></span>
-<span id="cb825-9"><a href="9.4-group-and-apply-functions.html#cb825-9" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span> <span class="fu">mean</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)))</span>
-<span id="cb825-10"><a href="9.4-group-and-apply-functions.html#cb825-10" tabindex="-1"></a></span>
-<span id="cb825-11"><a href="9.4-group-and-apply-functions.html#cb825-11" tabindex="-1"></a>by_species <span class="ot">&lt;-</span> iris <span class="sc">%&gt;%</span></span>
-<span id="cb825-12"><a href="9.4-group-and-apply-functions.html#cb825-12" tabindex="-1"></a>  <span class="fu">group_by</span>(Species)</span>
-<span id="cb825-13"><a href="9.4-group-and-apply-functions.html#cb825-13" tabindex="-1"></a>by_species <span class="sc">%&gt;%</span></span>
-<span id="cb825-14"><a href="9.4-group-and-apply-functions.html#cb825-14" tabindex="-1"></a>  <span class="fu">summarise_all</span>(<span class="fu">list</span>(min, max))</span>
-<span id="cb825-15"><a href="9.4-group-and-apply-functions.html#cb825-15" tabindex="-1"></a>by_species <span class="sc">%&gt;%</span></span>
-<span id="cb825-16"><a href="9.4-group-and-apply-functions.html#cb825-16" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), <span class="fu">list</span>(<span class="at">min =</span> min, <span class="at">max =</span> max)))</span></code></pre></div>
-<div class="sourceCode" id="cb826"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb826-1"><a href="9.4-group-and-apply-functions.html#cb826-1" tabindex="-1"></a><span class="co"># Count size of group</span></span>
-<span id="cb826-2"><a href="9.4-group-and-apply-functions.html#cb826-2" tabindex="-1"></a>by_species <span class="sc">%&gt;%</span> <span class="fu">summarize</span>(<span class="at">count=</span><span class="fu">n</span>())</span>
-<span id="cb826-3"><a href="9.4-group-and-apply-functions.html#cb826-3" tabindex="-1"></a></span>
-<span id="cb826-4"><a href="9.4-group-and-apply-functions.html#cb826-4" tabindex="-1"></a><span class="co"># Or use `tally()`</span></span>
-<span id="cb826-5"><a href="9.4-group-and-apply-functions.html#cb826-5" tabindex="-1"></a>by_species <span class="sc">%&gt;%</span> <span class="fu">tally</span>(<span class="at">sort=</span><span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb827"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb827-1"><a href="9.4-group-and-apply-functions.html#cb827-1" tabindex="-1"></a><span class="co"># `summarize_at` affects variables selected with a character vector or vars()</span></span>
+<span id="cb827-2"><a href="9.4-group-and-apply-functions.html#cb827-2" tabindex="-1"></a>error_continent_all <span class="sc">%&gt;%</span> </span>
+<span id="cb827-3"><a href="9.4-group-and-apply-functions.html#cb827-3" tabindex="-1"></a>    <span class="fu">group_by</span>(pct, CON) <span class="sc">%&gt;%</span> </span>
+<span id="cb827-4"><a href="9.4-group-and-apply-functions.html#cb827-4" tabindex="-1"></a>    <span class="fu">summarize</span>(<span class="fu">across</span>(<span class="sc">-</span>r_no, <span class="sc">~</span><span class="fu">mean</span>(.x, <span class="at">na.rm=</span><span class="cn">TRUE</span>)) )</span>
+<span id="cb827-5"><a href="9.4-group-and-apply-functions.html#cb827-5" tabindex="-1"></a></span>
+<span id="cb827-6"><a href="9.4-group-and-apply-functions.html#cb827-6" tabindex="-1"></a>starwars <span class="sc">%&gt;%</span></span>
+<span id="cb827-7"><a href="9.4-group-and-apply-functions.html#cb827-7" tabindex="-1"></a>  <span class="fu">summarise_if</span>(is.numeric, mean, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb827-8"><a href="9.4-group-and-apply-functions.html#cb827-8" tabindex="-1"></a>starwars <span class="sc">%&gt;%</span></span>
+<span id="cb827-9"><a href="9.4-group-and-apply-functions.html#cb827-9" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span> <span class="fu">mean</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)))</span>
+<span id="cb827-10"><a href="9.4-group-and-apply-functions.html#cb827-10" tabindex="-1"></a></span>
+<span id="cb827-11"><a href="9.4-group-and-apply-functions.html#cb827-11" tabindex="-1"></a>by_species <span class="ot">&lt;-</span> iris <span class="sc">%&gt;%</span></span>
+<span id="cb827-12"><a href="9.4-group-and-apply-functions.html#cb827-12" tabindex="-1"></a>  <span class="fu">group_by</span>(Species)</span>
+<span id="cb827-13"><a href="9.4-group-and-apply-functions.html#cb827-13" tabindex="-1"></a>by_species <span class="sc">%&gt;%</span></span>
+<span id="cb827-14"><a href="9.4-group-and-apply-functions.html#cb827-14" tabindex="-1"></a>  <span class="fu">summarise_all</span>(<span class="fu">list</span>(min, max))</span>
+<span id="cb827-15"><a href="9.4-group-and-apply-functions.html#cb827-15" tabindex="-1"></a>by_species <span class="sc">%&gt;%</span></span>
+<span id="cb827-16"><a href="9.4-group-and-apply-functions.html#cb827-16" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), <span class="fu">list</span>(<span class="at">min =</span> min, <span class="at">max =</span> max)))</span></code></pre></div>
+<div class="sourceCode" id="cb828"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb828-1"><a href="9.4-group-and-apply-functions.html#cb828-1" tabindex="-1"></a><span class="co"># Count size of group</span></span>
+<span id="cb828-2"><a href="9.4-group-and-apply-functions.html#cb828-2" tabindex="-1"></a>by_species <span class="sc">%&gt;%</span> <span class="fu">summarize</span>(<span class="at">count=</span><span class="fu">n</span>())</span>
+<span id="cb828-3"><a href="9.4-group-and-apply-functions.html#cb828-3" tabindex="-1"></a></span>
+<span id="cb828-4"><a href="9.4-group-and-apply-functions.html#cb828-4" tabindex="-1"></a><span class="co"># Or use `tally()`</span></span>
+<span id="cb828-5"><a href="9.4-group-and-apply-functions.html#cb828-5" tabindex="-1"></a>by_species <span class="sc">%&gt;%</span> <span class="fu">tally</span>(<span class="at">sort=</span><span class="cn">TRUE</span>)</span></code></pre></div>
 <p>Select one group</p>
-<div class="sourceCode" id="cb827"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb827-1"><a href="9.4-group-and-apply-functions.html#cb827-1" tabindex="-1"></a><span class="co"># Select one element from a list</span></span>
-<span id="cb827-2"><a href="9.4-group-and-apply-functions.html#cb827-2" tabindex="-1"></a>iris <span class="sc">%&gt;%</span></span>
-<span id="cb827-3"><a href="9.4-group-and-apply-functions.html#cb827-3" tabindex="-1"></a>  <span class="st">`</span><span class="at">[[</span><span class="st">`</span>(<span class="st">&quot;Species&quot;</span>)</span>
-<span id="cb827-4"><a href="9.4-group-and-apply-functions.html#cb827-4" tabindex="-1"></a><span class="co"># select one group</span></span>
-<span id="cb827-5"><a href="9.4-group-and-apply-functions.html#cb827-5" tabindex="-1"></a>by_species <span class="sc">%&gt;%</span> <span class="fu">group_split</span>() <span class="sc">%&gt;%</span> <span class="st">`</span><span class="at">[[</span><span class="st">`</span>(<span class="dv">1</span>)  <span class="co"># can extract by either position or name</span></span></code></pre></div>
+<div class="sourceCode" id="cb829"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb829-1"><a href="9.4-group-and-apply-functions.html#cb829-1" tabindex="-1"></a><span class="co"># Select one element from a list</span></span>
+<span id="cb829-2"><a href="9.4-group-and-apply-functions.html#cb829-2" tabindex="-1"></a>iris <span class="sc">%&gt;%</span></span>
+<span id="cb829-3"><a href="9.4-group-and-apply-functions.html#cb829-3" tabindex="-1"></a>  <span class="st">`</span><span class="at">[[</span><span class="st">`</span>(<span class="st">&quot;Species&quot;</span>)</span>
+<span id="cb829-4"><a href="9.4-group-and-apply-functions.html#cb829-4" tabindex="-1"></a><span class="co"># select one group</span></span>
+<span id="cb829-5"><a href="9.4-group-and-apply-functions.html#cb829-5" tabindex="-1"></a>by_species <span class="sc">%&gt;%</span> <span class="fu">group_split</span>() <span class="sc">%&gt;%</span> <span class="st">`</span><span class="at">[[</span><span class="st">`</span>(<span class="dv">1</span>)  <span class="co"># can extract by either position or name</span></span></code></pre></div>
 <p><code>across(.cols = everything(), .fns = NULL, ..., .names = NULL)</code> makes it easy to apply the same transformation to multiple columns, allowing you to use <code>select()</code> semantics inside in <code>summarise()</code> and <code>mutate()</code>.</p>
 <ul>
 <li><p><code>.cols</code> Columns to transform.</p>
@@ -1266,11 +1272,11 @@ document.addEventListener('DOMContentLoaded', function() {
 <li><p><code>.fns</code> Functions to apply to each of the selected columns.</p></li>
 <li><p><code>.names</code> A glue specification that describes how to name the output columns.</p></li>
 </ul>
-<div class="sourceCode" id="cb828"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb828-1"><a href="9.4-group-and-apply-functions.html#cb828-1" tabindex="-1"></a><span class="co"># code snippet for counting non-NA values for multiple select columns</span></span>
-<span id="cb828-2"><a href="9.4-group-and-apply-functions.html#cb828-2" tabindex="-1"></a>data_desp <span class="sc">%&gt;%</span> </span>
-<span id="cb828-3"><a href="9.4-group-and-apply-functions.html#cb828-3" tabindex="-1"></a>    <span class="fu">group_by</span>(ISO_C3) <span class="sc">%&gt;%</span> </span>
-<span id="cb828-4"><a href="9.4-group-and-apply-functions.html#cb828-4" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">c</span>(<span class="st">&quot;logDiff&quot;</span>,<span class="st">&quot;tmp&quot;</span>,<span class="st">&quot;pre&quot;</span>,<span class="st">&quot;dtr&quot;</span>), <span class="sc">~</span><span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(.))) ) <span class="sc">%&gt;%</span> </span>
-<span id="cb828-5"><a href="9.4-group-and-apply-functions.html#cb828-5" tabindex="-1"></a>    <span class="fu">arrange</span>(logDiff)</span></code></pre></div>
+<div class="sourceCode" id="cb830"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb830-1"><a href="9.4-group-and-apply-functions.html#cb830-1" tabindex="-1"></a><span class="co"># code snippet for counting non-NA values for multiple select columns</span></span>
+<span id="cb830-2"><a href="9.4-group-and-apply-functions.html#cb830-2" tabindex="-1"></a>data_desp <span class="sc">%&gt;%</span> </span>
+<span id="cb830-3"><a href="9.4-group-and-apply-functions.html#cb830-3" tabindex="-1"></a>    <span class="fu">group_by</span>(ISO_C3) <span class="sc">%&gt;%</span> </span>
+<span id="cb830-4"><a href="9.4-group-and-apply-functions.html#cb830-4" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">c</span>(<span class="st">&quot;logDiff&quot;</span>,<span class="st">&quot;tmp&quot;</span>,<span class="st">&quot;pre&quot;</span>,<span class="st">&quot;dtr&quot;</span>), <span class="sc">~</span><span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(.))) ) <span class="sc">%&gt;%</span> </span>
+<span id="cb830-5"><a href="9.4-group-and-apply-functions.html#cb830-5" tabindex="-1"></a>    <span class="fu">arrange</span>(logDiff)</span></code></pre></div>
 </div>
 <div id="split-apply-combine" class="section level3 hasAnchor" number="9.4.4">
 <h3><span class="header-section-number">9.4.4</span> split-apply-combine<a href="9.4-group-and-apply-functions.html#split-apply-combine" class="anchor-section" aria-label="Anchor link to header"></a></h3>
@@ -1281,38 +1287,38 @@ document.addEventListener('DOMContentLoaded', function() {
 <li><code>plyr::ddply()</code></li>
 <li><code>data.table::setDT()</code></li>
 </ul>
-<div class="sourceCode" id="cb829"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb829-1"><a href="9.4-group-and-apply-functions.html#cb829-1" tabindex="-1"></a><span class="co"># with `dplyr`</span></span>
-<span id="cb829-2"><a href="9.4-group-and-apply-functions.html#cb829-2" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(type) <span class="sc">%&gt;%</span> <span class="fu">group_map</span>(<span class="sc">~</span><span class="fu">tibble</span>(<span class="fu">trivial_func</span>(.)))</span>
-<span id="cb829-3"><a href="9.4-group-and-apply-functions.html#cb829-3" tabindex="-1"></a></span>
-<span id="cb829-4"><a href="9.4-group-and-apply-functions.html#cb829-4" tabindex="-1"></a><span class="co"># must do `group_split` before your can `map_dfr`</span></span>
-<span id="cb829-5"><a href="9.4-group-and-apply-functions.html#cb829-5" tabindex="-1"></a>df <span class="sc">%&gt;%</span> </span>
-<span id="cb829-6"><a href="9.4-group-and-apply-functions.html#cb829-6" tabindex="-1"></a>  <span class="fu">split</span>(type) <span class="sc">%&gt;%</span>    <span class="co"># equivalent to `group_by(type)` then `group_split()`</span></span>
-<span id="cb829-7"><a href="9.4-group-and-apply-functions.html#cb829-7" tabindex="-1"></a>  purrr<span class="sc">::</span><span class="fu">map_dfr</span>(trivial_func)</span>
-<span id="cb829-8"><a href="9.4-group-and-apply-functions.html#cb829-8" tabindex="-1"></a></span>
-<span id="cb829-9"><a href="9.4-group-and-apply-functions.html#cb829-9" tabindex="-1"></a><span class="co"># with `data.table`</span></span>
-<span id="cb829-10"><a href="9.4-group-and-apply-functions.html#cb829-10" tabindex="-1"></a><span class="fu">library</span>(data.table)</span>
-<span id="cb829-11"><a href="9.4-group-and-apply-functions.html#cb829-11" tabindex="-1"></a><span class="fu">setDT</span>(df)[, <span class="fu">trivial_func</span>(.SD), type]</span>
-<span id="cb829-12"><a href="9.4-group-and-apply-functions.html#cb829-12" tabindex="-1"></a></span>
-<span id="cb829-13"><a href="9.4-group-and-apply-functions.html#cb829-13" tabindex="-1"></a><span class="co"># with `plyr`</span></span>
-<span id="cb829-14"><a href="9.4-group-and-apply-functions.html#cb829-14" tabindex="-1"></a>plyr<span class="sc">::</span><span class="fu">ddply</span>(df, .(type), trivial_func)</span></code></pre></div>
+<div class="sourceCode" id="cb831"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb831-1"><a href="9.4-group-and-apply-functions.html#cb831-1" tabindex="-1"></a><span class="co"># with `dplyr`</span></span>
+<span id="cb831-2"><a href="9.4-group-and-apply-functions.html#cb831-2" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(type) <span class="sc">%&gt;%</span> <span class="fu">group_map</span>(<span class="sc">~</span><span class="fu">tibble</span>(<span class="fu">trivial_func</span>(.)))</span>
+<span id="cb831-3"><a href="9.4-group-and-apply-functions.html#cb831-3" tabindex="-1"></a></span>
+<span id="cb831-4"><a href="9.4-group-and-apply-functions.html#cb831-4" tabindex="-1"></a><span class="co"># must do `group_split` before your can `map_dfr`</span></span>
+<span id="cb831-5"><a href="9.4-group-and-apply-functions.html#cb831-5" tabindex="-1"></a>df <span class="sc">%&gt;%</span> </span>
+<span id="cb831-6"><a href="9.4-group-and-apply-functions.html#cb831-6" tabindex="-1"></a>  <span class="fu">split</span>(type) <span class="sc">%&gt;%</span>    <span class="co"># equivalent to `group_by(type)` then `group_split()`</span></span>
+<span id="cb831-7"><a href="9.4-group-and-apply-functions.html#cb831-7" tabindex="-1"></a>  purrr<span class="sc">::</span><span class="fu">map_dfr</span>(trivial_func)</span>
+<span id="cb831-8"><a href="9.4-group-and-apply-functions.html#cb831-8" tabindex="-1"></a></span>
+<span id="cb831-9"><a href="9.4-group-and-apply-functions.html#cb831-9" tabindex="-1"></a><span class="co"># with `data.table`</span></span>
+<span id="cb831-10"><a href="9.4-group-and-apply-functions.html#cb831-10" tabindex="-1"></a><span class="fu">library</span>(data.table)</span>
+<span id="cb831-11"><a href="9.4-group-and-apply-functions.html#cb831-11" tabindex="-1"></a><span class="fu">setDT</span>(df)[, <span class="fu">trivial_func</span>(.SD), type]</span>
+<span id="cb831-12"><a href="9.4-group-and-apply-functions.html#cb831-12" tabindex="-1"></a></span>
+<span id="cb831-13"><a href="9.4-group-and-apply-functions.html#cb831-13" tabindex="-1"></a><span class="co"># with `plyr`</span></span>
+<span id="cb831-14"><a href="9.4-group-and-apply-functions.html#cb831-14" tabindex="-1"></a>plyr<span class="sc">::</span><span class="fu">ddply</span>(df, .(type), trivial_func)</span></code></pre></div>
 <hr />
 <p>Apply regression to each group with <span class="env-green"><code>purrr::map</code></span></p>
-<div class="sourceCode" id="cb830"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb830-1"><a href="9.4-group-and-apply-functions.html#cb830-1" tabindex="-1"></a><span class="co"># A more realistic example: split a data frame into pieces, fit a</span></span>
-<span id="cb830-2"><a href="9.4-group-and-apply-functions.html#cb830-2" tabindex="-1"></a><span class="co"># model to each piece, summarise and extract R^2</span></span>
-<span id="cb830-3"><a href="9.4-group-and-apply-functions.html#cb830-3" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span></span>
-<span id="cb830-4"><a href="9.4-group-and-apply-functions.html#cb830-4" tabindex="-1"></a>  <span class="fu">split</span>(.<span class="sc">$</span>cyl) <span class="sc">%&gt;%</span></span>
-<span id="cb830-5"><a href="9.4-group-and-apply-functions.html#cb830-5" tabindex="-1"></a>  <span class="fu">map</span>(<span class="sc">~</span> <span class="fu">lm</span>(mpg <span class="sc">~</span> wt, <span class="at">data =</span> .x)) <span class="sc">%&gt;%</span></span>
-<span id="cb830-6"><a href="9.4-group-and-apply-functions.html#cb830-6" tabindex="-1"></a>  <span class="fu">map</span>(summary) <span class="sc">%&gt;%</span></span>
-<span id="cb830-7"><a href="9.4-group-and-apply-functions.html#cb830-7" tabindex="-1"></a>  <span class="fu">map_dbl</span>(<span class="st">&quot;r.squared&quot;</span>)</span>
-<span id="cb830-8"><a href="9.4-group-and-apply-functions.html#cb830-8" tabindex="-1"></a></span>
-<span id="cb830-9"><a href="9.4-group-and-apply-functions.html#cb830-9" tabindex="-1"></a><span class="co"># If each element of the output is a data frame, use</span></span>
-<span id="cb830-10"><a href="9.4-group-and-apply-functions.html#cb830-10" tabindex="-1"></a><span class="co"># map_dfr to row-bind them together:</span></span>
-<span id="cb830-11"><a href="9.4-group-and-apply-functions.html#cb830-11" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span></span>
-<span id="cb830-12"><a href="9.4-group-and-apply-functions.html#cb830-12" tabindex="-1"></a>  <span class="fu">split</span>(.<span class="sc">$</span>cyl) <span class="sc">%&gt;%</span></span>
-<span id="cb830-13"><a href="9.4-group-and-apply-functions.html#cb830-13" tabindex="-1"></a>  <span class="fu">map</span>(<span class="sc">~</span> <span class="fu">lm</span>(mpg <span class="sc">~</span> wt, <span class="at">data =</span> .x)) <span class="sc">%&gt;%</span></span>
-<span id="cb830-14"><a href="9.4-group-and-apply-functions.html#cb830-14" tabindex="-1"></a>  <span class="fu">map_dfr</span>(<span class="sc">~</span> <span class="fu">as.data.frame</span>(<span class="fu">t</span>(<span class="fu">as.matrix</span>(<span class="fu">coef</span>(.)))))</span>
-<span id="cb830-15"><a href="9.4-group-and-apply-functions.html#cb830-15" tabindex="-1"></a><span class="co"># (if you also want to preserve the variable names see</span></span>
-<span id="cb830-16"><a href="9.4-group-and-apply-functions.html#cb830-16" tabindex="-1"></a><span class="co"># the broom package)</span></span></code></pre></div>
+<div class="sourceCode" id="cb832"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb832-1"><a href="9.4-group-and-apply-functions.html#cb832-1" tabindex="-1"></a><span class="co"># A more realistic example: split a data frame into pieces, fit a</span></span>
+<span id="cb832-2"><a href="9.4-group-and-apply-functions.html#cb832-2" tabindex="-1"></a><span class="co"># model to each piece, summarise and extract R^2</span></span>
+<span id="cb832-3"><a href="9.4-group-and-apply-functions.html#cb832-3" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span></span>
+<span id="cb832-4"><a href="9.4-group-and-apply-functions.html#cb832-4" tabindex="-1"></a>  <span class="fu">split</span>(.<span class="sc">$</span>cyl) <span class="sc">%&gt;%</span></span>
+<span id="cb832-5"><a href="9.4-group-and-apply-functions.html#cb832-5" tabindex="-1"></a>  <span class="fu">map</span>(<span class="sc">~</span> <span class="fu">lm</span>(mpg <span class="sc">~</span> wt, <span class="at">data =</span> .x)) <span class="sc">%&gt;%</span></span>
+<span id="cb832-6"><a href="9.4-group-and-apply-functions.html#cb832-6" tabindex="-1"></a>  <span class="fu">map</span>(summary) <span class="sc">%&gt;%</span></span>
+<span id="cb832-7"><a href="9.4-group-and-apply-functions.html#cb832-7" tabindex="-1"></a>  <span class="fu">map_dbl</span>(<span class="st">&quot;r.squared&quot;</span>)</span>
+<span id="cb832-8"><a href="9.4-group-and-apply-functions.html#cb832-8" tabindex="-1"></a></span>
+<span id="cb832-9"><a href="9.4-group-and-apply-functions.html#cb832-9" tabindex="-1"></a><span class="co"># If each element of the output is a data frame, use</span></span>
+<span id="cb832-10"><a href="9.4-group-and-apply-functions.html#cb832-10" tabindex="-1"></a><span class="co"># map_dfr to row-bind them together:</span></span>
+<span id="cb832-11"><a href="9.4-group-and-apply-functions.html#cb832-11" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span></span>
+<span id="cb832-12"><a href="9.4-group-and-apply-functions.html#cb832-12" tabindex="-1"></a>  <span class="fu">split</span>(.<span class="sc">$</span>cyl) <span class="sc">%&gt;%</span></span>
+<span id="cb832-13"><a href="9.4-group-and-apply-functions.html#cb832-13" tabindex="-1"></a>  <span class="fu">map</span>(<span class="sc">~</span> <span class="fu">lm</span>(mpg <span class="sc">~</span> wt, <span class="at">data =</span> .x)) <span class="sc">%&gt;%</span></span>
+<span id="cb832-14"><a href="9.4-group-and-apply-functions.html#cb832-14" tabindex="-1"></a>  <span class="fu">map_dfr</span>(<span class="sc">~</span> <span class="fu">as.data.frame</span>(<span class="fu">t</span>(<span class="fu">as.matrix</span>(<span class="fu">coef</span>(.)))))</span>
+<span id="cb832-15"><a href="9.4-group-and-apply-functions.html#cb832-15" tabindex="-1"></a><span class="co"># (if you also want to preserve the variable names see</span></span>
+<span id="cb832-16"><a href="9.4-group-and-apply-functions.html#cb832-16" tabindex="-1"></a><span class="co"># the broom package)</span></span></code></pre></div>
 <hr />
 </div>
 <div id="dplyrgroup_modify" class="section level3 hasAnchor" number="9.4.5">
@@ -1350,7 +1356,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <li><p>If a <strong>function</strong>, it is used as is. It should have <strong>at least 2 formal arguments</strong>.</p>
 <ul>
 <li><p><u>If your costum function has only one argument</u>, you use the formula specification <code>~f(.x)</code>.</p>
-<div class="sourceCode" id="cb831"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb831-1"><a href="9.4-group-and-apply-functions.html#cb831-1" tabindex="-1"></a>econ_data <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(year) <span class="sc">%&gt;%</span> <span class="fu">group_modify</span>(<span class="sc">~</span><span class="fu">funPer_group</span>(.x))</span></code></pre></div></li>
+<div class="sourceCode" id="cb833"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb833-1"><a href="9.4-group-and-apply-functions.html#cb833-1" tabindex="-1"></a>econ_data <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(year) <span class="sc">%&gt;%</span> <span class="fu">group_modify</span>(<span class="sc">~</span><span class="fu">funPer_group</span>(.x))</span></code></pre></div></li>
 </ul></li>
 <li><p>If a <strong>formula</strong>, e.g. <code>~ head(.x)</code>, it is converted to a function.</p>
 <p>In the formula, you can use</p></li>
@@ -1365,19 +1371,19 @@ document.addEventListener('DOMContentLoaded', function() {
 <li>Default to <span class="env-green">drop</span>&gt; the grouping variable. Be mindful of this when you want to subset columns by position.</li>
 </ul></li>
 </ul>
-<div class="sourceCode" id="cb832"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb832-1"><a href="9.4-group-and-apply-functions.html#cb832-1" tabindex="-1"></a>cntry_group <span class="ot">&lt;-</span> cntry_agg_df <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(<span class="fu">as.numeric</span>(ISO_N3), year)</span>
-<span id="cb832-2"><a href="9.4-group-and-apply-functions.html#cb832-2" tabindex="-1"></a></span>
-<span id="cb832-3"><a href="9.4-group-and-apply-functions.html#cb832-3" tabindex="-1"></a>groups <span class="ot">&lt;-</span> cntry_group <span class="sc">%&gt;%</span> <span class="fu">group_split</span>()</span>
-<span id="cb832-4"><a href="9.4-group-and-apply-functions.html#cb832-4" tabindex="-1"></a>cntry_key <span class="ot">&lt;-</span> <span class="fu">group_keys</span>(cntry_group)</span>
-<span id="cb832-5"><a href="9.4-group-and-apply-functions.html#cb832-5" tabindex="-1"></a></span>
-<span id="cb832-6"><a href="9.4-group-and-apply-functions.html#cb832-6" tabindex="-1"></a><span class="co"># use a lambda function which includes a sequence of calculations</span></span>
-<span id="cb832-7"><a href="9.4-group-and-apply-functions.html#cb832-7" tabindex="-1"></a>cntry_stat <span class="ot">&lt;-</span> cntry_group <span class="sc">%&gt;%</span> </span>
-<span id="cb832-8"><a href="9.4-group-and-apply-functions.html#cb832-8" tabindex="-1"></a>    <span class="fu">group_modify</span>(<span class="sc">~</span> {</span>
-<span id="cb832-9"><a href="9.4-group-and-apply-functions.html#cb832-9" tabindex="-1"></a>        .x <span class="sc">%&gt;%</span> <span class="fu">select</span>(var_vec) <span class="sc">%&gt;%</span></span>
-<span id="cb832-10"><a href="9.4-group-and-apply-functions.html#cb832-10" tabindex="-1"></a>            <span class="fu">map_dfc</span>(cal_stat) <span class="sc">%&gt;%</span>                   <span class="co"># calculate stat</span></span>
-<span id="cb832-11"><a href="9.4-group-and-apply-functions.html#cb832-11" tabindex="-1"></a>            <span class="fu">mutate</span>(<span class="at">stat =</span> <span class="fu">c</span>(<span class="st">&quot;mean&quot;</span>, <span class="st">&quot;std&quot;</span>)) <span class="co"># assign stat names</span></span>
-<span id="cb832-12"><a href="9.4-group-and-apply-functions.html#cb832-12" tabindex="-1"></a>            }) <span class="sc">%&gt;%</span> </span>
-<span id="cb832-13"><a href="9.4-group-and-apply-functions.html#cb832-13" tabindex="-1"></a>        <span class="fu">ungroup</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb834"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb834-1"><a href="9.4-group-and-apply-functions.html#cb834-1" tabindex="-1"></a>cntry_group <span class="ot">&lt;-</span> cntry_agg_df <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(<span class="fu">as.numeric</span>(ISO_N3), year)</span>
+<span id="cb834-2"><a href="9.4-group-and-apply-functions.html#cb834-2" tabindex="-1"></a></span>
+<span id="cb834-3"><a href="9.4-group-and-apply-functions.html#cb834-3" tabindex="-1"></a>groups <span class="ot">&lt;-</span> cntry_group <span class="sc">%&gt;%</span> <span class="fu">group_split</span>()</span>
+<span id="cb834-4"><a href="9.4-group-and-apply-functions.html#cb834-4" tabindex="-1"></a>cntry_key <span class="ot">&lt;-</span> <span class="fu">group_keys</span>(cntry_group)</span>
+<span id="cb834-5"><a href="9.4-group-and-apply-functions.html#cb834-5" tabindex="-1"></a></span>
+<span id="cb834-6"><a href="9.4-group-and-apply-functions.html#cb834-6" tabindex="-1"></a><span class="co"># use a lambda function which includes a sequence of calculations</span></span>
+<span id="cb834-7"><a href="9.4-group-and-apply-functions.html#cb834-7" tabindex="-1"></a>cntry_stat <span class="ot">&lt;-</span> cntry_group <span class="sc">%&gt;%</span> </span>
+<span id="cb834-8"><a href="9.4-group-and-apply-functions.html#cb834-8" tabindex="-1"></a>    <span class="fu">group_modify</span>(<span class="sc">~</span> {</span>
+<span id="cb834-9"><a href="9.4-group-and-apply-functions.html#cb834-9" tabindex="-1"></a>        .x <span class="sc">%&gt;%</span> <span class="fu">select</span>(var_vec) <span class="sc">%&gt;%</span></span>
+<span id="cb834-10"><a href="9.4-group-and-apply-functions.html#cb834-10" tabindex="-1"></a>            <span class="fu">map_dfc</span>(cal_stat) <span class="sc">%&gt;%</span>                   <span class="co"># calculate stat</span></span>
+<span id="cb834-11"><a href="9.4-group-and-apply-functions.html#cb834-11" tabindex="-1"></a>            <span class="fu">mutate</span>(<span class="at">stat =</span> <span class="fu">c</span>(<span class="st">&quot;mean&quot;</span>, <span class="st">&quot;std&quot;</span>)) <span class="co"># assign stat names</span></span>
+<span id="cb834-12"><a href="9.4-group-and-apply-functions.html#cb834-12" tabindex="-1"></a>            }) <span class="sc">%&gt;%</span> </span>
+<span id="cb834-13"><a href="9.4-group-and-apply-functions.html#cb834-13" tabindex="-1"></a>        <span class="fu">ungroup</span>()</span></code></pre></div>
 <p>When using a lambda function inside <code>group_modify</code>:</p>
 <ul>
 <li><p><code>.x</code> <u>can only be used once at the first function</u>; <span class="env-green">for later use, use <code>.</code></span></p>
@@ -1390,47 +1396,47 @@ document.addEventListener('DOMContentLoaded', function() {
 <p><code>enframe(x, name = "name", value = "value")</code> use examples:</p>
 <ul>
 <li><p>Convert named atomic vectors to a tibble with one row per element.</p>
-<div class="sourceCode" id="cb833"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb833-1"><a href="9.4-group-and-apply-functions.html#cb833-1" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">enframe</span>(<span class="fu">c</span>(<span class="at">a =</span> <span class="dv">5</span>, <span class="at">b =</span> <span class="dv">7</span>))</span>
-<span id="cb833-2"><a href="9.4-group-and-apply-functions.html#cb833-2" tabindex="-1"></a><span class="co"># A tibble: 2 × 2</span></span>
-<span id="cb833-3"><a href="9.4-group-and-apply-functions.html#cb833-3" tabindex="-1"></a>  name  value</span>
-<span id="cb833-4"><a href="9.4-group-and-apply-functions.html#cb833-4" tabindex="-1"></a>  <span class="sc">&lt;</span>chr<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span></span>
-<span id="cb833-5"><a href="9.4-group-and-apply-functions.html#cb833-5" tabindex="-1"></a><span class="dv">1</span> a         <span class="dv">5</span></span>
-<span id="cb833-6"><a href="9.4-group-and-apply-functions.html#cb833-6" tabindex="-1"></a><span class="dv">2</span> b         <span class="dv">7</span></span></code></pre></div></li>
+<div class="sourceCode" id="cb835"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb835-1"><a href="9.4-group-and-apply-functions.html#cb835-1" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">enframe</span>(<span class="fu">c</span>(<span class="at">a =</span> <span class="dv">5</span>, <span class="at">b =</span> <span class="dv">7</span>))</span>
+<span id="cb835-2"><a href="9.4-group-and-apply-functions.html#cb835-2" tabindex="-1"></a><span class="co"># A tibble: 2 × 2</span></span>
+<span id="cb835-3"><a href="9.4-group-and-apply-functions.html#cb835-3" tabindex="-1"></a>  name  value</span>
+<span id="cb835-4"><a href="9.4-group-and-apply-functions.html#cb835-4" tabindex="-1"></a>  <span class="sc">&lt;</span>chr<span class="sc">&gt;</span> <span class="er">&lt;</span>dbl<span class="sc">&gt;</span></span>
+<span id="cb835-5"><a href="9.4-group-and-apply-functions.html#cb835-5" tabindex="-1"></a><span class="dv">1</span> a         <span class="dv">5</span></span>
+<span id="cb835-6"><a href="9.4-group-and-apply-functions.html#cb835-6" tabindex="-1"></a><span class="dv">2</span> b         <span class="dv">7</span></span></code></pre></div></li>
 <li><p>Convert named list to a tibble with one row per element.</p>
-<div class="sourceCode" id="cb834"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb834-1"><a href="9.4-group-and-apply-functions.html#cb834-1" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">enframe</span>(<span class="fu">list</span>(<span class="at">one =</span> <span class="dv">1</span>, <span class="at">two =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">3</span>, <span class="at">three =</span> <span class="dv">4</span><span class="sc">:</span><span class="dv">6</span>))</span>
-<span id="cb834-2"><a href="9.4-group-and-apply-functions.html#cb834-2" tabindex="-1"></a><span class="co"># A tibble: 3 × 2</span></span>
-<span id="cb834-3"><a href="9.4-group-and-apply-functions.html#cb834-3" tabindex="-1"></a>  name  value    </span>
-<span id="cb834-4"><a href="9.4-group-and-apply-functions.html#cb834-4" tabindex="-1"></a>  <span class="sc">&lt;</span>chr<span class="sc">&gt;</span> <span class="er">&lt;</span>list<span class="sc">&gt;</span>   </span>
-<span id="cb834-5"><a href="9.4-group-and-apply-functions.html#cb834-5" tabindex="-1"></a><span class="dv">1</span> one   <span class="sc">&lt;</span>dbl [<span class="dv">1</span>]<span class="sc">&gt;</span></span>
-<span id="cb834-6"><a href="9.4-group-and-apply-functions.html#cb834-6" tabindex="-1"></a><span class="dv">2</span> two   <span class="sc">&lt;</span>int [<span class="dv">2</span>]<span class="sc">&gt;</span></span>
-<span id="cb834-7"><a href="9.4-group-and-apply-functions.html#cb834-7" tabindex="-1"></a><span class="dv">3</span> three <span class="sc">&lt;</span>int [<span class="dv">3</span>]<span class="sc">&gt;</span></span></code></pre></div></li>
+<div class="sourceCode" id="cb836"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb836-1"><a href="9.4-group-and-apply-functions.html#cb836-1" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">enframe</span>(<span class="fu">list</span>(<span class="at">one =</span> <span class="dv">1</span>, <span class="at">two =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">3</span>, <span class="at">three =</span> <span class="dv">4</span><span class="sc">:</span><span class="dv">6</span>))</span>
+<span id="cb836-2"><a href="9.4-group-and-apply-functions.html#cb836-2" tabindex="-1"></a><span class="co"># A tibble: 3 × 2</span></span>
+<span id="cb836-3"><a href="9.4-group-and-apply-functions.html#cb836-3" tabindex="-1"></a>  name  value    </span>
+<span id="cb836-4"><a href="9.4-group-and-apply-functions.html#cb836-4" tabindex="-1"></a>  <span class="sc">&lt;</span>chr<span class="sc">&gt;</span> <span class="er">&lt;</span>list<span class="sc">&gt;</span>   </span>
+<span id="cb836-5"><a href="9.4-group-and-apply-functions.html#cb836-5" tabindex="-1"></a><span class="dv">1</span> one   <span class="sc">&lt;</span>dbl [<span class="dv">1</span>]<span class="sc">&gt;</span></span>
+<span id="cb836-6"><a href="9.4-group-and-apply-functions.html#cb836-6" tabindex="-1"></a><span class="dv">2</span> two   <span class="sc">&lt;</span>int [<span class="dv">2</span>]<span class="sc">&gt;</span></span>
+<span id="cb836-7"><a href="9.4-group-and-apply-functions.html#cb836-7" tabindex="-1"></a><span class="dv">3</span> three <span class="sc">&lt;</span>int [<span class="dv">3</span>]<span class="sc">&gt;</span></span></code></pre></div></li>
 </ul>
 <hr />
 <p><strong>Apply CAPM to each company</strong></p>
-<div class="sourceCode" id="cb835"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb835-1"><a href="9.4-group-and-apply-functions.html#cb835-1" tabindex="-1"></a><span class="co"># Apply CAPM to each company</span></span>
-<span id="cb835-2"><a href="9.4-group-and-apply-functions.html#cb835-2" tabindex="-1"></a><span class="co"># start with `.x`</span></span>
-<span id="cb835-3"><a href="9.4-group-and-apply-functions.html#cb835-3" tabindex="-1"></a><span class="co"># clearer logic flow, I prefer this approach ✓</span></span>
-<span id="cb835-4"><a href="9.4-group-and-apply-functions.html#cb835-4" tabindex="-1"></a>data_group <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(ISIN)</span>
-<span id="cb835-5"><a href="9.4-group-and-apply-functions.html#cb835-5" tabindex="-1"></a>data_group <span class="sc">%&gt;%</span> </span>
-<span id="cb835-6"><a href="9.4-group-and-apply-functions.html#cb835-6" tabindex="-1"></a>    <span class="co"># filter(cur_group_id() %in% c(1,2)) %&gt;% </span></span>
-<span id="cb835-7"><a href="9.4-group-and-apply-functions.html#cb835-7" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="fu">cur_group_id</span>() <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb835-8"><a href="9.4-group-and-apply-functions.html#cb835-8" tabindex="-1"></a>    <span class="fu">group_modify</span>(<span class="sc">~</span> {</span>
-<span id="cb835-9"><a href="9.4-group-and-apply-functions.html#cb835-9" tabindex="-1"></a>        .x <span class="sc">%&gt;%</span> </span>
-<span id="cb835-10"><a href="9.4-group-and-apply-functions.html#cb835-10" tabindex="-1"></a>            <span class="fu">filter</span>(<span class="fu">between</span>(p_date, estimation_start, estimation_end)) <span class="sc">%&gt;%</span> </span>
-<span id="cb835-11"><a href="9.4-group-and-apply-functions.html#cb835-11" tabindex="-1"></a>            <span class="fu">lm</span>(eRi<span class="sc">~</span>rmrf, <span class="at">data=</span>.) <span class="sc">%&gt;%</span> </span>
-<span id="cb835-12"><a href="9.4-group-and-apply-functions.html#cb835-12" tabindex="-1"></a>            <span class="fu">tidy</span>(.)</span>
-<span id="cb835-13"><a href="9.4-group-and-apply-functions.html#cb835-13" tabindex="-1"></a>    })</span>
-<span id="cb835-14"><a href="9.4-group-and-apply-functions.html#cb835-14" tabindex="-1"></a></span>
-<span id="cb835-15"><a href="9.4-group-and-apply-functions.html#cb835-15" tabindex="-1"></a><span class="co"># ------------------------------------------------</span></span>
-<span id="cb835-16"><a href="9.4-group-and-apply-functions.html#cb835-16" tabindex="-1"></a><span class="co"># Equivalently, plug in `.x` in the first func</span></span>
-<span id="cb835-17"><a href="9.4-group-and-apply-functions.html#cb835-17" tabindex="-1"></a><span class="co"># one line shorter, more concise</span></span>
-<span id="cb835-18"><a href="9.4-group-and-apply-functions.html#cb835-18" tabindex="-1"></a>data_group <span class="sc">%&gt;%</span> </span>
-<span id="cb835-19"><a href="9.4-group-and-apply-functions.html#cb835-19" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="fu">cur_group_id</span>() <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb835-20"><a href="9.4-group-and-apply-functions.html#cb835-20" tabindex="-1"></a>    <span class="fu">group_modify</span>(<span class="sc">~</span> {</span>
-<span id="cb835-21"><a href="9.4-group-and-apply-functions.html#cb835-21" tabindex="-1"></a>            <span class="fu">filter</span>(.x, <span class="fu">between</span>(p_date, estimation_start, estimation_end)) <span class="sc">%&gt;%</span> </span>
-<span id="cb835-22"><a href="9.4-group-and-apply-functions.html#cb835-22" tabindex="-1"></a>            <span class="fu">lm</span>(eRi<span class="sc">~</span>rmrf, <span class="at">data=</span>.) <span class="sc">%&gt;%</span> </span>
-<span id="cb835-23"><a href="9.4-group-and-apply-functions.html#cb835-23" tabindex="-1"></a>            <span class="fu">tidy</span>(.)</span>
-<span id="cb835-24"><a href="9.4-group-and-apply-functions.html#cb835-24" tabindex="-1"></a>    })</span></code></pre></div>
+<div class="sourceCode" id="cb837"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb837-1"><a href="9.4-group-and-apply-functions.html#cb837-1" tabindex="-1"></a><span class="co"># Apply CAPM to each company</span></span>
+<span id="cb837-2"><a href="9.4-group-and-apply-functions.html#cb837-2" tabindex="-1"></a><span class="co"># start with `.x`</span></span>
+<span id="cb837-3"><a href="9.4-group-and-apply-functions.html#cb837-3" tabindex="-1"></a><span class="co"># clearer logic flow, I prefer this approach ✓</span></span>
+<span id="cb837-4"><a href="9.4-group-and-apply-functions.html#cb837-4" tabindex="-1"></a>data_group <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(ISIN)</span>
+<span id="cb837-5"><a href="9.4-group-and-apply-functions.html#cb837-5" tabindex="-1"></a>data_group <span class="sc">%&gt;%</span> </span>
+<span id="cb837-6"><a href="9.4-group-and-apply-functions.html#cb837-6" tabindex="-1"></a>    <span class="co"># filter(cur_group_id() %in% c(1,2)) %&gt;% </span></span>
+<span id="cb837-7"><a href="9.4-group-and-apply-functions.html#cb837-7" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="fu">cur_group_id</span>() <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb837-8"><a href="9.4-group-and-apply-functions.html#cb837-8" tabindex="-1"></a>    <span class="fu">group_modify</span>(<span class="sc">~</span> {</span>
+<span id="cb837-9"><a href="9.4-group-and-apply-functions.html#cb837-9" tabindex="-1"></a>        .x <span class="sc">%&gt;%</span> </span>
+<span id="cb837-10"><a href="9.4-group-and-apply-functions.html#cb837-10" tabindex="-1"></a>            <span class="fu">filter</span>(<span class="fu">between</span>(p_date, estimation_start, estimation_end)) <span class="sc">%&gt;%</span> </span>
+<span id="cb837-11"><a href="9.4-group-and-apply-functions.html#cb837-11" tabindex="-1"></a>            <span class="fu">lm</span>(eRi<span class="sc">~</span>rmrf, <span class="at">data=</span>.) <span class="sc">%&gt;%</span> </span>
+<span id="cb837-12"><a href="9.4-group-and-apply-functions.html#cb837-12" tabindex="-1"></a>            <span class="fu">tidy</span>(.)</span>
+<span id="cb837-13"><a href="9.4-group-and-apply-functions.html#cb837-13" tabindex="-1"></a>    })</span>
+<span id="cb837-14"><a href="9.4-group-and-apply-functions.html#cb837-14" tabindex="-1"></a></span>
+<span id="cb837-15"><a href="9.4-group-and-apply-functions.html#cb837-15" tabindex="-1"></a><span class="co"># ------------------------------------------------</span></span>
+<span id="cb837-16"><a href="9.4-group-and-apply-functions.html#cb837-16" tabindex="-1"></a><span class="co"># Equivalently, plug in `.x` in the first func</span></span>
+<span id="cb837-17"><a href="9.4-group-and-apply-functions.html#cb837-17" tabindex="-1"></a><span class="co"># one line shorter, more concise</span></span>
+<span id="cb837-18"><a href="9.4-group-and-apply-functions.html#cb837-18" tabindex="-1"></a>data_group <span class="sc">%&gt;%</span> </span>
+<span id="cb837-19"><a href="9.4-group-and-apply-functions.html#cb837-19" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="fu">cur_group_id</span>() <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb837-20"><a href="9.4-group-and-apply-functions.html#cb837-20" tabindex="-1"></a>    <span class="fu">group_modify</span>(<span class="sc">~</span> {</span>
+<span id="cb837-21"><a href="9.4-group-and-apply-functions.html#cb837-21" tabindex="-1"></a>            <span class="fu">filter</span>(.x, <span class="fu">between</span>(p_date, estimation_start, estimation_end)) <span class="sc">%&gt;%</span> </span>
+<span id="cb837-22"><a href="9.4-group-and-apply-functions.html#cb837-22" tabindex="-1"></a>            <span class="fu">lm</span>(eRi<span class="sc">~</span>rmrf, <span class="at">data=</span>.) <span class="sc">%&gt;%</span> </span>
+<span id="cb837-23"><a href="9.4-group-and-apply-functions.html#cb837-23" tabindex="-1"></a>            <span class="fu">tidy</span>(.)</span>
+<span id="cb837-24"><a href="9.4-group-and-apply-functions.html#cb837-24" tabindex="-1"></a>    })</span></code></pre></div>
 <ul>
 <li><code>filter(cur_group_id() == 1)</code> select the 1st group to test run your function</li>
 </ul>
@@ -1438,26 +1444,26 @@ document.addEventListener('DOMContentLoaded', function() {
 <ul>
 <li>This approach is easier to debug, whereas long sequence of lambda is hard to debug.</li>
 </ul>
-<div class="sourceCode" id="cb836"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb836-1"><a href="9.4-group-and-apply-functions.html#cb836-1" tabindex="-1"></a>factor_model <span class="ot">&lt;-</span> <span class="cf">function</span>(company_data){</span>
-<span id="cb836-2"><a href="9.4-group-and-apply-functions.html#cb836-2" tabindex="-1"></a>    company_data <span class="ot">&lt;-</span> company_data <span class="sc">%&gt;%</span> </span>
-<span id="cb836-3"><a href="9.4-group-and-apply-functions.html#cb836-3" tabindex="-1"></a>        <span class="fu">filter</span>(<span class="fu">between</span>(p_date, estimation_start, estimation_end))</span>
-<span id="cb836-4"><a href="9.4-group-and-apply-functions.html#cb836-4" tabindex="-1"></a>    reg_ml <span class="ot">&lt;-</span> <span class="fu">lm</span>(eRi<span class="sc">~</span>rmrf, <span class="at">data=</span>company_data)</span>
-<span id="cb836-5"><a href="9.4-group-and-apply-functions.html#cb836-5" tabindex="-1"></a>    coef_est <span class="ot">&lt;-</span> <span class="fu">tidy</span>(reg_ml)</span>
-<span id="cb836-6"><a href="9.4-group-and-apply-functions.html#cb836-6" tabindex="-1"></a>    <span class="fu">return</span> (coef_est)</span>
-<span id="cb836-7"><a href="9.4-group-and-apply-functions.html#cb836-7" tabindex="-1"></a>}</span>
-<span id="cb836-8"><a href="9.4-group-and-apply-functions.html#cb836-8" tabindex="-1"></a><span class="co"># Debug with one group</span></span>
-<span id="cb836-9"><a href="9.4-group-and-apply-functions.html#cb836-9" tabindex="-1"></a>groups <span class="ot">&lt;-</span> data_group <span class="sc">%&gt;%</span> <span class="fu">group_split</span>()</span>
-<span id="cb836-10"><a href="9.4-group-and-apply-functions.html#cb836-10" tabindex="-1"></a><span class="fu">factor_model</span>(groups[[<span class="dv">1</span>]])</span>
-<span id="cb836-11"><a href="9.4-group-and-apply-functions.html#cb836-11" tabindex="-1"></a><span class="co"># A tibble: 2 × 5</span></span>
-<span id="cb836-12"><a href="9.4-group-and-apply-functions.html#cb836-12" tabindex="-1"></a>  term        estimate std.error statistic p.value</span>
-<span id="cb836-13"><a href="9.4-group-and-apply-functions.html#cb836-13" tabindex="-1"></a>  <span class="sc">&lt;</span>chr<span class="sc">&gt;</span>          <span class="er">&lt;</span>dbl<span class="sc">&gt;</span>     <span class="er">&lt;</span>dbl<span class="sc">&gt;</span>     <span class="er">&lt;</span>dbl<span class="sc">&gt;</span>   <span class="er">&lt;</span>dbl<span class="sc">&gt;</span></span>
-<span id="cb836-14"><a href="9.4-group-and-apply-functions.html#cb836-14" tabindex="-1"></a><span class="dv">1</span> (Intercept)    <span class="fl">0.114</span>    <span class="fl">0.0784</span>      <span class="fl">1.45</span> <span class="fl">0.147</span>  </span>
-<span id="cb836-15"><a href="9.4-group-and-apply-functions.html#cb836-15" tabindex="-1"></a><span class="dv">2</span> rmrf           <span class="fl">0.280</span>    <span class="fl">0.0945</span>      <span class="fl">2.97</span> <span class="fl">0.00331</span></span>
-<span id="cb836-16"><a href="9.4-group-and-apply-functions.html#cb836-16" tabindex="-1"></a></span>
-<span id="cb836-17"><a href="9.4-group-and-apply-functions.html#cb836-17" tabindex="-1"></a><span class="co"># Apply to all groups</span></span>
-<span id="cb836-18"><a href="9.4-group-and-apply-functions.html#cb836-18" tabindex="-1"></a>data_group <span class="sc">%&gt;%</span> </span>
-<span id="cb836-19"><a href="9.4-group-and-apply-functions.html#cb836-19" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="fu">cur_group_id</span>() <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb836-20"><a href="9.4-group-and-apply-functions.html#cb836-20" tabindex="-1"></a>    <span class="fu">group_modify</span>(<span class="sc">~</span><span class="fu">factor_model</span>(.x))</span></code></pre></div>
+<div class="sourceCode" id="cb838"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb838-1"><a href="9.4-group-and-apply-functions.html#cb838-1" tabindex="-1"></a>factor_model <span class="ot">&lt;-</span> <span class="cf">function</span>(company_data){</span>
+<span id="cb838-2"><a href="9.4-group-and-apply-functions.html#cb838-2" tabindex="-1"></a>    company_data <span class="ot">&lt;-</span> company_data <span class="sc">%&gt;%</span> </span>
+<span id="cb838-3"><a href="9.4-group-and-apply-functions.html#cb838-3" tabindex="-1"></a>        <span class="fu">filter</span>(<span class="fu">between</span>(p_date, estimation_start, estimation_end))</span>
+<span id="cb838-4"><a href="9.4-group-and-apply-functions.html#cb838-4" tabindex="-1"></a>    reg_ml <span class="ot">&lt;-</span> <span class="fu">lm</span>(eRi<span class="sc">~</span>rmrf, <span class="at">data=</span>company_data)</span>
+<span id="cb838-5"><a href="9.4-group-and-apply-functions.html#cb838-5" tabindex="-1"></a>    coef_est <span class="ot">&lt;-</span> <span class="fu">tidy</span>(reg_ml)</span>
+<span id="cb838-6"><a href="9.4-group-and-apply-functions.html#cb838-6" tabindex="-1"></a>    <span class="fu">return</span> (coef_est)</span>
+<span id="cb838-7"><a href="9.4-group-and-apply-functions.html#cb838-7" tabindex="-1"></a>}</span>
+<span id="cb838-8"><a href="9.4-group-and-apply-functions.html#cb838-8" tabindex="-1"></a><span class="co"># Debug with one group</span></span>
+<span id="cb838-9"><a href="9.4-group-and-apply-functions.html#cb838-9" tabindex="-1"></a>groups <span class="ot">&lt;-</span> data_group <span class="sc">%&gt;%</span> <span class="fu">group_split</span>()</span>
+<span id="cb838-10"><a href="9.4-group-and-apply-functions.html#cb838-10" tabindex="-1"></a><span class="fu">factor_model</span>(groups[[<span class="dv">1</span>]])</span>
+<span id="cb838-11"><a href="9.4-group-and-apply-functions.html#cb838-11" tabindex="-1"></a><span class="co"># A tibble: 2 × 5</span></span>
+<span id="cb838-12"><a href="9.4-group-and-apply-functions.html#cb838-12" tabindex="-1"></a>  term        estimate std.error statistic p.value</span>
+<span id="cb838-13"><a href="9.4-group-and-apply-functions.html#cb838-13" tabindex="-1"></a>  <span class="sc">&lt;</span>chr<span class="sc">&gt;</span>          <span class="er">&lt;</span>dbl<span class="sc">&gt;</span>     <span class="er">&lt;</span>dbl<span class="sc">&gt;</span>     <span class="er">&lt;</span>dbl<span class="sc">&gt;</span>   <span class="er">&lt;</span>dbl<span class="sc">&gt;</span></span>
+<span id="cb838-14"><a href="9.4-group-and-apply-functions.html#cb838-14" tabindex="-1"></a><span class="dv">1</span> (Intercept)    <span class="fl">0.114</span>    <span class="fl">0.0784</span>      <span class="fl">1.45</span> <span class="fl">0.147</span>  </span>
+<span id="cb838-15"><a href="9.4-group-and-apply-functions.html#cb838-15" tabindex="-1"></a><span class="dv">2</span> rmrf           <span class="fl">0.280</span>    <span class="fl">0.0945</span>      <span class="fl">2.97</span> <span class="fl">0.00331</span></span>
+<span id="cb838-16"><a href="9.4-group-and-apply-functions.html#cb838-16" tabindex="-1"></a></span>
+<span id="cb838-17"><a href="9.4-group-and-apply-functions.html#cb838-17" tabindex="-1"></a><span class="co"># Apply to all groups</span></span>
+<span id="cb838-18"><a href="9.4-group-and-apply-functions.html#cb838-18" tabindex="-1"></a>data_group <span class="sc">%&gt;%</span> </span>
+<span id="cb838-19"><a href="9.4-group-and-apply-functions.html#cb838-19" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="fu">cur_group_id</span>() <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb838-20"><a href="9.4-group-and-apply-functions.html#cb838-20" tabindex="-1"></a>    <span class="fu">group_modify</span>(<span class="sc">~</span><span class="fu">factor_model</span>(.x))</span></code></pre></div>
 <ul>
 <li><code>group_modify</code> requires at least 2 formal arguments for the function.</li>
 <li>Since the custom function <code>factor_model</code> has only 1 argument, we must use the lambda formula to pass to <code>group_modify</code>.</li>
@@ -1540,23 +1546,23 @@ iris %>%
 </code></pre>
 <p><code>group_walk(.data, .f)</code> calls <code>.f</code> for side effects and returns the input <code>.tbl</code>, invisibly.</p>
 <p>Can be used to write dplyr groups to separate files.</p>
-<div class="sourceCode" id="cb837"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb837-1"><a href="9.4-group-and-apply-functions.html#cb837-1" tabindex="-1"></a><span class="co"># `.x` refers to the group</span></span>
-<span id="cb837-2"><a href="9.4-group-and-apply-functions.html#cb837-2" tabindex="-1"></a><span class="co"># `.y` refers to the key</span></span>
-<span id="cb837-3"><a href="9.4-group-and-apply-functions.html#cb837-3" tabindex="-1"></a><span class="co"># `.keep = TRUE` keeps the key column</span></span>
-<span id="cb837-4"><a href="9.4-group-and-apply-functions.html#cb837-4" tabindex="-1"></a>all_df <span class="sc">%&gt;%</span> </span>
-<span id="cb837-5"><a href="9.4-group-and-apply-functions.html#cb837-5" tabindex="-1"></a>    <span class="fu">group_by</span>(ISO_C3) <span class="sc">%&gt;%</span> </span>
-<span id="cb837-6"><a href="9.4-group-and-apply-functions.html#cb837-6" tabindex="-1"></a>    <span class="fu">group_walk</span>(<span class="sc">~</span> <span class="fu">write_csv</span>(.x, <span class="fu">sprintf</span>(<span class="st">&quot;./data/reg_result/bootstrap/%s/pathway_country/country-impact_bootstrap1000_tmp_%s.csv&quot;</span>, ssp, .y<span class="sc">$</span>ISO_C3) ), <span class="at">.keep =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb839"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb839-1"><a href="9.4-group-and-apply-functions.html#cb839-1" tabindex="-1"></a><span class="co"># `.x` refers to the group</span></span>
+<span id="cb839-2"><a href="9.4-group-and-apply-functions.html#cb839-2" tabindex="-1"></a><span class="co"># `.y` refers to the key</span></span>
+<span id="cb839-3"><a href="9.4-group-and-apply-functions.html#cb839-3" tabindex="-1"></a><span class="co"># `.keep = TRUE` keeps the key column</span></span>
+<span id="cb839-4"><a href="9.4-group-and-apply-functions.html#cb839-4" tabindex="-1"></a>all_df <span class="sc">%&gt;%</span> </span>
+<span id="cb839-5"><a href="9.4-group-and-apply-functions.html#cb839-5" tabindex="-1"></a>    <span class="fu">group_by</span>(ISO_C3) <span class="sc">%&gt;%</span> </span>
+<span id="cb839-6"><a href="9.4-group-and-apply-functions.html#cb839-6" tabindex="-1"></a>    <span class="fu">group_walk</span>(<span class="sc">~</span> <span class="fu">write_csv</span>(.x, <span class="fu">sprintf</span>(<span class="st">&quot;./data/reg_result/bootstrap/%s/pathway_country/country-impact_bootstrap1000_tmp_%s.csv&quot;</span>, ssp, .y<span class="sc">$</span>ISO_C3) ), <span class="at">.keep =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 <p><strong>Suset specific groups</strong></p>
-<div class="sourceCode" id="cb838"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb838-1"><a href="9.4-group-and-apply-functions.html#cb838-1" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span></span>
-<span id="cb838-2"><a href="9.4-group-and-apply-functions.html#cb838-2" tabindex="-1"></a>  <span class="fu">group_by</span>(cyl) <span class="sc">%&gt;%</span></span>
-<span id="cb838-3"><a href="9.4-group-and-apply-functions.html#cb838-3" tabindex="-1"></a>  <span class="fu">select_first_n_groups</span>(<span class="dv">2</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb838-4"><a href="9.4-group-and-apply-functions.html#cb838-4" tabindex="-1"></a>  <span class="fu">do</span>({<span class="st">&#39;complicated expression&#39;</span>})</span></code></pre></div>
-<p><code>data.table</code> implementation</p>
-<div class="sourceCode" id="cb839"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb839-1"><a href="9.4-group-and-apply-functions.html#cb839-1" tabindex="-1"></a><span class="fu">setDT</span>(mtcars)[, .SD[.GRP <span class="sc">%in%</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>], by<span class="ot">=</span>cyl]</span></code></pre></div>
-<p><code>dplyr</code> implementation</p>
 <div class="sourceCode" id="cb840"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb840-1"><a href="9.4-group-and-apply-functions.html#cb840-1" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span></span>
 <span id="cb840-2"><a href="9.4-group-and-apply-functions.html#cb840-2" tabindex="-1"></a>  <span class="fu">group_by</span>(cyl) <span class="sc">%&gt;%</span></span>
-<span id="cb840-3"><a href="9.4-group-and-apply-functions.html#cb840-3" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">cur_group_id</span>() <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>))</span></code></pre></div>
+<span id="cb840-3"><a href="9.4-group-and-apply-functions.html#cb840-3" tabindex="-1"></a>  <span class="fu">select_first_n_groups</span>(<span class="dv">2</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb840-4"><a href="9.4-group-and-apply-functions.html#cb840-4" tabindex="-1"></a>  <span class="fu">do</span>({<span class="st">&#39;complicated expression&#39;</span>})</span></code></pre></div>
+<p><code>data.table</code> implementation</p>
+<div class="sourceCode" id="cb841"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb841-1"><a href="9.4-group-and-apply-functions.html#cb841-1" tabindex="-1"></a><span class="fu">setDT</span>(mtcars)[, .SD[.GRP <span class="sc">%in%</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>], by<span class="ot">=</span>cyl]</span></code></pre></div>
+<p><code>dplyr</code> implementation</p>
+<div class="sourceCode" id="cb842"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb842-1"><a href="9.4-group-and-apply-functions.html#cb842-1" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span></span>
+<span id="cb842-2"><a href="9.4-group-and-apply-functions.html#cb842-2" tabindex="-1"></a>  <span class="fu">group_by</span>(cyl) <span class="sc">%&gt;%</span></span>
+<span id="cb842-3"><a href="9.4-group-and-apply-functions.html#cb842-3" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">cur_group_id</span>() <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>))</span></code></pre></div>
 
 </div>
 </div>

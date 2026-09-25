@@ -332,7 +332,7 @@ By default, RStudio enables inline output (Notebook mode) on all R Markdown docu
 
     To use the console by default for all your R Markdown documents: Tools -> Options -> R Markdown -> Uncheck `Show output inline for all R Markdown documents`.
 
-    <img src="images/chunk output in console.png" width="60%" />
+    <img src="images/chunk output in console.png" width="60%" style="display: block; margin: auto;" />
 
 - To add comments to a function, you can type “**Roxygen comment**” into the Command Palette (shift+cmd+P) while the cursor is in a function and it will automatically add a template structure for writing a comment about your function.
 
@@ -356,7 +356,7 @@ By default, RStudio enables inline output (Notebook mode) on all R Markdown docu
 
   When you type an existing R function such as `round(`, not only does <span style='color:#00CC66'>`tab`</span> give you the options, but there's an explanation beneath each variable, telling you its role in the function:
 
-  <img src="images/func help.png" width="100%" />
+  <img src="images/func help.png" width="100%" style="display: block; margin: auto;" />
 
 
 

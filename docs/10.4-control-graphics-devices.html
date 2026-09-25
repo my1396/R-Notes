@@ -793,7 +793,13 @@ div.csl-indent {
 <li class="chapter" data-level="11.3.2" data-path="11.3-process-data.html"><a href="11.3-process-data.html#from-tibble-to-xts"><i class="fa fa-check"></i><b>11.3.2</b> From tibble to <code>xts</code></a></li>
 </ul></li>
 <li class="chapter" data-level="11.4" data-path="11.4-technical-analysis.html"><a href="11.4-technical-analysis.html"><i class="fa fa-check"></i><b>11.4</b> Technical Analysis</a></li>
-<li class="chapter" data-level="11.5" data-path="11.5-portfolio-return.html"><a href="11.5-portfolio-return.html"><i class="fa fa-check"></i><b>11.5</b> Portfolio Return</a></li>
+<li class="chapter" data-level="11.5" data-path="11.5-portfolio-return.html"><a href="11.5-portfolio-return.html"><i class="fa fa-check"></i><b>11.5</b> Portfolio Return</a>
+<ul>
+<li class="chapter" data-level="11.5.1" data-path="11.5-portfolio-return.html"><a href="11.5-portfolio-return.html#plot-portfolio-return"><i class="fa fa-check"></i><b>11.5.1</b> Plot portfolio return</a></li>
+<li class="chapter" data-level="11.5.2" data-path="11.5-portfolio-return.html"><a href="11.5-portfolio-return.html#rolling-performance"><i class="fa fa-check"></i><b>11.5.2</b> Rolling performance</a></li>
+<li class="chapter" data-level="11.5.3" data-path="11.5-portfolio-return.html"><a href="11.5-portfolio-return.html#monthly-summary-statistics"><i class="fa fa-check"></i><b>11.5.3</b> Monthly summary statistics</a></li>
+<li class="chapter" data-level="11.5.4" data-path="11.5-portfolio-return.html"><a href="11.5-portfolio-return.html#risk-adjusted-performance-measures"><i class="fa fa-check"></i><b>11.5.4</b> Risk-adjusted performance measures</a></li>
+</ul></li>
 <li class="chapter" data-level="11.6" data-path="11.6-plot-ts.html"><a href="11.6-plot-ts.html"><i class="fa fa-check"></i><b>11.6</b> Plot TS</a>
 <ul>
 <li class="chapter" data-level="11.6.1" data-path="11.6-plot-ts.html"><a href="11.6-plot-ts.html#plot.xts"><i class="fa fa-check"></i><b>11.6.1</b> <code>plot.xts</code></a></li>
@@ -1060,35 +1066,35 @@ document.addEventListener('DOMContentLoaded', function() {
 <p><code>dev.off(which = dev.cur())</code> shuts down the specified (by default the current) device.</p>
 <p><strong><code>graphics.off()</code></strong> shuts down all open graphics devices.</p>
 <p><strong>Save the current graphic object</strong></p>
-<div class="sourceCode" id="cb890"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb890-1"><a href="10.4-control-graphics-devices.html#cb890-1" tabindex="-1"></a><span class="fu">library</span>(grid)</span>
-<span id="cb890-2"><a href="10.4-control-graphics-devices.html#cb890-2" tabindex="-1"></a>grab <span class="ot">&lt;-</span> <span class="fu">grid.grab</span>()</span>
-<span id="cb890-3"><a href="10.4-control-graphics-devices.html#cb890-3" tabindex="-1"></a><span class="fu">ggsave</span>(grab, <span class="at">filename =</span> f_name, <span class="at">width=</span><span class="fl">10.9</span>, <span class="at">height=</span><span class="fl">5.82</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb892"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb892-1"><a href="10.4-control-graphics-devices.html#cb892-1" tabindex="-1"></a><span class="fu">library</span>(grid)</span>
+<span id="cb892-2"><a href="10.4-control-graphics-devices.html#cb892-2" tabindex="-1"></a>grab <span class="ot">&lt;-</span> <span class="fu">grid.grab</span>()</span>
+<span id="cb892-3"><a href="10.4-control-graphics-devices.html#cb892-3" tabindex="-1"></a><span class="fu">ggsave</span>(grab, <span class="at">filename =</span> f_name, <span class="at">width=</span><span class="fl">10.9</span>, <span class="at">height=</span><span class="fl">5.82</span>)</span></code></pre></div>
 <ul>
 <li><code>pdf</code> device uses inches to specify width and height.</li>
 <li><code>png</code> and <code>jpeg</code> use pixels to specify dimensions.</li>
 </ul>
 <div id="save-png" class="section level3 hasAnchor" number="10.4.1">
 <h3><span class="header-section-number">10.4.1</span> Save PNG<a href="10.4-control-graphics-devices.html#save-png" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<div class="sourceCode" id="cb891"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb891-1"><a href="10.4-control-graphics-devices.html#cb891-1" tabindex="-1"></a>plot_png <span class="ot">&lt;-</span> <span class="cf">function</span>(p, fn, <span class="at">width =</span> <span class="fl">5.5</span>, <span class="at">height =</span> <span class="dv">4</span>, <span class="at">ppi =</span> <span class="dv">300</span>) {</span>
-<span id="cb891-2"><a href="10.4-control-graphics-devices.html#cb891-2" tabindex="-1"></a>    <span class="co">#&#39; A wrapper function to save a plot as a PNG file.</span></span>
-<span id="cb891-3"><a href="10.4-control-graphics-devices.html#cb891-3" tabindex="-1"></a>    <span class="co">#&#39; If p is a function, call it to generate the plot; → This is useful for functions </span></span>
-<span id="cb891-4"><a href="10.4-control-graphics-devices.html#cb891-4" tabindex="-1"></a>    <span class="co">#&#39; that directly draw to the current device (e.g., corrplot), and does not return a plot object.</span></span>
-<span id="cb891-5"><a href="10.4-control-graphics-devices.html#cb891-5" tabindex="-1"></a>    <span class="co">#&#39; If p is a static plot object, print it directly.</span></span>
-<span id="cb891-6"><a href="10.4-control-graphics-devices.html#cb891-6" tabindex="-1"></a>    <span class="co">#&#39; @param p A plot object or a function that generates a plot when called.</span></span>
-<span id="cb891-7"><a href="10.4-control-graphics-devices.html#cb891-7" tabindex="-1"></a>    <span class="co">#&#39; @param fn File name to save the image.</span></span>
-<span id="cb891-8"><a href="10.4-control-graphics-devices.html#cb891-8" tabindex="-1"></a>    </span>
-<span id="cb891-9"><a href="10.4-control-graphics-devices.html#cb891-9" tabindex="-1"></a>    <span class="fu">png</span>(fn, <span class="at">width =</span> width <span class="sc">*</span> ppi, <span class="at">height =</span> height <span class="sc">*</span> ppi, <span class="at">res =</span> ppi)</span>
-<span id="cb891-10"><a href="10.4-control-graphics-devices.html#cb891-10" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">is.function</span>(p)) <span class="fu">p</span>() <span class="cf">else</span> <span class="fu">print</span>(p)</span>
-<span id="cb891-11"><a href="10.4-control-graphics-devices.html#cb891-11" tabindex="-1"></a>    <span class="fu">invisible</span>(<span class="fu">dev.off</span>())</span>
-<span id="cb891-12"><a href="10.4-control-graphics-devices.html#cb891-12" tabindex="-1"></a>}</span>
-<span id="cb891-13"><a href="10.4-control-graphics-devices.html#cb891-13" tabindex="-1"></a><span class="co"># Example usage:</span></span>
-<span id="cb891-14"><a href="10.4-control-graphics-devices.html#cb891-14" tabindex="-1"></a>scatter_p <span class="ot">&lt;-</span> <span class="fu">plot</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>)</span>
-<span id="cb891-15"><a href="10.4-control-graphics-devices.html#cb891-15" tabindex="-1"></a><span class="fu">plot_png</span>(scatter_p, <span class="st">&quot;scatter_plot.png&quot;</span>, <span class="fl">5.5</span>, <span class="dv">4</span>)</span>
-<span id="cb891-16"><a href="10.4-control-graphics-devices.html#cb891-16" tabindex="-1"></a><span class="co"># For a function that generates a plot directly:</span></span>
-<span id="cb891-17"><a href="10.4-control-graphics-devices.html#cb891-17" tabindex="-1"></a><span class="fu">plot_png</span>(<span class="at">p =</span> <span class="cf">function</span>() <span class="fu">plot</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>), <span class="at">fn =</span> <span class="st">&quot;example_plot.png&quot;</span>, <span class="at">width =</span> <span class="fl">5.5</span>, <span class="at">height =</span> <span class="dv">4</span>)</span>
-<span id="cb891-18"><a href="10.4-control-graphics-devices.html#cb891-18" tabindex="-1"></a><span class="fu">plot_png</span>(<span class="cf">function</span>() {</span>
-<span id="cb891-19"><a href="10.4-control-graphics-devices.html#cb891-19" tabindex="-1"></a>    <span class="fu">grid.arrange</span>(p1, p2, p3, p4, <span class="at">ncol =</span> <span class="dv">2</span>)</span>
-<span id="cb891-20"><a href="10.4-control-graphics-devices.html#cb891-20" tabindex="-1"></a>}, f_name, <span class="at">width =</span> <span class="fl">8.8</span>, <span class="at">height =</span> <span class="fl">6.54</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb893"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb893-1"><a href="10.4-control-graphics-devices.html#cb893-1" tabindex="-1"></a>plot_png <span class="ot">&lt;-</span> <span class="cf">function</span>(p, fn, <span class="at">width =</span> <span class="fl">5.5</span>, <span class="at">height =</span> <span class="dv">4</span>, <span class="at">ppi =</span> <span class="dv">300</span>) {</span>
+<span id="cb893-2"><a href="10.4-control-graphics-devices.html#cb893-2" tabindex="-1"></a>    <span class="co">#&#39; A wrapper function to save a plot as a PNG file.</span></span>
+<span id="cb893-3"><a href="10.4-control-graphics-devices.html#cb893-3" tabindex="-1"></a>    <span class="co">#&#39; If p is a function, call it to generate the plot; → This is useful for functions </span></span>
+<span id="cb893-4"><a href="10.4-control-graphics-devices.html#cb893-4" tabindex="-1"></a>    <span class="co">#&#39; that directly draw to the current device (e.g., corrplot), and does not return a plot object.</span></span>
+<span id="cb893-5"><a href="10.4-control-graphics-devices.html#cb893-5" tabindex="-1"></a>    <span class="co">#&#39; If p is a static plot object, print it directly.</span></span>
+<span id="cb893-6"><a href="10.4-control-graphics-devices.html#cb893-6" tabindex="-1"></a>    <span class="co">#&#39; @param p A plot object or a function that generates a plot when called.</span></span>
+<span id="cb893-7"><a href="10.4-control-graphics-devices.html#cb893-7" tabindex="-1"></a>    <span class="co">#&#39; @param fn File name to save the image.</span></span>
+<span id="cb893-8"><a href="10.4-control-graphics-devices.html#cb893-8" tabindex="-1"></a>    </span>
+<span id="cb893-9"><a href="10.4-control-graphics-devices.html#cb893-9" tabindex="-1"></a>    <span class="fu">png</span>(fn, <span class="at">width =</span> width <span class="sc">*</span> ppi, <span class="at">height =</span> height <span class="sc">*</span> ppi, <span class="at">res =</span> ppi)</span>
+<span id="cb893-10"><a href="10.4-control-graphics-devices.html#cb893-10" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">is.function</span>(p)) <span class="fu">p</span>() <span class="cf">else</span> <span class="fu">print</span>(p)</span>
+<span id="cb893-11"><a href="10.4-control-graphics-devices.html#cb893-11" tabindex="-1"></a>    <span class="fu">invisible</span>(<span class="fu">dev.off</span>())</span>
+<span id="cb893-12"><a href="10.4-control-graphics-devices.html#cb893-12" tabindex="-1"></a>}</span>
+<span id="cb893-13"><a href="10.4-control-graphics-devices.html#cb893-13" tabindex="-1"></a><span class="co"># Example usage:</span></span>
+<span id="cb893-14"><a href="10.4-control-graphics-devices.html#cb893-14" tabindex="-1"></a>scatter_p <span class="ot">&lt;-</span> <span class="fu">plot</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>)</span>
+<span id="cb893-15"><a href="10.4-control-graphics-devices.html#cb893-15" tabindex="-1"></a><span class="fu">plot_png</span>(scatter_p, <span class="st">&quot;scatter_plot.png&quot;</span>, <span class="fl">5.5</span>, <span class="dv">4</span>)</span>
+<span id="cb893-16"><a href="10.4-control-graphics-devices.html#cb893-16" tabindex="-1"></a><span class="co"># For a function that generates a plot directly:</span></span>
+<span id="cb893-17"><a href="10.4-control-graphics-devices.html#cb893-17" tabindex="-1"></a><span class="fu">plot_png</span>(<span class="at">p =</span> <span class="cf">function</span>() <span class="fu">plot</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>), <span class="at">fn =</span> <span class="st">&quot;example_plot.png&quot;</span>, <span class="at">width =</span> <span class="fl">5.5</span>, <span class="at">height =</span> <span class="dv">4</span>)</span>
+<span id="cb893-18"><a href="10.4-control-graphics-devices.html#cb893-18" tabindex="-1"></a><span class="fu">plot_png</span>(<span class="cf">function</span>() {</span>
+<span id="cb893-19"><a href="10.4-control-graphics-devices.html#cb893-19" tabindex="-1"></a>    <span class="fu">grid.arrange</span>(p1, p2, p3, p4, <span class="at">ncol =</span> <span class="dv">2</span>)</span>
+<span id="cb893-20"><a href="10.4-control-graphics-devices.html#cb893-20" tabindex="-1"></a>}, f_name, <span class="at">width =</span> <span class="fl">8.8</span>, <span class="at">height =</span> <span class="fl">6.54</span>)</span></code></pre></div>
 <ul>
 <li>Sometimes the title got cut off. You can change <code>oma</code> to add more top margin.
 <ul>
@@ -1129,15 +1135,15 @@ document.addEventListener('DOMContentLoaded', function() {
 <p><a href="https://apple.stackexchange.com/questions/175215/how-do-i-assign-a-keyboard-shortcut-to-an-applescript-i-wrote" class="uri">https://apple.stackexchange.com/questions/175215/how-do-i-assign-a-keyboard-shortcut-to-an-applescript-i-wrote</a></p>
 <p><img src="https://drive.google.com/thumbnail?id=1GOLLujeuJt858G2pqv1kkfMwdwJ50kvl&sz=w1000" alt="image-20221115084137151" style="zoom:100%;" /></p>
 <p>For the Quartz device, you can use <code>quartzFonts()</code> to see what the default font for each of these keywords is</p>
-<div class="sourceCode" id="cb892"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb892-1"><a href="10.4-control-graphics-devices.html#cb892-1" tabindex="-1"></a><span class="fu">quartzFonts</span>()</span>
-<span id="cb892-2"><a href="10.4-control-graphics-devices.html#cb892-2" tabindex="-1"></a><span class="co"># $serif</span></span>
-<span id="cb892-3"><a href="10.4-control-graphics-devices.html#cb892-3" tabindex="-1"></a><span class="co"># [1] &quot;Times-Roman&quot;      &quot;Times-Bold&quot;       &quot;Times-Italic&quot;     &quot;Times-BoldItalic&quot;</span></span>
-<span id="cb892-4"><a href="10.4-control-graphics-devices.html#cb892-4" tabindex="-1"></a><span class="co"># </span></span>
-<span id="cb892-5"><a href="10.4-control-graphics-devices.html#cb892-5" tabindex="-1"></a><span class="co"># $sans</span></span>
-<span id="cb892-6"><a href="10.4-control-graphics-devices.html#cb892-6" tabindex="-1"></a><span class="co"># [1] &quot;Helvetica&quot;             &quot;Helvetica-Bold&quot;        &quot;Helvetica-Oblique&quot;     &quot;Helvetica-BoldOblique&quot;</span></span>
-<span id="cb892-7"><a href="10.4-control-graphics-devices.html#cb892-7" tabindex="-1"></a><span class="co"># </span></span>
-<span id="cb892-8"><a href="10.4-control-graphics-devices.html#cb892-8" tabindex="-1"></a><span class="co"># $mono</span></span>
-<span id="cb892-9"><a href="10.4-control-graphics-devices.html#cb892-9" tabindex="-1"></a><span class="co"># [1] &quot;Courier&quot;             &quot;Courier-Bold&quot;        &quot;Courier-Oblique&quot;     &quot;Courier-BoldOblique&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb894"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb894-1"><a href="10.4-control-graphics-devices.html#cb894-1" tabindex="-1"></a><span class="fu">quartzFonts</span>()</span>
+<span id="cb894-2"><a href="10.4-control-graphics-devices.html#cb894-2" tabindex="-1"></a><span class="co"># $serif</span></span>
+<span id="cb894-3"><a href="10.4-control-graphics-devices.html#cb894-3" tabindex="-1"></a><span class="co"># [1] &quot;Times-Roman&quot;      &quot;Times-Bold&quot;       &quot;Times-Italic&quot;     &quot;Times-BoldItalic&quot;</span></span>
+<span id="cb894-4"><a href="10.4-control-graphics-devices.html#cb894-4" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb894-5"><a href="10.4-control-graphics-devices.html#cb894-5" tabindex="-1"></a><span class="co"># $sans</span></span>
+<span id="cb894-6"><a href="10.4-control-graphics-devices.html#cb894-6" tabindex="-1"></a><span class="co"># [1] &quot;Helvetica&quot;             &quot;Helvetica-Bold&quot;        &quot;Helvetica-Oblique&quot;     &quot;Helvetica-BoldOblique&quot;</span></span>
+<span id="cb894-7"><a href="10.4-control-graphics-devices.html#cb894-7" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb894-8"><a href="10.4-control-graphics-devices.html#cb894-8" tabindex="-1"></a><span class="co"># $mono</span></span>
+<span id="cb894-9"><a href="10.4-control-graphics-devices.html#cb894-9" tabindex="-1"></a><span class="co"># [1] &quot;Courier&quot;             &quot;Courier-Bold&quot;        &quot;Courier-Oblique&quot;     &quot;Courier-BoldOblique&quot;</span></span></code></pre></div>
 <p><strong>Table of font</strong></p>
 <p><a href="http://www.cookbook-r.com/Graphs/Fonts/" class="uri">http://www.cookbook-r.com/Graphs/Fonts/</a></p>
 <p>Font support in R is generally not very good. It varies between systems, and between output formats.</p>

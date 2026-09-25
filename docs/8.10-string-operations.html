@@ -793,7 +793,13 @@ div.csl-indent {
 <li class="chapter" data-level="11.3.2" data-path="11.3-process-data.html"><a href="11.3-process-data.html#from-tibble-to-xts"><i class="fa fa-check"></i><b>11.3.2</b> From tibble to <code>xts</code></a></li>
 </ul></li>
 <li class="chapter" data-level="11.4" data-path="11.4-technical-analysis.html"><a href="11.4-technical-analysis.html"><i class="fa fa-check"></i><b>11.4</b> Technical Analysis</a></li>
-<li class="chapter" data-level="11.5" data-path="11.5-portfolio-return.html"><a href="11.5-portfolio-return.html"><i class="fa fa-check"></i><b>11.5</b> Portfolio Return</a></li>
+<li class="chapter" data-level="11.5" data-path="11.5-portfolio-return.html"><a href="11.5-portfolio-return.html"><i class="fa fa-check"></i><b>11.5</b> Portfolio Return</a>
+<ul>
+<li class="chapter" data-level="11.5.1" data-path="11.5-portfolio-return.html"><a href="11.5-portfolio-return.html#plot-portfolio-return"><i class="fa fa-check"></i><b>11.5.1</b> Plot portfolio return</a></li>
+<li class="chapter" data-level="11.5.2" data-path="11.5-portfolio-return.html"><a href="11.5-portfolio-return.html#rolling-performance"><i class="fa fa-check"></i><b>11.5.2</b> Rolling performance</a></li>
+<li class="chapter" data-level="11.5.3" data-path="11.5-portfolio-return.html"><a href="11.5-portfolio-return.html#monthly-summary-statistics"><i class="fa fa-check"></i><b>11.5.3</b> Monthly summary statistics</a></li>
+<li class="chapter" data-level="11.5.4" data-path="11.5-portfolio-return.html"><a href="11.5-portfolio-return.html#risk-adjusted-performance-measures"><i class="fa fa-check"></i><b>11.5.4</b> Risk-adjusted performance measures</a></li>
+</ul></li>
 <li class="chapter" data-level="11.6" data-path="11.6-plot-ts.html"><a href="11.6-plot-ts.html"><i class="fa fa-check"></i><b>11.6</b> Plot TS</a>
 <ul>
 <li class="chapter" data-level="11.6.1" data-path="11.6-plot-ts.html"><a href="11.6-plot-ts.html#plot.xts"><i class="fa fa-check"></i><b>11.6.1</b> <code>plot.xts</code></a></li>
@@ -1051,20 +1057,20 @@ document.addEventListener('DOMContentLoaded', function() {
 <p><code>stringr::str_starts(string, pattern)</code></p>
 <p><code>str_detect(string, pattern)</code> returns a logical vector with <code>TRUE</code> for each element of <code>string</code> that matches <code>pattern</code> and <code>FALSE</code> otherwise.</p>
 <p><code>str_locate(string, pattern)</code> returns the <code>start</code> and <code>end</code> position of the first match;</p>
-<div class="sourceCode" id="cb752"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb752-1"><a href="8.10-string-operations.html#cb752-1" tabindex="-1"></a><span class="co"># match a pattern and select</span></span>
-<span id="cb752-2"><a href="8.10-string-operations.html#cb752-2" tabindex="-1"></a>data <span class="sc">%&gt;%</span> </span>
-<span id="cb752-3"><a href="8.10-string-operations.html#cb752-3" tabindex="-1"></a>        <span class="fu">mutate</span>(<span class="at">end =</span> <span class="fu">str_locate</span>(key,<span class="st">&quot;_sd&quot;</span>)[<span class="dv">1</span>],</span>
-<span id="cb752-4"><a href="8.10-string-operations.html#cb752-4" tabindex="-1"></a>                 <span class="at">name =</span> <span class="fu">str_sub</span>(key, <span class="dv">1</span>, end<span class="dv">-1</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb754"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb754-1"><a href="8.10-string-operations.html#cb754-1" tabindex="-1"></a><span class="co"># match a pattern and select</span></span>
+<span id="cb754-2"><a href="8.10-string-operations.html#cb754-2" tabindex="-1"></a>data <span class="sc">%&gt;%</span> </span>
+<span id="cb754-3"><a href="8.10-string-operations.html#cb754-3" tabindex="-1"></a>        <span class="fu">mutate</span>(<span class="at">end =</span> <span class="fu">str_locate</span>(key,<span class="st">&quot;_sd&quot;</span>)[<span class="dv">1</span>],</span>
+<span id="cb754-4"><a href="8.10-string-operations.html#cb754-4" tabindex="-1"></a>                 <span class="at">name =</span> <span class="fu">str_sub</span>(key, <span class="dv">1</span>, end<span class="dv">-1</span>))</span></code></pre></div>
 <p><code>str_locate_all(string, pattern)</code> returns the <code>start</code> and <code>end</code> position of each match.</p>
 <p><code>str_sub(string, start = 1L, end = -1L)</code> Extract substrings from a character vector.</p>
 <p>Negative indices index from end of string.</p>
-<div class="sourceCode" id="cb753"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb753-1"><a href="8.10-string-operations.html#cb753-1" tabindex="-1"></a><span class="co"># replace substring with specific value</span></span>
-<span id="cb753-2"><a href="8.10-string-operations.html#cb753-2" tabindex="-1"></a><span class="fu">str_sub</span>(string, <span class="at">start =</span> <span class="dv">1</span><span class="dt">L</span>, <span class="at">end =</span> <span class="sc">-</span><span class="dv">1</span><span class="dt">L</span>, <span class="at">omit_na =</span> <span class="cn">FALSE</span>) <span class="ot">&lt;-</span> value</span>
-<span id="cb753-3"><a href="8.10-string-operations.html#cb753-3" tabindex="-1"></a></span>
-<span id="cb753-4"><a href="8.10-string-operations.html#cb753-4" tabindex="-1"></a><span class="co"># A pair of integer vectors defining the range of characters to extract</span></span>
-<span id="cb753-5"><a href="8.10-string-operations.html#cb753-5" tabindex="-1"></a>hw <span class="ot">&lt;-</span> <span class="st">&quot;Hadley Wickham&quot;</span></span>
-<span id="cb753-6"><a href="8.10-string-operations.html#cb753-6" tabindex="-1"></a><span class="fu">str_sub</span>(hw, <span class="at">start=</span><span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">8</span>), <span class="at">end=</span><span class="fu">c</span>(<span class="dv">6</span>, <span class="dv">14</span>)) <span class="co"># select 1-6 and 8-14</span></span>
-<span id="cb753-7"><a href="8.10-string-operations.html#cb753-7" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Hadley&quot;  &quot;Wickham&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb755"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb755-1"><a href="8.10-string-operations.html#cb755-1" tabindex="-1"></a><span class="co"># replace substring with specific value</span></span>
+<span id="cb755-2"><a href="8.10-string-operations.html#cb755-2" tabindex="-1"></a><span class="fu">str_sub</span>(string, <span class="at">start =</span> <span class="dv">1</span><span class="dt">L</span>, <span class="at">end =</span> <span class="sc">-</span><span class="dv">1</span><span class="dt">L</span>, <span class="at">omit_na =</span> <span class="cn">FALSE</span>) <span class="ot">&lt;-</span> value</span>
+<span id="cb755-3"><a href="8.10-string-operations.html#cb755-3" tabindex="-1"></a></span>
+<span id="cb755-4"><a href="8.10-string-operations.html#cb755-4" tabindex="-1"></a><span class="co"># A pair of integer vectors defining the range of characters to extract</span></span>
+<span id="cb755-5"><a href="8.10-string-operations.html#cb755-5" tabindex="-1"></a>hw <span class="ot">&lt;-</span> <span class="st">&quot;Hadley Wickham&quot;</span></span>
+<span id="cb755-6"><a href="8.10-string-operations.html#cb755-6" tabindex="-1"></a><span class="fu">str_sub</span>(hw, <span class="at">start=</span><span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">8</span>), <span class="at">end=</span><span class="fu">c</span>(<span class="dv">6</span>, <span class="dv">14</span>)) <span class="co"># select 1-6 and 8-14</span></span>
+<span id="cb755-7"><a href="8.10-string-operations.html#cb755-7" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Hadley&quot;  &quot;Wickham&quot;</span></span></code></pre></div>
 <p><code>base::substr(name, start, end)</code></p>
 <p><code>base::substring(name, start, end=1000000L)</code> if not providing <code>end</code>, will subset from <code>start</code> until the end of the string.</p>
 <p><code>base::</code> is to specify using base R function.</p>

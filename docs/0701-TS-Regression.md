@@ -110,4 +110,4 @@ ggplot(psi_df, aes(x = lag, y = coef)) +
   theme_minimal()
 ```
 
-<img src="0701-TS-Regression_files/figure-html/unnamed-chunk-3-1.png" width="672" />
+<img src="0701-TS-Regression_files/figure-html/unnamed-chunk-3-1.png" width="80%" style="display: block; margin: auto;" />

@@ -118,7 +118,7 @@ fundamental_complete %>%
 
 This will set the main x-axis range to 0 to 0.1, and add padding of $5\% \times 0.1$ to both sides of the x-axis, resulting in an expanded range of -0.005 to 0.105. 
 
-<img src="images/historgram_coord.svg" width="70%" />
+<img src="images/historgram_coord.svg" width="70%" style="display: block; margin: auto;" />
 
 --------------------------------------------------------------------------------
 
