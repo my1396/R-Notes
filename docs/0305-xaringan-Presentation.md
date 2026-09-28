@@ -121,7 +121,9 @@ See the R help page `?xaringan::moon_reader` for all possible configurations.
   
   ref: <https://stackoverflow.com/a/45261469>
 
-- `nature`: (Nature transformation) A list of configurations to be passed to `remark.create()`, e.g. `list(ratio = '16:9', navigation = list(click = TRUE))`.
+- `nature` (Nature transformation): A list of configurations to be passed to `remark.create()`, e.g. `list(ratio = '16:9', navigation = list(click = TRUE))`.
+  
+  `ratio` display ratio, defaults to `4:3`.
   
   See [Wiki page of `remark.js`](https://github.com/gnab/remark/wiki/Configuration) for all possible configurations.
 
@@ -673,8 +675,8 @@ Rscript Slides/print-notes.R Slides/equity_valuation.Rmd
 **Flags** (all optional):
 
 | Flag | Effect |
-| --- |  --------------------------- |
-| `--render`   | Re-knit the `.Rmd` first. Without it, the existing `.html` is printed as-is (fast). |
+| ------ | --------------------------- |
+| <span class="env-green">`--render`</span> | Re-knit the `.Rmd` first. Without it, the existing `.html` is printed as-is (fast). |
 | `-o FILE`    | Choose the output path instead of `<deck>_notes.pdf`. |
 | `--zoom 0.5` | Shrink the slide on the page to make room for long notes (default `0.58`). |
 | `--wait 15`  | Extra seconds for MathJax to finish on heavy decks (default `10`). |
@@ -693,8 +695,13 @@ Typical workflow after editing a deck:
   ./print-notes.R <deck>.Rmd
   ```
 
-- Approach 2: Use `--render` to render and print in one command. 
-
+- **Approach 2:** Use <span class="env-green">`--render`</span> to render and print in one command. 
+  
+  <div class="rmd-note">
+  If you have made changes to the deck, you have to re-render the deck first before printing to PDF with notes. 
+  Otherwise, you may get a PDF with stale content.
+  </div>
+  
   ```bash
   # render and print; creates <deck>_notes.pdf directly from the latest <deck>.Rmd
   ./print-notes.R <deck>.Rmd --render

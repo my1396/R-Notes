@@ -1690,9 +1690,6 @@ Two options if you want to read external scripts:
 
 If we have R Markdown documents that we want to share across several pages in the website, we can include them in the parent `.Rmd` document using the <span class="env-green">`child` chunk option</span>. 
 
-Note that the child `.Rmd` files need to be named with a leading `_` so they are not compiled as standalone documents during the site rendering.
-
-
 In the parent `.Rmd` file, we can include a child document like this:
 
 ````markdown
@@ -1700,7 +1697,12 @@ In the parent `.Rmd` file, we can include a child document like this:
 ```
 ````
 
-The child document `_setup.Rmd` can contain any valid R Markdown content, including text, code chunks, and inline R code. When the parent document is rendered, the content of the child document will be included at the location of the chunk. E.g.,
+- Note that the child `.Rmd` files need to be named with a leading `_` so they are not compiled as standalone documents during the site rendering.
+
+- When you have the `child` option, this code chunk must be empty. Otherwise, the code inside will be ignored.
+
+The child document `_setup.Rmd` can contain any valid R Markdown content, including text, code chunks, and inline R code. When the parent document is rendered, the content of the child document will be included at the location of the chunk. An example of `_setup.Rmd`:
+
 
 ````markdown
 ```{r, label="chunk-opt", include=FALSE}
