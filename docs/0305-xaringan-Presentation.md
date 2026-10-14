@@ -363,6 +363,17 @@ $$E = mc^2$$
 
 **Fix:** Use <span class="env-green">`\( ... \)`</span> for inline math and `\[ ... \]` for display math inside html tags.
 
+--------------------------------------------------------------------------------
+
+Q: How to make inline math work within boldfaced text?  
+A: Surround your math with backticks and use `\(...\)` for inline math, e.g.,
+
+```markdown
+**The formula is `\(E = mc^2\)`**.
+```
+
+Without backticks the math will <span class="env-orange">NOT</span> render correctly. <span class="env-orange">Nor</span> does `$...$` work inside boldfaced text.
+
 
 --------------------------------------------------------------------------------
 
@@ -624,7 +635,9 @@ This is notes for presenter only.
 --------------------------------------------------------------------------------
 
 Q: **What is the behavior of presenter mode?**  
-A: The presenter mode shows thumbnails of the current slide and the next slide on the left, presenter notes on the right (see Section [7.3.5](https://bookdown.org/yihui/rmarkdown/xaringan-format.html#xaringan-notes)), and also a timer on the top right. 
+A: The presenter mode shows thumbnails of the current slide and the next slide on the left, presenter notes on the right (see [HERE](https://bookdown.org/yihui/rmarkdown/xaringan-format.html#xaringan-notes) for more details), and also a timer on the top right. 
+
+<img src="images/xaringan presenter notes.png" alt="" style="display: block; margin-right: auto; margin-left: auto; zoom:80%;" />
 
 The keys `c` (clone) and `p` (presenter mode) can be very useful when you present with your own computer connected to a second screen (such as a projector). 
 

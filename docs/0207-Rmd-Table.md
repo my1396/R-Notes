@@ -583,7 +583,7 @@ To show the `tibble` information (number of row/columns, and group information) 
 ```yaml
 ---
 title: "Use caption with df_print set to page"
-date: "2026-09-28"
+date: "2026-10-14"
 output:
   bookdown::html_document2:
     df_print: paged
@@ -871,10 +871,6 @@ Note:               *p<0.1; **p<0.05; ***p<0.01
 HTML table can be obtained by specifying `stargazer(model, type = "html")`.
 
 Note that you need to specify <span class="env-green">`results="asis"`</span> in the code **chunk options**. This option tells `knitr` to treat verbatim code blocks "as is." Otherwise, instead of your table, you will see the raw html or latex code.
-
-<div class="rmd-important">
-Update (June 2026): The stars annotation has been fixed!
-</div>
 
 - Note that <span class="env-orange">`*`'s do **NOT** show properly in html output</span>, see Fig. \@ref(fig:stargazer1), need to specify in the footnote (`notes`) manually.
 
@@ -1334,7 +1330,7 @@ print(xtab, type = "html", include.rownames = TRUE)
 ```
 
 <!-- html table generated in R 4.5.1 by xtable 1.8-4 package -->
-<!-- Mon Sep 28 11:44:30 2026 -->
+<!-- Wed Oct 14 11:45:38 2026 -->
 <table border=1>
 <caption align="bottom"> Asset Parameters </caption>
 <tr> <th>  </th> <th> Asset </th> <th> Mu </th> <th> Sigma </th>  </tr>
@@ -1354,7 +1350,7 @@ print(xtab_model, type = "html", digits = 3)
 ```
 
 <!-- html table generated in R 4.5.1 by xtable 1.8-4 package -->
-<!-- Mon Sep 28 11:44:30 2026 -->
+<!-- Wed Oct 14 11:45:38 2026 -->
 <table border=1>
 <caption align="bottom"> Regression of mpg on hp and wt </caption>
 <tr> <th>  </th> <th> Estimate </th> <th> Std. Error </th> <th> t value </th> <th> Pr(&gt;|t|) </th>  </tr>
